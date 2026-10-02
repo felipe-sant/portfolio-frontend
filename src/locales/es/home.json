@@ -1,0 +1,17 @@
+{
+    "meta": {
+        "title": "Título de la página",
+        "description": "Mi descripción personalizada."
+    },
+    "heading": "¡Hola, mundo!",
+    "showcase": {
+        "label": "Etiqueta de ejemplo",
+        "description": "Este párrafo de ejemplo muestra la tipografía del cuerpo y el ancho de lectura cómodo de los tokens de diseño de esta plantilla, con un fragmento <strong>destacado</strong>.",
+        "caption": "Leyenda de ejemplo en texto secundario, para contenido complementario.",
+        "status": {
+            "success": "Éxito",
+            "warning": "Advertencia",
+            "error": "Error"
+        }
+    }
+}

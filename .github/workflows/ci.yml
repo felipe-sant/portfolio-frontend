@@ -1,0 +1,99 @@
+name: CI
+
+on:
+    push:
+        branches: [main]
+    pull_request:
+
+permissions:
+    contents: read
+
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+    build:
+        name: Build
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v7
+            - name: Setup Node
+              uses: actions/setup-node@v7
+              with:
+                  node-version-file: ".nvmrc"
+                  cache: npm
+                  cache-dependency-path: package-lock.json
+            - name: Install dependencies
+              run: npm ci
+            - name: Build
+              run: npm run build
+
+    lint:
+        name: Lint
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v7
+            - name: Setup Node
+              uses: actions/setup-node@v7
+              with:
+                  node-version-file: ".nvmrc"
+                  cache: npm
+                  cache-dependency-path: package-lock.json
+            - name: Install dependencies
+              run: npm ci
+            - name: Lint
+              run: npm run lint
+
+    test:
+        name: Test
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v7
+              with:
+                  fetch-depth: 0
+                  ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+            - name: Setup Node
+              uses: actions/setup-node@v7
+              with:
+                  node-version-file: ".nvmrc"
+                  cache: npm
+                  cache-dependency-path: package-lock.json
+            - name: Install dependencies
+              run: npm ci
+            - name: Decide test scope
+              id: scope
+              env:
+                  EVENT_NAME: ${{ github.event_name }}
+                  BASE_REF: ${{ github.event.pull_request.base.ref }}
+              run: |
+                  if [ "$EVENT_NAME" = "push" ]; then
+                    echo "mode=full" >> "$GITHUB_OUTPUT"
+                  elif [ "$BASE_REF" = "main" ]; then
+                    echo "mode=full" >> "$GITHUB_OUTPUT"
+                  else
+                    CHANGED_FILES=$(git diff --name-only "origin/$BASE_REF...HEAD")
+                    echo "Arquivos alterados no PR:"
+                    echo "$CHANGED_FILES"
+                    if echo "$CHANGED_FILES" | grep -E '^(package\.json|package-lock\.json|vite\.config\.ts|tsconfig.*\.json|src/setupTests\.ts)$'; then
+                      echo "mode=full" >> "$GITHUB_OUTPUT"
+                    else
+                      echo "mode=changed" >> "$GITHUB_OUTPUT"
+                    fi
+                  fi
+            - name: Run full test suite with coverage
+              if: steps.scope.outputs.mode == 'full'
+              run: npm run test:cov
+            - name: Run tests affected by the diff
+              if: steps.scope.outputs.mode == 'changed'
+              run: npx vitest run --changed "origin/${{ github.event.pull_request.base.ref }}"
+            - name: Upload coverage report
+              if: steps.scope.outputs.mode == 'full'
+              uses: actions/upload-artifact@v7
+              with:
+                  name: coverage-report
+                  path: coverage/
+                  retention-days: 7

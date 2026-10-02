@@ -1,0 +1,8 @@
+{
+    "meta": {
+        "title": "An error occurred.",
+        "description": "Something went wrong while loading this page."
+    },
+    "heading": "An unexpected error occurred.",
+    "unknown": "Unknown error."
+}

@@ -1,0 +1,8 @@
+{
+    "meta": {
+        "title": "Se produjo un error.",
+        "description": "Algo salió mal al cargar esta página."
+    },
+    "heading": "Se produjo un error inesperado.",
+    "unknown": "Error desconocido."
+}
