@@ -34,7 +34,7 @@ describe("routes", () => {
         renderRoutes(["/rota-que-nao-existe"])
 
         expect(
-            await screen.findByRole("heading", { name: "404 - Página não encontrada" })
+            await screen.findByRole("heading", { name: "Página não encontrada" })
         ).toBeInTheDocument()
     })
 
@@ -42,8 +42,8 @@ describe("routes", () => {
         const user = userEvent.setup()
         renderRoutes(["/rota-que-nao-existe"])
 
-        await screen.findByRole("link", { name: "Vá para a página inicial." })
-        await user.click(screen.getByRole("link", { name: "Vá para a página inicial." }))
+        await screen.findByRole("link", { name: "Voltar para o início" })
+        await user.click(screen.getByRole("link", { name: "Voltar para o início" }))
 
         expect(
             await screen.findByRole("heading", { name: "Desenvolvedor full stack em TypeScript." })

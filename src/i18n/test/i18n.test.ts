@@ -121,6 +121,6 @@ describe("i18n", () => {
         i18n.addResourceBundle("es", "common", { loading: "Cargando..." })
 
         expect(i18n.t("loading")).toBe("Cargando...")
-        expect(i18n.t("backHome")).toBe("Go to the home page.")
+        expect(i18n.t("backHome")).toBe("Back to home")
     })
 })

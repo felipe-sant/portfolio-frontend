@@ -47,11 +47,11 @@ describe("App", () => {
         render(<App />)
 
         expect(
-            await screen.findByRole("heading", { name: "404 - Página não encontrada" })
+            await screen.findByRole("heading", { name: "Página não encontrada" })
         ).toBeInTheDocument()
-        expect(document.title).toBe("Página não encontrada.")
+        expect(document.title).toBe("Página não encontrada · Luiz Felipe dos Santos")
         expect(document.querySelector('meta[name="description"]')?.getAttribute("content")).toBe(
-            "A página não existe ou você não possui acesso."
+            "O endereço acessado não existe neste portfólio."
         )
     })
 })
