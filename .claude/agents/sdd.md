@@ -17,7 +17,7 @@ tools: Read, Grep, Glob, Write, Bash
 
 ## Convenções deste repositório
 
-Siga o `CLAUDE.md` do projeto. A spec não planeja peça de exemplo descartável: o que ela adiciona é código real e precisa se justificar como tal, com a convenção explicada no próprio `CLAUDE.md` ou na skill correspondente, não por apontar para um arquivo-modelo.
+Siga o `CLAUDE.md` do projeto. A spec não planeja peça descartável só para ilustrar: o que ela adiciona é código real e precisa se justificar como tal, com a convenção explicada no próprio `CLAUDE.md` ou na skill correspondente, não por apontar para um arquivo-modelo.
 
 Ao descrever tarefas/critérios de aceite que envolvam código, considere estas convenções como vigentes:
 
