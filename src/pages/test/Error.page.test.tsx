@@ -24,9 +24,7 @@ describe("ErrorPage", () => {
     it("renderiza o heading genérico de erro e a mensagem da exceção lançada", () => {
         renderErrorPage()
 
-        expect(
-            screen.getByRole("heading", { name: "Ocorreu um erro inesperado." })
-        ).toBeInTheDocument()
+        expect(screen.getByRole("heading", { name: "Erro inesperado" })).toBeInTheDocument()
         expect(screen.getByText("Falha proposital de teste")).toBeInTheDocument()
     })
 
@@ -39,7 +37,7 @@ describe("ErrorPage", () => {
     it("oferece um link de volta para a página inicial", () => {
         renderErrorPage()
 
-        expect(screen.getByRole("link", { name: "Vá para a página inicial." })).toHaveAttribute(
+        expect(screen.getByRole("link", { name: "Voltar para o início" })).toHaveAttribute(
             "href",
             "/"
         )
@@ -48,7 +46,7 @@ describe("ErrorPage", () => {
     it("define o title e a meta description da página", () => {
         renderErrorPage()
 
-        expect(document.title).toBe("Ocorreu um erro.")
+        expect(document.title).toBe("Erro inesperado · Luiz Felipe dos Santos")
         expect(document.querySelector('meta[name="description"]')?.getAttribute("content")).toBe(
             "Algo deu errado ao carregar esta página."
         )

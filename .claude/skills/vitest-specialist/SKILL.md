@@ -102,7 +102,9 @@ describe("HomePage", () => {
     it("renderiza o título principal", () => {
         render(<HomePage />)
 
-        expect(screen.getByRole("heading", { name: "Olá, mundo!" })).toBeInTheDocument()
+        expect(
+            screen.getByRole("heading", { name: "Desenvolvedor full stack em TypeScript." })
+        ).toBeInTheDocument()
     })
 })
 ```
@@ -293,13 +295,15 @@ import setLanguage from "@/i18n/setLanguage"
 import HomePage from "@/pages/Home.page"
 
 describe("HomePage", () => {
-    it("traduz os metadados e o trecho em destaque quando o idioma é es", async () => {
+    it("traduz o título e os metadados quando o idioma é es", async () => {
         await setLanguage("es")
 
         render(<HomePage />)
 
-        expect(document.title).toBe("Título de la página")
-        expect(screen.getByText("destacado").tagName).toBe("STRONG")
+        expect(
+            screen.getByRole("heading", { name: "Desarrollador full stack en TypeScript." })
+        ).toBeInTheDocument()
+        expect(document.title).toBe("Luiz Felipe dos Santos · Desarrollador full stack")
     })
 })
 ```

@@ -1,22 +1,22 @@
 # Ambientes
 
-> Exemplo: ambientes do frontend fictício. Substitua pelos do projeto real.
-
 ## Ambientes
 
-| Ambiente    | Para que serve                | Como subir                                                     |
-| ----------- | ----------------------------- | -------------------------------------------------------------- |
-| Local       | Desenvolvimento no computador | `npm run dev` e abrir `http://localhost:5173`                  |
-| Homologação | Validação antes de publicar   | Build com as variáveis de homologação, publicado pelo pipeline |
-| Produção    | Usuários finais               | Build com as variáveis de produção, publicado pelo pipeline    |
+| Ambiente | Para que serve                | Como subir                                    |
+| -------- | ----------------------------- | --------------------------------------------- |
+| Local    | Desenvolvimento no computador | `npm run dev` e abrir `http://localhost:5173` |
+
+Homologação e produção ainda não estão definidos: não há hospedagem nem pipeline de publicação escolhidos. Quando existirem, entram nesta tabela.
 
 ## Variáveis
 
 A fonte das variáveis é o `.env.example` da raiz. Só variáveis com prefixo `VITE_` chegam ao código do cliente, lidas com `import.meta.env.VITE_ALGO`.
 
-| Variável       | Local                   | Homologação                       | Produção                  |
-| -------------- | ----------------------- | --------------------------------- | ------------------------- |
-| `VITE_API_URL` | `http://localhost:3000` | `https://api.staging.example.com` | `https://api.example.com` |
+| Variável       | Local | Para que serve                                                |
+| -------------- | ----- | ------------------------------------------------------------- |
+| `VITE_API_URL` | vazia | URL base do backend, lida só em `src/services/http/apiUrl.ts` |
+
+O backend ainda não existe e a aplicação usa dados mock, então `VITE_API_URL` fica vazia ou ausente. Sem a variável, `apiUrl.ts` usa string vazia e as requisições saem com caminho relativo. O valor do `.env.example` é só um modelo do formato.
 
 ## Segredos
 

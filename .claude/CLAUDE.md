@@ -21,6 +21,53 @@ do tipo das chaves e os testes de tela afirmam o texto em português. **O fallba
 `en`**, o que o usuário vê quando nenhuma fonte de detecção dá um idioma suportado. As duas coisas
 são independentes.
 
+## Produto
+
+Este repositório é o frontend do **portfólio pessoal de Luiz Felipe dos Santos**, desenvolvedor
+full stack. O usuário é ao mesmo tempo cliente, PO e dev: ele decide escopo e prioridade e aprova
+as specs. Esta seção é um resumo; o detalhe vive em `docs/` e no handoff de design.
+
+**Handoff de design:** `/home/felipe/faculdade/design_handoff_portfolio` é a fonte de verdade do
+design (R3). Reaproveite `tokens/` (nomes e valores dos tokens) e use `components/` como ponto de
+partida dos componentes. Não copie o HTML das telas (`*.dc.html`), `support.js`, `image-slot.js`
+nem os sketches de `assets/` (não são imagens de produção). Onde o handoff diverge das convenções
+deste repositório, as convenções prevalecem: fonte self-hospedada em vez de Google Fonts, CSS
+Module em vez de classe global `.ds-*` e código sem comentários.
+
+**Rotas:** cinco telas, das quais hoje só `/` existe no código (as demais vêm nas specs de tela):
+
+- `/` (Início): primeira impressão, com quem é, o que faz agora, projetos em destaque e stack.
+- `/projetos` (Projetos): encontrar um projeto por busca, tipo, categoria ou tecnologia.
+- `/projetos/:slug` (Projeto): estudo de caso, com galeria, documentação e ficha técnica.
+- `/informacoes` (Informações): sobre mim, stack, complementos e trajetória.
+- `/contato` (Contato): formulário de mensagem e canais diretos.
+
+A interface tem tema claro e escuro.
+
+**Voz e copy:** texto em `pt-BR` como referência, na primeira pessoa do singular, direto, sem
+emoji e sem superlativo. Títulos são substantivos curtos sem ponto final, botões usam verbo no
+infinitivo + objeto ("Ver projetos", "Enviar mensagem") e o separador de metadados é `·`.
+
+**Requisitos obrigatórios de toda spec:**
+
+- **R1 — Frontend-only com dados mock.** O backend ainda não existe: a aplicação funciona sozinha
+  com dados mock até ele existir. Redux Toolkit, RTK Query e `src/services/http/` ficam no projeto
+  para a troca do mock pela API.
+- **R2 — Tradução em `pt-BR`, `en` e `es`.** Toda feature ou tarefa que cria ou altera texto de UI
+  entrega o texto nos três idiomas, com `pt-BR` como referência. Chave de tradução sem uso é
+  removida.
+- **R3 — O handoff é a fonte de verdade do design.** Tokens, componentes, voz e copy,
+  acessibilidade e responsividade seguem o handoff, com as convenções do repositório prevalecendo
+  onde divergem.
+
+**Pendências do handoff:** menu mobile (painel aberto não desenhado), logo (hoje placeholder),
+imagens reais dos projetos e foto de perfil, rodapé (decisão sobre o fundo), backend do formulário
+de contato e renderizador de markdown da documentação do projeto.
+
+**Onde ler mais:** `docs/product/overview.md` (visão, escopo, requisitos e pendências),
+`docs/product/glossary.md` (glossário), `docs/design/design-system.md` (design system),
+`docs/diagrams/` (fluxo de navegação e entidades) e `docs/architecture/frontend.md` (arquitetura).
+
 ## Comandos
 
 ```bash
@@ -145,7 +192,7 @@ para editores compatíveis, coerente com o `.prettierrc`.
   três idiomas. Um namespace por dono do texto, com o nome do CSS Module correspondente (ex.:
   `home`, `notFound`, `mainLayout`); `common` guarda texto compartilhado (`backHome`, `loading`)
   e texto fixo de componente de `src/components/`. Chave em inglês, lowerCamelCase, hierárquica por
-  papel (`meta.title`, `meta.description`, `heading`, `showcase.status.success`). Página com
+  papel (`meta.title`, `meta.description`, `heading`, `filters.category.academic`). Página com
   namespace próprio chama `useTranslation("home")`; quem também usa chave de `common` carrega os
   dois, `useTranslation(["notFound", "common"])`, e chama `t("common:backHome")`, senão a chave não
   tipa. Texto com marcação no meio usa `<Trans>` com `t={t}`, `i18nKey` e
@@ -222,8 +269,10 @@ para editores compatíveis, coerente com o `.prettierrc`.
 
 - **`src/styles/`** — `global.css` guarda as CSS custom properties (cor, tipografia, espaçamento e
   afins) e o reset. CSS Module usa essas custom properties em vez de valor hardcoded; confira os
-  nomes em `src/styles/global.css` antes de usar, e token global novo entra lá. Estilos de página
-  ficam em `src/styles/pages/<nome>.module.css` e de componente em
+  nomes em `src/styles/global.css` antes de usar, e token global novo entra lá. Os nomes dos
+  tokens seguem os de `tokens/` do handoff de design (ex.: `--danger-surface`/`--danger-ink`,
+  nunca um prefixo próprio como `error`). Estilos de página ficam em
+  `src/styles/pages/<nome>.module.css` e de componente em
   `src/styles/components/<nome>.module.css` (CSS Modules), importados como `import css from "..."`.
   A tipagem dos módulos vem de `src/types/declarations.d.ts` (`{ [key: string]: string }`): toda
   classe usada como `css.<algo>` precisa existir no módulo importado, porque uma classe inexistente
@@ -499,10 +548,12 @@ novo, então repetir via hook no momento do push seria redundante.
   `.specs/_template/`. As pastas de spec são gitignored: planejamento local, fora do histórico.
   O estado vive no campo `**Status:**` do `spec.md` (`rascunho` → `em-revisao` → `aprovada` →
   `em-andamento` → `implementada`); só humano promove para `aprovada`.
-- `docs/` — documentação versionada **só deste frontend** (arquitetura, ADRs, diagramas, telas). O
-  sistema inteiro fica no repositório pai, que reúne backend e frontend como submódulos, e o
-  contrato da API fica no backend. Índice em `docs/README.md`; o `sdd` não escreve lá, só em
-  `.specs/`.
+- `docs/` — documentação versionada **só deste frontend**: visão do produto e glossário
+  (`docs/product/`), design system (`docs/design/`), arquitetura (`docs/architecture/`), ADRs
+  (`docs/adr/`), diagramas de fluxo e entidades (`docs/diagrams/`), ambientes (`docs/setup/`) e o
+  modelo de documentação de tela (`docs/screens/`). O sistema inteiro fica no repositório pai,
+  que reúne backend e frontend como submódulos, e o contrato da API fica no backend. Índice em
+  `docs/README.md`; o `sdd` não escreve lá, só em `.specs/`.
 
 Ao mudar uma convenção deste arquivo, verifique se algum agente ou skill a repete — eles citam
 este `CLAUDE.md` como fonte da verdade, mas duplicam os pontos que precisam aplicar sozinhos.

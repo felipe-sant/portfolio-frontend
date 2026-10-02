@@ -1,17 +1,8 @@
 {
     "meta": {
-        "title": "Page Title",
-        "description": "My custom description."
+        "title": "Luiz Felipe dos Santos · Full stack developer",
+        "description": "Portfolio of Luiz Felipe dos Santos, full stack developer in TypeScript: projects, background and contact."
     },
-    "heading": "Hello, world!",
-    "showcase": {
-        "label": "Example label",
-        "description": "This example paragraph shows the body typography and the comfortable reading width of this template's design tokens, with a <strong>highlighted</strong> excerpt.",
-        "caption": "Example caption in secondary text, for complementary content.",
-        "status": {
-            "success": "Success",
-            "warning": "Warning",
-            "error": "Error"
-        }
-    }
+    "heading": "Full stack developer in TypeScript.",
+    "intro": "I build web products end to end, from the database to the interface."
 }

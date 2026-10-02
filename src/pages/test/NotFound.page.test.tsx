@@ -11,9 +11,7 @@ describe("NotFoundPage", () => {
             </MemoryRouter>
         )
 
-        expect(
-            screen.getByRole("heading", { name: "404 - Página não encontrada" })
-        ).toBeInTheDocument()
+        expect(screen.getByRole("heading", { name: "Página não encontrada" })).toBeInTheDocument()
     })
 
     it("oferece um link de volta para a página inicial", () => {
@@ -23,7 +21,7 @@ describe("NotFoundPage", () => {
             </MemoryRouter>
         )
 
-        expect(screen.getByRole("link", { name: "Vá para a página inicial." })).toHaveAttribute(
+        expect(screen.getByRole("link", { name: "Voltar para o início" })).toHaveAttribute(
             "href",
             "/"
         )
@@ -36,9 +34,9 @@ describe("NotFoundPage", () => {
             </MemoryRouter>
         )
 
-        expect(
-            screen.getByRole("heading", { name: "404 - Página não encontrada" })
-        ).not.toHaveAttribute("class")
+        expect(screen.getByRole("heading", { name: "Página não encontrada" })).not.toHaveAttribute(
+            "class"
+        )
     })
 
     it("define o title e a meta description da página", () => {
@@ -48,9 +46,9 @@ describe("NotFoundPage", () => {
             </MemoryRouter>
         )
 
-        expect(document.title).toBe("Página não encontrada.")
+        expect(document.title).toBe("Página não encontrada · Luiz Felipe dos Santos")
         expect(document.querySelector('meta[name="description"]')?.getAttribute("content")).toBe(
-            "A página não existe ou você não possui acesso."
+            "O endereço acessado não existe neste portfólio."
         )
     })
 })
