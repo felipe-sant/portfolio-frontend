@@ -1,6 +1,7 @@
 import { Suspense } from "react"
 import { useTranslation } from "react-i18next"
-import { Outlet } from "react-router-dom"
+import { Link, Outlet } from "react-router-dom"
+import ROUTES from "@/routers/paths"
 import css from "@/styles/layouts/main.module.css"
 
 function MainLayout() {
@@ -9,7 +10,7 @@ function MainLayout() {
     return (
         <div className={css.layout}>
             <header className={css.header}>
-                <span>{t("header")}</span>
+                <Link to={ROUTES.home}>{t("brand")}</Link>
             </header>
             <div className={css.content}>
                 <Suspense fallback={<p>{t("common:loading")}</p>}>
@@ -17,7 +18,7 @@ function MainLayout() {
                 </Suspense>
             </div>
             <footer className={css.footer}>
-                <span>{t("footer")}</span>
+                <p>{t("copyright")}</p>
             </footer>
         </div>
     )
