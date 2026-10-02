@@ -1,12 +1,19 @@
 # Glossário
 
-> Exemplo: termos da loja fictícia. Substitua pelos termos do seu domínio.
+Termos do domínio do portfólio, conforme o handoff de design.
 
-| Termo            | Definição                                                             | Onde aparece                     |
-| ---------------- | --------------------------------------------------------------------- | -------------------------------- |
-| Produto          | Item à venda, com nome, preço e categoria                             | Catálogo, carrinho               |
-| Catálogo         | Lista paginada de produtos disponíveis                                | Tela inicial                     |
-| Carrinho         | Conjunto de itens que o cliente pretende comprar                      | Barra superior, tela de carrinho |
-| Item             | Um produto com a quantidade escolhida dentro de um carrinho ou pedido | Carrinho, pedido                 |
-| Pedido           | Compra finalizada, com itens, total e status                          | Tela de pedidos                  |
-| Status do pedido | Etapa do pedido: criado, pago, enviado ou entregue                    | Tela de pedidos                  |
+| Termo               | Definição                                                                                                                                                                                      | Onde aparece                                                         |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| Projeto             | Trabalho do autor apresentado como estudo de caso, identificado por `slug`, com título, resumo, ano, tipo, categoria, stack, imagens 16:9, documentos em markdown e links                      | Início, Projetos, Projeto                                            |
+| Destaque            | Projeto marcado com `destaque`. Aparece no Início (quatro, em ritmo alternado), leva estrela âmbar no card da listagem e badge em degradê na página do projeto                                 | Início, Projetos, Projeto                                            |
+| Tipo                | Plataforma do projeto: `Web`, `Mobile` ou `API`. Filtrado pelas abas da listagem e exibido no rótulo do título do projeto                                                                      | Projetos (abas), Projeto (título, ficha técnica)                     |
+| Categoria           | Origem do projeto: `Acadêmico`, `Pessoal` ou `Profissional`. Filtrada na listagem e no modal de filtros                                                                                        | Projetos (filtros), Projeto (badge, ficha técnica)                   |
+| Stack               | Tecnologias, sempre agrupadas por categoria (Frontend, Backend, Infra/Ferramentas), nunca como lista única. No projeto, as usadas nele; no site, as que o autor usa com frequência             | Início (faixa de stack), Projetos (chips), Projeto, Informações      |
+| Ficha técnica       | Bloco do aside do projeto com pares chave/valor: Ano, Tipo, Categoria, Papel, Duração, Time e Situação (indicador verde para "Em produção")                                                    | Projeto                                                              |
+| Projeto relacionado | Outro projeto ligado ao atual, exibido com o motivo da relação (por exemplo, mesma stack). Substitui um "próximo projeto" sequencial                                                           | Projeto (faixa de relacionados)                                      |
+| Trajetória          | Histórico do autor em três grupos: experiências, formações e cursos. Cada item mostra título, período e detalhes; o clique abre um modal com o detalhe                                         | Informações                                                          |
+| Experiência         | Item de trajetória profissional: título, período, detalhes (empresa, contrato), resumo, responsabilidades, tecnologias e projetos ligados                                                      | Informações (trajetória e modal), Início (status atual)              |
+| Formação            | Item de trajetória acadêmica: título, período, detalhes, resumo, principais disciplinas, certificados e projetos ligados                                                                       | Informações (trajetória e modal), Início (status atual)              |
+| Curso               | Item de trajetória complementar (curso livre, técnico ou online), com a mesma estrutura de uma formação                                                                                        | Informações (trajetória e modal)                                     |
+| Status atual        | O que o autor faz agora, em dois cards: "Trabalhando atualmente como" (experiência em curso) e "Cursando atualmente" (formação ou curso em curso). Item sem data de fim recebe o badge "Atual" | Início                                                               |
+| Mock                | Dado fixo servido pelo próprio frontend no lugar da API enquanto o backend não existe (R1)                                                                                                     | Projetos, trajetória, status atual e demais conteúdo das cinco telas |
