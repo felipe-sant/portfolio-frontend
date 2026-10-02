@@ -38,6 +38,13 @@ Sem issue aberta, o número pode ser omitido:
 chore/update-gitignore
 ```
 
+### Branches de ambiente
+
+- **`staging`**: ambiente de testes e base do desenvolvimento. Toda branch de trabalho nasce de `origin/staging` atualizada e volta para ela por PR.
+- **`main`**: produção. Só recebe PR vindo de `staging` (promoção do que foi validado) ou de `hotfix/*`.
+
+Nenhuma das duas recebe push direto. Hotfix nasce de `origin/main`, volta por PR para a `main` e, depois do merge, a `main` é levada de volta para a `staging` por PR.
+
 ## Padrão de commits
 
 ```
@@ -60,9 +67,10 @@ Commits são atômicos: uma mudança concluída por commit, não várias tarefas
 
 ## Pull Requests
 
-- Toda alteração passa por PR para a `main` — sem push direto.
+- Toda alteração passa por PR para a `staging` — sem push direto (exceção: `hotfix/*`, que vai para a `main`).
+- A promoção para produção é um PR de `staging` para `main`, com título no padrão de commit (ex.: `Chore :see_no_evil: Promove staging para produção`) e a lista das issues incluídas.
 - Ao abrir o PR, preencha: **assignees** e **labels** (use as labels já existentes no repositório: `bug`, `enhancement`, `documentation`, etc.).
     - **Assignee**: por padrão, o autor do PR se auto-atribui já na criação (ex.: `gh pr create --assignee @me`), sem depender de edição posterior.
-- Referencie a issue relacionada na descrição (ex.: `Closes #5`) para que ela seja fechada automaticamente no merge.
+- Referencie a issue relacionada na descrição (ex.: `Closes #5`). O GitHub só fecha a issue quando o PR entra na branch padrão (`main`), então o PR de promoção `staging` → `main` repete o `Closes #<número>` de cada issue incluída.
 - O título do PR segue o mesmo padrão do commit principal (`<Tipo> <ícone> [#<número>] <descrição>`).
 - A descrição segue a estrutura de `.github/PULL_REQUEST_TEMPLATE.md`, não um corpo livre.
