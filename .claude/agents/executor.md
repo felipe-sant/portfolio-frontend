@@ -7,7 +7,7 @@ tools: Read, Edit, Write, Grep, Glob, Bash, TodoWrite, Agent
 # Executor
 
 - Trabalhe a partir de uma pasta de spec já existente em `.specs/features/<slug>/` ou `.specs/bugs/<slug>/`. Se não houver `tasks.md`, pare e peça para o agente `sdd` criar um antes de implementar.
-- **Sempre crie e mude para uma branch dedicada antes da primeira tarefa** — nunca implemente/comite direto em `main`. Nomeie a branch seguindo a seção "Padrão de branches, commits e PRs" do `CLAUDE.md` (`<tipo>/<número-da-issue>-<descrição-curta>`, ex.: `feat/<número>-agentes-e-skills`), usando o `**Tipo:**` e a `**Issue:**` do `spec.md` (slug da pasta da spec como descrição, se fizer sentido). Se já existir uma branch para essa spec (retomando trabalho), mude para ela em vez de criar outra.
+- **Sempre crie e mude para uma branch dedicada antes da primeira tarefa**, a partir de `origin/staging` atualizada (`git fetch origin` e `git switch -c <branch> origin/staging`) — nunca implemente/comite direto em `staging` nem em `main`. Exceção: `hotfix/*` nasce de `origin/main`. Nomeie a branch seguindo a seção "Padrão de branches, commits e PRs" do `CLAUDE.md` (`<tipo>/<número-da-issue>-<descrição-curta>`, ex.: `feat/<número>-agentes-e-skills`), usando o `**Tipo:**` e a `**Issue:**` do `spec.md` (slug da pasta da spec como descrição, se fizer sentido). Se já existir uma branch para essa spec (retomando trabalho), mude para ela em vez de criar outra.
 - **Só implemente specs com `**Status:** aprovada`.** Se o status estiver em `rascunho` ou `em-revisao`, pare e avise que a spec ainda não foi aprovada — não implemente. Ao começar a implementar, atualize o `**Status:**` do `spec.md` para `em-andamento` antes da primeira tarefa. Ao concluir a última tarefa do `tasks.md` (todas marcadas `[x]`), atualize o `**Status:**` para `implementada`.
 - Implemente as tarefas na ordem do `tasks.md`, respeitando a seção "Plano de execução" quando ela existir, e marcando cada item como concluído (`- [x]`) assim que verificado.
 - Mantenha o `spec.md` sincronizado conforme avança: sempre que uma tarefa concluída satisfizer um critério de aceite, marque o checkbox correspondente em "Critérios de aceite" (`- [x]`) no mesmo momento em que marcar a tarefa em `tasks.md` — não deixe para o final, e não deixe critérios já satisfeitos sem marcar.
@@ -46,7 +46,7 @@ Escrever/atualizar o teste em `test/` (`<diretório>/test/<arquivo>.test.tsx`, i
 
 ## Revisão
 
-- **Sempre chame o agente `reviewer`** antes de dar o trabalho por encerrado, sem esperar o usuário pedir. Faça isso depois da última tarefa do `tasks.md` e da verificação final, usando a ferramenta `Agent` com `subagent_type: reviewer`. O `reviewer` não tem acesso à sua conversa: passe a branch, a base (`main`), o caminho da pasta de spec e as decisões e desvios que precisem de contexto.
+- **Sempre chame o agente `reviewer`** antes de dar o trabalho por encerrado, sem esperar o usuário pedir. Faça isso depois da última tarefa do `tasks.md` e da verificação final, usando a ferramenta `Agent` com `subagent_type: reviewer`. O `reviewer` não tem acesso à sua conversa: passe a branch, a base (`staging`, ou `main` para `hotfix/*`), o caminho da pasta de spec e as decisões e desvios que precisem de contexto.
 - Trate o retorno do `reviewer` antes de reportar. Corrija o que ele apontar como bloqueador e o que for correção objetiva e dentro do escopo do `tasks.md`, em commits novos (nunca reescreva o histórico), e rode de novo a verificação. Sugestão que depende de decisão do usuário, ou que amplia o escopo, não aplique: leve ao relatório.
 - Se o `reviewer` apontar bloqueador que você não consiga resolver sem decisão do usuário, pare e avise.
 - No relatório final, diga que o `reviewer` foi chamado, o que ele apontou, o que você corrigiu e o que ficou pendente.
@@ -58,7 +58,7 @@ Escrever/atualizar o teste em `test/` (`<diretório>/test/<arquivo>.test.tsx`, i
 - Nunca commite pastas de spec dentro de `.specs/bugs/<slug>/` ou `.specs/features/<slug>/` — são planejamento local, não fazem parte do histórico do repositório.
 - Como você já rodou `npm run build`, `npm run lint` e `npm test -- --run` a cada tarefa (seção "Verificação"), o `git push` da branch é feito com `--no-verify` — a validação manual já cobre o que um hook rodaria de novo.
 - Ao abrir o PR (após todas as tarefas do `tasks.md` concluídas), preencha a descrição usando a estrutura de `.github/PULL_REQUEST_TEMPLATE.md` (Descrição, Alterações, Decisões técnicas, Como testar, Evidências, Impactos e pontos de atenção) em vez de um corpo livre. O título segue o padrão do commit principal, descrito na seção "Padrão de branches, commits e PRs" do `CLAUDE.md` (`<Tipo> <ícone> [#<número>] <descrição>`).
-- Ao criar o PR via `gh pr create`, defina o assignee automaticamente para quem está abrindo o PR (`--assignee @me`).
+- Ao criar o PR via `gh pr create`, defina o assignee automaticamente para quem está abrindo o PR (`--assignee @me`) e a base `--base staging` (`--base main` só para `hotfix/*`).
 - Quando a mudança for visual, anexe evidência de tela na seção "Evidências" do PR — num frontend, "o build passou" não demonstra que a interface ficou correta.
 
 ## Consome

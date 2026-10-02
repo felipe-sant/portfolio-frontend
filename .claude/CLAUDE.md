@@ -503,6 +503,16 @@ classifica a issue, o tipo classifica a mudança.
 Tipo em minúsculas (`feat/<número>-agentes-e-skills`). Sem issue aberta, o número é omitido
 (`chore/update-gitignore`).
 
+Duas branches de ambiente, nenhuma recebe push direto:
+
+- **`staging`** — ambiente de testes e base do desenvolvimento. Toda branch de trabalho nasce de
+  `origin/staging` atualizada e volta para ela por PR.
+- **`main`** — produção. Só recebe PR vindo de `staging` (promoção do que foi validado) ou de
+  `hotfix/*`.
+
+Hotfix é a exceção: nasce de `origin/main`, volta por PR para a `main` e, depois do merge, a `main`
+é levada de volta para a `staging` por PR, para as duas não divergirem.
+
 ### Commits
 
 ```
@@ -516,10 +526,14 @@ Commits são atômicos: uma mudança concluída por commit, nunca várias tarefa
 
 ### Pull Requests
 
-- Toda alteração passa por PR para a `main`, sem push direto.
+- Toda alteração passa por PR para a `staging`, sem push direto (exceção: `hotfix/*`, ver
+  "Branches"). A promoção para produção é um PR de `staging` para `main`, com título no padrão de
+  commit (`Chore :see_no_evil: Promove staging para produção`) e a lista das issues incluídas.
 - O autor se atribui já na criação (`gh pr create --assignee @me`) e aplica labels que já existem
   no repositório (`bug`, `enhancement`, `documentation`, etc.).
-- A descrição referencia a issue relacionada (`Closes #<número>`), para que ela feche no merge.
+- A descrição referencia a issue relacionada (`Closes #<número>`). O GitHub só fecha a issue
+  quando o PR entra na branch padrão (`main`): no PR para a `staging` a referência fica registrada,
+  e o PR de promoção `staging` → `main` repete o `Closes #<número>` de cada issue incluída.
 - O título segue o padrão do commit principal (`<Tipo> <ícone> [#<número>] <descrição>`).
 - A descrição segue a estrutura de `.github/PULL_REQUEST_TEMPLATE.md`, não um corpo livre, com as
   seções Descrição, Alterações, Decisões técnicas, Como testar, Evidências e Impactos e pontos de
