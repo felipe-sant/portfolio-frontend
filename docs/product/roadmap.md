@@ -79,7 +79,7 @@ O conteúdo é o real do PO: o "mock" de R1 quer dizer só que a fonte é local,
 
 ### M3 — Layout compartilhado
 
-Aplica D01, D02 (inclui o favicon), D04, D12, D21, D22, D23 (com D27), D31, PI1 e PI4. O link "Currículo em PDF" aponta para o arquivo de D14 mesmo antes de ele existir; o arquivo é gerado por X (D30).
+Aplica D01, D02 (inclui o favicon), D04, D12, D21, D22, D23 (com D27), D31, D34, D35, D36, PI1 e PI4. O link "Currículo em PDF" aponta para o arquivo de D14 mesmo antes de ele existir; o arquivo é gerado por X (D30).
 
 W vem antes de C porque muda o roteamento e `src/i18n/`, que todas as telas e o seletor de C usam (NF-IN de [`non-functional-requirements.md`](non-functional-requirements.md)). Data-limite recomendada: na `staging` até 25/10/2026. W não tem plano B: mudar URL depois de publicada é pior que atrasar.
 
@@ -142,7 +142,7 @@ M (fonte local → API), N (formulário real, proteção contra spam, remoção 
 | ---------------------------------------- | ----------------------------- | ----- | ------------------- |
 | Conteúdo real em JSON                    | M2                            | #13   | R1                  |
 | Menu mobile                              | M3                            | C     | D01                 |
-| Logo e favicon                           | M3                            | C     | D02                 |
+| Logo e favicon                           | M3                            | C     | D02, D34            |
 | Seletor de idioma                        | M3                            | C, W  | D12, D31, PI4       |
 | Ícones Lucide e de marca                 | M1                            | B     | D15                 |
 | Renderizador de markdown                 | M5                            | F     | D06                 |
