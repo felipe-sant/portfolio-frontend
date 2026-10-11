@@ -279,8 +279,8 @@ Por tela, além das quebras:
 
 O gato ao lado do nome "Luiz Felipe dos Santos" (Bricolage 700), em SVG inline com corpo em
 `--neutral-500` e detalhe em `--text-strong` nos dois temas, sem o placeholder tracejado do handoff.
-SVGs-fonte em [`assets/logo/`](assets/logo/); contraste e recomendação de favicon em
-`decisions.md` (D02).
+SVGs-fonte em [`assets/logo/`](assets/logo/); contraste em `decisions.md` (D02) e
+favicon em `decisions.md` (D34).
 
 ## Divergências adotadas pelo repositório
 
