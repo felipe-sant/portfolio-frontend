@@ -62,12 +62,18 @@ infinitivo + objeto ("Ver projetos", "Enviar mensagem") e o separador de metadad
   acessibilidade e responsividade seguem, nesta ordem de precedência: convenções do repositório >
   `docs/design/decisions.md` > protótipo > handoff.
 
+**Versões:** a v1 é a entrega da faculdade (Fatec), publicada no GitHub Pages de um repositório da
+organização da Fatec, com dados reais em JSON servidos pela camada local (R1) e sem backend; V2+
+são de uso pessoal (Vercel, depois AWS com backend). Ordem, dependências e critério da v1 em
+`docs/product/roadmap.md`.
+
 **Decisões de design:** as pendências e contradições do handoff estão decididas em
 `docs/design/decisions.md`, com IDs (`D01`–`D25`, `PI1`–`PI5`) que specs e issues citam.
 
 **Onde ler mais:** `docs/product/overview.md` (visão, escopo, requisitos e decisões),
-`docs/product/glossary.md` (glossário), `docs/design/design-system.md` (design system),
-`docs/diagrams/` (fluxo de navegação e entidades) e `docs/architecture/frontend.md` (arquitetura).
+`docs/product/glossary.md` (glossário), `docs/product/roadmap.md` (versões, marcos e definição da
+v1), `docs/design/design-system.md` (design system), `docs/diagrams/` (fluxo de navegação e
+entidades) e `docs/architecture/frontend.md` (arquitetura).
 
 ## Comandos
 
