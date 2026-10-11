@@ -309,7 +309,7 @@ categoria da stack vêm do conteúdo como valor fixo (enum) e viram texto por ch
 ## O que a tela pede ao contrato
 
 Lista para a #10, que decide os nomes de campo e o formato (e atualiza
-[`entity.md`](../diagrams/entity.md) e o [`glossário`](../product/glossary.md), que ainda falam em
+[`entity.md`](../diagrams/entity.md) e o [glossário](../product/glossary.md), que ainda falam em
 `slug`). "Por idioma" = um valor em cada um de `pt-BR`, `en` e `es`, e a tela só carrega o do idioma
 ativo (NF-DA-05).
 
@@ -371,3 +371,134 @@ ids UUID v7 únicos; `types` com pelo menos um código válido e sem repetição
   Gerado dos mesmos dados da tela, com `<` escapado.
 - Página não encontrada: a de [`layout.md`](layout.md) (`noindex`, sem canônica, sem Open Graph,
   sem JSON-LD).
+
+## Critérios de aceite
+
+Copiáveis para a issue F. Verificação entre colchetes, com a legenda de
+[`accessibility.md`](../product/accessibility.md#checklist-por-tela) (`[teste]`, `[axe]`, `[lint]`,
+`[teclado]`, `[leitor]`, `[navegador]`, `[e2e]` e `[medição]`) e mais `[review]` para o que só a
+revisão do PR confere. Nos itens funcionais, `[teste]` usa Testing Library com `renderWithStore` e
+`preloadedState`, `user-event` e `createMemoryRouter`; `[e2e]` cobre sticky, foco sob a navegação
+fixa, rolagem preservada e `inert` real; `[medição]` cobre contraste (PI2), alvos e o orçamento de
+NF-DE-09.
+
+### Funcionais
+
+- [ ] `RF-PROJECT-01` — "Voltar para Projetos" com seta oculta, link real para `/projects` do idioma, que volta pelo histórico quando a entrada anterior é a lista (restaurando query, quantidade e rolagem), também em carregando e erro, sem contador nem "Próximo" [teste] [e2e]
+- [ ] `RF-PROJECT-02` — Badges de destaque e categoria, rótulo com todos os tipos e o ano com separadores ocultos, `h1` e resumo do conteúdo, nos três idiomas, sem chave no lugar de texto [teste]
+- [ ] `RF-PROJECT-03` — Duas colunas a partir de 980px com aside fixo; uma coluna abaixo, na ordem galeria, aside, documentação [e2e]
+- [ ] `RF-PROJECT-04` — Imagem principal com o `alt` do dado dentro do botão "Ampliar imagem", legenda e contador [teste]
+- [ ] `RF-PROJECT-05` — Zero, uma e de duas a cinco imagens com o comportamento definido [teste]
+- [ ] `RF-PROJECT-06` — Miniaturas "Imagem N de M" com `aria-current`, cinco colunas e linha rolável abaixo de 640px; trocar não move o foco [teste] [e2e]
+- [ ] `RF-PROJECT-07` — Imagem principal sem `lazy` e com `fetchpriority="high"`; miniaturas `lazy` com variante pequena; variante grande só na lightbox [teste] [medição]
+- [ ] `RF-PROJECT-08` — Lightbox como diálogo nomeado, legenda e contador anunciados, Fechar, anterior e próxima nomeados [teste]
+- [ ] `RF-PROJECT-09` — Foco em Fechar ao abrir, preso, setas em ciclo, Esc, clique no fundo, foco devolvido, resto `inert`, rolagem travada [teste] [e2e] [leitor]
+- [ ] `RF-PROJECT-10` — Lightbox sem animação com movimento reduzido [navegador]
+- [ ] `RF-PROJECT-11` — Ficha técnica em `dl` com os sete pares na ordem, ano de `date` em `<time>`, tipos e categoria por chave [teste]
+- [ ] `RF-PROJECT-12` — Situação com um dos três valores por chave, indicador oculto e cor por valor [teste] [medição]
+- [ ] `RF-PROJECT-13` — Stack por categoria com `h3` e lista, sem categoria vazia [teste]
+- [ ] `RF-PROJECT-14` — Links externos em nova aba com `rel`, nome com projeto e aviso; link ausente não aparece; código vira primário sem demonstração [teste]
+- [ ] `RF-PROJECT-15` — Quatro rotas de documento nos três prefixos; opcional ausente e subcaminho desconhecido dão página não encontrada [teste]
+- [ ] `RF-PROJECT-16` — `nav` "Documentação do projeto" com links na ordem fixa, rótulos iguais nos três idiomas, nome com o projeto, `aria-current="page"`, fixa abaixo do cabeçalho [teste] [e2e]
+- [ ] `RF-PROJECT-17` — `h2` visível com o rótulo do documento, alvo do foco [teste]
+- [ ] `RF-PROJECT-18` — Troca de documento sem recarregar, resto montado sem nova requisição, push no histórico, `<title>` novo, rolagem preservada e foco no título do documento [teste] [e2e]
+- [ ] `RF-PROJECT-19` — Chegada de fora é navegação nova (topo e `h1`); troca de idioma mantém documento e âncora [teste]
+- [ ] `RF-PROJECT-20` — Só o idioma ativo é carregado; documento ausente num idioma é erro parcial, sem fallback [teste]
+- [ ] `RF-PROJECT-21` — Markdown, `remark-gfm` e realce só por `import()` nesta rota, chunk ≤ 100 KB gzip, só as linguagens usadas, sem nota de rodapé [review] [medição]
+- [ ] `RF-PROJECT-22` — HTML, imagem, nota de rodapé e URL fora da lista não são renderizados [teste]
+- [ ] `RF-PROJECT-23` — Títulos rebaixados (`##` → `h3`), nunca `h1` nem `h2` no markdown, com `id` para âncora [teste]
+- [ ] `RF-PROJECT-24` — Bloco de código com arquivo e linguagem no cabeçalho, rolável, focável e nomeado; tokens `--code-*` nos dois temas [teste] [axe] [medição]
+- [ ] `RF-PROJECT-25` — `project:<id>` vira link interno do idioma; externo em nova aba com aviso; `mailto:` sem `target` [teste]
+- [ ] `RF-PROJECT-26` — Texto do documento com até 80 caracteres por linha e entrelinha de 1,5 ou mais [navegador]
+- [ ] `RF-PROJECT-27` — `README.md` com as seções na ordem nos três idiomas (teste de conteúdo da #13) [review]
+- [ ] `RF-PROJECT-28` — Até três relacionados com o card de Projetos, título em `h3` e motivo, um link por card com o título, "Ver todos os projetos"; seção ausente sem relacionados [teste]
+- [ ] `RF-PROJECT-29` — Skeleton oculto e status "Carregando..."; foco no `h1` quando o conteúdo chega [teste]
+- [ ] `RF-PROJECT-30` — Erro do projeto em `role="alert"` com `h1`, "Tentar novamente" que refaz a requisição e "Ver outros projetos" [teste]
+- [ ] `RF-PROJECT-31` — Carregando e erro só na área do documento, com "Tentar novamente" do documento [teste]
+- [ ] `RF-PROJECT-32` — Imagem que falha vira placeholder com o `alt` como nome [teste]
+- [ ] `RF-PROJECT-33` — Relacionados que falham somem sem mensagem [teste]
+- [ ] `RF-PROJECT-34` — Id fora do formato, id inexistente, documento ausente e subcaminho desconhecido dão página não encontrada no idioma [teste]
+- [ ] `RF-PROJECT-35` — HTML pré-renderizado por projeto, documento e idioma com o documento renderizado, sem erro de hidratação [teste] [e2e]
+- [ ] `RF-PROJECT-36` — Dados só por endpoints do RTK Query, um por projeto e idioma e um por documento e idioma [review] [teste]
+- [ ] `RF-PROJECT-37` — Internos por `<Link>` com prefixo, externos em nova aba com aviso [teste]
+- [ ] `RF-PROJECT-38` — Tabela com `th` e rolagem própria focável e nomeada, sem rolagem da página a 320px; tarefas com caixa só leitura nomeada [teste] [axe] [medição]
+
+### Acessibilidade
+
+Copiados de [`accessibility.md`](../product/accessibility.md#checklist-por-tela), sem renumerar.
+
+- [ ] `A11Y-G01` — Um `main`, um `h1` e um `<title>` próprio e traduzido [teste]
+- [ ] `A11Y-G02` — `<html lang>` igual ao idioma da URL (`/`, `/en/`, `/es/`) [teste]
+- [ ] `A11Y-G03` — Nenhuma violação do axe em cada estado da tela [axe]
+- [ ] `A11Y-G04` — Nenhuma violação do axe no navegador, nos dois temas [e2e]
+- [ ] `A11Y-G05` — Ordem de foco igual à visual e foco visível em todo elemento focável [teclado]
+- [ ] `A11Y-G06` — Contorno de foco de D27 com 2px, afastado, 3:1 em toda superfície e nunca cortado (2.4.13) [e2e] [medição]
+- [ ] `A11Y-G07` — Todo link tem um nome que diz o destino sozinho (2.4.9) [teste]
+- [ ] `A11Y-G08` — Controles e links isolados com alvo de 44px em todas as larguras (2.5.5) [e2e] [medição]
+- [ ] `A11Y-G09` — Texto corrido com até 80 caracteres por linha, entrelinha de pelo menos 1,5 e sem justificar (1.4.8) [navegador]
+- [ ] `A11Y-G10` — Contraste AA nos dois temas e em todos os estados [e2e] [medição]
+- [ ] `A11Y-G11` — Sem rolagem horizontal a 320px e sem perda com texto a 200% [medição]
+- [ ] `A11Y-G12` — Movimento reduzido respeitado, inclusive a animação disparada por interação (2.3.3) [navegador]
+- [ ] `A11Y-G13` — Skeleton com `aria-hidden` e status "Carregando" visualmente oculto [teste]
+- [ ] `A11Y-G14` — Erro de carregamento em `role="alert"`, com a saída [teste]
+- [ ] `A11Y-G15` — Texto em `pt-BR`, `en` e `es`, inclusive os nomes acessíveis [teste]
+- [ ] `A11Y-G16` — Nenhum erro de `jsx-a11y` [lint]
+
+- [ ] `A11Y-PJ01` — "← Voltar para Projetos" com a seta oculta do leitor [teste]
+- [ ] `A11Y-PJ02` — "Ver código no GitHub" com o nome do projeto no nome acessível e aviso de nova aba, se abrir (2.4.9) [teste]
+- [ ] `A11Y-PJ03` — Galeria: imagem com o `alt` do dado e miniaturas "Imagem N de M" com `aria-current` [teste]
+- [ ] `A11Y-PJ04` — Lightbox: diálogo nomeado, foco preso, Esc e devolução do foco, anterior e próxima nomeados [teste] [e2e] [leitor]
+- [ ] `A11Y-PJ05` — Documentos do projeto: `nav` com nome acessível, links com `aria-current="page"` no aberto e foco no título do documento ao trocar (D33) [teste] [e2e]
+- [ ] `A11Y-PJ06` — Markdown da documentação sem segundo `h1` [teste]
+- [ ] `A11Y-PJ07` — Bloco de código rolável focável e com nome [axe]
+- [ ] `A11Y-PJ08` — Contraste do nome de arquivo do bloco de código no tema escuro (PI2) [medição]
+- [ ] `A11Y-PJ09` — Ficha técnica em `dl` [teste]
+- [ ] `A11Y-PJ10` — A navegação fixa entre documentos não cobre o foco [teclado]
+- [ ] `A11Y-PJ11` — Slug inexistente mostra a página não encontrada [teste]
+
+Em `A11Y-PJ11`, "slug" lê-se "id": o projeto é identificado pelo UUID v7 (D32, NF-DA-07), e o
+texto de `accessibility.md` é anterior a essa decisão.
+
+### Não funcionais
+
+De [`non-functional-requirements.md`](../product/non-functional-requirements.md), com o momento de
+verificação de lá (nos orçamentos, a forma de medir).
+
+- [ ] `NF-IN-02` — Documentos, legendas, `alt` e textos do projeto existem nos três idiomas [CI; #13]
+- [ ] `NF-IN-03` — Nenhuma tela mostra chave no lugar de texto [CI; K]
+- [ ] `NF-IN-06` — Idioma vem do caminho; prefixo desconhecido cai na página não encontrada [CI; W]
+- [ ] `NF-IN-10` — Seletor navega para o mesmo documento, id e âncora no outro idioma [CI; W; C]
+- [ ] `NF-IN-11` — Todo link interno mantém o prefixo do idioma, montado por função única [CI; W]
+- [ ] `NF-IN-13` — Caminhos em inglês: `/projects/:id`, `/architecture`, `/setup` e `/changelog` [CI; W; F]
+- [ ] `NF-DA-02` — A tela não importa JSON de conteúdo: o acesso é por endpoint do RTK Query [Review; CI]
+- [ ] `NF-DA-03` — Imagens e documentos com caminho montado por `import.meta.env.BASE_URL` [Review; O; K]
+- [ ] `NF-DA-05` — A tela carrega só o conteúdo do idioma ativo [#10; K]
+- [ ] `NF-DA-07` — Id UUID v7 gerado uma vez e nunca regenerado [CI; #13; M]
+- [ ] `NF-DE-09` — Markdown, `remark-gfm` e realce até 100 KB gzip, num chunk só baixado em `/projects/:id` [DevTools Network; nenhum desses módulos nas outras rotas]
+- [ ] `NF-DE-13` — Imagem grande 16:9 até 200 KB, AVIF ou WebP, até 1600px [tamanho dos arquivos em `public/`]
+- [ ] `NF-DE-14` — Miniatura 16:9 até 80 KB, servida por `srcset`/`sizes` [DevTools em 390px]
+- [ ] `NF-DE-16` — Imagens e placeholders com `width` e `height` (ou `aspect-ratio`) reservados [Review; K]
+- [ ] `NF-DE-17` — Imagem principal com `fetchpriority="high"` e sem `lazy`; miniaturas e cards com `loading="lazy"` e `decoding="async"` [Review; K]
+- [ ] `NF-DE-18` — Markdown e realce só por `import()` dinâmico na documentação, com as linguagens usadas [Review; F; K]
+- [ ] `NF-RE-03` — Sem rolagem horizontal da página em 360, 390, 768 e 1280px, nos dois temas, nos estados e com a lightbox aberta [K]
+- [ ] `NF-RE-04` — Galeria (D18) e ficha técnica (D19) por largura [C, D a H; K]
+- [ ] `NF-MO-01` — `prefers-reduced-motion: reduce` desliga animação da lightbox, shimmer e `translateY` de hover [K]
+- [ ] `NF-IA-01` — Cada projeto e documento com HTML gerado no build nos três idiomas, legível sem JavaScript [CI; S; K]
+- [ ] `NF-IA-02` — Cada documento com URL e HTML próprios com o markdown renderizado, e no `sitemap.xml` [CI; S; U]
+- [ ] `NF-IA-03` — Primeira renderização do cliente igual ao HTML, com projeto e documento serializados na store [CI; S; K]
+- [ ] `NF-IA-04` — Status 200 na primeira carga; id ou documento inexistente responde 404 [K]
+- [ ] `NF-IA-08` — JSON-LD `SoftwareSourceCode` ou `CreativeWork`, e `TechArticle` nos documentos opcionais [CI; V; D a H; K]
+- [ ] `NF-IA-09` — JSON-LD gerado dos mesmos dados da tela, com `<` escapado [CI; V]
+- [ ] `NF-IA-10` — `<title>`, descrição, Open Graph com a captura e `twitter:card` por documento e idioma [CI; V; K]
+- [ ] `NF-IA-11` — Canônica absoluta por documento e idioma e `hreflang` recíproco [CI; V; K]
+- [ ] `NF-IA-16` — HTML semântico, com o conteúdo principal dentro do `main` e a stack em texto [CI; C, D a H]
+- [ ] `NF-IA-21` — Documentos como rotas filhas: troca sem recarregar, resto montado, rolagem preservada, push e `nav` com `aria-current="page"` [CI; F]
+- [ ] `NF-PR-01` — Imagens e documentos da própria origem; link externo só seguido por clique [K; Review]
+- [ ] `NF-CO-03` — Sem JavaScript, projeto e documento legíveis; galeria e lightbox precisam de JavaScript [K]
+
+### Gerais
+
+- [ ] A rota abre e recarrega em `/projects/<id>` e nos três documentos opcionais, nos três prefixos, no build com o `base` do Pages
+- [ ] `npm run build`, `npm run lint` e `npm test -- --run` passam
+- [ ] Textos novos de `project` e `common` em `pt-BR`, `en` e `es`, namespace `project` registrado em `resources.ts` e no `ns` de `i18n.ts`, e chaves sem uso removidas (R2)
+- [ ] `/projects/<id>` e um documento opcional entram na suíte da Y
