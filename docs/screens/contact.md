@@ -270,3 +270,136 @@ campos inválidos); limite de taxa (429); falha (5xx ou rede). Na H, toda falha 
 RF-CONTACT-21; a N decide se 400 e 429 ganham mensagem própria, com o texto vindo do backend no
 idioma do `Accept-Language` (convenção do repositório). O backend valida de novo e não confia na
 validação do cliente.
+
+## Metadados e dados estruturados
+
+- `<title>` "Contato · Luiz Felipe dos Santos" e descrição "Como falar com Luiz Felipe dos Santos:
+  e-mail e currículo.", das chaves `contact:meta.*`, com as tags nativas do React 19 (a mesma
+  tabela de `layout.md`, sem mudança). A descrição vale com a flag ligada ou desligada.
+- Canônica, `hreflang`, Open Graph (`og:type` `website`) e `twitter:card` pelo mecanismo de V
+  (NF-IA-10, NF-IA-11).
+- JSON-LD `ContactPage` (NF-IA-08), gerado dos mesmos dados da tela com `<` escapado (NF-IA-09), no
+  idioma do caminho:
+
+```json
+{
+    "@context": "https://schema.org",
+    "@type": "ContactPage",
+    "name": "Contato · Luiz Felipe dos Santos",
+    "description": "Como falar com Luiz Felipe dos Santos: e-mail e currículo.",
+    "url": "<canônica do idioma>",
+    "inLanguage": "pt-BR",
+    "mainEntity": {
+        "@type": "Person",
+        "@id": "<URL canônica de />#person",
+        "name": "Luiz Felipe dos Santos",
+        "email": "mailto:<e-mail do conteúdo>",
+        "sameAs": ["<URL do GitHub>", "<URL do LinkedIn>"]
+    }
+}
+```
+
+A `Person` tem o `@id` `<URL canônica de />#person`, o mesmo em todas as telas (decisão
+transversal do PO de 11-10-2026); rede sem URL sai de `sameAs`.
+
+## Critérios de aceite
+
+Copiáveis para a issue H. Verificação entre colchetes, com a legenda de
+[`accessibility.md`](../product/accessibility.md#checklist-por-tela) (`[teste]`, `[axe]`, `[lint]`,
+`[teclado]`, `[leitor]`, `[navegador]`, `[e2e]` e `[medição]`) e mais `[review]` para o que só a
+revisão do PR confere. Nos itens funcionais, `[teste]` usa Testing Library, `user-event` e
+`renderWithStore`, com a flag desligada e ligada por `vi.stubEnv`; `[e2e]` cobre o que o `jsdom`
+não mede (quebra de 900px por media query, foco real).
+
+### Funcionais
+
+- [ ] `RF-CONTACT-01` — Selo com `availability.label` do conteúdo, ponto `aria-hidden`, em `--success-surface`/`--success-ink`; com `isAvailable: false` não aparece [teste] [medição]
+- [ ] `RF-CONTACT-02` — `h1` "Contato" e abertura `lede.direct` com a flag desligada e `lede.form` com a ligada, nos três idiomas, sem chave no lugar de texto [teste]
+- [ ] `RF-CONTACT-03` — Rótulos de canal em `h2`, caixa alta por CSS, canais no `main` sem `aside`, mesma estrutura nos dois modos, nos três idiomas, sem chave no lugar de texto [teste]
+- [ ] `RF-CONTACT-04` — E-mail inteiro e quebrando linha, "Copiar e-mail" com as chaves e o `role="status"` do rodapé e "Enviar e-mail" em `mailto:` sem `target`, alvos de 44px, nos três idiomas, sem chave no lugar de texto [teste] [medição]
+- [ ] `RF-CONTACT-05` — "Localização" com linha e detalhe do conteúdo [teste]
+- [ ] `RF-CONTACT-06` — "Resposta" com linha e detalhe do conteúdo [teste]
+- [ ] `RF-CONTACT-07` — Localização e resposta lado a lado quando cabem; bloco ou detalhe sem valor some [teste] [e2e]
+- [ ] `RF-CONTACT-08` — "Baixar CV" aponta para o PDF do idioma ativo sob `BASE_URL`, com `download`, sem `target` e nome acessível "Baixar CV (PDF)", nos três idiomas, sem chave no lugar de texto [teste]
+- [ ] `RF-CONTACT-09` — Sem "Agendar uma conversa", lista de redes nem "Procurando vaga fixa?" na tela [teste]
+- [ ] `RF-CONTACT-10` — `VITE_CONTACT_FORM_ENABLED` liga só com `"true"` (`"TRUE"`, `"1"`, `" true"`, vazia e ausente desligam), lida num único módulo [teste] [review]
+- [ ] `RF-CONTACT-11` — Flag desligada: formulário fora do DOM, do HTML pré-renderizado e do JS baixado; uma coluna até `--measure`; sem a nota [teste] [navegador]
+- [ ] `RF-CONTACT-12` — Flag ligada: duas colunas a partir de 900px e uma coluna com borda `--border-subtle` abaixo, por media query [e2e]
+- [ ] `RF-CONTACT-13` — Seção "Formulário de contato", frase de obrigatórios, rótulos ligados, `autocomplete`, `type="email"`, `aria-required` e campos de 44px, nos três idiomas, sem chave no lugar de texto [teste] [medição]
+- [ ] `RF-CONTACT-14` — Assunto em `fieldset` com `legend` e quatro rádios de mesmo `name`, "Projeto novo" marcado, setas trocam a opção, sem `aria-pressed`, nos três idiomas, sem chave no lugar de texto [teste] [e2e]
+- [ ] `RF-CONTACT-15` — `textarea` de 600 caracteres com contador em `aria-describedby`, sem `aria-live`, `--warning-ink` abaixo de 60 e anúncio só ao cruzar 60 e ao chegar a 0, nos três idiomas, sem chave no lugar de texto [teste] [medição]
+- [ ] `RF-CONTACT-16` — Nada validado antes do primeiro envio; depois de um envio com erro, revalida a cada alteração [teste]
+- [ ] `RF-CONTACT-17` — Campo inválido com `aria-invalid`, mensagem em `aria-describedby`, `--danger-ink` e ícone; uma mensagem por campo, nos três idiomas, sem chave no lugar de texto [teste] [medição]
+- [ ] `RF-CONTACT-18` — Resumo em `role="alert"` com a contagem do envio, foco no primeiro inválido, contagem congelada entre envios e resumo que some sem erro [teste]
+- [ ] `RF-CONTACT-19` — Enviando: campos e chips `disabled`, botão com `aria-disabled` e `aria-busy`, spinner e "Enviando", segundo envio ignorado [teste]
+- [ ] `RF-CONTACT-20` — Enviado: confirmação em `role="status"` presente desde a primeira renderização, foco no título, "Enviar outra mensagem" volta ao formulário vazio com foco no Nome, nos três idiomas, sem chave no lugar de texto [teste] [e2e]
+- [ ] `RF-CONTACT-21` — Falha: banner `role="alert"`, dados mantidos, foco no botão, banner some no próximo envio, nos três idiomas, sem chave no lugar de texto [teste]
+- [ ] `RF-CONTACT-22` — Mutation com `queryFn` simulada, sem requisição, argumento no formato do payload, nada guardado [teste] [review]
+- [ ] `RF-CONTACT-23` — Só os rádios têm `name`; os campos de texto não [teste]
+- [ ] `RF-CONTACT-24` — Campo-isca, limite de taxa e aviso de LGPD ficam para a N; a H não usa captcha nem serviço de terceiros [review]
+- [ ] `RF-CONTACT-25` — Canais lidos só por endpoints do RTK Query; carregando e erro conforme os estados [teste] [review]
+- [ ] `RF-CONTACT-26` — `<title>` e descrição por chave de `contact`, nos três idiomas, sem chave no lugar de texto; JSON-LD `ContactPage` gerado dos dados da tela [teste]
+- [ ] `RF-CONTACT-27` — Na navegação interna para `/contact` o foco vai ao `h1` e "Contato" tem `aria-current="page"` [teste]
+
+### Acessibilidade
+
+Copiados de [`accessibility.md`](../product/accessibility.md#checklist-por-tela), sem renumerar.
+`A11Y-L12` (rodapé de Contato) fica na C.
+
+- [ ] `A11Y-G01` — Um `main`, um `h1` e um `<title>` próprio e traduzido [teste]
+- [ ] `A11Y-G02` — `<html lang>` igual ao idioma da URL (`/`, `/en/`, `/es/`) [teste]
+- [ ] `A11Y-G03` — Nenhuma violação do axe em cada estado da tela [axe]
+- [ ] `A11Y-G04` — Nenhuma violação do axe no navegador, nos dois temas [e2e]
+- [ ] `A11Y-G05` — Ordem de foco igual à visual e foco visível em todo elemento focável [teclado]
+- [ ] `A11Y-G06` — Contorno de foco de D27 com 2px, afastado, 3:1 em toda superfície e nunca cortado (2.4.13) [e2e] [medição]
+- [ ] `A11Y-G07` — Todo link tem um nome que diz o destino sozinho (2.4.9) [teste]
+- [ ] `A11Y-G08` — Controles e links isolados com alvo de 44px em todas as larguras (2.5.5) [e2e] [medição]
+- [ ] `A11Y-G09` — Texto corrido com até 80 caracteres por linha, entrelinha de pelo menos 1,5 e sem justificar (1.4.8) [navegador]
+- [ ] `A11Y-G10` — Contraste AA nos dois temas e em todos os estados [e2e] [medição]
+- [ ] `A11Y-G11` — Sem rolagem horizontal a 320px e sem perda com texto a 200% [medição]
+- [ ] `A11Y-G12` — Movimento reduzido respeitado, inclusive a animação disparada por interação (2.3.3) [navegador]
+- [ ] `A11Y-G13` — Skeleton com `aria-hidden` e status "Carregando" visualmente oculto [teste]
+- [ ] `A11Y-G14` — Erro de carregamento em `role="alert"`, com a saída [teste]
+- [ ] `A11Y-G15` — Texto em `pt-BR`, `en` e `es`, inclusive os nomes acessíveis [teste]
+- [ ] `A11Y-G16` — Nenhum erro de `jsx-a11y` [lint]
+
+- [ ] `A11Y-CT01` — Canais com nomes claros e "Copiar" anunciado [teste]
+- [ ] `A11Y-CT02` — Com a flag ligada: rótulos, `autocomplete`, obrigatórios em texto e assunto em grupo de rádio [teste]
+- [ ] `A11Y-CT03` — Validação no envio, com resumo e foco no primeiro inválido (D25) [teste]
+- [ ] `A11Y-CT04` — Erro com `aria-invalid` e `aria-describedby`, em `--danger-ink` e com texto (D07) [teste]
+- [ ] `A11Y-CT05` — Contador de caracteres sem anúncio a cada tecla [teste]
+- [ ] `A11Y-CT06` — Enviando com `aria-busy` [teste]
+- [ ] `A11Y-CT07` — Enviado com o foco na confirmação [teste] [leitor]
+- [ ] `A11Y-CT08` — Borda de campo de texto com 3:1 (D29) [e2e] [medição]
+
+### Não funcionais
+
+De [`non-functional-requirements.md`](../product/non-functional-requirements.md), com o momento de
+verificação de lá.
+
+- [ ] `NF-IN-01` — Todo texto da tela existe em `pt-BR`, `en` e `es` [CI]
+- [ ] `NF-IN-03` — Nenhuma tela mostra chave no lugar de texto [CI; K]
+- [ ] `NF-IN-11` — Todo link interno mantém o prefixo do idioma, montado por função única [CI; W]
+- [ ] `NF-DA-01` — Sem requisição a `VITE_API_URL`: o envio é simulado [K]
+- [ ] `NF-DA-02` — A tela não importa JSON de conteúdo: o acesso é por endpoints do RTK Query [Review; CI]
+- [ ] `NF-DA-06` — Formulário implementado e desligado no build publicado (D05) [CI; K]
+- [ ] `NF-DE-08` — JS adicional de `/contact` até 40 KB gzip, sem o formulário com a flag desligada [Idem, navegando pelo cabeçalho]
+- [ ] `NF-RE-03` — Sem rolagem horizontal em 360, 390, 768 e 1280px, nos dois temas e nos estados especiais [K]
+- [ ] `NF-RE-04` — Decisão de layout por largura de D21 [C, D a H; K]
+- [ ] `NF-IA-01` — `/contact` com HTML gerado no build em cada idioma, legível sem JavaScript [CI; S; K]
+- [ ] `NF-IA-08` — JSON-LD `ContactPage` [CI; V; D a H; K]
+- [ ] `NF-IA-09` — JSON-LD gerado dos mesmos dados da tela, com `<` escapado [CI; V]
+- [ ] `NF-IA-10` — `<title>`, descrição, Open Graph e `twitter:card` por idioma [CI; V; K]
+- [ ] `NF-IA-11` — Canônica autorreferente sem query e `hreflang` recíproco com `x-default` [CI; V; K]
+- [ ] `NF-PR-01` — Nenhuma requisição a terceiros; sem serviço de formulário de terceiros [K; Review]
+- [ ] `NF-PR-02` — Sem cookie; nenhum dado digitado no `localStorage` [K]
+- [ ] `NF-PR-04` — Nada incorporado de terceiros (sem captcha nem widget) [Review]
+- [ ] `NF-PR-06` — Sem aviso de LGPD na v1 (formulário desligado); o aviso vem com a N [N]
+- [ ] `NF-CO-03` — Sem JavaScript, os canais são legíveis; cópia e formulário precisam de JavaScript [K]
+
+### Gerais
+
+- [ ] `npm run build`, `npm run lint` e `npm test -- --run` passam
+- [ ] `VITE_CONTACT_FORM_ENABLED` existe em `.env.example` (com `false`), `src/vite-env.d.ts` e `docs/setup/environments.md`
+- [ ] O build publicado não tem o formulário
+- [ ] Namespace `contact` em `pt-BR`, `en` e `es`, em `src/i18n/resources.ts` e no `ns` de `src/i18n/i18n.ts`; chaves sem uso removidas (R2)
