@@ -71,7 +71,7 @@ são de uso pessoal (Vercel, depois AWS com backend). Ordem, dependências e cri
 `docs/product/roadmap.md`.
 
 **Decisões de design:** as pendências e contradições do handoff estão decididas em
-`docs/design/decisions.md`, com IDs (`D01`–`D44`, `PI1`–`PI5`) que specs e issues citam.
+`docs/design/decisions.md`, com IDs (`D01`–`D46`, `PI1`–`PI5`) que specs e issues citam.
 
 **Onde ler mais:** `docs/product/overview.md` (visão, público, jornadas, objetivos, escopo,
 requisitos e decisões), `docs/product/glossary.md` (glossário), `docs/product/roadmap.md` (versões,
