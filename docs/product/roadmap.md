@@ -176,15 +176,15 @@ Fica fora da v1: backend, envio real do formulário, deploy na Vercel, domínio 
 
 ## Bloqueios
 
-| Item                                                  | Tipo           | Motivo                                                              | Quem desbloqueia                                            | Referência |
-| ----------------------------------------------------- | -------------- | ------------------------------------------------------------------- | ----------------------------------------------------------- | ---------- |
-| Conteúdo real (#13)                                   | Material do PO | JSONs ou textos ainda não entregues                                 | PO                                                          | R1, #10    |
-| CV (I)                                                | Material do PO | Os PDFs não existem                                                 | PO                                                          | D14        |
-| Capturas e foto (L)                                   | Material do PO | Imagens ainda não entregues                                         | PO                                                          | D26        |
-| Publicação Fatec (O)                                  | Credencial     | A organização pode não aceitar fine-grained PAT ou exigir aprovação | Admin da organização, ou o PO (classic PAT ou passo manual) | M4         |
-| Fonte local → API (M), formulário real (N), AWS (P)   | Backend        | O backend não existe                                                | Backend                                                     | R1, D05    |
-| Domínio próprio                                       | Decisão do PO  | Ainda não escolhido                                                 | PO                                                          | V2+        |
-| Desbloqueados por decisão: menu mobile (C) e logo (C) | —              | Previstos como bloqueados por design na #11, já decididos           | —                                                           | D01, D02   |
+| Item                                                      | Tipo           | Motivo                                                              | Quem desbloqueia                                            | Referência |
+| --------------------------------------------------------- | -------------- | ------------------------------------------------------------------- | ----------------------------------------------------------- | ---------- |
+| Conteúdo real (#13)                                       | Material do PO | JSONs ou textos ainda não entregues                                 | PO                                                          | R1, #10    |
+| CV (I)                                                    | Material do PO | Os PDFs não existem                                                 | PO                                                          | D14        |
+| Capturas e foto (L)                                       | Material do PO | Imagens ainda não entregues                                         | PO                                                          | D26        |
+| Publicação Fatec (O)                                      | Credencial     | A organização pode não aceitar fine-grained PAT ou exigir aprovação | Admin da organização, ou o PO (classic PAT ou passo manual) | M4         |
+| Fonte local → API (M), formulário real (N), AWS (P)       | Backend        | O backend não existe                                                | Backend                                                     | R1, D05    |
+| Domínio próprio                                           | Decisão do PO  | Ainda não escolhido                                                 | PO                                                          | V2+        |
+| Desbloqueados por decisão: menu mobile (D01) e logo (D02) | —              | Previstos como bloqueados por design na #11, já decididos           | —                                                           | D01, D02   |
 
 ## Issues a criar
 
