@@ -6,14 +6,25 @@ Portfólio pessoal de Luiz Felipe dos Santos, desenvolvedor full stack em TypeSc
 
 Converter visita em contato. O site mostra o trabalho do autor com profundidade suficiente para que quem visita entenda como ele resolve problemas, e não apenas quais tecnologias já usou.
 
-## Público
+Na v1 o propósito imediato é a entrega da faculdade (Fatec), avaliada pelo professor. Converter visita em contato vale nas duas fases e é o único propósito a partir da V2 ([`roadmap.md`](roadmap.md), Versões).
 
-- Recrutadores avaliando o autor para uma vaga.
-- Clientes avaliando o autor para um projeto ou freelance.
+## Público e jornadas
+
+Três públicos. O professor é público da v1 (`DP01`); recrutador e cliente são das duas fases (handoff, "Visão geral").
+
+| Público                      | Fase     | De onde chega                                                    | O que procura                                                                                     | Telas que respondem                                                                        | Ação final esperada                                                                                                 |
+| ---------------------------- | -------- | ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------- |
+| Professor/avaliador da Fatec | v1       | URL do GitHub Pages e vídeo de demonstração entregues pelo autor | Se a entrega cumpre o pedido: cinco telas com conteúdo real, três idiomas, dois temas, responsiva | Todas: `/` → `/projetos` → `/projetos/:slug` → `/informacoes` → `/contato`                 | Em `/projetos/:slug`, "Ver código no GitHub" de um projeto                                                          |
+| Recrutador                   | v1 e V2+ | Link no LinkedIn, no CV ou na candidatura                        | Perfil para vaga fixa: o que faz agora, stack, trajetória, formação e um projeto em profundidade  | `/` (status atual, destaques) → `/informacoes` (sobre mim, stack, trajetória) → um projeto | "Baixar CV" em `/informacoes` ou no hero de `/` (D14); alternativa: LinkedIn no rodapé (D04)                        |
+| Cliente (projeto/freelance)  | v1 e V2+ | Indicação, GitHub ou LinkedIn                                    | Projeto parecido com o problema dele, como o autor trabalha e em quanto tempo responde            | `/` → `/projetos` (busca e filtros) → `/projetos/:slug` → `/contato`                       | v1: em `/contato`, "Copiar" o e-mail direto ou abri-lo (D05, D21); V2+: "Enviar mensagem" pelo formulário (issue N) |
+
+Fontes de cada linha: o [protótipo](../design/prototype/README.md) para os rótulos dos botões ("Ver código no GitHub" em `prototipo-projeto`, "Baixar CV" em `prototipo-inicio`, `prototipo-informacoes` e `prototipo-contato`, "Copiar" em `prototipo-contato` e no rodapé), D14 para o CV por idioma, D21 para os canais de Contato sem agendamento e sem lista de redes, D04 para as redes no rodapé e D05 para o formulário desligado na v1.
 
 ## Papéis
 
 O usuário deste repositório é ao mesmo tempo **cliente** (dono do portfólio), **PO** (decide escopo e prioridade) e **dev** (implementa). Decisões de produto e de design são dele; o handoff registra as que já foram tomadas.
+
+O PO aprova a spec (Status `aprovada`) e o escopo de cada versão; mudar o escopo de uma versão muda [`roadmap.md`](roadmap.md) no mesmo PR. O professor avalia a v1, mas não decide escopo.
 
 ## Escopo
 
