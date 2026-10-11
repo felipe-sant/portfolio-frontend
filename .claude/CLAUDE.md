@@ -36,13 +36,15 @@ Module em vez de classe global `.ds-*` e código sem comentários. `docs/design/
 referência visual validada pelo PO (abre por `npm run dev` em
 `/docs/design/prototype/prototipo-indice.dc.html`).
 
-**Rotas:** cinco telas, das quais hoje só `/` existe no código (as demais vêm nas specs de tela):
+**Rotas:** cinco telas, das quais hoje só `/` existe no código (as demais vêm nas specs de tela),
+com caminhos em inglês (D32), como os identificadores; o `:id` é um UUID v7, não slug:
 
 - `/` (Início): primeira impressão, com quem é, o que faz agora, projetos em destaque e stack.
-- `/projetos` (Projetos): encontrar um projeto por busca, tipo, categoria ou tecnologia.
-- `/projetos/:slug` (Projeto): estudo de caso, com galeria, documentação e ficha técnica.
-- `/informacoes` (Informações): sobre mim, stack, complementos e trajetória.
-- `/contato` (Contato): formulário de mensagem e canais diretos (formulário desligado na v1,
+- `/projects` (Projetos): encontrar um projeto por busca, tipo, categoria ou tecnologia.
+- `/projects/:id` (Projeto): estudo de caso, com galeria, documentação e ficha técnica; os
+  documentos opcionais ficam em `/projects/:id/architecture`, `/setup` e `/changelog` (D33).
+- `/about` (Informações): sobre mim, stack, complementos e trajetória.
+- `/contact` (Contato): formulário de mensagem e canais diretos (formulário desligado na v1,
   D05).
 
 A interface tem tema claro e escuro.

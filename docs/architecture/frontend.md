@@ -28,14 +28,15 @@ flowchart TD
 
 Todas as rotas ficam em `src/routers/routes.tsx`, com os paths em `src/routers/paths.ts`. O `MainLayout` é a rota-pai, as páginas são filhas carregadas sob demanda (`lazy`) e o único `<Suspense>` fica em volta do `<Outlet />` do layout. A rota `*` leva à página não encontrada e fica por último; a página de erro é o `errorElement` da rota do layout e renderiza sem ele.
 
-| Rota              | Tela                  | Situação                        |
-| ----------------- | --------------------- | ------------------------------- |
-| `/`               | Início                | Existe, com o hero mínimo       |
-| `*`               | Página não encontrada | Existe                          |
-| `/projetos`       | Projetos              | Prevista no handoff, sem página |
-| `/projetos/:slug` | Projeto               | Prevista no handoff, sem página |
-| `/informacoes`    | Informações           | Prevista no handoff, sem página |
-| `/contato`        | Contato               | Prevista no handoff, sem página |
+| Rota                                                 | Tela                  | Situação                    |
+| ---------------------------------------------------- | --------------------- | --------------------------- |
+| `/`                                                  | Início                | Existe, com o hero mínimo   |
+| `*`                                                  | Página não encontrada | Existe                      |
+| `/projects`                                          | Projetos              | Prevista (D32), sem página  |
+| `/projects/:id`                                      | Projeto               | Prevista (D32), sem página  |
+| `/projects/:id/architecture`, `/setup`, `/changelog` | Documentos do projeto | Previstas (D33), sem página |
+| `/about`                                             | Informações           | Prevista (D32), sem página  |
+| `/contact`                                           | Contato               | Prevista (D32), sem página  |
 
 Uma rota só entra em `paths.ts` junto com a página que ela renderiza. Navegação interna usa `<Link>` ou `useNavigate` com o path de `ROUTES`.
 

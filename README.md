@@ -9,15 +9,16 @@ suficiente para que quem visita entenda como ele resolve problemas, e não apena
 já usou. O público são recrutadores avaliando o autor para uma vaga e clientes avaliando-o para um
 projeto ou freelance; na v1, também o professor da Fatec, que avalia a entrega.
 
-O design vem de um handoff de design, que define cinco telas:
+O design vem de um handoff de design, que define cinco telas; os caminhos são em inglês, iguais nos
+três idiomas (D32):
 
-| Rota              | Tela        | Propósito                                                                                |
-| ----------------- | ----------- | ---------------------------------------------------------------------------------------- |
-| `/`               | Início      | Primeira impressão: quem é, status atual, projetos em destaque e faixa de stack          |
-| `/projetos`       | Projetos    | Encontrar um projeto por busca, tipo, categoria ou tecnologia, com carregamento contínuo |
-| `/projetos/:slug` | Projeto     | Estudo de caso de um projeto: galeria, documentação e ficha técnica                      |
-| `/informacoes`    | Informações | Sobre mim, stack, complementos e trajetória                                              |
-| `/contato`        | Contato     | Formulário de mensagem (desligado na v1) e canais diretos                                |
+| Rota            | Tela        | Propósito                                                                                                                                               |
+| --------------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/`             | Início      | Primeira impressão: quem é, status atual, projetos em destaque e faixa de stack                                                                         |
+| `/projects`     | Projetos    | Encontrar um projeto por busca, tipo, categoria ou tecnologia, com carregamento contínuo                                                                |
+| `/projects/:id` | Projeto     | Estudo de caso de um projeto: galeria, documentação e ficha técnica; cada documento tem endereço próprio (`/architecture`, `/setup`, `/changelog`, D33) |
+| `/about`        | Informações | Sobre mim, stack, complementos e trajetória                                                                                                             |
+| `/contact`      | Contato     | Formulário de mensagem (desligado na v1) e canais diretos                                                                                               |
 
 Hoje o código tem só `/` (Início com o hero mínimo) e a página de rota inexistente; as outras rotas
 entram com as specs de cada tela. O site tem temas claro e escuro e interface em `pt-BR` (língua de

@@ -166,7 +166,7 @@ M (fonte local → API), N (formulário real, proteção contra spam, remoção 
 
 A v1 é a entrega da faculdade, publicada no GitHub Pages do repositório da v1 a partir da tag `v1.0.0` da `main`, criada pelo versionamento automático, com a URL entregue ao professor. **Prazo: 23/11/2026.** Ela só sai com todos os itens marcados:
 
-- [ ] As rotas `/`, `/projetos`, `/projetos/:slug`, `/informacoes` e `/contato`, a página não encontrada e a página de erro cumprem os critérios de aceite dos documentos de #2 a #7.
+- [ ] As rotas `/`, `/projects`, `/projects/:id`, `/about` e `/contact`, a página não encontrada e a página de erro cumprem os critérios de aceite dos documentos de #2 a #7.
 - [ ] Todo dado exibido é o conteúdo real do PO, vindo dos JSONs locais de #13 no formato do contrato de #10, sem requisição a backend.
 - [ ] Toda tela abre e recarrega nas três URLs (sem prefixo, `/en/` e `/es/`) no Pages, e o seletor leva à URL equivalente, com interface e conteúdo traduzidos, sem chave no lugar de texto.
 - [ ] Toda tela funciona nos temas claro e escuro.
@@ -177,7 +177,7 @@ A v1 é a entrega da faculdade, publicada no GitHub Pages do repositório da v1 
 - [ ] Os pesos de fonte sem uso foram removidos (D08).
 - [ ] A verificação K passou no build publicado.
 - [ ] `npm run build`, `npm run lint` e `npm run test:cov` (80% ou mais) passam no CI.
-- [ ] No GitHub Pages do repositório da v1, abrir e recarregar cada rota nas três versões de URL (sem prefixo, `/en/` e `/es/`, inclusive `/projetos/<slug>`, uma inexistente e `/en/<rota-inexistente>`) mostra a aplicação, com fontes, imagens, JSONs e CV carregando sob o subcaminho.
+- [ ] No GitHub Pages do repositório da v1, abrir e recarregar cada rota nas três versões de URL (sem prefixo, `/en/` e `/es/`, inclusive `/projects/<id>`, uma inexistente e `/en/<rota-inexistente>`) mostra a aplicação, com fontes, imagens, JSONs e CV carregando sob o subcaminho.
 - [ ] `curl` em cada rota e idioma do Pages devolve 200 e o conteúdo no idioma sem JavaScript, com `hreflang`, e `llms.txt` e `sitemap.xml` existem sob o subcaminho (NF-IA de [`non-functional-requirements.md`](non-functional-requirements.md)).
 - [ ] `main:/docs` do repositório da v1 tem só o build da v1, com `404.html` e `.nojekyll`, e o `README.md` da raiz continua lá.
 - [ ] O `package.json` está em `1.0.0`, gerado pelo PR de versão a partir do changeset `major`, e o `CHANGELOG.md` tem a seção `1.0.0`.
