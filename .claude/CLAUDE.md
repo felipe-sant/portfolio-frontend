@@ -42,7 +42,8 @@ referência visual validada pelo PO (abre por `npm run dev` em
 - `/projetos` (Projetos): encontrar um projeto por busca, tipo, categoria ou tecnologia.
 - `/projetos/:slug` (Projeto): estudo de caso, com galeria, documentação e ficha técnica.
 - `/informacoes` (Informações): sobre mim, stack, complementos e trajetória.
-- `/contato` (Contato): formulário de mensagem e canais diretos.
+- `/contato` (Contato): formulário de mensagem e canais diretos (formulário desligado na v1,
+  D05).
 
 A interface tem tema claro e escuro.
 
@@ -70,10 +71,10 @@ são de uso pessoal (Vercel, depois AWS com backend). Ordem, dependências e cri
 **Decisões de design:** as pendências e contradições do handoff estão decididas em
 `docs/design/decisions.md`, com IDs (`D01`–`D26`, `PI1`–`PI5`) que specs e issues citam.
 
-**Onde ler mais:** `docs/product/overview.md` (visão, escopo, requisitos e decisões),
-`docs/product/glossary.md` (glossário), `docs/product/roadmap.md` (versões, marcos e definição da
-v1), `docs/design/design-system.md` (design system), `docs/diagrams/` (fluxo de navegação e
-entidades) e `docs/architecture/frontend.md` (arquitetura).
+**Onde ler mais:** `docs/product/overview.md` (visão, público, jornadas, objetivos, escopo,
+requisitos e decisões), `docs/product/glossary.md` (glossário), `docs/product/roadmap.md` (versões,
+marcos e definição da v1), `docs/design/design-system.md` (design system), `docs/diagrams/` (fluxo
+de navegação e entidades) e `docs/architecture/frontend.md` (arquitetura).
 
 ## Comandos
 
