@@ -157,3 +157,134 @@ o protótipo, depois o handoff.
 | Links "Ver projetos", "Ver todos", "Ler sobre mim" para `prototipo-*.dc.html`; "Baixar CV" para `#` (PI5) | `/projects`, `/about` com o prefixo do idioma (D32, NF-IN-11); "Baixar CV" é download direto do PDF do idioma ativo (D14, D30, D36)                |
 | Erro do bloco de destaques com "Tentar novamente" que recarrega a página (`?estado=normal`)               | Botão que refaz só a consulta que falhou, sem recarregar                                                                                           |
 | Depoimentos (`Início.dc.html` do handoff)                                                                 | Fora do produto (D13)                                                                                                                              |
+
+## Navegação
+
+Caminhos de D32, sempre com o prefixo do idioma atual (NF-IN-11).
+
+| De onde                               | Ação                                         | Para onde                                                 |
+| ------------------------------------- | -------------------------------------------- | --------------------------------------------------------- |
+| Qualquer tela                         | Gato e nome, "Início" na navegação           | `/` do idioma atual (RF-LAY-02, RF-LAY-03)                |
+| Página não encontrada, página de erro | "Voltar para o início"                       | `/` (RF-LAY-28, RF-LAY-29)                                |
+| Primeira carga em `/`                 | Escolha salva diferente de `pt-BR`           | `/en/` ou `/es/` (NF-IN-09, W)                            |
+| Hero                                  | "Ver projetos"                               | `/projects`                                               |
+| Hero                                  | "Baixar CV"                                  | Download do PDF do idioma ativo, sem sair da página (D36) |
+| Projetos em destaque                  | "Ver todos →"                                | `/projects`                                               |
+| Projetos em destaque                  | Título, imagem ou "Ver projeto →" de um item | `/projects/:id` do projeto                                |
+| Saídas                                | "Ver todos os projetos", "Ler sobre mim"     | `/projects`, `/about`                                     |
+| Alerta de erro                        | "Tentar novamente"                           | Fica na tela; refaz a consulta do bloco                   |
+| Faixa de stack                        | Pausar                                       | Fica na tela                                              |
+
+## Textos fixos e chaves
+
+Todo texto fixo vem de chave (`react-i18next`). O valor `pt-BR` abaixo é a referência; `en` e `es`
+são escritos na implementação (D), com as mesmas chaves (R2). Nomes de tecnologia, "CV", "PDF" e
+os símbolos são iguais nos três JSON.
+
+O namespace `home` (existe) guarda o que só o Início usa. `common` guarda o que outras telas também
+mostram: "Baixar CV" (Informações e Contato), tipo e categoria de projeto (Projetos e Projeto), o
+formato de período (Informações), o nome do autor e os símbolos. As chaves `resume.*`,
+`projectType.*`, `projectCategory.*`, `period.*` e `symbols.forward` têm o nome fixado pelo PO para
+as cinco telas (decisão transversal de 11-10-2026), iguais às de [`about.md`](about.md) e
+[`contact.md`](contact.md): a tela que chegar primeiro cria, as outras reaproveitam. O selo de
+disponibilidade e o parágrafo do hero não têm chave: vêm do perfil (D-NOVA-3b).
+
+| Namespace | Chave                          | Valor em `pt-BR`                                                                                                      | Onde                                                                     |
+| --------- | ------------------------------ | --------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| `home`    | `meta.title`                   | Luiz Felipe dos Santos · Desenvolvedor full stack em TypeScript (existe, valor muda, como em `layout.md`)             | `<title>`, `og:title`                                                    |
+| `home`    | `meta.description`             | Portfólio de Luiz Felipe dos Santos, desenvolvedor full stack em TypeScript: projetos, trajetória e contato. (existe) | Descrição, `og:description`                                              |
+| `home`    | `heading`                      | Desenvolvedor full stack em TypeScript (existe, perde o ponto, D24)                                                   | `h1`; `jobTitle` do JSON-LD                                              |
+| `home`    | `hero.viewProjects`            | Ver projetos                                                                                                          | Link primário do hero                                                    |
+| `home`    | `status.heading`               | O que faço agora                                                                                                      | `h2` oculto do status                                                    |
+| `home`    | `status.working`               | Trabalhando como                                                                                                      | Rótulo do primeiro card                                                  |
+| `home`    | `status.studying`              | Cursando                                                                                                              | Rótulo do segundo card                                                   |
+| `home`    | `status.error`                 | Não consegui carregar o que faço agora                                                                                | Título do alerta                                                         |
+| `home`    | `stack.heading`                | Tecnologias que uso                                                                                                   | `h2` oculto da faixa                                                     |
+| `home`    | `stack.pause`                  | Pausar faixa de tecnologias                                                                                           | Nome fixo do botão de pausa                                              |
+| `home`    | `featured.heading`             | Projetos em destaque                                                                                                  | `h2` da seção                                                            |
+| `home`    | `featured.viewAll`             | Ver todos                                                                                                             | Texto visível do link do cabeçalho da seção                              |
+| `home`    | `featured.viewAllName`         | Ver todos os projetos                                                                                                 | Nome acessível do mesmo link                                             |
+| `home`    | `featured.viewProject`         | Ver projeto                                                                                                           | Texto `aria-hidden` do item                                              |
+| `home`    | `featured.empty`               | Nenhum projeto em destaque no momento                                                                                 | Estado vazio                                                             |
+| `home`    | `featured.error`               | Não consegui carregar os projetos                                                                                     | Título do alerta                                                         |
+| `home`    | `loadError.description`        | Verifique sua conexão e tente de novo.                                                                                | Texto dos alertas                                                        |
+| `home`    | `loadError.retry`              | Tentar novamente                                                                                                      | Botão dos alertas                                                        |
+| `home`    | `exits.allProjects`            | Ver todos os projetos                                                                                                 | Saída primária                                                           |
+| `home`    | `exits.about`                  | Ler sobre mim                                                                                                         | Saída secundária                                                         |
+| `common`  | `loading`                      | Carregando... (existe)                                                                                                | `role="status"`                                                          |
+| `common`  | `authorName`                   | Luiz Felipe dos Santos (de `layout.md`)                                                                               | `name` do JSON-LD                                                        |
+| `common`  | `resume.download`              | Baixar CV                                                                                                             | Texto visível do link de CV                                              |
+| `common`  | `resume.downloadPdf`           | Baixar CV (PDF)                                                                                                       | Nome acessível do link de CV                                             |
+| `common`  | `projectType.web`              | Web                                                                                                                   | Rótulo de metadados (também Projetos e Projeto)                          |
+| `common`  | `projectType.mobile`           | Mobile                                                                                                                | Idem                                                                     |
+| `common`  | `projectType.api`              | API                                                                                                                   | Idem                                                                     |
+| `common`  | `projectType.desktop`          | Desktop                                                                                                               | Idem                                                                     |
+| `common`  | `projectType.cli`              | CLI                                                                                                                   | Idem                                                                     |
+| `common`  | `projectType.library`          | Biblioteca                                                                                                            | Idem                                                                     |
+| `common`  | `projectType.extension`        | Extensão                                                                                                              | Idem                                                                     |
+| `common`  | `projectType.bot`              | Bot / automação                                                                                                       | Idem                                                                     |
+| `common`  | `projectType.data`             | Dados / IA                                                                                                            | Idem                                                                     |
+| `common`  | `projectType.game`             | Jogo                                                                                                                  | Idem                                                                     |
+| `common`  | `projectType.iot`              | IoT / embarcado                                                                                                       | Idem                                                                     |
+| `common`  | `projectType.infra`            | Infraestrutura                                                                                                        | Idem                                                                     |
+| `common`  | `projectCategory.academic`     | Acadêmico                                                                                                             | Idem                                                                     |
+| `common`  | `projectCategory.personal`     | Pessoal                                                                                                               | Idem                                                                     |
+| `common`  | `projectCategory.professional` | Profissional                                                                                                          | Idem                                                                     |
+| `common`  | `period.since`                 | desde `{{date}}`                                                                                                      | Linha de detalhe dos cards de status (D39)                               |
+| `common`  | `symbols.forward`              | →                                                                                                                     | Seta de "Ver todos →" e "Ver projeto →", em `aria-hidden`                |
+| `common`  | `symbols.separator`            | · (de `layout.md`)                                                                                                    | Separador dos cards de status e do rótulo de metadados, em `aria-hidden` |
+
+O rótulo de metadados do destaque é montado na tela com os rótulos de `common` e o
+`symbols.separator` entre eles, sem chave de frase única, porque cada separador fica em
+`aria-hidden` (RF-HOME-18). `home:intro` sai de `src/locales/` nos três idiomas (R2), porque o
+parágrafo do hero passa a vir do conteúdo (resposta do PO de 11-10-2026); o texto do protótipo
+("Trabalho em produtos web de ponta a ponta, do banco de dados à interface. Aqui estão os projetos
+que melhor mostram como resolvo problemas.") é a sugestão de valor `pt-BR` para a #13. O
+`common:symbols.download` do layout (`↓`) não é usado aqui: o hero usa o ícone de download (D14).
+"desde" é "since" em `en` e "desde" em `es`; o valor `es` de "Cursando" é "Estudiando" e o `en`
+"Studying" (sugestões para a D).
+
+## Conteúdo e contrato de dados
+
+### Vem do conteúdo, não de chave
+
+Campo definido na #10, valor na #13, texto nos três idiomas, lido por endpoint (NF-DA-02). Enquanto
+não há backend, cada fonte é um JSON local servido por endpoint do RTK Query com `queryFn` (R1).
+
+| Bloco                | Dado                                                                                                   | Onde aparece                            | Observação                                                                                   |
+| -------------------- | ------------------------------------------------------------------------------------------------------ | --------------------------------------- | -------------------------------------------------------------------------------------------- |
+| Hero                 | Disponibilidade: `isAvailable` e `label` (frase traduzida) do perfil                                   | Selo do hero                            | Mesmo campo do rodapé (RF-LAY-21), de Informações e de Contato (D-NOVA-3b)                   |
+| Hero                 | Texto de apresentação do Início, do perfil                                                             | Parágrafo do hero                       | Traduzido (resposta do PO de 11-10-2026)                                                     |
+| Status atual         | Item de experiência em curso da trajetória: cargo, organização, início                                 | Card "Trabalhando como"                 | RF-HOME-11                                                                                   |
+| Status atual         | Item de formação ou curso em curso da trajetória: curso, instituição, etapa (opcional), início         | Card "Cursando"                         | A etapa ("6º semestre") é texto traduzido                                                    |
+| Faixa de stack       | Stack do site, com a marcação de item principal                                                        | Faixa de stack; `knowsAbout` do JSON-LD | A mesma lista da stack de Informações, agrupada por categoria no conteúdo                    |
+| Projetos em destaque | Projeto: id, título, resumo, `date`, `types`, categoria, marcação de destaque, stack, primeira captura | Itens da seção de destaques             | Tipo e categoria como código de enum, traduzidos por chave; a tela mostra só o ano de `date` |
+| Metadados            | URLs de GitHub e LinkedIn do perfil                                                                    | `sameAs` do JSON-LD                     | Já previstas por `layout.md`                                                                 |
+
+Texto fixo, não conteúdo: o `h1`, "Ver projetos", "Baixar CV", os rótulos e headings das seções,
+"Ver todos", "Ver projeto", as mensagens de vazio e de erro, "Tentar novamente", "Ler sobre mim", o
+nome do botão de pausa e os rótulos de tipo e categoria (tabela acima).
+
+### O que a tela pede ao contrato (#10)
+
+Lista de necessidades; a #10 decide nomes de campo, arquivos e endpoints.
+
+1. Perfil com `availability: { isAvailable: boolean, label: string }` (`label` traduzido, frase
+   livre do PO), o mesmo campo do selo e do rodapé, e o texto de apresentação do Início
+   (traduzido).
+2. Trajetória com experiência, formação e curso trazendo: título (cargo ou curso), organização
+   (empresa ou instituição) em campo próprio, etapa opcional traduzida, início em `AAAA-MM` e fim
+   ausente quando em curso. O Início deriva o status atual daí, sem campo duplicado no perfil.
+3. Stack do site agrupada pelas categorias `frontend`, `backend` e `tooling`, com ordem definida
+   pelo conteúdo e uma marcação de item principal (booleano opcional).
+4. Projeto com id UUID v7, título, resumo curto, `date` (`AAAA-MM`), `types: ProjectType[]` (pelo
+   menos um, sem repetição, na ordem do conteúdo; enum `web`, `mobile`, `api`, `desktop`, `cli`,
+   `library`, `extension`, `bot`, `data`, `game`, `iot`, `infra`, sem `fullstack`: projeto web com
+   backend é `["web", "api"]`), categoria (`academic`, `personal`, `professional`, um valor),
+   booleano de destaque, stack ordenada e a lista de capturas 16:9 com `alt`; a ordem do array no
+   JSON é a "ordem do conteúdo" usada no desempate (igual nos três idiomas).
+5. Uma consulta leve de projetos para listagens (sem documentos markdown nem galeria completa),
+   para o Início não baixar o detalhe de todos (NF-DA-05, NF-DE-15); o filtro de destaque pode ser
+   no cliente ou por parâmetro, à escolha da #10.
+6. Todo texto do conteúdo por idioma, servido só no idioma ativo (NF-DA-05); erro de carga como
+   falha de rede comum, sem mensagem do servidor na tela.
