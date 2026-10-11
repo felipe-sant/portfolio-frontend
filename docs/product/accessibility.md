@@ -4,7 +4,7 @@ Este documento define o requisito de acessibilidade do portfólio: a meta de con
 
 ## Meta
 
-**WCAG 2.2, nível AA** (decisão do PO), em todas as rotas (`/`, `/projetos`, `/projetos/:slug`, `/informacoes` e `/contato`, nos três prefixos de idioma da URL definidos pela #8), na página não encontrada e na página de erro, nos dois temas, nos três idiomas e em qualquer largura de 320px a 1280px ou mais.
+**WCAG 2.2, nível AA** (decisão do PO), em todas as rotas (`/`, `/projects`, `/projects/:id`, `/about` e `/contact`, nos três prefixos de idioma da URL definidos pela #8), na página não encontrada e na página de erro, nos dois temas, nos três idiomas e em qualquer largura de 320px a 1280px ou mais.
 
 Além do AA, **cinco critérios AAA são obrigatórios**, porque saem baratos neste produto:
 
