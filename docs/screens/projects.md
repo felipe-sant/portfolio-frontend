@@ -151,3 +151,139 @@ Decisão `D-NOVA-4a`.
 | ID               | Regra                                                                                                                                                                                                                         | Fonte                           |
 | ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------- |
 | `RF-PROJECTS-27` | `<title>` "Projetos · Luiz Felipe dos Santos" e descrição "Projetos de Luiz Felipe dos Santos, com busca por tipo, categoria e tecnologia." (de `layout.md`), iguais com ou sem query; JSON-LD conforme "Metadados e JSON-LD" | `layout.md`, NF-IA-08, NF-IA-10 |
+
+## Navegação
+
+Caminhos de D32, sempre com o prefixo do idioma atual (NF-IN-11).
+
+| De onde                       | Ação                                                       | Para onde                                                                    |
+| ----------------------------- | ---------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| Cabeçalho, menu               | "Projetos"                                                 | `/projects` sem query (RF-LAY-03)                                            |
+| Início                        | "Ver projetos", "Ver todos →", "Ver todos os projetos"     | `/projects` sem query ([`home.md`](home.md))                                 |
+| Página não encontrada         | "Ver projetos"                                             | `/projects` sem query (RF-LAY-28)                                            |
+| Projeto                       | "← Voltar para Projetos"                                   | `/projects` (comportamento da #5; ver "Notas")                               |
+| Projetos                      | Card (título ou área do card)                              | `/projects/<id>` do idioma atual, mesma aba                                  |
+| Projetos                      | Busca, filtro, ordenação, "Limpar busca", "Limpar filtros" | Mesma tela, query atualizada por `replace`                                   |
+| Projetos                      | "Carregar mais"                                            | Mesma tela e URL                                                             |
+| Projetos                      | "Tentar novamente"                                         | Mesma tela, novo pedido, sem recarregar                                      |
+| Projeto (voltar do navegador) | Voltar                                                     | `/projects` com a query, a quantidade e a rolagem de antes (RF-PROJECTS-25)  |
+| Seletor de idioma             | `PT`, `EN`, `ES`                                           | `/projects` no outro idioma, com a mesma query, no primeiro lote (RF-LAY-12) |
+
+### Notas
+
+- **"← Voltar para Projetos" na tela do projeto:** recomendação para a #5, que decide. Se a entrada
+  anterior do histórico for a lista, voltar pelo histórico (restaura tudo, RF-PROJECTS-25); senão,
+  ir para `/projects` sem query.
+
+## Textos fixos e chaves
+
+Todo texto fixo vem de chave (`react-i18next`). O valor `pt-BR` abaixo é a referência; `en` e `es`
+são escritos na implementação (E), com as mesmas chaves (R2). Os rótulos de tipo e "A–Z" podem ser
+iguais nos três JSON; nomes de tecnologia não são chave (vêm do conteúdo e não se traduzem).
+
+O namespace `projects` guarda o que só a tela usa. `common` guarda o que o card mostra, porque o
+card é componente de `src/components/` reutilizado nos relacionados do Projeto (#5), e os rótulos
+de tipo e categoria, que também aparecem no Início ([`home.md`](home.md)) e na ficha técnica do
+Projeto (#5). Os rótulos de filtro no plural ("Acadêmicos") ficam em `projects`; os do card no
+singular ("Acadêmico") em `common`.
+
+| Namespace  | Chave                           | Valor em `pt-BR`                                                                                                 | Onde                                                              |
+| ---------- | ------------------------------- | ---------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| `projects` | `meta.title`                    | Projetos · Luiz Felipe dos Santos (de `layout.md`)                                                               | `<title>`, `og:title`, `name` do JSON-LD                          |
+| `projects` | `meta.description`              | Projetos de Luiz Felipe dos Santos, com busca por tipo, categoria e tecnologia. (de `layout.md`)                 | Descrição, `og:description`, `description` do JSON-LD             |
+| `projects` | `heading`                       | Projetos                                                                                                         | `h1`                                                              |
+| `projects` | `intro`                         | Tudo o que construí e posso mostrar: trabalho profissional, projetos da faculdade e o que fiz por conta própria. | Introdução                                                        |
+| `projects` | `search.label`                  | Buscar projeto                                                                                                   | Rótulo oculto do campo                                            |
+| `projects` | `search.placeholder`            | Busque por nome ou tecnologia                                                                                    | Placeholder                                                       |
+| `projects` | `search.clear`                  | Limpar busca                                                                                                     | Nome do botão ×                                                   |
+| `projects` | `sort.label`                    | Ordenar                                                                                                          | Rótulo do `select`                                                |
+| `projects` | `sort.recent`                   | Mais recente                                                                                                     | Opção                                                             |
+| `projects` | `sort.oldest`                   | Mais antigo                                                                                                      | Opção                                                             |
+| `projects` | `sort.title`                    | A–Z                                                                                                              | Opção                                                             |
+| `projects` | `filters.type.label`            | Tipo                                                                                                             | Nome do grupo                                                     |
+| `projects` | `filters.type.all`              | Todos                                                                                                            | Botão                                                             |
+| `projects` | `filters.category.label`        | Categoria                                                                                                        | Nome do grupo                                                     |
+| `projects` | `filters.category.academic`     | Acadêmicos                                                                                                       | Botão                                                             |
+| `projects` | `filters.category.personal`     | Pessoais                                                                                                         | Botão                                                             |
+| `projects` | `filters.category.professional` | Profissionais                                                                                                    | Botão                                                             |
+| `projects` | `results.count_one`             | `{{shown}}` de `{{count}}` projeto                                                                               | Contagem (plural do i18next)                                      |
+| `projects` | `results.count_other`           | `{{shown}}` de `{{count}}` projetos                                                                              | Contagem                                                          |
+| `projects` | `results.loading`               | Carregando projetos…                                                                                             | Contagem carregando                                               |
+| `projects` | `results.clearFilters`          | Limpar filtros                                                                                                   | Linha da contagem e estado sem resultado                          |
+| `projects` | `noResults.heading`             | Nenhum projeto encontrado                                                                                        | `h2` e contagem                                                   |
+| `projects` | `noResults.withSearch`          | Nenhum resultado para “`{{query}}`”. Tente outro termo ou remova os filtros.                                     | Texto com termo                                                   |
+| `projects` | `noResults.withoutSearch`       | Nenhum projeto com essa combinação de filtros.                                                                   | Texto sem termo                                                   |
+| `projects` | `empty.heading`                 | Nenhum projeto publicado                                                                                         | `h2` do vazio                                                     |
+| `projects` | `empty.description`             | Os projetos aparecem aqui assim que eu publicar o primeiro.                                                      | Texto do vazio                                                    |
+| `projects` | `error.heading`                 | Não consegui carregar a lista de projetos                                                                        | Título do alerta                                                  |
+| `projects` | `error.description`             | Verifique sua conexão e tente de novo. Seus filtros foram mantidos.                                              | Texto do alerta                                                   |
+| `projects` | `error.retry`                   | Tentar novamente                                                                                                 | Botão do alerta                                                   |
+| `projects` | `loadMore`                      | Carregar mais                                                                                                    | Botão                                                             |
+| `common`   | `projectType.web`               | Web (de `home.md`)                                                                                               | Filtro, linha do card, Início, ficha                              |
+| `common`   | `projectType.mobile`            | Mobile (de `home.md`)                                                                                            | Idem                                                              |
+| `common`   | `projectType.api`               | API (de `home.md`)                                                                                               | Idem                                                              |
+| `common`   | `projectType.desktop`           | Desktop (de `home.md`)                                                                                           | Idem                                                              |
+| `common`   | `projectType.cli`               | CLI (de `home.md`)                                                                                               | Idem                                                              |
+| `common`   | `projectType.library`           | Biblioteca (de `home.md`)                                                                                        | Idem                                                              |
+| `common`   | `projectType.extension`         | Extensão (de `home.md`)                                                                                          | Idem                                                              |
+| `common`   | `projectType.bot`               | Bot / automação (de `home.md`)                                                                                   | Idem                                                              |
+| `common`   | `projectType.data`              | Dados / IA (de `home.md`)                                                                                        | Idem                                                              |
+| `common`   | `projectType.game`              | Jogo (de `home.md`)                                                                                              | Idem                                                              |
+| `common`   | `projectType.iot`               | IoT / embarcado (de `home.md`)                                                                                   | Idem                                                              |
+| `common`   | `projectType.infra`             | Infraestrutura (de `home.md`)                                                                                    | Idem                                                              |
+| `common`   | `projectCategory.academic`      | Acadêmico (de `home.md`)                                                                                         | Linha do card, Início, ficha                                      |
+| `common`   | `projectCategory.personal`      | Pessoal (de `home.md`)                                                                                           | Idem                                                              |
+| `common`   | `projectCategory.professional`  | Profissional (de `home.md`)                                                                                      | Idem                                                              |
+| `common`   | `projectCard.featured`          | Em destaque                                                                                                      | Texto oculto da estrela                                           |
+| `common`   | `symbols.separator`             | · (de `layout.md`)                                                                                               | Separador da linha de tipos e categoria do card, em `aria-hidden` |
+
+A linha de tipos e categoria do card é montada na tela com os rótulos de `common` e o
+`symbols.separator` entre eles, sem chave de frase única, porque cada separador fica em
+`aria-hidden` (RF-PROJECTS-14), como o rótulo de metadados do Início. O plural usa as regras do
+i18next (`_one`, `_other`); em `pt-BR` o 0 cairia em `_one`, mas a contagem nunca mostra 0 (vira
+"Nenhum projeto encontrado"). `common:projectType.<código>`, `common:projectCategory.*`,
+`common:projectCard.featured` e `common:symbols.separator` são os nomes compartilhados decididos
+pelo PO para as cinco telas (decisão transversal de 11-10-2026): os de tipo, categoria e separador
+já estão em [`home.md`](home.md) e [`layout.md`](layout.md) e são reaproveitados com o mesmo nome;
+`projectCard.featured` aparece pela primeira vez aqui. Não usar outro nome.
+
+**Vem do conteúdo, não de chave** (campo da #10, valor da #13, por idioma quando é texto): título,
+resumo, data (`date`), tipos, categoria, destaque, tecnologias (todas e as principais do card),
+captura e as variantes dela.
+
+## Conteúdo e contrato de dados
+
+O que a tela pede à #10 (nomes sugeridos em inglês; a #10 decide os finais e atualiza
+[`entity.md`](../diagrams/entity.md), que ainda tem `slug`, `ano` e tipo em português):
+
+- **Endpoint de lista**, por idioma: devolve todos os projetos publicados, só com os campos do card
+  (o detalhe, a galeria e os documentos ficam no endpoint do projeto, da #5), sem ordem garantida.
+- **Item da lista:**
+
+    | Campo              | Tipo                                                        | Uso                                                           |
+    | ------------------ | ----------------------------------------------------------- | ------------------------------------------------------------- |
+    | `id`               | UUID v7 (D32, NF-DA-07)                                     | Link do card, desempate final, `key`                          |
+    | `title`            | Texto traduzido                                             | Card, busca, A–Z, JSON-LD                                     |
+    | `summary`          | Texto traduzido, até ~160 caracteres                        | Card (duas linhas); também descrição do projeto (#5)          |
+    | `date`             | `AAAA-MM` (mês e ano, decisão do PO)                        | Ano no card, ordenação                                        |
+    | `types`            | Lista de 1 ou mais códigos do enum de tipo, sem repetição   | Filtro (casa se algum bate), linha do card, botões do filtro  |
+    | `category`         | Enum `academic` \| `personal` \| `professional`             | Filtro, linha do card                                         |
+    | `featured`         | Booleano                                                    | Estrela; também os destaques do Início ([`home.md`](home.md)) |
+    | `technologies`     | Lista de nomes, não traduzidos                              | Busca (todas)                                                 |
+    | `cardTechnologies` | 1 a 3 nomes, subconjunto de `technologies`                  | Chips do card, na ordem dada                                  |
+    | `cover`            | Opcional: `src`, `width`, `height`, variantes para `srcset` | Imagem do card (D26); ausente → placeholder                   |
+
+- **Enums** em código inglês minúsculo, nunca o rótulo: o rótulo vem de chave
+  (`common:projectType.*`, `common:projectCategory.*`), e o mesmo código é o valor da query
+  (`?type=<código>`). Tipo: `web`, `mobile`, `api`, `desktop`, `cli`, `library`, `extension`,
+  `bot`, `data`, `game`, `iot`, `infra`, nessa ordem; não existe `fullstack` (web com backend é
+  `["web", "api"]`). Categoria é um valor só por projeto; `types` é uma lista com pelo menos um
+  código, sem repetição, na ordem do conteúdo. Valor novo de enum exige chave nova nos três idiomas
+  e decisão do PO. A situação do projeto (`status`: `inDevelopment`, `completed`, `discontinued`,
+  decisão transversal) não aparece no card nem filtra a lista, então não precisa estar no item da
+  lista.
+- **Data:** `date` em `AAAA-MM` (mês e ano, decisão do PO e transversal às telas); a lista ordena
+  por `date` e o card mostra só o ano.
+- A captura do card usa `alt=""`, então o item da lista não precisa de `alt`; o `alt` da captura na
+  galeria é da #5.
+- Erro de carga chega como falha de rede comum, sem mensagem do servidor na tela.
