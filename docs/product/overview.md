@@ -102,6 +102,16 @@ Os pontos que o handoff deixava em aberto estão decididos em [`decisions.md`](.
 
 Os itens à espera de material são o CV em PDF por idioma (D14) e as capturas e a foto (D26).
 
+## Decisões de produto
+
+Decisões de escopo e de público tomadas pelo PO. Os IDs `DPnn` não colidem com `Dnn` e `PIn` de [`decisions.md`](../design/decisions.md), que são de design.
+
+| ID   | Decisão                                                                                                                                                                                           | Fonte | Data       |
+| ---- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----- | ---------- |
+| DP01 | O professor/avaliador da Fatec é público da v1, com jornada própria                                                                                                                               | PO    | 11-10-2026 |
+| DP02 | v1 sem analytics; na V2+, analytics sem cookie (Vercel Web Analytics ou Plausible), escolhido numa issue ou ADR da V2 junto com a métrica de sucesso da V2+; a política de privacidade fica na #8 | PO    | 11-10-2026 |
+| DP03 | Área logada ou painel, blog, CMS e comentários ou chat ficam fora deste frontend na v1 e na V2+; a edição de conteúdo, quando existir, será outro app                                             | PO    | 11-10-2026 |
+
 ## Roadmap
 
 A v1 é a entrega da faculdade (Fatec), publicada no GitHub Pages de um repositório da organização da Fatec, com o conteúdo real servido localmente e sem backend. As versões V2+ são de uso pessoal. A ordem das entregas e o critério de cada versão estão em [`roadmap.md`](roadmap.md).
