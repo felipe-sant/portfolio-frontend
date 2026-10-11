@@ -240,7 +240,7 @@ Já resolvido nos protótipos do handoff, a manter na implementação:
 - Botão só de ícone tem `aria-label`; alternador de tema tem `aria-pressed`; botão carregando tem
   `aria-busy`; skeleton tem `aria-hidden="true"`.
 - Modal tem `role="dialog"` e `aria-modal="true"` e fecha por Esc.
-- Abas usam `role="tablist"`/`role="tab"` com `aria-selected`.
+- Abas usam `role="tablist"`/`role="tab"` com `aria-selected`. Os documentos do projeto são exceção: têm endereço próprio e viram navegação com links (D33, ver `docs/product/accessibility.md`).
 - Miniatura de galeria tem `aria-label` com a posição ("Imagem 2 de 5") e `aria-current`.
 - Alvo de toque de `--hit-min` em contexto mobile.
 
