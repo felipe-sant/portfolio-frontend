@@ -26,6 +26,19 @@ O usuário deste repositório é ao mesmo tempo **cliente** (dono do portfólio)
 
 O PO aprova a spec (Status `aprovada`) e o escopo de cada versão; mudar o escopo de uma versão muda [`roadmap.md`](roadmap.md) no mesmo PR. O professor avalia a v1, mas não decide escopo.
 
+## Objetivos e sinais de sucesso
+
+| Fase | Objetivo                                         | Sinal de sucesso                                                                                            | Como é verificado                                                         |
+| ---- | ------------------------------------------------ | ----------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| v1   | Entregar a v1 aprovada pela Fatec até 23/11/2026 | Todos os itens da definição da v1 em [`roadmap.md`](roadmap.md#v1) marcados; URL e vídeo entregues no prazo | Checklist da v1, CI (build, lint, testes com 80% ou mais) e verificação K |
+| v1   | Mostrar trabalho com profundidade                | Todo projeto publicado tem estudo de caso (documentação, ficha técnica e galeria ou placeholder, D26)       | Revisão do conteúdo de #13 pelo PO                                        |
+| V2+  | Converter visita em contato                      | Não definido agora: a métrica é definida junto com a ferramenta de analytics na V2 (`DP02`)                 | Pela ferramenta de analytics escolhida na V2                              |
+
+**Medição (`DP02`):**
+
+- **v1 sem analytics.** O público que importa na v1 é um avaliador, o site roda no repositório da organização da Fatec e o projeto evita requisição a terceiros (fontes self-hospedadas, D09, e privacidade da #8). Cliques em "Baixar CV", "Copiar" e nos links de rede não são medidos na v1.
+- **V2+: analytics sem cookie.** Vercel Web Analytics ou Plausible, escolhido numa issue ou ADR da V2, junto com a métrica de sucesso da V2+. A política de privacidade e a regra de terceiros são da #8.
+
 ## Escopo
 
 Cinco rotas, cada uma com o propósito definido no handoff:
