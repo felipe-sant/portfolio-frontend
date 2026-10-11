@@ -60,9 +60,8 @@ infinitivo + objeto ("Ver projetos", "Enviar mensagem") e o separador de metadad
   acessibilidade e responsividade seguem o handoff, com as convenções do repositório prevalecendo
   onde divergem.
 
-**Pendências do handoff:** menu mobile (painel aberto não desenhado), logo (hoje placeholder),
-imagens reais dos projetos e foto de perfil, rodapé (decisão sobre o fundo), backend do formulário
-de contato e renderizador de markdown da documentação do projeto.
+**Decisões de design:** as pendências e contradições do handoff estão decididas em
+`docs/design/decisions.md`, com IDs (`D01`–`D25`, `PI1`–`PI5`) que specs e issues citam.
 
 **Onde ler mais:** `docs/product/overview.md` (visão, escopo, requisitos e pendências),
 `docs/product/glossary.md` (glossário), `docs/design/design-system.md` (design system),
