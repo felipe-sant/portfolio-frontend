@@ -1,6 +1,6 @@
 # Roadmap
 
-Este documento diz em que ordem as entregas do portfólio acontecem e o que define cada versão. Não é cronograma nem quadro de status: datas e andamento vivem nas issues do GitHub e no `**Status:**` de cada spec. A única data fixa é o prazo da v1: **23/11/2026**. O produto tem duas fases: a **v1** é a entrega da faculdade (Fatec) e as versões **V2+** são de uso pessoal. As issues que ainda não existem aparecem por letra e descrição (A a R) e serão criadas depois que a documentação (#1 a #11) terminar; ao criar uma delas, a letra vira o número neste documento. Mudar a ordem dos marcos ou o escopo de uma versão é decisão do PO e muda este documento no mesmo PR. Os requisitos R1 a R3 estão em [`overview.md`](overview.md) e as decisões de design (`Dnn`, `PIn`) em [`decisions.md`](../design/decisions.md).
+Este documento diz em que ordem as entregas do portfólio acontecem e o que define cada versão. Não é cronograma nem quadro de status: datas e andamento vivem nas issues do GitHub e no `**Status:**` de cada spec. A única data fixa é o prazo da v1: **23/11/2026**. O produto tem duas fases: a **v1** é a entrega da faculdade (Fatec) e as versões **V2+** são de uso pessoal. As issues que ainda não existem aparecem por letra e descrição (A a R, T e Y) e serão criadas depois que a documentação (#1 a #11) terminar; ao criar uma delas, a letra vira o número neste documento. Mudar a ordem dos marcos ou o escopo de uma versão é decisão do PO e muda este documento no mesmo PR. Os requisitos R1 a R3 estão em [`overview.md`](overview.md) e as decisões de design (`Dnn`, `PIn`) em [`decisions.md`](../design/decisions.md).
 
 ## Versões
 
@@ -36,25 +36,25 @@ A ordem sugerida pelo handoff, citada na #11: (1) tokens e tema com `data-theme`
 
 ## Marcos
 
-| Marco                     | Entrega                                                                                                                                                                                                                          | Depende de                                                       | Issues                                                     | Bloqueio                                   |
-| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- | ---------------------------------------------------------- | ------------------------------------------ |
-| M0 Requisitos e decisões  | Roadmap; visão; requisitos não funcionais e de acessibilidade; layout e cinco telas; modelo de dados e contrato. Ao fim, criação das issues A a R                                                                                | Nada                                                             | #11, #1, #8, #9, #2, #3, #4, #5, #6, #7, #10 (nesta ordem) | Nenhum                                     |
-| M1 Fundação visual        | A: tokens do protótipo, tema por `data-theme`, foco visível. B: componentes base e ícones                                                                                                                                        | #2, #8, #9                                                       | A, B (a criar)                                             | Nenhum                                     |
-| M2 Conteúdo real          | JSONs com o conteúdo real do PO (projetos, trajetória, perfil, stack, certificados, canais) em `pt-BR`, traduzido para `en` e `es` no projeto, servido pela camada local no formato do contrato                                  | #10 e o conteúdo entregue pelo PO                                | #13                                                        | Material do PO (conteúdo)                  |
-| M3 Layout compartilhado   | C: cabeçalho com logo, navegação, idioma e tema; menu mobile; rodapé e variante de Contato; 404 e erro; metadados                                                                                                                | #2, A, B                                                         | C (a criar)                                                | Nenhum (D01 e D02 decididos)               |
-| M4 Publicação Fatec       | O: build com `base` `/ra2581392423047/`, `basename` no router, `404.html`, `.nojekyll` e workflow que faz commit do `dist/` em `main:/docs` do repositório da v1                                                                 | C; token do PO nos Secrets deste repositório                     | O (a criar)                                                | Credencial (token aceito pela organização) |
-| M5 Telas                  | D Início → E Projetos → F Projeto → G Informações → H Contato, com estados, dois temas e três idiomas                                                                                                                            | Cada tela: o próprio documento (#3 a #7), #13, C e O; F também E | D, E, F, G, H (a criar)                                    | Nenhum para implementar                    |
-| M6 Preparação da v1       | Q: versionamento por Changesets, tag e Release. I: CV em PDF nos três idiomas. L: capturas reais e foto (D26). J: poda de pesos de fonte. K: verificação de acessibilidade, responsividade e performance no build do Pages       | M5; I e L também dependem de material do PO                      | Q, I, J, K, L (a criar)                                    | Material do PO (PDFs e imagens)            |
-| M7 Entrega da v1          | PR com changeset `major`, PR de versão (`1.0.0`), promoção `staging` → `main`, tag `v1.0.0` e Release criados pela Action, publicação no GitHub Pages do repositório da v1 e URL entregue ao professor; R: vídeo de demonstração | M6, O e Q                                                        | R (a criar)                                                | Herda os de M6                             |
-| Trilha pessoal (paralela) | Deploy na Vercel: `staging` em testes, `main` em produção pessoal                                                                                                                                                                | Nada além do PO configurar a conta                               | #15                                                        | Nenhum; não é requisito da v1              |
-| V2+ Uso pessoal           | Backend; troca da fonte local pela API; envio real do formulário com proteção contra spam e sem flag; domínio próprio; migração para AWS; destino só pessoal a partir de `v2.0.0`                                                | Backend e banco                                                  | M, N, P (a criar); domínio sem issue                       | Backend                                    |
+| Marco                     | Entrega                                                                                                                                                                                                                                                  | Depende de                                                       | Issues                                                     | Bloqueio                                   |
+| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- | ---------------------------------------------------------- | ------------------------------------------ |
+| M0 Requisitos e decisões  | Roadmap; visão; requisitos não funcionais e de acessibilidade; layout e cinco telas; modelo de dados e contrato. Ao fim, criação das issues A a R, T e Y                                                                                                 | Nada                                                             | #11, #1, #8, #9, #2, #3, #4, #5, #6, #7, #10 (nesta ordem) | Nenhum                                     |
+| M1 Fundação visual        | A: tokens do protótipo, tema por `data-theme`, foco visível. T: verificação automática de acessibilidade com `axe-core` nos testes. B: componentes base e ícones                                                                                         | #2, #8, #9                                                       | A, B, T (a criar)                                          | Nenhum                                     |
+| M2 Conteúdo real          | JSONs com o conteúdo real do PO (projetos, trajetória, perfil, stack, certificados, canais) em `pt-BR`, traduzido para `en` e `es` no projeto, servido pela camada local no formato do contrato                                                          | #10 e o conteúdo entregue pelo PO                                | #13                                                        | Material do PO (conteúdo)                  |
+| M3 Layout compartilhado   | C: cabeçalho com logo, navegação, idioma e tema; menu mobile; rodapé e variante de Contato; 404 e erro; metadados                                                                                                                                        | #2, A, B                                                         | C (a criar)                                                | Nenhum (D01 e D02 decididos)               |
+| M4 Publicação Fatec       | O: build com `base` `/ra2581392423047/`, `basename` no router, `404.html`, `.nojekyll` e workflow que faz commit do `dist/` em `main:/docs` do repositório da v1. Y: teste de acessibilidade ponta a ponta com Playwright e axe no CI, contra esse build | C; token do PO nos Secrets deste repositório                     | O, Y (a criar)                                             | Credencial (token aceito pela organização) |
+| M5 Telas                  | D Início → E Projetos → F Projeto → G Informações → H Contato, com estados, dois temas e três idiomas                                                                                                                                                    | Cada tela: o próprio documento (#3 a #7), #13, C e O; F também E | D, E, F, G, H (a criar)                                    | Nenhum para implementar                    |
+| M6 Preparação da v1       | Q: versionamento por Changesets, tag e Release. I: CV em PDF nos três idiomas. L: capturas reais e foto (D26). J: poda de pesos de fonte. K: verificação de acessibilidade, responsividade e performance no build do Pages                               | M5; I e L também dependem de material do PO                      | Q, I, J, K, L (a criar)                                    | Material do PO (PDFs e imagens)            |
+| M7 Entrega da v1          | PR com changeset `major`, PR de versão (`1.0.0`), promoção `staging` → `main`, tag `v1.0.0` e Release criados pela Action, publicação no GitHub Pages do repositório da v1 e URL entregue ao professor; R: vídeo de demonstração                         | M6, O e Q                                                        | R (a criar)                                                | Herda os de M6                             |
+| Trilha pessoal (paralela) | Deploy na Vercel: `staging` em testes, `main` em produção pessoal                                                                                                                                                                                        | Nada além do PO configurar a conta                               | #15                                                        | Nenhum; não é requisito da v1              |
+| V2+ Uso pessoal           | Backend; troca da fonte local pela API; envio real do formulário com proteção contra spam e sem flag; domínio próprio; migração para AWS; destino só pessoal a partir de `v2.0.0`                                                                        | Backend e banco                                                  | M, N, P (a criar); domínio sem issue                       | Backend                                    |
 
 ```mermaid
 flowchart LR
-    M0["M0 Requisitos e decisões<br/>#1 a #11"] --> M1["M1 Fundação visual<br/>A, B"]
+    M0["M0 Requisitos e decisões<br/>#1 a #11"] --> M1["M1 Fundação visual<br/>A, B, T"]
     M0 --> M2["M2 Conteúdo real<br/>#13"]
     M1 --> M3["M3 Layout compartilhado<br/>C"]
-    M3 --> M4["M4 Publicação Fatec<br/>O"]
+    M3 --> M4["M4 Publicação Fatec<br/>O, Y"]
     M2 --> M5["M5 Telas<br/>D, E, F, G, H"]
     M3 --> M5
     M4 --> M5
@@ -67,11 +67,11 @@ flowchart LR
 
 ### M0 — Requisitos e decisões
 
-Ordem interna e motivo: #11 primeiro, porque ordena o resto; #1 (escopo, que passa a citar a entrega da Fatec); #8 e #9 antes das telas, porque cada documento de tela cita a checklist de acessibilidade e os requisitos transversais, inclusive as restrições do GitHub Pages (ver M4); #2 antes de #3 a #7; #10 por último, porque precisa que toda informação das cinco telas tenha entidade. Ao fechar #1 a #11, as issues A a R são criadas. M1 anda quando #2, #8 e #9 fecham; M2, quando #10 fecha e o PO entrega o conteúdo.
+Ordem interna e motivo: #11 primeiro, porque ordena o resto; #1 (escopo, que passa a citar a entrega da Fatec); #8 e #9 antes das telas, porque cada documento de tela cita a checklist de acessibilidade e os requisitos transversais, inclusive as restrições do GitHub Pages (ver M4); #2 antes de #3 a #7; #10 por último, porque precisa que toda informação das cinco telas tenha entidade. Ao fechar #1 a #11, as issues A a R, T e Y são criadas. M1 anda quando #2, #8 e #9 fecham; M2, quando #10 fecha e o PO entrega o conteúdo.
 
 ### M1 — Fundação visual
 
-A aplica D04 (tokens de cromo), D22, D23 e as linhas "color-scheme", "Mecanismo de tema" e "Foco global" das divergências de tokens de [`decisions.md`](../design/decisions.md). B aplica D07, D11 e D15, com os ícones de marca (GitHub, LinkedIn) junto.
+A aplica D04 (tokens de cromo), D22, D23 com a cor e a aparência de D27 e as linhas "color-scheme", "Mecanismo de tema" e "Foco global" das divergências de tokens de [`decisions.md`](../design/decisions.md). B aplica D07, D11, D15 e D29, com os ícones de marca (GitHub, LinkedIn) junto. T vem antes de B e liga as regras do `axe-core` nos testes do `jsdom`, para todo componente de B já nascer verificado; as regras e a checklist de acessibilidade estão em [`accessibility.md`](accessibility.md).
 
 ### M2 — Conteúdo real
 
@@ -79,7 +79,7 @@ O conteúdo é o real do PO: o "mock" de R1 quer dizer só que a fonte é local,
 
 ### M3 — Layout compartilhado
 
-Aplica D01, D02 (inclui o favicon), D04, D12, D21, D22, D23, PI1 e PI4. O link "Currículo em PDF" aponta para o arquivo de D14 mesmo antes de ele existir; o arquivo é I.
+Aplica D01, D02 (inclui o favicon), D04, D12, D21, D22, D23 (com D27), PI1 e PI4. O link "Currículo em PDF" aponta para o arquivo de D14 mesmo antes de ele existir; o arquivo é I.
 
 ### M4 — Publicação Fatec
 
@@ -103,13 +103,13 @@ Ordem Início → Projetos → Projeto → Informações → Contato: Início ex
 
 | Tela        | Issue | Decisões                                                         |
 | ----------- | ----- | ---------------------------------------------------------------- |
-| Início      | D     | D26, D11, D13, D14, D24                                          |
+| Início      | D     | D26, D11, D13, D14, D24, D28                                     |
 | Projetos    | E     | D16, D17                                                         |
 | Projeto     | F     | D06 (markdown sob demanda, conforme #8), D10, D18, D19, PI1, PI2 |
 | Informações | G     | D13, D14, D20, PI1                                               |
-| Contato     | H     | D05, D07, D21, D25                                               |
+| Contato     | H     | D05, D07, D21, D25, D29                                          |
 
-Cada tela é conferida no build com o `base` do Pages.
+Cada tela é conferida no build com o `base` do Pages e acrescenta as suas rotas e os seus roteiros de teclado à suíte ponta a ponta da Y (lightbox e abas em F, modal em G, formulário em H).
 
 ### M6 — Preparação da v1
 
@@ -117,7 +117,7 @@ Cada tela é conferida no build com o `base` do Pages.
 - **I** coloca `cv-pt-BR.pdf`, `cv-en.pdf` e `cv-es.pdf` em `public/cv/` (D14), obrigatório na v1.
 - **L** aplica D26: substitui os placeholders pelas capturas e pela foto; o projeto sem captura mantém o placeholder neutro.
 - **J** faz a poda de D08, depois da última tela e antes da `main`.
-- **K** roda, no build publicado do Pages, a checklist de #9 em cada tela, a varredura em 360, 390, 768 e 1280px nos dois temas e nos estados especiais (PI3), o contraste de PI2 e as metas de #8, e abre uma issue de correção para cada falha.
+- **K** roda, no build publicado do Pages, o método de verificação e a checklist de [`accessibility.md`](accessibility.md) (#9) em cada tela, a varredura em 360, 390, 768 e 1280px nos dois temas e nos estados especiais (PI3), o contraste de PI2 e as metas de #8, e abre uma issue de correção para cada falha.
 
 ### M7 — Entrega da v1
 
@@ -145,6 +145,7 @@ M (fonte local → API), N (formulário real, proteção contra spam, remoção 
 | Imagens reais e foto     | M6                            | L     | D26 (substitui D03) |
 | CV em PDF                | M6                            | I     | D14                 |
 | Poda de pesos de fonte   | M6                            | J     | D08                 |
+| Pausa da faixa de stack  | M5                            | D     | D28                 |
 | Publicação da v1         | M4 (ensaio) e M7 (publicação) | O     | —                   |
 | Versionamento e release  | M6                            | Q     | —                   |
 | Hospedagem pessoal       | Trilha pessoal                | #15   | —                   |
@@ -191,22 +192,24 @@ Fica fora da v1: backend, envio real do formulário, deploy na Vercel, domínio 
 
 Serão criadas depois que #1 a #11 terminarem; a letra vira número neste documento quando isso acontecer.
 
-| Letra | Descrição                                                                           | Marco            | Depende de                                      |
-| ----- | ----------------------------------------------------------------------------------- | ---------------- | ----------------------------------------------- |
-| A     | Tokens do protótipo, foco visível e tema claro e escuro por `data-theme`            | M1               | #2, #8, #9                                      |
-| B     | Componentes base (Button, Chip, TextField, SearchInput, Skeleton, Spinner) e ícones | M1               | A                                               |
-| C     | Layout compartilhado com cabeçalho, menu mobile, seletor de idioma, rodapé e erros  | M3               | #2, A, B                                        |
-| D     | Tela Início                                                                         | M5               | #3, #13, C, O                                   |
-| E     | Listagem de Projetos com busca, filtros e carregamento incremental                  | M5               | #4, #13, C, O                                   |
-| F     | Detalhe de Projeto com galeria e documentação em markdown                           | M5               | #5, #13, C, O, E                                |
-| G     | Tela Informações com a trajetória                                                   | M5               | #6, #13, C, O                                   |
-| H     | Tela Contato com o formulário atrás de flag                                         | M5               | #7, #13, C, O                                   |
-| I     | CV em PDF nos três idiomas                                                          | M6               | PDFs do PO; C, D, G, H                          |
-| J     | Poda dos pesos de fonte sem uso                                                     | M6               | D, E, F, G, H                                   |
-| K     | Verificação de acessibilidade, responsividade e performance da v1                   | M6               | D a J, L, O                                     |
-| L     | Capturas dos projetos e foto no lugar dos placeholders                              | M6               | Imagens do PO; D26; #13; D, E, F, G             |
-| M     | Troca da fonte local de dados pela API do backend                                   | V2+              | Backend publicado com o contrato de #10         |
-| N     | Formulário de contato ligado ao backend, sem a flag                                 | V2+              | Endpoint de contato com proteção contra spam; H |
-| O     | Publicação da v1 no GitHub Pages do repositório da Fatec                            | M4 (ensaio) e M7 | C; token do PO aceito pela organização          |
-| P     | Migração da hospedagem pessoal da Vercel para AWS junto do backend                  | V2+              | Backend e banco na mesma máquina; ADR da #15    |
-| Q     | SemVer automático com Changesets, tag e GitHub Release                              | M6               | O                                               |
+| Letra | Descrição                                                                                              | Marco            | Depende de                                      |
+| ----- | ------------------------------------------------------------------------------------------------------ | ---------------- | ----------------------------------------------- |
+| A     | Tokens do protótipo, foco visível e tema claro e escuro por `data-theme`                               | M1               | #2, #8, #9                                      |
+| B     | Componentes base (Button, Chip, TextField, SearchInput, Skeleton, Spinner) e ícones                    | M1               | A, T                                            |
+| C     | Layout compartilhado com cabeçalho, menu mobile, seletor de idioma, rodapé e erros                     | M3               | #2, A, B                                        |
+| D     | Tela Início                                                                                            | M5               | #3, #13, C, O, Y                                |
+| E     | Listagem de Projetos com busca, filtros e carregamento incremental                                     | M5               | #4, #13, C, O, Y                                |
+| F     | Detalhe de Projeto com galeria e documentação em markdown                                              | M5               | #5, #13, C, O, E, Y                             |
+| G     | Tela Informações com a trajetória                                                                      | M5               | #6, #13, C, O, Y                                |
+| H     | Tela Contato com o formulário atrás de flag                                                            | M5               | #7, #13, C, O, Y                                |
+| I     | CV em PDF nos três idiomas                                                                             | M6               | PDFs do PO; C, D, G, H                          |
+| J     | Poda dos pesos de fonte sem uso                                                                        | M6               | D, E, F, G, H                                   |
+| K     | Verificação de acessibilidade, responsividade e performance da v1                                      | M6               | D a J, L, O                                     |
+| L     | Capturas dos projetos e foto no lugar dos placeholders                                                 | M6               | Imagens do PO; D26; #13; D, E, F, G             |
+| M     | Troca da fonte local de dados pela API do backend                                                      | V2+              | Backend publicado com o contrato de #10         |
+| N     | Formulário de contato ligado ao backend, sem a flag                                                    | V2+              | Endpoint de contato com proteção contra spam; H |
+| O     | Publicação da v1 no GitHub Pages do repositório da Fatec                                               | M4 (ensaio) e M7 | C; token do PO aceito pela organização          |
+| P     | Migração da hospedagem pessoal da Vercel para AWS junto do backend                                     | V2+              | Backend e banco na mesma máquina; ADR da #15    |
+| Q     | SemVer automático com Changesets, tag e GitHub Release                                                 | M6               | O                                               |
+| T     | Verificação automática de acessibilidade com `axe-core` nos testes do `jsdom`                          | M1 (antes de B)  | #9                                              |
+| Y     | Teste de acessibilidade ponta a ponta com Playwright e axe no CI, contra o build com o `base` do Pages | M4               | C, O, T                                         |
