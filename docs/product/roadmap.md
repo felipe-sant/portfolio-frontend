@@ -112,7 +112,7 @@ Ordem Início → Projetos → Projeto → Informações → Contato: Início ex
 | Informações | G     | D13, D14, D20, PI1                                                    |
 | Contato     | H     | D05, D07, D21, D25, D29                                               |
 
-Cada tela é conferida no build com o `base` do Pages, entra na pré-renderização de S e acrescenta as suas rotas e os seus roteiros de teclado à suíte ponta a ponta da Y (lightbox e abas em F, modal em G, formulário em H).
+Cada tela é conferida no build com o `base` do Pages, entra na pré-renderização de S e acrescenta as suas rotas e os seus roteiros de teclado à suíte ponta a ponta da Y (lightbox e seletor de documentos em F, modal em G, formulário em H).
 
 ### M6 — Preparação da v1
 
