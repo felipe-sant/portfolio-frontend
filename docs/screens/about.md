@@ -417,7 +417,7 @@ verificação de lá.
 - [ ] `NF-DA-03` — JSONs em `public/`, com caminho montado por `import.meta.env.BASE_URL` [Review; O; K]
 - [ ] `NF-DA-04` — Tela, pré-renderização, JSON-LD e CV leem os mesmos JSONs, sem texto duplicado à mão [Review]
 - [ ] `NF-DA-05` — A tela carrega só o conteúdo do idioma ativo [#10; K]
-- [ ] `NF-DE-14` — Foto 1:1 com no máximo 80 KB, servida por `srcset`/`sizes` [DevTools no build publicado]
+- [ ] `NF-DE-14` — Foto 1:1 com no máximo 80 KB, servida por `srcset`/`sizes` [DevTools em 390px]
 - [ ] `NF-DE-16` — Foto e placeholder com `width` e `height` declarados, mantendo a proporção [Review; K]
 - [ ] `NF-DE-17` — Foto (LCP) com `fetchpriority="high"` e sem `lazy` [Review; K]
 - [ ] `NF-RE-03` — Sem rolagem horizontal em 360, 390, 768 e 1280px, inclusive com o modal aberto e nos estados especiais [K]
