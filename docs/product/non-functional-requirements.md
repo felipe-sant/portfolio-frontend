@@ -333,3 +333,51 @@ com setas (NF-IA-21, conforme a #9).
 
 Pontos comuns com este documento: HTML semântico (NF-IA-16), movimento reduzido (NF-MO), contraste
 nos dois temas (NF-TE-05), alvos de toque e larguras (NF-RE-03).
+
+## Decisões registradas
+
+| Decisão                                                                                                                                       | Fonte     | Data       |
+| --------------------------------------------------------------------------------------------------------------------------------------------- | --------- | ---------- |
+| Pré-renderização das rotas na v1 por script próprio (opção 1), com data-limite 08/11/2026 e plano B                                           | PO        | 11-10-2026 |
+| Idioma no caminho da URL já na v1: `pt-BR` sem prefixo, `/en/`, `/es/`; pré-renderização nos três; `?lng=` removido                           | PO        | 11-10-2026 |
+| Sem redirecionamento automático pelo idioma do navegador (Google Search Central, sites multilíngues); só a raiz redireciona por escolha salva | PO        | 11-10-2026 |
+| Seletor de idioma navega para a URL equivalente e salva a escolha                                                                             | `D31`     | 11-10-2026 |
+| Caminhos em inglês, tabela única nos três idiomas: `/projects`, `/projects/:id` e documentos, `/about`, `/contact`; id do projeto UUID v7     | `D32`     | 11-10-2026 |
+| Documentos do projeto com endereço próprio e padrão de conteúdo                                                                               | `D33`     | 11-10-2026 |
+| Open Graph e `twitter:card` em toda página: sim                                                                                               | PO (spec) | 11-10-2026 |
+| `hreflang` e canônica por idioma na v1, `x-default` em `en`                                                                                   | PO        | 11-10-2026 |
+| Crawlers, inclusive de IA e de treinamento: permitidos em produção; staging com `noindex` (#15)                                               | PO        | 11-10-2026 |
+| `llms.txt` e `llms-full*.txt`: sim, gerados dos JSONs                                                                                         | PO (spec) | 11-10-2026 |
+| CV estruturado em JSON; PDF, Markdown e HTML gerados dele no build (PDF por Chromium headless)                                                | `D30`     | 11-10-2026 |
+| Analytics: não na v1; sem cookie na V2+                                                                                                       | `DP02`    | 11-10-2026 |
+| Política de privacidade: não na v1 (não há coleta)                                                                                            | PO (spec) | 11-10-2026 |
+
+"PO (spec)" é decisão tomada com a aprovação da spec da #8. O mecanismo do idioma no caminho é ADR
+de W; o seletor é `D31`; os caminhos em inglês são `D32`; os documentos do projeto são `D33`.
+
+## Roteiro de verificação
+
+Comandos contra a URL publicada
+(`SITE=https://fatec-jacarei-dsm-portfolio.github.io/ra2581392423047`), que K roda e registra:
+
+```bash
+for path in / /projects /projects/<id> /projects/<id>/architecture /about /contact \
+    /en/ /en/projects /en/projects/<id> /es/ /es/about /nao-existe /en/nao-existe; do
+    curl -s -o /dev/null -w "%{http_code} $path\n" -L "$SITE$path"
+done
+curl -sL "$SITE/projects/<id>" | grep -o "<h1[^>]*>[^<]*"
+curl -sL "$SITE/" | grep -o '<script type="application/ld+json">'
+curl -sL "$SITE/en/projects" | grep -o '<html lang="[^"]*"'
+curl -sL "$SITE/es/projects" | grep -o '<link rel="\(canonical\|alternate\)"[^>]*>'
+curl -s "$SITE/llms.txt" | head -20
+curl -s "$SITE/sitemap.xml" | grep -c "<loc>"
+curl -s -A "GPTBot" -o /dev/null -w "%{http_code}\n" "$SITE/"
+```
+
+Ferramentas: Lighthouse mobile (Performance, SEO, Best Practices) em cada rota; Schema Markup
+Validator e Teste de pesquisa aprimorada; LinkedIn Post Inspector; DevTools Network (domínios,
+pesos) e Application (cookies, `localStorage`); checagem qualitativa de NF-IA-18. O mesmo roteiro
+roda antes, no artefato do ensaio de O, servido com o mesmo `base`.
+
+**V2+ e o Pages da v1:** quando o site pessoal tiver domínio próprio, decidir se a v1 no Pages
+passa a apontar a canônica para ele (correção `v1.x.y`).
