@@ -139,3 +139,134 @@ Vale com a flag ligada.
 | `RF-CONTACT-25` | Canais vêm do conteúdo pelos endpoints do RTK Query (NF-DA-02), nunca por import de JSON; o carregamento e o erro seguem [Estados](#estados); na pré-renderização (S) o conteúdo já está no HTML e no `preloadedState` | NF-DA-02, NF-IA-01, NF-IA-03              |
 | `RF-CONTACT-26` | Metadados e JSON-LD conforme [Metadados e dados estruturados](#metadados-e-dados-estruturados)                                                                                                                         | NF-IA-08, NF-IA-10, NF-IA-11, `layout.md` |
 | `RF-CONTACT-27` | Na navegação interna para `/contact` o foco vai para o `h1` e o `<title>` muda (RF-LAY-32); o item "Contato" do cabeçalho tem `aria-current="page"` (RF-LAY-04)                                                        | `layout.md`                               |
+
+## Navegação
+
+Todo destino interno leva o prefixo do idioma atual (NF-IN-11).
+
+| De onde               | Ação                                       | Para onde                                                   |
+| --------------------- | ------------------------------------------ | ----------------------------------------------------------- |
+| Cabeçalho, menu       | "Contato"                                  | `/contact`                                                  |
+| Rodapé padrão         | "Entrar em contato" (RF-LAY-22)            | `/contact`                                                  |
+| Informações (#6)      | "Entrar em contato" (mesma chave)          | `/contact`                                                  |
+| Contato               | "Enviar e-mail"                            | `mailto:` com o e-mail do conteúdo (cliente de e-mail, D36) |
+| Contato               | "Copiar e-mail"                            | Fica na tela                                                |
+| Contato               | "Baixar CV"                                | Download do PDF do idioma ativo, sem sair da tela (D36)     |
+| Contato (flag ligada) | "Enviar mensagem", "Enviar outra mensagem" | Fica na tela                                                |
+| Rodapé de navegação   | Início, Projetos, Informações              | `/`, `/projects`, `/about`                                  |
+| Rodapé de navegação   | GitHub, LinkedIn, "Currículo em PDF"       | Perfis em nova aba; download do PDF (RF-LAY-26, RF-LAY-27)  |
+
+## Textos fixos e chaves
+
+Todo texto fixo vem de chave (`react-i18next`). O valor `pt-BR` abaixo é a referência; `en` e `es`
+são escritos na implementação (H), com as mesmas chaves (R2), salvo as mensagens de validação, que
+já têm os três valores em [Validações](#validações). O namespace novo é `contact`, com o nome do
+CSS Module da página, registrado em `src/locales/*/contact.json`, em `src/i18n/resources.ts` e no
+`ns` de `src/i18n/i18n.ts` (na H); a página carrega `["contact", "common"]`.
+
+| Chave                             | Valor em `pt-BR`                                                                       | Onde                             |
+| --------------------------------- | -------------------------------------------------------------------------------------- | -------------------------------- |
+| `meta.title`                      | Contato · Luiz Felipe dos Santos                                                       | `<title>` (valor de `layout.md`) |
+| `meta.description`                | Como falar com Luiz Felipe dos Santos: e-mail e currículo.                             | Descrição (valor de `layout.md`) |
+| `heading`                         | Contato                                                                                | `h1`                             |
+| `lede.direct`                     | Projeto, freelance ou vaga: escreva para o meu e-mail contando o contexto e o prazo.   | Abertura, flag desligada         |
+| `lede.form`                       | Conte o escopo, o prazo e o que já existe.                                             | Abertura, flag ligada            |
+| `channels.email.heading`          | E-mail direto                                                                          | Rótulo do bloco                  |
+| `channels.email.send`             | Enviar e-mail                                                                          | Link `mailto:`                   |
+| `channels.location.heading`       | Localização                                                                            | Rótulo do bloco                  |
+| `channels.response.heading`       | Resposta                                                                               | Rótulo do bloco                  |
+| `channels.loadError`              | Não foi possível carregar os canais de contato.                                        | Erro de carregamento             |
+| `channels.retry`                  | Tentar novamente                                                                       | Botão do erro de carregamento    |
+| `form.label`                      | Formulário de contato                                                                  | Nome da seção                    |
+| `form.requiredNote`               | Todos os campos são obrigatórios.                                                      | Antes do primeiro campo          |
+| `form.name.label`                 | Nome                                                                                   | Rótulo                           |
+| `form.name.required`              | Diga como devo te chamar.                                                              | Erro                             |
+| `form.email.label`                | E-mail                                                                                 | Rótulo                           |
+| `form.email.required`             | Preciso de um e-mail para responder.                                                   | Erro                             |
+| `form.email.invalid`              | Esse endereço não parece completo.                                                     | Erro                             |
+| `form.subject.legend`             | Assunto                                                                                | `legend`                         |
+| `form.subject.options.newProject` | Projeto novo                                                                           | Rádio                            |
+| `form.subject.options.freelance`  | Freelance                                                                              | Rádio                            |
+| `form.subject.options.job`        | Vaga                                                                                   | Rádio                            |
+| `form.subject.options.other`      | Outro                                                                                  | Rádio                            |
+| `form.message.label`              | Mensagem                                                                               | Rótulo                           |
+| `form.message.placeholder`        | Escopo, prazo e links do que já existe                                                 | Placeholder                      |
+| `form.message.tooShort`           | Escreva um pouco mais: 20 caracteres no mínimo.                                        | Erro                             |
+| `form.message.remaining`          | `{{count}}` restantes (`_one`: `{{count}}` restante)                                   | Contador                         |
+| `form.message.nearLimit`          | Restam `{{count}}` caracteres.                                                         | Anúncio ao cruzar 60             |
+| `form.message.limitReached`       | Você chegou ao limite de `{{max}}` caracteres.                                         | Anúncio ao chegar a 0            |
+| `form.errorSummary`               | Falta corrigir `{{count}}` campos. (`_one`: Falta corrigir 1 campo.)                   | Resumo                           |
+| `form.submit`                     | Enviar mensagem                                                                        | Botão                            |
+| `form.sending`                    | Enviando                                                                               | Botão durante o envio            |
+| `form.privacyNote`                | Sem newsletter e sem cadastro.                                                         | Nota ao lado do botão            |
+| `form.sendError`                  | Não consegui enviar sua mensagem. Tente de novo ou escreva para o e-mail desta página. | Banner de falha                  |
+| `form.sent.heading`               | Mensagem enviada                                                                       | Título da confirmação            |
+| `form.sent.description`           | Recebi sua mensagem e respondo pelo e-mail que você informou.                          | Texto da confirmação             |
+| `form.sent.again`                 | Enviar outra mensagem                                                                  | Botão da confirmação             |
+
+Chaves de outros namespaces, usadas e não criadas aqui:
+
+- `common:loading` ("Carregando...", existe): status de carregamento.
+- `common:footer.copyEmail.idle`, `common:footer.copyEmail.copied` e
+  `common:footer.copyEmail.failed` ("Copiar e-mail", "E-mail copiado", "Não foi possível copiar"):
+  botão de cópia, as chaves de `layout.md` como estão, sem renomear (RF-LAY-23).
+- `common:resume.download` ("Baixar CV") e `common:resume.downloadPdf` ("Baixar CV (PDF)", nome
+  acessível): chaves compartilhadas pelas cinco telas (decisão transversal do PO de 11-10-2026),
+  com esses nomes exatos; a tela que chegar primeiro cria, as outras reaproveitam.
+- `common:authorName` ("Luiz Felipe dos Santos", de `layout.md`): nome do autor no `<title>` e no
+  JSON-LD.
+
+### Vem do conteúdo, não de chave
+
+Campo definido pela #10, com valor da #13 nos três idiomas quando é texto, lido por endpoint
+(NF-DA-02):
+
+| Dado                                                                | Onde aparece                               |
+| ------------------------------------------------------------------- | ------------------------------------------ |
+| Disponibilidade (`availability.isAvailable` e `availability.label`) | Selo (RF-CONTACT-01)                       |
+| E-mail                                                              | "E-mail direto", `mailto:`, cópia, JSON-LD |
+| Localização (linha e detalhe)                                       | "Localização"                              |
+| Resposta (linha e detalhe)                                          | "Resposta"                                 |
+
+## O que a tela pede ao contrato
+
+O contrato é da #10; esta lista diz o que a tela precisa, sem escolher nome de campo nem de
+arquivo.
+
+### Conteúdo
+
+V1, JSON local; V2+, API. Por idioma onde é texto.
+
+| Dado                                | Tipo                             | Traduzido | Obrigatório | Também usado em               |
+| ----------------------------------- | -------------------------------- | --------- | ----------- | ----------------------------- |
+| E-mail de contato                   | Texto, e-mail                    | Não       | Sim         | Rodapé (RF-LAY-21, RF-LAY-24) |
+| `availability.isAvailable` (perfil) | Booleano; `false` esconde o selo | Não       | Sim         | Início, Informações, rodapé   |
+| `availability.label` (perfil)       | Frase livre do PO                | Sim       | Sim         | Início, Informações, rodapé   |
+| Localização: linha principal        | Texto                            | Sim       | Não         | Rodapé                        |
+| Localização: detalhe                | Texto                            | Sim       | Não         | —                             |
+| Tempo de resposta: linha principal  | Texto ("Em até 1 dia útil")      | Sim       | Não         | —                             |
+| Tempo de resposta: detalhe          | Texto ("Fuso GMT-3")             | Sim       | Não         | —                             |
+| URL do GitHub, URL do LinkedIn      | URL                              | Não       | Não         | Rodapés, JSON-LD (`sameAs`)   |
+
+O CV não é campo do contrato de contato: o caminho segue D14 (`cv/cv-<idioma>.pdf`) e o conteúdo,
+D30. A disponibilidade segue a decisão transversal do PO de 11-10-2026:
+`availability: { isAvailable, label }` no perfil, o mesmo campo para as cinco telas e o rodapé.
+
+### Formulário (backend futuro, N)
+
+`POST` no endpoint de contato, com corpo:
+
+| Campo      | Regra (a mesma de [Validações](#validações))                                    |
+| ---------- | ------------------------------------------------------------------------------- |
+| `name`     | Texto, 1 a 100 caracteres depois de `trim`                                      |
+| `email`    | Texto, até 254 caracteres, formato da regex de [Validações](#validações)        |
+| `subject`  | `newProject`, `freelance`, `job` ou `other`                                     |
+| `message`  | Texto, 20 a 600 caracteres (mínimo depois de `trim`)                            |
+| `language` | `pt-BR`, `en` ou `es`, o idioma da página, para a resposta sair no idioma certo |
+| `website`  | Campo-isca, sempre vazio; preenchido, o backend responde sucesso e descarta     |
+
+Respostas que a tela trata: sucesso (2xx, sem corpo necessário); erro de validação (400, com os
+campos inválidos); limite de taxa (429); falha (5xx ou rede). Na H, toda falha vira o banner de
+RF-CONTACT-21; a N decide se 400 e 429 ganham mensagem própria, com o texto vindo do backend no
+idioma do `Accept-Language` (convenção do repositório). O backend valida de novo e não confia na
+validação do cliente.
