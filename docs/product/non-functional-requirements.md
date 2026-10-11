@@ -80,3 +80,30 @@ Requisitos de implementação ligados às metas:
 | NF-DE-18 | Rotas carregadas sob demanda (`lazy`, já no código); markdown e realce só por `import()` dinâmico dentro da documentação do projeto; realce só com as linguagens usadas nos documentos (D06) | Review; NF-DE-09                                   | Review; F; K |
 | NF-DE-19 | Animação só por `transform` e `opacity`                                                                                                                                                      | Review                                             | Review       |
 | NF-DE-20 | Se a base (React, React Router, Redux Toolkit, i18next) sozinha passar de NF-DE-07, a meta é revista por decisão registrada neste documento, não ignorada                                    | Medida na primeira execução de S ou de K           | S; K         |
+
+## Responsividade (`NF-RE`)
+
+| ID       | Requisito                                                                                                                                                                                      | Como é verificado                      | Quando      |
+| -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------- | ----------- |
+| NF-RE-01 | Quebras de 640px e de 900–980px (varia por tela), como em [`design-system.md`](../design/design-system.md); entre elas tipografia e padding respondem de forma contínua por `clamp()`          | Varredura visual                       | K           |
+| NF-RE-02 | Nada de largura fixa em px fora das imagens: `width`, `min-width`, `max-width` e `flex-basis` em `rem`, `%`, `ch` ou funções (`min()`, `clamp()`); px só em `@media`, borda, contorno e sombra | Review dos CSS Modules                 | Review      |
+| NF-RE-03 | Sem rolagem horizontal da página em 360, 390, 768 e 1280px, nos dois temas e nos estados especiais (vazio, carregando, erro, modal aberto) (PI3); 320px e zoom de 200% são da #9               | Varredura no DevTools, modo responsivo | K           |
+| NF-RE-04 | Decisões de layout por largura: D01, D16, D17, D18, D19, D20, D21                                                                                                                              | Critérios de cada tela                 | C, D a H; K |
+
+## Temas (`NF-TE`)
+
+| ID       | Requisito                                                                                                                                                                                             | Como é verificado                                                | Quando  |
+| -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- | ------- |
+| NF-TE-01 | Claro e escuro por `data-theme` no `<html>`, com `color-scheme` correspondente (D22)                                                                                                                  | Teste do hook de tema (A)                                        | CI; A   |
+| NF-TE-02 | Primeira visita segue `prefers-color-scheme`; a escolha pelo alternador fica salva no navegador e prevalece nas visitas seguintes; sem escolha salva, o tema acompanha o sistema                      | Teste do hook de tema (A)                                        | CI; A   |
+| NF-TE-03 | Sem piscar o tema errado: o tema é aplicado antes da primeira pintura por um script inline no `<head>` (necessário porque o HTML pré-renderizado pinta antes do JS), e `theme-color` acompanha o tema | Recarregar cada rota no tema escuro salvo com o sistema em claro | A; S; K |
+| NF-TE-04 | Estado lido do navegador (tema, idioma salvo, `matchMedia`) não muda a primeira renderização do cliente em relação ao HTML pré-renderizado: é lido com `getServerSnapshot` ou depois de montar        | Console sem erro de hidratação no build publicado; testes de S   | S; K    |
+| NF-TE-05 | Contraste nos dois temas segue a #9 (inclui PI2)                                                                                                                                                      | Ver [`accessibility.md`](accessibility.md#contraste-e-cor)       | K       |
+
+## Movimento (`NF-MO`)
+
+| ID       | Requisito                                                                                                                                                                  | Como é verificado                                    | Quando        |
+| -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- | ------------- |
+| NF-MO-01 | `prefers-reduced-motion: reduce` desliga animação e transição: zera os tokens `--dur-*` e `scroll-behavior` (já em `global.css`), para o marquee e o `translateY` de hover | DevTools, "Emulate CSS prefers-reduced-motion"       | K             |
+| NF-MO-02 | Movimento disparado por JS (rolagem suave, marquee controlado por código) consulta a preferência por um hook reutilizável em `src/hooks/`                                  | Teste do hook com `matchMedia` stubado               | CI; quem usar |
+| NF-MO-03 | Conteúdo que se move sozinho por mais de 5 s tem como pausar (marquee da stack, D28), conforme a #9                                                                        | Ver [`accessibility.md`](accessibility.md#movimento) | D; K          |
