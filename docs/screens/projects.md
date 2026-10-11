@@ -397,6 +397,10 @@ Copiados de [`accessibility.md`](../product/accessibility.md#checklist-por-tela)
 - [ ] `A11Y-PS06` — Título do card é heading, e o link do card tem o nome do projeto (2.4.9) [teste]
 - [ ] `A11Y-PS07` — Linha de filtros alcançável por Tab no mobile [teclado]
 
+Em Projetos, o status "Carregando" de `A11Y-G13` é a própria contagem visível em `role="status"`
+(RF-PROJECTS-10): o teste confere o texto na região e o skeleton em `aria-hidden`, não a ocultação
+visual.
+
 ### Não funcionais
 
 De [`non-functional-requirements.md`](../product/non-functional-requirements.md), com o momento de
