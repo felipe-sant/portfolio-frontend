@@ -357,7 +357,7 @@ colunas da grade, restauração de rolagem ao voltar, hidratação) e `[mediçã
 - [ ] `RF-PROJECTS-15` — Título em `h2` com o único link, nome igual ao título, para `/projects/<id>` do idioma; card clicável inteiro por CSS; hover sem movimento com movimento reduzido [teste] [e2e] [navegador]
 - [ ] `RF-PROJECTS-16` — Estrela `aria-hidden` e "Em destaque" oculto dentro do `h2`, fora do link, nos três idiomas, sem chave no lugar de texto [teste]
 - [ ] `RF-PROJECTS-17` — 1 coluna em 360 e 390px, 2 em 768px, 3 em 1280px [e2e]
-- [ ] `RF-PROJECTS-18` — Imagens com 16:9 reservado e `srcset`/`sizes`; as três primeiras sem `lazy`, as demais com `loading="lazy"` e `decoding="async"` [teste] [review]
+- [ ] `RF-PROJECTS-18` — Imagens com 16:9 reservado e `srcset`/`sizes`; as três primeiras sem `lazy` e a do LCP com `fetchpriority="high"`, as demais com `loading="lazy"` e `decoding="async"` [teste] [review]
 - [ ] `RF-PROJECTS-19` — Carregando com nove skeletons `aria-hidden`, controles usáveis e aplicados quando a lista chega [teste]
 - [ ] `RF-PROJECTS-20` — Sem resultado com o texto com ou sem termo, termo como texto e "Limpar filtros", nos três idiomas, sem chave no lugar de texto [teste]
 - [ ] `RF-PROJECTS-21` — Vazio sem controles nem contagem, com "Nenhum projeto publicado", nos três idiomas, sem chave no lugar de texto [teste]
