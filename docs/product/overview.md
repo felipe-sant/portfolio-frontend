@@ -52,6 +52,10 @@ Os pontos que o handoff deixava em aberto estão decididos em [`decisions.md`](.
 
 Os itens à espera de material são o CV em PDF por idioma (D14) e as capturas e a foto (D26).
 
+## Roadmap
+
+A v1 é a entrega da faculdade (Fatec), publicada no GitHub Pages de um repositório da organização da Fatec, com o conteúdo real servido localmente e sem backend. As versões V2+ são de uso pessoal. A ordem das entregas e o critério de cada versão estão em [`roadmap.md`](roadmap.md).
+
 ## Fora de escopo
 
 - **Backend:** não faz parte deste repositório. Enquanto ele não existe, os dados são mock (R1).
