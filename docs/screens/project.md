@@ -305,3 +305,69 @@ resumo, data (`date`), papel, duração, time, itens da stack (iguais nos três 
 demonstração e repositório, imagens com `alt` e legenda, documentos em markdown, motivo de cada
 relacionado, e título, resumo e capa dos relacionados (da lista de E). Tipos, categoria, situação e
 categoria da stack vêm do conteúdo como valor fixo (enum) e viram texto por chave.
+
+## O que a tela pede ao contrato
+
+Lista para a #10, que decide os nomes de campo e o formato (e atualiza
+[`entity.md`](../diagrams/entity.md) e o [`glossário`](../product/glossary.md), que ainda falam em
+`slug`). "Por idioma" = um valor em cada um de `pt-BR`, `en` e `es`, e a tela só carrega o do idioma
+ativo (NF-DA-05).
+
+| Dado                      | Tipo e regra                                                                                                                                                                        | Por idioma    | Obrigatório                 | Usado em                                                      |
+| ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------- | --------------------------- | ------------------------------------------------------------- |
+| Id                        | UUID v7, gerado no cadastro e nunca regenerado (NF-DA-07)                                                                                                                           | Não           | Sim                         | Rota, links `project:`, relacionados, JSON-LD                 |
+| Título                    | Texto curto                                                                                                                                                                         | Sim           | Sim                         | `h1`, `<title>`, nomes acessíveis, cards, JSON-LD             |
+| Resumo                    | Uma ou duas frases                                                                                                                                                                  | Sim           | Sim                         | Parágrafo, descrição, Open Graph, cards, JSON-LD              |
+| Destaque                  | Booleano                                                                                                                                                                            | Não           | Sim                         | Badge                                                         |
+| Tipos (`types`)           | Lista de `web`, `mobile`, `api`, `desktop`, `cli`, `library`, `extension`, `bot`, `data`, `game`, `iot`, `infra`; pelo menos um, sem repetição, na ordem do conteúdo                | Não           | Sim                         | Rótulo, ficha, `genre` do JSON-LD                             |
+| Categoria                 | `academic`, `personal` ou `professional`                                                                                                                                            | Não           | Sim                         | Badge, ficha                                                  |
+| Data (`date`)             | `AAAA-MM` (mês e ano); a tela mostra só o ano e as listas ordenam por ela                                                                                                           | Não           | Sim                         | Rótulo, ficha, `dateCreated`                                  |
+| Papel, duração, time      | Texto curto                                                                                                                                                                         | Sim           | Sim                         | Ficha                                                         |
+| Situação (`status`)       | `inDevelopment`, `completed` ou `discontinued` (D49)                                                                                                                                | Não           | Sim                         | Ficha                                                         |
+| Stack                     | Lista de grupos com categoria (`frontend`, `backend`, `tooling`) e itens (nomes oficiais), na ordem de exibição                                                                     | Não           | Sim, ao menos um item       | Stack, `keywords`                                             |
+| Linguagens de programação | Lista de nomes (ou marcação dos itens da stack que são linguagem)                                                                                                                   | Não           | Sim, se houver repositório  | `programmingLanguage` do JSON-LD                              |
+| URL de demonstração       | `https:` absoluta                                                                                                                                                                   | Não           | Não                         | "Ver projeto ao vivo"                                         |
+| URL do repositório        | `https://github.com/...` público                                                                                                                                                    | Não           | Não                         | "Ver código no GitHub", `codeRepository`, tipo do JSON-LD     |
+| Imagens                   | Zero a cinco, ordenadas, 16:9 (D48); cada uma com caminho relativo ao `BASE_URL` das variantes grande (≤ 1600px, ≤ 200 KB) e pequena (≤ 80 KB), largura e altura                    | Não           | Não                         | Galeria, lightbox, capa de card, `og:image`, JSON-LD          |
+| `alt` de cada imagem      | Até cerca de 150 caracteres, sem "imagem de", sem repetir a legenda                                                                                                                 | Sim           | Sim, para cada imagem       | `alt`, nome do placeholder de falha, `og:image:alt`           |
+| Legenda de cada imagem    | Texto curto                                                                                                                                                                         | Sim           | Não                         | Galeria, lightbox                                             |
+| Documentos                | Conjunto entre `readme`, `architecture`, `setup`, `changelog`, igual nos três idiomas; um `.md` por documento e idioma, referenciado pelo JSON (D33)                                | Sim (arquivo) | `readme` sim, os outros não | Navegação, rotas, conteúdo, sitemap (U), pré-renderização (S) |
+| Relacionados              | Até três, ordenados, cada um com id existente (diferente do próprio) e motivo                                                                                                       | Motivo sim    | Não                         | Seção de relacionados                                         |
+| Data de atualização       | `AAAA-MM-DD`                                                                                                                                                                        | Não           | Não                         | `dateModified` e `lastmod` do sitemap (NF-IA-15)              |
+| Lista de projetos (de E)  | O item da lista de [`projects.md`](projects.md) ("Conteúdo e contrato de dados"): id, título, resumo, `date`, `types`, categoria, destaque, tecnologias, tecnologias do card e capa | Sim           | Sim                         | Cards dos relacionados                                        |
+| "Não existe" x "falhou"   | A leitura de um projeto ou documento distingue ausente (vira página não encontrada) de falha (vira erro)                                                                            | —             | Sim                         | RF-PROJECT-30, RF-PROJECT-34                                  |
+
+O que o teste de conteúdo da #13 verifica, para a tela não precisar de fallback: os três idiomas de
+todo texto, `alt` e documento; o mesmo conjunto de documentos nos três idiomas; `README.md` com as
+seções de RF-PROJECT-27; markdown GFM sem HTML, sem imagem, sem nota de rodapé, sem `#`, com
+linguagem em todo bloco de código, toda tabela com linha de cabeçalho e só links `https:`, `http:`,
+`mailto:`, `project:<id existente>` e `#âncora`; de zero a cinco imagens; relacionados existentes;
+ids UUID v7 únicos; `types` com pelo menos um código válido e sem repetição; `date` em `AAAA-MM`;
+`status` entre os três valores.
+
+## Metadados e dados estruturados
+
+- `<title>`: `project:meta.title` no `README.md` e `project:meta.documentTitle` nos outros, com
+  `{{document}}` igual ao rótulo do documento; `project:meta.fallbackTitle` em carregando e erro
+  ([`layout.md`](layout.md), A11Y-G01).
+- `<meta name="description">` e `og:description`: resumo do projeto, do conteúdo, igual nos quatro
+  documentos ([`layout.md`](layout.md)).
+- Canônica autorreferente por documento e idioma (`/en/projects/<id>/setup` aponta para si);
+  `hreflang` recíproco entre os três idiomas do mesmo documento, `x-default` no `en` (NF-IA-11).
+- Open Graph: `og:type` `article`; `og:url` igual à canônica; `og:image` a variante grande da
+  primeira captura (D26), absoluta, com `og:image:alt` do `alt` dela, ou a imagem do site quando
+  não há captura; `og:locale` e `og:locale:alternate`; `twitter:card` `summary_large_image`
+  (NF-IA-10).
+- JSON-LD (NF-IA-08, NF-IA-09, mecanismo de V), nos quatro documentos, a entidade do projeto:
+  `SoftwareSourceCode` quando há repositório público, `CreativeWork` quando não há, com `@id` igual
+  à canônica do `README.md` no idioma mais `#project`, `name`, `description`, `url` (canônica do
+  `README.md`), `inLanguage`, `author` (a `Person` do site, referenciada pelo `@id` único
+  `<URL canônica de />#person`, o mesmo em todas as telas), `dateCreated` (`date`, `AAAA-MM`),
+  `dateModified` (se houver), `image` (capturas absolutas), `genre` (rótulos dos tipos no idioma),
+  `keywords` (itens da stack) e, em `SoftwareSourceCode`, `codeRepository` e `programmingLanguage`.
+  Em `ARCHITECTURE.md`, `SETUP.md` e `CHANGELOG.md`, também um `TechArticle` com `headline` igual
+  ao título sem o nome do autor (`<documento> · <projeto>`), `url` (canônica do documento),
+  `inLanguage`, `author` (o mesmo `@id` da `Person`) e `about` apontando para o `@id` do projeto.
+  Gerado dos mesmos dados da tela, com `<` escapado.
+- Página não encontrada: a de [`layout.md`](layout.md) (`noindex`, sem canônica, sem Open Graph,
+  sem JSON-LD).
