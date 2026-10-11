@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="styles.css">
+<style>body{margin:0;background:#FBF9F5;font-family:var(--font-body)}</style>
+</helmet>
+<div style="padding:24px;font:400 13px/1.5 var(--font-mono);color:#202020">
+<div style="font:700 18px var(--font-heading);margin-bottom:8px">Verificação automática · {{ progresso }}</div>
+<pre style="white-space:pre-wrap;margin:0 0 16px">{{ relatorio }}</pre>
+<iframe ref="{{ quadro }}" title="teste" style="width:{{ largura }};height:800px;border:1px solid #C4BEB4;background:#fff"></iframe>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const PAGINAS = ["inicio", "projetos", "projeto", "informacoes", "contato", "404", "erro"];
+const LARGURAS = [360, 768, 1280];
+const TEMAS = ["light", "dark"];
+const espera = (ms) => new Promise((r) => setTimeout(r, ms));
+
+function lum(c) {
+  const m = c.match(/[\d.]+/g); if (!m) return 1;
+  const [r, g, b] = m.slice(0, 3).map((v) => { v = +v / 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); });
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+}
+function razao(a, b) { const x = lum(a), y = lum(b); return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05); }
+function resolver(doc, v) { const el = doc.createElement("span"); el.style.color = "var(" + v + ")"; doc.body.appendChild(el); const c = doc.defaultView.getComputedStyle(el).color; el.remove(); return c; }
+function bgDe(el) {
+  while (el) { const cs = el.ownerDocument.defaultView.getComputedStyle(el); const b = cs.backgroundColor; if (b && !/rgba\(0, 0, 0, 0\)|transparent/.test(b) && cs.backgroundImage === "none") return b; el = el.parentElement; }
+  return "rgb(251,249,245)";
+}
+
+class Component extends DCLogic {
+  state = { linhas: [], largura: "360px", feito: 0 };
+  quadro = React.createRef();
+
+  carregar(src, w) {
+    return new Promise((res) => {
+      this.setState({ largura: w + "px" });
+      const f = this.quadro.current;
+      f.onload = () => res();
+      f.src = src;
+    });
+  }
+
+  async componentDidMount() {
+    const linhas = [];
+    let n = 0;
+    for (const p of PAGINAS) for (const t of TEMAS) for (const w of LARGURAS) {
+      await this.carregar("prototipo-" + p + ".dc.html?tema=" + t, w);
+      await espera(1600);
+      const f = this.quadro.current, doc = f.contentDocument, win = f.contentWindow;
+      const r = [];
+      const sw = doc.documentElement.scrollWidth, cw = doc.documentElement.clientWidth;
+      if (sw > cw + 1) {
+        const largos = [...doc.querySelectorAll("body *")].filter((e) => e.getBoundingClientRect().right > cw + 1 && doc.defaultView.getComputedStyle(e).position !== "fixed").slice(0, 3).map((e) => e.tagName + (e.getAttribute("data-screen-label") ? "[" + e.getAttribute("data-screen-label") + "]" : ""));
+        r.push("ESTOURO " + sw + ">" + cw + " " + largos.join(","));
+      }
+      if (w === 360) {
+        const b = doc.querySelector('button[aria-label="Abrir menu"]');
+        if (!b) r.push("MENU: botão ausente");
+        else {
+          b.click(); await espera(250);
+          const aberto = !!doc.getElementById("menu-mobile");
+          doc.dispatchEvent(new win.KeyboardEvent("keydown", { key: "Escape", bubbles: true })); await espera(250);
+          const fechou = !doc.getElementById("menu-mobile");
+          if (!aberto || !fechou) r.push("MENU: abre=" + aberto + " fecha(Esc)=" + fechou);
+        }
+        const pequenos = [...doc.querySelectorAll("a,button,input,select,textarea")].filter((e) => {
+          const q = e.getBoundingClientRect(); if (!q.width || !q.height) return false;
+          if (e.tagName === "A" && e.closest("p,li,blockquote")) return false;
+          if (e.closest('[aria-label^="Estado do protótipo"]')) return false;
+          return q.height < 43.5;
+        });
+        if (pequenos.length) r.push("ALVO<44: " + pequenos.length + " (" + pequenos.slice(0, 3).map((e) => e.tagName + ":" + (e.textContent || e.getAttribute("aria-label") || "").trim().slice(0, 18) + ":" + Math.round(e.getBoundingClientRect().height)).join(" | ") + ")");
+      }
+      if (w === 1280) {
+        let focus = false;
+        const varrer = (ss) => { try { for (const ru of ss.cssRules) { if ((ru.selectorText || "").includes(":focus-visible")) focus = true; if (ru.styleSheet) varrer(ru.styleSheet); } } catch (e) {} };
+        for (const ss of doc.styleSheets) varrer(ss);
+        if (!focus) r.push("FOCO: regra :focus-visible ausente");
+        const ruins = [];
+        const vistos = new Set();
+        for (const el of doc.querySelectorAll("body *")) {
+          if (!el.childNodes.length || ![...el.childNodes].some((c) => c.nodeType === 3 && c.textContent.trim())) continue;
+          const q = el.getBoundingClientRect(); if (!q.width) continue;
+          const cs = win.getComputedStyle(el);
+          if (cs.visibility === "hidden" || +cs.opacity === 0) continue;
+          let bg = bgDe(el);
+          let alvo = bg;
+          const temGrad = (() => { let x = el; while (x) { const s = win.getComputedStyle(x); if (s.backgroundImage.includes("gradient") && !s.backgroundImage.includes("var")) return true; if (s.backgroundColor && !/rgba\(0, 0, 0, 0\)/.test(s.backgroundColor)) return false; x = x.parentElement; } return false; })();
+          if (temGrad) alvo = "rgb(249,174,14)";
+          const big = parseFloat(cs.fontSize) >= 24 || (parseFloat(cs.fontSize) >= 18.66 && +cs.fontWeight >= 700);
+          const k = razao(cs.color, alvo);
+          const min = big ? 3 : 4.5;
+          const chave = cs.color + "|" + alvo;
+          if (k < min && !vistos.has(chave)) { vistos.add(chave); ruins.push(el.textContent.trim().slice(0, 22) + " " + k.toFixed(2)); }
+        }
+        if (ruins.length) r.push("CONTRASTE: " + ruins.slice(0, 4).join(" | "));
+      }
+      linhas.push((r.length ? "✗ " : "✓ ") + p + " · " + t + " · " + w + (r.length ? "\n    " + r.join("\n    ") : ""));
+      n++;
+      this.setState({ linhas: linhas.slice(), feito: n });
+    }
+  }
+
+  renderVals() {
+    const total = PAGINAS.length * LARGURAS.length * TEMAS.length;
+    return { progresso: this.state.feito + "/" + total, relatorio: this.state.linhas.join("\n"), largura: this.state.largura, quadro: this.quadro };
+  }
+}
+</script>
+</body>
+</html>

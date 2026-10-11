@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="styles.css">
+<style>body{margin:0;background:var(--bg-page);color:var(--text-body);font-family:var(--font-body)}a{color:var(--text-link)}a:hover{color:var(--brand-variant)}</style>
+</helmet>
+<div style="min-height:100vh;display:flex;flex-direction:column;background:var(--bg-page);overflow-x:clip">
+<dc-import name="ProtoHeader" ativo="Contato" hint-size="100%,64px" style="position:sticky;top:0;z-index:20"></dc-import>
+<main style="flex:1;width:100%;max-width:80rem;margin:0 auto;padding:clamp(2rem,5vw,3.5rem) clamp(1rem,4vw,3rem) clamp(3rem,6vw,5rem)">
+
+<span style="display:inline-flex;align-items:center;gap:0.5rem;padding:0.375rem 0.625rem;font:600 0.8125rem var(--font-body);color:var(--success-ink);background:var(--success-surface);border-radius:0.3rem"><span style="width:0.5rem;height:0.5rem;border-radius:50%;background:currentColor" aria-hidden="true"></span>Disponível para projetos</span>
+<h1 style="margin:1rem 0 0.75rem;font-family:var(--font-heading);font-weight:800;font-size:clamp(2rem,5vw,2.75rem);line-height:1.05;letter-spacing:-.03em;color:var(--text-strong)">Contato</h1>
+<p style="margin:0 0 clamp(2rem,4vw,3rem);max-width:34rem;font:400 1rem/1.65 var(--font-body);color:var(--text-body);text-wrap:pretty">Conte o escopo, o prazo e o que já existe. Respondo em até um dia útil.</p>
+
+<div style="display:grid;grid-template-columns:{{ colunas }};gap:clamp(2rem,5vw,4rem);align-items:start">
+
+<section data-screen-label="Formulário" aria-label="Formulário de contato" style="min-width:0;max-width:32rem">
+<sc-if value="{{ enviado }}" hint-placeholder-val="{{ false }}">
+<div role="status" style="padding:1.5rem;background:var(--success-surface);color:var(--success-ink);border-radius:0.3rem">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>
+<div style="font:700 1.25rem var(--font-heading);margin:0.75rem 0 0.375rem">Mensagem enviada</div>
+<p style="margin:0 0 1.25rem;font:400 0.9375rem/1.6 var(--font-body)">Recebi sua mensagem e respondo em até um dia útil, pelo e-mail que você informou.</p>
+<button type="button" onClick="{{ novaMensagem }}" style="min-height:2.75rem;padding:0 1.25rem;font:600 0.9375rem var(--font-body);color:var(--success-ink);background:transparent;border:1px solid currentColor;border-radius:0.3rem;cursor:pointer">Enviar outra mensagem</button>
+</div>
+</sc-if>
+
+<sc-if value="{{ formulario }}" hint-placeholder-val="{{ true }}">
+<form onSubmit="{{ enviar }}" noValidate="{{ true }}" style="display:flex;flex-direction:column;gap:1.25rem">
+<sc-if value="{{ resumoErro }}" hint-placeholder-val="{{ false }}">
+<div role="alert" style="display:flex;gap:0.625rem;padding:0.875rem 1rem;background:var(--danger-surface);color:var(--danger-ink);border-radius:0.3rem;font:500 0.875rem/1.5 var(--font-body)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" style="flex:none;margin-top:1px"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v4M12 16h.01"></path></svg>{{ resumoErro }}</div>
+</sc-if>
+
+<div style="display:flex;flex-direction:column;gap:0.375rem">
+<label for="f-nome" style="font:600 0.875rem var(--font-body);color:var(--text-strong)">Nome</label>
+<input id="f-nome" value="{{ nome }}" onChange="{{ mudarNome }}" autoComplete="name" aria-invalid="{{ nomeInvalido }}" aria-describedby="e-nome" disabled="{{ bloqueado }}" style="min-height:2.75rem;padding:0 0.875rem;font:400 1rem var(--font-body);color:var(--text-strong);background:transparent;border:1px solid {{ bordaNome }};border-radius:0.3rem"></input>
+<sc-if value="{{ erroNome }}" hint-placeholder-val="{{ false }}"><span id="e-nome" style="font:500 0.8125rem var(--font-body);color:var(--danger-ink)">{{ erroNome }}</span></sc-if>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:0.375rem">
+<label for="f-email" style="font:600 0.875rem var(--font-body);color:var(--text-strong)">E-mail</label>
+<input id="f-email" type="email" value="{{ email }}" onChange="{{ mudarEmail }}" autoComplete="email" inputMode="email" aria-invalid="{{ emailInvalido }}" aria-describedby="e-email" disabled="{{ bloqueado }}" style="min-height:2.75rem;padding:0 0.875rem;font:400 1rem var(--font-body);color:var(--text-strong);background:transparent;border:1px solid {{ bordaEmail }};border-radius:0.3rem"></input>
+<sc-if value="{{ erroEmail }}" hint-placeholder-val="{{ false }}"><span id="e-email" style="font:500 0.8125rem var(--font-body);color:var(--danger-ink)">{{ erroEmail }}</span></sc-if>
+</div>
+
+<fieldset style="margin:0;padding:0;border:none;display:flex;flex-direction:column;gap:0.5rem">
+<legend style="padding:0;margin-bottom:0.5rem;font:600 0.875rem var(--font-body);color:var(--text-strong)">Assunto</legend>
+<div style="display:flex;flex-wrap:wrap;gap:0.375rem">
+<sc-for list="{{ assuntos }}" as="a" hint-placeholder-count="4">
+<button type="button" aria-pressed="{{ a.ativo }}" onClick="{{ a.onClick }}" disabled="{{ bloqueado }}" style="min-height:2.75rem;padding:0 0.875rem;border-radius:0.3rem;cursor:pointer;font-family:var(--font-body);font-size:0.875rem;font-weight:{{ a.peso }};color:{{ a.cor }};background:{{ a.fundo }};border:1px solid {{ a.borda }}">{{ a.rotulo }}</button>
+</sc-for>
+</div>
+</fieldset>
+
+<div style="display:flex;flex-direction:column;gap:0.375rem">
+<div style="display:flex;justify-content:space-between;gap:1rem"><label for="f-msg" style="font:600 0.875rem var(--font-body);color:var(--text-strong)">Mensagem</label><span aria-live="polite" style="font:400 0.8125rem var(--font-mono);color:{{ corContador }}">{{ restantes }}</span></div>
+<textarea id="f-msg" rows="6" maxLength="600" value="{{ mensagem }}" onChange="{{ mudarMensagem }}" aria-invalid="{{ msgInvalida }}" aria-describedby="e-msg" disabled="{{ bloqueado }}" placeholder="Escopo, prazo e links do que já existe" style="padding:0.75rem 0.875rem;font:400 1rem/1.6 var(--font-body);color:var(--text-strong);background:transparent;border:1px solid {{ bordaMsg }};border-radius:0.3rem;resize:vertical"></textarea>
+<sc-if value="{{ erroMsg }}" hint-placeholder-val="{{ false }}"><span id="e-msg" style="font:500 0.8125rem var(--font-body);color:var(--danger-ink)">{{ erroMsg }}</span></sc-if>
+</div>
+
+<div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap">
+<button type="submit" aria-busy="{{ ocupado }}" disabled="{{ bloqueado }}" style="display:inline-flex;align-items:center;gap:0.5rem;min-height:3rem;padding:0 1.5rem;font:600 1rem var(--font-body);color:#202020;background:linear-gradient(180deg,#FFCC00,#F19100);border:none;border-radius:0.3rem;cursor:{{ cursor }};opacity:{{ opacidade }}">{{ spinner }}{{ rotuloEnvio }}</button>
+<span style="font:400 0.8125rem var(--font-body);color:var(--text-weak)">Sem newsletter e sem cadastro.</span>
+</div>
+</form>
+</sc-if>
+</section>
+
+<aside data-screen-label="Canais" style="display:flex;flex-direction:column;gap:1.5rem;padding-top:{{ asidePad }};border-top:{{ asideBorda }};min-width:0">
+<div>
+<h2 style="margin:0 0 0.625rem;font:500 0.75rem var(--font-mono);letter-spacing:.08em;color:var(--text-label)">E-MAIL DIRETO</h2>
+<div style="display:flex;align-items:center;gap:0.5rem;padding:0.25rem 0.25rem 0.25rem 0.875rem;border:1px solid var(--border-subtle);border-radius:0.3rem">
+<span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;font:400 0.9375rem var(--font-mono);color:var(--text-strong)">luiz@email.com</span>
+<button type="button" onClick="{{ copiar }}" style="flex:none;min-height:2.75rem;padding:0 0.875rem;font:600 0.8125rem var(--font-body);color:var(--text-strong);background:var(--bg-raised);border:1px solid var(--border-subtle);border-radius:0.3rem;cursor:pointer">{{ copiarLabel }}</button>
+</div>
+</div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,10rem),1fr));gap:1.25rem">
+<div><h2 style="margin:0 0 0.375rem;font:500 0.75rem var(--font-mono);letter-spacing:.08em;color:var(--text-label)">LOCALIZAÇÃO</h2><div style="font:600 0.9375rem var(--font-body);color:var(--text-strong)">São José dos Campos · SP</div><div style="font:400 0.875rem var(--font-body);color:var(--text-weak);margin-top:0.25rem">Remoto ou híbrido na região</div></div>
+<div><h2 style="margin:0 0 0.375rem;font:500 0.75rem var(--font-mono);letter-spacing:.08em;color:var(--text-label)">RESPOSTA</h2><div style="font:600 0.9375rem var(--font-body);color:var(--text-strong)">Em até 1 dia útil</div><div style="font:400 0.875rem var(--font-body);color:var(--text-weak);margin-top:0.25rem">Fuso GMT-3</div></div>
+</div>
+<a href="#" style="display:inline-flex;align-items:center;justify-content:center;gap:0.5rem;min-height:2.75rem;padding:0 1.25rem;font:600 0.9375rem var(--font-body);color:var(--text-strong);border:1px solid var(--border-strong);border-radius:0.3rem;text-decoration:none" style-hover="border-color:var(--text-strong);color:var(--text-strong)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"></path></svg>Baixar CV</a>
+</aside>
+</div>
+</main>
+<dc-import name="ProtoFooter" modo="nav" hint-size="100%,260px"></dc-import>
+<dc-import name="ProtoEstados" opcoes="{{ estados }}" hint-size="0px,0px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const h = React.createElement;
+const ASSUNTOS = ["Projeto novo", "Freelance", "Vaga", "Outro"];
+const ESTADOS = [{ id: "normal", rotulo: "Normal" }, { id: "erro", rotulo: "Erro de validação" }, { id: "enviando", rotulo: "Enviando" }, { id: "enviado", rotulo: "Enviado" }];
+const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+const MAX = 600;
+
+function validar(s) {
+  const e = {};
+  if (!s.nome.trim()) e.nome = "Diga como devo te chamar.";
+  if (!s.email.trim()) e.email = "Preciso de um e-mail para responder.";
+  else if (!EMAIL.test(s.email.trim())) e.email = "Esse endereço não parece completo.";
+  if (s.mensagem.trim().length < 20) e.mensagem = "Escreva um pouco mais: 20 caracteres no mínimo.";
+  return e;
+}
+
+class Component extends DCLogic {
+  constructor(p) {
+    super(p);
+    const est = new URLSearchParams(location.search).get("estado") || "normal";
+    const valido = { nome: "Marina Costa", email: "marina@empresa.com", mensagem: "Preciso de um painel interno para acompanhar pedidos. Prazo de dois meses." };
+    const base = { w: window.innerWidth, assunto: "Projeto novo", copiado: false, enviando: false, enviado: false, tentou: false };
+    if (est === "erro") this.state = { ...base, nome: "", email: "marina@empresa", mensagem: "Oi, tudo bem?", tentou: true };
+    else if (est === "enviando") this.state = { ...base, ...valido, enviando: true };
+    else if (est === "enviado") this.state = { ...base, ...valido, enviado: true };
+    else this.state = { ...base, nome: "", email: "", mensagem: "" };
+  }
+  onR = () => this.setState({ w: window.innerWidth });
+  componentDidMount() { window.addEventListener("resize", this.onR); }
+  componentWillUnmount() { window.removeEventListener("resize", this.onR); clearTimeout(this._t); clearTimeout(this._c); }
+
+  enviar = (ev) => {
+    ev.preventDefault();
+    if (this.state.enviando) return;
+    const e = validar(this.state);
+    if (Object.keys(e).length) {
+      this.setState({ tentou: true });
+      const id = e.nome ? "f-nome" : e.email ? "f-email" : "f-msg";
+      setTimeout(() => { const el = document.getElementById(id); if (el) el.focus(); }, 0);
+      return;
+    }
+    this.setState({ enviando: true });
+    this._t = setTimeout(() => this.setState({ enviando: false, enviado: true }), 1400);
+  };
+  copiar = () => {
+    try { navigator.clipboard && navigator.clipboard.writeText("luiz@email.com").catch(() => {}); } catch (e) {}
+    this.setState({ copiado: true });
+    clearTimeout(this._c);
+    this._c = setTimeout(() => this.setState({ copiado: false }), 2200);
+  };
+
+  renderVals() {
+    const s = this.state;
+    const erros = s.tentou ? validar(s) : {};
+    const n = Object.keys(erros).length;
+    const borda = (campo, valor) => erros[campo] ? "var(--danger-ink)" : valor ? "var(--text-strong)" : "var(--border-strong)";
+    const restam = MAX - s.mensagem.length;
+    const largo = s.w >= 900;
+    return {
+      estados: ESTADOS,
+      colunas: largo ? "minmax(0,1.35fr) minmax(0,1fr)" : "minmax(0,1fr)",
+      asidePad: largo ? "0" : "2rem", asideBorda: largo ? "none" : "1px solid var(--border-subtle)",
+      enviado: s.enviado, formulario: !s.enviado,
+      novaMensagem: () => this.setState({ enviado: false, tentou: false, nome: "", email: "", mensagem: "" }),
+      enviar: this.enviar,
+      resumoErro: n ? (n === 1 ? "Falta corrigir 1 campo." : "Falta corrigir " + n + " campos.") : "",
+      nome: s.nome, email: s.email, mensagem: s.mensagem,
+      mudarNome: (e) => this.setState({ nome: e.target.value }),
+      mudarEmail: (e) => this.setState({ email: e.target.value }),
+      mudarMensagem: (e) => this.setState({ mensagem: e.target.value }),
+      erroNome: erros.nome || "", erroEmail: erros.email || "", erroMsg: erros.mensagem || "",
+      nomeInvalido: erros.nome ? "true" : "false", emailInvalido: erros.email ? "true" : "false", msgInvalida: erros.mensagem ? "true" : "false",
+      bordaNome: borda("nome", s.nome), bordaEmail: borda("email", s.email), bordaMsg: borda("mensagem", s.mensagem),
+      restantes: restam + " restantes",
+      corContador: restam < 60 ? "var(--warning-ink)" : "var(--text-label)",
+      assuntos: ASSUNTOS.map((a) => { const on = a === s.assunto; return { rotulo: a, ativo: on ? "true" : "false", peso: on ? 600 : 500, cor: on ? "var(--text-strong)" : "var(--text-body)", fundo: on ? "var(--bg-highlight)" : "transparent", borda: on ? "var(--brand-variant)" : "var(--border-subtle)", onClick: () => this.setState({ assunto: a }) }; }),
+      bloqueado: s.enviando,
+      ocupado: s.enviando ? "true" : undefined,
+      cursor: s.enviando ? "progress" : "pointer", opacidade: s.enviando ? 0.7 : 1,
+      rotuloEnvio: s.enviando ? "Enviando" : "Enviar mensagem",
+      spinner: s.enviando ? h("svg", { width: 16, height: 16, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 2.4, strokeLinecap: "round", "aria-hidden": true, style: { animation: "ds-spin 700ms linear infinite" } }, h("path", { d: "M21 12a9 9 0 1 1-6.22-8.56" })) : null,
+      copiar: this.copiar, copiarLabel: s.copiado ? "Copiado" : "Copiar"
+    };
+  }
+}
+</script>
+</body>
+</html>

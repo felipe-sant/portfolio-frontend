@@ -1,8 +1,13 @@
 # Design system
 
-Resumo do design system do portfólio, para consulta rápida durante o desenvolvimento. A fonte de
-verdade é o handoff de design em `/home/felipe/faculdade/design_handoff_portfolio` (requisito R3):
-em caso de dúvida ou de valor que não está aqui, vale o handoff.
+Resumo do design system do portfólio, para consulta rápida durante o desenvolvimento. O ponto de
+partida é o handoff de design em `/home/felipe/faculdade/design_handoff_portfolio` (requisito R3), e
+a referência visual validada pelo PO é o [protótipo navegável](prototype/README.md), com as sete
+telas, os estados e os dois temas.
+
+Onde as fontes divergem, vale esta ordem: convenções do repositório (`.claude/CLAUDE.md`), depois
+[`decisions.md`](decisions.md), depois o protótipo, depois o handoff. Valor que não está em nenhum
+deles sai do handoff.
 
 | Arquivo do handoff      | O que tem                                                                            |
 | ----------------------- | ------------------------------------------------------------------------------------ |
@@ -29,8 +34,10 @@ hardcoded; token novo entra lá.
   `--dark-050` (`#F2EEE7`, texto forte).
 - **Sem `#fff` em nenhum ponto.** Branco puro foi rejeitado pelo autor por cansar a vista.
 
-Cabeçalho e rodapé em tema escuro usam `#141210` (um passo abaixo de `--dark-bg`) com borda
-`#2C2925`; esses valores ainda não viraram token e entram com a spec de Header/Footer.
+Cabeçalho e rodapé leem `--surface-chrome` (fundo) e `--border-chrome` (borda), que no tema claro
+apontam para `--bg-page` e `--border-subtle` e no escuro valem `#141210` (um passo abaixo de
+`--dark-bg`) e `#2C2925`. Os dois tokens substituem os hex soltos do handoff e entram em
+`global.css` com a spec de cabeçalho e rodapé (D04).
 
 ### Marca
 
@@ -78,6 +85,10 @@ variante do tema ativo. Usos previstos no handoff: badge de disponibilidade e in
 de campo com erro (`--danger-ink`) e banner de falha de envio (danger), pelos componentes `Badge`
 e `Banner` de `components/feedback/`.
 
+A paleta semântica fica, e erro de campo usa `--danger-ink` na borda e na mensagem, com
+`aria-invalid` e `aria-describedby`, não o `--brand-variant`/`--brand-deep` do `TextField` do
+handoff (D07).
+
 O repositório usa o prefixo `--danger-*`, igual ao handoff (o nome antigo `--error-*` saiu).
 
 ## Tipografia
@@ -91,7 +102,8 @@ O repositório usa o prefixo `--danger-*`, igual ao handoff (o nome antigo `--er
 | `--font-mono`    | IBM Plex Mono       | Rótulos de seção, chips de tecnologia, valores tabulares, datas    |
 
 Pesos carregados: Bricolage Grotesque 400–800 (variável), IBM Plex Sans 400/500/600/700 e IBM Plex
-Mono 400/500 (`--weight-regular` a `--weight-black`).
+Mono 400/500 (`--weight-regular` a `--weight-black`). Os pesos sem uso saem depois da última tela da
+v1, antes da primeira entrega na `main`, pelo método registrado em `decisions.md` (D08).
 
 ### Escala
 
@@ -122,11 +134,15 @@ Títulos levam `letter-spacing` negativo; rótulos em mono, positivo (`--ls-labe
 - Padding responsivo por `clamp()`, não por breakpoint: `--pad-page`, `--pad-card`; controles com
   `--pad-control-y`/`--pad-control-x`. Contêiner máximo `--container-max` (`73.75rem`).
 - **Um único raio**, `--radius` (`0.3rem`), em botões, campos, cards, imagens, chips e modais.
-  Círculo só em avatar e indicador de status. Nada de pílula, apesar de o token `--radius-pill`
-  existir nos `tokens/`.
+  Chips, badges, botões e campos usam `--radius`; círculo só no indicador de status, e não há
+  avatar nesta versão. `--radius-pill` fica em `global.css` sem uso, e usá-lo exige revisar a
+  decisão (D11).
 - Bordas `--border-width` (1px) e `--border-width-active` (2px).
+- Grade de projetos com colunas de no mínimo 18rem preenchendo o espaço: 1 coluna em 360/390px, 2
+  em 768px e 3 em 1280px (D17).
 - Toda imagem de projeto é 16:9 (`--ratio-media`), inclusive miniaturas de galeria. Placeholder de
-  imagem é `--bg-placeholder` com borda de 1px, sem ícone nem texto dentro.
+  imagem é `--bg-placeholder` com borda de 1px, sem ícone nem texto dentro, em 16:9 e 1:1 (foto)
+  até as capturas reais, depois da v1 (D03).
 - Ritmo de página vem de alternar bloco claro (`--bg-page`) e faixa escura (`--neutral-900`:
   marquee, complementos, rodapé), não de mudar cor de card. Uma faixa de marquee por página, no
   máximo.
@@ -137,9 +153,9 @@ O sistema é **desenhado com linha, não com sombra**.
 
 - Repouso: 1px em `--border-subtle`; controle secundário: 1px em `--border-strong`.
 - Ativo/selecionado: 2px em `--brand-variant` (aba ativa, miniatura ativa, item de nav ativo).
-- Foco de campo e hover de item de trajetória: 1px em `--text-strong`.
-- Tracejado marca o que **não** é conteúdo real: estado vazio, placeholder de logo, bloco
-  informativo.
+- Hover de item de trajetória: 1px em `--text-strong`.
+- Foco visível: contorno de 2px em `--brand-variant` (ver "Estados", D23).
+- Tracejado marca o que **não** é conteúdo real: estado vazio e bloco informativo.
 - Sombra só no modal (`--shadow-modal`). Card não tem sombra; nenhuma superfície tem blur ou
   gradiente de proteção.
 
@@ -157,18 +173,18 @@ componente que os usar.
 
 ## Estados
 
-| Estado                    | Tratamento                                                                    |
-| ------------------------- | ----------------------------------------------------------------------------- |
-| Hover em card             | `transform: translateY(-3px)`                                                 |
-| Hover em item de lista    | Borda para `--text-strong`, fundo para `--bg-raised`, revela "Ver detalhes →" |
-| Hover em botão secundário | Borda para `--text-strong`                                                    |
-| Hover em link de lista    | `padding-left` +0.375rem, texto para `--text-link`                            |
-| Foco de campo             | Borda 1px `--text-strong`, sem `outline` do navegador e sem glow              |
-| Ativo/selecionado         | 2px em `--brand-variant`                                                      |
-| Desabilitado              | `opacity: 0.5`, `cursor: not-allowed`, sem trocar a cor                       |
-| Carregando conteúdo       | Skeleton com shimmer, na forma do conteúdo real, `aria-hidden="true"`         |
-| Carregando ação           | Spinner dentro do botão, `aria-busy`                                          |
-| Toque                     | Alvo mínimo `--hit-min` (`2.75rem`) em contexto mobile                        |
+| Estado                    | Tratamento                                                                                                    |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| Hover em card             | `transform: translateY(-3px)`                                                                                 |
+| Hover em item de lista    | Borda para `--text-strong`, fundo para `--bg-raised`, revela "Ver detalhes →"                                 |
+| Hover em botão secundário | Borda para `--text-strong`                                                                                    |
+| Hover em link de lista    | `padding-left` +0.375rem, texto para `--text-link`                                                            |
+| Foco visível              | Contorno 2px `--brand-variant`, afastamento 2px, `--radius`, em todo `:focus-visible`, inclusive campos (D23) |
+| Ativo/selecionado         | 2px em `--brand-variant`                                                                                      |
+| Desabilitado              | `opacity: 0.5`, `cursor: not-allowed`, sem trocar a cor                                                       |
+| Carregando conteúdo       | Skeleton com shimmer, na forma do conteúdo real, `aria-hidden="true"`                                         |
+| Carregando ação           | Spinner dentro do botão, `aria-busy`                                                                          |
+| Toque                     | Alvo mínimo `--hit-min` (`2.75rem`) em contexto mobile                                                        |
 
 Skeleton e spinner nunca no mesmo bloco: skeleton é para conteúdo que vai aparecer, spinner para
 ação em curso.
@@ -183,7 +199,8 @@ seguem as mesmas regras (requisito R2).
   `--font-mono` com `--ls-label`/`--ls-label-wide`. Nome de tecnologia mantém a grafia oficial
   (`TypeScript`).
 - **Títulos:** substantivos curtos, sem verbo e sem ponto final ("Projetos", "Sobre mim"). A única
-  frase completa em corpo grande é a chamada do Início, "Desenvolvedor full stack em TypeScript.".
+  frase completa em corpo grande é a chamada do Início, "Desenvolvedor full stack em TypeScript",
+  também sem ponto (D24).
 - **Botões:** verbo no infinitivo + objeto ("Ver projetos", "Baixar CV"); nunca "Clique aqui" nem
   "Saiba mais".
 - **Links de continuação:** rótulo curto + flecha ("Ver todos →"). Voltar sempre nomeia o destino
@@ -198,7 +215,7 @@ seguem as mesmas regras (requisito R2).
 ## Ícones
 
 SVG inline traçado, no vocabulário do Lucide: `viewBox="0 0 24 24"`, `fill="none"`,
-`stroke="currentColor"`, `stroke-linecap="round"`, traço de 1.8 a 2.5 e tamanho de 11 a 20px. O
+`stroke="currentColor"`, `stroke-linecap="round"`, traço de 2 a 2.4 e tamanho de 12 a 20px (D15). O
 inventário é fechado (lupa, ×, chevrons, download, hambúrguer, lua, sol, arco de spinner, pin,
 check, alerta, GitHub, LinkedIn, envelope, arquivo, lupa com mais e a estrela preenchida, único
 ícone com `fill`, que marca projeto em destaque). Setas no texto são caracteres unicode
@@ -221,9 +238,11 @@ Já resolvido nos protótipos do handoff, a manter na implementação:
 - Miniatura de galeria tem `aria-label` com a posição ("Imagem 2 de 5") e `aria-current`.
 - Alvo de toque de `--hit-min` em contexto mobile.
 
-Falta fazer, segundo o handoff: armadilha de foco nos modais, devolução do foco ao elemento de
-origem ao fechar e `aria-live` para anunciar resultado de busca e confirmação do formulário. No
-repositório, `jsx-a11y` (oxlint) cobre o básico mecanicamente; o restante é revisão.
+Falta fazer, segundo o handoff e o protótipo: armadilha de foco nos modais e no menu, devolução do
+foco ao elemento de origem ao fechar (PI1) e `aria-live` para anunciar resultado de busca e
+confirmação do formulário. A varredura de contraste do protótipo não foi rodada de novo depois da
+última correção (PI2) e não cobriu 390px, os estados além do normal nem o degradê com precisão
+(PI3). No repositório, `jsx-a11y` (oxlint) cobre o básico mecanicamente; o restante é revisão.
 
 ## Responsividade
 
@@ -235,30 +254,42 @@ forma contínua entre as quebras.
 | 900–980px (varia por tela) | Aside do projeto perde o sticky e desce (980px); grids de duas colunas viram uma; grade de projetos vai para duas colunas; complementos empilham                              |
 | 640px                      | Nav do cabeçalho vira botão de menu; grade de projetos vira uma coluna; destaques empilham com a imagem primeiro; miniaturas vão para três colunas; rodapé empilha à esquerda |
 
-O painel do menu mobile não foi desenhado e é pendência do handoff.
+Por tela, além das quebras:
+
+- **Menu mobile (D01):** abaixo de 640px, botão de 44px que abre painel em largura total abaixo do
+  cabeçalho, com links em coluna de 52px, seletor de idioma e alternador de tema; fecha por Esc,
+  link, botão ou ao alargar, e trava a rolagem da página.
+- **Filtros (D16):** no mobile, linha com rolagem horizontal encostando na borda, sem modal de
+  filtros.
+- **Galeria (D18):** no mobile, miniaturas em linha rolável de 6.5rem; no desktop, cinco colunas.
+- **Ficha técnica (D19):** abaixo de 980px, entre a galeria e a documentação, em grade de pares e
+  sem sticky.
+- **Trajetória (D20):** no mobile o período quebra para baixo do título; modal em tela cheia abaixo
+  de 640px.
+- **Contato (D21):** duas colunas a partir de 900px; abaixo, os canais descem para depois do
+  formulário, separados por uma linha.
+
+## Logo
+
+O gato ao lado do nome "Luiz Felipe dos Santos" (Bricolage 700), em SVG inline com corpo em
+`--neutral-500` e detalhe em `--text-strong` nos dois temas, sem o placeholder tracejado do handoff.
+SVGs-fonte em [`assets/logo/`](assets/logo/); contraste e recomendação de favicon em
+`decisions.md` (D02).
 
 ## Divergências adotadas pelo repositório
 
 As convenções do repositório prevalecem onde divergem do handoff (R3):
 
-| Handoff                                                    | Repositório                                                                                                                       |
-| ---------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| Fontes do Google Fonts por `@import` em `tokens/fonts.css` | Fontes self-hospedadas: `woff2` e licença em `public/fonts/`, `@font-face` em `src/styles/global.css` e `preload` no `index.html` |
-| Classes globais `.ds-*` e regras de `tokens/layout.css`    | CSS Module por página (`src/styles/pages/`) e componente (`src/styles/components/`), com as media queries no próprio módulo       |
-| Tema por `data-theme="dark"` na raiz, com persistência     | Tema por `@media (prefers-color-scheme: dark)` em `global.css` até a spec de tema, que liga `data-theme` com persistência         |
-| `tokens/*.css` e `components/*.jsx` com comentários        | Código sem comentários                                                                                                            |
-| Componentes React em JSX                                   | Recriados em TypeScript, com texto de UI por chave de tradução nos três idiomas                                                   |
+| Handoff                                                    | Repositório                                                                                                                             |
+| ---------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| Fontes do Google Fonts por `@import` em `tokens/fonts.css` | Fontes self-hospedadas: `woff2` e licença em `public/fonts/`, `@font-face` em `src/styles/global.css` e `preload` no `index.html` (D09) |
+| Classes globais `.ds-*` e regras de `tokens/layout.css`    | CSS Module por página (`src/styles/pages/`) e componente (`src/styles/components/`), com as media queries no próprio módulo             |
+| Tema por `data-theme="dark"` na raiz, com persistência     | Tema por `@media (prefers-color-scheme: dark)` em `global.css` até a spec de tema, que liga `data-theme` com persistência (D22)         |
+| `tokens/*.css` e `components/*.jsx` com comentários        | Código sem comentários                                                                                                                  |
+| Componentes React em JSX                                   | Recriados em TypeScript, com texto de UI por chave de tradução nos três idiomas                                                         |
 
-## Pendências de decisão de design
+## Decisões de design
 
-- **Paleta semântica.** O `design-system.md` do handoff diz que não há paleta semântica de
-  sucesso, erro e aviso, e que erro de formulário usa `--brand-variant` na borda e `--brand-deep`
-  no texto. Já os `tokens/` e o `README.md` do handoff definem `--success-*`, `--warning-*` e
-  `--danger-*`, e o formulário de contato usa `--danger-ink` na borda de erro. O repositório segue
-  os tokens; a inconsistência fica registrada para o autor decidir.
-- **Pesos e traço.** O `design-system.md` cita Bricolage 700/800 e Plex Sans 400/500/600, ícones de
-  traço 2 a 2.5 e 13 a 20px; o `README.md` e os `tokens/`, Bricolage 400–800, Plex Sans 400–700,
-  traço 1.8 a 2.5 e 11 a 20px. O repositório carrega a faixa maior.
-- **Outras pendências do handoff:** menu mobile, logo (o cabeçalho usa placeholder tracejado),
-  imagens reais de projeto (os `assets/proj-*.png` são sketches, não vão para produção) e os
-  valores `#141210`/`#2C2925` do cabeçalho e rodapé escuros, ainda sem token.
+As pendências e contradições do handoff estão decididas e registradas em
+[`decisions.md`](decisions.md), com opções, fonte e data. Só falta material do PO: os PDFs de CV
+por idioma, que deixam D14 `bloqueada`.

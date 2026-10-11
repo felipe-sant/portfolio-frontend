@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="styles.css">
+<style>body{margin:0;background:var(--bg-page);color:var(--text-body);font-family:var(--font-body)}a{color:var(--text-link)}a:hover{color:var(--brand-variant)}</style>
+</helmet>
+<div style="min-height:100vh;background:var(--bg-page);overflow-x:clip">
+<dc-import name="ProtoHeader" ativo="" hint-size="100%,64px" style="position:sticky;top:0;z-index:20"></dc-import>
+<main style="max-width:56rem;margin:0 auto;padding:clamp(2rem,5vw,3.5rem) clamp(1rem,4vw,3rem) 4rem">
+<div style="font:500 0.75rem var(--font-mono);letter-spacing:.1em;color:var(--text-label);margin-bottom:0.75rem">PROTÓTIPO NAVEGÁVEL · REFERÊNCIA VISUAL</div>
+<h1 style="margin:0 0 1rem;font-family:var(--font-heading);font-weight:800;font-size:clamp(2rem,5vw,2.75rem);line-height:1.05;letter-spacing:-.03em;color:var(--text-strong)">Índice</h1>
+<p style="margin:0 0 2.5rem;max-width:36rem;font:400 1rem/1.65 var(--font-body);text-wrap:pretty">Sete telas com estados, tema claro e escuro e versão mobile. O botão de tema no cabeçalho vale para todas as páginas. Os estados também podem ser trocados pelo seletor no canto inferior direito de cada tela.</p>
+<sc-for list="{{ grupos }}" as="g" hint-placeholder-count="7">
+<section style="padding:1.25rem 0;border-top:1px solid var(--border-subtle)">
+<div style="display:flex;justify-content:space-between;align-items:baseline;gap:1rem;flex-wrap:wrap;margin-bottom:0.375rem">
+<h2 style="margin:0;font:700 1.25rem var(--font-heading);letter-spacing:-.015em;color:var(--text-strong)"><a href="{{ g.href }}" style="color:inherit;text-decoration:none" style-hover="color:var(--text-link)">{{ g.nome }}</a></h2>
+<span style="font:400 0.75rem var(--font-mono);color:var(--text-label)">{{ g.arquivo }}</span>
+</div>
+<p style="margin:0 0 0.5rem;font:400 0.9375rem/1.6 var(--font-body)">{{ g.descricao }}</p>
+<div style="display:flex;flex-direction:column">
+<sc-for list="{{ g.estados }}" as="e" hint-placeholder-count="2">
+<a href="{{ e.href }}" style="display:flex;gap:0.75rem;align-items:baseline;min-height:2.75rem;padding:0.625rem 0;border-bottom:1px dashed var(--border-subtle);text-decoration:none;color:inherit" style-hover="color:var(--text-strong)">
+<span style="flex:0 0 9rem;font:600 0.875rem var(--font-body);color:var(--text-link)">{{ e.rotulo }}</span>
+<span style="flex:1;min-width:0;font:400 0.875rem/1.5 var(--font-body);color:var(--text-weak)">{{ e.texto }}</span>
+</a>
+</sc-for>
+</div>
+</section>
+</sc-for>
+<section style="padding:1.25rem 0;border-top:1px solid var(--border-subtle);display:flex;flex-direction:column;gap:0.25rem">
+<a href="prototipo-decisoes.dc.html" style="display:flex;align-items:center;min-height:2.75rem;font:700 1.25rem var(--font-heading);text-decoration:none">Documento de decisões →</a>
+<a href="prototipo-verificacao.dc.html" style="display:flex;align-items:center;min-height:2.75rem;font:600 0.9375rem var(--font-body);text-decoration:none">Rodar a verificação automática →</a>
+</section>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const G = [
+  ["Início", "inicio", "Apresentação, situação atual, faixa de stack e três projetos em destaque em ritmo alternado.", [
+    ["normal", "Normal", "Conteúdo completo."], ["carregando", "Carregando", "Skeleton nos cards de status e nos destaques."], ["erro", "Erro", "Destaques não carregaram, com ação de tentar novamente."]]],
+  ["Projetos", "projetos", "Busca com limpar, ordenação visível, filtros por tipo e categoria em linha rolável no mobile, carregar mais.", [
+    ["normal", "Normal", "Seis projetos de dez; carregar mais mostra skeleton e completa a lista."], ["carregando", "Carregando", "Seis skeletons na forma do card."], ["vazio", "Busca vazia", "Busca por \u201cblockchain\u201d sem resultado, com limpar filtros."], ["erro", "Erro", "Falha ao carregar a lista, filtros mantidos."]]],
+  ["Projeto", "projeto", "Galeria 16:9 com miniaturas e ampliação, documentação em abas com código, ficha técnica e relacionados.", [
+    ["normal", "Normal", "Detalhe completo; a ficha fica fixa na rolagem a partir de 980px."], ["carregando", "Carregando", "Skeleton do título e da imagem principal."], ["erro", "Erro", "Projeto não carregou, com volta para a lista."]]],
+  ["Informações", "informacoes", "Foto, sobre mim, stack por categoria, certificados e trajetória com detalhe em modal.", [
+    ["normal", "Normal", "Clique num item de trajetória para abrir o modal; em tela cheia no mobile."], ["carregando", "Carregando", "Skeleton da foto e dos itens de trajetória."]]],
+  ["Contato", "contato", "Formulário com validação por campo e canais diretos. Rodapé vira navegação.", [
+    ["normal", "Normal", "Formulário vazio, interativo de ponta a ponta."], ["erro", "Erro de validação", "Três campos inválidos com mensagem na cor de perigo."], ["enviando", "Enviando", "Botão com spinner, campos bloqueados."], ["enviado", "Enviado", "Confirmação no lugar do formulário."]]],
+  ["Página não encontrada", "404", "Erro 404 com saída para Projetos e para o Início.", [["", "Normal", "Estado único."]]],
+  ["Página de erro", "erro", "Erro 500 com tentar novamente e e-mail de contato.", [["", "Normal", "Estado único."]]]
+];
+class Component extends DCLogic {
+  renderVals() {
+    return { grupos: G.map(([nome, id, descricao, est]) => {
+      const arquivo = "prototipo-" + id + ".dc.html";
+      return { nome, arquivo, href: arquivo, descricao, estados: est.map(([e, rotulo, texto]) => ({ rotulo, texto, href: arquivo + (e ? "?estado=" + e : "") })) };
+    }) };
+  }
+}
+</script>
+</body>
+</html>

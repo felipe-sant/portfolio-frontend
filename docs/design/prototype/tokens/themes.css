@@ -1,0 +1,68 @@
+/* Papéis semânticos. Tema claro é o padrão em :root; [data-theme="dark"] troca os valores. */
+:root {
+  --bg-page: var(--neutral-050);
+  --bg-raised: var(--neutral-100);
+  --bg-placeholder: var(--neutral-150);
+  --bg-highlight: var(--brand-wash);
+  --border-subtle: var(--neutral-200);
+  --border-strong: var(--neutral-300);
+  --text-strong: var(--neutral-900);
+  --text-body: var(--neutral-700);
+  --text-weak: var(--neutral-700);
+  --text-label: var(--neutral-600);
+  --text-link: var(--brand-deep);
+  --overlay: rgba(32, 32, 32, 0.5);
+  --skeleton-base: var(--neutral-150);
+  --skeleton-sheen: var(--neutral-100);
+  --shadow-modal: 0 12px 32px rgba(32, 32, 32, 0.18);
+  --success-surface: var(--success-bg);
+  --success-ink: var(--success-text);
+  --warning-surface: var(--warning-bg);
+  --warning-ink: var(--warning-text);
+  --danger-surface: var(--danger-bg);
+  --danger-ink: var(--danger-text);
+  --surface-chrome: var(--bg-page);
+  --border-chrome: var(--border-subtle);
+  --code-bg: var(--neutral-100);
+  --code-text: var(--neutral-900);
+  --code-comment: #6E6A64;
+  --code-keyword: #AF2472;
+  --code-string: #0F7538;
+  --code-number: #AC3A0A;
+  --code-function: #1560BC;
+  --code-type: #6D3FC0;
+}
+
+[data-theme="dark"] {
+  --bg-page: var(--dark-bg);
+  --bg-raised: var(--dark-raised);
+  --bg-placeholder: var(--dark-raised-2);
+  --bg-highlight: var(--brand-wash-dark);
+  --border-subtle: var(--dark-border);
+  --border-strong: var(--dark-border);
+  --text-strong: var(--dark-050);
+  --text-body: var(--dark-200);
+  --text-weak: var(--dark-300);
+  --text-label: var(--dark-400);
+  --text-link: var(--brand-primary);
+  --overlay: rgba(10, 10, 10, 0.6);
+  --skeleton-base: #242422;
+  --skeleton-sheen: #302F2C;
+  --shadow-modal: 0 12px 32px rgba(0, 0, 0, 0.4);
+  --success-surface: var(--success-bg-dark);
+  --success-ink: var(--success-text-dark);
+  --warning-surface: var(--warning-bg-dark);
+  --warning-ink: var(--warning-text-dark);
+  --danger-surface: var(--danger-bg-dark);
+  --danger-ink: var(--danger-text-dark);
+  --surface-chrome: #141210;
+  --border-chrome: #2C2925;
+  --code-bg: #141210;
+  --code-text: var(--dark-050);
+  --code-comment: #8E8981;
+  --code-keyword: #F38BC4;
+  --code-string: #7FCB8F;
+  --code-number: #F2A272;
+  --code-function: #7FB4F0;
+  --code-type: #B9A2F2;
+}

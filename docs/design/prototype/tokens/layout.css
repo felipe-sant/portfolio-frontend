@@ -1,0 +1,11 @@
+/* Regras responsivas dos componentes que usam grid de duas ou mais colunas. */
+@media (max-width: 640px) {
+  .ds-featured, .ds-about { grid-template-columns: 1fr !important; }
+  .ds-featured > *:last-child { order: -1; }
+  .ds-about { gap: var(--space-4) !important; }
+  .ds-thumbs { grid-template-columns: repeat(2, 1fr) !important; }
+  .ds-grid { grid-template-columns: 1fr !important; }
+}
+@media (min-width: 641px) and (max-width: 900px) {
+  .ds-grid { grid-template-columns: repeat(2, 1fr) !important; }
+}

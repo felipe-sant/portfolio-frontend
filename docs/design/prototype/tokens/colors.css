@@ -1,0 +1,51 @@
+/* Escala neutra quente. Sem branco puro em nenhum ponto do sistema. */
+:root {
+  --neutral-900: #202020;
+  --neutral-800: #332F2B;
+  --neutral-700: #4A4643;
+  --neutral-600: #635F5A;
+  --neutral-500: #7C7770;
+  --neutral-400: #A19B92;
+  --neutral-300: #C4BEB4;
+  --neutral-200: #DAD5CC;
+  --neutral-150: #EAE6DF;
+  --neutral-100: #F3F0EA;
+  --neutral-050: #FBF9F5;
+
+  /* Escala escura, também quente, para o tema escuro */
+  --dark-bg: #191919;
+  --dark-raised: #242422;
+  --dark-raised-2: #2E2E2E;
+  --dark-border: #3A3A38;
+  --dark-500: #6E6A64;
+  --dark-400: #8E8981;
+  --dark-300: #A8A39B;
+  --dark-200: #C9C4BC;
+  --dark-050: #F2EEE7;
+
+  /* Marca */
+  --brand-primary: #FFCC00;
+  --brand-variant: #F19100;
+  --brand-deep: #8A5A00;
+  --brand-wash: #FFF6DB;
+  --brand-wash-dark: #3A2E10;
+  --brand-ink: #202020;
+
+  /* Semântico — duas cores por tipo: fundo/borda e texto/ícone */
+  --success-bg: #E8F0E3;
+  --success-text: #3D6B2C;
+  --warning-bg: #FCEFD9;
+  --warning-text: #8A5A00;
+  --danger-bg: #F7E3DE;
+  --danger-text: #A23B22;
+
+  --success-bg-dark: #1E2A19;
+  --success-text-dark: #7FBD63;
+  --warning-bg-dark: #33270F;
+  --warning-text-dark: #E0A83D;
+  --danger-bg-dark: #3A1E17;
+  --danger-text-dark: #E28564;
+
+  /* O degradê vertical é a assinatura da marca e não muda entre temas */
+  --brand-gradient: linear-gradient(180deg, var(--brand-primary), var(--brand-variant));
+}

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="styles.css">
+<style>body{margin:0;background:var(--bg-page);color:var(--text-body);font-family:var(--font-body)}a{color:var(--text-link)}a:hover{color:var(--brand-variant)}</style>
+</helmet>
+<div style="min-height:100vh;display:flex;flex-direction:column;background:var(--bg-page);overflow-x:clip">
+<dc-import name="ProtoHeader" ativo="Projetos" hint-size="100%,64px" style="position:sticky;top:0;z-index:20"></dc-import>
+<main style="flex:1;width:100%;max-width:80rem;margin:0 auto;padding:clamp(2rem,5vw,3.5rem) clamp(1rem,4vw,3rem) clamp(3rem,6vw,5rem)">
+
+<h1 style="margin:0 0 0.75rem;font-family:var(--font-heading);font-weight:800;font-size:clamp(2rem,5vw,2.75rem);line-height:1.05;letter-spacing:-.03em;color:var(--text-strong)">Projetos</h1>
+<p style="margin:0 0 clamp(1.5rem,3vw,2.25rem);max-width:34rem;font:400 1rem/1.65 var(--font-body);color:var(--text-body);text-wrap:pretty">Tudo o que construí e posso mostrar: trabalho profissional, projetos da faculdade e o que fiz por conta própria.</p>
+
+<div data-screen-label="Controles" style="display:flex;flex-direction:column;gap:0.875rem;margin-bottom:1.5rem">
+<div style="display:flex;gap:0.625rem;flex-wrap:wrap">
+<div style="position:relative;flex:1 1 16rem;min-width:0">
+<label for="busca" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Buscar projeto</label>
+<input id="busca" type="search" value="{{ busca }}" onChange="{{ aoBuscar }}" placeholder="Busque por nome ou tecnologia" style="width:100%;min-height:2.75rem;padding:0 3rem 0 0.875rem;font:400 1rem var(--font-body);color:var(--text-strong);background:transparent;border:1px solid {{ bordaBusca }};border-radius:0.3rem;-webkit-appearance:none;appearance:none"></input>
+<sc-if value="{{ temBusca }}" hint-placeholder-val="{{ false }}">
+<button type="button" aria-label="Limpar busca" onClick="{{ limparBusca }}" style="position:absolute;right:0;top:0;width:2.75rem;height:100%;display:inline-flex;align-items:center;justify-content:center;padding:0;background:transparent;border:none;cursor:pointer;color:var(--text-strong)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
+</sc-if>
+<sc-if value="{{ semBusca }}" hint-placeholder-val="{{ true }}">
+<span aria-hidden="true" style="position:absolute;right:0;top:0;width:2.75rem;height:100%;display:inline-flex;align-items:center;justify-content:center;color:var(--text-label);pointer-events:none"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg></span>
+</sc-if>
+</div>
+<label style="display:inline-flex;align-items:center;gap:0.5rem;min-height:2.75rem;padding:0 0.75rem;border:1px solid var(--border-subtle);border-radius:0.3rem;flex:0 0 auto">
+<span style="font:500 0.8125rem var(--font-body);color:var(--text-weak)">Ordenar</span>
+<select value="{{ ordem }}" onChange="{{ aoOrdenar }}" style="min-height:2.75rem;font:600 0.875rem var(--font-body);color:var(--text-strong);background:transparent;border:none;cursor:pointer">
+<option value="recente">Mais recente</option>
+<option value="antigo">Mais antigo</option>
+<option value="az">A–Z</option>
+</select>
+</label>
+</div>
+
+<div role="toolbar" aria-label="Filtros" style="display:flex;gap:0.375rem;align-items:center;flex-wrap:{{ quebra }};overflow-x:{{ rolagem }};margin:0 {{ sangria }};padding:0.125rem {{ recuo }};scrollbar-width:none">
+<sc-for list="{{ tipos }}" as="t" hint-placeholder-count="4">
+<button type="button" aria-pressed="{{ t.ativo }}" onClick="{{ t.onClick }}" style="flex:none;min-height:2.75rem;padding:0 0.875rem;border-radius:0.3rem;cursor:pointer;white-space:nowrap;font-family:var(--font-body);font-size:0.875rem;font-weight:{{ t.peso }};color:{{ t.cor }};background:{{ t.fundo }};border:1px solid {{ t.borda }}">{{ t.rotulo }}</button>
+</sc-for>
+<span aria-hidden="true" style="flex:none;width:1px;height:1.5rem;background:var(--border-subtle);margin:0 0.375rem"></span>
+<sc-for list="{{ categorias }}" as="c" hint-placeholder-count="3">
+<button type="button" aria-pressed="{{ c.ativo }}" onClick="{{ c.onClick }}" style="flex:none;min-height:2.75rem;padding:0 0.875rem;border-radius:0.3rem;cursor:pointer;white-space:nowrap;font-family:var(--font-body);font-size:0.875rem;font-weight:{{ c.peso }};color:{{ c.cor }};background:{{ c.fundo }};border:1px solid {{ c.borda }}">{{ c.rotulo }}</button>
+</sc-for>
+</div>
+
+<div style="display:flex;justify-content:space-between;align-items:center;gap:0.75rem;flex-wrap:wrap;min-height:2.75rem">
+<span aria-live="polite" style="font:400 0.875rem var(--font-body);color:var(--text-weak)">{{ contagem }}</span>
+<sc-if value="{{ temFiltro }}" hint-placeholder-val="{{ false }}">
+<button type="button" onClick="{{ limparTudo }}" style="min-height:2.75rem;padding:0;background:transparent;border:none;cursor:pointer;font:600 0.875rem var(--font-body);color:var(--text-link)">Limpar filtros</button>
+</sc-if>
+</div>
+</div>
+
+<sc-if value="{{ erro }}" hint-placeholder-val="{{ false }}">
+<div role="alert" style="display:flex;gap:0.875rem;align-items:flex-start;flex-wrap:wrap;padding:1rem 1.125rem;background:var(--danger-surface);color:var(--danger-ink);border-radius:0.3rem">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" style="flex:none"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v4M12 16h.01"></path></svg>
+<div style="flex:1 1 14rem"><div style="font:600 0.9375rem var(--font-body)">Não consegui carregar a lista de projetos</div><div style="font:400 0.875rem/1.5 var(--font-body);margin-top:0.25rem">O servidor demorou para responder. Seus filtros foram mantidos.</div></div>
+<a href="?estado=normal" style="display:inline-flex;align-items:center;min-height:2.75rem;padding:0 1rem;font:600 0.875rem var(--font-body);color:var(--danger-ink);border:1px solid currentColor;border-radius:0.3rem;text-decoration:none">Tentar novamente</a>
+</div>
+</sc-if>
+
+<sc-if value="{{ vazio }}" hint-placeholder-val="{{ false }}">
+<div style="padding:clamp(2rem,6vw,3.5rem) 1.25rem;text-align:center;border:1px dashed var(--border-strong);border-radius:0.3rem">
+<div style="font:700 1.25rem var(--font-heading);color:var(--text-strong);margin-bottom:0.5rem">Nenhum projeto encontrado</div>
+<p style="margin:0 auto 1.25rem;max-width:26rem;font:400 0.9375rem/1.6 var(--font-body);color:var(--text-weak);text-wrap:pretty">{{ vazioTexto }}</p>
+<button type="button" onClick="{{ limparTudo }}" style="min-height:2.75rem;padding:0 1.25rem;font:600 0.9375rem var(--font-body);color:var(--text-strong);background:transparent;border:1px solid var(--border-strong);border-radius:0.3rem;cursor:pointer">Limpar filtros</button>
+</div>
+</sc-if>
+
+<div data-screen-label="Grade" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,18rem),1fr));gap:clamp(1.75rem,3vw,2.25rem) clamp(1.25rem,2.5vw,1.75rem)">
+<sc-for list="{{ cards }}" as="p" hint-placeholder-count="6">
+<a href="prototipo-projeto.dc.html" style="display:flex;flex-direction:column;color:inherit;text-decoration:none;border-radius:0.3rem;transition:transform 180ms cubic-bezier(.2,0,.2,1)" style-hover="transform:translateY(-3px)">
+<div style="aspect-ratio:16/9;background:var(--bg-placeholder);border:1px solid var(--border-subtle);border-radius:0.3rem;margin-bottom:0.875rem"></div>
+<div style="display:flex;justify-content:space-between;align-items:baseline;gap:0.75rem;margin-bottom:0.375rem">
+<span style="display:inline-flex;align-items:center;gap:0.375rem;font:700 1.125rem var(--font-heading);letter-spacing:-.015em;color:var(--text-strong)">{{ p.titulo }}<sc-if value="{{ p.destaque }}" hint-placeholder-val="{{ false }}"><svg width="14" height="14" viewBox="0 0 24 24" fill="#F19100" role="img" aria-label="Em destaque"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"></path></svg></sc-if></span>
+<span style="flex:none;font:400 0.8125rem var(--font-mono);color:var(--text-label)">{{ p.ano }}</span>
+</div>
+<div style="font:500 0.75rem var(--font-mono);letter-spacing:.04em;color:var(--text-label);margin-bottom:0.5rem">{{ p.meta }}</div>
+<p style="margin:0 0 0.75rem;font:400 0.9375rem/1.55 var(--font-body);color:var(--text-body);text-wrap:pretty">{{ p.resumo }}</p>
+<div style="display:flex;flex-wrap:wrap;gap:0.375rem;margin-top:auto">
+<sc-for list="{{ p.stack }}" as="s" hint-placeholder-count="2"><span style="padding:0.3rem 0.5rem;font:400 0.75rem var(--font-mono);color:var(--text-body);border:1px solid var(--border-subtle);border-radius:0.3rem">{{ s }}</span></sc-for>
+</div>
+</a>
+</sc-for>
+<sc-for list="{{ esqueletos }}" as="e" hint-placeholder-count="0">
+<div aria-hidden="true" style="display:flex;flex-direction:column;gap:0.625rem">
+<div style="aspect-ratio:16/9;border-radius:0.3rem;background:linear-gradient(90deg,var(--skeleton-base) 25%,var(--skeleton-sheen) 50%,var(--skeleton-base) 75%);background-size:200% 100%;animation:ds-shimmer 1.4s linear infinite;margin-bottom:0.25rem"></div>
+<div style="height:1.125rem;width:60%;border-radius:0.3rem;background:linear-gradient(90deg,var(--skeleton-base) 25%,var(--skeleton-sheen) 50%,var(--skeleton-base) 75%);background-size:200% 100%;animation:ds-shimmer 1.4s linear infinite"></div>
+<div style="height:0.75rem;width:100%;border-radius:0.3rem;background:linear-gradient(90deg,var(--skeleton-base) 25%,var(--skeleton-sheen) 50%,var(--skeleton-base) 75%);background-size:200% 100%;animation:ds-shimmer 1.4s linear infinite"></div>
+<div style="height:0.75rem;width:75%;border-radius:0.3rem;background:linear-gradient(90deg,var(--skeleton-base) 25%,var(--skeleton-sheen) 50%,var(--skeleton-base) 75%);background-size:200% 100%;animation:ds-shimmer 1.4s linear infinite"></div>
+</div>
+</sc-for>
+</div>
+
+<sc-if value="{{ temMais }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;justify-content:center;margin-top:clamp(2rem,4vw,3rem)">
+<button type="button" onClick="{{ carregarMais }}" aria-busy="{{ buscandoMais }}" style="display:inline-flex;align-items:center;gap:0.5rem;min-height:2.75rem;padding:0 1.5rem;font:600 0.9375rem var(--font-body);color:var(--text-strong);background:transparent;border:1px solid var(--border-strong);border-radius:0.3rem;cursor:pointer" style-hover="border-color:var(--text-strong)">{{ maisLabel }}</button>
+</div>
+</sc-if>
+</main>
+<dc-import name="ProtoFooter" modo="padrao" hint-size="100%,320px"></dc-import>
+<dc-import name="ProtoEstados" opcoes="{{ estados }}" hint-size="0px,0px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const PROJETOS = [
+  { titulo: "Maps", tipo: "Web", cat: "Pessoal", ano: 2026, destaque: true, resumo: "Mapa interativo com camadas de dados e recorte de área.", stack: ["React", "TypeScript", "PostGIS"] },
+  { titulo: "Dashboard de finanças", tipo: "Web", cat: "Profissional", ano: 2026, destaque: true, resumo: "Receitas e despesas recorrentes com projeção de saldo.", stack: ["Next.js", "PostgreSQL"] },
+  { titulo: "API de pagamentos", tipo: "API", cat: "Profissional", ano: 2025, destaque: true, resumo: "Três meios de pagamento e fila de reprocessamento.", stack: ["Node.js", "Prisma"] },
+  { titulo: "Plataforma de cursos", tipo: "Web", cat: "Acadêmico", ano: 2025, destaque: false, resumo: "Trilhas com progresso e certificado gerado no fim.", stack: ["React", "Node.js"] },
+  { titulo: "Check-in de eventos", tipo: "Mobile", cat: "Pessoal", ano: 2025, destaque: false, resumo: "Leitura de credencial por QR code, funcionando offline.", stack: ["React Native"] },
+  { titulo: "Catálogo de componentes", tipo: "Web", cat: "Profissional", ano: 2024, destaque: false, resumo: "Busca e curadoria dos componentes de três times.", stack: ["TypeScript", "Storybook"] },
+  { titulo: "Relatórios agendados", tipo: "API", cat: "Profissional", ano: 2024, destaque: false, resumo: "Geração e envio automático de relatórios em PDF.", stack: ["Python", "Docker"] },
+  { titulo: "Controle de estoque", tipo: "Web", cat: "Acadêmico", ano: 2024, destaque: false, resumo: "Entrada, saída e alerta de estoque mínimo por item.", stack: ["Next.js", "Prisma"] },
+  { titulo: "Rastreio de entregas", tipo: "Mobile", cat: "Acadêmico", ano: 2023, destaque: false, resumo: "Rota do dia e comprovante com foto no aparelho do entregador.", stack: ["React Native", "Node.js"] },
+  { titulo: "Gateway de webhooks", tipo: "API", cat: "Pessoal", ano: 2023, destaque: false, resumo: "Recebe, valida e reenvia eventos com nova tentativa automática.", stack: ["Node.js", "Redis"] }
+];
+const TIPOS = ["Todos", "Web", "Mobile", "API"];
+const CATS = [["Acadêmico", "Acadêmicos"], ["Pessoal", "Pessoais"], ["Profissional", "Profissionais"]];
+const ESTADOS = [{ id: "normal", rotulo: "Normal" }, { id: "carregando", rotulo: "Carregando" }, { id: "vazio", rotulo: "Busca vazia" }, { id: "erro", rotulo: "Erro" }];
+const POR_PAGINA = 6;
+
+const chip = (on) => ({ ativo: on, peso: on ? 600 : 500, cor: on ? "var(--text-strong)" : "var(--text-body)", fundo: on ? "var(--bg-highlight)" : "transparent", borda: on ? "var(--brand-variant)" : "var(--border-subtle)" });
+
+class Component extends DCLogic {
+  constructor(p) {
+    super(p);
+    const estado = new URLSearchParams(location.search).get("estado") || "normal";
+    this.state = { w: window.innerWidth, estado, busca: estado === "vazio" ? "blockchain" : "", tipo: "Todos", cat: null, ordem: "recente", visiveis: POR_PAGINA, buscandoMais: false };
+  }
+  onR = () => this.setState({ w: window.innerWidth });
+  componentDidMount() { window.addEventListener("resize", this.onR); }
+  componentWillUnmount() { window.removeEventListener("resize", this.onR); clearTimeout(this._t); }
+  limparTudo = () => this.setState({ busca: "", tipo: "Todos", cat: null, visiveis: POR_PAGINA });
+  carregarMais = () => {
+    if (this.state.buscandoMais) return;
+    this.setState({ buscandoMais: true });
+    this._t = setTimeout(() => this.setState((s) => ({ buscandoMais: false, visiveis: s.visiveis + POR_PAGINA })), 900);
+  };
+
+  renderVals() {
+    const { w, estado, busca, tipo, cat, ordem, visiveis, buscandoMais } = this.state;
+    const mobile = w < 640;
+    const q = busca.trim().toLowerCase();
+    let lista = PROJETOS.filter((p) => (tipo === "Todos" || p.tipo === tipo) && (!cat || p.cat === cat) &&
+      (!q || p.titulo.toLowerCase().includes(q) || p.stack.some((s) => s.toLowerCase().includes(q))));
+    lista = lista.slice().sort((a, b) => ordem === "az" ? a.titulo.localeCompare(b.titulo) : ordem === "antigo" ? a.ano - b.ano : b.ano - a.ano);
+    const carregando = estado === "carregando";
+    const erro = estado === "erro";
+    const vazio = !carregando && !erro && lista.length === 0;
+    const mostrados = carregando || erro ? [] : lista.slice(0, visiveis);
+    const temFiltro = !!q || tipo !== "Todos" || !!cat;
+
+    return {
+      estados: ESTADOS,
+      busca, temBusca: busca.length > 0, semBusca: busca.length === 0,
+      bordaBusca: busca ? "var(--text-strong)" : "var(--border-subtle)",
+      aoBuscar: (e) => this.setState({ busca: e.target.value, visiveis: POR_PAGINA }),
+      limparBusca: () => this.setState({ busca: "" }),
+      ordem, aoOrdenar: (e) => this.setState({ ordem: e.target.value }),
+      quebra: mobile ? "nowrap" : "wrap",
+      rolagem: mobile ? "auto" : "visible",
+      sangria: mobile ? "-16px" : "0",
+      recuo: mobile ? "16px" : "0",
+      tipos: TIPOS.map((t) => ({ rotulo: t, ...chip(tipo === t), onClick: () => this.setState({ tipo: t, visiveis: POR_PAGINA }) })),
+      categorias: CATS.map(([id, rotulo]) => ({ rotulo, ...chip(cat === id), onClick: () => this.setState({ cat: cat === id ? null : id, visiveis: POR_PAGINA }) })),
+      contagem: carregando ? "Carregando projetos…" : erro ? "" : mostrados.length + " de " + lista.length + " projetos",
+      temFiltro: temFiltro && !carregando, limparTudo: this.limparTudo,
+      erro, vazio,
+      vazioTexto: q ? "Nenhum resultado para \u201c" + busca + "\u201d. Tente outro termo ou remova os filtros." : "Nenhum projeto com essa combinação de filtros.",
+      cards: mostrados.map((p) => ({ ...p, meta: p.tipo.toUpperCase() + " · " + p.cat.toUpperCase() })),
+      esqueletos: carregando ? [1, 2, 3, 4, 5, 6] : buscandoMais ? [1, 2, 3] : [],
+      temMais: !carregando && !erro && visiveis < lista.length,
+      buscandoMais: buscandoMais ? "true" : undefined,
+      maisLabel: buscandoMais ? "Carregando…" : "Carregar mais",
+      carregarMais: this.carregarMais
+    };
+  }
+}
+</script>
+</body>
+</html>
