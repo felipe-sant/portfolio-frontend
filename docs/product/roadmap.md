@@ -1,6 +1,6 @@
 # Roadmap
 
-Este documento diz em que ordem as entregas do portfólio acontecem e o que define cada versão. Não é cronograma nem quadro de status: datas e andamento vivem nas issues do GitHub e no `**Status:**` de cada spec. O produto tem duas fases: a **v1** é a entrega da faculdade (Fatec) e as versões **V2+** são de uso pessoal. As issues que ainda não existem aparecem por letra e descrição (A a Q) e serão criadas depois que a documentação (#1 a #11) terminar; ao criar uma delas, a letra vira o número neste documento. Mudar a ordem dos marcos ou o escopo de uma versão é decisão do PO e muda este documento no mesmo PR. Os requisitos R1 a R3 estão em [`overview.md`](overview.md) e as decisões de design (`Dnn`, `PIn`) em [`decisions.md`](../design/decisions.md).
+Este documento diz em que ordem as entregas do portfólio acontecem e o que define cada versão. Não é cronograma nem quadro de status: datas e andamento vivem nas issues do GitHub e no `**Status:**` de cada spec. A única data fixa é o prazo da v1: **23/11/2026**. O produto tem duas fases: a **v1** é a entrega da faculdade (Fatec) e as versões **V2+** são de uso pessoal. As issues que ainda não existem aparecem por letra e descrição (A a Q) e serão criadas depois que a documentação (#1 a #11) terminar; ao criar uma delas, a letra vira o número neste documento. Mudar a ordem dos marcos ou o escopo de uma versão é decisão do PO e muda este documento no mesmo PR. Os requisitos R1 a R3 estão em [`overview.md`](overview.md) e as decisões de design (`Dnn`, `PIn`) em [`decisions.md`](../design/decisions.md).
 
 ## Versões
 
@@ -153,7 +153,7 @@ M (fonte local → API), N (formulário real, proteção contra spam, remoção 
 
 ## v1
 
-A v1 é a entrega da faculdade, publicada no GitHub Pages do repositório da v1 a partir da tag `v1.0.0` da `main`, criada pelo versionamento automático, com a URL entregue ao professor. Ela só sai com todos os itens marcados:
+A v1 é a entrega da faculdade, publicada no GitHub Pages do repositório da v1 a partir da tag `v1.0.0` da `main`, criada pelo versionamento automático, com a URL entregue ao professor. **Prazo: 23/11/2026.** Ela só sai com todos os itens marcados:
 
 - [ ] As rotas `/`, `/projetos`, `/projetos/:slug`, `/informacoes` e `/contato`, a página não encontrada e a página de erro cumprem os critérios de aceite dos documentos de #2 a #7.
 - [ ] Todo dado exibido é o conteúdo real do PO, vindo dos JSONs locais de #13 no formato do contrato de #10, sem requisição a backend.
