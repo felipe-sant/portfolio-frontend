@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="styles.css">
+<style>body{margin:0;background:var(--bg-page);color:var(--text-body);font-family:var(--font-body)}a{color:var(--text-link)}a:hover{color:var(--brand-variant)}</style>
+</helmet>
+<div style="min-height:100vh;display:flex;flex-direction:column;background:var(--bg-page);overflow-x:clip">
+<dc-import name="ProtoHeader" ativo="Projetos" hint-size="100%,64px" style="position:sticky;top:0;z-index:20"></dc-import>
+<main style="flex:1;width:100%;max-width:80rem;margin:0 auto;padding:1rem clamp(1rem,4vw,3rem) clamp(3rem,6vw,5rem)">
+
+<a href="prototipo-projetos.dc.html" style="display:inline-flex;align-items:center;gap:0.5rem;min-height:2.75rem;font:600 0.9375rem var(--font-body);color:var(--text-body);text-decoration:none" style-hover="color:var(--text-strong)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7M19 12H5"></path></svg>Voltar para Projetos</a>
+
+<sc-if value="{{ erro }}" hint-placeholder-val="{{ false }}">
+<div role="alert" style="margin-top:2rem;padding:clamp(1.5rem,4vw,2.5rem);background:var(--danger-surface);color:var(--danger-ink);border-radius:0.3rem">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v4M12 16h.01"></path></svg>
+<div style="font:700 1.25rem var(--font-heading);margin:0.75rem 0 0.375rem">Não consegui carregar este projeto</div>
+<p style="margin:0 0 1.25rem;font:400 0.9375rem/1.6 var(--font-body);max-width:30rem">A documentação e as imagens não chegaram. O restante do site continua funcionando.</p>
+<div style="display:flex;gap:0.625rem;flex-wrap:wrap">
+<a href="?estado=normal" style="display:inline-flex;align-items:center;min-height:2.75rem;padding:0 1.25rem;font:600 0.9375rem var(--font-body);color:var(--danger-ink);border:1px solid currentColor;border-radius:0.3rem;text-decoration:none">Tentar novamente</a>
+<a href="prototipo-projetos.dc.html" style="display:inline-flex;align-items:center;min-height:2.75rem;padding:0 1.25rem;font:600 0.9375rem var(--font-body);color:var(--danger-ink);text-decoration:underline">Ver outros projetos</a>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ carregando }}" hint-placeholder-val="{{ false }}">
+<div aria-hidden="true" style="margin-top:1.5rem;display:flex;flex-direction:column;gap:1rem">
+<div style="height:2.75rem;width:min(60%,22rem);border-radius:0.3rem;background:linear-gradient(90deg,var(--skeleton-base) 25%,var(--skeleton-sheen) 50%,var(--skeleton-base) 75%);background-size:200% 100%;animation:ds-shimmer 1.4s linear infinite"></div>
+<div style="height:1rem;width:min(90%,34rem);border-radius:0.3rem;background:linear-gradient(90deg,var(--skeleton-base) 25%,var(--skeleton-sheen) 50%,var(--skeleton-base) 75%);background-size:200% 100%;animation:ds-shimmer 1.4s linear infinite"></div>
+<div style="aspect-ratio:16/9;max-width:52rem;border-radius:0.3rem;background:linear-gradient(90deg,var(--skeleton-base) 25%,var(--skeleton-sheen) 50%,var(--skeleton-base) 75%);background-size:200% 100%;animation:ds-shimmer 1.4s linear infinite;margin-top:1rem"></div>
+</div>
+</sc-if>
+
+<sc-if value="{{ pronto }}" hint-placeholder-val="{{ true }}">
+<header data-screen-label="Título" style="padding:clamp(1.25rem,3vw,2rem) 0 clamp(1.75rem,3vw,2.5rem)">
+<div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;margin-bottom:1rem">
+<span style="display:inline-flex;align-items:center;gap:0.3rem;padding:0.3rem 0.55rem;font:600 0.75rem var(--font-body);color:#202020;background:linear-gradient(180deg,#FFCC00,#F19100);border-radius:0.3rem"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"></path></svg>Destaque</span>
+<span style="padding:0.3rem 0.55rem;font:600 0.75rem var(--font-body);color:var(--text-body);background:var(--bg-raised);border:1px solid var(--border-subtle);border-radius:0.3rem">Pessoal</span>
+<span style="font:500 0.75rem var(--font-mono);letter-spacing:.06em;color:var(--text-label)">WEB · 2026</span>
+</div>
+<h1 style="margin:0 0 1rem;font-family:var(--font-heading);font-weight:800;font-size:clamp(2.25rem,6vw,3rem);line-height:1.02;letter-spacing:-.035em;color:var(--text-strong)">Maps</h1>
+<p style="margin:0;max-width:38rem;font:400 clamp(1rem,2vw,1.125rem)/1.65 var(--font-body);color:var(--text-body);text-wrap:pretty">Mapa interativo com camadas de dados, busca por região e recorte de área. Continua fluido com 40 mil pontos na tela, inclusive nas máquinas antigas do escritório.</p>
+</header>
+
+<div style="display:grid;grid-template-columns:{{ colunas }};grid-template-areas:{{ areas }};gap:clamp(1.75rem,4vw,3rem);align-items:start">
+
+<section data-screen-label="Galeria" aria-label="Galeria" style="grid-area:g;min-width:0">
+<button type="button" onClick="{{ abrirLightbox }}" aria-label="Ampliar imagem" style="display:block;width:100%;padding:0;aspect-ratio:16/9;background:var(--bg-placeholder);border:1px solid var(--border-subtle);border-radius:0.3rem;cursor:zoom-in"></button>
+<div style="display:flex;justify-content:space-between;gap:1rem;margin:0.75rem 0">
+<span style="font:400 0.875rem/1.5 var(--font-body);color:var(--text-weak)">{{ legenda }}</span>
+<span style="flex:none;font:400 0.8125rem var(--font-mono);color:var(--text-label)">{{ contador }}</span>
+</div>
+<div role="group" aria-label="Miniaturas" style="display:grid;grid-auto-flow:column;grid-auto-columns:{{ colMini }};gap:0.5rem;overflow-x:auto;padding:2px;scrollbar-width:thin">
+<sc-for list="{{ miniaturas }}" as="m" hint-placeholder-count="5">
+<button type="button" aria-label="{{ m.aria }}" aria-current="{{ m.atual }}" onClick="{{ m.onClick }}" style="padding:0;aspect-ratio:16/9;min-height:2.75rem;background:var(--bg-placeholder);border-radius:0.3rem;cursor:pointer;border:{{ m.borda }}"></button>
+</sc-for>
+</div>
+</section>
+
+<aside data-screen-label="Ficha técnica" style="grid-area:a;display:flex;flex-direction:column;gap:1rem;position:{{ asidePos }};top:5rem">
+<div style="padding:1.25rem;border:1px solid var(--border-subtle);border-radius:0.3rem">
+<h2 style="margin:0 0 1rem;font:500 0.75rem var(--font-mono);letter-spacing:.08em;color:var(--text-label)">FICHA TÉCNICA</h2>
+<dl style="margin:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,7.5rem),1fr));gap:0.875rem 1rem">
+<sc-for list="{{ ficha }}" as="f" hint-placeholder-count="6">
+<div><dt style="font:400 0.8125rem var(--font-body);color:var(--text-weak);margin-bottom:0.2rem">{{ f.k }}</dt><dd style="margin:0;font:600 0.9375rem var(--font-body);color:var(--text-strong)">{{ f.v }}</dd></div>
+</sc-for>
+<div><dt style="font:400 0.8125rem var(--font-body);color:var(--text-weak);margin-bottom:0.2rem">Situação</dt><dd style="margin:0;display:inline-flex;align-items:center;gap:0.4rem;font:600 0.9375rem var(--font-body);color:var(--success-ink)"><span style="width:0.45rem;height:0.45rem;border-radius:50%;background:currentColor" aria-hidden="true"></span>Em produção</dd></div>
+</dl>
+</div>
+<div style="padding:1.25rem;border:1px solid var(--border-subtle);border-radius:0.3rem">
+<h2 style="margin:0 0 0.875rem;font:500 0.75rem var(--font-mono);letter-spacing:.08em;color:var(--text-label)">STACK</h2>
+<div style="font:500 0.75rem var(--font-mono);color:var(--text-label);margin-bottom:0.5rem">FRONTEND</div>
+<div style="display:flex;flex-wrap:wrap;gap:0.375rem;margin-bottom:0.875rem"><span style="padding:0.3rem 0.5rem;font:400 0.75rem var(--font-mono);color:var(--text-body);border:1px solid var(--border-subtle);border-radius:0.3rem">TypeScript</span><span style="padding:0.3rem 0.5rem;font:400 0.75rem var(--font-mono);color:var(--text-body);border:1px solid var(--border-subtle);border-radius:0.3rem">React</span><span style="padding:0.3rem 0.5rem;font:400 0.75rem var(--font-mono);color:var(--text-body);border:1px solid var(--border-subtle);border-radius:0.3rem">Leaflet</span></div>
+<div style="font:500 0.75rem var(--font-mono);color:var(--text-label);margin-bottom:0.5rem">BACKEND</div>
+<div style="display:flex;flex-wrap:wrap;gap:0.375rem"><span style="padding:0.3rem 0.5rem;font:400 0.75rem var(--font-mono);color:var(--text-body);border:1px solid var(--border-subtle);border-radius:0.3rem">Node.js</span><span style="padding:0.3rem 0.5rem;font:400 0.75rem var(--font-mono);color:var(--text-body);border:1px solid var(--border-subtle);border-radius:0.3rem">PostGIS</span></div>
+</div>
+<div style="display:flex;flex-direction:column;gap:0.5rem">
+<a href="#" style="display:inline-flex;align-items:center;justify-content:center;gap:0.5rem;min-height:2.75rem;padding:0 1.25rem;font:600 0.9375rem var(--font-body);color:#202020;background:linear-gradient(180deg,#FFCC00,#F19100);border-radius:0.3rem;text-decoration:none">Ver projeto ao vivo<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg></a>
+<a href="#" style="display:inline-flex;align-items:center;justify-content:center;gap:0.5rem;min-height:2.75rem;padding:0 1.25rem;font:600 0.9375rem var(--font-body);color:var(--text-strong);border:1px solid var(--border-strong);border-radius:0.3rem;text-decoration:none" style-hover="border-color:var(--text-strong);color:var(--text-strong)">Ver código no GitHub</a>
+</div>
+</aside>
+
+<section data-screen-label="Documentação" aria-label="Documentação" style="grid-area:d;min-width:0">
+<div role="tablist" aria-label="Arquivos" style="position:sticky;top:calc(4rem + 1px);z-index:2;background:var(--bg-page);box-shadow:0 -1.5rem 0 1.5rem var(--bg-page);clip-path:inset(-1.5rem -1.5rem 0 -1.5rem);display:flex;gap:1.25rem;overflow-x:auto;border-bottom:1px solid var(--border-subtle);margin-bottom:1.75rem;scrollbar-width:none">
+<sc-for list="{{ abas }}" as="a" hint-placeholder-count="4">
+<button type="button" role="tab" aria-selected="{{ a.ativo }}" onClick="{{ a.onClick }}" style="flex:none;min-height:2.75rem;padding:0;margin-bottom:-1px;background:transparent;border:none;border-bottom:2px solid {{ a.linha }};cursor:pointer;white-space:nowrap;font-family:var(--font-mono);font-size:0.8125rem;font-weight:{{ a.peso }};color:{{ a.cor }}">{{ a.rotulo }}</button>
+</sc-for>
+</div>
+
+<sc-if value="{{ ehReadme }}" hint-placeholder-val="{{ true }}">
+<article style="max-width:42rem;font:400 1rem/1.7 var(--font-body);color:var(--text-body)">
+<h2 style="margin:0 0 0.75rem;padding-bottom:0.5rem;border-bottom:1px solid var(--border-subtle);font:800 1.5rem var(--font-heading);letter-spacing:-.02em;color:var(--text-strong)">Por que construí</h2>
+<p style="margin:0 0 1rem;text-wrap:pretty">A equipe recebia planilhas de coordenadas e abria uma a uma no editor de mapas para conferir se as áreas se sobrepunham. Levava uma tarde por lote. Detalhes do processo antigo estão no <a href="#">relatório de levantamento</a>.</p>
+<blockquote style="margin:0 0 1.5rem;padding:0.25rem 0 0.25rem 1rem;border-left:3px solid var(--border-strong);color:var(--text-weak)">A primeira versão travava aos 8 mil pontos. O requisito era 40 mil, numa máquina de 2017.</blockquote>
+<h3 style="margin:0 0 0.625rem;font:700 1.125rem var(--font-heading);color:var(--text-strong)">O que muda</h3>
+<ul style="margin:0 0 1.5rem;padding-left:1.25rem;display:flex;flex-direction:column;gap:0.375rem">
+<li>Renderização em canvas com agrupamento por nível de zoom</li>
+<li>Recorte por polígono livre, com interseção calculada no navegador</li>
+<li>Exportação do recorte em <code style="padding:0.1rem 0.35rem;font:400 0.875em var(--font-mono);color:var(--code-text);background:var(--code-bg);border:1px solid var(--border-subtle);border-radius:0.3rem">GeoJSON</code> e CSV</li>
+</ul>
+<h3 style="margin:0 0 0.625rem;font:700 1.125rem var(--font-heading);color:var(--text-strong)">Agrupamento</h3>
+<div style="border:1px solid var(--border-subtle);border-radius:0.3rem;overflow:hidden;margin-bottom:1rem">
+<div style="display:flex;justify-content:space-between;padding:0.5rem 0.875rem;background:var(--bg-raised);border-bottom:1px solid var(--border-subtle);font:400 0.75rem var(--font-mono);color:var(--text-weak)"><span>src/agrupar.ts</span><span>TypeScript</span></div>
+<pre style="margin:0;padding:1rem 0.875rem;overflow-x:auto;background:var(--code-bg);font:400 0.8125rem/1.7 var(--font-mono);color:var(--code-text)"><code style="display:block;width:max-content;min-width:100%"><span style="display:block"><span style="color:var(--code-comment)">// Agrupa pontos por célula de grade conforme o zoom</span></span><span style="display:block"><span style="color:var(--code-keyword)">export function</span> <span style="color:var(--code-function)">agrupar</span>(pontos: <span style="color:var(--code-type)">Ponto</span>[], zoom: <span style="color:var(--code-type)">number</span>): <span style="color:var(--code-type)">Grupo</span>[] {</span><span style="display:block">  <span style="color:var(--code-keyword)">const</span> tamanho = <span style="color:var(--code-number)">256</span> / <span style="color:var(--code-number)">2</span> ** zoom;</span><span style="display:block">  <span style="color:var(--code-keyword)">const</span> celulas = <span style="color:var(--code-keyword)">new</span> <span style="color:var(--code-type)">Map</span>&lt;<span style="color:var(--code-type)">string</span>, <span style="color:var(--code-type)">Ponto</span>[]&gt;();</span><span style="display:block">  <span style="color:var(--code-keyword)">for</span> (<span style="color:var(--code-keyword)">const</span> p <span style="color:var(--code-keyword)">of</span> pontos) {</span><span style="display:block">    <span style="color:var(--code-keyword)">const</span> chave = <span style="color:var(--code-string)">`${Math.</span><span style="color:var(--code-function)">floor</span><span style="color:var(--code-string)">(p.x / tamanho)}:${Math.</span><span style="color:var(--code-function)">floor</span><span style="color:var(--code-string)">(p.y / tamanho)}`</span>;</span><span style="display:block">    celulas.<span style="color:var(--code-function)">set</span>(chave, [...(celulas.<span style="color:var(--code-function)">get</span>(chave) ?? []), p]);</span><span style="display:block">  }</span><span style="display:block">  <span style="color:var(--code-keyword)">return</span> [...celulas.<span style="color:var(--code-function)">values</span>()].<span style="color:var(--code-function)">map</span>(criarGrupo);</span><span style="display:block">}</span></code></pre>
+</div>
+<p style="margin:0;text-wrap:pretty">O tamanho da célula cai pela metade a cada nível de zoom, então o número de grupos visíveis fica estável enquanto o usuário navega.</p>
+</article>
+</sc-if>
+<sc-if value="{{ ehOutro }}" hint-placeholder-val="{{ false }}">
+<article style="max-width:42rem;font:400 1rem/1.7 var(--font-body);color:var(--text-body)">
+<h2 style="margin:0 0 0.75rem;padding-bottom:0.5rem;border-bottom:1px solid var(--border-subtle);font:800 1.5rem var(--font-heading);letter-spacing:-.02em;color:var(--text-strong)">{{ outroTitulo }}</h2>
+<p style="margin:0;text-wrap:pretty">{{ outroTexto }}</p>
+</article>
+</sc-if>
+</section>
+</div>
+
+<section data-screen-label="Relacionados" style="margin-top:clamp(3rem,6vw,4.5rem);padding-top:clamp(2rem,4vw,2.75rem);border-top:1px solid var(--border-subtle)">
+<div style="display:flex;justify-content:space-between;align-items:center;gap:1rem;margin-bottom:1.5rem">
+<h2 style="margin:0;font:500 0.75rem var(--font-mono);letter-spacing:.1em;color:var(--text-label)">PROJETOS RELACIONADOS</h2>
+<a href="prototipo-projetos.dc.html" style="display:inline-flex;align-items:center;min-height:2.75rem;font:600 0.875rem var(--font-body);text-decoration:none;white-space:nowrap">Ver todos →</a>
+</div>
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,17rem),1fr));gap:1.5rem">
+<sc-for list="{{ relacionados }}" as="r" hint-placeholder-count="3">
+<a href="prototipo-projeto.dc.html" style="display:flex;flex-direction:column;color:inherit;text-decoration:none;border-radius:0.3rem;transition:transform 180ms cubic-bezier(.2,0,.2,1)" style-hover="transform:translateY(-3px)">
+<div style="aspect-ratio:16/9;background:var(--bg-placeholder);border:1px solid var(--border-subtle);border-radius:0.3rem;margin-bottom:0.875rem"></div>
+<div style="font:500 0.75rem var(--font-mono);letter-spacing:.04em;color:var(--text-label);margin-bottom:0.375rem">{{ r.motivo }}</div>
+<div style="font:700 1.125rem var(--font-heading);letter-spacing:-.015em;color:var(--text-strong);margin-bottom:0.375rem">{{ r.titulo }}</div>
+<p style="margin:0;font:400 0.9375rem/1.55 var(--font-body);color:var(--text-body)">{{ r.resumo }}</p>
+</a>
+</sc-for>
+</div>
+</section>
+</sc-if>
+</main>
+<dc-import name="ProtoFooter" modo="padrao" hint-size="100%,320px"></dc-import>
+<dc-import name="ProtoEstados" opcoes="{{ estados }}" hint-size="0px,0px"></dc-import>
+
+<sc-if value="{{ lightbox }}" hint-placeholder-val="{{ false }}">
+<div role="dialog" aria-modal="true" aria-label="Imagem ampliada" onClick="{{ fecharLightbox }}" style="position:fixed;inset:0;z-index:50;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:0.75rem;padding:16px;background:var(--overlay)">
+<div onClick="{{ parar }}" style="width:100%;max-width:64rem;background:var(--bg-page);border:1px solid var(--border-strong);border-radius:0.3rem;box-shadow:var(--shadow-modal);overflow:hidden">
+<div style="display:flex;justify-content:space-between;align-items:center;gap:1rem;padding:0.5rem 0.5rem 0.5rem 1rem;border-bottom:1px solid var(--border-subtle)">
+<span style="font:600 0.9375rem var(--font-body);color:var(--text-strong)">{{ legenda }} · {{ contador }}</span>
+<button type="button" aria-label="Fechar" onClick="{{ fecharLightbox }}" style="flex:none;display:inline-flex;align-items:center;justify-content:center;width:2.75rem;height:2.75rem;padding:0;background:transparent;border:none;cursor:pointer;color:var(--text-body)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
+</div>
+<div style="position:relative;aspect-ratio:16/9;background:var(--bg-placeholder)">
+<button type="button" aria-label="Imagem anterior" onClick="{{ anterior }}" style="position:absolute;left:0.5rem;top:50%;transform:translateY(-50%);display:inline-flex;align-items:center;justify-content:center;width:2.75rem;height:2.75rem;padding:0;background:var(--bg-page);border:1px solid var(--border-subtle);border-radius:0.3rem;cursor:pointer;color:var(--text-strong)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg></button>
+<button type="button" aria-label="Próxima imagem" onClick="{{ proxima }}" style="position:absolute;right:0.5rem;top:50%;transform:translateY(-50%);display:inline-flex;align-items:center;justify-content:center;width:2.75rem;height:2.75rem;padding:0;background:var(--bg-page);border:1px solid var(--border-subtle);border-radius:0.3rem;cursor:pointer;color:var(--text-strong)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg></button>
+</div>
+</div>
+</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const GALERIA = ["Visão geral com as três camadas ligadas", "Recorte de área por polígono livre", "Busca por região", "Painel de camadas", "Exportação do recorte"];
+const ABAS = ["README.md", "ARQUITETURA.md", "SETUP.md", "CHANGELOG.md"];
+const OUTROS = {
+  "ARQUITETURA.md": ["Arquitetura", "Camada de render própria em canvas, índice espacial em memória e entrega dos dados em tiles GeoJSON com cache em IndexedDB."],
+  "SETUP.md": ["Como rodar", "Node 20, PostgreSQL 16 com PostGIS e um arquivo .env com a chave do provedor de tiles. O passo a passo completo fica no repositório."],
+  "CHANGELOG.md": ["Histórico", "v1.4 em 03/2026 trouxe exportação em CSV. v1.2 em 01/2026 trouxe cache offline. v1.0 entrou em uso em 11/2025."]
+};
+const FICHA = [["Ano", "2026"], ["Tipo", "Web · SPA"], ["Categoria", "Pessoal"], ["Papel", "Fullstack"], ["Duração", "4 meses"], ["Time", "Solo"]];
+const RELACIONADOS = [
+  { motivo: "TAMBÉM USA MAPA", titulo: "Rastreio de entregas", resumo: "Rota do dia e comprovante com foto no aparelho do entregador." },
+  { motivo: "MESMA STACK", titulo: "Dashboard de finanças", resumo: "Receitas e despesas recorrentes com projeção de saldo." },
+  { motivo: "MESMO ANO", titulo: "API de pagamentos", resumo: "Três meios de pagamento e fila de reprocessamento." }
+];
+const ESTADOS = [{ id: "normal", rotulo: "Normal" }, { id: "carregando", rotulo: "Carregando" }, { id: "erro", rotulo: "Erro" }];
+
+class Component extends DCLogic {
+  state = { w: window.innerWidth, foto: 0, aba: "README.md", lb: false };
+  onR = () => this.setState({ w: window.innerWidth });
+  onKey = (e) => {
+    if (!this.state.lb) return;
+    if (e.key === "Escape") this.setState({ lb: false });
+    if (e.key === "ArrowRight") this.mover(1);
+    if (e.key === "ArrowLeft") this.mover(-1);
+  };
+  mover = (d) => this.setState((s) => ({ foto: (s.foto + d + GALERIA.length) % GALERIA.length }));
+  componentDidMount() { window.addEventListener("resize", this.onR); document.addEventListener("keydown", this.onKey); }
+  componentWillUnmount() { window.removeEventListener("resize", this.onR); document.removeEventListener("keydown", this.onKey); }
+
+  renderVals() {
+    const estado = new URLSearchParams(location.search).get("estado") || "normal";
+    const { w, foto, aba, lb } = this.state;
+    const largo = w >= 980;
+    const outro = OUTROS[aba];
+    return {
+      estados: ESTADOS,
+      erro: estado === "erro", carregando: estado === "carregando", pronto: estado === "normal",
+      colunas: largo ? "minmax(0,1fr) 18rem" : "minmax(0,1fr)",
+      areas: largo ? "'g a' 'd a'" : "'g' 'a' 'd'",
+      asidePos: largo ? "sticky" : "static",
+      colMini: w < 640 ? "6.5rem" : "minmax(0,1fr)",
+      legenda: GALERIA[foto], contador: (foto + 1) + " de " + GALERIA.length,
+      miniaturas: GALERIA.map((g, i) => ({ aria: g + " (" + (i + 1) + " de " + GALERIA.length + ")", atual: i === foto ? "true" : undefined,
+        borda: i === foto ? "2px solid var(--brand-variant)" : "1px solid var(--border-subtle)", onClick: () => this.setState({ foto: i }) })),
+      ficha: FICHA.map(([k, v]) => ({ k, v })),
+      abas: ABAS.map((r) => { const on = r === aba; return { rotulo: r, ativo: on ? "true" : "false", peso: on ? 600 : 400, cor: on ? "var(--text-strong)" : "var(--text-weak)", linha: on ? "var(--brand-variant)" : "transparent", onClick: () => this.setState({ aba: r }) }; }),
+      ehReadme: aba === "README.md", ehOutro: !!outro,
+      outroTitulo: outro ? outro[0] : "", outroTexto: outro ? outro[1] : "",
+      relacionados: RELACIONADOS,
+      lightbox: lb,
+      abrirLightbox: () => this.setState({ lb: true }), fecharLightbox: () => this.setState({ lb: false }),
+      parar: (e) => e.stopPropagation(),
+      anterior: (e) => { e.stopPropagation(); this.mover(-1); }, proxima: (e) => { e.stopPropagation(); this.mover(1); }
+    };
+  }
+}
+</script>
+</body>
+</html>

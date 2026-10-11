@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="styles.css">
+<style>body{margin:0;background:var(--bg-page);color:var(--text-body);font-family:var(--font-body)}a{color:var(--text-link)}a:hover{color:var(--brand-variant)}</style>
+</helmet>
+<div style="min-height:100vh;display:flex;flex-direction:column;background:var(--bg-page);overflow-x:clip">
+<dc-import name="ProtoHeader" ativo="Informações" hint-size="100%,64px" style="position:sticky;top:0;z-index:20"></dc-import>
+<main style="flex:1">
+
+<section data-screen-label="Apresentação" style="max-width:80rem;margin:0 auto;padding:clamp(2rem,5vw,3.5rem) clamp(1rem,4vw,3rem)">
+<div style="display:flex;flex-wrap:wrap;gap:clamp(1.5rem,4vw,3rem);align-items:flex-start">
+<div style="flex:0 0 clamp(9rem,24vw,15rem)">
+<sc-if value="{{ carregando }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true" style="aspect-ratio:1;border-radius:0.3rem;background:linear-gradient(90deg,var(--skeleton-base) 25%,var(--skeleton-sheen) 50%,var(--skeleton-base) 75%);background-size:200% 100%;animation:ds-shimmer 1.4s linear infinite"></div></sc-if>
+<sc-if value="{{ pronto }}" hint-placeholder-val="{{ true }}"><div role="img" aria-label="Foto de Luiz Felipe (placeholder)" style="aspect-ratio:1;background:var(--bg-placeholder);border:1px solid var(--border-subtle);border-radius:0.3rem"></div></sc-if>
+<div style="display:flex;flex-direction:column;gap:0.375rem;margin-top:0.75rem">
+<span style="display:inline-flex;align-items:center;gap:0.375rem;font:400 0.8125rem var(--font-body);color:var(--text-weak)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><path d="M20 10c0 5-5.5 10.2-7.4 11.8a1 1 0 0 1-1.2 0C9.5 20.2 4 15 4 10a8 8 0 0 1 16 0"></path><circle cx="12" cy="10" r="3"></circle></svg>São José dos Campos · SP</span>
+<span style="display:inline-flex;align-items:center;gap:0.375rem;font:600 0.8125rem var(--font-body);color:var(--success-ink)"><span style="width:0.45rem;height:0.45rem;border-radius:50%;background:currentColor" aria-hidden="true"></span>Disponível para projetos</span>
+</div>
+</div>
+<div style="flex:1 1 20rem;min-width:0">
+<div style="font:500 0.75rem var(--font-mono);letter-spacing:.1em;color:var(--text-label);margin-bottom:0.75rem">INFORMAÇÕES</div>
+<h1 style="margin:0 0 1rem;font-family:var(--font-heading);font-weight:800;font-size:clamp(2rem,5vw,2.75rem);line-height:1.05;letter-spacing:-.03em;color:var(--text-strong)">Luiz Felipe dos Santos</h1>
+<p style="margin:0 0 1.5rem;max-width:34rem;font:400 clamp(1rem,2vw,1.125rem)/1.65 var(--font-body);color:var(--text-body);text-wrap:pretty">Desenvolvedor full stack em TypeScript. Trabalho em produtos web de ponta a ponta, do banco de dados à interface.</p>
+<div style="display:flex;gap:0.625rem;flex-wrap:wrap">
+<a href="#" style="display:inline-flex;align-items:center;gap:0.5rem;min-height:2.75rem;padding:0 1.25rem;font:600 0.9375rem var(--font-body);color:#202020;background:linear-gradient(180deg,#FFCC00,#F19100);border-radius:0.3rem;text-decoration:none"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"></path></svg>Baixar CV</a>
+<a href="prototipo-contato.dc.html" style="display:inline-flex;align-items:center;min-height:2.75rem;padding:0 1.25rem;font:600 0.9375rem var(--font-body);color:var(--text-strong);border:1px solid var(--border-strong);border-radius:0.3rem;text-decoration:none" style-hover="border-color:var(--text-strong);color:var(--text-strong)">Enviar mensagem</a>
+</div>
+</div>
+</div>
+</section>
+
+<section data-screen-label="Sobre mim" style="background:var(--bg-raised);border-top:1px solid var(--border-subtle);border-bottom:1px solid var(--border-subtle)">
+<div style="max-width:80rem;margin:0 auto;padding:clamp(2.5rem,5vw,3.5rem) clamp(1rem,4vw,3rem)">
+<h2 style="margin:0 0 1.5rem;font:800 1.75rem var(--font-heading);letter-spacing:-.025em;color:var(--text-strong)">Sobre mim</h2>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,22rem),1fr));gap:1.125rem clamp(1.5rem,4vw,3rem);font:400 1rem/1.7 var(--font-body);color:var(--text-body)">
+<p style="margin:0;text-wrap:pretty">Comecei em curso técnico aos dezesseis anos e entrei na faculdade sem parar de trabalhar. Isso me acostumou a aprender no meio da entrega, com prazo real e código de outra pessoa na tela.</p>
+<p style="margin:0;text-wrap:pretty">O que me puxa é o problema que ninguém quer encostar: a integração que quebra em silêncio, a modelagem que travou o time, o relatório manual que consome uma tarde por mês.</p>
+<p style="margin:0;text-wrap:pretty">Trabalho bem em time pequeno, onde ninguém tem uma função só. Já fiz migração de banco numa semana e ajustei espaçamento de botão na seguinte.</p>
+<p style="margin:0;text-wrap:pretty">Levo o problema do enunciado até a tela e deixo registrado por que cada decisão foi tomada. Por isso cada projeto aqui tem documentação de verdade.</p>
+</div>
+</div>
+</section>
+
+<section data-screen-label="Stack" style="max-width:80rem;margin:0 auto;padding:clamp(2.5rem,5vw,3.5rem) clamp(1rem,4vw,3rem)">
+<h2 style="margin:0 0 1.5rem;font:800 1.75rem var(--font-heading);letter-spacing:-.025em;color:var(--text-strong)">Stack</h2>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,15rem),1fr));gap:1.75rem">
+<sc-for list="{{ stack }}" as="g" hint-placeholder-count="3">
+<div>
+<div style="display:flex;justify-content:space-between;padding-bottom:0.5rem;border-bottom:1px solid var(--border-subtle);margin-bottom:0.75rem;font:500 0.75rem var(--font-mono);letter-spacing:.08em;color:var(--text-label)"><span>{{ g.rotulo }}</span><span>{{ g.total }}</span></div>
+<div style="display:flex;flex-wrap:wrap;gap:0.375rem">
+<sc-for list="{{ g.itens }}" as="i" hint-placeholder-count="4"><span style="padding:0.375rem 0.5625rem;font:400 0.8125rem var(--font-mono);color:var(--text-body);border:1px solid var(--border-subtle);border-radius:0.3rem">{{ i }}</span></sc-for>
+</div>
+</div>
+</sc-for>
+</div>
+</section>
+
+<section data-screen-label="Complementos" style="background:var(--neutral-900)">
+<div style="max-width:80rem;margin:0 auto;padding:clamp(2.25rem,4vw,3rem) clamp(1rem,4vw,3rem);display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,18rem),1fr));gap:2rem">
+<div>
+<h2 style="margin:0 0 0.875rem;font:500 0.75rem var(--font-mono);letter-spacing:.08em;color:var(--dark-300)">CERTIFICADOS</h2>
+<div style="display:flex;flex-wrap:wrap;gap:0.375rem"><span style="padding:0.375rem 0.5625rem;font:400 0.8125rem var(--font-mono);color:var(--dark-200);border:1px solid var(--dark-border);border-radius:0.3rem">Técnico em Informática para Internet</span><span style="padding:0.375rem 0.5625rem;font:400 0.8125rem var(--font-mono);color:var(--dark-200);border:1px solid var(--dark-border);border-radius:0.3rem">Arquitetura de aplicações web</span><span style="padding:0.375rem 0.5625rem;font:400 0.8125rem var(--font-mono);color:var(--dark-200);border:1px solid var(--dark-border);border-radius:0.3rem">Informática básica · Microcamp</span></div>
+</div>
+<div>
+<h2 style="margin:0 0 0.875rem;font:500 0.75rem var(--font-mono);letter-spacing:.08em;color:var(--dark-300)">COMO EU TRABALHO</h2>
+<div style="display:flex;flex-wrap:wrap;gap:0.375rem"><span style="padding:0.375rem 0.5625rem;font:400 0.8125rem var(--font-mono);color:var(--dark-200);border:1px solid var(--dark-border);border-radius:0.3rem">Escrevo o que decidi</span><span style="padding:0.375rem 0.5625rem;font:400 0.8125rem var(--font-mono);color:var(--dark-200);border:1px solid var(--dark-border);border-radius:0.3rem">Pergunto antes de supor</span><span style="padding:0.375rem 0.5625rem;font:400 0.8125rem var(--font-mono);color:var(--dark-200);border:1px solid var(--dark-border);border-radius:0.3rem">Entrego em partes pequenas</span></div>
+</div>
+</div>
+</section>
+
+<section data-screen-label="Trajetória" style="max-width:80rem;margin:0 auto;padding:clamp(2.5rem,5vw,3.5rem) clamp(1rem,4vw,3rem) clamp(3rem,6vw,5rem)">
+<h2 style="margin:0 0 0.5rem;font:800 1.75rem var(--font-heading);letter-spacing:-.025em;color:var(--text-strong)">Trajetória</h2>
+<p style="margin:0;font:400 0.875rem var(--font-body);color:var(--text-weak)">Selecione um item para ver o detalhe.</p>
+<sc-for list="{{ grupos }}" as="g" hint-placeholder-count="3">
+<div style="margin-top:2rem">
+<h3 style="display:flex;justify-content:space-between;margin:0 0 0.875rem;padding-bottom:0.625rem;border-bottom:1px solid var(--border-subtle);font:500 0.75rem var(--font-mono);letter-spacing:.1em;color:var(--text-label)"><span>{{ g.rotulo }}</span><span>{{ g.total }}</span></h3>
+<div style="display:flex;flex-direction:column;gap:0.5rem">
+<sc-for list="{{ g.itens }}" as="it" hint-placeholder-count="2">
+<sc-if value="{{ carregando }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true" style="height:4.5rem;border-radius:0.3rem;background:linear-gradient(90deg,var(--skeleton-base) 25%,var(--skeleton-sheen) 50%,var(--skeleton-base) 75%);background-size:200% 100%;animation:ds-shimmer 1.4s linear infinite"></div></sc-if>
+<sc-if value="{{ pronto }}" hint-placeholder-val="{{ true }}">
+<button type="button" onClick="{{ it.onClick }}" aria-haspopup="dialog" style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:0.375rem 1rem;width:100%;min-height:2.75rem;text-align:left;padding:1rem 1.125rem;background:transparent;border:1px solid var(--border-subtle);border-radius:0.3rem;cursor:pointer;color:inherit;font-family:var(--font-body);transition:border-color 180ms cubic-bezier(.2,0,.2,1),background 180ms cubic-bezier(.2,0,.2,1)" style-hover="border-color:var(--text-strong);background:var(--bg-raised)">
+<span style="flex:1 1 14rem;min-width:0">
+<span style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap"><span style="font:700 1.0625rem var(--font-heading);letter-spacing:-.015em;color:var(--text-strong)">{{ it.titulo }}</span>
+<sc-if value="{{ it.atual }}" hint-placeholder-val="{{ false }}"><span style="display:inline-flex;align-items:center;gap:0.3rem;padding:0.15rem 0.4rem;font:600 0.75rem var(--font-body);color:var(--success-ink);background:var(--success-surface);border-radius:0.3rem"><span style="width:0.35rem;height:0.35rem;border-radius:50%;background:currentColor" aria-hidden="true"></span>Atual</span></sc-if></span>
+<span style="display:block;margin-top:0.25rem;font:400 0.875rem var(--font-body);color:var(--text-weak)">{{ it.detalhes }}</span>
+</span>
+<span style="flex:none;font:400 0.8125rem var(--font-mono);color:var(--text-label)">{{ it.periodo }}</span>
+</button>
+</sc-if>
+</sc-for>
+</div>
+</div>
+</sc-for>
+</section>
+</main>
+<dc-import name="ProtoFooter" modo="padrao" hint-size="100%,320px"></dc-import>
+<dc-import name="ProtoEstados" opcoes="{{ estados }}" hint-size="0px,0px"></dc-import>
+
+<sc-if value="{{ aberto }}" hint-placeholder-val="{{ false }}">
+<div onClick="{{ fechar }}" style="position:fixed;inset:0;z-index:50;overflow-y:auto;background:var(--overlay);padding:{{ fundoPad }}">
+<div role="dialog" aria-modal="true" aria-labelledby="modal-titulo" onClick="{{ parar }}" style="max-width:{{ modalMax }};min-height:{{ modalMin }};margin:0 auto;background:var(--bg-page);border:1px solid var(--border-strong);border-radius:{{ modalRaio }};box-shadow:var(--shadow-modal)">
+<div style="position:sticky;top:0;display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;padding:1rem 0.75rem 1rem 1.25rem;background:var(--bg-page);border-bottom:1px solid var(--border-subtle)">
+<div style="padding-top:0.375rem"><div id="modal-titulo" style="font:800 1.375rem var(--font-heading);letter-spacing:-.02em;color:var(--text-strong)">{{ mTitulo }}</div><div style="font:400 0.8125rem var(--font-body);color:var(--text-weak);margin-top:0.25rem">{{ mMeta }}</div></div>
+<button type="button" aria-label="Fechar" onClick="{{ fechar }}" style="flex:none;display:inline-flex;align-items:center;justify-content:center;width:2.75rem;height:2.75rem;padding:0;background:transparent;border:none;cursor:pointer;color:var(--text-body)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
+</div>
+<div style="padding:1.25rem;display:flex;flex-direction:column;gap:1.25rem">
+<p style="margin:0;font:400 1rem/1.7 var(--font-body);color:var(--text-body);text-wrap:pretty">{{ mResumo }}</p>
+<sc-for list="{{ mBlocos }}" as="b" hint-placeholder-count="2">
+<div style="padding-top:1.125rem;border-top:1px solid var(--border-subtle)">
+<div style="font:500 0.75rem var(--font-mono);letter-spacing:.08em;color:var(--text-label);margin-bottom:0.625rem">{{ b.rotulo }}</div>
+<sc-if value="{{ b.lista }}" hint-placeholder-val="{{ true }}"><ul style="margin:0;padding-left:1.125rem;display:flex;flex-direction:column;gap:0.375rem;font:400 0.9375rem/1.6 var(--font-body);color:var(--text-body)"><sc-for list="{{ b.itens }}" as="i" hint-placeholder-count="3"><li>{{ i }}</li></sc-for></ul></sc-if>
+<sc-if value="{{ b.chips }}" hint-placeholder-val="{{ false }}"><div style="display:flex;flex-wrap:wrap;gap:0.375rem"><sc-for list="{{ b.itens }}" as="i" hint-placeholder-count="3"><span style="padding:0.375rem 0.5625rem;font:400 0.8125rem var(--font-mono);color:var(--text-body);border:1px solid var(--border-subtle);border-radius:0.3rem">{{ i }}</span></sc-for></div></sc-if>
+<sc-if value="{{ b.links }}" hint-placeholder-val="{{ false }}"><div style="display:flex;flex-direction:column"><sc-for list="{{ b.itens }}" as="i" hint-placeholder-count="2"><a href="prototipo-projeto.dc.html" style="display:flex;align-items:center;min-height:2.75rem;font:600 0.9375rem var(--font-body);text-decoration:none">{{ i }} →</a></sc-for></div></sc-if>
+</div>
+</sc-for>
+</div>
+</div>
+</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const STACK = [["FRONTEND", ["TypeScript", "React", "Next.js", "Tailwind"]], ["BACKEND", ["Node.js", "Python", "PostgreSQL", "Prisma"]], ["INFRA E FERRAMENTAS", ["Docker", "Git", "GitHub Actions", "Vercel"]]];
+const GRUPOS = [
+  ["EXPERIÊNCIAS PROFISSIONAIS", [
+    { titulo: "Desenvolvedor full stack", inicio: "06/2026", detalhes: ["Empresa de dados", "CLT"], resumo: "Produto de dados com time de quatro pessoas e ciclo curto de entrega. Entrei para cuidar da interface e assumi também a modelagem dos relatórios.", resp: ["Interfaces em React e Next.js", "Consultas de relatório em PostgreSQL", "Componentes compartilhados entre dois produtos"], tec: ["React", "TypeScript", "Next.js", "PostgreSQL"], proj: ["Maps", "Dashboard de finanças"] },
+    { titulo: "Desenvolvedor júnior", inicio: "06/2024", fim: "05/2026", detalhes: ["Empresa de serviços", "CLT"], resumo: "Sistema legado em produção havia oito anos, migrado aos poucos para TypeScript sem parar as entregas.", resp: ["Correção de falhas com cliente ativo", "Testes de integração onde não havia nenhum", "Migração incremental para TypeScript"], tec: ["React", "Redux", "Node.js", "MySQL"], proj: ["API de pagamentos"] }
+  ]],
+  ["FORMAÇÕES", [
+    { titulo: "Fatec", inicio: "01/2023", detalhes: ["Análise e desenvolvimento de sistemas", "6º semestre"], resumo: "Curso superior em tecnologia, com ênfase em estrutura de dados, banco e engenharia de software.", disc: ["Estrutura de dados", "Banco de dados", "Engenharia de software"], proj: ["Controle de estoque"] },
+    { titulo: "Etec", inicio: "01/2020", fim: "12/2022", detalhes: ["Técnico em Informática para Internet"], resumo: "Curso técnico integrado ao ensino médio. Onde escrevi o primeiro código que outra pessoa usou.", disc: ["Lógica de programação", "Redes", "Desenvolvimento web"], cert: ["Certificado técnico"] }
+  ]],
+  ["CURSOS", [
+    { titulo: "Arquitetura de aplicações web", inicio: "06/2024", fim: "05/2026", detalhes: ["Online", "120 horas"], resumo: "Decisões de estrutura e estratégia de testes em aplicações web de médio porte.", disc: ["Arquitetura", "Testes automatizados", "Integração contínua"], cert: ["Certificado de conclusão"] },
+    { titulo: "Informática básica", inicio: "01/2017", fim: "12/2019", detalhes: ["Microcamp", "Presencial"], resumo: "Primeiro contato com programação. Três anos de sábado de manhã.", disc: ["Lógica", "Hardware"], cert: ["Certificado Microcamp"] }
+  ]]
+];
+const ESTADOS = [{ id: "normal", rotulo: "Normal" }, { id: "carregando", rotulo: "Carregando" }];
+const periodo = (i, f) => (f ? i + " — " + f : "desde " + i);
+
+class Component extends DCLogic {
+  state = { w: window.innerWidth, aberto: null };
+  onR = () => this.setState({ w: window.innerWidth });
+  onKey = (e) => { if (e.key === "Escape") this.setState({ aberto: null }); };
+  componentDidMount() { window.addEventListener("resize", this.onR); document.addEventListener("keydown", this.onKey); }
+  componentWillUnmount() { window.removeEventListener("resize", this.onR); document.removeEventListener("keydown", this.onKey); }
+  componentDidUpdate() { document.body.style.overflow = this.state.aberto ? "hidden" : ""; }
+
+  blocos(a) {
+    const out = [];
+    const add = (rotulo, itens, tipo) => { if (itens && itens.length) out.push({ rotulo, itens, lista: tipo === "l", chips: tipo === "c", links: tipo === "k" }); };
+    add("RESPONSABILIDADES", a.resp, "l");
+    add("PRINCIPAIS DISCIPLINAS", a.disc, "l");
+    add("TECNOLOGIAS", a.tec, "c");
+    add("CERTIFICADOS", a.cert, "c");
+    add("PROJETOS RELACIONADOS", a.proj, "k");
+    return out;
+  }
+
+  renderVals() {
+    const estado = new URLSearchParams(location.search).get("estado") || "normal";
+    const { w, aberto: a } = this.state;
+    const mobile = w < 640;
+    return {
+      estados: ESTADOS,
+      carregando: estado === "carregando", pronto: estado !== "carregando",
+      stack: STACK.map(([rotulo, itens]) => ({ rotulo, itens, total: String(itens.length) })),
+      grupos: GRUPOS.map(([rotulo, itens]) => ({ rotulo, total: String(itens.length), itens: itens.map((it) => ({
+        titulo: it.titulo, detalhes: it.detalhes.join(" · "), periodo: periodo(it.inicio, it.fim), atual: !it.fim,
+        onClick: () => this.setState({ aberto: it }) })) })),
+      aberto: !!a,
+      fechar: () => this.setState({ aberto: null }), parar: (e) => e.stopPropagation(),
+      fundoPad: mobile ? "0" : "clamp(1rem,6vh,3rem) 1.25rem",
+      modalMax: mobile ? "none" : "34rem", modalMin: mobile ? "100%" : "0", modalRaio: mobile ? "0" : "0.3rem",
+      mTitulo: a ? a.titulo : "", mMeta: a ? a.detalhes.join(" · ") + " · " + periodo(a.inicio, a.fim) : "",
+      mResumo: a ? a.resumo : "", mBlocos: a ? this.blocos(a) : []
+    };
+  }
+}
+</script>
+</body>
+</html>

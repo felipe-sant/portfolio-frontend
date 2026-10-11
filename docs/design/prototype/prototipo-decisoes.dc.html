@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="styles.css">
+<style>body{margin:0;background:var(--bg-page);color:var(--text-body);font-family:var(--font-body)}a{color:var(--text-link)}a:hover{color:var(--brand-variant)}</style>
+</helmet>
+<div style="min-height:100vh;background:var(--bg-page);overflow-x:clip">
+<dc-import name="ProtoHeader" ativo="" hint-size="100%,64px" style="position:sticky;top:0;z-index:20"></dc-import>
+<main style="max-width:52rem;margin:0 auto;padding:clamp(2rem,5vw,3.5rem) clamp(1rem,4vw,3rem) 4rem">
+<a href="prototipo-indice.dc.html" style="display:inline-flex;align-items:center;min-height:2.75rem;font:600 0.9375rem var(--font-body);text-decoration:none">← Voltar para o índice</a>
+<h1 style="margin:1rem 0 1rem;font-family:var(--font-heading);font-weight:800;font-size:clamp(2rem,5vw,2.75rem);line-height:1.05;letter-spacing:-.03em;color:var(--text-strong)">Decisões</h1>
+<p style="margin:0 0 2.5rem;max-width:36rem;font:400 1rem/1.65 var(--font-body);text-wrap:pretty">Os 12 pontos em aberto, o que foi aplicado em cada um e onde aparece. Depois, as decisões que o design system não cobria, o que ficou provisório e o resultado da verificação.</p>
+
+<h2 style="margin:0 0 1rem;font:500 0.75rem var(--font-mono);letter-spacing:.1em;color:var(--text-label)">PONTOS EM ABERTO</h2>
+<sc-for list="{{ pontos }}" as="p" hint-placeholder-count="12">
+<section style="padding:1.25rem 0;border-top:1px solid var(--border-subtle)">
+<div style="display:flex;align-items:baseline;gap:0.75rem;flex-wrap:wrap;margin-bottom:0.5rem">
+<span style="font:500 0.8125rem var(--font-mono);color:var(--text-label)">{{ p.n }}</span>
+<h3 style="margin:0;font:700 1.125rem var(--font-heading);color:var(--text-strong)">{{ p.titulo }}</h3>
+<span style="padding:0.2rem 0.45rem;font:600 0.75rem var(--font-body);border-radius:0.3rem;color:{{ p.corSelo }};background:{{ p.fundoSelo }}">{{ p.selo }}</span>
+</div>
+<p style="margin:0 0 0.5rem;font:400 0.9375rem/1.65 var(--font-body);text-wrap:pretty">{{ p.decisao }}</p>
+<sc-if value="{{ p.temNota }}" hint-placeholder-val="{{ false }}"><p style="margin:0 0 0.5rem;font:400 0.9375rem/1.65 var(--font-body);color:var(--text-weak);text-wrap:pretty">{{ p.nota }}</p></sc-if>
+<div style="font:400 0.8125rem var(--font-mono);color:var(--text-label)">{{ p.telas }}</div>
+</section>
+</sc-for>
+
+<sc-for list="{{ listas }}" as="l" hint-placeholder-count="3">
+<section style="margin-top:2.5rem">
+<h2 style="margin:0 0 1rem;font:500 0.75rem var(--font-mono);letter-spacing:.1em;color:var(--text-label)">{{ l.titulo }}</h2>
+<ul style="margin:0;padding-left:1.125rem;display:flex;flex-direction:column;gap:0.625rem;font:400 0.9375rem/1.65 var(--font-body)">
+<sc-for list="{{ l.itens }}" as="i" hint-placeholder-count="5"><li style="text-wrap:pretty">{{ i }}</li></sc-for>
+</ul>
+</section>
+</sc-for>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const SEGUIU = ["Seguiu a proposta", "var(--success-ink)", "var(--success-surface)"];
+const DIVERGE = ["Seguiu, diverge do existente", "var(--warning-ink)", "var(--warning-surface)"];
+const P = [
+  ["Menu mobile", SEGUIU, "Abaixo de 640px a navegação vira um botão de 44px. O painel ocupa a largura toda abaixo do cabeçalho, com links em coluna de 52px de altura, item ativo marcado por traço de 2px em --brand-variant à esquerda, seletor de idioma e alternador de tema. Fecha com Esc, com clique num link, no botão, ou ao alargar a janela para desktop. A rolagem da página fica travada com o menu aberto.", "", "Todas as telas"],
+  ["Logo", DIVERGE, "Só o nome \u201cLuiz Felipe dos Santos\u201d em Bricolage 700, sem placeholder.", "O componente Header do design system e as telas aprovadas ainda usam o quadrado tracejado com LOGO. O Header precisa ser atualizado para bater com o protótipo.", "Todas as telas"],
+  ["Rodapé", SEGUIU, "Linha superior de 2px em degradê horizontal, fundo neutro (--surface-chrome). Em Contato o rodapé vira navegação: Início, Projetos, Informações e redes, sem a chamada para contato.", "No tema escuro o fundo do cabeçalho e do rodapé é #141210, como nas telas aprovadas. Criei --surface-chrome e --border-chrome para isso não depender de classe.", "Todas; variação de navegação em Contato"],
+  ["Formulário de contato", SEGUIU, "Nome, e-mail, assunto em chips e mensagem com contador de 600 caracteres. Validação só no envio e, depois disso, a cada alteração. No erro, um resumo no topo conta os campos e o foco vai para o primeiro inválido. Enviando bloqueia os campos e mostra spinner. Enviado troca o formulário pela confirmação.", "Saíram da coluna lateral \u201cAgendar uma conversa\u201d e a lista de redes, que agora estão no rodapé de navegação.", "Contato"],
+  ["Erro de formulário", DIVERGE, "Borda do campo e mensagem em --danger-ink, com aria-invalid e aria-describedby.", "O TextField do design system e o readme dizem borda em --brand-variant e texto em --brand-deep. Precisam ser corrigidos.", "Contato"],
+  ["Detalhe de projeto", DIVERGE, "Sem \u201cProjeto N de 10\u201d e sem \u201cPróximo\u201d. A volta é um link \u201cVoltar para Projetos\u201d no topo e a continuação é a seção de relacionados.", "Projeto.dc.html, aprovado antes, tinha uma barra com contador e próximo projeto.", "Projeto"],
+  ["Pílulas", SEGUIU, "Chips, badges, botões e campos usam 0.3rem. Só o indicador de status (bolinha verde) é redondo. Não há avatar nesta versão.", "", "Todas as telas"],
+  ["Seletor de idioma", SEGUIU, "PT · EN · ES no cabeçalho, entre a navegação e o tema, com o ativo em peso 600 e cor forte. No menu mobile vira três botões de 44px com o ativo em --bg-highlight. Só visual: o texto não muda.", "", "Todas as telas"],
+  ["Depoimentos", DIVERGE, "Fora das telas.", "Início.dc.html, o componente Testimonial e o UI kit ainda têm depoimentos.", "Início"],
+  ["CV", SEGUIU, "\u201cBaixar CV\u201d com ícone de download no hero do Início, na apresentação de Informações e na coluna de canais do Contato. No rodapé de navegação aparece como \u201cCurrículo em PDF\u201d.", "", "Início, Informações, Contato"],
+  ["Documentação do projeto", SEGUIU, "README.md com título, parágrafo com link, citação, subtítulo, lista com código inline e bloco de código TypeScript com destaque de sintaxe por tipo de token. As cores vêm dos novos tokens --code-*, com uma paleta para cada tema. As abas ficam fixas no topo durante a rolagem.", "", "Projeto"],
+  ["Ícones", SEGUIU, "Desenho no estilo Lucide, inline, traço entre 2 e 2.4, tamanho entre 12 e 20px.", "", "Todas as telas"]
+];
+const OUTRAS = [
+  "Filtros no mobile: escolhi a linha com rolagem horizontal, não o painel. Tipo e categoria cabem numa linha só e ficam sempre visíveis; a linha encosta na borda da tela para indicar que rola. O modal de filtros por tecnologia e ano das telas aprovadas saiu, porque a busca já filtra por tecnologia.",
+  "Grade de projetos: colunas de no mínimo 18rem, preenchendo o espaço. Dá 1 coluna em 360 e 390, 2 em 768 e 3 em 1280.",
+  "Galeria no mobile: miniaturas em linha rolável de 6.5rem, para cada uma ter pelo menos 44px de altura. No desktop são cinco colunas iguais.",
+  "Ficha técnica: abaixo de 980px vai para entre a galeria e a documentação, com os dados em grade de pares, e deixa de ser fixa.",
+  "Trajetória: no mobile o período quebra para baixo do título. O modal ocupa a tela toda abaixo de 640px.",
+  "Contato: duas colunas a partir de 900px. Abaixo disso, os canais descem para depois do formulário, separados por uma linha.",
+  "Tema: começa pelo prefers-color-scheme, fica salvo no navegador e pode ser forçado com ?tema=dark na URL.",
+  "Foco visível: novo arquivo tokens/base.css com contorno de 2px em --brand-variant e afastamento de 2px em todo elemento focado por teclado.",
+  "Seletor de estado: fixo no canto inferior direito, fora do layout. Começa recolhido no mobile para não cobrir o conteúdo.",
+  "Títulos sem ponto final, inclusive o do Início (\u201cDesenvolvedor full stack em TypeScript\u201d), que nas telas aprovadas tinha ponto."
+];
+const PROVISORIO = [
+  "Imagens: todas são placeholders neutros 16:9 e 1:1. Os sketches não foram usados.",
+  "Todos os cards levam ao mesmo detalhe (Maps). ARQUITETURA.md, SETUP.md e CHANGELOG.md têm só um parágrafo.",
+  "Links externos (GitHub, LinkedIn, demo) e os botões de CV apontam para #. O envio do formulário é simulado.",
+  "O idioma não traduz nada.",
+  "Menu e modais fecham por Esc e devolvem a rolagem, mas não prendem o foco dentro deles. Isso fica para a implementação.",
+  "A ampliação da galeria mostra o placeholder, sem imagem real."
+];
+const VERIFICACAO = [
+  "Rodei uma varredura automática nas 7 telas, em 360, 768 e 1280px, nos dois temas: 42 combinações. Ela fica em prototipo-verificacao.dc.html e pode ser rodada de novo.",
+  "Largura: nenhuma tela estourou em nenhuma combinação.",
+  "Menu mobile: abriu e fechou com Esc nas 7 telas em 360px, nos dois temas.",
+  "Alvos de toque: o nome no cabeçalho tinha 19px de altura e o seletor de ordenação 40px. Os dois foram para 44px; a segunda rodada passou.",
+  "Contraste AA: falhou um caso, o nome do arquivo no bloco de código no tema escuro (4.48:1). Troquei o tom para --text-weak. Não rodei a varredura de novo depois desta última correção.",
+  "Foco visível: a regra global está presente em todas as telas. Isso confirma a regra, não um teste com teclado.",
+  "Limites: só o estado normal de cada tela foi varrido. 390px não entrou na varredura; o layout é fluido entre 360 e 768. O contraste sobre o degradê foi medido contra a cor média dele."
+];
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      pontos: P.map(([titulo, s, decisao, nota, telas], i) => ({ n: String(i + 1).padStart(2, "0"), titulo, selo: s[0], corSelo: s[1], fundoSelo: s[2], decisao, nota, temNota: !!nota, telas })),
+      listas: [
+        { titulo: "OUTRAS DECISÕES", itens: OUTRAS },
+        { titulo: "PROVISÓRIO OU DE FORA", itens: PROVISORIO },
+        { titulo: "VERIFICAÇÃO", itens: VERIFICACAO }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

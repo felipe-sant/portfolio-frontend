@@ -1,0 +1,9 @@
+/* Um raio só, em rem, para tudo que é clicável ou contido. */
+:root {
+  --radius: 0.3rem;
+  --radius-pill: 999px;
+  --border-width: 1px;
+  --border-width-active: 2px;
+  --hit-min: 2.75rem;
+  --ratio-media: 16 / 9;
+}

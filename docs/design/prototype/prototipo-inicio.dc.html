@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="styles.css">
+<style>body{margin:0;background:var(--bg-page);color:var(--text-body);font-family:var(--font-body)}a{color:var(--text-link)}a:hover{color:var(--brand-variant)}</style>
+</helmet>
+<div style="min-height:100vh;display:flex;flex-direction:column;background:var(--bg-page);overflow-x:clip">
+<dc-import name="ProtoHeader" ativo="Início" hint-size="100%,64px" style="position:sticky;top:0;z-index:20"></dc-import>
+<main style="flex:1">
+
+<section data-screen-label="Hero" style="max-width:80rem;margin:0 auto;padding:clamp(3rem,8vw,6rem) clamp(1rem,4vw,3rem) clamp(2.5rem,5vw,4rem)">
+<span style="display:inline-flex;align-items:center;gap:0.5rem;padding:0.375rem 0.625rem;font:600 0.8125rem var(--font-body);color:var(--success-ink);background:var(--success-surface);border-radius:0.3rem"><span style="width:0.5rem;height:0.5rem;border-radius:50%;background:currentColor"></span>Disponível para projetos</span>
+<h1 style="margin:1.25rem 0 0;max-width:46rem;font-family:var(--font-heading);font-weight:800;font-size:clamp(2.25rem,7vw,3.75rem);line-height:1.02;letter-spacing:-.035em;color:var(--text-strong);text-wrap:balance">Desenvolvedor full stack em TypeScript</h1>
+<p style="margin:1.25rem 0 2rem;max-width:34rem;font:400 clamp(1rem,2vw,1.125rem)/1.65 var(--font-body);color:var(--text-body);text-wrap:pretty">Trabalho em produtos web de ponta a ponta, do banco de dados à interface. Aqui estão os projetos que melhor mostram como resolvo problemas.</p>
+<div style="display:flex;gap:0.75rem;flex-wrap:wrap">
+<a href="prototipo-projetos.dc.html" style="display:inline-flex;align-items:center;gap:0.5rem;min-height:3rem;padding:0 1.5rem;font:600 1rem var(--font-body);color:#202020;background:linear-gradient(180deg,#FFCC00,#F19100);border-radius:0.3rem;text-decoration:none">Ver projetos<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-7-7 7 7-7 7"></path></svg></a>
+<a href="#" style="display:inline-flex;align-items:center;gap:0.5rem;min-height:3rem;padding:0 1.5rem;font:600 1rem var(--font-body);color:var(--text-strong);border:1px solid var(--border-strong);border-radius:0.3rem;text-decoration:none" style-hover="border-color:var(--text-strong);color:var(--text-strong)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"></path></svg>Baixar CV</a>
+</div>
+</section>
+
+<section data-screen-label="Status" style="max-width:80rem;margin:0 auto;padding:0 clamp(1rem,4vw,3rem) clamp(2.5rem,5vw,4rem)">
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,17rem),1fr));gap:0.75rem">
+<sc-if value="{{ carregando }}" hint-placeholder-val="{{ false }}">
+<div style="height:6.5rem;border-radius:0.3rem;background:linear-gradient(90deg,var(--skeleton-base) 25%,var(--skeleton-sheen) 50%,var(--skeleton-base) 75%);background-size:200% 100%;animation:ds-shimmer 1.4s linear infinite" aria-hidden="true"></div>
+<div style="height:6.5rem;border-radius:0.3rem;background:linear-gradient(90deg,var(--skeleton-base) 25%,var(--skeleton-sheen) 50%,var(--skeleton-base) 75%);background-size:200% 100%;animation:ds-shimmer 1.4s linear infinite" aria-hidden="true"></div>
+</sc-if>
+<sc-if value="{{ pronto }}" hint-placeholder-val="{{ true }}">
+<div style="padding:1.25rem;border:1px solid var(--border-subtle);border-radius:0.3rem">
+<div style="font:500 0.75rem var(--font-mono);letter-spacing:.08em;color:var(--text-label);margin-bottom:0.625rem">TRABALHANDO COMO</div>
+<div style="font:700 1.125rem var(--font-heading);color:var(--text-strong)">Dev Fullstack</div>
+<div style="font:400 0.8125rem var(--font-body);color:var(--text-weak);margin-top:0.375rem">Empresa · desde 06/2026</div></div>
+<div style="padding:1.25rem;border:1px solid var(--border-subtle);border-radius:0.3rem">
+<div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.625rem"><span style="width:0.5rem;height:0.5rem;border-radius:50%;background:var(--success-ink)" aria-hidden="true"></span><span style="font:500 0.75rem var(--font-mono);letter-spacing:.08em;color:var(--text-label)">CURSANDO</span></div>
+<div style="font:700 1.125rem var(--font-heading);color:var(--text-strong)">Fatec · Análise e desenvolvimento de sistemas</div>
+<div style="font:400 0.8125rem var(--font-body);color:var(--text-weak);margin-top:0.375rem">6º semestre · desde 01/2023</div></div>
+</sc-if>
+</div>
+</section>
+
+<div data-screen-label="Stack" aria-label="Tecnologias que uso" style="background:var(--neutral-900);overflow:hidden;padding:1.125rem 0">{{ marquee }}</div>
+
+<section data-screen-label="Destaques" style="max-width:80rem;margin:0 auto;padding:clamp(3rem,6vw,5rem) clamp(1rem,4vw,3rem)">
+<div style="display:flex;justify-content:space-between;align-items:center;gap:1rem;padding-bottom:0.875rem;border-bottom:1px solid var(--border-subtle);margin-bottom:clamp(2rem,4vw,3rem)">
+<h2 style="margin:0;font:500 0.75rem var(--font-mono);letter-spacing:.1em;color:var(--text-label)">PROJETOS EM DESTAQUE</h2>
+<a href="prototipo-projetos.dc.html" style="display:inline-flex;align-items:center;min-height:2.75rem;font:600 0.875rem var(--font-body);text-decoration:none;white-space:nowrap">Ver todos →</a>
+</div>
+
+<sc-if value="{{ erro }}" hint-placeholder-val="{{ false }}">
+<div role="alert" style="display:flex;gap:0.875rem;align-items:flex-start;flex-wrap:wrap;padding:1rem 1.125rem;background:var(--danger-surface);color:var(--danger-ink);border-radius:0.3rem">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" style="flex:none"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v4M12 16h.01"></path></svg>
+<div style="flex:1 1 14rem"><div style="font:600 0.9375rem var(--font-body)">Não consegui carregar os projetos</div><div style="font:400 0.875rem/1.5 var(--font-body);margin-top:0.25rem">Verifique sua conexão e tente de novo.</div></div>
+<a href="?estado=normal" style="display:inline-flex;align-items:center;min-height:2.75rem;padding:0 1rem;font:600 0.875rem var(--font-body);color:var(--danger-ink);border:1px solid currentColor;border-radius:0.3rem;text-decoration:none">Tentar novamente</a>
+</div>
+</sc-if>
+
+<sc-if value="{{ carregando }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:clamp(2.5rem,5vw,4rem)">
+<sc-for list="{{ esqueletos }}" as="e" hint-placeholder-count="2">
+<div style="display:grid;grid-template-columns:{{ colunas }};gap:clamp(1.25rem,3vw,2.5rem);align-items:center" aria-hidden="true">
+<div style="aspect-ratio:16/9;border-radius:0.3rem;background:linear-gradient(90deg,var(--skeleton-base) 25%,var(--skeleton-sheen) 50%,var(--skeleton-base) 75%);background-size:200% 100%;animation:ds-shimmer 1.4s linear infinite"></div>
+<div style="display:flex;flex-direction:column;gap:0.75rem">
+<div style="height:1.75rem;width:55%;border-radius:0.3rem;background:linear-gradient(90deg,var(--skeleton-base) 25%,var(--skeleton-sheen) 50%,var(--skeleton-base) 75%);background-size:200% 100%;animation:ds-shimmer 1.4s linear infinite"></div>
+<div style="height:0.875rem;width:100%;border-radius:0.3rem;background:linear-gradient(90deg,var(--skeleton-base) 25%,var(--skeleton-sheen) 50%,var(--skeleton-base) 75%);background-size:200% 100%;animation:ds-shimmer 1.4s linear infinite"></div>
+<div style="height:0.875rem;width:80%;border-radius:0.3rem;background:linear-gradient(90deg,var(--skeleton-base) 25%,var(--skeleton-sheen) 50%,var(--skeleton-base) 75%);background-size:200% 100%;animation:ds-shimmer 1.4s linear infinite"></div>
+</div></div>
+</sc-for>
+</div>
+</sc-if>
+
+<sc-if value="{{ pronto }}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;flex-direction:column;gap:clamp(2.5rem,5vw,4.5rem)">
+<sc-for list="{{ destaques }}" as="p" hint-placeholder-count="3">
+<article style="display:grid;grid-template-columns:{{ colunas }};gap:clamp(1.25rem,3vw,2.5rem);align-items:center">
+<a href="prototipo-projeto.dc.html" aria-label="{{ p.aria }}" style="order:{{ p.ordemImg }};display:block;aspect-ratio:16/9;background:var(--bg-placeholder);border:1px solid var(--border-subtle);border-radius:0.3rem;transition:transform 180ms cubic-bezier(.2,0,.2,1)" style-hover="transform:translateY(-3px)"></a>
+<div style="order:{{ p.ordemTxt }}">
+<div style="font:500 0.75rem var(--font-mono);letter-spacing:.06em;color:var(--text-label);margin-bottom:0.625rem">{{ p.meta }}</div>
+<h3 style="margin:0 0 0.75rem;font:800 clamp(1.5rem,3vw,1.875rem)/1.15 var(--font-heading);letter-spacing:-.025em;color:var(--text-strong)">{{ p.titulo }}</h3>
+<p style="margin:0 0 1rem;max-width:30rem;font:400 1rem/1.65 var(--font-body);color:var(--text-body);text-wrap:pretty">{{ p.resumo }}</p>
+<div style="display:flex;flex-wrap:wrap;gap:0.375rem;margin-bottom:1.25rem">
+<sc-for list="{{ p.stack }}" as="s" hint-placeholder-count="3"><span style="padding:0.375rem 0.5rem;font:400 0.75rem var(--font-mono);color:var(--text-body);border:1px solid var(--border-subtle);border-radius:0.3rem">{{ s }}</span></sc-for>
+</div>
+<a href="prototipo-projeto.dc.html" style="display:inline-flex;align-items:center;min-height:2.75rem;font:600 0.9375rem var(--font-body);text-decoration:none">Ver projeto →</a>
+</div>
+</article>
+</sc-for>
+</div>
+</sc-if>
+
+<div style="display:flex;gap:0.75rem;flex-wrap:wrap;justify-content:center;margin-top:clamp(3rem,6vw,4.5rem)">
+<a href="prototipo-projetos.dc.html" style="display:inline-flex;align-items:center;min-height:3rem;padding:0 1.5rem;font:600 1rem var(--font-body);color:#202020;background:linear-gradient(180deg,#FFCC00,#F19100);border-radius:0.3rem;text-decoration:none">Ver todos os projetos</a>
+<a href="prototipo-informacoes.dc.html" style="display:inline-flex;align-items:center;min-height:3rem;padding:0 1.5rem;font:600 1rem var(--font-body);color:var(--text-strong);border:1px solid var(--border-strong);border-radius:0.3rem;text-decoration:none" style-hover="border-color:var(--text-strong);color:var(--text-strong)">Ler sobre mim</a>
+</div>
+</section>
+
+</main>
+<dc-import name="ProtoFooter" modo="padrao" hint-size="100%,320px"></dc-import>
+<dc-import name="ProtoEstados" opcoes="{{ estados }}" hint-size="0px,0px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const h = React.createElement;
+const STACK = ["TypeScript","React","Next.js","Node.js","PostgreSQL","Prisma","Docker","Python","Redis","Tailwind","Git","GitHub Actions","Vitest","Playwright","GraphQL","REST","Zod","tRPC","Vercel","Linux","Figma","Storybook"];
+const DESTAQUES = [
+  { titulo: "Maps", meta: "WEB · PESSOAL · 2026", resumo: "Mapa interativo com camadas de dados, busca por região e recorte de área. Continua fluido com 40 mil pontos na tela.", stack: ["React","TypeScript","PostGIS"] },
+  { titulo: "Dashboard de finanças", meta: "WEB · PROFISSIONAL · 2026", resumo: "Receitas e despesas recorrentes com projeção de saldo. Substituiu uma planilha que o time atualizava à mão toda segunda.", stack: ["Next.js","PostgreSQL","Prisma"] },
+  { titulo: "API de pagamentos", meta: "API · PROFISSIONAL · 2025", resumo: "Integração com três meios de pagamento e fila de reprocessamento. A taxa de cobrança perdida caiu de 4% para 0,3%.", stack: ["Node.js","Prisma","Redis"] }
+];
+const ESTADOS = [{ id: "normal", rotulo: "Normal" }, { id: "carregando", rotulo: "Carregando" }, { id: "erro", rotulo: "Erro" }];
+
+class Component extends DCLogic {
+  state = { w: window.innerWidth };
+  onR = () => this.setState({ w: window.innerWidth });
+  componentDidMount() { window.addEventListener("resize", this.onR); }
+  componentWillUnmount() { window.removeEventListener("resize", this.onR); }
+
+  marquee() {
+    const itens = STACK.concat(STACK).map((t, i) => h("span", { key: i, style: { color: t === "TypeScript" ? "var(--brand-primary)" : "var(--dark-300)" } }, t));
+    return h("div", { "aria-hidden": true, style: { display: "flex", gap: "2.25rem", width: "max-content", paddingLeft: "2rem", font: "700 1rem var(--font-heading)", whiteSpace: "nowrap", animation: "ds-marquee 40s linear infinite" } }, itens);
+  }
+
+  renderVals() {
+    const estado = new URLSearchParams(location.search).get("estado") || "normal";
+    const mobile = this.state.w < 768;
+    return {
+      estados: ESTADOS,
+      carregando: estado === "carregando",
+      erro: estado === "erro",
+      pronto: estado === "normal",
+      colunas: mobile ? "minmax(0,1fr)" : "repeat(2,minmax(0,1fr))",
+      esqueletos: [1, 2],
+      marquee: this.marquee(),
+      destaques: DESTAQUES.map((p, i) => ({
+        ...p, aria: "Abrir " + p.titulo,
+        ordemImg: mobile || i % 2 === 0 ? 0 : 1,
+        ordemTxt: mobile || i % 2 === 0 ? 1 : 0
+      }))
+    };
+  }
+}
+</script>
+</body>
+</html>

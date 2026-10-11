@@ -1,0 +1,38 @@
+/* Base 1rem = 16px, razão ~1.25. Os três níveis maiores são fluidos. */
+:root {
+  --text-display: clamp(2.5rem, 6vw, 3.5rem);
+  --text-h1: clamp(1.875rem, 4vw, 2.5rem);
+  --text-h2: clamp(1.5rem, 3vw, 1.75rem);
+  --text-h3: 1.25rem;
+  --text-h4: 1rem;
+  --text-body-lg: 1.125rem;
+  --text-body-md: 1rem;
+  --text-body-sm: 0.875rem;
+  --text-caption: 0.8125rem;
+  --text-label-sm: 0.75rem;
+  --text-chip: 0.6875rem;
+
+  --lh-display: 1.02;
+  --lh-h1: 1.1;
+  --lh-h2: 1.2;
+  --lh-h3: 1.3;
+  --lh-h4: 1.4;
+  --lh-body: 1.65;
+  --lh-tight: 1.5;
+
+  --ls-display: -0.03em;
+  --ls-h1: -0.025em;
+  --ls-h2: -0.02em;
+  --ls-h3: -0.015em;
+  --ls-label: 0.08em;
+  --ls-label-wide: 0.1em;
+
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+  --weight-black: 800;
+
+  /* Medida de leitura */
+  --measure: 34rem;
+}
