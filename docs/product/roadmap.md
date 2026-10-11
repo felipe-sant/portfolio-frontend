@@ -178,7 +178,7 @@ A v1 é a entrega da faculdade, publicada no GitHub Pages do repositório da v1 
 - [ ] A verificação K passou no build publicado.
 - [ ] `npm run build`, `npm run lint` e `npm run test:cov` (80% ou mais) passam no CI.
 - [ ] No GitHub Pages do repositório da v1, abrir e recarregar cada rota nas três versões de URL (sem prefixo, `/en/` e `/es/`, inclusive `/projects/<id>`, uma inexistente e `/en/<rota-inexistente>`) mostra a aplicação, com fontes, imagens, JSONs e CV carregando sob o subcaminho.
-- [ ] `curl` em cada rota e idioma do Pages devolve 200 e o conteúdo no idioma sem JavaScript, com `hreflang`, e `llms.txt` e `sitemap.xml` existem sob o subcaminho (NF-IA de [`non-functional-requirements.md`](non-functional-requirements.md)).
+- [ ] `curl` em cada rota e idioma do Pages devolve 200 e o conteúdo no idioma sem JavaScript, com `hreflang`, e `llms.txt` e `sitemap.xml` existem sob o subcaminho (NF-IA de [`non-functional-requirements.md`](non-functional-requirements.md)); se S tiver ido para a V2+ pelo plano B (ver M4), vale só a parte de `hreflang`, `llms.txt` e `sitemap.xml`, com o plano B registrado no Release.
 - [ ] `main:/docs` do repositório da v1 tem só o build da v1, com `404.html` e `.nojekyll`, e o `README.md` da raiz continua lá.
 - [ ] O `package.json` está em `1.0.0`, gerado pelo PR de versão a partir do changeset `major`, e o `CHANGELOG.md` tem a seção `1.0.0`.
 - [ ] A tag `v1.0.0` e o GitHub Release foram criados pela Action da Q (sem tag manual), e o Release tem a URL publicada.
