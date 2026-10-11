@@ -22,23 +22,23 @@ Uma decisão que sobrevive à mudança que a motivou vira um ADR em [`adr/`](adr
 
 ## Índice
 
-| Arquivo                                                        | O que vai nele                                                                                                             |
-| -------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| [`product/overview.md`](product/overview.md)                   | Propósito, público, papéis, escopo, requisitos R1–R3, decisões de design e fora de escopo do produto                       |
-| [`product/glossary.md`](product/glossary.md)                   | Termos do domínio, definição e onde aparecem                                                                               |
-| [`product/roadmap.md`](product/roadmap.md)                     | Versões, ordem das entregas em marcos, dependências, bloqueios e a definição da v1                                         |
-| [`design/design-system.md`](design/design-system.md)           | Resumo do design system do handoff: cores, tipografia, forma, movimento, voz, acessibilidade e divergências do repositório |
-| [`design/prototype/README.md`](design/prototype/README.md)     | Protótipo navegável validado pelo PO: como abrir pelo `npm run dev`, telas, estados e temas                                |
-| [`design/decisions.md`](design/decisions.md)                   | Decisões de design D01–D26 e pendências de implementação PI1–PI5, com opções, fonte, data e issues                         |
-| [`design/assets/logo/`](design/assets/logo/)                   | SVGs-fonte do logo (o gato), sem metadado                                                                                  |
-| [`screens/_template.md`](screens/_template.md)                 | Molde para documentar uma tela: objetivo, estados, validações, permissões, regras e navegação                              |
-| [`architecture/frontend.md`](architecture/frontend.md)         | Camadas, roteamento, estado, estilo, internacionalização e testes                                                          |
-| [`adr/README.md`](adr/README.md)                               | Quando escrever um ADR, numeração e índice das decisões                                                                    |
-| [`adr/0000-template.md`](adr/0000-template.md)                 | Molde de ADR                                                                                                               |
-| [`adr/0001-state-management.md`](adr/0001-state-management.md) | Gerenciamento de estado                                                                                                    |
-| [`diagrams/flow.md`](diagrams/flow.md)                         | Fluxograma de navegação entre as telas do portfólio                                                                        |
-| [`diagrams/entity.md`](diagrams/entity.md)                     | Entidades de conteúdo do handoff (Projeto, Experiência, Formação, Link)                                                    |
-| [`setup/environments.md`](setup/environments.md)               | Ambientes, variáveis `VITE_*` e como subir o ambiente local                                                                |
+| Arquivo                                                        | O que vai nele                                                                                                                                                                |
+| -------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`product/overview.md`](product/overview.md)                   | Propósito, público e jornadas, papéis, objetivos e sinais de sucesso, escopo e fora de escopo com fonte, requisitos R1–R3, decisões de design e decisões de produto DP01–DP03 |
+| [`product/glossary.md`](product/glossary.md)                   | Termos do domínio, definição e onde aparecem                                                                                                                                  |
+| [`product/roadmap.md`](product/roadmap.md)                     | Versões, ordem das entregas em marcos, dependências, bloqueios e a definição da v1                                                                                            |
+| [`design/design-system.md`](design/design-system.md)           | Resumo do design system do handoff: cores, tipografia, forma, movimento, voz, acessibilidade e divergências do repositório                                                    |
+| [`design/prototype/README.md`](design/prototype/README.md)     | Protótipo navegável validado pelo PO: como abrir pelo `npm run dev`, telas, estados e temas                                                                                   |
+| [`design/decisions.md`](design/decisions.md)                   | Decisões de design D01–D26 e pendências de implementação PI1–PI5, com opções, fonte, data e issues                                                                            |
+| [`design/assets/logo/`](design/assets/logo/)                   | SVGs-fonte do logo (o gato), sem metadado                                                                                                                                     |
+| [`screens/_template.md`](screens/_template.md)                 | Molde para documentar uma tela: objetivo, estados, validações, permissões, regras e navegação                                                                                 |
+| [`architecture/frontend.md`](architecture/frontend.md)         | Camadas, roteamento, estado, estilo, internacionalização e testes                                                                                                             |
+| [`adr/README.md`](adr/README.md)                               | Quando escrever um ADR, numeração e índice das decisões                                                                                                                       |
+| [`adr/0000-template.md`](adr/0000-template.md)                 | Molde de ADR                                                                                                                                                                  |
+| [`adr/0001-state-management.md`](adr/0001-state-management.md) | Gerenciamento de estado                                                                                                                                                       |
+| [`diagrams/flow.md`](diagrams/flow.md)                         | Fluxograma de navegação entre as telas do portfólio                                                                                                                           |
+| [`diagrams/entity.md`](diagrams/entity.md)                     | Entidades de conteúdo do handoff (Projeto, Experiência, Formação, Link)                                                                                                       |
+| [`setup/environments.md`](setup/environments.md)               | Ambientes, variáveis `VITE_*` e como subir o ambiente local                                                                                                                   |
 
 ## Convenções
 
