@@ -27,16 +27,14 @@ Este repositório é o frontend do **portfólio pessoal de Luiz Felipe dos Santo
 full stack. O usuário é ao mesmo tempo cliente, PO e dev: ele decide escopo e prioridade e aprova
 as specs. Esta seção é um resumo; o detalhe vive em `docs/` e no handoff de design.
 
-**Handoff de design:** `/home/felipe/faculdade/design_handoff_portfolio` é a fonte de verdade do
-design (R3). Reaproveite `tokens/` (nomes e valores dos tokens) e use `components/` como ponto de
+**Handoff de design:** `/home/felipe/faculdade/design_handoff_portfolio` é a base do design
+(R3). Reaproveite `tokens/` (nomes e valores dos tokens) e use `components/` como ponto de
 partida dos componentes. Não copie o HTML das telas (`*.dc.html`), `support.js`, `image-slot.js`
 nem os sketches de `assets/` (não são imagens de produção). Onde o handoff diverge das convenções
 deste repositório, as convenções prevalecem: fonte self-hospedada em vez de Google Fonts, CSS
 Module em vez de classe global `.ds-*` e código sem comentários. `docs/design/prototype/` é a
-referência visual validada pelo PO (telas, estados e temas; abre por `npm run dev` em
-`/docs/design/prototype/prototipo-indice.dc.html`). Onde handoff, protótipo e
-`docs/design/decisions.md` divergem, vale `decisions.md`, depois o protótipo, depois o handoff,
-com as convenções do repositório acima de todos.
+referência visual validada pelo PO (abre por `npm run dev` em
+`/docs/design/prototype/prototipo-indice.dc.html`).
 
 **Rotas:** cinco telas, das quais hoje só `/` existe no código (as demais vêm nas specs de tela):
 
@@ -60,16 +58,15 @@ infinitivo + objeto ("Ver projetos", "Enviar mensagem") e o separador de metadad
 - **R2 — Tradução em `pt-BR`, `en` e `es`.** Toda feature ou tarefa que cria ou altera texto de UI
   entrega o texto nos três idiomas, com `pt-BR` como referência. Chave de tradução sem uso é
   removida.
-- **R3 — O handoff é a fonte de verdade do design.** Tokens, componentes, voz e copy,
-  acessibilidade e responsividade seguem o handoff, na precedência descrita em "Handoff de
-  design" (convenções do repositório > `decisions.md` > protótipo > handoff).
+- **R3 — O design segue as decisões, o protótipo e o handoff.** Tokens, componentes, voz e copy,
+  acessibilidade e responsividade seguem, nesta ordem de precedência: convenções do repositório >
+  `docs/design/decisions.md` > protótipo > handoff.
 
 **Decisões de design:** as pendências e contradições do handoff estão decididas em
 `docs/design/decisions.md`, com IDs (`D01`–`D25`, `PI1`–`PI5`) que specs e issues citam.
 
 **Onde ler mais:** `docs/product/overview.md` (visão, escopo, requisitos e decisões),
 `docs/product/glossary.md` (glossário), `docs/design/design-system.md` (design system),
-`docs/design/decisions.md` (decisões de design), `docs/design/prototype/` (protótipo),
 `docs/diagrams/` (fluxo de navegação e entidades) e `docs/architecture/frontend.md` (arquitetura).
 
 ## Comandos
@@ -553,8 +550,7 @@ novo, então repetir via hook no momento do push seria redundante.
 - `.claude/agents/` — três papéis que formam o fluxo planejar → aprovar → executar → revisar:
   `sdd` (só planeja, escreve `spec.md`/`tasks.md` em `.specs/`, nunca toca em `src/`), `executor`
   (implementa um `tasks.md` já aprovado, em branch dedicada, com commits atômicos, e sempre chama
-  o `reviewer` ao terminar e, ao fim da issue, atualiza este arquivo só quando a próxima sessão
-  precisar) e `reviewer`
+  o `reviewer` ao terminar) e `reviewer`
   (audita o resultado contra este arquivo, somente leitura).
 - `.claude/skills/` — conhecimento carregável sob demanda. São cinco, separadas pela pasta do
   artefato: `react-page-scaffold` (página em `src/pages/` + CSS Module + registro de rota),
