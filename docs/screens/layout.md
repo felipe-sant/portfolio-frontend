@@ -157,3 +157,110 @@ Vale `D36` para todo link do layout: link interno navega na mesma aba, por `<Lin
 com o path de `ROUTES`; link externo (GitHub, LinkedIn) abre em nova aba com `target="_blank"` e
 `rel="noopener noreferrer"`, com "(abre em nova aba)" no nome acessível; `mailto:` não leva
 `target`; o CV em PDF é download direto.
+
+## Navegação
+
+Os caminhos são os de `D32`, sempre com o prefixo do idioma atual (sem prefixo em `pt-BR`, `/en/`,
+`/es/`).
+
+| De onde               | Ação                                       | Para onde                                                     |
+| --------------------- | ------------------------------------------ | ------------------------------------------------------------- |
+| Qualquer tela         | Gato e nome                                | `/` do idioma atual                                           |
+| Qualquer tela         | Início, Projetos, Informações, Contato     | `/`, `/projects`, `/about`, `/contact` do idioma atual        |
+| Qualquer tela         | `PT`, `EN`, `ES`                           | A mesma URL no idioma escolhido (sem prefixo, `/en/`, `/es/`) |
+| Qualquer tela         | Alternador de tema                         | Fica na mesma tela                                            |
+| Rodapé padrão         | "Entrar em contato"                        | `/contact`                                                    |
+| Rodapé padrão         | GitHub, LinkedIn                           | Perfis externos (URL do conteúdo), em nova aba (D36)          |
+| Rodapé padrão         | Ícone de e-mail                            | `mailto:` com o e-mail do conteúdo                            |
+| Rodapé de `/contact`  | Início, Projetos, Informações              | `/`, `/projects`, `/about` do idioma atual                    |
+| Rodapé de `/contact`  | GitHub, LinkedIn                           | Perfis externos, em nova aba (D36)                            |
+| Rodapé de `/contact`  | "Currículo em PDF"                         | Download do PDF do idioma ativo, sem sair da página (D36)     |
+| Página não encontrada | "Ver projetos", "Voltar para o início"     | `/projects`, `/`                                              |
+| Página de erro        | "Tentar novamente", "Voltar para o início" | A mesma URL (recarrega), `/`                                  |
+| URL sem rota          | Abrir                                      | Página não encontrada                                         |
+| Erro de renderização  | Abrir                                      | Página de erro                                                |
+
+A primeira carga em `/` com escolha salva diferente de `pt-BR` redireciona para `/en/` ou `/es/`
+(NF-IN-09, W); nenhuma outra rota redireciona por idioma.
+
+## Textos fixos e chaves
+
+Todo texto do layout vem de chave (`react-i18next`). O valor `pt-BR` abaixo é a referência; `en` e
+`es` são escritos na implementação (C), com os mesmos namespaces e chaves (R2). Os nomes dos
+idiomas ("Português", "English", "Español"), as siglas, "GitHub", "LinkedIn", "TypeScript" e os
+símbolos são iguais nos três JSON.
+
+O namespace é `common`, porque cabeçalho e rodapé são componentes de `src/components/` usados pelo
+`MainLayout` e pela página de erro, que fica fora dele (convenção do `.claude/CLAUDE.md`: `common`
+guarda texto fixo de componente). As chaves `mainLayout:brand` e `mainLayout:copyright` passam para
+`common`, e o namespace `mainLayout` sai de `src/locales/`, de `resources.ts` e do `ns` de
+`i18n.ts` se ficar vazio (R2: chave sem uso é removida).
+
+| Namespace  | Chave                         | Valor em `pt-BR`                                                                           | Onde                                                                                   |
+| ---------- | ----------------------------- | ------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------- |
+| `common`   | `authorName`                  | Luiz Felipe dos Santos                                                                     | Nome no cabeçalho, nomes acessíveis, copyright (era `mainLayout:brand`, "Luiz Felipe") |
+| `common`   | `loading`                     | Carregando... (existe)                                                                     | Status da tela carregando                                                              |
+| `common`   | `backHome`                    | Voltar para o início (existe)                                                              | Página não encontrada e página de erro                                                 |
+| `common`   | `skipToContent`               | Pular para o conteúdo                                                                      | Primeiro foco                                                                          |
+| `common`   | `navigation.label`            | Principal                                                                                  | Nome do `nav` principal                                                                |
+| `common`   | `navigation.home`             | Início                                                                                     | Cabeçalho, menu e rodapé de navegação                                                  |
+| `common`   | `navigation.projects`         | Projetos                                                                                   | Idem                                                                                   |
+| `common`   | `navigation.about`            | Informações                                                                                | Idem                                                                                   |
+| `common`   | `navigation.contact`          | Contato                                                                                    | Cabeçalho e menu                                                                       |
+| `common`   | `menu.toggle`                 | Menu                                                                                       | Nome do botão de menu                                                                  |
+| `common`   | `menu.theme`                  | Tema                                                                                       | Rótulo no painel                                                                       |
+| `common`   | `languageSelector.label`      | Idioma                                                                                     | Nome do grupo e rótulo no painel                                                       |
+| `common`   | `languageSelector.ptBR.short` | PT                                                                                         | Sigla visível                                                                          |
+| `common`   | `languageSelector.ptBR.name`  | Português                                                                                  | Parte oculta do nome acessível                                                         |
+| `common`   | `languageSelector.en.short`   | EN                                                                                         | Sigla visível                                                                          |
+| `common`   | `languageSelector.en.name`    | English                                                                                    | Parte oculta do nome acessível                                                         |
+| `common`   | `languageSelector.es.short`   | ES                                                                                         | Sigla visível                                                                          |
+| `common`   | `languageSelector.es.name`    | Español                                                                                    | Parte oculta do nome acessível                                                         |
+| `common`   | `themeToggle.label`           | Tema escuro                                                                                | Nome fixo do alternador e texto no painel                                              |
+| `common`   | `footer.contact.label`        | Contato                                                                                    | Rótulo do bloco de contato                                                             |
+| `common`   | `footer.contact.cta`          | Entrar em contato                                                                          | Link para `/contact`                                                                   |
+| `common`   | `footer.copyEmail.idle`       | Copiar e-mail                                                                              | Botão                                                                                  |
+| `common`   | `footer.copyEmail.copied`     | E-mail copiado                                                                             | Botão e `role="status"`                                                                |
+| `common`   | `footer.copyEmail.failed`     | Não foi possível copiar                                                                    | Botão e `role="status"`                                                                |
+| `common`   | `footer.social.heading`       | Redes                                                                                      | Rótulo da coluna no rodapé de navegação                                                |
+| `common`   | `footer.social.github`        | GitHub                                                                                     | Texto no rodapé de navegação                                                           |
+| `common`   | `footer.social.githubName`    | GitHub de `{{name}}` (abre em nova aba)                                                    | Nome acessível                                                                         |
+| `common`   | `footer.social.linkedin`      | LinkedIn                                                                                   | Texto no rodapé de navegação                                                           |
+| `common`   | `footer.social.linkedinName`  | LinkedIn de `{{name}}` (abre em nova aba)                                                  | Nome acessível                                                                         |
+| `common`   | `footer.social.emailName`     | Enviar e-mail para `{{name}}`                                                              | Nome do ícone de e-mail                                                                |
+| `common`   | `footer.navigation.label`     | Rodapé                                                                                     | Nome do `nav` de `/contact`                                                            |
+| `common`   | `footer.navigation.heading`   | Navegação                                                                                  | Rótulo da coluna                                                                       |
+| `common`   | `footer.resume`               | Currículo em PDF                                                                           | Link do CV no rodapé de navegação                                                      |
+| `common`   | `footer.copyright`            | © `{{year}}` · `{{name}}` (`year` do build)                                                | Barra inferior (era `mainLayout:copyright`)                                            |
+| `common`   | `footer.madeWith`             | Feito em TypeScript                                                                        | Barra inferior                                                                         |
+| `common`   | `symbols.external`            | ↗                                                                                          | Seta de link externo, em `aria-hidden`                                                 |
+| `common`   | `symbols.download`            | ↓                                                                                          | Seta de download, em `aria-hidden`                                                     |
+| `common`   | `symbols.separator`           | ·                                                                                          | Separador do seletor, em `aria-hidden`                                                 |
+| `notFound` | `label`                       | Erro 404                                                                                   | Rótulo acima do `h1`                                                                   |
+| `notFound` | `heading`                     | Página não encontrada (existe)                                                             | `h1`                                                                                   |
+| `notFound` | `description`                 | O endereço pode ter mudado ou o projeto saiu do ar. A lista completa continua em Projetos. | Texto                                                                                  |
+| `notFound` | `viewProjects`                | Ver projetos                                                                               | Link primário                                                                          |
+| `error`    | `heading`                     | Erro inesperado (existe)                                                                   | `h1`                                                                                   |
+| `error`    | `description`                 | Algo quebrou do meu lado, não do seu. Tente de novo em alguns segundos.                    | Texto                                                                                  |
+| `error`    | `retry`                       | Tentar novamente                                                                           | Botão primário                                                                         |
+
+Os símbolos ficam em chave porque `react/jsx-no-literals` acusa string literal em JSX. Saem
+`error:unknown` (RF-LAY-30), `mainLayout:brand` e `mainLayout:copyright`. Os valores `en` de
+`footer.contact.cta` são "Get in touch" e `es` "Ponerse en contacto" (resposta do PO).
+
+### Vem do conteúdo, não de chave
+
+O campo é definido na #10 e o valor é preenchido na #13, nos três idiomas quando é texto. Página e
+componente leem esses dados pelos endpoints do RTK Query (NF-DA-02), nunca pelo JSON direto.
+
+| Dado                       | Onde aparece                                          |
+| -------------------------- | ----------------------------------------------------- |
+| Frase de disponibilidade   | Bloco de contato do rodapé padrão                     |
+| Localização                | Bloco de contato do rodapé padrão                     |
+| E-mail                     | Rodapé padrão, "Copiar e-mail" e ícone `mailto:`      |
+| URL do GitHub              | Ícone do rodapé padrão e rodapé de navegação          |
+| URL do LinkedIn            | Ícone do rodapé padrão e rodapé de navegação          |
+| Título e resumo do projeto | `<title>` e descrição de `/projects/:id` e documentos |
+
+O nome do autor fica em chave (`common:authorName`), não no conteúdo, porque é usado no `<title>`
+de toda tela, no logo e na página de erro, que precisam dele mesmo quando o conteúdo não carregou.
