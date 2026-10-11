@@ -142,7 +142,7 @@ Títulos levam `letter-spacing` negativo; rótulos em mono, positivo (`--ls-labe
   em 768px e 3 em 1280px (D17).
 - Toda imagem de projeto é 16:9 (`--ratio-media`), inclusive miniaturas de galeria. Placeholder de
   imagem é `--bg-placeholder` com borda de 1px, sem ícone nem texto dentro, em 16:9 e 1:1 (foto)
-  até as capturas reais, depois da v1 (D03).
+  só para projeto sem captura; capturas e foto reais entram na v1 (D26, que substitui D03).
 - Ritmo de página vem de alternar bloco claro (`--bg-page`) e faixa escura (`--neutral-900`:
   marquee, complementos, rodapé), não de mudar cor de card. Uma faixa de marquee por página, no
   máximo.

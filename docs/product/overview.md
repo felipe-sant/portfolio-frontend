@@ -45,12 +45,16 @@ Os pontos que o handoff deixava em aberto estão decididos em [`decisions.md`](.
 
 1. **Menu mobile (D01):** abaixo de 640px a navegação vira um botão de 44px que abre um painel em largura total abaixo do cabeçalho, com os links, o seletor de idioma e o alternador de tema.
 2. **Logo (D02):** o gato ao lado do nome "Luiz Felipe dos Santos", em SVG inline com as cores do tema. Os SVGs-fonte estão em [`design/assets/logo/`](../design/assets/logo/).
-3. **Imagens reais (D03):** placeholders neutros 16:9 e 1:1 pelo menos até a primeira entrega na `main`; capturas reais dos projetos e foto de perfil entram depois da v1. Os sketches do handoff não vão para produção.
+3. **Imagens reais (D26, que substitui D03):** capturas reais dos projetos (16:9) e foto de perfil (1:1) entram na v1; projeto sem captura mantém o placeholder neutro 16:9. Os sketches do handoff não vão para produção.
 4. **Rodapé (D04):** linha superior em degradê e fundo neutro, pelos tokens `--surface-chrome` e `--border-chrome`; em Contato ele vira navegação.
 5. **Formulário de contato (D05):** implementado no frontend com envio simulado (R1) e escondido em produção atrás de uma flag até o backend existir; endpoint real e proteção contra spam vêm depois.
 6. **Renderizador de markdown (D06):** `react-markdown` com `rehype-highlight`, sem HTML embutido, com as cores de realce do protótipo.
 
-O único item à espera de material é o CV em PDF por idioma (D14).
+Os itens à espera de material são o CV em PDF por idioma (D14) e as capturas e a foto (D26).
+
+## Roadmap
+
+A v1 é a entrega da faculdade (Fatec), publicada no GitHub Pages de um repositório da organização da Fatec, com o conteúdo real servido localmente e sem backend. As versões V2+ são de uso pessoal. A ordem das entregas e o critério de cada versão estão em [`roadmap.md`](roadmap.md).
 
 ## Fora de escopo
 
