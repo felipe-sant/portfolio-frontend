@@ -44,9 +44,13 @@ Antes de rodar, confira o `package.json` da branch em vez de assumir esta lista;
 
 Escrever/atualizar o teste em `test/` (`<diretório>/test/<arquivo>.test.tsx`, importando o arquivo testado pelo alias `@/`) faz parte da própria tarefa de código sempre que ela muda comportamento de componente, hook ou rota — não é uma tarefa separada depois. O ambiente de teste é `jsdom` e o setup fica em `src/setupTests.ts`. Antes de escrever ou alterar um arquivo de teste, carregue o skill `vitest-specialist` (via ferramenta `Skill`, se disponível, ou lendo `.claude/skills/vitest-specialist/SKILL.md`) — vale a mesma ressalva: se a convenção real do código contradizer o skill, o código vence.
 
+## `CLAUDE.md`
+
+Ao fim da issue (depois da última tarefa do `tasks.md`, antes de chamar o `reviewer`), atualize o `.claude/CLAUDE.md` só se a próxima sessão precisar de algo que ele ainda não diz: convenção nova ou mudada, comando novo, estado do produto que ele descreve (rotas existentes, pendências). Não registre histórico, resumo da tarefa nem o que já está em `docs/` ou no código. Sem nada a mudar, não toque no arquivo e diga isso no relatório.
+
 ## Revisão
 
-- **Sempre chame o agente `reviewer`** antes de dar o trabalho por encerrado, sem esperar o usuário pedir. Faça isso depois da última tarefa do `tasks.md` e da verificação final, usando a ferramenta `Agent` com `subagent_type: reviewer`. O `reviewer` não tem acesso à sua conversa: passe a branch, a base (`staging`, ou `main` para `hotfix/*`), o caminho da pasta de spec e as decisões e desvios que precisem de contexto.
+- **Sempre chame o agente `reviewer`** antes de dar o trabalho por encerrado, sem esperar o usuário pedir. Faça isso depois da última tarefa do `tasks.md` e da verificação final, usando a ferramenta `Agent` com `subagent_type: reviewer`. O `reviewer` não tem acesso à sua conversa: passe a branch, a base (`staging`, ou `main` para `hotfix/*`), o caminho da pasta de spec, as decisões e desvios que precisem de contexto e se o `.claude/CLAUDE.md` mudou.
 - Trate o retorno do `reviewer` antes de reportar. Corrija o que ele apontar como bloqueador e o que for correção objetiva e dentro do escopo do `tasks.md`, em commits novos (nunca reescreva o histórico), e rode de novo a verificação. Sugestão que depende de decisão do usuário, ou que amplia o escopo, não aplique: leve ao relatório.
 - Se o `reviewer` apontar bloqueador que você não consiga resolver sem decisão do usuário, pare e avise.
 - No relatório final, diga que o `reviewer` foi chamado, o que ele apontou, o que você corrigiu e o que ficou pendente.

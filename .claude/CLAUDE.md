@@ -553,7 +553,8 @@ novo, então repetir via hook no momento do push seria redundante.
 - `.claude/agents/` — três papéis que formam o fluxo planejar → aprovar → executar → revisar:
   `sdd` (só planeja, escreve `spec.md`/`tasks.md` em `.specs/`, nunca toca em `src/`), `executor`
   (implementa um `tasks.md` já aprovado, em branch dedicada, com commits atômicos, e sempre chama
-  o `reviewer` ao terminar) e `reviewer`
+  o `reviewer` ao terminar e, ao fim da issue, atualiza este arquivo só quando a próxima sessão
+  precisar) e `reviewer`
   (audita o resultado contra este arquivo, somente leitura).
 - `.claude/skills/` — conhecimento carregável sob demanda. São cinco, separadas pela pasta do
   artefato: `react-page-scaffold` (página em `src/pages/` + CSS Module + registro de rota),
