@@ -79,7 +79,7 @@ O conteúdo é o real do PO: o "mock" de R1 quer dizer só que a fonte é local,
 
 ### M3 — Layout compartilhado
 
-Aplica D01, D02 (inclui o favicon), D04, D12, D21, D22, D23, PI1 e PI4. O link "Currículo em PDF" aponta para o arquivo de D14 mesmo antes de ele existir; o arquivo é I.
+Aplica D01, D02 (inclui o favicon), D04, D12, D21, D22, D23 (com D27), PI1 e PI4. O link "Currículo em PDF" aponta para o arquivo de D14 mesmo antes de ele existir; o arquivo é I.
 
 ### M4 — Publicação Fatec
 
@@ -103,11 +103,11 @@ Ordem Início → Projetos → Projeto → Informações → Contato: Início ex
 
 | Tela        | Issue | Decisões                                                         |
 | ----------- | ----- | ---------------------------------------------------------------- |
-| Início      | D     | D26, D11, D13, D14, D24                                          |
+| Início      | D     | D26, D11, D13, D14, D24, D28                                     |
 | Projetos    | E     | D16, D17                                                         |
 | Projeto     | F     | D06 (markdown sob demanda, conforme #8), D10, D18, D19, PI1, PI2 |
 | Informações | G     | D13, D14, D20, PI1                                               |
-| Contato     | H     | D05, D07, D21, D25                                               |
+| Contato     | H     | D05, D07, D21, D25, D29                                          |
 
 Cada tela é conferida no build com o `base` do Pages e acrescenta as suas rotas e os seus roteiros de teclado à suíte ponta a ponta da Y (lightbox e abas em F, modal em G, formulário em H).
 
@@ -145,6 +145,7 @@ M (fonte local → API), N (formulário real, proteção contra spam, remoção 
 | Imagens reais e foto     | M6                            | L     | D26 (substitui D03) |
 | CV em PDF                | M6                            | I     | D14                 |
 | Poda de pesos de fonte   | M6                            | J     | D08                 |
+| Pausa da faixa de stack  | M5                            | D     | D28                 |
 | Publicação da v1         | M4 (ensaio) e M7 (publicação) | O     | —                   |
 | Versionamento e release  | M6                            | Q     | —                   |
 | Hospedagem pessoal       | Trilha pessoal                | #15   | —                   |
