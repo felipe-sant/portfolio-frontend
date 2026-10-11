@@ -1,8 +1,13 @@
 # Design system
 
-Resumo do design system do portfólio, para consulta rápida durante o desenvolvimento. A fonte de
-verdade é o handoff de design em `/home/felipe/faculdade/design_handoff_portfolio` (requisito R3):
-em caso de dúvida ou de valor que não está aqui, vale o handoff.
+Resumo do design system do portfólio, para consulta rápida durante o desenvolvimento. O ponto de
+partida é o handoff de design em `/home/felipe/faculdade/design_handoff_portfolio` (requisito R3), e
+a referência visual validada pelo PO é o [protótipo navegável](prototype/README.md), com as sete
+telas, os estados e os dois temas.
+
+Onde as fontes divergem, vale esta ordem: convenções do repositório (`.claude/CLAUDE.md`), depois
+[`decisions.md`](decisions.md), depois o protótipo, depois o handoff. Valor que não está em nenhum
+deles sai do handoff.
 
 | Arquivo do handoff      | O que tem                                                                            |
 | ----------------------- | ------------------------------------------------------------------------------------ |

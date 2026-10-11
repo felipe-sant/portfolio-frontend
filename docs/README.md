@@ -27,6 +27,7 @@ Uma decisão que sobrevive à mudança que a motivou vira um ADR em [`adr/`](adr
 | [`product/overview.md`](product/overview.md)                   | Propósito, público, papéis, escopo, requisitos R1–R3, pendências e fora de escopo do produto                               |
 | [`product/glossary.md`](product/glossary.md)                   | Termos do domínio, definição e onde aparecem                                                                               |
 | [`design/design-system.md`](design/design-system.md)           | Resumo do design system do handoff: cores, tipografia, forma, movimento, voz, acessibilidade e divergências do repositório |
+| [`design/prototype/README.md`](design/prototype/README.md)     | Protótipo navegável validado pelo PO: como abrir pelo `npm run dev`, telas, estados e temas                                |
 | [`screens/_template.md`](screens/_template.md)                 | Molde para documentar uma tela: objetivo, estados, validações, permissões, regras e navegação                              |
 | [`architecture/frontend.md`](architecture/frontend.md)         | Camadas, roteamento, estado, estilo, internacionalização e testes                                                          |
 | [`adr/README.md`](adr/README.md)                               | Quando escrever um ADR, numeração e índice das decisões                                                                    |
