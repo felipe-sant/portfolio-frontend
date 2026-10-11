@@ -255,3 +255,111 @@ Vale para o formulário de Contato (D05, D07, D25) com a flag ligada; com a flag
 - Resumo de erros e foco no primeiro inválido conforme D25.
 - Assunto como grupo de rádio (ver [Achados](#achados)).
 - Enviando e enviado conforme [Anúncios dinâmicos](#anúncios-dinâmicos-aria-live).
+
+## Checklist por tela
+
+Cada item tem um ID estável e a forma de verificação entre colchetes: `[teste]` (Testing Library), `[axe]` (helper da T), `[lint]` (oxlint), `[teclado]` (manual, sem mouse), `[leitor]` (NVDA ou TalkBack), `[navegador]` (Lighthouse ou axe DevTools), `[e2e]` (Playwright da Y) e `[medição]` (contraste ou zoom). O documento de cada tela (#2 a #7) copia a checklist "Todas as telas" e a da sua tela como critério de aceite, citando os IDs. ID não é reaproveitado: item que deixa de valer é riscado, e item novo recebe o próximo número.
+
+### Todas as telas
+
+- [ ] `A11Y-G01` — Um `main`, um `h1` e um `<title>` próprio e traduzido [teste]
+- [ ] `A11Y-G02` — `<html lang>` igual ao idioma da URL (`/`, `/en/`, `/es/`) [teste]
+- [ ] `A11Y-G03` — Nenhuma violação do axe em cada estado da tela [axe]
+- [ ] `A11Y-G04` — Nenhuma violação do axe no navegador, nos dois temas [e2e]
+- [ ] `A11Y-G05` — Ordem de foco igual à visual e foco visível em todo elemento focável [teclado]
+- [ ] `A11Y-G06` — Contorno de foco de D27 com 2px, afastado, 3:1 em toda superfície e nunca cortado (2.4.13) [e2e] [medição]
+- [ ] `A11Y-G07` — Todo link tem um nome que diz o destino sozinho (2.4.9) [teste]
+- [ ] `A11Y-G08` — Controles e links isolados com alvo de 44px em todas as larguras (2.5.5) [e2e] [medição]
+- [ ] `A11Y-G09` — Texto corrido com até 80 caracteres por linha, entrelinha de pelo menos 1,5 e sem justificar (1.4.8) [navegador]
+- [ ] `A11Y-G10` — Contraste AA nos dois temas e em todos os estados [e2e] [medição]
+- [ ] `A11Y-G11` — Sem rolagem horizontal a 320px e sem perda com texto a 200% [medição]
+- [ ] `A11Y-G12` — Movimento reduzido respeitado, inclusive a animação disparada por interação (2.3.3) [navegador]
+- [ ] `A11Y-G13` — Skeleton com `aria-hidden` e status "Carregando" visualmente oculto [teste]
+- [ ] `A11Y-G14` — Erro de carregamento em `role="alert"`, com a saída [teste]
+- [ ] `A11Y-G15` — Texto em `pt-BR`, `en` e `es`, inclusive os nomes acessíveis [teste]
+- [ ] `A11Y-G16` — Nenhum erro de `jsx-a11y` [lint]
+
+### Layout: cabeçalho, menu e rodapé
+
+- [ ] `A11Y-L01` — "Pular para o conteúdo" é o primeiro Tab e leva ao `main` [teste] [e2e]
+- [ ] `A11Y-L02` — A troca de rota põe o foco no `h1` da nova tela [teste]
+- [ ] `A11Y-L03` — Landmarks `banner`, `navigation` "Principal" e `contentinfo` [teste]
+- [ ] `A11Y-L04` — `aria-current="page"` no item da rota atual [teste]
+- [ ] `A11Y-L05` — Seletor de idioma em grupo nomeado, com um link para a URL equivalente de cada idioma, `hreflang` e `lang` em cada link e `aria-current` no ativo [teste]
+- [ ] `A11Y-L06` — Trocar de idioma navega para a URL equivalente, atualiza `<html lang>` e `<title>` e devolve o foco ao seletor [teste] [e2e]
+- [ ] `A11Y-L07` — Alternador de tema com nome fixo e `aria-pressed` [teste]
+- [ ] `A11Y-L08` — Botão de menu com `aria-expanded` e `aria-controls` [teste]
+- [ ] `A11Y-L09` — Menu aberto: foco preso, Esc fecha e devolve o foco ao botão, resto da página `inert` [teste] [e2e] [leitor]
+- [ ] `A11Y-L10` — Logo e ícones com `aria-hidden` [teste]
+- [ ] `A11Y-L11` — "Copiar e-mail" anuncia o resultado [teste]
+- [ ] `A11Y-L12` — O rodapé de Contato é um `nav` com nome próprio [teste]
+- [ ] `A11Y-L13` — O foco nunca fica embaixo do cabeçalho fixo [teclado] [e2e]
+
+### Início
+
+- [ ] `A11Y-IN01` — `h1` "Desenvolvedor full stack em TypeScript" (D24) [teste]
+- [ ] `A11Y-IN02` — Cada seção tem heading [teste]
+- [ ] `A11Y-IN03` — Cards de destaque em lista, com um link por card, nome do link com o nome do projeto e imagem com `alt=""` [teste]
+- [ ] `A11Y-IN04` — "Ver todos" tem o nome "Ver todos os projetos" (2.4.9) [teste]
+- [ ] `A11Y-IN05` — Faixa de stack com a lista acessível uma vez e a cópia do laço com `aria-hidden` [teste]
+- [ ] `A11Y-IN06` — Botão de pausa da faixa com `aria-pressed` e rótulo nos três idiomas (D28) [teste]
+- [ ] `A11Y-IN07` — Faixa estática, quebrando linha, com movimento reduzido [navegador]
+- [ ] `A11Y-IN08` — "Baixar CV (PDF)" no nome do link [teste]
+
+### Projetos
+
+- [ ] `A11Y-PS01` — Busca com rótulo [teste]
+- [ ] `A11Y-PS02` — Filtros em grupo nomeado, com `aria-pressed` [teste]
+- [ ] `A11Y-PS03` — Ordenação em `select` nativo com rótulo [teste]
+- [ ] `A11Y-PS04` — Contagem de resultados e lista vazia anunciadas em `aria-live` [teste] [leitor]
+- [ ] `A11Y-PS05` — "Carregar mais" leva o foco ao primeiro card novo [teste]
+- [ ] `A11Y-PS06` — Título do card é heading, e o link do card tem o nome do projeto (2.4.9) [teste]
+- [ ] `A11Y-PS07` — Linha de filtros alcançável por Tab no mobile [teclado]
+
+### Projeto
+
+- [ ] `A11Y-PJ01` — "← Voltar para Projetos" com a seta oculta do leitor [teste]
+- [ ] `A11Y-PJ02` — "Ver código no GitHub" com o nome do projeto no nome acessível e aviso de nova aba, se abrir (2.4.9) [teste]
+- [ ] `A11Y-PJ03` — Galeria: imagem com o `alt` do dado e miniaturas "Imagem N de M" com `aria-current` [teste]
+- [ ] `A11Y-PJ04` — Lightbox: diálogo nomeado, foco preso, Esc e devolução do foco, anterior e próxima nomeados [teste] [e2e] [leitor]
+- [ ] `A11Y-PJ05` — Abas: `tablist`, setas, `aria-selected` e painel ligado [teste] [e2e]
+- [ ] `A11Y-PJ06` — Markdown da documentação sem segundo `h1` [teste]
+- [ ] `A11Y-PJ07` — Bloco de código rolável focável e com nome [axe]
+- [ ] `A11Y-PJ08` — Contraste do nome de arquivo do bloco de código no tema escuro (PI2) [medição]
+- [ ] `A11Y-PJ09` — Ficha técnica em `dl` [teste]
+- [ ] `A11Y-PJ10` — As abas fixas não cobrem o foco [teclado]
+- [ ] `A11Y-PJ11` — Slug inexistente mostra a página não encontrada [teste]
+
+### Informações
+
+- [ ] `A11Y-IF01` — Foto de perfil com `alt` (D26) [teste]
+- [ ] `A11Y-IF02` — Stack e trajetória em listas, datas em `time` [teste]
+- [ ] `A11Y-IF03` — Item de trajetória é `button` com `aria-haspopup="dialog"` [teste]
+- [ ] `A11Y-IF04` — Modal de trajetória com `aria-labelledby`, foco preso, Esc, devolução do foco e tela cheia abaixo de 640px (D20) [teste] [e2e] [leitor]
+- [ ] `A11Y-IF05` — "Baixar CV (PDF)" no nome do link [teste]
+
+### Contato
+
+- [ ] `A11Y-CT01` — Canais com nomes claros e "Copiar" anunciado [teste]
+- [ ] `A11Y-CT02` — Com a flag ligada: rótulos, `autocomplete`, obrigatórios em texto e assunto em grupo de rádio [teste]
+- [ ] `A11Y-CT03` — Validação no envio, com resumo e foco no primeiro inválido (D25) [teste]
+- [ ] `A11Y-CT04` — Erro com `aria-invalid` e `aria-describedby`, em `--danger-ink` e com texto (D07) [teste]
+- [ ] `A11Y-CT05` — Contador de caracteres sem anúncio a cada tecla [teste]
+- [ ] `A11Y-CT06` — Enviando com `aria-busy` [teste]
+- [ ] `A11Y-CT07` — Enviado com o foco na confirmação [teste] [leitor]
+- [ ] `A11Y-CT08` — Borda de campo de texto com 3:1 (D29) [e2e] [medição]
+
+### Página não encontrada e erro
+
+- [ ] `A11Y-ER01` — `h1` que diz o que aconteceu, `<title>` próprio e link para o início [teste]
+- [ ] `A11Y-ER02` — A página de erro tem os próprios landmarks, por estar fora do layout [teste]
+
+## Relação com outros documentos
+
+- **#8 (requisitos não funcionais):** cita [HTML semântico e nomes acessíveis](#html-semântico-e-nomes-acessíveis) como base comum para pessoas e IAs e não repete as regras.
+- **Telas (#2 a #7):** copiam "Todas as telas" e a checklist da tela como critério de aceite.
+- **#10 (modelo de dados):** `alt` e legenda traduzidos por imagem ([Imagens e texto alternativo](#imagens-e-texto-alternativo)).
+- **K (verificação da v1):** executa o [método de verificação](#método-de-verificação) e esta checklist no build do Pages.
+- **T (teste automático):** fornece o helper que os itens `[axe]` usam.
+- **Y (ponta a ponta):** a suíte cobre os itens `[e2e]`; cada tela (D a H) acrescenta as suas rotas e roteiros.
+- **[`decisions.md`](../design/decisions.md) e [`design-system.md`](../design/design-system.md):** decisões e tokens continuam lá; este documento cita os IDs.
