@@ -135,3 +135,156 @@ Cada subseção lista os requisitos na ordem dos IDs.
 | `RF-ABOUT-28` | `<title>` "Informações · Luiz Felipe dos Santos" e `<meta name="description">` por chave do namespace `about` (A11Y-G01); canônica, `hreflang`, Open Graph e `twitter:card` pelo mecanismo de V (NF-IA-10, NF-IA-11), com `og:type` `profile` e `og:image` do site (a foto é 1:1, não 1200×630) | `layout.md` (Metadados), NF-IA-10 |
 | `RF-ABOUT-29` | JSON-LD `ProfilePage` com `mainEntity` `Person` (ver [Metadados e dados estruturados](#metadados-e-dados-estruturados)), gerado dos mesmos dados da tela, com `<` escapado (NF-IA-08, NF-IA-09)                                                                                                 | NF-IA-08                          |
 | `RF-ABOUT-30` | `/about` é pré-renderizada nos três idiomas com `h1`, todas as seções e o detalhe dos itens no `main` (NF-IA-01, NF-IA-16, RF-ABOUT-23); os dados de perfil, trajetória e projetos usados no HTML vão serializados para a store (NF-IA-03), sem erro de hidratação                              | NF-IA-01, NF-IA-03                |
+
+## Navegação
+
+| De onde                               | Ação                                       | Para onde                                               |
+| ------------------------------------- | ------------------------------------------ | ------------------------------------------------------- |
+| Cabeçalho, menu, rodapé de `/contact` | "Informações"                              | `/about` do idioma atual                                |
+| Qualquer link externo ou URL digitada | Abrir `/about`, `/en/about` ou `/es/about` | A tela no idioma do caminho                             |
+| Apresentação                          | "Baixar CV"                                | Download do PDF do idioma ativo, sem sair da tela (D36) |
+| Apresentação                          | "Entrar em contato"                        | `/contact` do idioma atual                              |
+| Item de trajetória                    | Clique, Enter ou Espaço                    | Modal de detalhe, na mesma URL                          |
+| Modal                                 | "Fechar", fundo ou Esc                     | Fecha; o foco volta ao item                             |
+| Modal, projetos relacionados          | Título do projeto                          | `/projects/:id` do idioma atual                         |
+| Seletor de idioma                     | `PT`, `EN`, `ES`                           | `/about`, `/en/about`, `/es/about` (D31)                |
+
+O Início pode ter um link para `/about`; isso é da spec da #3.
+
+## Textos fixos e chaves
+
+Todo texto fixo vem de chave (`react-i18next`). O valor `pt-BR` abaixo é a referência; `en` e `es`
+são escritos na implementação (G), com as mesmas chaves (R2). O namespace novo é `about`,
+registrado em `src/locales/*/about.json`, em `src/i18n/resources.ts` e no `ns` de
+`src/i18n/i18n.ts` (na G). Texto usado por mais de uma tela vai para `common` (convenção do
+`.claude/CLAUDE.md`).
+
+| Namespace | Chave                                             | Valor em `pt-BR`                                                        | Onde                                                        |
+| --------- | ------------------------------------------------- | ----------------------------------------------------------------------- | ----------------------------------------------------------- |
+| `about`   | `meta.title`                                      | Informações · Luiz Felipe dos Santos                                    | `<title>` (valor de `layout.md`)                            |
+| `about`   | `meta.description`                                | Quem é Luiz Felipe dos Santos: sobre mim, stack, trajetória e formação. | Descrição (valor de `layout.md`)                            |
+| `about`   | `hero.label`                                      | Informações                                                             | Rótulo acima do `h1`                                        |
+| `about`   | `hero.photoAlt`                                   | Foto de `{{name}}`                                                      | `alt` da foto, com `common:authorName`                      |
+| `about`   | `aboutMe.heading`                                 | Sobre mim                                                               | `h2`                                                        |
+| `about`   | `stack.heading`                                   | Stack                                                                   | `h2`                                                        |
+| `about`   | `stack.count_one` / `stack.count_other`           | `{{count}}` tecnologia / `{{count}}` tecnologias                        | Contagem oculta (RF-ABOUT-09)                               |
+| `about`   | `complements.certificates`                        | Certificados                                                            | `h2` da faixa                                               |
+| `about`   | `complements.workStyle`                           | Como eu trabalho                                                        | `h2` da faixa                                               |
+| `about`   | `trajectory.heading`                              | Trajetória                                                              | `h2`                                                        |
+| `about`   | `trajectory.hint`                                 | Selecione um item para ver o detalhe.                                   | Instrução                                                   |
+| `about`   | `trajectory.groups.experience`                    | Experiências profissionais                                              | `h3`                                                        |
+| `about`   | `trajectory.groups.education`                     | Formações                                                               | `h3`                                                        |
+| `about`   | `trajectory.groups.course`                        | Cursos                                                                  | `h3`                                                        |
+| `about`   | `trajectory.count_one` / `trajectory.count_other` | `{{count}}` item / `{{count}}` itens                                    | Contagem oculta                                             |
+| `about`   | `modal.close`                                     | Fechar                                                                  | `aria-label` do botão ×                                     |
+| `about`   | `modal.responsibilities`                          | Responsabilidades                                                       | Rótulo de bloco                                             |
+| `about`   | `modal.disciplines`                               | Principais disciplinas                                                  | Rótulo de bloco                                             |
+| `about`   | `modal.technologies`                              | Tecnologias                                                             | Rótulo de bloco                                             |
+| `about`   | `modal.certificates`                              | Certificados                                                            | Rótulo de bloco                                             |
+| `about`   | `modal.relatedProjects`                           | Projetos relacionados                                                   | Rótulo de bloco                                             |
+| `about`   | `loadError.message`                               | Não foi possível carregar esta parte da página.                         | Erro por fonte                                              |
+| `about`   | `loadError.retry`                                 | Tentar novamente                                                        | Botão do erro                                               |
+| `common`  | `resume.download`                                 | Baixar CV                                                               | Texto visível do botão (Início, Informações e Contato; D14) |
+| `common`  | `resume.downloadPdf`                              | Baixar CV (PDF)                                                         | Nome acessível (A11Y-IF05)                                  |
+| `common`  | `period.range`                                    | `{{start}}` – `{{end}}`                                                 | Período encerrado (Informações e Início)                    |
+| `common`  | `period.since`                                    | desde `{{date}}`                                                        | Período em curso (D39)                                      |
+| `common`  | `period.current`                                  | Atual                                                                   | Selo do item em curso                                       |
+| `common`  | `stackCategory.frontend`                          | Frontend                                                                | `h3` do grupo de stack                                      |
+| `common`  | `stackCategory.backend`                           | Backend                                                                 | `h3` do grupo de stack                                      |
+| `common`  | `stackCategory.tooling`                           | Infra e ferramentas                                                     | `h3` do grupo de stack                                      |
+| `common`  | `symbols.forward`                                 | →                                                                       | Seta de link de continuação, em `aria-hidden`               |
+| `common`  | `authorName`                                      | Luiz Felipe dos Santos (de `layout.md`)                                 | `h1`                                                        |
+| `common`  | `loading`                                         | Carregando... (existe)                                                  | Status da tela                                              |
+| `common`  | `footer.contact.cta`                              | Entrar em contato (de `layout.md`)                                      | Link secundário                                             |
+| `common`  | `symbols.separator`                               | · (de `layout.md`)                                                      | Linha de detalhes e de metadados                            |
+
+`resume.*`, `period.*`, `stackCategory.*` e `symbols.forward` são as chaves compartilhadas pelas
+cinco telas (decisão transversal do PO de 11-10-2026), com esses nomes exatos: a tela que chegar
+primeiro cria, as outras reaproveitam. "desde" é "since" em `en` e "desde" em `es`. A contagem usa
+o plural do i18next (`_one`/`_other`), nos três idiomas.
+
+## Vem do conteúdo
+
+Campo definido pela #10, com valor da #13 nos três idiomas quando é texto, lido por endpoint
+(NF-DA-02):
+
+| Dado                                                     | Onde aparece                                           |
+| -------------------------------------------------------- | ------------------------------------------------------ |
+| Cargo                                                    | JSON-LD (`jobTitle`) e CV; não aparece escrito na tela |
+| Parágrafo de apresentação                                | Apresentação, JSON-LD (`description`)                  |
+| Localização                                              | Apresentação, rodapé, JSON-LD                          |
+| Disponibilidade (`label` livre e `isAvailable`)          | Apresentação, Início, Contato, rodapé                  |
+| Foto (arquivo e dimensões)                               | Apresentação, JSON-LD (`image`)                        |
+| Parágrafos de Sobre mim                                  | Sobre mim                                              |
+| Stack por categoria                                      | Stack, faixa do Início, JSON-LD (`knowsAbout`), CV     |
+| Frases de "Como eu trabalho"                             | Complementos                                           |
+| Itens de trajetória (com certificados e ids de projetos) | Trajetória, modal, Certificados, JSON-LD, CV           |
+| Título do projeto                                        | Projetos relacionados do modal                         |
+
+Texto fixo, não conteúdo: rótulos de seção, de grupo e de bloco, instrução, selo "Atual", "Baixar
+CV", "Entrar em contato", "Fechar", `alt` da foto e o nome do autor (`common:authorName`,
+`layout.md`). Sobre mim, apresentação e "Como eu trabalho" são conteúdo, e não chave, porque são
+escritos pelo PO, mudam sem mexer em código, são traduzidos com o resto do conteúdo (NF-IN-02) e
+alimentam o CV e os arquivos para IA da mesma fonte (NF-DA-04).
+
+## O que a tela pede ao contrato (#10)
+
+Lista de necessidades da tela, com nomes sugeridos em inglês; a #10 decide nomes, arquivos e
+endpoints.
+
+### Perfil
+
+Um por idioma.
+
+| Campo sugerido                            | Tipo                                                                    | Uso                                                                   |
+| ----------------------------------------- | ----------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| `role`                                    | texto                                                                   | JSON-LD `jobTitle`, CV                                                |
+| `summary`                                 | texto, obrigatório                                                      | Parágrafo de apresentação, JSON-LD `description`, CV                  |
+| `location`                                | `{ city, region, country }`                                             | "São José dos Campos · SP"; JSON-LD `homeLocation`; rodapé            |
+| `availability`                            | `{ isAvailable: boolean, label: texto }`                                | Selo de Informações, Início, Contato e rodapé; `false` esconde o selo |
+| `photo`                                   | `{ src, width, height }` (o `alt` é chave)                              | Foto 1:1 (D26, L)                                                     |
+| `about`                                   | texto[], pelo menos um                                                  | Sobre mim                                                             |
+| `workPrinciples`                          | texto[]                                                                 | "Como eu trabalho"                                                    |
+| `stack`                                   | `{ category: "frontend" \| "backend" \| "tooling", items: string[] }[]` | Stack, Início, JSON-LD, CV                                            |
+| `email`, `links.github`, `links.linkedin` | (já pedidos por `layout.md`)                                            | JSON-LD `sameAs`, CV                                                  |
+
+### Item de trajetória
+
+Entidade única para experiência, formação e curso; substitui `Experiencia` e `Formacao` de
+[`entity.md`](../diagrams/entity.md), que não tipam curso.
+
+| Campo sugerido     | Tipo                                                         | Uso                                                                |
+| ------------------ | ------------------------------------------------------------ | ------------------------------------------------------------------ |
+| `id`               | texto estável, igual nos três idiomas (sugestão: UUID v7)    | Chave do item, ids de `aria-labelledby`, referência a partir do CV |
+| `kind`             | `"experience" \| "education" \| "course"`                    | Grupo e escolha entre responsabilidades e disciplinas              |
+| `title`            | texto                                                        | Título do item e do modal                                          |
+| `organization`     | texto                                                        | Linha de detalhes; JSON-LD `worksFor`/`alumniOf`                   |
+| `details`          | texto[]                                                      | Linha de detalhes ("CLT", "6º semestre", "120 horas")              |
+| `start`, `end?`    | `AAAA-MM`; `end` ausente = em curso; iguais nos três idiomas | Período, selo "Atual", ordenação                                   |
+| `summary`          | texto, obrigatório                                           | Resumo do modal, JSON-LD `Occupation.description`                  |
+| `responsibilities` | texto[] (experiência)                                        | Bloco do modal, CV                                                 |
+| `disciplines`      | texto[] (formação e curso)                                   | Bloco do modal, CV                                                 |
+| `technologies`     | string[] (nomes, sem tradução)                               | Bloco do modal, CV                                                 |
+| `certificates`     | `{ id, name, issuer? }[]`                                    | Bloco do modal, coluna Certificados (D38), JSON-LD `hasCredential` |
+| `projectIds`       | UUID v7[] de projetos (NF-DA-07)                             | Projetos relacionados; o título vem do projeto, nunca copiado      |
+
+### Projeto
+
+Só `id` e `title` do conteúdo de projetos que a #4 e a #5 já pedem. O `Link` (`titulo`/`url`) em
+`projetos` de `Experiencia` e `Formacao` de `entity.md` sai: a referência é por id, porque o título
+muda e a URL depende do idioma.
+
+### Ligação com o CV (D30)
+
+O CV não tem uma cópia própria de perfil, stack e trajetória. O "JSON do CV" de D30 é a composição
+desses mesmos dados (perfil, stack e trajetória) mais o que só o CV mostra (por exemplo, idiomas
+falados), que a #10 define. X gera PDF, Markdown e HTML lendo os mesmos JSONs da tela (NF-DA-04,
+NF-IA-07), então mudar um item de trajetória muda tela, CV, `llms-full*.txt` e JSON-LD de uma vez.
+Se o PO quiser um item só no site ou só no CV, a #10 prevê um campo de visibilidade por destino; a
+tela mostra todo item que não for marcado como "só CV".
+
+### Endpoints
+
+Perfil, trajetória e projetos por idioma, com erro independente (a tela trata erro por fonte,
+RF-ABOUT-26). Se a #10 juntar perfil e trajetória num documento só, os dois estados de erro viram
+um.
