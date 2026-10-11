@@ -202,7 +202,7 @@ Serão criadas depois que #1 a #11 terminarem; a letra vira número neste docume
 | H     | Tela Contato com o formulário atrás de flag                                         | M5               | #7, #13, C, O                                   |
 | I     | CV em PDF nos três idiomas                                                          | M6               | PDFs do PO; C, D, G, H                          |
 | J     | Poda dos pesos de fonte sem uso                                                     | M6               | D, E, F, G, H                                   |
-| K     | Verificação de acessibilidade, responsividade e performance da v1                   | M6               | D a J, O                                        |
+| K     | Verificação de acessibilidade, responsividade e performance da v1                   | M6               | D a J, L, O                                     |
 | L     | Capturas dos projetos e foto no lugar dos placeholders                              | M6               | Imagens do PO; D26; #13; D, E, F, G             |
 | M     | Troca da fonte local de dados pela API do backend                                   | V2+              | Backend publicado com o contrato de #10         |
 | N     | Formulário de contato ligado ao backend, sem a flag                                 | V2+              | Endpoint de contato com proteção contra spam; H |
