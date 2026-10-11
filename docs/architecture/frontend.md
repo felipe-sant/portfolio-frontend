@@ -73,7 +73,7 @@ Todo texto visível vem de uma chave de tradução, com o valor de cada idioma e
 
 A detecção segue a escolha salva (por `setLanguage` ou por `?lng=`), depois o idioma do navegador e por fim `en`. A escolha fica em `localStorage` na chave `portfolio-frontend:language`.
 
-Toda feature com texto de UI entrega o texto nos três idiomas, e chave sem uso é removida (R2). O handoff não desenha seletor de idioma.
+Toda feature com texto de UI entrega o texto nos três idiomas, e chave sem uso é removida (R2). O seletor de idioma fica no cabeçalho (`PT · EN · ES`, entre a navegação e o tema) e no menu mobile, e troca o idioma por `setLanguage` (D12, em [`decisions.md`](../design/decisions.md)).
 
 ## Testes
 

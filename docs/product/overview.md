@@ -37,18 +37,20 @@ Valem para toda feature e toda tarefa.
 
 - **R1 — Frontend-only com dados mock no início.** O backend ainda não existe. A aplicação funciona sozinha, com dados mock de projetos, trajetória e demais conteúdo exigido pelo handoff. Os dados virão do backend no futuro, então a infraestrutura de Redux Toolkit, RTK Query e `src/services/http/` fica no projeto.
 - **R2 — Tradução obrigatória em `pt-BR`, `en` e `es`.** Toda feature e toda tarefa que cria ou altera texto de UI entrega o texto nos três idiomas; `pt-BR` é a referência. Chave de tradução sem uso é removida.
-- **R3 — O handoff é a fonte de verdade do design.** Tokens, componentes, voz e copy, acessibilidade e responsividade seguem o handoff; as convenções do repositório prevalecem onde divergem (fonte self-hospedada em vez de Google Fonts, CSS Module em vez de classe global `.ds-*`, código sem comentários).
+- **R3 — O handoff é a fonte de verdade do design.** Tokens, componentes, voz e copy, acessibilidade e responsividade seguem o handoff; as convenções do repositório prevalecem onde divergem (fonte self-hospedada em vez de Google Fonts, CSS Module em vez de classe global `.ds-*`, código sem comentários). A ordem de precedência é: convenções do repositório, depois [`decisions.md`](../design/decisions.md), depois o [protótipo navegável](../design/prototype/README.md), depois o handoff.
 
-## Pendências conhecidas
+## Decisões de design
 
-Pontos que o handoff deixa em aberto:
+Os pontos que o handoff deixava em aberto estão decididos em [`decisions.md`](../design/decisions.md), com opções, fonte e data:
 
-1. **Menu mobile:** abaixo de 640px a navegação do cabeçalho vira um botão de menu, mas o painel aberto não foi desenhado e precisa de definição antes de ser implementado.
-2. **Logo:** não existe. O cabeçalho usa um placeholder quadrado tracejado com o texto `LOGO` ao lado do nome; ao receber o arquivo, o placeholder é substituído e o nome continua ao lado.
-3. **Imagens reais:** não existe nenhuma. Os dez `assets/proj-*.png` do handoff são sketches desenhados em canvas e não vão para produção; devem ser trocados por capturas reais dos projetos, sempre em 16:9. Foto de perfil também é placeholder.
-4. **Rodapé:** a decisão final foi manter a linha superior em degradê e o fundo neutro. Se o fundo em degradê voltar, botões e textos internos passam para tinta `#202020` cheia.
-5. **Backend do formulário de contato:** no protótipo a submissão é simulada. Falta endpoint real, proteção contra spam e tratamento de falha (o banner de erro já existe no design system).
-6. **Renderizador de markdown:** no protótipo a documentação do projeto é HTML escrito à mão. No código, a documentação é renderizada por uma biblioteca (o handoff sugere `react-markdown` com `rehype-highlight`) com as cores de realce documentadas no handoff.
+1. **Menu mobile (D01):** abaixo de 640px a navegação vira um botão de 44px que abre um painel em largura total abaixo do cabeçalho, com os links, o seletor de idioma e o alternador de tema.
+2. **Logo (D02):** o gato ao lado do nome "Luiz Felipe dos Santos", em SVG inline com as cores do tema. Os SVGs-fonte estão em [`design/assets/logo/`](../design/assets/logo/).
+3. **Imagens reais (D03):** placeholders neutros 16:9 e 1:1 pelo menos até a primeira entrega na `main`; capturas reais dos projetos e foto de perfil entram depois da v1. Os sketches do handoff não vão para produção.
+4. **Rodapé (D04):** linha superior em degradê e fundo neutro, pelos tokens `--surface-chrome` e `--border-chrome`; em Contato ele vira navegação.
+5. **Formulário de contato (D05):** implementado no frontend com envio simulado (R1) e escondido em produção atrás de uma flag até o backend existir; endpoint real e proteção contra spam vêm depois.
+6. **Renderizador de markdown (D06):** `react-markdown` com `rehype-highlight`, sem HTML embutido, com as cores de realce do protótipo.
+
+O único item à espera de material é o CV em PDF por idioma (D14).
 
 ## Fora de escopo
 
