@@ -383,7 +383,7 @@ verificação de lá.
 - [ ] `NF-DA-01` — Sem requisição a `VITE_API_URL`: o envio é simulado [K]
 - [ ] `NF-DA-02` — A tela não importa JSON de conteúdo: o acesso é por endpoints do RTK Query [Review; CI]
 - [ ] `NF-DA-06` — Formulário implementado e desligado no build publicado (D05) [CI; K]
-- [ ] `NF-DE-08` — JS adicional de `/contact` até 40 KB gzip, sem o formulário com a flag desligada [Idem, navegando pelo cabeçalho]
+- [ ] `NF-DE-08` — JS adicional de `/contact` até 40 KB gzip, sem o formulário com a flag desligada [DevTools Network, filtro JS, cache desligado, navegando pelo cabeçalho]
 - [ ] `NF-RE-03` — Sem rolagem horizontal em 360, 390, 768 e 1280px, nos dois temas e nos estados especiais [K]
 - [ ] `NF-RE-04` — Decisão de layout por largura de D21 [C, D a H; K]
 - [ ] `NF-IA-01` — `/contact` com HTML gerado no build em cada idioma, legível sem JavaScript [CI; S; K]
