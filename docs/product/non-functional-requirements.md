@@ -280,3 +280,56 @@ Geração do PDF do CV (`D30`, issue X):
 | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ | -------- |
 | NF-IA-20 | Os três PDFs de CV são gerados no build a partir do JSON, marcados (tagged), com o idioma do documento e o texto selecionável; build com JSON de CV inválido falha                                                                                                                                                                                    | Teste de X; abrir o PDF e conferir idioma e marcação nas propriedades do arquivo                                                                 | CI; X; K |
 | NF-IA-21 | Documentos do projeto são rotas filhas da tela do projeto (`D33`): trocar de documento navega no cliente sem recarregar, galeria, ficha técnica e relacionados continuam montados, a rolagem é preservada e cada troca é um passo no histórico (push). O seletor de documentos é navegação por links (`nav` com `aria-current="page"`), conforme a #9 | Teste de F com `createMemoryRouter` e `user-event` (troca de documento sem desmontar a galeria; voltar no histórico volta ao documento anterior) | CI; F    |
+
+## Privacidade (`NF-PR`)
+
+| ID       | Requisito                                                                                                                                                                                                    | Como é verificado                                                         | Quando    |
+| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------- | --------- |
+| NF-PR-01 | Nenhuma requisição a terceiros ao carregar ou navegar: fontes (D09), imagens, JSONs, PDFs e scripts saem da própria origem; link externo só é seguido por clique                                             | DevTools Network com "Domain" visível em cada rota; review de URL externa | K; Review |
+| NF-PR-02 | Sem cookie. `localStorage` só guarda o idioma (`portfolio-frontend:language`) e o tema (chave definida em A)                                                                                                 | DevTools, aba Application                                                 | K         |
+| NF-PR-03 | **v1 sem analytics** (`DP02`). V2+: analytics sem cookie (Vercel Web Analytics ou Plausible), escolhido em issue ou ADR da V2, que registra a exceção a NF-PR-01; sem cookie, não há banner de consentimento | Review; NF-PR-01                                                          | V2+       |
+| NF-PR-04 | Nada incorporado de terceiros (vídeo, mapa, widget social); o vídeo de demonstração (R) é link, não embed                                                                                                    | Review                                                                    | Review    |
+| NF-PR-05 | Imagens publicadas sem metadado EXIF ou de localização                                                                                                                                                       | `exiftool` ou inspeção equivalente nos arquivos de L                      | L         |
+| NF-PR-06 | Sem página de política de privacidade na v1: o site não coleta dado pessoal (formulário desligado, D05). O formulário real (N) traz o aviso de tratamento de dados (LGPD) junto                              | Review de N                                                               | N         |
+
+## Compatibilidade de navegadores (`NF-CO`)
+
+| ID       | Requisito                                                                                                                                                                                    | Como é verificado                                                                         | Quando |
+| -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | ------ |
+| NF-CO-01 | Suporte às duas últimas versões estáveis de Chrome, Edge, Firefox, Safari (macOS e iOS) e Samsung Internet; o piso técnico é o alvo padrão de build do Vite (Baseline amplamente disponível) | Fumaça em Chrome e Firefox desktop, Safari no iOS e Chrome no Android, no build publicado | K      |
+| NF-CO-02 | Sem polyfill e sem build legado; Internet Explorer e Edge legado fora                                                                                                                        | Review do `vite.config.ts`                                                                | Review |
+| NF-CO-03 | Sem JavaScript, o conteúdo é legível (NF-IA-01); busca, filtros, idioma, tema, galeria e modais precisam de JavaScript                                                                       | Navegador com JavaScript desligado                                                        | K      |
+
+## Qualidade e CI (`NF-QA`)
+
+| ID       | Requisito                                                                                                                                                                                                | Como é verificado  | Quando |
+| -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------ | ------ |
+| NF-QA-01 | `npm run build` (com `typecheck` em `strict`), `npm run lint` e testes passam no CI; PR para a `main` e push na `main` rodam `npm run test:cov`, os demais PRs rodam os testes afetados (`ci.yml` atual) | CI                 | CI     |
+| NF-QA-02 | Cobertura mínima de 80% em statements, branches, functions e lines                                                                                                                                       | `npm run test:cov` | CI     |
+| NF-QA-03 | Todo requisito deste documento que muda comportamento tem teste em `test/`; o que teste não cobre (visual, rede real, Lighthouse) é checado em K                                                         | Review; K          | Review |
+| NF-QA-04 | A pré-renderização (S) e a geração dos arquivos para máquinas (U) rodam dentro de `npm run build`: uma rota que falha ao renderizar ou um JSON inválido falha o build e o CI                             | CI                 | S; U   |
+| NF-QA-05 | Formatação por Prettier e lint no `pre-commit` (Husky e lint-staged)                                                                                                                                     | Hook local         | —      |
+
+## Hospedagem da v1 — GitHub Pages (`NF-HO`)
+
+| ID       | Requisito                                                                                                                                                                                           | Como é verificado                                                                 | Quando  |
+| -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- | ------- |
+| NF-HO-01 | Site no subcaminho `/ra2581392423047/`: `base` do Vite por variável de ambiente (padrão `/`), `basename` do router de `import.meta.env.BASE_URL`, todo caminho de asset e de `public/` com o `base` | Abrir e recarregar cada rota no build publicado, com fontes, imagens, JSONs e CV  | O; K    |
+| NF-HO-02 | Sem reescrita de rota no servidor: com S, um arquivo HTML por rota pública e `404.html` com a página não encontrada; sem S, `404.html` é cópia do `index.html` (M4)                                 | NF-IA-04                                                                          | O; S    |
+| NF-HO-03 | Pages em modo `legacy` com Jekyll: `.nojekyll` na raiz publicada (sem ele, arquivo e pasta com `_` somem)                                                                                           | `curl` de um asset com `_` no nome; listagem de `main:/docs` no repositório da v1 | O; K    |
+| NF-HO-04 | Sem cabeçalho HTTP próprio no Pages (sem CSP, `Cache-Control` ou `X-Robots-Tag`): nada da v1 pode depender de cabeçalho; assets com hash no nome                                                    | Review                                                                            | O       |
+| NF-HO-05 | Só a linha 1.x publica no repositório da Fatec, pela Action de O chamada pela release de Q ([`roadmap.md`](roadmap.md), M4)                                                                         | Critérios de O                                                                    | O; Q    |
+| NF-HO-06 | A URL pública usada em canônica, `sitemap.xml`, `llms.txt` e Open Graph vem da mesma variável do build (NF-IA-11) e bate com o `base`                                                               | Teste de V e U; `curl`                                                            | V; U; K |
+
+## Acessibilidade
+
+Meta, checklist por tela e foco visível em [`accessibility.md`](accessibility.md) (#9). A base de
+HTML semântico, comum a pessoas e IAs, é a seção
+[`accessibility.md#html-semântico-e-nomes-acessíveis`](accessibility.md#html-semântico-e-nomes-acessíveis),
+dona das regras de landmarks, headings, nomes acessíveis e texto alternativo; NF-IA-16 aponta para
+ela em vez de repetir as regras. O teste automático de acessibilidade é a issue T da #9. O seletor
+de documentos do projeto é navegação por links (`nav` com `aria-current="page"`), não `tablist`
+com setas (NF-IA-21, conforme a #9).
+
+Pontos comuns com este documento: HTML semântico (NF-IA-16), movimento reduzido (NF-MO), contraste
+nos dois temas (NF-TE-05), alvos de toque e larguras (NF-RE-03).
