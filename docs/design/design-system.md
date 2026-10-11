@@ -288,7 +288,7 @@ As convenções do repositório prevalecem onde divergem do handoff (R3):
 | `tokens/*.css` e `components/*.jsx` com comentários        | Código sem comentários                                                                                                                  |
 | Componentes React em JSX                                   | Recriados em TypeScript, com texto de UI por chave de tradução nos três idiomas                                                         |
 
-## Pendências de decisão de design
+## Decisões de design
 
 As pendências e contradições do handoff estão decididas e registradas em
 [`decisions.md`](decisions.md), com opções, fonte e data. Só falta material do PO: os PDFs de CV

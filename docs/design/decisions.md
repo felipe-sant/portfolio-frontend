@@ -140,8 +140,8 @@ fórmula de luminância relativa da WCAG 2.x.
 ## Citação do handoff
 
 O handoff não estava acessível quando este registro foi escrito. A citação de D01 a D15 foi
-transcrita de [`design-system.md`](design-system.md) e de `docs/product/overview.md`, que o
-resumiam antes destas decisões, e fica **a conferir** contra o handoff quando ele estiver
+transcrita de `docs/design/design-system.md` e `docs/product/overview.md` na versão anterior a
+estas decisões (commit `e974b8b`, `git show e974b8b:docs/design/design-system.md`), e fica **a conferir** contra o handoff quando ele estiver
 disponível.
 
 | ID  | O que o handoff diz                                                                                                           | Onde no handoff                                         |
