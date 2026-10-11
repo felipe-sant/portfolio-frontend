@@ -7,7 +7,7 @@ Frontend do portfólio pessoal de Luiz Felipe dos Santos, desenvolvedor full sta
 O portfólio existe para converter visita em contato: mostra o trabalho do autor com profundidade
 suficiente para que quem visita entenda como ele resolve problemas, e não apenas quais tecnologias
 já usou. O público são recrutadores avaliando o autor para uma vaga e clientes avaliando-o para um
-projeto ou freelance.
+projeto ou freelance; na v1, também o professor da Fatec, que avalia a entrega.
 
 O design vem de um handoff de design, que define cinco telas:
 
@@ -17,12 +17,12 @@ O design vem de um handoff de design, que define cinco telas:
 | `/projetos`       | Projetos    | Encontrar um projeto por busca, tipo, categoria ou tecnologia, com carregamento contínuo |
 | `/projetos/:slug` | Projeto     | Estudo de caso de um projeto: galeria, documentação e ficha técnica                      |
 | `/informacoes`    | Informações | Sobre mim, stack, complementos e trajetória                                              |
-| `/contato`        | Contato     | Formulário de mensagem e canais diretos                                                  |
+| `/contato`        | Contato     | Formulário de mensagem (desligado na v1) e canais diretos                                |
 
 Hoje o código tem só `/` (Início com o hero mínimo) e a página de rota inexistente; as outras rotas
 entram com as specs de cada tela. O site tem temas claro e escuro e interface em `pt-BR` (língua de
-referência), `en` e `es`. Propósito, público, pendências e fora de escopo estão detalhados em
-[`docs/product/overview.md`](docs/product/overview.md).
+referência), `en` e `es`. Propósito, público e jornadas, objetivos, escopo e fora de escopo estão
+detalhados em [`docs/product/overview.md`](docs/product/overview.md).
 
 ## Requisitos do projeto
 
