@@ -307,10 +307,12 @@ já está no HTML.
 
 ## Critérios de aceite
 
-Copiáveis para a issue C. Verificação entre colchetes, como em `accessibility.md`: `[teste]`
-(Testing Library, `user-event`, `createMemoryRouter`), `[e2e]` para o que o `jsdom` não mede
-(sticky, media query, `inert` real, foco sob o cabeçalho), `[medição]` para cor e tamanho,
-`[navegador]` para favicon e `theme-color`, `[lint]` e `[review]`.
+Copiáveis para a issue C. Verificação entre colchetes, com a legenda de
+[`accessibility.md`](../product/accessibility.md#checklist-por-tela) (`[teste]`, `[axe]`, `[lint]`,
+`[teclado]`, `[leitor]`, `[navegador]`, `[e2e]` e `[medição]`) e mais `[review]` para o que só a
+revisão do PR confere. Nos itens funcionais, `[teste]` usa Testing Library, `user-event` e
+`createMemoryRouter`; `[e2e]` cobre o que o `jsdom` não mede (sticky, media query, `inert` real,
+foco sob o cabeçalho); `[navegador]` cobre favicon, `theme-color` e movimento reduzido.
 
 ### Funcionais
 
