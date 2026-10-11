@@ -185,8 +185,10 @@ O namespace `home` (existe) guarda o que só o Início usa. `common` guarda o qu
 mostram: "Baixar CV" (Informações e Contato), tipo e categoria de projeto (Projetos e Projeto), o
 formato de período (Informações), o nome do autor e os símbolos. As chaves `resume.*`,
 `projectType.*`, `projectCategory.*`, `period.*` e `symbols.forward` têm o nome fixado pelo PO para
-as cinco telas (decisão transversal de 11-10-2026), iguais às de [`about.md`](about.md) e
-[`contact.md`](contact.md): a tela que chegar primeiro cria, as outras reaproveitam. O selo de
+as cinco telas (decisão transversal de 11-10-2026): `resume.*`, `period.*` e `symbols.forward` são
+as mesmas de [`about.md`](about.md) e [`contact.md`](contact.md); `projectType.*` e
+`projectCategory.*` aparecem pela primeira vez aqui e serão reaproveitadas por Projetos e Projeto. A
+tela que chegar primeiro cria, as outras reaproveitam. O selo de
 disponibilidade e o parágrafo do hero não têm chave: vêm do perfil (D44).
 
 | Namespace | Chave                          | Valor em `pt-BR`                                                                                                      | Onde                                                                     |
