@@ -41,25 +41,51 @@ O PO aprova a spec (Status `aprovada`) e o escopo de cada versão; mudar o escop
 
 ## Escopo
 
-Cinco rotas, cada uma com o propósito definido no handoff:
+Cinco rotas, cada uma com o propósito definido no handoff. A coluna Fonte cita o handoff e o protótipo da tela e as decisões principais de cada uma, as mesmas da tabela "Decisões por tela" de [`roadmap.md`](roadmap.md#m5--telas) (M5):
 
-| Rota              | Tela        | Propósito                                                                                                        |
-| ----------------- | ----------- | ---------------------------------------------------------------------------------------------------------------- |
-| `/`               | Início      | Primeira impressão: quem é, o que faz agora (status atual), quatro projetos em destaque e faixa de stack         |
-| `/projetos`       | Projetos    | Encontrar um projeto por busca, tipo, categoria ou tecnologia, com ordenação e carregamento incremental          |
-| `/projetos/:slug` | Projeto     | Contar como o problema foi resolvido, como estudo de caso: galeria, documentação em markdown e ficha técnica     |
-| `/informacoes`    | Informações | Quem é o autor, o que domina e por onde passou: sobre mim, stack, complementos e trajetória com modal de detalhe |
-| `/contato`        | Contato     | Receber mensagem qualificada pelo formulário ou dar o canal direto para quem prefere                             |
+| Rota              | Tela        | Propósito                                                                                                                         | Fonte                                                      |
+| ----------------- | ----------- | --------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------- |
+| `/`               | Início      | Primeira impressão: quem é, o que faz agora (status atual), quatro projetos em destaque e faixa de stack                          | Handoff, `prototipo-inicio`; D26, D11, D13, D14, D24       |
+| `/projetos`       | Projetos    | Encontrar um projeto por busca, tipo, categoria ou tecnologia, com ordenação e carregamento incremental                           | Handoff, `prototipo-projetos`; D16, D17                    |
+| `/projetos/:slug` | Projeto     | Contar como o problema foi resolvido, como estudo de caso: galeria, documentação em markdown e ficha técnica                      | Handoff, `prototipo-projeto`; D06, D10, D18, D19, PI1, PI2 |
+| `/informacoes`    | Informações | Quem é o autor, o que domina e por onde passou: sobre mim, stack, complementos e trajetória com modal de detalhe                  | Handoff, `prototipo-informacoes`; D13, D14, D20, PI1       |
+| `/contato`        | Contato     | Dar o canal direto (e-mail, CV) para quem quer falar com o autor; o formulário existe, mas está desligado na v1 e é ligado na V2+ | Handoff, `prototipo-contato`; D05, D07, D21, D25           |
 
-- Cabeçalho igual nas cinco telas, com o item da rota atual destacado; rodapé igual em quatro delas (em `/contato` ele vira navegação).
-- Temas claro e escuro, trocados por `data-theme` na raiz, com a escolha persistida e `prefers-color-scheme` respeitado na primeira visita.
-- Interface em três idiomas: `pt-BR` (língua de referência), `en` e `es`.
+- Cabeçalho igual nas cinco telas, com o item da rota atual destacado; rodapé igual em quatro delas (em `/contato` ele vira navegação). Fonte: handoff, `ProtoHeader` e `ProtoFooter`; D01, D02, D04.
+- Temas claro e escuro, trocados por `data-theme` na raiz, com a escolha persistida e `prefers-color-scheme` respeitado na primeira visita. Fonte: D22.
+- Interface em três idiomas: `pt-BR` (língua de referência), `en` e `es`. Fonte: R2; D12.
+- Página não encontrada e página de erro. Fonte: protótipo, `prototipo-404` e `prototipo-erro`; [`roadmap.md`](roadmap.md#v1), definição da v1.
+- CV em PDF por idioma, baixado pelo idioma ativo. Fonte: D14.
+- Conteúdo real em JSON local na v1, no formato do contrato da API. Fonte: [`roadmap.md`](roadmap.md#m2--conteúdo-real), M2; R1.
+
+## Fora de escopo
+
+Já decididos no handoff, no protótipo ou nos requisitos:
+
+- **Backend:** não faz parte deste repositório. Enquanto ele não existe, os dados são mock (R1).
+- **Paginação numerada na listagem de projetos:** o carregamento é sempre incremental ("Carregar mais"). Fonte: protótipo, `prototipo-projetos`; D16, D17.
+- **Newsletter e cadastro de visitante:** o contato é só a mensagem e os canais diretos. Fonte: protótipo de Contato ("Sem newsletter e sem cadastro").
+- **Idiomas além de `pt-BR`, `en` e `es`** (R2).
+- **Depoimentos** (D13).
+- **Agendamento de conversa e lista de redes na coluna de Contato** (D21).
+- **Envio real do formulário na v1:** volta na V2+, pela issue N (D05).
+- **Deploy na Vercel, domínio próprio e AWS como requisito da v1** ([`roadmap.md`](roadmap.md#v1), v1).
+- **Analytics na v1** (`DP02`).
+
+Decididos pelo PO, valendo para a v1 e a V2+ (`DP03`):
+
+- **Área logada ou painel administrativo.**
+- **Blog ou artigos.**
+- **CMS de terceiros ou próprio.**
+- **Comentários, chat ou qualquer interação de visitante além dos canais de contato.**
+
+A edição de conteúdo, quando existir, será **outro app**, não este frontend. Na v1 o conteúdo é editado em arquivo (JSON local); na V2+ vem do backend.
 
 ## Requisitos do projeto
 
 Valem para toda feature e toda tarefa.
 
-- **R1 — Frontend-only com dados mock no início.** O backend ainda não existe. A aplicação funciona sozinha, com dados mock de projetos, trajetória e demais conteúdo exigido pelo handoff. Os dados virão do backend no futuro, então a infraestrutura de Redux Toolkit, RTK Query e `src/services/http/` fica no projeto.
+- **R1 — Frontend-only com dados mock no início.** O backend ainda não existe. A aplicação funciona sozinha, com dados mock de projetos, trajetória e demais conteúdo exigido pelo handoff. Os dados virão do backend no futuro, então a infraestrutura de Redux Toolkit, RTK Query e `src/services/http/` fica no projeto. Na v1 o conteúdo é o real do PO: "mock" quer dizer só que a fonte é local, no formato do contrato de #10, trocável pela API sem mexer nas telas ([`roadmap.md`](roadmap.md#m2--conteúdo-real), M2).
 - **R2 — Tradução obrigatória em `pt-BR`, `en` e `es`.** Toda feature e toda tarefa que cria ou altera texto de UI entrega o texto nos três idiomas; `pt-BR` é a referência. Chave de tradução sem uso é removida.
 - **R3 — O design segue as decisões, o protótipo e o handoff.** Tokens, componentes, voz e copy, acessibilidade e responsividade seguem o handoff; as convenções do repositório prevalecem onde divergem (fonte self-hospedada em vez de Google Fonts, CSS Module em vez de classe global `.ds-*`, código sem comentários). A ordem de precedência é: convenções do repositório, depois [`decisions.md`](../design/decisions.md), depois o [protótipo navegável](../design/prototype/README.md), depois o handoff.
 
@@ -79,10 +105,3 @@ Os itens à espera de material são o CV em PDF por idioma (D14) e as capturas e
 ## Roadmap
 
 A v1 é a entrega da faculdade (Fatec), publicada no GitHub Pages de um repositório da organização da Fatec, com o conteúdo real servido localmente e sem backend. As versões V2+ são de uso pessoal. A ordem das entregas e o critério de cada versão estão em [`roadmap.md`](roadmap.md).
-
-## Fora de escopo
-
-- **Backend:** não faz parte deste repositório. Enquanto ele não existe, os dados são mock (R1).
-- **Paginação numerada na listagem de projetos:** o carregamento é sempre incremental ("Carregar mais").
-- **Newsletter e cadastro de visitante:** o contato é só a mensagem e os canais diretos.
-- **Idiomas além de `pt-BR`, `en` e `es`** (R2).
