@@ -15,6 +15,7 @@ handoff.
 | ----------- | ------------------------------------------------------------------------------------------------------------ |
 | PO          | Resposta do PO (Luiz Felipe dos Santos), que é também cliente e dev                                          |
 | protótipo   | Protótipo do Claude Design validado pelo PO em 11-10-2026, versionado em [`prototype/`](prototype/README.md) |
+| PO (spec)   | Decisão proposta numa spec e aprovada pelo PO junto com ela                                                  |
 | repositório | Decisão já materializada no código ou na configuração do repositório                                         |
 | handoff     | `/home/felipe/faculdade/design_handoff_portfolio`, ponto de partida; citado na seção "Citação do handoff"    |
 
