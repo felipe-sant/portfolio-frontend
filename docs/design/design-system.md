@@ -151,10 +151,11 @@ Títulos levam `letter-spacing` negativo; rótulos em mono, positivo (`--ls-labe
 
 O sistema é **desenhado com linha, não com sombra**.
 
-- Repouso: 1px em `--border-subtle`; controle secundário: 1px em `--border-strong`.
+- Repouso: 1px em `--border-subtle`; controle secundário: 1px em `--border-strong`; campo de texto:
+  1px em `--border-control` (D29).
 - Ativo/selecionado: 2px em `--brand-variant` (aba ativa, miniatura ativa, item de nav ativo).
 - Hover de item de trajetória: 1px em `--text-strong`.
-- Foco visível: contorno de 2px em `--brand-variant` (ver "Estados", D23).
+- Foco visível: contorno de 2px em `--focus-ring` (ver "Estados", D23 com a cor de D27).
 - Tracejado marca o que **não** é conteúdo real: estado vazio e bloco informativo.
 - Sombra só no modal (`--shadow-modal`). Card não tem sombra; nenhuma superfície tem blur ou
   gradiente de proteção.
@@ -164,27 +165,29 @@ O sistema é **desenhado com linha, não com sombra**.
 Discreto e curto: `--ease` (`cubic-bezier(0.2, 0, 0.2, 1)`) com `--dur-fast` (120ms),
 `--dur-base` (180ms, transição de cor, borda, fundo e transform) e `--dur-slow` (320ms). Animações
 contínuas: `--dur-shimmer` (1.4s, skeleton), `--dur-spin` (700ms, spinner) e `--dur-marquee`
-(22s, faixa de stack). Nada de bounce, entrada em escala ou parallax.
+(22s, faixa de stack). Nada de bounce, entrada em escala ou parallax. A faixa de stack tem botão de
+pausa (D28).
 
 `prefers-reduced-motion: reduce` desliga tudo. No `global.css` isso zera os tokens de duração e
-encurta animação e transição em `*`, `*::before` e `*::after`. Os keyframes do handoff
+encurta animação e transição em `*`, `*::before` e `*::after`; a faixa de stack vira lista estática
+(D28). Os keyframes do handoff
 (`ds-shimmer`, `ds-spin`, `ds-marquee`) ainda não existem no código: entram no CSS Module do
 componente que os usar.
 
 ## Estados
 
-| Estado                    | Tratamento                                                                                                    |
-| ------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| Hover em card             | `transform: translateY(-3px)`                                                                                 |
-| Hover em item de lista    | Borda para `--text-strong`, fundo para `--bg-raised`, revela "Ver detalhes →"                                 |
-| Hover em botão secundário | Borda para `--text-strong`                                                                                    |
-| Hover em link de lista    | `padding-left` +0.375rem, texto para `--text-link`                                                            |
-| Foco visível              | Contorno 2px `--brand-variant`, afastamento 2px, `--radius`, em todo `:focus-visible`, inclusive campos (D23) |
-| Ativo/selecionado         | 2px em `--brand-variant`                                                                                      |
-| Desabilitado              | `opacity: 0.5`, `cursor: not-allowed`, sem trocar a cor                                                       |
-| Carregando conteúdo       | Skeleton com shimmer, na forma do conteúdo real, `aria-hidden="true"`                                         |
-| Carregando ação           | Spinner dentro do botão, `aria-busy`                                                                          |
-| Toque                     | Alvo mínimo `--hit-min` (`2.75rem`) em contexto mobile                                                        |
+| Estado                    | Tratamento                                                                                                      |
+| ------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| Hover em card             | `transform: translateY(-3px)`                                                                                   |
+| Hover em item de lista    | Borda para `--text-strong`, fundo para `--bg-raised`, revela "Ver detalhes →"                                   |
+| Hover em botão secundário | Borda para `--text-strong`                                                                                      |
+| Hover em link de lista    | `padding-left` +0.375rem, texto para `--text-link`                                                              |
+| Foco visível              | Contorno 2px `--focus-ring`, afastamento 2px, `--radius`, em todo `:focus-visible`, inclusive campos (D23, D27) |
+| Ativo/selecionado         | 2px em `--brand-variant`                                                                                        |
+| Desabilitado              | `opacity: 0.5`, `cursor: not-allowed`, sem trocar a cor                                                         |
+| Carregando conteúdo       | Skeleton com shimmer, na forma do conteúdo real, `aria-hidden="true"`                                           |
+| Carregando ação           | Spinner dentro do botão, `aria-busy`                                                                            |
+| Toque                     | Alvo mínimo `--hit-min` (`2.75rem`) em contexto mobile                                                          |
 
 Skeleton e spinner nunca no mesmo bloco: skeleton é para conteúdo que vai aparecer, spinner para
 ação em curso.
@@ -217,8 +220,8 @@ seguem as mesmas regras (requisito R2).
 SVG inline traçado, no vocabulário do Lucide: `viewBox="0 0 24 24"`, `fill="none"`,
 `stroke="currentColor"`, `stroke-linecap="round"`, traço de 2 a 2.4 e tamanho de 12 a 20px (D15). O
 inventário é fechado (lupa, ×, chevrons, download, hambúrguer, lua, sol, arco de spinner, pin,
-check, alerta, GitHub, LinkedIn, envelope, arquivo, lupa com mais e a estrela preenchida, único
-ícone com `fill`, que marca projeto em destaque). Setas no texto são caracteres unicode
+check, alerta, GitHub, LinkedIn, envelope, arquivo, lupa com mais, pausa e play da faixa de stack
+(D28) e a estrela preenchida, único ícone com `fill`, que marca projeto em destaque). Setas no texto são caracteres unicode
 (`→ ← ↗ ↓ ▾`), não ícones.
 
 A recomendação do handoff é trocar por `lucide-react` e usar um pacote de marcas (ou os SVGs
@@ -226,6 +229,10 @@ oficiais) para GitHub e LinkedIn. Nada disso está instalado ainda: entra com o 
 que precisar de ícone.
 
 ## Acessibilidade
+
+O requisito de acessibilidade (meta WCAG 2.2 AA, método de verificação, regras e checklist por
+tela) está em [`accessibility.md`](../product/accessibility.md). Esta seção resume o que o handoff
+e o protótipo já trazem.
 
 Já resolvido nos protótipos do handoff, a manter na implementação:
 
