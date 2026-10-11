@@ -32,7 +32,11 @@ design (R3). Reaproveite `tokens/` (nomes e valores dos tokens) e use `component
 partida dos componentes. Não copie o HTML das telas (`*.dc.html`), `support.js`, `image-slot.js`
 nem os sketches de `assets/` (não são imagens de produção). Onde o handoff diverge das convenções
 deste repositório, as convenções prevalecem: fonte self-hospedada em vez de Google Fonts, CSS
-Module em vez de classe global `.ds-*` e código sem comentários.
+Module em vez de classe global `.ds-*` e código sem comentários. `docs/design/prototype/` é a
+referência visual validada pelo PO (telas, estados e temas; abre por `npm run dev` em
+`/docs/design/prototype/prototipo-indice.dc.html`). Onde handoff, protótipo e
+`docs/design/decisions.md` divergem, vale `decisions.md`, depois o protótipo, depois o handoff,
+com as convenções do repositório acima de todos.
 
 **Rotas:** cinco telas, das quais hoje só `/` existe no código (as demais vêm nas specs de tela):
 
@@ -57,14 +61,15 @@ infinitivo + objeto ("Ver projetos", "Enviar mensagem") e o separador de metadad
   entrega o texto nos três idiomas, com `pt-BR` como referência. Chave de tradução sem uso é
   removida.
 - **R3 — O handoff é a fonte de verdade do design.** Tokens, componentes, voz e copy,
-  acessibilidade e responsividade seguem o handoff, com as convenções do repositório prevalecendo
-  onde divergem.
+  acessibilidade e responsividade seguem o handoff, na precedência descrita em "Handoff de
+  design" (convenções do repositório > `decisions.md` > protótipo > handoff).
 
 **Decisões de design:** as pendências e contradições do handoff estão decididas em
 `docs/design/decisions.md`, com IDs (`D01`–`D25`, `PI1`–`PI5`) que specs e issues citam.
 
-**Onde ler mais:** `docs/product/overview.md` (visão, escopo, requisitos e pendências),
+**Onde ler mais:** `docs/product/overview.md` (visão, escopo, requisitos e decisões),
 `docs/product/glossary.md` (glossário), `docs/design/design-system.md` (design system),
+`docs/design/decisions.md` (decisões de design), `docs/design/prototype/` (protótipo),
 `docs/diagrams/` (fluxo de navegação e entidades) e `docs/architecture/frontend.md` (arquitetura).
 
 ## Comandos
