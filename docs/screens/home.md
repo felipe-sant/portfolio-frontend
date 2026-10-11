@@ -288,3 +288,162 @@ Lista de necessidades; a #10 decide nomes de campo, arquivos e endpoints.
    no cliente ou por parâmetro, à escolha da #10.
 6. Todo texto do conteúdo por idioma, servido só no idioma ativo (NF-DA-05); erro de carga como
    falha de rede comum, sem mensagem do servidor na tela.
+
+## Metadados e dados estruturados
+
+- `<title>` "Luiz Felipe dos Santos · Desenvolvedor full stack em TypeScript" e
+  `<meta name="description">`, das chaves de `home`, com as tags nativas do React 19; o título da
+  raiz é a exceção ao formato `<Tela> · Luiz Felipe dos Santos` ([`layout.md`](layout.md)).
+- Canônica, `hreflang`, Open Graph (`og:type` `website`, `og:image` a do site, 1200×630) e
+  `twitter:card`: pelo mecanismo de V, como em [`layout.md`](layout.md) ("Metadados por rota e
+  idioma"); a tela não declara nada além disso.
+- JSON-LD (NF-IA-08, NF-IA-09), num `<script type="application/ld+json">` com `<` escapado,
+  gerado dos mesmos dados da tela, um por idioma: `WebSite` e `Person`, ligados pelo `@id` da
+  `Person`. V fornece o mecanismo e D declara os dados, sem inventar campo que o conteúdo não tem.
+
+```json
+{
+    "@context": "https://schema.org",
+    "@graph": [
+        {
+            "@type": "WebSite",
+            "name": "<common:authorName>",
+            "url": "<canônica de / no idioma>",
+            "inLanguage": "<pt-BR, en ou es>",
+            "publisher": { "@id": "<URL canônica de />#person" }
+        },
+        {
+            "@type": "Person",
+            "@id": "<URL canônica de />#person",
+            "name": "<common:authorName>",
+            "jobTitle": "<home:heading>",
+            "url": "<canônica de / no idioma>",
+            "sameAs": ["<GitHub>", "<LinkedIn>"],
+            "knowsAbout": ["<itens da stack do site>"]
+        }
+    ]
+}
+```
+
+O `@id` da `Person` é `<URL canônica de />#person`, o mesmo em todas as telas e idiomas (decisão
+transversal do PO de 11-10-2026), e `/about` o reutiliza na `ProfilePage` (G,
+[`about.md`](about.md)). `sameAs` só tem as redes que existirem no conteúdo. `image` só entra
+depois de L (foto, D26). `jobTitle` vem da mesma chave do `h1`, para o cargo exibido e o declarado
+serem o mesmo dado (NF-IA-09). Sem `noindex`. A pré-renderização (S) gera `/`, `/en/` e `/es/` com
+tudo isso no HTML.
+
+## Critérios de aceite
+
+Copiáveis para a issue D. Verificação entre colchetes, com a legenda de
+[`accessibility.md`](../product/accessibility.md#checklist-por-tela) (`[teste]`, `[axe]`, `[lint]`,
+`[teclado]`, `[leitor]`, `[navegador]`, `[e2e]` e `[medição]`) e mais `[review]` para o que só a
+revisão do PR confere. Nos itens funcionais, `[teste]` usa Testing Library com `renderWithStore` e
+`preloadedState`, `user-event` e `createMemoryRouter`; `[e2e]` cobre media query e posição visual,
+`[navegador]` o movimento reduzido e `[medição]` cor e alvo.
+
+### Funcionais
+
+- [ ] `RF-HOME-01` — Rota `/`, `/en/` e `/es/` dentro do `MainLayout`, sem `main` próprio, "Início" ativo, seções na ordem hero, status atual, faixa de stack e destaques com saídas, sem depoimentos [teste]
+- [ ] `RF-HOME-02` — Conteúdo só por endpoints do RTK Query, no idioma ativo; seleção e ordenação no hook da página ou em função pura com teste [teste] [review]
+- [ ] `RF-HOME-03` — Selo com `availability.label` do conteúdo, indicador `aria-hidden`, em `--success-surface`/`--success-ink` e `--radius`; com `isAvailable: false` não aparece [teste] [medição]
+- [ ] `RF-HOME-04` — `h1` "Desenvolvedor full stack em TypeScript", sem ponto, por `home:heading`, alvo de foco na navegação interna, nos três idiomas, sem chave no lugar de texto [teste]
+- [ ] `RF-HOME-05` — Parágrafo do hero vindo do perfil, limitado a `--measure`; três linhas de skeleton `aria-hidden` enquanto carrega; some sem mensagem se o perfil falha [teste] [review]
+- [ ] `RF-HOME-06` — "Ver projetos" para `/projects` e "Baixar CV" com ícones `aria-hidden` e alvo de 44px, quebrando linha quando não cabem, nos três idiomas, sem chave no lugar de texto [teste] [medição]
+- [ ] `RF-HOME-07` — "Baixar CV" aponta para o PDF do idioma ativo sob `BASE_URL`, com `download`, sem `target` e nome acessível "Baixar CV (PDF)", nos três idiomas, sem chave no lugar de texto [teste]
+- [ ] `RF-HOME-08` — Status atual com `h2` visualmente oculto "O que faço agora" e até dois cards de texto, uma coluna quando não cabem, nos três idiomas, sem chave no lugar de texto [teste] [e2e]
+- [ ] `RF-HOME-09` — Card "Trabalhando como" com cargo, organização e "desde `MM/AAAA`" em `<time datetime>`, separador `aria-hidden` e sem selo "Atual", nos três idiomas, sem chave no lugar de texto [teste]
+- [ ] `RF-HOME-10` — Card "Cursando" com indicador `aria-hidden`, instituição e curso, etapa quando houver e "desde `MM/AAAA`", nos três idiomas, sem chave no lugar de texto [teste]
+- [ ] `RF-HOME-11` — Item em curso é o sem fim; mais de um, o de início mais recente, empate pela ordem do conteúdo; card sem item some e a seção some sem os dois; teste da função pura [teste]
+- [ ] `RF-HOME-12` — Faixa `--neutral-900` com `--focus-ring` redefinido, `section` com `h2` oculto e `ul` lida uma vez, cópia `aria-hidden`, nos três idiomas, sem chave no lugar de texto [teste] [medição]
+- [ ] `RF-HOME-13` — Itens da stack do site achatados na ordem `frontend`, `backend`, `tooling`, item principal em `--brand-primary`, animação por `transform` com `--dur-marquee` [teste] [medição] [review]
+- [ ] `RF-HOME-14` — Botão de pausa antes da lista, 44px, nome "Pausar faixa de tecnologias", `aria-pressed` alternando e ícone de pausa ou play; a pausa não é salva [teste] [medição]
+- [ ] `RF-HOME-15` — Com movimento reduzido, lista estática que quebra linha, sem cópia e sem botão, sem diferença na primeira renderização em relação ao HTML [teste] [navegador]
+- [ ] `RF-HOME-16` — `h2` "Projetos em destaque" e "Ver todos →" para `/projects` com nome "Ver todos os projetos" e alvo de 44px, nos três idiomas, sem chave no lugar de texto [teste] [medição]
+- [ ] `RF-HOME-17` — Até quatro destaques por `date` decrescente, empate pela ordem do conteúdo, sem completar com projeto não marcado; nenhum mostra o estado vazio; teste da função pura [teste]
+- [ ] `RF-HOME-18` — Itens em `ul` de `article`, rótulo de metadados com todos os `types`, a categoria e o ano, separadores `aria-hidden`, `h3`, resumo, até três chips e "Ver projeto →", nos três idiomas, sem chave no lugar de texto [teste]
+- [ ] `RF-HOME-19` — Um link por item, no título, para `/projects/:id` do idioma; área clicável estendida por CSS; imagem com `alt=""`; hover sem movimento com movimento reduzido [teste] [e2e] [navegador]
+- [ ] `RF-HOME-20` — Duas colunas alternadas a partir de 640px e uma coluna abaixo, por media query, com a mesma ordem no DOM [e2e]
+- [ ] `RF-HOME-21` — Primeira captura 16:9 com espaço reservado, `srcset`/`sizes`, `loading="lazy"` e `decoding="async"`; placeholder `aria-hidden` sem captura [teste] [review]
+- [ ] `RF-HOME-22` — "Ver todos os projetos" para `/projects` e "Ler sobre mim" para `/about`, alvos de 44px, nos três idiomas, sem chave no lugar de texto [teste] [medição]
+- [ ] `RF-HOME-23` — Cada bloco carrega e falha sozinho; skeletons `aria-hidden` e um único `role="status"` [teste]
+- [ ] `RF-HOME-24` — Erro de status ou destaques em `role="alert"` com "Tentar novamente" que refaz só aquela consulta, heading mantido; perfil e stack somem sem mensagem; nunca mensagem técnica, nos três idiomas, sem chave no lugar de texto [teste]
+- [ ] `RF-HOME-25` — Todo link interno por `<Link>` com o prefixo do idioma, montado pela função de W; nenhum link externo [teste] [review]
+
+### Acessibilidade
+
+Copiados de [`accessibility.md`](../product/accessibility.md#checklist-por-tela), sem renumerar.
+
+- [ ] `A11Y-G01` — Um `main`, um `h1` e um `<title>` próprio e traduzido [teste]
+- [ ] `A11Y-G02` — `<html lang>` igual ao idioma da URL (`/`, `/en/`, `/es/`) [teste]
+- [ ] `A11Y-G03` — Nenhuma violação do axe em cada estado da tela [axe]
+- [ ] `A11Y-G04` — Nenhuma violação do axe no navegador, nos dois temas [e2e]
+- [ ] `A11Y-G05` — Ordem de foco igual à visual e foco visível em todo elemento focável [teclado]
+- [ ] `A11Y-G06` — Contorno de foco de D27 com 2px, afastado, 3:1 em toda superfície e nunca cortado (2.4.13) [e2e] [medição]
+- [ ] `A11Y-G07` — Todo link tem um nome que diz o destino sozinho (2.4.9) [teste]
+- [ ] `A11Y-G08` — Controles e links isolados com alvo de 44px em todas as larguras (2.5.5) [e2e] [medição]
+- [ ] `A11Y-G09` — Texto corrido com até 80 caracteres por linha, entrelinha de pelo menos 1,5 e sem justificar (1.4.8) [navegador]
+- [ ] `A11Y-G10` — Contraste AA nos dois temas e em todos os estados [e2e] [medição]
+- [ ] `A11Y-G11` — Sem rolagem horizontal a 320px e sem perda com texto a 200% [medição]
+- [ ] `A11Y-G12` — Movimento reduzido respeitado, inclusive a animação disparada por interação (2.3.3) [navegador]
+- [ ] `A11Y-G13` — Skeleton com `aria-hidden` e status "Carregando" visualmente oculto [teste]
+- [ ] `A11Y-G14` — Erro de carregamento em `role="alert"`, com a saída [teste]
+- [ ] `A11Y-G15` — Texto em `pt-BR`, `en` e `es`, inclusive os nomes acessíveis [teste]
+- [ ] `A11Y-G16` — Nenhum erro de `jsx-a11y` [lint]
+
+- [ ] `A11Y-IN01` — `h1` "Desenvolvedor full stack em TypeScript" (D24) [teste]
+- [ ] `A11Y-IN02` — Cada seção tem heading [teste]
+- [ ] `A11Y-IN03` — Cards de destaque em lista, com um link por card, nome do link com o nome do projeto e imagem com `alt=""` [teste]
+- [ ] `A11Y-IN04` — "Ver todos" tem o nome "Ver todos os projetos" (2.4.9) [teste]
+- [ ] `A11Y-IN05` — Faixa de stack com a lista acessível uma vez e a cópia do laço com `aria-hidden` [teste]
+- [ ] `A11Y-IN06` — Botão de pausa da faixa com `aria-pressed` e rótulo nos três idiomas (D28) [teste]
+- [ ] `A11Y-IN07` — Faixa estática, quebrando linha, com movimento reduzido [navegador]
+- [ ] `A11Y-IN08` — "Baixar CV (PDF)" no nome do link [teste]
+
+### Não funcionais
+
+De [`non-functional-requirements.md`](../product/non-functional-requirements.md), com o momento de
+verificação de lá. As metas de desempenho NF-DE-01, NF-DE-02, NF-DE-05 e NF-DE-06 são medidas com
+Lighthouse mobile no build publicado do Pages, como diz aquele documento.
+
+- [ ] `NF-IN-01` — Todo texto da tela existe em `pt-BR`, `en` e `es` [CI]
+- [ ] `NF-IN-02` — Perfil, trajetória, stack e projetos traduzidos nos três idiomas [CI; #13]
+- [ ] `NF-IN-03` — Nenhuma tela mostra chave no lugar de texto [CI; K]
+- [ ] `NF-IN-04` — Datas em `MM/AAAA` por `Intl.DateTimeFormat` nos três idiomas; o período em curso segue D39 ("desde MM/AAAA") [CI; G, F]
+- [ ] `NF-IN-05` — `<html lang>` acompanha o idioma do caminho, já no HTML pré-renderizado [CI; S; W]
+- [ ] `NF-IN-06` — `/`, `/en/` e `/es/` abrem a tela no idioma do caminho [CI; W]
+- [ ] `NF-IN-11` — Todo link interno mantém o prefixo do idioma, montado por função única [CI; W]
+- [ ] `NF-IN-13` — Caminhos em inglês: `/projects`, `/projects/:id` e `/about` [CI; W; F]
+- [ ] `NF-DA-02` — A tela não importa JSON de conteúdo: o acesso é por endpoints do RTK Query [Review; CI]
+- [ ] `NF-DA-03` — JSONs e PDFs com caminho montado por `import.meta.env.BASE_URL` [Review; O; K]
+- [ ] `NF-DA-05` — A tela carrega só o conteúdo do idioma ativo [#10; K]
+- [ ] `NF-DE-01` — LCP até 2,5 s [Lighthouse mobile]
+- [ ] `NF-DE-02` — CLS até 0,1, rolando até o fim da página [Lighthouse mobile]
+- [ ] `NF-DE-05` — FCP até 1,8 s [Lighthouse mobile]
+- [ ] `NF-DE-06` — Nota de Performance de pelo menos 90 [Lighthouse mobile]
+- [ ] `NF-DE-07` — JS da primeira carga de `/` até 180 KB gzip [DevTools Network, filtro JS, cache desligado]
+- [ ] `NF-DE-14` — Imagem 16:9 de destaque com no máximo 80 KB, servida por `srcset`/`sizes` [DevTools em 390px]
+- [ ] `NF-DE-15` — Total transferido na primeira carga de `/` até 800 KB [DevTools Network, rodapé]
+- [ ] `NF-DE-16` — Imagens e placeholders com `width` e `height` (ou `aspect-ratio`) reservados [Review; K]
+- [ ] `NF-DE-17` — Imagens de destaque, abaixo da dobra, com `loading="lazy"` e `decoding="async"` [Review; K]
+- [ ] `NF-DE-19` — Faixa de stack e hover animados só por `transform` e `opacity` [Review]
+- [ ] `NF-RE-01` — Quebra de 640px dos destaques por media query; tipografia contínua por `clamp()` [K]
+- [ ] `NF-RE-02` — Sem largura fixa em px fora das imagens [Review]
+- [ ] `NF-RE-03` — Sem rolagem horizontal em 360, 390, 768 e 1280px, nos dois temas e nos estados especiais [K]
+- [ ] `NF-TE-04` — Movimento reduzido e quebras não mudam a primeira renderização em relação ao HTML [S; K]
+- [ ] `NF-MO-01` — `prefers-reduced-motion: reduce` desliga marquee, shimmer e `translateY` de hover [K]
+- [ ] `NF-MO-02` — A faixa consulta a preferência pelo hook reutilizável de `src/hooks/` [CI; quem usar]
+- [ ] `NF-MO-03` — A faixa de stack tem pausa (D28) [D; K]
+- [ ] `NF-IA-01` — `/`, `/en/` e `/es/` com HTML gerado no build, legível sem JavaScript [CI; S; K]
+- [ ] `NF-IA-03` — Primeira renderização do cliente igual ao HTML, com os dados serializados na store [CI; S; K]
+- [ ] `NF-IA-08` — JSON-LD `WebSite` e `Person` com nome, cargo, URL, `sameAs` e `knowsAbout` [CI; V; D a H; K]
+- [ ] `NF-IA-09` — JSON-LD gerado dos mesmos dados da tela, com `<` escapado [CI; V]
+- [ ] `NF-IA-10` — `<title>`, descrição, Open Graph e `twitter:card` por idioma [CI; V; K]
+- [ ] `NF-IA-16` — HTML semântico, com o conteúdo principal dentro do `main` e a stack em texto [CI; C, D a H]
+- [ ] `NF-CO-03` — Sem JavaScript, o conteúdo é legível; pausa e "Tentar novamente" precisam de JavaScript [K]
+- [ ] `NF-PR-01` — Nenhuma requisição a terceiros: imagens, JSONs e PDFs da própria origem [K; Review]
+
+### Gerais
+
+- [ ] `npm run build`, `npm run lint` e `npm test -- --run` passam
+- [ ] Textos novos de `home` e `common` em `pt-BR`, `en` e `es`; `home:intro` e outras chaves sem uso removidas (R2)
+- [ ] A rota abre e recarrega nos três prefixos (`/`, `/en/`, `/es/`) no build com o `base` do Pages
