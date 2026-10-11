@@ -264,3 +264,153 @@ componente leem esses dados pelos endpoints do RTK Query (NF-DA-02), nunca pelo 
 
 O nome do autor fica em chave (`common:authorName`), não no conteúdo, porque é usado no `<title>`
 de toda tela, no logo e na página de erro, que precisam dele mesmo quando o conteúdo não carregou.
+
+## Metadados por rota e idioma
+
+Regras:
+
+- Cada tela declara `<title>` e `<meta name="description">` com as tags nativas do React 19, com
+  texto de chave do namespace da tela (`<title>{t("meta.title")}</title>`). Formato do título:
+  `<Tela> · Luiz Felipe dos Santos`, único por tela e traduzido (A11Y-G01); a exceção é `/`, cujo
+  título é o próprio nome com o cargo.
+- Em toda rota pública e idioma, pelo mecanismo de V (NF-IA-10, NF-IA-11): canônica absoluta e
+  autorreferente do idioma (da variável de build de V, sugestão `VITE_SITE_URL`, mais o `base`),
+  `hreflang` recíproco para `pt-BR`, `en`, `es` e `x-default` (`en`), `og:title` e
+  `og:description` iguais ao título e à descrição, `og:type`, `og:url` igual à canônica,
+  `og:image` (a do site, 1200×630, ou a captura 16:9 do projeto quando houver, D26), `og:locale`
+  do idioma com os outros dois em `og:locale:alternate`, e `twitter:card` `summary_large_image`.
+  JSON-LD por tipo de página (NF-IA-08) é das telas D a H, com o mecanismo de V.
+- Página não encontrada e página de erro: `<title>` e descrição próprios,
+  `<meta name="robots" content="noindex">`, sem canônica, sem `hreflang`, sem Open Graph e sem
+  JSON-LD.
+- `theme-color` é global (acompanha o tema, RF-LAY-17), não por página.
+
+Os namespaces das telas que ainda não existem são previstos e podem mudar de nome na spec da tela,
+que também revisa o texto sem mudar a chave:
+
+| Rota                                                 | Namespace             | `meta.title` (`pt-BR`)                                                         | `meta.description` (`pt-BR`)                                                                                          |
+| ---------------------------------------------------- | --------------------- | ------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------- |
+| `/`                                                  | `home` (existe)       | Luiz Felipe dos Santos · Desenvolvedor full stack em TypeScript                | Portfólio de Luiz Felipe dos Santos, desenvolvedor full stack em TypeScript: projetos, trajetória e contato. (existe) |
+| `/projects`                                          | `projects` (previsto) | Projetos · Luiz Felipe dos Santos                                              | Projetos de Luiz Felipe dos Santos, com busca por tipo, categoria e tecnologia.                                       |
+| `/projects/:id`                                      | `project` (previsto)  | `{{project}}` · Luiz Felipe dos Santos                                         | Resumo do projeto, do conteúdo (#10, #13), sem chave                                                                  |
+| `/projects/:id/architecture`, `/setup`, `/changelog` | `project` (previsto)  | `{{document}}` · `{{project}}` · Luiz Felipe dos Santos (`meta.documentTitle`) | Resumo do projeto, do conteúdo                                                                                        |
+| `/about`                                             | `about` (previsto)    | Informações · Luiz Felipe dos Santos                                           | Quem é Luiz Felipe dos Santos: sobre mim, stack, trajetória e formação.                                               |
+| `/contact`                                           | `contact` (previsto)  | Contato · Luiz Felipe dos Santos                                               | Como falar com Luiz Felipe dos Santos: e-mail e currículo.                                                            |
+| Página não encontrada                                | `notFound` (existe)   | Página não encontrada · Luiz Felipe dos Santos (existe)                        | O endereço acessado não existe neste portfólio. (existe)                                                              |
+| Página de erro                                       | `error` (existe)      | Erro inesperado · Luiz Felipe dos Santos (existe)                              | Algo deu errado ao carregar esta página. (existe)                                                                     |
+
+O `meta.title` atual de `home` ("Luiz Felipe dos Santos · Desenvolvedor full stack") ganha "em
+TypeScript" para bater com a chamada do Início (D24); a troca é da #3. `{{document}}` é o rótulo
+fixo de D33 (`ARCHITECTURE.md`, `SETUP.md`, `CHANGELOG.md`), igual nos três idiomas. Na página de
+projeto, o `<title>` só existe depois que o conteúdo do projeto chega; na pré-renderização (S) ele
+já está no HTML.
+
+## Critérios de aceite
+
+Copiáveis para a issue C. Verificação entre colchetes, como em `accessibility.md`: `[teste]`
+(Testing Library, `user-event`, `createMemoryRouter`), `[e2e]` para o que o `jsdom` não mede
+(sticky, media query, `inert` real, foco sob o cabeçalho), `[medição]` para cor e tamanho,
+`[navegador]` para favicon e `theme-color`, `[lint]` e `[review]`.
+
+### Funcionais
+
+- [ ] `RF-LAY-01` — Cabeçalho fixo em todas as telas, com `--surface-chrome`, `--border-chrome` e o foco nunca embaixo dele [e2e] [medição]
+- [ ] `RF-LAY-02` — Logo com o gato em `aria-hidden` e o nome do autor, levando ao início do idioma atual, com o nome do autor como nome acessível [teste]
+- [ ] `RF-LAY-03` — `nav` "Principal" com Início, Projetos, Informações e Contato, com o prefixo do idioma, nos três idiomas, sem chave no lugar de texto [teste]
+- [ ] `RF-LAY-04` — Item ativo por rota (Início só em `/`, Projetos também no detalhe e nos documentos, nenhum em 404 e erro), com `aria-current="page"` [teste]
+- [ ] `RF-LAY-05` — Navegação completa e botão de menu trocados por media query, sem largura lida em JavaScript [teste] [e2e]
+- [ ] `RF-LAY-06` — Botão de menu de 44px com nome fixo "Menu", `aria-expanded` e `aria-controls` [teste]
+- [ ] `RF-LAY-07` — Painel como disclosure: foco no primeiro link ao abrir, Tab circula entre botão e painel, resto da página `inert` e rolagem travada [teste] [e2e]
+- [ ] `RF-LAY-08` — Menu fecha por Esc (foco no botão), botão, link, mudança de rota e janela a partir de 640px; não fecha na troca de idioma ou tema [teste] [e2e]
+- [ ] `RF-LAY-09` — Painel com os quatro links, "Idioma" com três alvos de 44px e "Tema" com o alternador, nos três idiomas, sem chave no lugar de texto [teste] [medição]
+- [ ] `RF-LAY-10` — Sem animação do painel com `prefers-reduced-motion: reduce` [navegador]
+- [ ] `RF-LAY-11` — Idioma e `<html lang>` vêm do caminho; navegador e `?lng=` não decidem [teste]
+- [ ] `RF-LAY-12` — Seletor `PT · EN · ES` em grupo "Idioma", com links para a URL equivalente (rota, id, documento, query e âncora), `hreflang`, `lang` e `aria-current="true"` no ativo [teste]
+- [ ] `RF-LAY-13` — Nome acessível de cada idioma começa pela sigla e traz o nome no próprio idioma, igual nos três JSON [teste]
+- [ ] `RF-LAY-14` — Trocar de idioma navega sem recarregar, salva a escolha, atualiza `<html lang>` e `<title>`, preserva a rolagem e devolve o foco ao seletor [teste] [e2e]
+- [ ] `RF-LAY-15` — Todo link interno do layout mantém o prefixo do idioma, montado pela função de W [teste] [review]
+- [ ] `RF-LAY-16` — Tema por `data-theme` e `color-scheme`, seguindo o sistema até haver escolha salva, que prevalece [teste]
+- [ ] `RF-LAY-17` — Tema aplicado antes da primeira pintura e `theme-color` do tema escolhido [navegador]
+- [ ] `RF-LAY-18` — Alternador de 44px com nome fixo "Tema escuro" e `aria-pressed`, sem mover o foco, nos três idiomas [teste]
+- [ ] `RF-LAY-19` — `?tema=` ignorado [teste]
+- [ ] `RF-LAY-20` — Rodapé padrão com linha em degradê, `--surface-chrome` e landmark `contentinfo` [teste] [medição]
+- [ ] `RF-LAY-21` — Disponibilidade, localização e e-mail vêm do conteúdo, não de chave [teste] [review]
+- [ ] `RF-LAY-22` — Link "Entrar em contato" para `/contact`, nos três idiomas, sem chave no lugar de texto [teste]
+- [ ] `RF-LAY-23` — "Copiar e-mail" troca o rótulo por 2,2 s e anuncia sucesso ou falha em `role="status"` presente desde a primeira renderização [teste]
+- [ ] `RF-LAY-24` — Ícones de GitHub e LinkedIn em nova aba com `rel="noopener noreferrer"` e aviso no nome; `mailto:` sem `target`; rede sem URL não aparece [teste]
+- [ ] `RF-LAY-25` — Barra inferior com o ano do build e "Feito em TypeScript", igual no HTML pré-renderizado e na hidratação [teste]
+- [ ] `RF-LAY-26` — Em `/contact`, rodapé de navegação com `nav` "Rodapé", Início, Projetos, Informações, GitHub, LinkedIn e "Currículo em PDF", sem e-mail nem chamada para contato [teste]
+- [ ] `RF-LAY-27` — "Currículo em PDF" aponta para o PDF do idioma ativo com o atributo `download`, sem `target` [teste]
+- [ ] `RF-LAY-28` — Página não encontrada dentro do layout para URL sem rota, prefixo desconhecido, id inexistente e documento ausente, no idioma do prefixo, nos três idiomas [teste]
+- [ ] `RF-LAY-29` — Página de erro com os próprios landmarks e "Pular para o conteúdo", "Tentar novamente" e "Voltar para o início", nos três idiomas [teste]
+- [ ] `RF-LAY-30` — A mensagem técnica do erro nunca aparece; `error:unknown` removida [teste]
+- [ ] `RF-LAY-31` — "Pular para o conteúdo" é o primeiro foco e leva ao `main` do layout; as páginas não renderizam o próprio `main` [teste]
+- [ ] `RF-LAY-32` — Na navegação interna o foco vai ao `h1` e a rolagem ao topo (ou à âncora); restaurada no voltar e avançar; foco parado na primeira carga [teste] [e2e]
+- [ ] `RF-LAY-33` — Favicon do gato com detalhe por `prefers-color-scheme` [navegador]
+
+### Acessibilidade
+
+Copiados de [`accessibility.md`](../product/accessibility.md#checklist-por-tela), sem renumerar.
+
+- [ ] `A11Y-G01` — Um `main`, um `h1` e um `<title>` próprio e traduzido [teste]
+- [ ] `A11Y-G02` — `<html lang>` igual ao idioma da URL (`/`, `/en/`, `/es/`) [teste]
+- [ ] `A11Y-G03` — Nenhuma violação do axe em cada estado da tela [axe]
+- [ ] `A11Y-G04` — Nenhuma violação do axe no navegador, nos dois temas [e2e]
+- [ ] `A11Y-G05` — Ordem de foco igual à visual e foco visível em todo elemento focável [teclado]
+- [ ] `A11Y-G06` — Contorno de foco de D27 com 2px, afastado, 3:1 em toda superfície e nunca cortado (2.4.13) [e2e] [medição]
+- [ ] `A11Y-G07` — Todo link tem um nome que diz o destino sozinho (2.4.9) [teste]
+- [ ] `A11Y-G08` — Controles e links isolados com alvo de 44px em todas as larguras (2.5.5) [e2e] [medição]
+- [ ] `A11Y-G09` — Texto corrido com até 80 caracteres por linha, entrelinha de pelo menos 1,5 e sem justificar (1.4.8) [navegador]
+- [ ] `A11Y-G10` — Contraste AA nos dois temas e em todos os estados [e2e] [medição]
+- [ ] `A11Y-G11` — Sem rolagem horizontal a 320px e sem perda com texto a 200% [medição]
+- [ ] `A11Y-G12` — Movimento reduzido respeitado, inclusive a animação disparada por interação (2.3.3) [navegador]
+- [ ] `A11Y-G13` — Skeleton com `aria-hidden` e status "Carregando" visualmente oculto [teste]
+- [ ] `A11Y-G14` — Erro de carregamento em `role="alert"`, com a saída [teste]
+- [ ] `A11Y-G15` — Texto em `pt-BR`, `en` e `es`, inclusive os nomes acessíveis [teste]
+- [ ] `A11Y-G16` — Nenhum erro de `jsx-a11y` [lint]
+
+- [ ] `A11Y-L01` — "Pular para o conteúdo" é o primeiro Tab e leva ao `main` [teste] [e2e]
+- [ ] `A11Y-L02` — A troca de rota põe o foco no `h1` da nova tela [teste]
+- [ ] `A11Y-L03` — Landmarks `banner`, `navigation` "Principal" e `contentinfo` [teste]
+- [ ] `A11Y-L04` — `aria-current="page"` no item da rota atual [teste]
+- [ ] `A11Y-L05` — Seletor de idioma em grupo nomeado, com um link para a URL equivalente de cada idioma, `hreflang` e `lang` em cada link e `aria-current` no ativo [teste]
+- [ ] `A11Y-L06` — Trocar de idioma navega para a URL equivalente, atualiza `<html lang>` e `<title>` e devolve o foco ao seletor [teste] [e2e]
+- [ ] `A11Y-L07` — Alternador de tema com nome fixo e `aria-pressed` [teste]
+- [ ] `A11Y-L08` — Botão de menu com `aria-expanded` e `aria-controls` [teste]
+- [ ] `A11Y-L09` — Menu aberto: foco preso, Esc fecha e devolve o foco ao botão, resto da página `inert` [teste] [e2e] [leitor]
+- [ ] `A11Y-L10` — Logo e ícones com `aria-hidden` [teste]
+- [ ] `A11Y-L11` — "Copiar e-mail" anuncia o resultado [teste]
+- [ ] `A11Y-L12` — O rodapé de Contato é um `nav` com nome próprio [teste]
+- [ ] `A11Y-L13` — O foco nunca fica embaixo do cabeçalho fixo [teclado] [e2e]
+
+- [ ] `A11Y-ER01` — `h1` que diz o que aconteceu, `<title>` próprio e link para o início [teste]
+- [ ] `A11Y-ER02` — A página de erro tem os próprios landmarks, por estar fora do layout [teste]
+
+### Não funcionais
+
+De [`non-functional-requirements.md`](../product/non-functional-requirements.md), com o momento de
+verificação de lá.
+
+- [ ] `NF-IN-03` — Nenhuma tela mostra chave no lugar de texto [CI; K]
+- [ ] `NF-IN-05` — `<html lang>` acompanha o idioma do caminho [CI; S; W]
+- [ ] `NF-IN-06` — Idioma vem do caminho; prefixo desconhecido cai na página não encontrada [CI; W]
+- [ ] `NF-IN-08` — `?lng=` ignorado [CI; W]
+- [ ] `NF-IN-10` — Seletor navega para a URL equivalente e salva a escolha [CI; W; C]
+- [ ] `NF-IN-11` — Todo link interno mantém o prefixo do idioma, montado por função única [CI; W]
+- [ ] `NF-TE-01` — Claro e escuro por `data-theme`, com `color-scheme` [CI; A]
+- [ ] `NF-TE-02` — Primeira visita segue o sistema; a escolha salva prevalece [CI; A]
+- [ ] `NF-TE-03` — Sem piscar o tema errado; `theme-color` acompanha o tema [A; S; K]
+- [ ] `NF-TE-04` — Estado lido do navegador não muda a primeira renderização do cliente [S; K]
+- [ ] `NF-RE-03` — Sem rolagem horizontal em 360, 390, 768 e 1280px, inclusive com o menu aberto [K]
+- [ ] `NF-RE-04` — Decisão de layout por largura do menu (D01) [C, D a H; K]
+- [ ] `NF-MO-01` — `prefers-reduced-motion: reduce` desliga animação e transição [K]
+- [ ] `NF-IA-01` — Cabeçalho e rodapé no HTML pré-renderizado de cada rota e idioma, legíveis sem JavaScript [CI; S; K]
+- [ ] `NF-IA-10` — `<title>`, descrição, Open Graph e `twitter:card` por página e idioma [CI; V; K]
+- [ ] `NF-IA-11` — Canônica autorreferente e `hreflang` recíproco com `x-default` [CI; V; K]
+- [ ] `NF-IA-16` — HTML semântico, com o conteúdo principal dentro do `main` [CI; C, D a H]
+- [ ] `NF-CO-03` — Sem JavaScript, o layout é legível; menu, tema e idioma salvo precisam de JavaScript [K]
+
+### Gerais
+
+- [ ] `npm run build`, `npm run lint` e `npm test -- --run` passam
+- [ ] Textos novos em `pt-BR`, `en` e `es`, e chaves sem uso removidas (`error:unknown`, `mainLayout:brand`, `mainLayout:copyright`) (R2)
