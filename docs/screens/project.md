@@ -185,3 +185,123 @@ Títulos das seções do `README.md` (RF-PROJECT-27):
 | `RF-PROJECT-35` | Cada projeto, documento existente e idioma tem HTML próprio gerado no build (S) com `<html lang>`, metadados, JSON-LD, o `h1`, a ficha, os links, a navegação entre documentos e o documento já renderizado, legível sem JavaScript; o projeto e o documento vão serializados no `preloadedState`, e o chunk do markdown é carregado antes da hidratação, para a primeira renderização do cliente ser igual ao HTML | NF-IA-01, NF-IA-02, NF-IA-03, NF-CO-03 |
 | `RF-PROJECT-36` | Dados só pelos endpoints do RTK Query (`queryFn` local), nunca por import de JSON; uma requisição por projeto e idioma, outra por documento e idioma; a lista de projetos (de E, RF-PROJECTS-26) serve os relacionados                                                                                                                                                                                              | NF-DA-02, NF-DA-05, R1                 |
 | `RF-PROJECT-37` | Abertura de links (D36): internos (volta, documentos, relacionados, "Ver todos", "Ver outros projetos", `project:`) na mesma aba por `<Link>` com o prefixo do idioma; externos (demonstração, repositório, `https:` do markdown) em nova aba com aviso no nome; `mailto:` sem `target`                                                                                                                             | D36, NF-IN-11                          |
+
+## Navegação
+
+Caminhos de D32, sempre com o prefixo do idioma atual (NF-IN-11).
+
+| De onde                          | Ação                                          | Para onde                                                                                                                                                      |
+| -------------------------------- | --------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Início, Projetos, Informações    | Card ou link de projeto                       | `/projects/:id`                                                                                                                                                |
+| Markdown de outro projeto        | Link `project:<id>`                           | `/projects/:id` ou o documento citado                                                                                                                          |
+| Projeto                          | "← Voltar para Projetos"                      | Entrada anterior do histórico, se for a lista de Projetos (query, quantidade e rolagem de antes, RF-PROJECTS-25); senão, `/projects` sem query (RF-PROJECT-01) |
+| Projeto                          | Link da navegação de documentos               | `/projects/:id`, `/architecture`, `/setup` ou `/changelog`, sem recarregar                                                                                     |
+| Projeto                          | Imagem principal                              | Abre a lightbox (mesma URL)                                                                                                                                    |
+| Projeto                          | Miniatura                                     | Troca a imagem principal (mesma URL)                                                                                                                           |
+| Projeto                          | "Ver projeto ao vivo", "Ver código no GitHub" | URL externa, em nova aba                                                                                                                                       |
+| Projeto                          | Card relacionado                              | `/projects/<outro id>` (navegação nova)                                                                                                                        |
+| Projeto                          | "Ver todos"                                   | `/projects` sem query                                                                                                                                          |
+| Erro do projeto                  | "Tentar novamente", "Ver outros projetos"     | Mesma URL (refaz a requisição), `/projects` sem query                                                                                                          |
+| Qualquer documento               | `PT`, `EN`, `ES`                              | Mesmo documento, id e âncora no outro idioma (RF-LAY-12)                                                                                                       |
+| URL com id ou documento inválido | Abrir                                         | Página não encontrada                                                                                                                                          |
+
+## Textos fixos e chaves
+
+Todo texto fixo vem de chave (`react-i18next`). O valor `pt-BR` abaixo é a referência; `en` e `es`
+são escritos na implementação (F), com as mesmas chaves (R2), salvo os valores fixos indicados
+(rótulos dos documentos e nomes de linguagem, iguais nos três JSON). O namespace `project` (o
+previsto em `layout.md`) guarda o que só a tela usa e é registrado nos três idiomas, em
+`resources.ts` e no `ns` de `i18n.ts`; `common` guarda o que outras telas também usam.
+
+| Namespace | Chave                             | Valor em `pt-BR`                                                           | Onde                                                                           |
+| --------- | --------------------------------- | -------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| `project` | `meta.title`                      | `{{project}}` · Luiz Felipe dos Santos                                     | `<title>` do `README.md`                                                       |
+| `project` | `meta.documentTitle`              | `{{document}}` · `{{project}}` · Luiz Felipe dos Santos                    | `<title>` dos documentos opcionais                                             |
+| `project` | `meta.fallbackTitle`              | Projeto · Luiz Felipe dos Santos                                           | `<title>` em carregando e erro                                                 |
+| `project` | `backToProjects`                  | Voltar para Projetos                                                       | Barra de volta                                                                 |
+| `project` | `gallery.label`                   | Galeria                                                                    | Nome da `section`                                                              |
+| `project` | `gallery.enlarge`                 | Ampliar imagem                                                             | Texto oculto do botão da imagem principal                                      |
+| `project` | `gallery.counter`                 | `{{current}}` de `{{total}}`                                               | Contador da galeria e da lightbox                                              |
+| `project` | `gallery.thumbnails`              | Miniaturas                                                                 | Nome do grupo                                                                  |
+| `project` | `gallery.thumbnail`               | Imagem `{{current}}` de `{{total}}`                                        | Nome de cada miniatura                                                         |
+| `project` | `lightbox.label`                  | Imagem ampliada                                                            | Nome do diálogo                                                                |
+| `project` | `lightbox.close`                  | Fechar                                                                     | Botão                                                                          |
+| `project` | `lightbox.previous`               | Imagem anterior                                                            | Botão                                                                          |
+| `project` | `lightbox.next`                   | Próxima imagem                                                             | Botão                                                                          |
+| `project` | `facts.heading`                   | Ficha técnica                                                              | `h2`                                                                           |
+| `project` | `facts.year`                      | Ano                                                                        | Termo                                                                          |
+| `project` | `facts.type`                      | Tipo                                                                       | Termo                                                                          |
+| `project` | `facts.category`                  | Categoria                                                                  | Termo                                                                          |
+| `project` | `facts.role`                      | Papel                                                                      | Termo                                                                          |
+| `project` | `facts.duration`                  | Duração                                                                    | Termo                                                                          |
+| `project` | `facts.team`                      | Time                                                                       | Termo                                                                          |
+| `project` | `facts.status`                    | Situação                                                                   | Termo                                                                          |
+| `project` | `stack.heading`                   | Stack                                                                      | `h2`                                                                           |
+| `project` | `links.demo`                      | Ver projeto ao vivo                                                        | Texto visível                                                                  |
+| `project` | `links.demoName`                  | Ver projeto ao vivo: `{{project}}` (abre em nova aba)                      | Nome acessível                                                                 |
+| `project` | `links.code`                      | Ver código no GitHub                                                       | Texto visível                                                                  |
+| `project` | `links.codeName`                  | Ver código no GitHub: `{{project}}` (abre em nova aba)                     | Nome acessível                                                                 |
+| `project` | `documents.label`                 | Documentação do projeto                                                    | Nome do `nav`                                                                  |
+| `project` | `documents.readme`                | README.md                                                                  | Rótulo, igual nos três JSON                                                    |
+| `project` | `documents.architecture`          | ARCHITECTURE.md                                                            | Idem                                                                           |
+| `project` | `documents.setup`                 | SETUP.md                                                                   | Idem                                                                           |
+| `project` | `documents.changelog`             | CHANGELOG.md                                                               | Idem                                                                           |
+| `project` | `documents.linkName`              | `{{document}}`: `{{project}}`                                              | Nome acessível de cada link                                                    |
+| `project` | `documents.loadError.heading`     | Não consegui carregar este documento                                       | Erro parcial                                                                   |
+| `project` | `documents.loadError.description` | O restante da página continua aqui. Tente de novo em alguns segundos.      | Idem                                                                           |
+| `project` | `retry`                           | Tentar novamente                                                           | Erro do projeto e do documento                                                 |
+| `project` | `markdown.newTab`                 | (abre em nova aba)                                                         | Texto oculto de link externo do markdown                                       |
+| `project` | `markdown.table`                  | Tabela `{{index}}`                                                         | Nome do contêiner rolável da tabela                                            |
+| `project` | `markdown.taskDone`               | Feito                                                                      | Nome da caixa marcada da lista de tarefas                                      |
+| `project` | `markdown.taskTodo`               | A fazer                                                                    | Nome da caixa desmarcada                                                       |
+| `project` | `codeBlock.label`                 | Código                                                                     | Nome do bloco sem linguagem nem arquivo                                        |
+| `project` | `codeBlock.language.<id>`         | Nome oficial da linguagem (`ts` → TypeScript), igual nos três JSON         | Cabeçalho do bloco; uma chave por linguagem usada                              |
+| `project` | `related.heading`                 | Projetos relacionados                                                      | `h2`                                                                           |
+| `project` | `related.viewAll`                 | Ver todos                                                                  | Texto visível                                                                  |
+| `project` | `related.viewAllName`             | Ver todos os projetos                                                      | Nome acessível                                                                 |
+| `project` | `loadError.heading`               | Não consegui carregar este projeto                                         | `h1` do erro                                                                   |
+| `project` | `loadError.description`           | Os dados do projeto não chegaram. O restante do site continua funcionando. | Texto do erro                                                                  |
+| `project` | `loadError.otherProjects`         | Ver outros projetos                                                        | Link do erro                                                                   |
+| `common`  | `loading`                         | Carregando... (existe)                                                     | Status do projeto e do documento carregando                                    |
+| `common`  | `projectCard.featured`            | Em destaque (de `projects.md`)                                             | Badge do cabeçalho e card dos relacionados                                     |
+| `common`  | `projectType.web`                 | Web (de `home.md`)                                                         | Rótulo do cabeçalho, ficha e card dos relacionados                             |
+| `common`  | `projectType.mobile`              | Mobile (de `home.md`)                                                      | Idem                                                                           |
+| `common`  | `projectType.api`                 | API (de `home.md`)                                                         | Idem                                                                           |
+| `common`  | `projectType.desktop`             | Desktop (de `home.md`)                                                     | Idem                                                                           |
+| `common`  | `projectType.cli`                 | CLI (de `home.md`)                                                         | Idem                                                                           |
+| `common`  | `projectType.library`             | Biblioteca (de `home.md`)                                                  | Idem                                                                           |
+| `common`  | `projectType.extension`           | Extensão (de `home.md`)                                                    | Idem                                                                           |
+| `common`  | `projectType.bot`                 | Bot / automação (de `home.md`)                                             | Idem                                                                           |
+| `common`  | `projectType.data`                | Dados / IA (de `home.md`)                                                  | Idem                                                                           |
+| `common`  | `projectType.game`                | Jogo (de `home.md`)                                                        | Idem                                                                           |
+| `common`  | `projectType.iot`                 | IoT / embarcado (de `home.md`)                                             | Idem                                                                           |
+| `common`  | `projectType.infra`               | Infraestrutura (de `home.md`)                                              | Idem                                                                           |
+| `common`  | `projectCategory.academic`        | Acadêmico (de `home.md`)                                                   | Badge, ficha e card dos relacionados                                           |
+| `common`  | `projectCategory.personal`        | Pessoal (de `home.md`)                                                     | Idem                                                                           |
+| `common`  | `projectCategory.professional`    | Profissional (de `home.md`)                                                | Idem                                                                           |
+| `common`  | `projectStatus.inDevelopment`     | Em desenvolvimento                                                         | Valor da situação na ficha                                                     |
+| `common`  | `projectStatus.completed`         | Concluído                                                                  | Idem                                                                           |
+| `common`  | `projectStatus.discontinued`      | Descontinuado                                                              | Idem                                                                           |
+| `common`  | `stackCategory.frontend`          | Frontend (de `about.md`)                                                   | `h3` da stack                                                                  |
+| `common`  | `stackCategory.backend`           | Backend (de `about.md`)                                                    | Idem                                                                           |
+| `common`  | `stackCategory.tooling`           | Infra e ferramentas (de `about.md`)                                        | Idem                                                                           |
+| `common`  | `symbols.separator`               | · (de `layout.md`)                                                         | Separador do rótulo, do tipo na ficha e da barra da lightbox, em `aria-hidden` |
+| `common`  | `symbols.external`                | ↗ (de `layout.md`)                                                         | Seta dos links externos, em `aria-hidden`                                      |
+| `common`  | `symbols.forward`                 | → (de `home.md`)                                                           | Seta de "Ver todos", em `aria-hidden`                                          |
+
+As chaves de `common` acima são os nomes únicos decididos pelo PO para as cinco telas (decisão
+transversal de 11-10-2026) e são reaproveitadas com o mesmo nome e valor de
+[`layout.md`](layout.md), [`home.md`](home.md), [`projects.md`](projects.md) e
+[`about.md`](about.md); quem implementar primeiro (D, E, F ou G) as cria, e nenhuma ganha variante.
+`projectStatus.*` aparece pela primeira vez aqui (D49), porque a situação só é mostrada na ficha.
+O rótulo do cabeçalho, o tipo da ficha e a barra da lightbox são montados na tela com os rótulos e
+o `symbols.separator` entre eles, sem chave de frase única, porque cada separador fica em
+`aria-hidden`. `codeBlock.language.<id>` tem uma chave por linguagem usada nos documentos da #13,
+com o mesmo valor nos três JSON, e um teste falha se uma linguagem usada não tiver chave nem
+registro no realce.
+
+**Vem do conteúdo, não de chave** (campo da #10, valor da #13, texto nos três idiomas): título,
+resumo, data (`date`), papel, duração, time, itens da stack (iguais nos três idiomas), URLs de
+demonstração e repositório, imagens com `alt` e legenda, documentos em markdown, motivo de cada
+relacionado, e título, resumo e capa dos relacionados (da lista de E). Tipos, categoria, situação e
+categoria da stack vêm do conteúdo como valor fixo (enum) e viram texto por chave.
