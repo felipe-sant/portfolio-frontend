@@ -36,8 +36,8 @@ O PO aprova a spec (Status `aprovada`) e o escopo de cada versão; mudar o escop
 
 **Medição (`DP02`):**
 
-- **v1 sem analytics.** O público que importa na v1 é um avaliador, o site roda no repositório da organização da Fatec e o projeto evita requisição a terceiros (fontes self-hospedadas, D09, e privacidade da #8). Cliques em "Baixar CV", "Copiar" e nos links de rede não são medidos na v1.
-- **V2+: analytics sem cookie.** Vercel Web Analytics ou Plausible, escolhido numa issue ou ADR da V2, junto com a métrica de sucesso da V2+. A política de privacidade e a regra de terceiros são da #8.
+- **v1 sem analytics.** O público que importa na v1 é um avaliador, o site roda no repositório da organização da Fatec e o projeto evita requisição a terceiros (fontes self-hospedadas, D09, e privacidade da #8, em [NF-PR](non-functional-requirements.md#privacidade-nf-pr)). Cliques em "Baixar CV", "Copiar" e nos links de rede não são medidos na v1.
+- **V2+: analytics sem cookie.** Vercel Web Analytics ou Plausible, escolhido numa issue ou ADR da V2, junto com a métrica de sucesso da V2+. A política de privacidade e a regra de terceiros estão em [`non-functional-requirements.md`](non-functional-requirements.md#privacidade-nf-pr) (NF-PR, #8).
 
 ## Escopo
 
@@ -53,9 +53,9 @@ Cinco rotas, cada uma com o propósito definido no handoff. A coluna Fonte cita 
 
 - Cabeçalho igual nas cinco telas, com o item da rota atual destacado; rodapé igual em quatro delas (em `/contato` ele vira navegação). Fonte: handoff; protótipo, `ProtoHeader` e `ProtoFooter`; D01, D02, D04.
 - Temas claro e escuro, trocados por `data-theme` na raiz, com a escolha persistida e `prefers-color-scheme` respeitado na primeira visita. Fonte: D22.
-- Interface em três idiomas: `pt-BR` (língua de referência), `en` e `es`. Fonte: R2; D12.
+- Interface em três idiomas: `pt-BR` (língua de referência), `en` e `es`, com cada rota em três URLs: sem prefixo em `pt-BR`, `/en/` e `/es/` (W, `D31`). Fonte: R2; D12; D31.
 - Página não encontrada e página de erro. Fonte: protótipo, `prototipo-404` e `prototipo-erro`; [`roadmap.md`](roadmap.md#v1), definição da v1.
-- CV em PDF por idioma, baixado pelo idioma ativo. Fonte: D14.
+- CV em PDF por idioma, baixado pelo idioma ativo. Fonte: D14, D30 (gerado do JSON).
 - Conteúdo real em JSON local na v1, no formato do contrato da API. Fonte: [`roadmap.md`](roadmap.md#m2--conteúdo-real), M2; R1.
 
 ## Fora de escopo
@@ -89,6 +89,8 @@ Valem para toda feature e toda tarefa.
 - **R2 — Tradução obrigatória em `pt-BR`, `en` e `es`.** Toda feature e toda tarefa que cria ou altera texto de UI entrega o texto nos três idiomas; `pt-BR` é a referência. Chave de tradução sem uso é removida.
 - **R3 — O design segue as decisões, o protótipo e o handoff.** Tokens, componentes, voz e copy, acessibilidade e responsividade seguem o handoff; as convenções do repositório prevalecem onde divergem (fonte self-hospedada em vez de Google Fonts, CSS Module em vez de classe global `.ds-*`, código sem comentários). A ordem de precedência é: convenções do repositório, depois [`decisions.md`](../design/decisions.md), depois o [protótipo navegável](../design/prototype/README.md), depois o handoff.
 
+Os requisitos que valem para todas as telas (idioma, conteúdo local, desempenho, temas, legibilidade por IA, privacidade, navegadores e hospedagem) estão em [`non-functional-requirements.md`](non-functional-requirements.md), com a forma de verificação de cada um.
+
 ## Decisões de design
 
 Os pontos que o handoff deixava em aberto estão decididos em [`decisions.md`](../design/decisions.md), com opções, fonte e data:
@@ -100,7 +102,7 @@ Os pontos que o handoff deixava em aberto estão decididos em [`decisions.md`](.
 5. **Formulário de contato (D05):** implementado no frontend com envio simulado (R1) e escondido em produção atrás de uma flag até o backend existir; endpoint real e proteção contra spam vêm depois.
 6. **Renderizador de markdown (D06):** `react-markdown` com `rehype-highlight`, sem HTML embutido, com as cores de realce do protótipo.
 
-Os itens à espera de material são o CV em PDF por idioma (D14) e as capturas e a foto (D26).
+Os itens à espera de material são o conteúdo do CV no JSON (D30) e as capturas e a foto (D26).
 
 ## Decisões de produto
 
