@@ -170,9 +170,8 @@ pausa (D28).
 
 `prefers-reduced-motion: reduce` desliga tudo. No `global.css` isso zera os tokens de duração e
 encurta animação e transição em `*`, `*::before` e `*::after`; a faixa de stack vira lista estática
-(D28). Os keyframes do handoff
-(`ds-shimmer`, `ds-spin`, `ds-marquee`) ainda não existem no código: entram no CSS Module do
-componente que os usar.
+(D28). Os keyframes do handoff (`ds-shimmer`, `ds-spin`, `ds-marquee`) ainda não existem no código:
+entram no CSS Module do componente que os usar.
 
 ## Estados
 
@@ -221,8 +220,8 @@ SVG inline traçado, no vocabulário do Lucide: `viewBox="0 0 24 24"`, `fill="no
 `stroke="currentColor"`, `stroke-linecap="round"`, traço de 2 a 2.4 e tamanho de 12 a 20px (D15). O
 inventário é fechado (lupa, ×, chevrons, download, hambúrguer, lua, sol, arco de spinner, pin,
 check, alerta, GitHub, LinkedIn, envelope, arquivo, lupa com mais, pausa e play da faixa de stack
-(D28) e a estrela preenchida, único ícone com `fill`, que marca projeto em destaque). Setas no texto são caracteres unicode
-(`→ ← ↗ ↓ ▾`), não ícones.
+(D28) e a estrela preenchida, único ícone com `fill`, que marca projeto em destaque). Setas no texto
+são caracteres unicode (`→ ← ↗ ↓ ▾`), não ícones.
 
 A recomendação do handoff é trocar por `lucide-react` e usar um pacote de marcas (ou os SVGs
 oficiais) para GitHub e LinkedIn. Nada disso está instalado ainda: entra com o primeiro componente
