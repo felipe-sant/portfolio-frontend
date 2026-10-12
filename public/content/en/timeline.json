@@ -1,0 +1,132 @@
+{
+    "items": [
+        {
+            "id": "01a13107-769a-7e34-88f5-d4b82776cf24",
+            "kind": "experience",
+            "title": "Development intern",
+            "organization": "Example Studio",
+            "details": ["Internship"],
+            "start": "2022-08",
+            "end": "2024-05",
+            "summary": "I supported the product team in maintaining websites and building new screens.",
+            "responsibilities": ["Fix bugs on client websites", "Build screens from prototypes"],
+            "disciplines": [],
+            "technologies": ["JavaScript", "HTML", "CSS"],
+            "certificates": [],
+            "projectIds": []
+        },
+        {
+            "id": "01a13107-769a-775e-8a57-acbfe83f7dc2",
+            "kind": "experience",
+            "title": "Frontend developer",
+            "organization": "Example Company",
+            "details": ["Full-time employee"],
+            "start": "2024-06",
+            "summary": "I develop and maintain the interface of the company's main product.",
+            "responsibilities": [
+                "Implement screens from the design",
+                "Review pull requests",
+                "Write automated tests"
+            ],
+            "disciplines": [],
+            "technologies": ["React", "TypeScript", "Vitest"],
+            "certificates": [],
+            "projectIds": ["01a13107-769a-7731-addd-ec7576eaadbd"]
+        },
+        {
+            "id": "01a13107-769a-7af1-b2a9-9382bd61ab6e",
+            "kind": "education",
+            "title": "Internet Computing Technician",
+            "organization": "Example Technical School",
+            "details": ["Technical course"],
+            "start": "2019-02",
+            "end": "2021-12",
+            "summary": "Technical course integrated with high school, focused on web programming and networks.",
+            "responsibilities": [],
+            "disciplines": ["Web programming", "Computer networks", "Programming logic"],
+            "technologies": ["HTML", "CSS", "JavaScript"],
+            "certificates": [
+                {
+                    "id": "01a13107-769a-711c-8761-5ce5a172357f",
+                    "name": "Internet Computing Technician",
+                    "issuer": "Example Technical School"
+                }
+            ],
+            "projectIds": []
+        },
+        {
+            "id": "01a13107-769a-7b3c-b99c-62cd17aabe68",
+            "kind": "education",
+            "title": "Systems Analysis and Development",
+            "organization": "Example College",
+            "stage": "6th semester",
+            "details": ["Technology degree"],
+            "start": "2023-02",
+            "summary": "Degree focused on software engineering, databases and web development.",
+            "responsibilities": [],
+            "disciplines": ["Software engineering", "Databases", "Data structures"],
+            "technologies": ["Java", "PostgreSQL"],
+            "certificates": [],
+            "projectIds": [
+                "01a13107-7699-73d4-8e74-d2595a05bb59",
+                "01a13107-7699-72c5-a7a5-a5ddd278d026"
+            ]
+        },
+        {
+            "id": "01a13107-769a-764c-bf9e-783e4f344002",
+            "kind": "course",
+            "title": "Automated testing",
+            "organization": "Example Platform",
+            "details": ["30 hours"],
+            "start": "2024-09",
+            "end": "2024-11",
+            "summary": "Hands-on course on unit and interface testing.",
+            "responsibilities": [],
+            "disciplines": ["Unit tests", "Interface tests"],
+            "technologies": ["Vitest", "Testing Library"],
+            "certificates": [
+                {
+                    "id": "01a13107-769a-7fed-8399-6e0659578e7b",
+                    "name": "Web development track",
+                    "issuer": "Example Platform"
+                }
+            ],
+            "projectIds": []
+        },
+        {
+            "id": "01a13107-769a-783a-98f9-8c05b91daace",
+            "kind": "course",
+            "title": "Introduction to databases",
+            "details": ["40 hours"],
+            "start": "2025-03",
+            "end": "2025-05",
+            "summary": "Introductory course on modeling and querying relational databases.",
+            "responsibilities": [],
+            "disciplines": ["Modeling", "SQL"],
+            "technologies": ["PostgreSQL"],
+            "certificates": [
+                {
+                    "id": "01a13107-769a-7fed-8399-6e0659578e7b",
+                    "name": "Web development track",
+                    "issuer": "Example Platform"
+                }
+            ],
+            "projectIds": []
+        },
+        {
+            "id": "01a13107-769a-708b-ac05-6f9e381d5ff1",
+            "kind": "course",
+            "title": "Front-end architecture",
+            "organization": "Example Platform",
+            "stage": "Module 3",
+            "details": ["Online course"],
+            "start": "2026-01",
+            "summary": "Course on front-end project organization, testing and performance.",
+            "responsibilities": [],
+            "disciplines": ["Code organization", "Testing", "Web performance"],
+            "technologies": ["React", "TypeScript"],
+            "certificates": [],
+            "projectIds": ["01a13107-769a-7a65-b444-648f90c8b59f"]
+        }
+    ]
+}

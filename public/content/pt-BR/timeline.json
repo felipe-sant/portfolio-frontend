@@ -1,0 +1,135 @@
+{
+    "items": [
+        {
+            "id": "01a13107-769a-7e34-88f5-d4b82776cf24",
+            "kind": "experience",
+            "title": "Estagiário de desenvolvimento",
+            "organization": "Estúdio Exemplo",
+            "details": ["Estágio"],
+            "start": "2022-08",
+            "end": "2024-05",
+            "summary": "Apoiei o time de produto na manutenção de sites e na criação de novas telas.",
+            "responsibilities": [
+                "Corrigir erros em sites de clientes",
+                "Criar telas a partir de protótipos"
+            ],
+            "disciplines": [],
+            "technologies": ["JavaScript", "HTML", "CSS"],
+            "certificates": [],
+            "projectIds": []
+        },
+        {
+            "id": "01a13107-769a-775e-8a57-acbfe83f7dc2",
+            "kind": "experience",
+            "title": "Desenvolvedor frontend",
+            "organization": "Empresa Exemplo",
+            "details": ["CLT"],
+            "start": "2024-06",
+            "summary": "Desenvolvo e mantenho a interface do produto principal da empresa.",
+            "responsibilities": [
+                "Implementar telas a partir do design",
+                "Revisar pull requests",
+                "Escrever testes automatizados"
+            ],
+            "disciplines": [],
+            "technologies": ["React", "TypeScript", "Vitest"],
+            "certificates": [],
+            "projectIds": ["01a13107-769a-7731-addd-ec7576eaadbd"]
+        },
+        {
+            "id": "01a13107-769a-7af1-b2a9-9382bd61ab6e",
+            "kind": "education",
+            "title": "Técnico em Informática para Internet",
+            "organization": "Escola Técnica Exemplo",
+            "details": ["Curso técnico"],
+            "start": "2019-02",
+            "end": "2021-12",
+            "summary": "Curso técnico integrado ao ensino médio, com base em programação web e redes.",
+            "responsibilities": [],
+            "disciplines": ["Programação web", "Redes de computadores", "Lógica de programação"],
+            "technologies": ["HTML", "CSS", "JavaScript"],
+            "certificates": [
+                {
+                    "id": "01a13107-769a-711c-8761-5ce5a172357f",
+                    "name": "Técnico em Informática para Internet",
+                    "issuer": "Escola Técnica Exemplo"
+                }
+            ],
+            "projectIds": []
+        },
+        {
+            "id": "01a13107-769a-7b3c-b99c-62cd17aabe68",
+            "kind": "education",
+            "title": "Análise e Desenvolvimento de Sistemas",
+            "organization": "Faculdade Exemplo",
+            "stage": "6º semestre",
+            "details": ["Graduação tecnológica"],
+            "start": "2023-02",
+            "summary": "Graduação com foco em engenharia de software, banco de dados e desenvolvimento web.",
+            "responsibilities": [],
+            "disciplines": ["Engenharia de software", "Banco de dados", "Estruturas de dados"],
+            "technologies": ["Java", "PostgreSQL"],
+            "certificates": [],
+            "projectIds": [
+                "01a13107-7699-73d4-8e74-d2595a05bb59",
+                "01a13107-7699-72c5-a7a5-a5ddd278d026"
+            ]
+        },
+        {
+            "id": "01a13107-769a-764c-bf9e-783e4f344002",
+            "kind": "course",
+            "title": "Testes automatizados",
+            "organization": "Plataforma Exemplo",
+            "details": ["30 horas"],
+            "start": "2024-09",
+            "end": "2024-11",
+            "summary": "Curso prático de testes de unidade e de interface.",
+            "responsibilities": [],
+            "disciplines": ["Testes de unidade", "Testes de interface"],
+            "technologies": ["Vitest", "Testing Library"],
+            "certificates": [
+                {
+                    "id": "01a13107-769a-7fed-8399-6e0659578e7b",
+                    "name": "Trilha de desenvolvimento web",
+                    "issuer": "Plataforma Exemplo"
+                }
+            ],
+            "projectIds": []
+        },
+        {
+            "id": "01a13107-769a-783a-98f9-8c05b91daace",
+            "kind": "course",
+            "title": "Introdução a banco de dados",
+            "details": ["40 horas"],
+            "start": "2025-03",
+            "end": "2025-05",
+            "summary": "Curso introdutório de modelagem e consultas em bancos relacionais.",
+            "responsibilities": [],
+            "disciplines": ["Modelagem", "SQL"],
+            "technologies": ["PostgreSQL"],
+            "certificates": [
+                {
+                    "id": "01a13107-769a-7fed-8399-6e0659578e7b",
+                    "name": "Trilha de desenvolvimento web",
+                    "issuer": "Plataforma Exemplo"
+                }
+            ],
+            "projectIds": []
+        },
+        {
+            "id": "01a13107-769a-708b-ac05-6f9e381d5ff1",
+            "kind": "course",
+            "title": "Arquitetura de front-end",
+            "organization": "Plataforma Exemplo",
+            "stage": "Módulo 3",
+            "details": ["Curso online"],
+            "start": "2026-01",
+            "summary": "Curso sobre organização de projetos front-end, testes e desempenho.",
+            "responsibilities": [],
+            "disciplines": ["Organização de código", "Testes", "Desempenho web"],
+            "technologies": ["React", "TypeScript"],
+            "certificates": [],
+            "projectIds": ["01a13107-769a-7a65-b444-648f90c8b59f"]
+        }
+    ]
+}
