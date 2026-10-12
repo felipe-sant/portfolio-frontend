@@ -27,6 +27,7 @@
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
     "format": "prettier --write \"**/*.{ts,tsx,css,json,md,yml,html}\"",
+    "content:id": "tsx --tsconfig tsconfig.node.json scripts/newId.ts",
     "prepare": "husky"
   },
   "devDependencies": {
