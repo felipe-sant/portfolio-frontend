@@ -104,13 +104,13 @@ Recomendações, decididas de vez nas specs de #45 (build e ensaio) e #63 (publi
 
 Ordem Início → Projetos → Projeto → Informações → Contato: Início exercita o layout; Projeto reutiliza o card da listagem; Informações linka para projetos; Contato fecha com o formulário. Decisões por tela:
 
-| Tela        | Issue         | Decisões                                                              |
-| ----------- | ------------- | --------------------------------------------------------------------- |
-| Início      | #34           | D26, D11, D13, D14, D24, D28                                          |
-| Projetos    | #35           | D16, D17                                                              |
-| Projeto     | #36, #61, #62 | D06 (markdown sob demanda, conforme #8), D10, D18, D19, D33, PI1, PI2 |
-| Informações | #37           | D13, D14, D20, PI1                                                    |
-| Contato     | #38           | D05, D07, D21, D25, D29                                               |
+| Tela        | Issue         | Decisões                                                                   |
+| ----------- | ------------- | -------------------------------------------------------------------------- |
+| Início      | #34           | D26, D11, D13, D14, D24, D28                                               |
+| Projetos    | #35           | D16, D17                                                                   |
+| Projeto     | #36, #61, #62 | D06 (markdown sob demanda, conforme #8), D10, D18, D19, D33, D55, PI1, PI2 |
+| Informações | #37           | D13, D14, D20, PI1                                                         |
+| Contato     | #38           | D05, D07, D21, D25, D29                                                    |
 
 Cada tela é conferida no build com o `base` do Pages, entra na pré-renderização de #49 e acrescenta as suas rotas e os seus roteiros de teclado à suíte ponta a ponta da #55 (lightbox em #61, seletor de documentos em #62, modal em #37, formulário em #38).
 
