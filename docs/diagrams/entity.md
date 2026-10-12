@@ -21,6 +21,8 @@ Observações sobre o diagrama:
   isso não aparecem na forma guardada.
 - `Project` é a forma guardada de `ProjectDetail`. As respostas montadas pela API (`ProjectPage`,
   `Timeline`, `TimelineGroup` e `CurrentTimeline`) não estão no diagrama.
+- `ProjectDocument` descreve cada documento do projeto (D55); o conteúdo do arquivo fica fora do
+  registro, um por idioma quando o documento é traduzido e um só quando é neutro.
 - `ContactMessage` é o corpo do envio de contato, não um registro do conteúdo.
 - O CV é um arquivo próprio por idioma, fora do modelo (D52).
 
@@ -32,6 +34,7 @@ erDiagram
     TimelineItem }o--o{ Project : "projectIds"
     Project ||--o{ ProjectImage : "images"
     Project ||--o{ RelatedProject : "related"
+    Project ||--|{ ProjectDocument : "documents"
 
     Profile {
         string role
@@ -88,7 +91,6 @@ erDiagram
         string status "ProjectStatus"
         string demoUrl "opcional"
         string repositoryUrl "opcional"
-        string[] documents "ProjectDocument"
         string updatedAt "AAAA-MM-DD, opcional"
     }
 
@@ -97,6 +99,15 @@ erDiagram
         object small "ImageAsset"
         string alt
         string caption "opcional"
+    }
+
+    ProjectDocument {
+        string id PK "UUID v7"
+        string name "nome do arquivo, único no projeto"
+        string format "markdown ou text"
+        boolean translated
+        string contentLanguage "opcional, só em documento neutro"
+        string updatedAt "AAAA-MM-DD, opcional"
     }
 
     RelatedProject {
