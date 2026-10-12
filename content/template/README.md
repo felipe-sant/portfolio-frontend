@@ -10,8 +10,7 @@ Esta pasta não é publicada: o que vai ao ar fica em `public/`.
 ## Como usar
 
 1. Copie `pt-BR/profile.json`, `pt-BR/timeline.json` e `pt-BR/projects.json` para
-   `public/content/pt-BR/` e preencha. O conteúdo de exemplo que já está lá é substituído por esses
-   arquivos.
+   `public/content/pt-BR/` e preencha. Eles substituem os arquivos que já estão lá.
 2. Gere um id para cada projeto, item de trajetória, certificado e documento com
    `npm run content:id`. Para vários de uma vez, use `npm run content:id -- 5`. O id é gerado uma
    vez e nunca muda, mesmo que o título mude.
