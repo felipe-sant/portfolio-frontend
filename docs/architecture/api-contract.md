@@ -762,3 +762,117 @@ O mapa está publicado e recebe novos pontos toda semana.
 
 **Quem usa:** Projeto (documentos, RF-PROJECT-15 a RF-PROJECT-27), pré-renderização de cada
 documento (#49) e `llms-full*.txt` (#51).
+
+### `POST /contact-messages`
+
+Envio de uma mensagem pelo formulário de Contato. Endpoint da #44 (V2+): **na v1 não é chamado**.
+O formulário está desligado no build publicado por `VITE_CONTACT_FORM_ENABLED` (D05, D41), e o
+envio é uma mutation do RTK Query com `queryFn` simulada, que não faz requisição e resolve com
+sucesso depois de cerca de 1,4 s (RF-CONTACT-22). O argumento da mutation já tem a forma do corpo
+abaixo, para a #44 trocar a `queryFn` por `query` mexendo só em `src/store/api/`.
+
+**Parâmetros:** nenhum na query. Headers: `Content-Type: application/json` e `Accept-Language`
+(idioma das mensagens de erro).
+
+**Corpo** (`ContactMessage`, regras em [`data-model.md`](data-model.md#contactmessage) e em
+[`contact.md`](../screens/contact.md), "Validações"):
+
+| Campo      | Tipo                | Regra                                                                           |
+| ---------- | ------------------- | ------------------------------------------------------------------------------- |
+| `name`     | `string`            | De 1 a 100 caracteres depois de `trim`                                          |
+| `email`    | `string`            | Até 254 caracteres; casa com `/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/` depois de `trim` |
+| `subject`  | `ContactSubject`    | `newProject`, `freelance`, `job` ou `other`                                     |
+| `message`  | `string`            | De 20 (depois de `trim`) a 600 caracteres                                       |
+| `language` | `SupportedLanguage` | Idioma da página, para a resposta ao visitante sair no idioma certo             |
+| `website`  | `string`            | Campo-isca, sempre `""`                                                         |
+
+```json
+{
+    "name": "Ana Souza",
+    "email": "ana@exemplo.com",
+    "subject": "newProject",
+    "message": "Preciso de um site institucional para a minha clínica até março.",
+    "language": "pt-BR",
+    "website": ""
+}
+```
+
+**Sucesso:** `202 Accepted`, sem corpo. O backend valida de novo e não confia na validação do
+cliente. Com `website` preenchido, o backend responde o mesmo `202` e descarta a mensagem, para o
+robô não saber que foi barrado.
+
+**Erros**
+
+| Status | `code`              | Quando                                                                                                                   |
+| ------ | ------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| 400    | `VALIDATION_FAILED` | Corpo inválido; `fields` traz um item por campo (`REQUIRED`, `INVALID_FORMAT`, `TOO_SHORT`, `TOO_LONG`, `INVALID_VALUE`) |
+| 429    | `RATE_LIMITED`      | Limite de envios excedido; `Retry-After` em segundos                                                                     |
+| 500    | `INTERNAL_ERROR`    | Falha do servidor                                                                                                        |
+| 503    | —                   | Serviço indisponível                                                                                                     |
+
+Na #38, toda falha (inclusive rede) vira o banner de RF-CONTACT-21. A proteção contra spam
+(campo-isca e limite de taxa, sem captcha de terceiros) e a decisão de dar mensagem própria a `400`
+e `429`, com `error.message` traduzido pelo backend, são da #44 (RF-CONTACT-24).
+
+**Quem usa:** formulário de Contato (RF-CONTACT-13 a RF-CONTACT-24), com a flag ligada.
+
+## O CV não é servido pela API
+
+O CV é um arquivo estático por idioma, fora da API e do modelo de dados: `cv/cv-<idioma>.md`,
+escrito pelo PO, e `cv/cv-<idioma>.pdf`, gerado dele no build, em `public/cv/` (D14, D52). O
+cliente monta o caminho com `import.meta.env.BASE_URL`. Quando o backend existir, os arquivos
+continuam estáticos.
+
+## Camada local na v1
+
+Na v1 não há backend (R1): uma camada local no frontend faz o papel dele e responde exatamente como
+este contrato. Decidido pelo PO (11-10-2026) para que a integração (#43) seja só a troca da
+origem, sem mudar telas.
+
+- **Onde ficam os dados:** os registros (JSON) e os documentos (`.md`) ficam em
+  `public/content/<lang>/`, um conjunto por idioma, e são lidos com `import.meta.env.BASE_URL`
+  (NF-DA-03). Página e componente nunca leem esses arquivos: o acesso é pelos endpoints do RTK
+  Query em `src/store/api/` (NF-DA-02), cujo `queryFn` chama a camada local.
+- **Forma dos registros:** cada registro guardado tem a forma da entidade de
+  [`data-model.md`](data-model.md) no seu idioma (`Profile`, `TimelineItem` com `projectIds`,
+  projeto na forma `ProjectDetail` com `related` como `{ id, reason }`), como o backend guardaria.
+- **Respostas montadas como o backend montaria:** a camada local monta, a partir dos registros e
+  com as mesmas regras deste documento, tudo o que a API calcula: o envelope `ProjectPage` com
+  `total` e `availableTypes`, `technologies` e `cover` de cada projeto, `related` expandido, o
+  `projects` com título em cada item de trajetória, os grupos e a ordem da trajetória,
+  `certificates` sem repetição e os itens de `current=true`. A resposta que o `queryFn` devolve é
+  idêntica, campo a campo, à que a API vai devolver para os mesmos parâmetros.
+- **Mesmos parâmetros e mesmos erros:** a camada local aplica `q`, `type`, `category`, `featured`,
+  `sort`, `offset`, `limit` e `current` exatamente como descrito acima, valida os parâmetros e
+  responde os erros de [Formato de erro](#formato-de-erro) no mesmo formato: `400` para `lang`,
+  parâmetro ou id inválido e `404` para projeto ou documento inexistente. Arquivo que não carrega
+  (rede) é falha comum. Assim a tela trata erro igual com a fonte local e com a API.
+- **Regras numa só implementação:** busca, filtros, ordenação e paginação de projetos,
+  agrupamento e ordem da trajetória, escolha dos itens em curso e deduplicação de certificados
+  ficam em funções puras testadas, usadas só pela camada local; a tela não filtra nem ordena. Na
+  #43 essa implementação sai do frontend, e a regra passa a ser do backend, descrita neste
+  documento.
+- **Sugestão de lugar** (a #13 decide): a camada local como service em `src/services/` (acesso a
+  dado externo vira service, `.claude/CLAUDE.md`), chamada pelo `queryFn` de cada endpoint. A #43
+  troca cada `queryFn` por `query` só em `src/store/api/` e remove o service, sem mexer nas
+  páginas.
+- **Fora daqui, para a #13:** a autoria e a organização dos arquivos (um arquivo por coleção ou por
+  registro, fonte normalizada com gerador ou escrita direta, como evitar repetir à mão campos
+  neutros nos três idiomas, NF-DA-04) e o comando de geração de UUID v7 (NF-DA-07).
+- **Envio de contato:** `POST /contact-messages` continua com a `queryFn` simulada de
+  RF-CONTACT-22, que não lê arquivo nem faz requisição.
+
+## Evolução
+
+Até o contrato ir para o repositório do backend, ele muda aqui.
+
+- **Muda sem quebrar o cliente:** campo novo numa resposta (o cliente ignora o que não conhece),
+  parâmetro de query opcional novo com padrão que mantém o comportamento atual, valor máximo de
+  `limit` maior, endpoint novo.
+- **Quebra o cliente:** renomear ou remover campo, mudar o tipo ou a obrigatoriedade de um campo,
+  mudar ou remover valor de enum, mudar o formato de data ou de id, mudar o envelope (`items`,
+  `total`, `offset`, `limit`, `availableTypes`), mudar a forma ou a ordem de `groups` da
+  trajetória, mudar um padrão de parâmetro ou o formato de erro.
+- Mudança que quebra exige, no mesmo PR, atualizar este documento, o
+  [`data-model.md`](data-model.md), os tipos em `src/types/` e a camada local. Valor novo de enum
+  exige também a chave do rótulo nos três idiomas.
