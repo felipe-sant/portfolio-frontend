@@ -71,7 +71,7 @@ são de uso pessoal (Vercel, depois AWS com backend). Ordem, dependências e cri
 `docs/product/roadmap.md`.
 
 **Decisões de design:** as pendências e contradições do handoff estão decididas em
-`docs/design/decisions.md`, com IDs (`D01`–`D42`, `PI1`–`PI5`) que specs e issues citam.
+`docs/design/decisions.md`, com IDs (`D01`–`D50`, `PI1`–`PI5`) que specs e issues citam.
 
 **Onde ler mais:** `docs/product/overview.md` (visão, público, jornadas, objetivos, escopo,
 requisitos e decisões), `docs/product/glossary.md` (glossário), `docs/product/roadmap.md` (versões,
@@ -544,9 +544,8 @@ Commits são atômicos: uma mudança concluída por commit, nunca várias tarefa
   commit (`Chore :see_no_evil: Promove staging para produção`) e a lista das issues incluídas.
 - O autor se atribui já na criação (`gh pr create --assignee @me`) e aplica labels que já existem
   no repositório (`bug`, `enhancement`, `documentation`, etc.).
-- A descrição referencia a issue relacionada (`Closes #<número>`). O GitHub só fecha a issue
-  quando o PR entra na branch padrão (`main`): no PR para a `staging` a referência fica registrada,
-  e o PR de promoção `staging` → `main` repete o `Closes #<número>` de cada issue incluída.
+- A descrição referencia a issue relacionada (`Closes #<número>`). A branch padrão do repositório
+  é a `staging`, então a issue fecha no merge do PR para a `staging`.
 - O título segue o padrão do commit principal (`<Tipo> <ícone> [#<número>] <descrição>`).
 - A descrição segue a estrutura de `.github/PULL_REQUEST_TEMPLATE.md`, não um corpo livre, com as
   seções Descrição, Alterações, Decisões técnicas, Como testar, Evidências e Impactos e pontos de
