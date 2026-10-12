@@ -24,7 +24,7 @@ describe("routes", () => {
         renderRoutes(["/"])
 
         expect(
-            await screen.findByRole("heading", { name: "Desenvolvedor full stack em TypeScript." })
+            await screen.findByRole("heading", { name: "Desenvolvedor full stack em TypeScript" })
         ).toBeInTheDocument()
         expect(screen.getByRole("banner")).toBeInTheDocument()
         expect(screen.getByRole("contentinfo")).toBeInTheDocument()
@@ -46,7 +46,7 @@ describe("routes", () => {
         await user.click(screen.getByRole("link", { name: "Voltar para o início" }))
 
         expect(
-            await screen.findByRole("heading", { name: "Desenvolvedor full stack em TypeScript." })
+            await screen.findByRole("heading", { name: "Desenvolvedor full stack em TypeScript" })
         ).toBeInTheDocument()
     })
 })
