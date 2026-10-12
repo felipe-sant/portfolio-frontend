@@ -3,7 +3,7 @@ import { afterEach, describe, expect, it, vi } from "vitest"
 async function loadPublicUrl(base: string) {
     vi.stubEnv("BASE_URL", base)
     vi.resetModules()
-    const { default: publicUrl } = await import("@/services/content/publicUrl")
+    const { default: publicUrl } = await import("@/utils/publicUrl")
     return publicUrl
 }
 

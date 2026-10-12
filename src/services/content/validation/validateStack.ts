@@ -1,4 +1,4 @@
-import STACK_CATEGORIES from "@/services/content/stackCategories"
+import STACK_CATEGORIES from "@/enum/stackCategories.enum"
 import checkObjectKeys from "@/services/content/validation/checkObjectKeys"
 import isNonEmptyString from "@/services/content/validation/isNonEmptyString"
 import requireBoolean from "@/services/content/validation/requireBoolean"

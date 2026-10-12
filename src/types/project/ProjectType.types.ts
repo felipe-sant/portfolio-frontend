@@ -1,4 +1,4 @@
-import type PROJECT_TYPES from "@/services/content/projectTypes"
+import type PROJECT_TYPES from "@/enum/projectTypes.enum"
 
 type ProjectType = (typeof PROJECT_TYPES)[number]
 

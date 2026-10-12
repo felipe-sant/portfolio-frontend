@@ -141,7 +141,7 @@ API responderia, com os mesmos parâmetros, respostas e erros de
 
 Página e componente nunca leem esses arquivos: o acesso é pelos endpoints, com `lang` no argumento
 (`projectsApi.useGetProjectsQuery({ lang, sort: "recent" })`). Os arquivos de `public/` são
-pedidos com `import.meta.env.BASE_URL` (`src/services/content/publicUrl.ts`), então funcionam na
+pedidos com `import.meta.env.BASE_URL` (`src/utils/publicUrl.ts`), então funcionam na
 raiz (`npm run dev`) e no prefixo do GitHub Pages.
 
 O conteúdo de hoje é de exemplo, fictício, em três idiomas. Para escrever o conteúdo real, copie o

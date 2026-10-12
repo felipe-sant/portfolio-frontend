@@ -1,6 +1,6 @@
 import collectCertificates from "@/services/content/collectCertificates"
 import sortTimelineRecords from "@/services/content/sortTimelineRecords"
-import TIMELINE_KINDS from "@/services/content/timelineKinds"
+import TIMELINE_KINDS from "@/enum/timelineKinds.enum"
 import toTimelineItem from "@/services/content/toTimelineItem"
 import type ProjectRecord from "@/types/project/ProjectRecord.types"
 import type Timeline from "@/types/timeline/Timeline.types"

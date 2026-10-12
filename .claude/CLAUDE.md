@@ -318,14 +318,18 @@ não-ok vira `Error` literal em português com o status e, quando há, o corpo).
 o caminho relativo. Timeout próprio não existe: quem quiser usa `AbortSignal.timeout(ms)`.
 
 **`src/services/content/`** é a camada de dados local da v1 (R1), usada só pelos `queryFn` de
-`src/store/api/` (e removida na #43): `publicUrl.ts` é a **única** leitura de
-`import.meta.env.BASE_URL`, `readJson`/`readText` leem `public/` por `fetch`, os `load*` carregam os
+`src/store/api/` (e removida na #43): `readJson`/`readText` leem `public/` por `fetch`, os `load*` carregam os
 registros de um idioma, e funções puras montam o que a API calcularia (busca, ordenação, paginação,
 trajetória). Página e componente nunca importam essa pasta nem JSON de `public/`. O conteúdo fica
 em `public/content/<idioma>/` e `public/images/`, o modelo em branco em `content/template/` e a
 validação do conteúdo em `src/services/content/validation/`, executada por
 `src/services/content/test/content.test.ts` (`npm run content:check`). `scripts/` guarda os
 comandos `content:*` (rodam com `tsx` e `tsconfig.node.json`); ID novo vem de `npm run content:id`.
+
+**`src/enum/`** guarda as listas fixas de valores (`PROJECT_TYPES`, `PROJECT_CATEGORIES` etc.), um
+símbolo por arquivo com `export default`, nomeado `<nome>.enum.ts`; os tipos de `src/types/` derivam
+delas. **`src/utils/`** guarda funções puras reutilizáveis sem relação com React, como `publicUrl.ts`,
+a **única** leitura de `import.meta.env.BASE_URL`. Se a pasta não existir, crie no primeiro uso.
 
 A convenção de variáveis de ambiente é a do Vite: só variáveis com prefixo `VITE_`
 são expostas ao código do cliente, e a leitura é `import.meta.env.VITE_ALGO`, nunca

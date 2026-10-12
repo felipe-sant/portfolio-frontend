@@ -1,4 +1,4 @@
-import publicUrl from "@/services/content/publicUrl"
+import publicUrl from "@/utils/publicUrl"
 
 async function readText(path: string): Promise<string> {
     const response = await fetch(publicUrl(path))

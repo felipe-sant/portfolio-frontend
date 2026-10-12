@@ -1,5 +1,5 @@
 import buildProjectSummary from "@/services/content/buildProjectSummary"
-import PROJECT_TYPES from "@/services/content/projectTypes"
+import PROJECT_TYPES from "@/enum/projectTypes.enum"
 import searchProjects from "@/services/content/searchProjects"
 import sortProjects from "@/services/content/sortProjects"
 import type NormalizedProjectListParams from "@/types/project/NormalizedProjectListParams.types"

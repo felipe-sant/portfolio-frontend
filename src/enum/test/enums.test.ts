@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest"
-import DOCUMENT_FORMATS from "@/services/content/documentFormats"
-import PROJECT_CATEGORIES from "@/services/content/projectCategories"
-import PROJECT_SORTS from "@/services/content/projectSorts"
-import PROJECT_STATUSES from "@/services/content/projectStatuses"
-import PROJECT_TYPES from "@/services/content/projectTypes"
-import STACK_CATEGORIES from "@/services/content/stackCategories"
-import TIMELINE_KINDS from "@/services/content/timelineKinds"
+import DOCUMENT_FORMATS from "@/enum/documentFormats.enum"
+import PROJECT_CATEGORIES from "@/enum/projectCategories.enum"
+import PROJECT_SORTS from "@/enum/projectSorts.enum"
+import PROJECT_STATUSES from "@/enum/projectStatuses.enum"
+import PROJECT_TYPES from "@/enum/projectTypes.enum"
+import STACK_CATEGORIES from "@/enum/stackCategories.enum"
+import TIMELINE_KINDS from "@/enum/timelineKinds.enum"
 
 describe("enums do contrato", () => {
     it("lista os tipos de projeto na ordem do modelo de dados", () => {

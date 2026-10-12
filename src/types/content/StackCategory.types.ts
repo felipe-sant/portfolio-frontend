@@ -1,4 +1,4 @@
-import type STACK_CATEGORIES from "@/services/content/stackCategories"
+import type STACK_CATEGORIES from "@/enum/stackCategories.enum"
 
 type StackCategory = (typeof STACK_CATEGORIES)[number]
 

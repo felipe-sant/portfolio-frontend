@@ -1,5 +1,5 @@
 import { vi } from "vitest"
-import publicUrl from "@/services/content/publicUrl"
+import publicUrl from "@/utils/publicUrl"
 
 function stripBase(url: string): string {
     const base = publicUrl("")

@@ -1,4 +1,4 @@
-import type TIMELINE_KINDS from "@/services/content/timelineKinds"
+import type TIMELINE_KINDS from "@/enum/timelineKinds.enum"
 
 type TimelineKind = (typeof TIMELINE_KINDS)[number]
 
