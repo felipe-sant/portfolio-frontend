@@ -1,6 +1,6 @@
 ## Contexto
 
-Projeto pessoal para praticar operações CRUD completas (criar, listar, editar, excluir) com um banco NoSQL, construindo tanto o frontend quanto a API.
+Projeto acadêmico para praticar operações CRUD completas (criar, listar, editar, excluir) com um banco NoSQL, construindo tanto o frontend quanto a API.
 
 ## Meu papel
 

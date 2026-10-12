@@ -1,10 +1,10 @@
 ## Contexto
 
-Projeto pessoal para praticar o ciclo completo de um produto com IA: treinar/usar um modelo de reconhecimento de dígitos manuscritos e expor isso numa aplicação web interativa, do desenho até a predição.
+Projeto pessoal para praticar o ciclo completo de um produto com IA: treinar um modelo de reconhecimento de dígitos manuscritos e expor isso numa aplicação web interativa, do desenho até a predição.
 
 ## Mi rol
 
-Desenvolvi sozinho as três camadas: o frontend (canvas de desenho), o backend (intermediário entre front e IA) e o serviço de inferência em Python.
+Desenvolvi sozinho as três camadas: o frontend (canvas de desenho), o backend (intermediário entre front e IA) e o serviço de inferência em Python, além de treinar o modelo.
 
 ## Solución
 

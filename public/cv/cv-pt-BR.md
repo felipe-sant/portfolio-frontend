@@ -1,10 +1,17 @@
+# Luiz Felipe dos Santos
+
+São José dos Campos / Jacareí
+contact.felipesant@gmail.com
+github.com/felipe-sant
+linkedin.com/in/lfelipesant
+
 ## Resumo
 
-Desenvolvedor de software com experiência em desenvolvimento frontend (React, TypeScript) e conhecimento de backend, atuando no ciclo completo de aplicações web. Estudante do 6º semestre de Desenvolvimento de Software Multiplataforma na Fatec de Jacareí. Tenho experiência prática em arquiteturas de microsserviços e micro frontends (Module Federation), integração e consumo de APIs REST, controle de versão com Git, containers com Docker, testes automatizados e pipelines de CI/CD. Sou proativo na identificação e resolução de problemas além do escopo das tarefas atribuídas, com histórico consistente de entregas aprovadas sem retrabalho.
+Desenvolvedor full stack, com atuação principal em frontend (React, TypeScript) e conhecimento de backend, atuando no ciclo completo de aplicações web. Estudante do 6º semestre de Desenvolvimento de Software Multiplataforma na Fatec de Jacareí. Tenho experiência prática em arquiteturas de microsserviços e micro frontends (Module Federation), integração e consumo de APIs REST, controle de versão com Git, containers com Docker, testes automatizados e pipelines de CI/CD. Sou proativo na identificação e resolução de problemas além do escopo das tarefas atribuídas, com histórico consistente de entregas aprovadas sem retrabalho.
 
 ## Experiência
 
-### Incicle — Estagiário de Desenvolvimento (05/2026 – atual)
+### InCicle — Estagiário de Desenvolvimento (05/2026 – atual)
 
 Atuação no desenvolvimento frontend de múltiplos módulos de produto (OKR, Hiring/Admissão, DISC, Agenda, Termômetro, entre outros), trabalhando em uma arquitetura de micro frontends.
 
@@ -24,7 +31,7 @@ Responsável pelo gerenciamento e controle de faltas das turmas, com acompanhame
 ## Formação
 
 **Fatec – Faculdade de Tecnologia do Estado de São Paulo** (2023 – 2027) — Cursando, 6º semestre
-Tecnólogo em Desenvolvimento de Software Multiplataforma — conclusão prevista para meados de 2027
+Tecnólogo em Desenvolvimento de Software Multiplataforma — conclusão prevista para 2027
 
 Sólidos conhecimentos em TypeScript e frameworks como React, com experiência em bancos de dados SQL e NoSQL, consumo e integração de APIs internas e externas, programação orientada a objetos e boas práticas de organização de código (incluindo testes automatizados). Desenvolvimento de projetos acadêmicos e em parceria com empresas utilizando a metodologia ágil Scrum.
 

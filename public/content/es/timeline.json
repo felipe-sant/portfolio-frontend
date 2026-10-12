@@ -4,10 +4,10 @@
             "id": "01a13157-51e9-72f2-bf6d-68dd797d4b8c",
             "kind": "experience",
             "title": "Estagiário de Desenvolvimento Frontend",
-            "organization": "Incicle",
+            "organization": "InCicle",
             "details": ["Estágio · Híbrido"],
             "start": "2026-05",
-            "summary": "Atuação fullstack em squad ágil, passando por diferentes módulos de produto dentro de uma arquitetura de micro frontends — da implementação de novas features à evolução de versões já existentes. Desenvolvimento com React, TypeScript e Node.js, integração de APIs REST e trabalho com bancos de dados SQL e NoSQL. Revisão de Pull Requests, testes de QA e resolução de hotfixes em produção.",
+            "summary": "Atuação principalmente em frontend, com incursões no backend, em squad ágil, passando por diferentes módulos de produto dentro de uma arquitetura de micro frontends — da implementação de novas features à evolução de versões já existentes. Desenvolvimento com React, TypeScript e Node.js, integração de APIs REST e trabalho com bancos de dados SQL e NoSQL. Revisão de Pull Requests, testes de QA e resolução de hotfixes em produção.",
             "responsibilities": [
                 "Desenvolvimento de features com React, TypeScript e Node.js",
                 "Integração de APIs REST internas e externas",
@@ -58,7 +58,7 @@
             "title": "Tecnólogo em Desenvolvimento de Software Multiplataforma",
             "organization": "Fatec – Faculdade de Tecnologia do Estado de São Paulo (Jacareí)",
             "stage": "6º semestre",
-            "details": [],
+            "details": ["Conclusão prevista em 2027"],
             "start": "2023-02",
             "summary": "Formação em desenvolvimento de software com foco em lógica de programação, POO, frameworks web e boas práticas de código, incluindo projetos acadêmicos e em parceria com empresas.",
             "responsibilities": [],
@@ -131,7 +131,13 @@
             "responsibilities": [],
             "disciplines": [],
             "technologies": [],
-            "certificates": [],
+            "certificates": [
+                {
+                    "id": "01a1326b-4068-7ac8-9c17-134f9e079f77",
+                    "name": "Gestores do Futuro",
+                    "issuer": "Expro"
+                }
+            ],
             "projectIds": []
         },
         {
@@ -139,14 +145,25 @@
             "kind": "course",
             "title": "Informática",
             "organization": "Microcamp São José dos Campos",
-            "details": ["+200 horas"],
+            "details": ["200 horas"],
             "start": "2017-01",
             "end": "2019-12",
-            "summary": "Curso de informática com atuação como monitor auxiliando professores e alunos nas aulas de Informática, com 200 horas de experiência.",
+            "summary": "Curso de informática, com atuação como monitor auxiliando professores e alunos nas aulas por 200 horas.",
             "responsibilities": [],
             "disciplines": [],
             "technologies": [],
-            "certificates": [],
+            "certificates": [
+                {
+                    "id": "01a1326b-4068-72d0-b866-8d9744961d4a",
+                    "name": "Monitoria em Informática",
+                    "issuer": "Microcamp"
+                },
+                {
+                    "id": "01a1326b-4068-75f6-a6cd-4424d2dd0262",
+                    "name": "Monitoria em Robótica",
+                    "issuer": "Microcamp"
+                }
+            ],
             "projectIds": []
         }
     ]

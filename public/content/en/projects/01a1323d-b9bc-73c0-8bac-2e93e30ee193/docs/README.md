@@ -4,11 +4,11 @@ Projeto pessoal para aplicar aprendizado não supervisionado (K-Means) a um prob
 
 ## My role
 
-Desenvolvi sozinho todo o pipeline: desde o treinamento do modelo em Python até a API de inferência em produção.
+Desenvolvi sozinho todo o pipeline: desde o treinamento do modelo em Python até a API de inferência em produção. A API fica em um repositório próprio, o [player-profile-clustering-service](https://github.com/felipe-sant/player-profile-clustering-service), e consome o modelo exportado por este.
 
 ## Solution
 
-O modelo foi treinado em Python com scikit-learn (pipeline de normalização + K-Means com 4 clusters), incluindo uma métrica derivada de "explosividade" calculada a partir da distância de sprint e velocidade máxima. Os clusters resultantes são nomeados automaticamente com base nas características dos centroides (ex.: maior distância de sprint = "explosivo"). O modelo treinado é exportado para o formato ONNX e servido por uma API em Node.js/TypeScript, que roda a inferência via ONNX Runtime sem depender de Python em produção — e também calcula o perfil predominante de um atleta ao longo de várias partidas, consultando um banco PostgreSQL.
+O modelo foi treinado em Python com scikit-learn (pipeline de normalização + K-Means com 4 clusters), incluindo uma métrica derivada de "explosividade" calculada a partir da distância de sprint e velocidade máxima. Os clusters resultantes são nomeados automaticamente com base nas características dos centroides (ex.: alta intensidade e sprint curto = "explosivo"). O modelo treinado é exportado para o formato ONNX e servido por uma API em Node.js/TypeScript, que roda a inferência via ONNX Runtime sem depender de Python em produção — e também calcula o perfil predominante de um atleta ao longo de várias partidas, consultando um banco PostgreSQL.
 
 ## Technical decisions
 

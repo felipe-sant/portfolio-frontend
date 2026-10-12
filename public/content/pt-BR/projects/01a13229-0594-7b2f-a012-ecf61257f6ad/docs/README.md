@@ -12,7 +12,7 @@ O usuário escolhe uma categoria (comprimento, peso ou temperatura), informa um 
 
 ## Decisões técnicas
 
-Toda a lógica de conversão roda no cliente, sem necessidade de API externa — as fórmulas de conversão entre unidades são fixas e conhecidas, então não há motivo para depender de um serviço externo para isso (diferente do conversor de moedas, que precisa de taxas atualizadas).
+Toda a lógica de conversão roda no cliente, sem necessidade de API externa — as fórmulas de conversão entre unidades são fixas e conhecidas, então não há motivo para depender de um serviço externo para isso (diferente de conversões que dependem de dados atualizados, como as de moeda).
 
 ## Resultado
 

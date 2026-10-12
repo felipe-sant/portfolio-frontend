@@ -1,11 +1,11 @@
 ## Pré-requisitos
 
-Node.js e npm instalados.
+Node.js e npm instalados. O repositório [maps](https://github.com/felipe-sant/maps) reúne o backend e o frontend como submódulos; clone com `git clone --recurse-submodules https://github.com/felipe-sant/maps.git`.
 
 ## Backend
 
 ```bash
-cd maps-back
+cd maps/back
 npm install
 npm run dev
 ```
@@ -15,7 +15,7 @@ Sobe em `http://localhost:3001`, com as rotas prefixadas em `/api`.
 ## Frontend
 
 ```bash
-cd maps-front
+cd maps/front
 npm install
 npm start
 ```

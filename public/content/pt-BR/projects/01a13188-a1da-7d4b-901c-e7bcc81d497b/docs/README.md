@@ -1,6 +1,6 @@
 ## Contexto
 
-Projeto pessoal para praticar cálculo geográfico e integração entre frontend e backend: simular uma rota de voo real entre dois pontos aleatórios do Brasil, levando em conta a curvatura da Terra em vez de uma linha reta num plano cartesiano.
+Projeto acadêmico para praticar cálculo geográfico e integração entre frontend e backend: simular uma rota de voo real entre dois pontos aleatórios do Brasil, levando em conta a curvatura da Terra em vez de uma linha reta num plano cartesiano.
 
 ## Meu papel
 

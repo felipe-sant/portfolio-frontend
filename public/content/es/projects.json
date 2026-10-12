@@ -56,7 +56,6 @@
                     ]
                 }
             ],
-            "demoUrl": "https://front-maps.vercel.app/",
             "repositoryUrl": "https://github.com/felipe-sant/maps",
             "images": [
                 {
@@ -153,7 +152,6 @@
                     ]
                 }
             ],
-            "demoUrl": "https://mnist-classifier-eight.vercel.app/",
             "repositoryUrl": "https://github.com/felipe-sant/mnist-classifier",
             "images": [
                 {
@@ -198,7 +196,7 @@
             "id": "01a131fc-d24c-7c70-887b-0d055f57d251",
             "title": "Pedido de Namoro Irrecusável",
             "summary": "Site divertido de pedido de namoro onde o botão \"Não\" foge do cursor sempre que o usuário tenta clicar nele.",
-            "date": "2024-02",
+            "date": "2024-12",
             "types": ["web"],
             "category": "personal",
             "featured": false,
@@ -397,7 +395,7 @@
             "category": "personal",
             "featured": true,
             "cardTechnologies": ["scikit-learn", "ONNX Runtime", "Node.js"],
-            "role": "Full stack + IA (modelo + API)",
+            "role": "IA (modelo e treinamento)",
             "duration": "1 semana",
             "team": "Sozinho",
             "status": "completed",
