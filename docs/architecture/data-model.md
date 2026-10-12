@@ -409,11 +409,17 @@ três idiomas.
 - De 1 a 64 caracteres entre `A–Z`, `a–z`, `0–9`, `.`, `_` e `-`, começando por letra ou dígito,
   sem espaço, barra nem acento, para caber na URL sem codificação (`/projects/:id/docs/SETUP.md`).
 - Único no projeto sem diferenciar maiúsculas de minúsculas (`README.md` e `readme.md` não
-  convivem), para não colidir em sistema de arquivos que ignora caixa; a URL compara o nome
-  exatamente como está no conteúdo.
+  convivem), para não colidir em sistema de arquivos que ignora caixa.
+- Na URL, o nome é aceito em qualquer caixa (`/docs/license` acha `LICENSE`); a tela troca a URL
+  pela do nome exato por `replace`, sem passo extra no histórico, e a canônica é a do nome exato.
+- A URL mantém a extensão (`/docs/SETUP.md`). O spike da #64 confirma que isso funciona no GitHub
+  Pages; se não funcionar, o plano B é tirar a extensão só na URL (`/docs/setup`), com `SETUP.md`
+  como rótulo (D55).
 - `README.md` é obrigatório, em `markdown` e traduzido, com as seções de RF-PROJECT-27, e abre em
   `/projects/:id`, não em `/projects/:id/docs/README.md`.
-- `ARCHITECTURE.md`, `SETUP.md` e `CHANGELOG.md` são convenções de nome, não obrigações.
+- `ARCHITECTURE.md`, `SETUP.md` e `CHANGELOG.md` são convenções de nome, não obrigações. O
+  formato de versões de RF-PROJECT-27 (`vX.Y.Z · MM/AAAA`) vale só para o arquivo chamado
+  `CHANGELOG.md`, e o teste de conteúdo da #13 o confere quando ele existe (D55).
 
 ### `ProjectPage`
 

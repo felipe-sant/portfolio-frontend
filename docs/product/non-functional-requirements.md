@@ -232,7 +232,7 @@ M0 fechar até meados de outubro, mas sem folga. Ordem e datas:
   documento), porque muda o roteamento e `src/i18n/`, que todas as telas e o seletor de #33 usam.
   Mudar URL depois de publicada é pior que atrasar: #53 não tem plano B. **Data-limite
   recomendada: 25/10/2026** na `staging`.
-- **#49** fica em M4, com #45, depois do spike e do ADR de #64. **Data-limite: 08/11/2026** (#53 não aumenta o risco de #49, só o tamanho).
+- **#49** fica em M4, com #45, depois do spike e do ADR de #64, que também confirma as URLs de documento com extensão (`/projects/<id>/docs/SETUP.md`, `D55`) no GitHub Pages; plano B: tirar a extensão só na URL (`/docs/setup`). **Data-limite: 08/11/2026** (#53 não aumenta o risco de #49, só o tamanho).
 - **Se apertar, cai nesta ordem:** (1) #49, e a v1 sai pelo plano B: rotas com prefixo funcionando
   pelo `404.html` (status 404 na primeira carga), sem HTML legível sem JavaScript, mas com #51 e #52;
   (2) os `llms-full.en.txt` e `llms-full.es.txt` (fica só o `pt-BR`, com os links de idioma no

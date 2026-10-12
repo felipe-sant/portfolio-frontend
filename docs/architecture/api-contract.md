@@ -743,7 +743,8 @@ quem precisa só da lista, como a pré-renderização (#49), o `sitemap.xml` e o
 | `id`   | caminho | `string`            | Sim         | —      | UUID v7 do projeto |
 | `lang` | query   | `SupportedLanguage` | Sim         | —      | Idioma do conteúdo |
 
-**Regras:** `README.md` vem primeiro; os outros, na ordem do conteúdo. A lista é a mesma nos três
+**Regras:** `lang` é obrigatório, como em toda leitura, mesmo com a lista igual nos três idiomas
+(D55). `README.md` vem primeiro; os outros, na ordem do conteúdo. A lista é a mesma nos três
 idiomas (mesmos `id`, `name`, `format`, `translated` e `contentLanguage`).
 
 **Sucesso:** `200`, `application/json`, `Content-Language` igual a `lang`, corpo
@@ -801,7 +802,8 @@ O conteúdo de um documento do projeto (D55), no idioma pedido quando o document
 | `documentId` | caminho | `string`            | Sim         | —      | UUID v7 do documento, de `ProjectDocument.id`                 |
 | `lang`       | query   | `SupportedLanguage` | Sim         | —      | Idioma do conteúdo; documento neutro devolve o mesmo conteúdo |
 
-A tela abre o documento pelo nome na URL (`/projects/:id/docs/SETUP.md`): ela acha o `id` pelo
+`lang` é obrigatório também para documento neutro, que devolve o mesmo conteúdo nos três idiomas
+(D55). A tela abre o documento pelo nome na URL (`/projects/:id/docs/SETUP.md`, em qualquer caixa): ela acha o `id` pelo
 `name` em `ProjectDetail.documents` e pede o conteúdo pelo `id`. A API não busca documento por
 nome.
 
