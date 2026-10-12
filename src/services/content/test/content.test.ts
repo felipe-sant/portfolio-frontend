@@ -33,7 +33,7 @@ describe("conteúdo de public/", () => {
         await cp(join(PUBLIC_ROOT, "images"), join(copyRoot, "images"), { recursive: true })
         const target = join(copyRoot, "content", "en", "projects.json")
         const original = await readFile(target, "utf-8")
-        await writeFile(target, original.replace('"date": "2026-03"', '"date": "2026-13"'))
+        await writeFile(target, original.replace(/"date": "\d{4}-\d{2}"/, '"date": "2026-13"'))
 
         const issues = validateContent(await readContentSnapshot(copyRoot))
 
