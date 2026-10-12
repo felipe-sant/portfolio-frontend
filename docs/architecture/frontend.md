@@ -8,12 +8,13 @@ Frontend do portfólio pessoal de Luiz Felipe dos Santos: React 19 e TypeScript,
 flowchart TD
     Page[Página] --> Hook[Hook da página]
     Page --> Component[Componente]
-    Hook --> Mock[Dados mock]
     Hook --> Store[Store]
     Store --> Api[RTK Query]
     Hook --> Service[Service HTTP]
-    Api --> Backend[(Backend futuro)]
-    Service --> Backend
+    Api --> Local[Camada local v1]
+    Local --> Content[(public/content)]
+    Api -.-> Backend[(Backend futuro)]
+    Service -.-> Backend
 ```
 
 - **Página** (`src/pages/<Nome>.page.tsx`): ligada a uma rota; só chama o hook e renderiza o resultado, com `<title>` e `<meta name="description">` declarados no próprio JSX.
@@ -22,7 +23,7 @@ flowchart TD
 - **Layout** (`src/layouts/Main.layout.tsx`): cabeçalho, conteúdo e rodapé comuns às páginas.
 - **Store** (`src/store/`): estado compartilhado em slices e estado de servidor em endpoints do RTK Query.
 - **Service HTTP** (`src/services/http/`): `get` e `post` sobre `fetch`, para chamadas fora do RTK Query.
-- **Dados mock:** enquanto o backend não existe, o conteúdo vem de dados locais do frontend (R1). As pastas `src/pages/hooks/`, `src/hooks/` e `src/components/` nascem no primeiro uso.
+- **Camada local:** na v1 não há backend (R1). O conteúdo é o conteúdo real do PO, em JSON e Markdown sob `public/content/<idioma>/`, lido só pelos endpoints do RTK Query, cujo `queryFn` chama uma camada local que simula o backend, com as mesmas respostas, parâmetros e erros. As entidades estão em [`data-model.md`](data-model.md) e o contrato em [`api-contract.md`](api-contract.md). As pastas `src/pages/hooks/`, `src/hooks/` e `src/components/` nascem no primeiro uso.
 
 ## Roteamento
 
@@ -46,16 +47,16 @@ Hoje a store não tem slice nem endpoint: `src/store/api.ts` declara o `createAp
 
 - **Estado de uma tela** fica em `useState` no hook da página. O handoff define o estado de cada tela:
 
-| Tela        | Estado                                                                                                     |
-| ----------- | ---------------------------------------------------------------------------------------------------------- |
-| Todas       | Tema claro ou escuro; indicador de e-mail copiado no botão de copiar e-mail, que volta em 2,2 s            |
-| Projetos    | Busca, tipo, categoria, ordenação, filtros ativos, modal de filtros aberto, carregando, quantidade visível |
-| Projeto     | Foto atual da galeria, lightbox aberto, arquivo ativo                                                      |
-| Informações | Item de experiência ou formação aberto                                                                     |
-| Contato     | Nome, e-mail, mensagem, assunto, erros por campo, tocado, enviando, enviado                                |
+| Tela        | Estado                                                                                          |
+| ----------- | ----------------------------------------------------------------------------------------------- |
+| Todas       | Tema claro ou escuro; indicador de e-mail copiado no botão de copiar e-mail, que volta em 2,2 s |
+| Projetos    | Busca, tipo, categoria, ordenação, filtros ativos, carregando, quantidade visível               |
+| Projeto     | Foto atual da galeria, lightbox aberto, arquivo ativo                                           |
+| Informações | Item de experiência ou formação aberto                                                          |
+| Contato     | Nome, e-mail, mensagem, assunto, erros por campo, tocado, enviando, enviado                     |
 
 - **Estado compartilhado** entre telas vai para um slice em `src/store/slices/`.
-- **Dados de projetos e trajetória** (experiências, formações, stack) começam como mock no frontend, porque o backend ainda não existe (R1). Quando o backend existir, cada domínio vira um endpoint do RTK Query injetado em `src/store/api/<dominio>.api.ts`, e o envio do formulário de contato passa a usar o backend.
+- **Dados de conteúdo** (perfil, trajetória, projetos e documentos) vêm de endpoints do RTK Query injetados por domínio em `src/store/api/<dominio>.api.ts`. Na v1, o `queryFn` desses endpoints chama a camada local que simula o backend ([`api-contract.md`](api-contract.md#camada-local-na-v1)), e a #43 troca o `queryFn` pela API mexendo só em `src/store/api/`. O envio do formulário de contato é uma mutation com `queryFn` simulado até a #44.
 - **Idioma** continua em `src/i18n/`, fora da store.
 
 ## Estilo

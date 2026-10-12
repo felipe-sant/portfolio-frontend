@@ -4,11 +4,11 @@ Esta pasta guarda a documentação versionada **só do frontend do portfólio** 
 
 ## Fronteira
 
-| Nível           | Onde vive       | O que documenta                                                                                   |
-| --------------- | --------------- | ------------------------------------------------------------------------------------------------- |
-| Este frontend   | `docs/`         | Telas, arquitetura, decisões, diagramas e ambientes do frontend                                   |
-| Sistema inteiro | Repositório pai | Containers e a relação entre backend e frontend, que entram nele como submódulos                  |
-| Contrato da API | Backend         | O backend ainda não existe; até lá, o contrato esperado pelo frontend será documentado em `docs/` |
+| Nível           | Onde vive       | O que documenta                                                                                                                                                                                                                              |
+| --------------- | --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Este frontend   | `docs/`         | Telas, arquitetura, decisões, diagramas e ambientes do frontend                                                                                                                                                                              |
+| Sistema inteiro | Repositório pai | Containers e a relação entre backend e frontend, que entram nele como submódulos                                                                                                                                                             |
+| Contrato da API | Backend         | Vai viver no backend, que ainda não existe; até lá, o contrato esperado pelo frontend fica em [`architecture/api-contract.md`](architecture/api-contract.md), com as entidades em [`architecture/data-model.md`](architecture/data-model.md) |
 
 ## `docs/` vs `.specs/`
 
@@ -41,11 +41,13 @@ Uma decisão que sobrevive à mudança que a motivou vira um ADR em [`adr/`](adr
 | [`screens/projects.md`](screens/projects.md)                                       | Tela Projetos: busca, filtros, ordenação, carregamento incremental (lote de 9), estados, estado na URL, chaves, contrato de dados, JSON-LD e critérios de aceite da #35                                                             |
 | [`screens/project.md`](screens/project.md)                                         | Tela Projeto: cabeçalho, galeria e lightbox, ficha técnica e links, documentos com endereço próprio, regras do markdown, relacionados, estados, chaves, contrato, metadados e JSON-LD e critérios de aceite da #36, da #61 e da #62 |
 | [`architecture/frontend.md`](architecture/frontend.md)                             | Camadas, roteamento, estado, estilo, internacionalização e testes                                                                                                                                                                   |
+| [`architecture/data-model.md`](architecture/data-model.md)                         | Entidades de conteúdo, campos, enums, tradução, mapeamento do handoff e origem de cada dado por tela                                                                                                                                |
+| [`architecture/api-contract.md`](architecture/api-contract.md)                     | Endpoints esperados do backend, busca e paginação, trajetória, formato de erro, idioma e camada local da v1                                                                                                                         |
 | [`adr/README.md`](adr/README.md)                                                   | Quando escrever um ADR, numeração e índice das decisões                                                                                                                                                                             |
 | [`adr/0000-template.md`](adr/0000-template.md)                                     | Molde de ADR                                                                                                                                                                                                                        |
 | [`adr/0001-state-management.md`](adr/0001-state-management.md)                     | Gerenciamento de estado                                                                                                                                                                                                             |
 | [`diagrams/flow.md`](diagrams/flow.md)                                             | Fluxograma de navegação entre as telas do portfólio                                                                                                                                                                                 |
-| [`diagrams/entity.md`](diagrams/entity.md)                                         | Entidades de conteúdo do handoff (Projeto, Experiência, Formação, Link)                                                                                                                                                             |
+| [`diagrams/entity.md`](diagrams/entity.md)                                         | Diagrama das entidades de conteúdo do modelo de dados                                                                                                                                                                               |
 | [`setup/environments.md`](setup/environments.md)                                   | Ambientes, variáveis `VITE_*` e como subir o ambiente local                                                                                                                                                                         |
 
 ## Convenções
