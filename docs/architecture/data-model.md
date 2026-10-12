@@ -559,6 +559,24 @@ Os idiomas de `src/i18n/supportedLanguages.ts`, valores de `lang` e de `ContactM
 `disciplines`, `technologies`, `certificates` e `projectIds` de cada item, `details` e
 `cardTechnologies`.
 
+## Tipos previstos para a #13
+
+Sugestão de onde cada tipo vive em `src/types/`, um tipo por arquivo
+(`src/types/<dominio>/<Nome>.types.ts`, `.claude/CLAUDE.md`); a #13 decide os domínios.
+
+| Domínio    | Tipos                                                                                                                                                                                        |
+| ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `profile`  | `Profile`, `Availability`, `Location`, `ContactChannels`, `SocialLinks`, `ResponseTime`                                                                                                      |
+| `content`  | `ImageAsset`, `ResponsiveImage`, `StackGroup`, `StackItem`, `StackCategory`                                                                                                                  |
+| `timeline` | `TimelineItem`, `TimelineKind`, `TimelineGroup`, `Timeline`, `CurrentTimeline`, `Certificate`, `TimelineProjectRef`                                                                          |
+| `project`  | `ProjectSummary`, `ProjectDetail`, `ProjectImage`, `RelatedProject`, `ProjectPage`, `ProjectListParams`, `ProjectType`, `ProjectCategory`, `ProjectStatus`, `ProjectDocument`, `ProjectSort` |
+| `contact`  | `ContactMessage`, `ContactSubject`                                                                                                                                                           |
+| `api`      | `ApiError` (o corpo de [Formato de erro](api-contract.md#formato-de-erro)) e `ListResponse` (o envelope `{ items }`)                                                                         |
+
+`ProjectListParams` são os parâmetros de `GET /projects` (`lang`, `q`, `type`, `category`,
+`featured`, `sort`, `offset`, `limit`, [`api-contract.md`](api-contract.md#get-projects)).
+`SupportedLanguage` já existe em `src/types/language/`.
+
 ## Mapeamento do handoff
 
 Fonte: a seção "Modelo de dados" do `README.md` do handoff de design (tipos `Link`, `Experiencia`,
