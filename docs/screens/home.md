@@ -287,7 +287,8 @@ Lista de necessidades; os nomes de campo, os arquivos e os endpoints estão deci
    `library`, `extension`, `bot`, `data`, `game`, `iot`, `infra`, sem `fullstack`: projeto web com
    backend é `["web", "api"]`), categoria (`academic`, `personal`, `professional`, um valor),
    booleano de destaque, stack ordenada e a lista de capturas 16:9 com `alt`; a ordem do array no
-   JSON é a "ordem do conteúdo" usada no desempate (igual nos três idiomas).
+   JSON é a "ordem do conteúdo" (igual nos três idiomas); o desempate dos destaques é por título
+   A–Z e depois `id` (D53).
 5. Uma consulta leve de projetos para listagens (sem documentos markdown nem galeria completa),
    para o Início não baixar o detalhe de todos (NF-DA-05, NF-DE-15): os destaques vêm de
    `GET /projects?featured=true&sort=recent&limit=4` (D51), com o desempate por título de D53.

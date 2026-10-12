@@ -360,7 +360,7 @@ tela cheia por media query, rolagem travada).
 - [ ] `RF-ABOUT-12` — "Como eu trabalho" com as frases do conteúdo, na ordem do conteúdo [teste]
 - [ ] `RF-ABOUT-13` — Trajetória com instrução e os três grupos de `Timeline.groups` na ordem Experiências profissionais, Formações e Cursos, grupo vazio escondido, cada um com `h3`, contagem e `ul`, nos três idiomas, sem chave no lugar de texto [teste]
 - [ ] `RF-ABOUT-14` — Itens na ordem de `GET /timeline`; a regra (em curso primeiro, depois encerrados por fim e início mais recentes, empate total na ordem do conteúdo) num teste da camada local (#13) [teste]
-- [ ] `RF-ABOUT-15` — Item é `button` com `type="button"`, `aria-haspopup="dialog"`, alvo de 44px, destaque e linha de detalhes pelo `kind` (formação destaca a instituição), selo "Atual" quando não há fim e período abaixo do título em menos de 640px [teste] [e2e] [medição]
+- [ ] `RF-ABOUT-15` — Item é `button` com `type="button"`, `aria-haspopup="dialog"`, alvo de 44px, destaque e linha de detalhes pelo `kind` (formação destaca a instituição), selo "Atual" quando não há fim e período abaixo do destaque em menos de 640px [teste] [e2e] [medição]
 - [ ] `RF-ABOUT-16` — Período em `MM/AAAA` por `Intl.DateTimeFormat` dentro de `<time datetime>`, "MM/AAAA – MM/AAAA" ou "desde MM/AAAA" com o selo à parte; teste da função pura nos três idiomas [teste]
 - [ ] `RF-ABOUT-17` — Modal em `role="dialog"`, `aria-modal="true"`, `aria-labelledby` no título, cabeçalho com metadados e "Fechar" de 44px com nome por chave, nos três idiomas [teste]
 - [ ] `RF-ABOUT-18` — Corpo na ordem resumo, responsabilidades ou disciplinas, tecnologias, certificados e projetos; bloco sem itens some com o rótulo [teste]
