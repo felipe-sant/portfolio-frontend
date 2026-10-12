@@ -1,12 +1,10 @@
 import { vi } from "vitest"
+import publicUrl from "@/services/content/publicUrl"
 
 function stripBase(url: string): string {
-    const base = import.meta.env.BASE_URL
-    const normalizedBase = base.endsWith("/") ? base : `${base}/`
+    const base = publicUrl("")
 
-    return url.startsWith(normalizedBase)
-        ? url.slice(normalizedBase.length)
-        : url.replace(/^\/+/, "")
+    return url.startsWith(base) ? url.slice(base.length) : url.replace(/^\/+/, "")
 }
 
 function stubContentFetch(files: Record<string, unknown>) {
