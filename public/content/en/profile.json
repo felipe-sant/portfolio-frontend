@@ -1,0 +1,48 @@
+{
+    "role": "Full stack developer",
+    "homeIntro": "I work on web products end to end, from the database to the interface. Here are sample projects that show how I solve problems.",
+    "summary": "Full stack developer working with TypeScript, studying Systems Analysis and Development.",
+    "location": {
+        "city": "São José dos Campos",
+        "region": "SP",
+        "countryCode": "BR",
+        "detail": "Remote or hybrid in the region"
+    },
+    "availability": { "isAvailable": true, "label": "Available for new projects" },
+    "photo": {
+        "large": { "src": "images/profile/photo-large.webp", "width": 800, "height": 800 },
+        "small": { "src": "images/profile/photo-small.webp", "width": 320, "height": 320 }
+    },
+    "aboutParagraphs": [
+        "I started programming in a technical course and never stopped. I like to understand the problem before choosing the tool.",
+        "Today I mainly work with TypeScript, React and Node.js, and I study software engineering at college."
+    ],
+    "workPrinciples": [
+        "I write the test together with the code",
+        "I prefer to deliver small and early",
+        "I document the decisions that are not obvious"
+    ],
+    "stack": [
+        {
+            "category": "frontend",
+            "items": [
+                { "name": "TypeScript", "isPrimary": true },
+                { "name": "React" },
+                { "name": "CSS Modules" }
+            ]
+        },
+        { "category": "backend", "items": [{ "name": "Node.js" }, { "name": "PostgreSQL" }] },
+        {
+            "category": "tooling",
+            "items": [{ "name": "Docker" }, { "name": "GitHub Actions" }, { "name": "Vitest" }]
+        }
+    ],
+    "contact": {
+        "email": "contato@example.com",
+        "responseTime": { "label": "Within 1 business day", "detail": "GMT-3 time zone" }
+    },
+    "links": {
+        "github": "https://github.com/example",
+        "linkedin": "https://www.linkedin.com/in/example"
+    }
+}

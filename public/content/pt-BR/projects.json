@@ -1,0 +1,703 @@
+{
+    "items": [
+        {
+            "id": "01a13107-7699-73d4-8e74-d2595a05bb59",
+            "title": "Mapa da cidade",
+            "summary": "Mapa colaborativo de pontos de interesse da cidade, com rotas e filtros por categoria.",
+            "date": "2026-03",
+            "types": ["web", "api"],
+            "category": "personal",
+            "featured": true,
+            "cardTechnologies": ["React", "PostGIS", "Node.js"],
+            "role": "Full stack",
+            "duration": "4 meses",
+            "team": "Sozinho",
+            "status": "inDevelopment",
+            "stack": [
+                {
+                    "category": "frontend",
+                    "items": [
+                        { "name": "React" },
+                        { "name": "TypeScript", "isProgrammingLanguage": true }
+                    ]
+                },
+                { "category": "backend", "items": [{ "name": "Node.js" }, { "name": "PostGIS" }] },
+                { "category": "tooling", "items": [{ "name": "Docker" }] }
+            ],
+            "demoUrl": "https://map.example.com",
+            "repositoryUrl": "https://github.com/example/city-map",
+            "images": [
+                {
+                    "large": {
+                        "src": "images/projects/01a13107-7699-73d4-8e74-d2595a05bb59/1-large.webp",
+                        "width": 1600,
+                        "height": 900
+                    },
+                    "small": {
+                        "src": "images/projects/01a13107-7699-73d4-8e74-d2595a05bb59/1-small.webp",
+                        "width": 640,
+                        "height": 360
+                    },
+                    "alt": "Mapa da cidade: tela inicial",
+                    "caption": "Visão geral"
+                },
+                {
+                    "large": {
+                        "src": "images/projects/01a13107-7699-73d4-8e74-d2595a05bb59/2-large.webp",
+                        "width": 1600,
+                        "height": 900
+                    },
+                    "small": {
+                        "src": "images/projects/01a13107-7699-73d4-8e74-d2595a05bb59/2-small.webp",
+                        "width": 640,
+                        "height": 360
+                    },
+                    "alt": "Mapa da cidade: lista de resultados"
+                },
+                {
+                    "large": {
+                        "src": "images/projects/01a13107-7699-73d4-8e74-d2595a05bb59/3-large.webp",
+                        "width": 1600,
+                        "height": 900
+                    },
+                    "small": {
+                        "src": "images/projects/01a13107-7699-73d4-8e74-d2595a05bb59/3-small.webp",
+                        "width": 640,
+                        "height": 360
+                    },
+                    "alt": "Mapa da cidade: filtros abertos",
+                    "caption": "Detalhe"
+                },
+                {
+                    "large": {
+                        "src": "images/projects/01a13107-7699-73d4-8e74-d2595a05bb59/4-large.webp",
+                        "width": 1600,
+                        "height": 900
+                    },
+                    "small": {
+                        "src": "images/projects/01a13107-7699-73d4-8e74-d2595a05bb59/4-small.webp",
+                        "width": 640,
+                        "height": 360
+                    },
+                    "alt": "Mapa da cidade: detalhe de um item"
+                },
+                {
+                    "large": {
+                        "src": "images/projects/01a13107-7699-73d4-8e74-d2595a05bb59/5-large.webp",
+                        "width": 1600,
+                        "height": 900
+                    },
+                    "small": {
+                        "src": "images/projects/01a13107-7699-73d4-8e74-d2595a05bb59/5-small.webp",
+                        "width": 640,
+                        "height": 360
+                    },
+                    "alt": "Mapa da cidade: configurações"
+                }
+            ],
+            "documents": [
+                {
+                    "id": "01a13107-769a-7ed0-860b-764c14bd429d",
+                    "name": "README.md",
+                    "format": "markdown",
+                    "translated": true,
+                    "updatedAt": "2026-09-30"
+                },
+                {
+                    "id": "01a13107-769a-7373-985f-0fca62731754",
+                    "name": "SETUP.md",
+                    "format": "markdown",
+                    "translated": true
+                },
+                {
+                    "id": "01a13107-769a-7525-88e6-570073c9d3ed",
+                    "name": "CHANGELOG.md",
+                    "format": "markdown",
+                    "translated": true,
+                    "updatedAt": "2026-09-30"
+                }
+            ],
+            "related": [
+                {
+                    "id": "01a13107-7699-72c5-a7a5-a5ddd278d026",
+                    "reason": "Também usa Node.js e TypeScript na API"
+                },
+                {
+                    "id": "01a13107-769a-7a65-b444-648f90c8b59f",
+                    "reason": "Usa a biblioteca de componentes na interface"
+                },
+                {
+                    "id": "01a13107-769a-705f-982a-80e17622b5a7",
+                    "reason": "Gera relatórios a partir dos pontos cadastrados"
+                }
+            ],
+            "updatedAt": "2026-09-30"
+        },
+        {
+            "id": "01a13107-7699-72c5-a7a5-a5ddd278d026",
+            "title": "Check-in de eventos",
+            "summary": "Aplicativo de check-in por QR code para eventos acadêmicos, com lista de presença em tempo real.",
+            "date": "2025-09",
+            "types": ["mobile", "api"],
+            "category": "academic",
+            "featured": true,
+            "cardTechnologies": ["React Native", "Node.js"],
+            "role": "Full stack",
+            "duration": "3 meses",
+            "team": "3 pessoas",
+            "status": "completed",
+            "stack": [
+                {
+                    "category": "frontend",
+                    "items": [
+                        { "name": "React Native" },
+                        { "name": "TypeScript", "isProgrammingLanguage": true }
+                    ]
+                },
+                { "category": "backend", "items": [{ "name": "Node.js" }] }
+            ],
+            "repositoryUrl": "https://github.com/example/event-check-in",
+            "images": [
+                {
+                    "large": {
+                        "src": "images/projects/01a13107-7699-72c5-a7a5-a5ddd278d026/1-large.webp",
+                        "width": 1600,
+                        "height": 900
+                    },
+                    "small": {
+                        "src": "images/projects/01a13107-7699-72c5-a7a5-a5ddd278d026/1-small.webp",
+                        "width": 640,
+                        "height": 360
+                    },
+                    "alt": "Check-in de eventos: tela inicial",
+                    "caption": "Visão geral"
+                },
+                {
+                    "large": {
+                        "src": "images/projects/01a13107-7699-72c5-a7a5-a5ddd278d026/2-large.webp",
+                        "width": 1600,
+                        "height": 900
+                    },
+                    "small": {
+                        "src": "images/projects/01a13107-7699-72c5-a7a5-a5ddd278d026/2-small.webp",
+                        "width": 640,
+                        "height": 360
+                    },
+                    "alt": "Check-in de eventos: lista de resultados"
+                }
+            ],
+            "documents": [
+                {
+                    "id": "01a13107-769a-7b85-94fa-ec7ef479f973",
+                    "name": "README.md",
+                    "format": "markdown",
+                    "translated": true
+                }
+            ],
+            "related": [
+                {
+                    "id": "01a13107-7699-73d4-8e74-d2595a05bb59",
+                    "reason": "Também usa Node.js e TypeScript na API"
+                }
+            ]
+        },
+        {
+            "id": "01a13107-769a-7a65-b444-648f90c8b59f",
+            "title": "Catálogo de componentes",
+            "summary": "Biblioteca de componentes de interface com documentação viva e testes de acessibilidade.",
+            "date": "2025-11",
+            "types": ["library"],
+            "category": "academic",
+            "featured": true,
+            "cardTechnologies": ["React", "Storybook"],
+            "role": "Frontend",
+            "duration": "2 meses",
+            "team": "2 pessoas",
+            "status": "completed",
+            "stack": [
+                {
+                    "category": "frontend",
+                    "items": [
+                        { "name": "React" },
+                        { "name": "TypeScript", "isProgrammingLanguage": true },
+                        { "name": "Storybook" }
+                    ]
+                }
+            ],
+            "demoUrl": "https://components.example.com",
+            "images": [],
+            "documents": [
+                {
+                    "id": "01a13107-769a-76d4-9af3-614826623d4f",
+                    "name": "README.md",
+                    "format": "markdown",
+                    "translated": true
+                }
+            ],
+            "related": [],
+            "updatedAt": "2026-01-15"
+        },
+        {
+            "id": "01a13107-769a-731e-b52a-d7762b3e2adf",
+            "title": "Painel de vendas",
+            "summary": "Painel com indicadores de vendas por região e período, alimentado por planilhas mensais.",
+            "date": "2025-09",
+            "types": ["data"],
+            "category": "professional",
+            "featured": true,
+            "cardTechnologies": ["Python", "Pandas", "Chart.js"],
+            "role": "Dados",
+            "duration": "2 meses",
+            "team": "Sozinho",
+            "status": "completed",
+            "stack": [
+                { "category": "frontend", "items": [{ "name": "Chart.js" }] },
+                {
+                    "category": "backend",
+                    "items": [
+                        { "name": "Python", "isProgrammingLanguage": true },
+                        { "name": "Pandas" },
+                        { "name": "PostgreSQL" }
+                    ]
+                },
+                { "category": "tooling", "items": [{ "name": "Docker" }] }
+            ],
+            "images": [
+                {
+                    "large": {
+                        "src": "images/projects/01a13107-769a-731e-b52a-d7762b3e2adf/1-large.webp",
+                        "width": 1600,
+                        "height": 900
+                    },
+                    "small": {
+                        "src": "images/projects/01a13107-769a-731e-b52a-d7762b3e2adf/1-small.webp",
+                        "width": 640,
+                        "height": 360
+                    },
+                    "alt": "Painel de vendas: tela inicial",
+                    "caption": "Visão geral"
+                }
+            ],
+            "documents": [
+                {
+                    "id": "01a13107-769a-7ecf-81a8-042f2e0285eb",
+                    "name": "README.md",
+                    "format": "markdown",
+                    "translated": true
+                }
+            ],
+            "related": []
+        },
+        {
+            "id": "01a13107-769a-705f-982a-80e17622b5a7",
+            "title": "Gerador de relatórios",
+            "summary": "Ferramenta de linha de comando que gera relatórios em PDF e CSV a partir de arquivos de dados.",
+            "date": "2025-06",
+            "types": ["cli"],
+            "category": "professional",
+            "featured": false,
+            "cardTechnologies": ["Node.js", "TypeScript"],
+            "role": "Backend",
+            "duration": "1 mês",
+            "team": "Sozinho",
+            "status": "discontinued",
+            "stack": [
+                {
+                    "category": "backend",
+                    "items": [
+                        { "name": "Node.js" },
+                        { "name": "TypeScript", "isProgrammingLanguage": true },
+                        { "name": "Commander" }
+                    ]
+                }
+            ],
+            "repositoryUrl": "https://github.com/example/report-generator",
+            "images": [],
+            "documents": [
+                {
+                    "id": "01a13107-769a-79d3-a6ce-23978df2c615",
+                    "name": "README.md",
+                    "format": "markdown",
+                    "translated": true
+                },
+                {
+                    "id": "01a13107-769a-70ce-aebc-7c4774b082d6",
+                    "name": "LICENSE",
+                    "format": "text",
+                    "translated": false,
+                    "contentLanguage": "en"
+                },
+                {
+                    "id": "01a13107-769a-7dd1-86df-626ba47f17af",
+                    "name": "settings.json",
+                    "format": "text",
+                    "translated": false
+                }
+            ],
+            "related": []
+        },
+        {
+            "id": "01a13107-769a-7731-addd-ec7576eaadbd",
+            "title": "Agenda de consultas",
+            "summary": "Sistema de agendamento de consultas com confirmação por e-mail e painel para a recepção.",
+            "date": "2025-02",
+            "types": ["web"],
+            "category": "professional",
+            "featured": false,
+            "cardTechnologies": ["React", "Spring Boot", "PostgreSQL"],
+            "role": "Full stack",
+            "duration": "5 meses",
+            "team": "3 pessoas",
+            "status": "completed",
+            "stack": [
+                {
+                    "category": "frontend",
+                    "items": [
+                        { "name": "React" },
+                        { "name": "TypeScript", "isProgrammingLanguage": true }
+                    ]
+                },
+                {
+                    "category": "backend",
+                    "items": [
+                        { "name": "Java", "isProgrammingLanguage": true },
+                        { "name": "Spring Boot" },
+                        { "name": "PostgreSQL" }
+                    ]
+                },
+                {
+                    "category": "tooling",
+                    "items": [{ "name": "Docker" }, { "name": "GitHub Actions" }]
+                }
+            ],
+            "demoUrl": "https://scheduler.example.com",
+            "repositoryUrl": "https://github.com/example/appointment-scheduler",
+            "images": [
+                {
+                    "large": {
+                        "src": "images/projects/01a13107-769a-7731-addd-ec7576eaadbd/1-large.webp",
+                        "width": 1600,
+                        "height": 900
+                    },
+                    "small": {
+                        "src": "images/projects/01a13107-769a-7731-addd-ec7576eaadbd/1-small.webp",
+                        "width": 640,
+                        "height": 360
+                    },
+                    "alt": "Agenda de consultas: tela inicial",
+                    "caption": "Visão geral"
+                },
+                {
+                    "large": {
+                        "src": "images/projects/01a13107-769a-7731-addd-ec7576eaadbd/2-large.webp",
+                        "width": 1600,
+                        "height": 900
+                    },
+                    "small": {
+                        "src": "images/projects/01a13107-769a-7731-addd-ec7576eaadbd/2-small.webp",
+                        "width": 640,
+                        "height": 360
+                    },
+                    "alt": "Agenda de consultas: lista de resultados"
+                }
+            ],
+            "documents": [
+                {
+                    "id": "01a13107-769a-70a7-bc56-bc3e32f896e6",
+                    "name": "README.md",
+                    "format": "markdown",
+                    "translated": true
+                }
+            ],
+            "related": [
+                {
+                    "id": "01a13107-769a-78bd-9fcd-21c9cf01ce35",
+                    "reason": "Mesmo tipo de sistema de gestão"
+                }
+            ]
+        },
+        {
+            "id": "01a13107-769a-7237-86d3-faabbbd8486c",
+            "title": "Álbum de receitas",
+            "summary": "Aplicativo para guardar receitas com fotos, ingredientes e lista de compras.",
+            "date": "2024-11",
+            "types": ["mobile"],
+            "category": "personal",
+            "featured": false,
+            "cardTechnologies": ["Kotlin", "Jetpack Compose"],
+            "role": "Full stack",
+            "duration": "3 meses",
+            "team": "Sozinho",
+            "status": "inDevelopment",
+            "stack": [
+                {
+                    "category": "frontend",
+                    "items": [
+                        { "name": "Kotlin", "isProgrammingLanguage": true },
+                        { "name": "Jetpack Compose" },
+                        { "name": "Room" }
+                    ]
+                }
+            ],
+            "images": [
+                {
+                    "large": {
+                        "src": "images/projects/01a13107-769a-7237-86d3-faabbbd8486c/1-large.webp",
+                        "width": 1600,
+                        "height": 900
+                    },
+                    "small": {
+                        "src": "images/projects/01a13107-769a-7237-86d3-faabbbd8486c/1-small.webp",
+                        "width": 640,
+                        "height": 360
+                    },
+                    "alt": "Álbum de receitas: tela inicial",
+                    "caption": "Visão geral"
+                }
+            ],
+            "documents": [
+                {
+                    "id": "01a13107-769a-77c0-8772-850df9c9aa6a",
+                    "name": "README.md",
+                    "format": "markdown",
+                    "translated": true
+                }
+            ],
+            "related": []
+        },
+        {
+            "id": "01a13107-769a-7517-abd9-88b54f8f8fea",
+            "title": "API de pagamentos",
+            "summary": "API REST para registrar cobranças e conciliar pagamentos, com filas e reprocessamento.",
+            "date": "2024-08",
+            "types": ["api"],
+            "category": "professional",
+            "featured": false,
+            "cardTechnologies": ["Go", "PostgreSQL"],
+            "role": "Backend",
+            "duration": "4 meses",
+            "team": "Sozinho",
+            "status": "completed",
+            "stack": [
+                {
+                    "category": "backend",
+                    "items": [
+                        { "name": "Go", "isProgrammingLanguage": true },
+                        { "name": "PostgreSQL" },
+                        { "name": "Redis" }
+                    ]
+                },
+                { "category": "tooling", "items": [{ "name": "Docker" }] }
+            ],
+            "repositoryUrl": "https://github.com/example/payments-api",
+            "images": [],
+            "documents": [
+                {
+                    "id": "01a13107-769a-77b5-a651-9890b13a8a60",
+                    "name": "README.md",
+                    "format": "markdown",
+                    "translated": true
+                }
+            ],
+            "related": []
+        },
+        {
+            "id": "01a13107-769a-7af4-9c1c-0c9e832bd30c",
+            "title": "Biblioteca de validação",
+            "summary": "Biblioteca TypeScript para validar formulários com mensagens traduzidas e tipos inferidos.",
+            "date": "2024-05",
+            "types": ["library"],
+            "category": "personal",
+            "featured": false,
+            "cardTechnologies": ["TypeScript", "Vitest"],
+            "role": "Full stack",
+            "duration": "2 meses",
+            "team": "Sozinho",
+            "status": "completed",
+            "stack": [
+                {
+                    "category": "frontend",
+                    "items": [{ "name": "TypeScript", "isProgrammingLanguage": true }]
+                },
+                { "category": "tooling", "items": [{ "name": "Vitest" }] }
+            ],
+            "repositoryUrl": "https://github.com/example/validation-library",
+            "images": [
+                {
+                    "large": {
+                        "src": "images/projects/01a13107-769a-7af4-9c1c-0c9e832bd30c/1-large.webp",
+                        "width": 1600,
+                        "height": 900
+                    },
+                    "small": {
+                        "src": "images/projects/01a13107-769a-7af4-9c1c-0c9e832bd30c/1-small.webp",
+                        "width": 640,
+                        "height": 360
+                    },
+                    "alt": "Biblioteca de validação: tela inicial",
+                    "caption": "Visão geral"
+                }
+            ],
+            "documents": [
+                {
+                    "id": "01a13107-769a-78c0-8db3-99ce58e872d4",
+                    "name": "README.md",
+                    "format": "markdown",
+                    "translated": true
+                }
+            ],
+            "related": []
+        },
+        {
+            "id": "01a13107-769a-7677-a32c-9fde9ff5b58d",
+            "title": "Previsão de demanda",
+            "summary": "Modelo de previsão de demanda semanal de produtos, com avaliação dos erros por categoria.",
+            "date": "2024-01",
+            "types": ["data"],
+            "category": "academic",
+            "featured": false,
+            "cardTechnologies": ["Python", "scikit-learn"],
+            "role": "Dados",
+            "duration": "6 meses",
+            "team": "Sozinho",
+            "status": "completed",
+            "stack": [
+                {
+                    "category": "backend",
+                    "items": [
+                        { "name": "Python", "isProgrammingLanguage": true },
+                        { "name": "scikit-learn" },
+                        { "name": "Pandas" }
+                    ]
+                },
+                { "category": "tooling", "items": [{ "name": "Jupyter" }] }
+            ],
+            "images": [
+                {
+                    "large": {
+                        "src": "images/projects/01a13107-769a-7677-a32c-9fde9ff5b58d/1-large.webp",
+                        "width": 1600,
+                        "height": 900
+                    },
+                    "small": {
+                        "src": "images/projects/01a13107-769a-7677-a32c-9fde9ff5b58d/1-small.webp",
+                        "width": 640,
+                        "height": 360
+                    },
+                    "alt": "Previsão de demanda: tela inicial",
+                    "caption": "Visão geral"
+                },
+                {
+                    "large": {
+                        "src": "images/projects/01a13107-769a-7677-a32c-9fde9ff5b58d/2-large.webp",
+                        "width": 1600,
+                        "height": 900
+                    },
+                    "small": {
+                        "src": "images/projects/01a13107-769a-7677-a32c-9fde9ff5b58d/2-small.webp",
+                        "width": 640,
+                        "height": 360
+                    },
+                    "alt": "Previsão de demanda: lista de resultados"
+                }
+            ],
+            "documents": [
+                {
+                    "id": "01a13107-769a-7598-af8e-b9d8aacaefe0",
+                    "name": "README.md",
+                    "format": "markdown",
+                    "translated": true
+                }
+            ],
+            "related": []
+        },
+        {
+            "id": "01a13107-769a-78bd-9fcd-21c9cf01ce35",
+            "title": "Controle de estoque",
+            "summary": "Sistema web de controle de estoque com entradas, saídas e alertas de nível mínimo.",
+            "date": "2023-09",
+            "types": ["web"],
+            "category": "academic",
+            "featured": false,
+            "cardTechnologies": ["Angular", "C#"],
+            "role": "Full stack",
+            "duration": "5 meses",
+            "team": "3 pessoas",
+            "status": "completed",
+            "stack": [
+                {
+                    "category": "frontend",
+                    "items": [
+                        { "name": "Angular" },
+                        { "name": "TypeScript", "isProgrammingLanguage": true }
+                    ]
+                },
+                {
+                    "category": "backend",
+                    "items": [
+                        { "name": "C#", "isProgrammingLanguage": true },
+                        { "name": "SQL Server" }
+                    ]
+                }
+            ],
+            "demoUrl": "https://inventory.example.com",
+            "images": [
+                {
+                    "large": {
+                        "src": "images/projects/01a13107-769a-78bd-9fcd-21c9cf01ce35/1-large.webp",
+                        "width": 1600,
+                        "height": 900
+                    },
+                    "small": {
+                        "src": "images/projects/01a13107-769a-78bd-9fcd-21c9cf01ce35/1-small.webp",
+                        "width": 640,
+                        "height": 360
+                    },
+                    "alt": "Controle de estoque: tela inicial",
+                    "caption": "Visão geral"
+                }
+            ],
+            "documents": [
+                {
+                    "id": "01a13107-769a-75ca-a568-f0bdf72bf402",
+                    "name": "README.md",
+                    "format": "markdown",
+                    "translated": true
+                }
+            ],
+            "related": []
+        },
+        {
+            "id": "01a13107-769a-75af-916d-b66296964ac7",
+            "title": "Monitor de pedidos",
+            "summary": "Ferramenta de terminal que acompanha o status dos pedidos e avisa quando algum atrasa.",
+            "date": "2023-06",
+            "types": ["cli"],
+            "category": "professional",
+            "featured": false,
+            "cardTechnologies": ["Go"],
+            "role": "Backend",
+            "duration": "1 mês",
+            "team": "Sozinho",
+            "status": "completed",
+            "stack": [
+                {
+                    "category": "backend",
+                    "items": [{ "name": "Go", "isProgrammingLanguage": true }]
+                },
+                { "category": "tooling", "items": [{ "name": "Docker" }] }
+            ],
+            "repositoryUrl": "https://github.com/example/order-monitor",
+            "images": [],
+            "documents": [
+                {
+                    "id": "01a13107-769a-74cf-87ac-8c444cff5b2c",
+                    "name": "README.md",
+                    "format": "markdown",
+                    "translated": true
+                }
+            ],
+            "related": []
+        }
+    ]
+}

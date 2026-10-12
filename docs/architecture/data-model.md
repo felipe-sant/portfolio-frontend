@@ -599,23 +599,28 @@ Os idiomas de `src/i18n/supportedLanguages.ts`, valores de `lang` e de `ContactM
 `disciplines`, `technologies`, `certificates` e `projectIds` de cada item, `details` e
 `cardTechnologies`.
 
-## Tipos previstos para a #13
+## Tipos em `src/types/`
 
-Sugestão de onde cada tipo vive em `src/types/`, um tipo por arquivo
-(`src/types/<dominio>/<Nome>.types.ts`, `.claude/CLAUDE.md`); a #13 decide os domínios.
+Um tipo por arquivo (`src/types/<dominio>/<Nome>.types.ts`, `.claude/CLAUDE.md`). Os enums viram
+constante com a lista na ordem deste documento, em `src/services/content/` (`PROJECT_TYPES`,
+`PROJECT_CATEGORIES`, `PROJECT_STATUSES`, `STACK_CATEGORIES`, `TIMELINE_KINDS`, `DOCUMENT_FORMATS` e
+`PROJECT_SORTS`), e o tipo é derivado da constante.
 
-| Domínio    | Tipos                                                                                                                                                                                                          |
-| ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `profile`  | `Profile`, `Availability`, `Location`, `ContactChannels`, `SocialLinks`, `ResponseTime`                                                                                                                        |
-| `content`  | `ImageAsset`, `ResponsiveImage`, `StackGroup`, `StackItem`, `StackCategory`                                                                                                                                    |
-| `timeline` | `TimelineItem`, `TimelineKind`, `TimelineGroup`, `Timeline`, `CurrentTimeline`, `Certificate`, `TimelineProjectRef`                                                                                            |
-| `project`  | `ProjectSummary`, `ProjectDetail`, `ProjectImage`, `RelatedProject`, `ProjectPage`, `ProjectListParams`, `ProjectType`, `ProjectCategory`, `ProjectStatus`, `ProjectDocument`, `DocumentFormat`, `ProjectSort` |
-| `contact`  | `ContactMessage`, `ContactSubject`                                                                                                                                                                             |
-| `api`      | `ApiError` (o corpo de [Formato de erro](api-contract.md#formato-de-erro)) e `ListResponse` (o envelope `{ items }`)                                                                                           |
+| Domínio    | Tipos                                                                                                                                                                                                                                                                                                   |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `profile`  | `Profile`, `Availability`, `Location`, `ContactChannels`, `SocialLinks`, `ResponseTime`                                                                                                                                                                                                                 |
+| `content`  | `ImageAsset`, `ResponsiveImage`, `StackGroup`, `StackItem`, `StackCategory`, mais `ContentIssue`, `ContentSnapshot`, `LanguageContent` e `ContentTemplate` (validação e modelo em branco)                                                                                                               |
+| `timeline` | `TimelineItem`, `TimelineItemRecord` (forma guardada, com `projectIds`), `TimelineKind`, `TimelineGroup`, `Timeline`, `CurrentTimeline`, `Certificate`, `TimelineProjectRef`                                                                                                                            |
+| `project`  | `ProjectSummary`, `ProjectDetail`, `ProjectRecord` (forma guardada), `RelatedProjectRecord`, `ProjectImage`, `RelatedProject`, `ProjectPage`, `ProjectListParams`, `NormalizedProjectListParams`, `ProjectType`, `ProjectCategory`, `ProjectStatus`, `ProjectDocument`, `DocumentFormat`, `ProjectSort` |
+| `api`      | `ApiError` (o corpo de [Formato de erro](api-contract.md#formato-de-erro)), `ContentError` (`status` e `ApiError`, o erro que o `queryFn` devolve) e `ListResponse` (o envelope `{ items }`)                                                                                                            |
 
 `ProjectListParams` são os parâmetros de `GET /projects` (`lang`, `q`, `type`, `category`,
 `featured`, `sort`, `offset`, `limit`, [`api-contract.md`](api-contract.md#get-projects)).
-`SupportedLanguage` já existe em `src/types/language/`.
+`SupportedLanguage` já existe em `src/types/language/`. `ContactMessage` e `ContactSubject` ainda
+não existem: nascem com a tela de Contato (#38), porque nada os usa antes.
+
+A seção [Validação do conteúdo](#validação-do-conteúdo) está implementada em
+`src/services/content/validation/` e roda por `npm run content:check`.
 
 ## Mapeamento do handoff
 

@@ -1,0 +1,64 @@
+{
+    "items": [
+        {
+            "id": "",
+            "title": "",
+            "summary": "",
+            "date": "",
+            "types": ["web"],
+            "category": "academic",
+            "featured": false,
+            "cardTechnologies": [""],
+            "role": "",
+            "duration": "",
+            "team": "",
+            "status": "inDevelopment",
+            "stack": [
+                {
+                    "category": "frontend",
+                    "items": [
+                        {
+                            "name": "",
+                            "isProgrammingLanguage": false
+                        }
+                    ]
+                }
+            ],
+            "demoUrl": "",
+            "repositoryUrl": "",
+            "images": [
+                {
+                    "large": {
+                        "src": "",
+                        "width": 0,
+                        "height": 0
+                    },
+                    "small": {
+                        "src": "",
+                        "width": 0,
+                        "height": 0
+                    },
+                    "alt": "",
+                    "caption": ""
+                }
+            ],
+            "documents": [
+                {
+                    "id": "",
+                    "name": "README.md",
+                    "format": "markdown",
+                    "translated": true,
+                    "contentLanguage": "en",
+                    "updatedAt": ""
+                }
+            ],
+            "related": [
+                {
+                    "id": "",
+                    "reason": ""
+                }
+            ],
+            "updatedAt": ""
+        }
+    ]
+}

@@ -1,0 +1,48 @@
+{
+    "role": "Desenvolvedor full stack",
+    "homeIntro": "Trabalho em produtos web de ponta a ponta, do banco de dados à interface. Aqui estão projetos de exemplo que mostram como resolvo problemas.",
+    "summary": "Desenvolvedor full stack em TypeScript, estudante de Análise e Desenvolvimento de Sistemas.",
+    "location": {
+        "city": "São José dos Campos",
+        "region": "SP",
+        "countryCode": "BR",
+        "detail": "Remoto ou híbrido na região"
+    },
+    "availability": { "isAvailable": true, "label": "Disponível para novos projetos" },
+    "photo": {
+        "large": { "src": "images/profile/photo-large.webp", "width": 800, "height": 800 },
+        "small": { "src": "images/profile/photo-small.webp", "width": 320, "height": 320 }
+    },
+    "aboutParagraphs": [
+        "Comecei a programar no curso técnico e não parei mais. Gosto de entender o problema antes de escolher a ferramenta.",
+        "Hoje trabalho principalmente com TypeScript, React e Node.js, e estudo engenharia de software na faculdade."
+    ],
+    "workPrinciples": [
+        "Escrevo o teste junto com o código",
+        "Prefiro entregar pequeno e cedo",
+        "Documento as decisões que não são óbvias"
+    ],
+    "stack": [
+        {
+            "category": "frontend",
+            "items": [
+                { "name": "TypeScript", "isPrimary": true },
+                { "name": "React" },
+                { "name": "CSS Modules" }
+            ]
+        },
+        { "category": "backend", "items": [{ "name": "Node.js" }, { "name": "PostgreSQL" }] },
+        {
+            "category": "tooling",
+            "items": [{ "name": "Docker" }, { "name": "GitHub Actions" }, { "name": "Vitest" }]
+        }
+    ],
+    "contact": {
+        "email": "contato@example.com",
+        "responseTime": { "label": "Em até 1 dia útil", "detail": "Fuso GMT-3" }
+    },
+    "links": {
+        "github": "https://github.com/example",
+        "linkedin": "https://www.linkedin.com/in/example"
+    }
+}

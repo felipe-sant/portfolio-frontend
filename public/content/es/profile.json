@@ -1,0 +1,48 @@
+{
+    "role": "Desarrollador full stack",
+    "homeIntro": "Trabajo en productos web de punta a punta, desde la base de datos hasta la interfaz. Aquí hay proyectos de ejemplo que muestran cómo resuelvo problemas.",
+    "summary": "Desarrollador full stack en TypeScript, estudiante de Análisis y Desarrollo de Sistemas.",
+    "location": {
+        "city": "São José dos Campos",
+        "region": "SP",
+        "countryCode": "BR",
+        "detail": "Remoto o híbrido en la región"
+    },
+    "availability": { "isAvailable": true, "label": "Disponible para nuevos proyectos" },
+    "photo": {
+        "large": { "src": "images/profile/photo-large.webp", "width": 800, "height": 800 },
+        "small": { "src": "images/profile/photo-small.webp", "width": 320, "height": 320 }
+    },
+    "aboutParagraphs": [
+        "Empecé a programar en un curso técnico y no paré más. Me gusta entender el problema antes de elegir la herramienta.",
+        "Hoy trabajo principalmente con TypeScript, React y Node.js, y estudio ingeniería de software en la facultad."
+    ],
+    "workPrinciples": [
+        "Escribo la prueba junto con el código",
+        "Prefiero entregar pequeño y temprano",
+        "Documento las decisiones que no son obvias"
+    ],
+    "stack": [
+        {
+            "category": "frontend",
+            "items": [
+                { "name": "TypeScript", "isPrimary": true },
+                { "name": "React" },
+                { "name": "CSS Modules" }
+            ]
+        },
+        { "category": "backend", "items": [{ "name": "Node.js" }, { "name": "PostgreSQL" }] },
+        {
+            "category": "tooling",
+            "items": [{ "name": "Docker" }, { "name": "GitHub Actions" }, { "name": "Vitest" }]
+        }
+    ],
+    "contact": {
+        "email": "contato@example.com",
+        "responseTime": { "label": "En hasta 1 día hábil", "detail": "Huso horario GMT-3" }
+    },
+    "links": {
+        "github": "https://github.com/example",
+        "linkedin": "https://www.linkedin.com/in/example"
+    }
+}
