@@ -14,8 +14,9 @@ API (#43) ser só a troca da origem. As entidades, os campos e as regras de cada
 
 - **Base:** todo caminho é relativo a `VITE_API_URL`, lida só em `src/services/http/apiUrl.ts`. O
   prefixo de versão, se o backend tiver um (`/v1`), fica dentro da variável, não nos caminhos.
-- **Formato:** JSON em UTF-8 (`application/json; charset=utf-8`), salvo os documentos do projeto,
-  em Markdown (`text/markdown; charset=utf-8`).
+- **Formato:** JSON em UTF-8 (`application/json; charset=utf-8`), salvo o conteúdo dos documentos
+  do projeto, em `text/markdown; charset=utf-8` ou `text/plain; charset=utf-8` conforme o `format`
+  (D55).
 - **Idioma do conteúdo:** toda leitura exige `lang` (`pt-BR`, `en` ou `es`) na query, e a resposta
   traz o conteúdo só nesse idioma, com `Content-Language` igual a ele
   ([`data-model.md`](data-model.md#tradução-do-conteúdo)). `lang` ausente ou fora da lista responde
@@ -65,7 +66,7 @@ Toda resposta de erro, salvo `503`, tem `Content-Type: application/json` e este 
 | 400    | `INVALID_PARAMETER`    | Parâmetro de query com valor inválido ou repetido (com `fields`)                         |
 | 400    | `INVALID_ID`           | `{id}` do caminho fora do formato UUID v7                                                |
 | 400    | `VALIDATION_FAILED`    | Corpo inválido em `POST /contact-messages` (com `fields`)                                |
-| 404    | `NOT_FOUND`            | Projeto inexistente, documento que o projeto não tem ou `{document}` fora do enum        |
+| 404    | `NOT_FOUND`            | Projeto inexistente ou documento que não existe no projeto                               |
 | 429    | `RATE_LIMITED`         | Limite de envios excedido; o header `Retry-After` diz em quantos segundos tentar de novo |
 | 500    | `INTERNAL_ERROR`       | Falha inesperada do servidor                                                             |
 | 503    | —                      | Serviço indisponível; o corpo não é garantido                                            |
@@ -78,15 +79,16 @@ válido e não pedem id fora do formato, um `400` em leitura indica defeito no c
 
 ## Endpoints
 
-| Endpoint                                                                | Devolve                                  | Quem usa                                                |
-| ----------------------------------------------------------------------- | ---------------------------------------- | ------------------------------------------------------- |
-| `GET /profile?lang=`                                                    | `Profile`                                | Rodapé, Início, Informações, Contato                    |
-| `GET /timeline?lang=`                                                   | `Timeline`                               | Informações                                             |
-| `GET /timeline?lang=&current=true`                                      | `CurrentTimeline`                        | Início (status atual)                                   |
-| `GET /projects?lang=&q=&type=&category=&featured=&sort=&offset=&limit=` | `ProjectPage`                            | Projetos, Início (destaques)                            |
-| `GET /projects/{id}?lang=`                                              | `ProjectDetail`, com `related` expandido | Projeto e metadados das rotas do projeto                |
-| `GET /projects/{id}/documents/{document}?lang=`                         | Markdown                                 | Documentos do projeto (D33)                             |
-| `POST /contact-messages`                                                | `202` sem corpo                          | Formulário de Contato (#44; simulado e desligado na v1) |
+| Endpoint                                                                | Devolve                                     | Quem usa                                                       |
+| ----------------------------------------------------------------------- | ------------------------------------------- | -------------------------------------------------------------- |
+| `GET /profile?lang=`                                                    | `Profile`                                   | Rodapé, Início, Informações, Contato                           |
+| `GET /timeline?lang=`                                                   | `Timeline`                                  | Informações                                                    |
+| `GET /timeline?lang=&current=true`                                      | `CurrentTimeline`                           | Início (status atual)                                          |
+| `GET /projects?lang=&q=&type=&category=&featured=&sort=&offset=&limit=` | `ProjectPage`                               | Projetos, Início (destaques)                                   |
+| `GET /projects/{id}?lang=`                                              | `ProjectDetail`, com `related` expandido    | Projeto e metadados das rotas do projeto                       |
+| `GET /projects/{id}/documents?lang=`                                    | `{ items: ProjectDocument[] }`              | Pré-renderização (#49), `sitemap.xml` e `llms-full*.txt` (#51) |
+| `GET /projects/{id}/documents/{documentId}?lang=`                       | Conteúdo em `text/markdown` ou `text/plain` | Documentos do projeto (D55)                                    |
+| `POST /contact-messages`                                                | `202` sem corpo                             | Formulário de Contato (#44; simulado e desligado na v1)        |
 
 Perfil e trajetória são endpoints separados porque Informações trata erro por fonte (RF-ABOUT-26) e
 o Início trata perfil e status atual de forma diferente (RF-HOME-24). A stack do site fica dentro do
@@ -589,8 +591,10 @@ O projeto inteiro, no idioma pedido, com os relacionados expandidos.
   `ProjectSummary` no `lang` pedido, na ordem do conteúdo (até três, RF-PROJECT-28). A tela não pede
   a lista de projetos para montar os relacionados (D51).
 - `technologies` e `cover` são montados de `stack` e de `images[0]`, como em `GET /projects`.
-- `documents` lista os documentos que o projeto tem, na ordem do enum; o conteúdo de cada um vem de
-  [`GET /projects/{id}/documents/{document}`](#get-projectsiddocumentsdocument).
+- `documents` traz a lista de documentos do projeto (D55), a mesma de
+  [`GET /projects/{id}/documents`](#get-projectsiddocuments), embutida para a navegação entre
+  documentos não depender de outro pedido; o conteúdo de cada um vem de
+  [`GET /projects/{id}/documents/{documentId}`](#get-projectsiddocumentsdocumentid).
 
 **Sucesso:** `200`, `application/json`, `Content-Language` igual a `lang`, corpo `ProjectDetail`.
 
@@ -668,7 +672,28 @@ O projeto inteiro, no idioma pedido, com os relacionados expandidos.
             "alt": "Rota traçada entre dois pontos, com tempo e distância estimados"
         }
     ],
-    "documents": ["readme", "architecture"],
+    "documents": [
+        {
+            "id": "0192f1d0-2b3c-7d4e-8f50-61728394a5b6",
+            "name": "README.md",
+            "format": "markdown",
+            "translated": true,
+            "updatedAt": "2026-09-30"
+        },
+        {
+            "id": "0192f1d0-4c5d-7e6f-9a01-b2c3d4e5f6a7",
+            "name": "SETUP.md",
+            "format": "markdown",
+            "translated": true
+        },
+        {
+            "id": "0192f1d0-6d7e-7f80-a1b2-c3d4e5f6a7b8",
+            "name": "LICENSE",
+            "format": "text",
+            "translated": false,
+            "contentLanguage": "en"
+        }
+    ],
     "related": [
         {
             "reason": "Mesma stack",
@@ -704,24 +729,93 @@ A tela de Projeto não pede `id` fora do formato: ela mostra a página não enco
 **Quem usa:** Projeto (RF-PROJECT-02 a RF-PROJECT-16, RF-PROJECT-28, RF-PROJECT-36), metadados e
 JSON-LD das rotas do projeto, pré-renderização (#49).
 
-### `GET /projects/{id}/documents/{document}`
+### `GET /projects/{id}/documents`
 
-Um documento do projeto, em Markdown, no idioma pedido (D33).
+A lista de documentos do projeto (D55), a mesma que vem em `ProjectDetail.documents`. Existe para
+quem precisa só da lista, como a pré-renderização (#49), o `sitemap.xml` e os `llms-full*.txt`
+(#51); a tela do projeto usa a lista embutida no detalhe.
 
 **Parâmetros**
 
-| Nome       | Onde    | Tipo                | Obrigatório | Padrão | Regra                                            |
-| ---------- | ------- | ------------------- | ----------- | ------ | ------------------------------------------------ |
-| `id`       | caminho | `string`            | Sim         | —      | UUID v7 do projeto                               |
-| `document` | caminho | `ProjectDocument`   | Sim         | —      | `readme`, `architecture`, `setup` ou `changelog` |
-| `lang`     | query   | `SupportedLanguage` | Sim         | —      | Idioma do conteúdo                               |
+| Nome   | Onde    | Tipo                | Obrigatório | Padrão | Regra              |
+| ------ | ------- | ------------------- | ----------- | ------ | ------------------ |
+| `id`   | caminho | `string`            | Sim         | —      | UUID v7 do projeto |
+| `lang` | query   | `SupportedLanguage` | Sim         | —      | Idioma do conteúdo |
 
-**Sucesso:** `200`, `text/markdown; charset=utf-8`, `Content-Language` igual a `lang`. O corpo é o
-documento em GFM (D50), começando em `##`, sem HTML, imagem nem nota de rodapé, com links entre
-projetos por `project:<id>` (D33); as regras de conteúdo estão em
-[`project.md`](../screens/project.md) (RF-PROJECT-21 a RF-PROJECT-27).
+**Regras:** `README.md` vem primeiro; os outros, na ordem do conteúdo. A lista é a mesma nos três
+idiomas (mesmos `id`, `name`, `format`, `translated` e `contentLanguage`).
 
-`GET /projects/0192f1a0-7c3e-7b21-8d4f-2a9e6c1b3f50/documents/readme?lang=pt-BR`
+**Sucesso:** `200`, `application/json`, `Content-Language` igual a `lang`, corpo
+`{ "items": ProjectDocument[] }`.
+
+`GET /projects/0192f1a0-7c3e-7b21-8d4f-2a9e6c1b3f50/documents?lang=pt-BR`
+
+```json
+{
+    "items": [
+        {
+            "id": "0192f1d0-2b3c-7d4e-8f50-61728394a5b6",
+            "name": "README.md",
+            "format": "markdown",
+            "translated": true,
+            "updatedAt": "2026-09-30"
+        },
+        {
+            "id": "0192f1d0-4c5d-7e6f-9a01-b2c3d4e5f6a7",
+            "name": "SETUP.md",
+            "format": "markdown",
+            "translated": true
+        },
+        {
+            "id": "0192f1d0-6d7e-7f80-a1b2-c3d4e5f6a7b8",
+            "name": "LICENSE",
+            "format": "text",
+            "translated": false,
+            "contentLanguage": "en"
+        }
+    ]
+}
+```
+
+**Erros**
+
+| Status | `code`                 | Quando                           |
+| ------ | ---------------------- | -------------------------------- |
+| 400    | `UNSUPPORTED_LANGUAGE` | `lang` ausente ou inválido       |
+| 400    | `INVALID_ID`           | `id` fora do formato UUID v7     |
+| 404    | `NOT_FOUND`            | Não existe projeto com esse `id` |
+| 500    | `INTERNAL_ERROR`       | Falha do servidor                |
+
+**Quem usa:** pré-renderização (#49), `sitemap.xml` e `llms-full*.txt` (#51).
+
+### `GET /projects/{id}/documents/{documentId}`
+
+O conteúdo de um documento do projeto (D55), no idioma pedido quando o documento é traduzido.
+
+**Parâmetros**
+
+| Nome         | Onde    | Tipo                | Obrigatório | Padrão | Regra                                                         |
+| ------------ | ------- | ------------------- | ----------- | ------ | ------------------------------------------------------------- |
+| `id`         | caminho | `string`            | Sim         | —      | UUID v7 do projeto                                            |
+| `documentId` | caminho | `string`            | Sim         | —      | UUID v7 do documento, de `ProjectDocument.id`                 |
+| `lang`       | query   | `SupportedLanguage` | Sim         | —      | Idioma do conteúdo; documento neutro devolve o mesmo conteúdo |
+
+A tela abre o documento pelo nome na URL (`/projects/:id/docs/SETUP.md`): ela acha o `id` pelo
+`name` em `ProjectDetail.documents` e pede o conteúdo pelo `id`. A API não busca documento por
+nome.
+
+**Sucesso:** `200`, corpo com o conteúdo do arquivo:
+
+- `format: "markdown"`: `text/markdown; charset=utf-8`. Documento em GFM (D50), começando em `##`,
+  sem HTML, imagem nem nota de rodapé, com links entre projetos por `project:<id>` ou
+  `project:<id>/docs/<name>`; as regras de conteúdo estão em [`project.md`](../screens/project.md)
+  (RF-PROJECT-21 a RF-PROJECT-27).
+- `format: "text"`: `text/plain; charset=utf-8`, devolvido como está, sem interpretação.
+- `Content-Language` igual a `lang` em documento traduzido; em documento neutro, igual a
+  `contentLanguage` quando houver, e ausente quando não houver.
+
+`GET /projects/0192f1a0-7c3e-7b21-8d4f-2a9e6c1b3f50/documents/0192f1d0-2b3c-7d4e-8f50-61728394a5b6?lang=pt-BR`
+(o `README.md`)
 
 ```markdown
 ## Contexto
@@ -748,17 +842,27 @@ Uma aplicação web com mapa interativo e uma API que calcula rotas com PostGIS.
 O mapa está publicado e recebe novos pontos toda semana.
 ```
 
+`GET /projects/0192f1a0-7c3e-7b21-8d4f-2a9e6c1b3f50/documents/0192f1d0-6d7e-7f80-a1b2-c3d4e5f6a7b8?lang=pt-BR`
+(o `LICENSE`, neutro, com `Content-Language: en`)
+
+```text
+MIT License
+
+Copyright (c) 2026 Luiz Felipe dos Santos
+```
+
 **Erros**
 
-| Status | `code`                 | Quando                                                                          |
-| ------ | ---------------------- | ------------------------------------------------------------------------------- |
-| 400    | `UNSUPPORTED_LANGUAGE` | `lang` ausente ou inválido                                                      |
-| 400    | `INVALID_ID`           | `id` fora do formato UUID v7                                                    |
-| 404    | `NOT_FOUND`            | Projeto inexistente, `document` fora do enum ou documento que o projeto não tem |
-| 500    | `INTERNAL_ERROR`       | Falha do servidor                                                               |
+| Status | `code`                 | Quando                                                               |
+| ------ | ---------------------- | -------------------------------------------------------------------- |
+| 400    | `UNSUPPORTED_LANGUAGE` | `lang` ausente ou inválido                                           |
+| 400    | `INVALID_ID`           | `id` ou `documentId` fora do formato UUID v7                         |
+| 404    | `NOT_FOUND`            | Projeto inexistente ou `documentId` que não está na lista do projeto |
+| 500    | `INTERNAL_ERROR`       | Falha do servidor                                                    |
 
-`404` vira a página não encontrada (RF-PROJECT-34); o resto vira o erro parcial do documento
-(RF-PROJECT-31).
+A tela só pede documento que está na lista, então um `404` aqui indica conteúdo inconsistente e
+vira o erro parcial do documento (RF-PROJECT-31), como as outras falhas. A página não encontrada
+de documento vem do nome da URL que não está na lista (RF-PROJECT-34).
 
 **Quem usa:** Projeto (documentos, RF-PROJECT-15 a RF-PROJECT-27), pré-renderização de cada
 documento (#49) e `llms-full*.txt` (#51).
@@ -829,9 +933,13 @@ Na v1 não há backend (R1): uma camada local no frontend faz o papel dele e res
 este contrato. Decidido pelo PO (11-10-2026) para que a integração (#43) seja só a troca da
 origem, sem mudar telas.
 
-- **Onde ficam os dados:** os registros (JSON) e os documentos (`.md`) ficam em
+- **Onde ficam os dados:** os registros (JSON) e os documentos ficam em
   `public/content/<lang>/`, um conjunto por idioma, e são lidos com `import.meta.env.BASE_URL`
-  (NF-DA-03). Página e componente nunca leem esses arquivos: o acesso é pelos endpoints do RTK
+  (NF-DA-03). Sugestão para os documentos (a #13 decide): a lista em
+  `public/content/<lang>/projects/<id>/documents.json`, cada documento traduzido em
+  `public/content/<lang>/projects/<id>/docs/<name>` e cada documento neutro uma vez só, em
+  `public/content/shared/projects/<id>/docs/<name>`. A camada local simula os dois endpoints de
+  documento com esses arquivos. Página e componente nunca leem esses arquivos: o acesso é pelos endpoints do RTK
   Query em `src/store/api/` (NF-DA-02), cujo `queryFn` chama a camada local.
 - **Forma dos registros:** cada registro guardado tem a forma da entidade de
   [`data-model.md`](data-model.md) no seu idioma (`Profile`, `TimelineItem` com `projectIds`,
@@ -867,10 +975,12 @@ origem, sem mudar telas.
 Até o contrato ir para o repositório do backend, ele muda aqui.
 
 - **Muda sem quebrar o cliente:** campo novo numa resposta (o cliente ignora o que não conhece),
+  valor novo de `ProjectDocument.format` (o cliente mostra formato desconhecido como `text`; é o
+  caminho do realce de `.json` e `.yml` da #69),
   parâmetro de query opcional novo com padrão que mantém o comportamento atual, valor máximo de
   `limit` maior, endpoint novo.
 - **Quebra o cliente:** renomear ou remover campo, mudar o tipo ou a obrigatoriedade de um campo,
-  mudar ou remover valor de enum, mudar o formato de data ou de id, mudar o envelope (`items`,
+  mudar ou remover valor de enum (salvo `format`, acima), mudar o formato de data ou de id, mudar o envelope (`items`,
   `total`, `offset`, `limit`, `availableTypes`), mudar a forma ou a ordem de `groups` da
   trajetória, mudar um padrão de parâmetro ou o formato de erro.
 - **Idioma do conteúdo na V2:** o parâmetro `lang` existe porque a v1 é servida pelo GitHub Pages,
