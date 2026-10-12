@@ -47,15 +47,15 @@ O estado "Vazio" do molde não se aplica ao layout, que não tem lista própria.
 
 Não há campo de formulário no layout. Regras de entrada e o que acontece quando falham:
 
-| Entrada                                 | Regra                                                                                                            | Quando falha                                                                   |
-| --------------------------------------- | ---------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
-| Prefixo de idioma no caminho            | Só sem prefixo (`pt-BR`), `/en/` e `/es/` (NF-IN-06)                                                             | Prefixo desconhecido (`/fr/projects`) cai na página não encontrada, em `pt-BR` |
-| `?lng=` na URL                          | Ignorado (NF-IN-08)                                                                                              | Nada muda; o caminho decide                                                    |
-| Tema salvo no navegador                 | Só `light` ou `dark`                                                                                             | Valor ausente ou inválido é ignorado: vale `prefers-color-scheme` (NF-TE-02)   |
-| Idioma salvo no navegador               | Só `pt-BR`, `en` ou `es`; só redireciona a raiz `/` (NF-IN-09, #53)                                              | Valor inválido é ignorado                                                      |
-| `?tema=` na URL                         | Não é recurso do produto (D35, RF-LAY-19)                                                                        | Ignorado                                                                       |
-| Área de transferência ("Copiar e-mail") | `navigator.clipboard.writeText` precisa existir e resolver                                                       | "Não foi possível copiar" (ver Estados)                                        |
-| Rota de tela, id de projeto, documento  | Só os caminhos de D32; id inexistente, documento opcional que o projeto não tem ou subcaminho desconhecido (D33) | Página não encontrada                                                          |
+| Entrada                                 | Regra                                                                                                                                 | Quando falha                                                                   |
+| --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| Prefixo de idioma no caminho            | Só sem prefixo (`pt-BR`), `/en/` e `/es/` (NF-IN-06)                                                                                  | Prefixo desconhecido (`/fr/projects`) cai na página não encontrada, em `pt-BR` |
+| `?lng=` na URL                          | Ignorado (NF-IN-08)                                                                                                                   | Nada muda; o caminho decide                                                    |
+| Tema salvo no navegador                 | Só `light` ou `dark`                                                                                                                  | Valor ausente ou inválido é ignorado: vale `prefers-color-scheme` (NF-TE-02)   |
+| Idioma salvo no navegador               | Só `pt-BR`, `en` ou `es`; só redireciona a raiz `/` (NF-IN-09, #53)                                                                   | Valor inválido é ignorado                                                      |
+| `?tema=` na URL                         | Não é recurso do produto (D35, RF-LAY-19)                                                                                             | Ignorado                                                                       |
+| Área de transferência ("Copiar e-mail") | `navigator.clipboard.writeText` precisa existir e resolver                                                                            | "Não foi possível copiar" (ver Estados)                                        |
+| Rota de tela, id de projeto, documento  | Só os caminhos de D32; id inexistente, documento que não está na lista do projeto, `/docs/README.md` ou subcaminho desconhecido (D55) | Página não encontrada                                                          |
 
 ## Permissões
 
@@ -69,13 +69,13 @@ Cada subseção lista os requisitos na ordem dos IDs.
 
 ### Cabeçalho
 
-| ID          | Regra                                                                                                                                                                                                                                                                                                                                                                                          | Fonte                   |
-| ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------- |
-| `RF-LAY-01` | Fixo no topo (sticky) em todas as telas, inclusive não encontrada e erro, com fundo `--surface-chrome` e borda inferior `--border-chrome` (D04); altura mínima de 4rem; o foco nunca fica embaixo dele (`scroll-padding-top`, A11Y-L13)                                                                                                                                                        | Protótipo, D04          |
-| `RF-LAY-02` | À esquerda, um link para o início do idioma atual com o gato (SVG inline, corpo `--neutral-500`, detalhe `--text-strong`, `aria-hidden`) e o nome "Luiz Felipe dos Santos" (Bricolage 700). O nome acessível do link é o nome do autor; o nome não é heading                                                                                                                                   | D02, `accessibility.md` |
-| `RF-LAY-03` | Navegação principal em `nav` com nome "Principal": Início (`/`), Projetos (`/projects`), Informações (`/about`) e Contato (`/contact`), sempre com o prefixo do idioma atual (NF-IN-11)                                                                                                                                                                                                        | Protótipo, D32          |
-| `RF-LAY-04` | Item ativo: Início só em `/` exato; Projetos em `/projects`, `/projects/:id` e nos documentos (`/architecture`, `/setup`, `/changelog`); Informações em `/about`; Contato em `/contact`; nenhum na página não encontrada e na de erro. O ativo tem `aria-current="page"`, peso 600, `--text-strong` e traço inferior de 2px em `--brand-variant` (no menu, traço de 2px à esquerda e peso 800) | Protótipo, A11Y-L04     |
-| `RF-LAY-05` | A troca entre navegação completa e botão de menu é por media query no CSS (640px), não por largura lida em JavaScript: os dois existem no HTML pré-renderizado e a primeira renderização do cliente é igual a ele (NF-TE-04). Só um dos dois está visível e na árvore de acessibilidade de cada vez                                                                                            | NF-TE-04, NF-IA-01      |
+| ID          | Regra                                                                                                                                                                                                                                                                                                                                                                              | Fonte                   |
+| ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------- |
+| `RF-LAY-01` | Fixo no topo (sticky) em todas as telas, inclusive não encontrada e erro, com fundo `--surface-chrome` e borda inferior `--border-chrome` (D04); altura mínima de 4rem; o foco nunca fica embaixo dele (`scroll-padding-top`, A11Y-L13)                                                                                                                                            | Protótipo, D04          |
+| `RF-LAY-02` | À esquerda, um link para o início do idioma atual com o gato (SVG inline, corpo `--neutral-500`, detalhe `--text-strong`, `aria-hidden`) e o nome "Luiz Felipe dos Santos" (Bricolage 700). O nome acessível do link é o nome do autor; o nome não é heading                                                                                                                       | D02, `accessibility.md` |
+| `RF-LAY-03` | Navegação principal em `nav` com nome "Principal": Início (`/`), Projetos (`/projects`), Informações (`/about`) e Contato (`/contact`), sempre com o prefixo do idioma atual (NF-IN-11)                                                                                                                                                                                            | Protótipo, D32          |
+| `RF-LAY-04` | Item ativo: Início só em `/` exato; Projetos em `/projects`, `/projects/:id` e nos documentos (`/projects/:id/docs/<name>`); Informações em `/about`; Contato em `/contact`; nenhum na página não encontrada e na de erro. O ativo tem `aria-current="page"`, peso 600, `--text-strong` e traço inferior de 2px em `--brand-variant` (no menu, traço de 2px à esquerda e peso 800) | Protótipo, A11Y-L04     |
+| `RF-LAY-05` | A troca entre navegação completa e botão de menu é por media query no CSS (640px), não por largura lida em JavaScript: os dois existem no HTML pré-renderizado e a primeira renderização do cliente é igual a ele (NF-TE-04). Só um dos dois está visível e na árvore de acessibilidade de cada vez                                                                                | NF-TE-04, NF-IA-01      |
 
 ### Menu mobile
 
@@ -123,16 +123,16 @@ Vale em todas as telas, menos `/contact`.
 
 Vale só em `/contact`.
 
-| ID          | Regra                                                                                                                                                                                                                                                                                                                                                                                            | Fonte                     |
-| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------- |
-| `RF-LAY-26` | No lugar do bloco de contato, duas colunas: "Navegação", um `nav` com nome "Rodapé" (A11Y-L12) e lista com Início, Projetos e Informações; e "Redes", lista com "GitHub ↗", "LinkedIn ↗" (URLs do conteúdo, em nova aba com o aviso no nome, D36) e "Currículo em PDF ↓". Sem chamada para contato, e-mail e "Copiar e-mail" (a tela já os mostra). Setas em `aria-hidden`. Barra inferior igual | D04, D21, D36             |
-| `RF-LAY-27` | "Currículo em PDF" aponta para o PDF do idioma ativo (`cv/cv-pt-BR.pdf`, `cv/cv-en.pdf`, `cv/cv-es.pdf`, com `import.meta.env.BASE_URL`), mesmo antes de o arquivo existir (gerado por #54); é download direto (atributo `download`, mesma origem), sem abrir aba e sem sair da página; o nome acessível diz o formato                                                                           | D14, D30, D36, roadmap M3 |
+| ID          | Regra                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | Fonte                |
+| ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------- |
+| `RF-LAY-26` | No lugar do bloco de contato, duas colunas: "Navegação", um `nav` com nome "Rodapé" (A11Y-L12) e lista com Início, Projetos e Informações; e "Redes", lista com "GitHub ↗", "LinkedIn ↗" (URLs do conteúdo, em nova aba com o aviso no nome, D36) e "Currículo em PDF ↓". Sem chamada para contato, e-mail e "Copiar e-mail" (a tela já os mostra). Setas em `aria-hidden`. Barra inferior igual                                                                                                                                                                            | D04, D21, D36        |
+| `RF-LAY-27` | "Currículo em PDF" aponta para o PDF do idioma ativo (`cv/cv-pt-BR.pdf`, `cv/cv-en.pdf`, `cv/cv-es.pdf`, com `import.meta.env.BASE_URL`), mesmo antes de o arquivo existir (gerado por #54); é um link real, sem `download` nem `target`: com JavaScript, o clique abre o modal de pré-visualização de D52, onde está o download, sem sair da página; sem JavaScript, abre o PDF. O nome acessível começa pelo texto visível e diz o formato e a abertura da pré-visualização: "Currículo em PDF, abre a pré-visualização" (`common:footer.resumeName`; `en` e `es` na #60) | D14, D52, roadmap M3 |
 
 ### Página não encontrada
 
-| ID          | Regra                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | Fonte                           |
-| ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------- |
-| `RF-LAY-28` | Renderizada dentro do layout (cabeçalho e rodapé padrão) para toda URL sem rota, prefixo desconhecido, id inexistente e documento opcional ausente (D33), no idioma do prefixo. Rótulo "Erro 404" (caixa alta por CSS), `h1` "Página não encontrada", texto "O endereço pode ter mudado ou o projeto saiu do ar. A lista completa continua em Projetos.", link primário "Ver projetos" (`/projects`) e secundário "Voltar para o início" (`/`). Responde 404 no Pages (NF-IA-04) | `prototipo-404`, D33, A11Y-ER01 |
+| ID          | Regra                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | Fonte                                |
+| ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------ |
+| `RF-LAY-28` | Renderizada dentro do layout (cabeçalho e rodapé padrão) para toda URL sem rota, prefixo desconhecido, id inexistente e documento fora da lista do projeto (D55), no idioma do prefixo. Rótulo "Erro 404" (caixa alta por CSS), `h1` "Página não encontrada", texto "O endereço pode ter mudado ou o projeto saiu do ar. A lista completa continua em Projetos.", link primário "Ver projetos" (`/projects`) e secundário "Voltar para o início" (`/`). Responde 404 no Pages (NF-IA-04) | `prototipo-404`, D33, D55, A11Y-ER01 |
 
 ### Página de erro
 
@@ -157,29 +157,30 @@ nesse caso vale o comportamento padrão do React Router. Fica fora do escopo da 
 Vale `D36` para todo link do layout: link interno navega na mesma aba, por `<Link>` do React Router
 com o path de `ROUTES`; link externo (GitHub, LinkedIn) abre em nova aba com `target="_blank"` e
 `rel="noopener noreferrer"`, com "(abre em nova aba)" no nome acessível; `mailto:` não leva
-`target`; o CV em PDF é download direto.
+`target`. O CV é a exceção (D52, que substitui D36 nesse ponto): link real para o PDF do idioma
+ativo que, com JavaScript, abre o modal de pré-visualização, onde está o download.
 
 ## Navegação
 
 Os caminhos são os de `D32`, sempre com o prefixo do idioma atual (sem prefixo em `pt-BR`, `/en/`,
 `/es/`).
 
-| De onde               | Ação                                       | Para onde                                                     |
-| --------------------- | ------------------------------------------ | ------------------------------------------------------------- |
-| Qualquer tela         | Gato e nome                                | `/` do idioma atual                                           |
-| Qualquer tela         | Início, Projetos, Informações, Contato     | `/`, `/projects`, `/about`, `/contact` do idioma atual        |
-| Qualquer tela         | `PT`, `EN`, `ES`                           | A mesma URL no idioma escolhido (sem prefixo, `/en/`, `/es/`) |
-| Qualquer tela         | Alternador de tema                         | Fica na mesma tela                                            |
-| Rodapé padrão         | "Entrar em contato"                        | `/contact`                                                    |
-| Rodapé padrão         | GitHub, LinkedIn                           | Perfis externos (URL do conteúdo), em nova aba (D36)          |
-| Rodapé padrão         | Ícone de e-mail                            | `mailto:` com o e-mail do conteúdo                            |
-| Rodapé de `/contact`  | Início, Projetos, Informações              | `/`, `/projects`, `/about` do idioma atual                    |
-| Rodapé de `/contact`  | GitHub, LinkedIn                           | Perfis externos, em nova aba (D36)                            |
-| Rodapé de `/contact`  | "Currículo em PDF"                         | Download do PDF do idioma ativo, sem sair da página (D36)     |
-| Página não encontrada | "Ver projetos", "Voltar para o início"     | `/projects`, `/`                                              |
-| Página de erro        | "Tentar novamente", "Voltar para o início" | A mesma URL (recarrega), `/`                                  |
-| URL sem rota          | Abrir                                      | Página não encontrada                                         |
-| Erro de renderização  | Abrir                                      | Página de erro                                                |
+| De onde               | Ação                                       | Para onde                                                                                         |
+| --------------------- | ------------------------------------------ | ------------------------------------------------------------------------------------------------- |
+| Qualquer tela         | Gato e nome                                | `/` do idioma atual                                                                               |
+| Qualquer tela         | Início, Projetos, Informações, Contato     | `/`, `/projects`, `/about`, `/contact` do idioma atual                                            |
+| Qualquer tela         | `PT`, `EN`, `ES`                           | A mesma URL no idioma escolhido (sem prefixo, `/en/`, `/es/`)                                     |
+| Qualquer tela         | Alternador de tema                         | Fica na mesma tela                                                                                |
+| Rodapé padrão         | "Entrar em contato"                        | `/contact`                                                                                        |
+| Rodapé padrão         | GitHub, LinkedIn                           | Perfis externos (URL do conteúdo), em nova aba (D36)                                              |
+| Rodapé padrão         | Ícone de e-mail                            | `mailto:` com o e-mail do conteúdo                                                                |
+| Rodapé de `/contact`  | Início, Projetos, Informações              | `/`, `/projects`, `/about` do idioma atual                                                        |
+| Rodapé de `/contact`  | GitHub, LinkedIn                           | Perfis externos, em nova aba (D36)                                                                |
+| Rodapé de `/contact`  | "Currículo em PDF"                         | Modal de pré-visualização do PDF do idioma ativo, sem sair da página; sem JavaScript, o PDF (D52) |
+| Página não encontrada | "Ver projetos", "Voltar para o início"     | `/projects`, `/`                                                                                  |
+| Página de erro        | "Tentar novamente", "Voltar para o início" | A mesma URL (recarrega), `/`                                                                      |
+| URL sem rota          | Abrir                                      | Página não encontrada                                                                             |
+| Erro de renderização  | Abrir                                      | Página de erro                                                                                    |
 
 A primeira carga em `/` com escolha salva diferente de `pt-BR` redireciona para `/en/` ou `/es/`
 (NF-IN-09, #53); nenhuma outra rota redireciona por idioma.
@@ -232,6 +233,7 @@ guarda texto fixo de componente). As chaves `mainLayout:brand` e `mainLayout:cop
 | `common`   | `footer.navigation.label`     | Rodapé                                                                                     | Nome do `nav` de `/contact`                                                            |
 | `common`   | `footer.navigation.heading`   | Navegação                                                                                  | Rótulo da coluna                                                                       |
 | `common`   | `footer.resume`               | Currículo em PDF                                                                           | Link do CV no rodapé de navegação                                                      |
+| `common`   | `footer.resumeName`           | Currículo em PDF, abre a pré-visualização                                                  | Nome acessível do link do CV no rodapé de navegação (D52)                              |
 | `common`   | `footer.copyright`            | © `{{year}}` · `{{name}}` (`year` do build)                                                | Barra inferior (era `mainLayout:copyright`)                                            |
 | `common`   | `footer.madeWith`             | Feito em TypeScript                                                                        | Barra inferior                                                                         |
 | `common`   | `symbols.external`            | ↗                                                                                          | Seta de link externo, em `aria-hidden`                                                 |
@@ -289,20 +291,20 @@ Regras:
 Os namespaces das telas que ainda não existem são previstos e podem mudar de nome na spec da tela,
 que também revisa o texto sem mudar a chave:
 
-| Rota                                                 | Namespace             | `meta.title` (`pt-BR`)                                                         | `meta.description` (`pt-BR`)                                                                                          |
-| ---------------------------------------------------- | --------------------- | ------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------- |
-| `/`                                                  | `home` (existe)       | Luiz Felipe dos Santos · Desenvolvedor full stack em TypeScript                | Portfólio de Luiz Felipe dos Santos, desenvolvedor full stack em TypeScript: projetos, trajetória e contato. (existe) |
-| `/projects`                                          | `projects` (previsto) | Projetos · Luiz Felipe dos Santos                                              | Projetos de Luiz Felipe dos Santos, com busca por tipo, categoria e tecnologia.                                       |
-| `/projects/:id`                                      | `project` (previsto)  | `{{project}}` · Luiz Felipe dos Santos                                         | Resumo do projeto, do conteúdo (#10, #58), sem chave                                                                  |
-| `/projects/:id/architecture`, `/setup`, `/changelog` | `project` (previsto)  | `{{document}}` · `{{project}}` · Luiz Felipe dos Santos (`meta.documentTitle`) | Resumo do projeto, do conteúdo                                                                                        |
-| `/about`                                             | `about` (previsto)    | Informações · Luiz Felipe dos Santos                                           | Quem é Luiz Felipe dos Santos: sobre mim, stack, trajetória e formação.                                               |
-| `/contact`                                           | `contact` (previsto)  | Contato · Luiz Felipe dos Santos                                               | Como falar com Luiz Felipe dos Santos: e-mail e currículo.                                                            |
-| Página não encontrada                                | `notFound` (existe)   | Página não encontrada · Luiz Felipe dos Santos (existe)                        | O endereço acessado não existe neste portfólio. (existe)                                                              |
-| Página de erro                                       | `error` (existe)      | Erro inesperado · Luiz Felipe dos Santos (existe)                              | Algo deu errado ao carregar esta página. (existe)                                                                     |
+| Rota                        | Namespace             | `meta.title` (`pt-BR`)                                                         | `meta.description` (`pt-BR`)                                                                                          |
+| --------------------------- | --------------------- | ------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------- |
+| `/`                         | `home` (existe)       | Luiz Felipe dos Santos · Desenvolvedor full stack em TypeScript                | Portfólio de Luiz Felipe dos Santos, desenvolvedor full stack em TypeScript: projetos, trajetória e contato. (existe) |
+| `/projects`                 | `projects` (previsto) | Projetos · Luiz Felipe dos Santos                                              | Projetos de Luiz Felipe dos Santos, com busca por tipo, categoria e tecnologia.                                       |
+| `/projects/:id`             | `project` (previsto)  | `{{project}}` · Luiz Felipe dos Santos                                         | Resumo do projeto, do conteúdo (#10, #58), sem chave                                                                  |
+| `/projects/:id/docs/<name>` | `project` (previsto)  | `{{document}}` · `{{project}}` · Luiz Felipe dos Santos (`meta.documentTitle`) | Resumo do projeto, do conteúdo                                                                                        |
+| `/about`                    | `about` (previsto)    | Informações · Luiz Felipe dos Santos                                           | Quem é Luiz Felipe dos Santos: sobre mim, stack, trajetória e formação.                                               |
+| `/contact`                  | `contact` (previsto)  | Contato · Luiz Felipe dos Santos                                               | Como falar com Luiz Felipe dos Santos: e-mail e currículo.                                                            |
+| Página não encontrada       | `notFound` (existe)   | Página não encontrada · Luiz Felipe dos Santos (existe)                        | O endereço acessado não existe neste portfólio. (existe)                                                              |
+| Página de erro              | `error` (existe)      | Erro inesperado · Luiz Felipe dos Santos (existe)                              | Algo deu errado ao carregar esta página. (existe)                                                                     |
 
 O `meta.title` atual de `home` ("Luiz Felipe dos Santos · Desenvolvedor full stack") ganha "em
-TypeScript" para bater com a chamada do Início (D24); a troca é da #3. `{{document}}` é o rótulo
-fixo de D33 (`ARCHITECTURE.md`, `SETUP.md`, `CHANGELOG.md`), igual nos três idiomas. Na página de
+TypeScript" para bater com a chamada do Início (D24); a troca é da #3. `{{document}}` é o nome do
+documento (`SETUP.md`, `LICENSE`, D55), igual nos três idiomas. Na página de
 projeto, o `<title>` só existe depois que o conteúdo do projeto chega; na pré-renderização (#49) ele
 já está no HTML.
 
@@ -343,7 +345,7 @@ foco sob o cabeçalho); `[navegador]` cobre favicon, `theme-color` e movimento r
 - [ ] `RF-LAY-24` — Ícones de GitHub e LinkedIn em nova aba com `rel="noopener noreferrer"` e aviso no nome; `mailto:` sem `target`; rede sem URL não aparece [teste]
 - [ ] `RF-LAY-25` — Barra inferior com o ano do build e "Feito em TypeScript", igual no HTML pré-renderizado e na hidratação [teste]
 - [ ] `RF-LAY-26` — Em `/contact`, rodapé de navegação com `nav` "Rodapé", Início, Projetos, Informações, GitHub, LinkedIn e "Currículo em PDF", sem e-mail nem chamada para contato [teste]
-- [ ] `RF-LAY-27` — "Currículo em PDF" aponta para o PDF do idioma ativo com o atributo `download`, sem `target` [teste]
+- [ ] `RF-LAY-27` — "Currículo em PDF" aponta para o PDF do idioma ativo, sem `download` nem `target`, abre a pré-visualização de D52 com JavaScript e tem o nome acessível "Currículo em PDF, abre a pré-visualização", nos três idiomas [teste]
 - [ ] `RF-LAY-28` — Página não encontrada dentro do layout para URL sem rota, prefixo desconhecido, id inexistente e documento ausente, no idioma do prefixo, nos três idiomas [teste]
 - [ ] `RF-LAY-29` — Página de erro com os próprios landmarks e "Pular para o conteúdo", "Tentar novamente" e "Voltar para o início", nos três idiomas [teste]
 - [ ] `RF-LAY-30` — A mensagem técnica do erro nunca aparece; `error:unknown` removida [teste]

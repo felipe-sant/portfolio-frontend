@@ -43,19 +43,19 @@ O PO aprova a spec (Status `aprovada`) e o escopo de cada versão; mudar o escop
 
 Cinco rotas, cada uma com o propósito definido no handoff e o caminho em inglês de D32. A coluna Fonte cita o handoff e o protótipo da tela e as decisões principais de cada uma, as mesmas da tabela "Decisões por tela" de [`roadmap.md`](roadmap.md#m5--telas) (M5):
 
-| Rota            | Tela        | Propósito                                                                                                                                                                                   | Fonte                                                           |
-| --------------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
-| `/`             | Início      | Primeira impressão: quem é, o que faz agora (status atual), quatro projetos em destaque e faixa de stack                                                                                    | Handoff, `prototipo-inicio`; D26, D11, D13, D14, D24            |
-| `/projects`     | Projetos    | Encontrar um projeto por busca, tipo, categoria ou tecnologia, com ordenação e carregamento incremental                                                                                     | Handoff, `prototipo-projetos`; D16, D17                         |
-| `/projects/:id` | Projeto     | Contar como o problema foi resolvido, como estudo de caso: galeria, documentação em markdown (cada documento com endereço próprio: `/architecture`, `/setup`, `/changelog`) e ficha técnica | Handoff, `prototipo-projeto`; D06, D10, D18, D19, D33, PI1, PI2 |
-| `/about`        | Informações | Quem é o autor, o que domina e por onde passou: sobre mim, stack, complementos e trajetória com modal de detalhe                                                                            | Handoff, `prototipo-informacoes`; D13, D14, D20, PI1            |
-| `/contact`      | Contato     | Dar o canal direto (e-mail, CV) para quem quer falar com o autor; o formulário existe, mas está desligado na v1 e é ligado na V2+                                                           | Handoff, `prototipo-contato`; D05, D07, D21, D25                |
+| Rota            | Tela        | Propósito                                                                                                                                                                                                              | Fonte                                                                |
+| --------------- | ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| `/`             | Início      | Primeira impressão: quem é, o que faz agora (status atual), quatro projetos em destaque e faixa de stack                                                                                                               | Handoff, `prototipo-inicio`; D26, D11, D13, D14, D24                 |
+| `/projects`     | Projetos    | Encontrar um projeto por busca, tipo, categoria ou tecnologia, com ordenação e carregamento incremental                                                                                                                | Handoff, `prototipo-projetos`; D16, D17                              |
+| `/projects/:id` | Projeto     | Contar como o problema foi resolvido, como estudo de caso: galeria, documentação do projeto (`README.md` e qualquer outro documento, cada um com endereço próprio em `/projects/:id/docs/<name>`, D55) e ficha técnica | Handoff, `prototipo-projeto`; D06, D10, D18, D19, D33, D55, PI1, PI2 |
+| `/about`        | Informações | Quem é o autor, o que domina e por onde passou: sobre mim, stack, complementos e trajetória com modal de detalhe                                                                                                       | Handoff, `prototipo-informacoes`; D13, D14, D20, PI1                 |
+| `/contact`      | Contato     | Dar o canal direto (e-mail, CV) para quem quer falar com o autor; o formulário existe, mas está desligado na v1 e é ligado na V2+                                                                                      | Handoff, `prototipo-contato`; D05, D07, D21, D25                     |
 
 - Cabeçalho igual nas cinco telas, com o item da rota atual destacado; rodapé igual em quatro delas (em `/contact` ele vira navegação). Fonte: handoff; protótipo, `ProtoHeader` e `ProtoFooter`; D01, D02, D04.
 - Temas claro e escuro, trocados por `data-theme` na raiz, com a escolha persistida e `prefers-color-scheme` respeitado na primeira visita. Fonte: D22.
 - Interface em três idiomas: `pt-BR` (língua de referência), `en` e `es`, com cada rota em três URLs: sem prefixo em `pt-BR`, `/en/` e `/es/` (#53, `D31`). Fonte: R2; D12; D31.
 - Página não encontrada e página de erro. Fonte: protótipo, `prototipo-404` e `prototipo-erro`; [`roadmap.md`](roadmap.md#v1), definição da v1.
-- CV em PDF por idioma, baixado pelo idioma ativo. Fonte: D14, D30 (gerado do JSON).
+- CV por idioma, em Markdown escrito pelo PO e PDF gerado dele no build, com pré-visualização em modal antes de baixar, pelo idioma ativo. Fonte: D14, D52.
 - Conteúdo real em JSON local na v1, no formato do contrato da API. Fonte: [`roadmap.md`](roadmap.md#m2--conteúdo-real), M2; R1.
 
 ## Fora de escopo
@@ -102,7 +102,7 @@ Os pontos que o handoff deixava em aberto estão decididos em [`decisions.md`](.
 5. **Formulário de contato (D05):** implementado no frontend com envio simulado (R1) e escondido em produção atrás de uma flag até o backend existir; endpoint real e proteção contra spam vêm depois.
 6. **Renderizador de markdown (D06):** `react-markdown` com `rehype-highlight`, sem HTML embutido, com as cores de realce do protótipo.
 
-Os itens à espera de material são o conteúdo do CV no JSON (D30) e as capturas e a foto (D26).
+Os itens à espera de material são o conteúdo do CV em Markdown (D52) e as capturas e a foto (D26).
 
 ## Decisões de produto
 
