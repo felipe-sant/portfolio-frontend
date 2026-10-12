@@ -23,7 +23,7 @@ flowchart TD
 - **Layout** (`src/layouts/Main.layout.tsx`): cabeçalho, conteúdo e rodapé comuns às páginas.
 - **Store** (`src/store/`): estado compartilhado em slices e estado de servidor em endpoints do RTK Query.
 - **Service HTTP** (`src/services/http/`): `get` e `post` sobre `fetch`, para chamadas fora do RTK Query.
-- **Camada local:** na v1 não há backend (R1). O conteúdo é o conteúdo real do PO, em JSON e Markdown sob `public/content/<idioma>/`, lido só pelos endpoints do RTK Query, cujo `queryFn` chama uma camada local que simula o backend, com as mesmas respostas, parâmetros e erros. As entidades estão em [`data-model.md`](data-model.md) e o contrato em [`api-contract.md`](api-contract.md). As pastas `src/pages/hooks/`, `src/hooks/` e `src/components/` nascem no primeiro uso.
+- **Camada local** (`src/services/content/`): na v1 não há backend (R1). O conteúdo, em JSON e Markdown sob `public/content/<idioma>/`, é lido só pelos endpoints do RTK Query, cujo `queryFn` chama essa camada, que simula o backend com as mesmas respostas, parâmetros e erros. As entidades estão em [`data-model.md`](data-model.md) e o contrato em [`api-contract.md`](api-contract.md). As pastas `src/pages/hooks/`, `src/hooks/` e `src/components/` nascem no primeiro uso. Ver [Camada de dados local](#camada-de-dados-local-v1).
 
 ## Roteamento
 
@@ -43,7 +43,7 @@ Uma rota só entra em `paths.ts` junto com a página que ela renderiza. Navegaç
 
 ## Estado
 
-Hoje a store não tem slice nem endpoint: `src/store/api.ts` declara o `createApi` sem endpoints e o `rootReducer` só registra o reducer do RTK Query. A infraestrutura fica pronta para o backend futuro. A decisão está em [ADR 0001](../adr/0001-state-management.md).
+Hoje a store não tem slice: `src/store/api.ts` declara o `createApi` sem endpoints, os endpoints de conteúdo são injetados por domínio em `src/store/api/` (ver [Camada de dados local](#camada-de-dados-local-v1)) e o `rootReducer` só registra o reducer do RTK Query. A decisão está em [ADR 0001](../adr/0001-state-management.md).
 
 - **Estado de uma tela** fica em `useState` no hook da página. O handoff define o estado de cada tela:
 
@@ -58,6 +58,37 @@ Hoje a store não tem slice nem endpoint: `src/store/api.ts` declara o `createAp
 - **Estado compartilhado** entre telas vai para um slice em `src/store/slices/`.
 - **Dados de conteúdo** (perfil, trajetória, projetos e documentos) vêm de endpoints do RTK Query injetados por domínio em `src/store/api/<dominio>.api.ts`. Na v1, o `queryFn` desses endpoints chama a camada local que simula o backend ([`api-contract.md`](api-contract.md#camada-local-na-v1)), e a #43 troca o `queryFn` pela API mexendo só em `src/store/api/`. O envio do formulário de contato é uma mutation com `queryFn` simulado até a #44.
 - **Idioma** continua em `src/i18n/`, fora da store.
+
+## Camada de dados local (v1)
+
+Fluxo de uma leitura: a página chama o hook gerado do endpoint (`projectsApi.useGetProjectsQuery`),
+o `queryFn` valida o argumento, a camada local carrega os arquivos de `public/` e monta a resposta
+com funções puras, e o resultado volta como `{ data }` ou `{ error }` no formato do contrato.
+
+```mermaid
+flowchart LR
+    Hook[Hook gerado] --> QueryFn[queryFn em src/store/api]
+    QueryFn --> Content[src/services/content]
+    Content --> Files[(public/content e public/images)]
+```
+
+| Endpoint                                                                  | Contrato                                    |
+| ------------------------------------------------------------------------- | ------------------------------------------- |
+| `profileApi.useGetProfileQuery({ lang })`                                 | `GET /profile`                              |
+| `timelineApi.useGetTimelineQuery({ lang })`                               | `GET /timeline`                             |
+| `timelineApi.useGetCurrentTimelineQuery({ lang })`                        | `GET /timeline?current=true`                |
+| `projectsApi.useGetProjectsQuery(ProjectListParams)`                      | `GET /projects`                             |
+| `projectsApi.useGetProjectQuery({ id, lang })`                            | `GET /projects/{id}`                        |
+| `projectsApi.useGetProjectDocumentsQuery({ id, lang })`                   | `GET /projects/{id}/documents`              |
+| `projectsApi.useGetProjectDocumentContentQuery({ id, documentId, lang })` | `GET /projects/{id}/documents/{documentId}` |
+
+- **`lang` no argumento:** todo endpoint recebe o idioma explicitamente, como a API vai exigir. O cache do RTK Query é por argumento, então trocar de idioma refaz o pedido sozinho; o `prepareHeaders` de `api.ts` não participa porque o `queryFn` não usa `baseQuery`.
+- **Erros:** argumento inválido responde `400` (`UNSUPPORTED_LANGUAGE`, `INVALID_PARAMETER`, `INVALID_ID`), projeto ou documento inexistente responde `404 NOT_FOUND`, ambos com o corpo `ApiError`; arquivo que não carrega vira `FETCH_ERROR`. A mensagem do `ApiError` é texto literal em português, de diagnóstico.
+- **Regras só na camada:** busca, filtros, ordenação, paginação, `availableTypes`, destaques, agrupamento e ordem da trajetória, certificados sem repetição e itens em curso vivem em `src/services/content/`; a tela não filtra nem ordena.
+- **Caminhos:** todo arquivo de `public/` é pedido com `import.meta.env.BASE_URL`, lido só em `src/services/content/publicUrl.ts`. O `src` de imagem do JSON continua relativo, como o contrato, e quem exibe a imagem o resolve com a mesma base.
+- **Validação do conteúdo:** `src/services/content/validation/` implementa a seção "Validação do conteúdo" de [`data-model.md`](data-model.md); `npm run content:check` e o teste de `src/services/content/test/content.test.ts` falham com o arquivo, o campo e a regra.
+
+**Trocar pela API (#43):** em `src/store/api/*.api.ts`, cada `queryFn` vira `query` com o mesmo argumento e o mesmo tipo de resposta (`lang` vira parâmetro da URL); remover `src/services/content/` e os dados de `public/content/`; definir `VITE_API_URL`. Nenhuma página, hook de página ou componente muda, porque nenhum deles importa a camada local.
 
 ## Estilo
 
