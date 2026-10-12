@@ -3,8 +3,8 @@
 A tela Projetos (`/projects`, também `/en/projects` e `/es/projects`, D32) é o passo do meio da
 jornada do cliente (Início → Projetos → Projeto, [`overview.md`](../product/overview.md)): a lista
 completa de projetos, com busca, filtros de tipo e categoria, ordenação e carregamento incremental.
-Quem a implementa é a issue E, com B (componentes base, inclusive chip, campo de busca e skeleton),
-C (layout), W (idioma no caminho), S (pré-renderização) e V (canônica e o mecanismo do JSON-LD).
+Quem a implementa é a issue #35, com #32 (componentes base, inclusive chip, campo de busca e skeleton),
+#33 e #60 (layout), #53 (idioma no caminho), #49 (pré-renderização) e #52 (canônica e o mecanismo do JSON-LD).
 Este documento diz o comportamento; não escolhe nome de componente nem de arquivo, além do
 namespace e da chave de tradução.
 
@@ -18,7 +18,7 @@ não se repete aqui.
 
 Cada requisito funcional tem um ID `RF-PROJECTS-nn`, estável e nunca reaproveitado: item que deixa
 de valer é riscado, não apagado nem renumerado (mesma regra de `layout.md`). Os exemplos de busca e
-de filtro usam os dez projetos fictícios do protótipo, que não são conteúdo (PI5); os testes da E
+de filtro usam os dez projetos fictícios do protótipo, que não são conteúdo (PI5); os testes da #35
 usam um fixture próprio no formato da #10.
 
 ## Objetivo
@@ -35,7 +35,7 @@ problema dele, por nome, tecnologia, tipo ou categoria, e abrir o estudo de caso
 | Sem resultado                | Contagem "0 projetos"; bloco tracejado com `h2` "Nenhum projeto encontrado", texto conforme haja termo de busca ou não, e botão "Limpar filtros"; sem grade e sem "Carregar mais"                                                                                                                            |
 | Vazio (conteúdo sem projeto) | `h1` e introdução; sem busca, filtros, ordenação e contagem; bloco tracejado com `h2` "Nenhum projeto publicado" e texto. Não deve acontecer na v1 (o conteúdo tem projetos), mas a tela não quebra                                                                                                          |
 | Erro                         | Busca, filtros e ordenação continuam com o que estava escolhido; contagem vazia; bloco `role="alert"` em `--danger-surface`/`--danger-ink` com ícone de alerta, "Não consegui carregar a lista de projetos", "Verifique sua conexão e tente de novo. Seus filtros foram mantidos." e "Tentar novamente"      |
-| Sem JavaScript               | O HTML pré-renderizado (S) mostra `h1`, introdução, os controles e os nove primeiros cards na ordem padrão, com os links funcionando; busca, filtros, ordenação e "Carregar mais" precisam de JavaScript (NF-CO-03, NF-IA-17); os demais projetos estão em `llms-full*.txt` e no `sitemap.xml` (NF-IA-02)    |
+| Sem JavaScript               | O HTML pré-renderizado (#49) mostra `h1`, introdução, os controles e os nove primeiros cards na ordem padrão, com os links funcionando; busca, filtros, ordenação e "Carregar mais" precisam de JavaScript (NF-CO-03, NF-IA-17); os demais projetos estão em `llms-full*.txt` e no `sitemap.xml` (NF-IA-02)  |
 
 ## Validações
 
@@ -74,11 +74,11 @@ Cada subseção lista os requisitos na ordem dos IDs.
 
 ### Busca
 
-| ID               | Regra                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              | Fonte                                                              |
-| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------ |
-| `RF-PROJECTS-02` | Campo `type="search"` de 44px de altura, com rótulo "Buscar projeto" em texto visualmente oculto ligado por `label`, placeholder "Busque por nome ou tecnologia" e `maxLength` 100. Sem texto, mostra a lupa decorativa (`aria-hidden`); com texto, no lugar da lupa aparece o botão "Limpar busca" (ícone ×, 44px), que esvazia o campo, aplica na hora e devolve o foco ao campo                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 | Protótipo, A11Y-PS01, D15                                          |
-| `RF-PROJECTS-03` | Busca da v1 (a busca inteligente é a issue Z, fora da v1). Considera o título e todas as tecnologias do projeto (não só as do card), no idioma ativo; não considera o resumo. Ignora caixa e acento: o termo e o texto são decompostos em NFD, perdem as marcas diacríticas e vão para minúsculas no idioma ativo. O termo é aparado e dividido por espaços; cada palavra precisa aparecer, como trecho, no título ou em alguma tecnologia, e palavras diferentes podem casar em campos diferentes. Entrada → resultado com os dados do protótipo: "maps" → Maps; "REACT" → os quatro com React ou React Native (Maps, Plataforma de cursos, Check-in de eventos, Rastreio de entregas); "react native" → Check-in de eventos e Rastreio de entregas; "react postgis" → Maps (React e PostGIS); "catalogo" → Catálogo de componentes; "blockchain" → sem resultado | D16 ("a busca já filtra por tecnologia"), placeholder do protótipo |
-| `RF-PROJECTS-04` | O termo é aplicado 300 ms depois da última tecla (lista, contagem, "Limpar filtros" e URL juntos), para a contagem ser anunciada uma vez, quando a digitação para. "Limpar busca" e "Limpar filtros" aplicam na hora. Enter não envia nada nem recarrega a página                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | `accessibility.md` (Anúncios dinâmicos), NF-DE-03                  |
+| ID               | Regra                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                | Fonte                                                              |
+| ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| `RF-PROJECTS-02` | Campo `type="search"` de 44px de altura, com rótulo "Buscar projeto" em texto visualmente oculto ligado por `label`, placeholder "Busque por nome ou tecnologia" e `maxLength` 100. Sem texto, mostra a lupa decorativa (`aria-hidden`); com texto, no lugar da lupa aparece o botão "Limpar busca" (ícone ×, 44px), que esvazia o campo, aplica na hora e devolve o foco ao campo                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | Protótipo, A11Y-PS01, D15                                          |
+| `RF-PROJECTS-03` | Busca da v1 (a busca inteligente é a issue #56, fora da v1). Considera o título e todas as tecnologias do projeto (não só as do card), no idioma ativo; não considera o resumo. Ignora caixa e acento: o termo e o texto são decompostos em NFD, perdem as marcas diacríticas e vão para minúsculas no idioma ativo. O termo é aparado e dividido por espaços; cada palavra precisa aparecer, como trecho, no título ou em alguma tecnologia, e palavras diferentes podem casar em campos diferentes. Entrada → resultado com os dados do protótipo: "maps" → Maps; "REACT" → os quatro com React ou React Native (Maps, Plataforma de cursos, Check-in de eventos, Rastreio de entregas); "react native" → Check-in de eventos e Rastreio de entregas; "react postgis" → Maps (React e PostGIS); "catalogo" → Catálogo de componentes; "blockchain" → sem resultado | D16 ("a busca já filtra por tecnologia"), placeholder do protótipo |
+| `RF-PROJECTS-04` | O termo é aplicado 300 ms depois da última tecla (lista, contagem, "Limpar filtros" e URL juntos), para a contagem ser anunciada uma vez, quando a digitação para. "Limpar busca" e "Limpar filtros" aplicam na hora. Enter não envia nada nem recarrega a página                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | `accessibility.md` (Anúncios dinâmicos), NF-DE-03                  |
 
 ### Filtros
 
@@ -137,14 +137,14 @@ Decisão `D45`.
 | ID               | Regra                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | Fonte                                 |
 | ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------- |
 | `RF-PROJECTS-23` | Busca, tipo, categoria e ordenação ficam na query: `q`, `type`, `category`, `sort`, com os valores em inglês de "Validações"; valor padrão não aparece (sem busca, "Todos", sem categoria, `recent`), e `/projects` sem query é a lista padrão. A URL muda por substituição (`replace`), nunca criando entrada no histórico por tecla ou clique; a ordem dos parâmetros é sempre `q`, `type`, `category`, `sort`. Entrada → resultado: abrir `/projects?type=web&sort=title` mostra a lista já filtrada e ordenada. A canônica não leva query (NF-IA-11) | Issue #4, `D45`                       |
-| `RF-PROJECTS-24` | A primeira renderização do cliente é igual ao HTML pré-renderizado de `/projects` (lista padrão, sem query); a query é aplicada logo depois de hidratar, sem erro de hidratação. Sem pré-renderização (plano B de S), a query é aplicada já na primeira renderização                                                                                                                                                                                                                                                                                     | NF-IA-03, NF-TE-04, `D45`             |
+| `RF-PROJECTS-24` | A primeira renderização do cliente é igual ao HTML pré-renderizado de `/projects` (lista padrão, sem query); a query é aplicada logo depois de hidratar, sem erro de hidratação. Sem pré-renderização (plano B de #49), a query é aplicada já na primeira renderização                                                                                                                                                                                                                                                                                   | NF-IA-03, NF-TE-04, `D45`             |
 | `RF-PROJECTS-25` | Voltar do detalhe pelo navegador restaura busca, filtros e ordenação (pela query), a quantidade de cards mostrada (guardada no estado da entrada do histórico, não na URL) e a posição de rolagem (RF-LAY-32), com os dados do cache, sem estado de carregamento. Um link compartilhado restaura busca, filtros e ordenação e abre no primeiro lote. A troca de idioma mantém a query (RF-LAY-12) e volta ao primeiro lote                                                                                                                               | Issue #4, RF-LAY-12, RF-LAY-32, `D45` |
 
 ### Dados
 
-| ID               | Regra                                                                                                                                                                                                                                                                                                                                                                                                                       | Fonte                                                            |
-| ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
-| `RF-PROJECTS-26` | A lista vem de um endpoint do RTK Query em `src/store/api/` (`queryFn` local, NF-DA-02) que devolve todos os projetos do idioma ativo num pedido só (NF-DA-05); a página não importa JSON. Busca, filtros, ordenação e lote são feitos no cliente por funções puras testáveis, fora do JSX (no hook da página ou em função pura). Na troca para a API (M), o contrato pode ganhar paginação no servidor sem mudar esta tela | R1, NF-DA-02, NF-DA-05, `.claude/CLAUDE.md` (lógica fora do JSX) |
+| ID               | Regra                                                                                                                                                                                                                                                                                                                                                                                                                         | Fonte                                                            |
+| ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| `RF-PROJECTS-26` | A lista vem de um endpoint do RTK Query em `src/store/api/` (`queryFn` local, NF-DA-02) que devolve todos os projetos do idioma ativo num pedido só (NF-DA-05); a página não importa JSON. Busca, filtros, ordenação e lote são feitos no cliente por funções puras testáveis, fora do JSX (no hook da página ou em função pura). Na troca para a API (#43), o contrato pode ganhar paginação no servidor sem mudar esta tela | R1, NF-DA-02, NF-DA-05, `.claude/CLAUDE.md` (lógica fora do JSX) |
 
 ### Metadados
 
@@ -178,7 +178,7 @@ Caminhos de D32, sempre com o prefixo do idioma atual (NF-IN-11).
 ## Textos fixos e chaves
 
 Todo texto fixo vem de chave (`react-i18next`). O valor `pt-BR` abaixo é a referência; `en` e `es`
-são escritos na implementação (E), com as mesmas chaves (R2). Os rótulos de tipo e "A–Z" podem ser
+são escritos na implementação (#35), com as mesmas chaves (R2). Os rótulos de tipo e "A–Z" podem ser
 iguais nos três JSON; nomes de tecnologia não são chave (vêm do conteúdo e não se traduzem).
 
 O namespace `projects` guarda o que só a tela usa. `common` guarda o que o card mostra, porque o
@@ -248,7 +248,7 @@ pelo PO para as cinco telas (decisão transversal de 11-10-2026): os de tipo, ca
 já estão em [`home.md`](home.md) e [`layout.md`](layout.md) e são reaproveitados com o mesmo nome;
 `projectCard.featured` aparece pela primeira vez aqui. Não usar outro nome.
 
-**Vem do conteúdo, não de chave** (campo da #10, valor da #13, por idioma quando é texto): título,
+**Vem do conteúdo, não de chave** (campo da #10, valor da #58 e da #59, por idioma quando é texto): título,
 resumo, data (`date`), tipos, categoria, destaque, tecnologias (todas e as principais do card),
 captura e as variantes dela.
 
@@ -292,7 +292,7 @@ O que a tela pede à #10 (nomes sugeridos em inglês; a #10 decide os finais e a
 ## Metadados e JSON-LD
 
 - `<title>` e descrição de RF-PROJECTS-27, das chaves de `projects`, com as tags nativas do React 19. Canônica, `hreflang`, Open Graph (`og:type` `website`, `og:image` a do site) e
-  `twitter:card` pelo mecanismo de V, como em [`layout.md`](layout.md) ("Metadados por rota e
+  `twitter:card` pelo mecanismo de #52, como em [`layout.md`](layout.md) ("Metadados por rota e
   idioma"). A canônica nunca leva a query, e URL com query não ganha `noindex` (a canônica já
   aponta a lista padrão, NF-IA-11).
 - JSON-LD (NF-IA-08, NF-IA-09), num `<script type="application/ld+json">` com `<` escapado, gerado
@@ -303,7 +303,7 @@ O que a tela pede à #10 (nomes sugeridos em inglês; a #10 decide os finais e a
   `/projects/<id>` no mesmo idioma e `name` igual ao título. A página referencia o autor por
   `author` com o `@id` único da `Person` (`<URL canônica de />#person`, o mesmo em todas as telas,
   decisão transversal do PO de 11-10-2026), sem repetir a `Person` inteira.
-- Na pré-renderização (S), `/projects`, `/en/projects` e `/es/projects` têm cada um seu HTML com o
+- Na pré-renderização (#49), `/projects`, `/en/projects` e `/es/projects` têm cada um seu HTML com o
   primeiro lote na ordem padrão e o JSON-LD completo.
 
 ```json
@@ -331,7 +331,7 @@ O que a tela pede à #10 (nomes sugeridos em inglês; a #10 decide os finais e a
 
 ## Critérios de aceite
 
-Copiáveis para a issue E. Verificação entre colchetes, com a legenda de
+Copiáveis para a issue #35. Verificação entre colchetes, com a legenda de
 [`accessibility.md`](../product/accessibility.md#checklist-por-tela) (`[teste]`, `[axe]`, `[lint]`,
 `[teclado]`, `[leitor]`, `[navegador]`, `[e2e]` e `[medição]`) e mais `[review]` para o que só a
 revisão do PR confere. Nos itens funcionais, `[teste]` usa Testing Library com `renderWithStore` e
@@ -347,7 +347,7 @@ colunas da grade, restauração de rolagem ao voltar, hidratação) e `[mediçã
 - [ ] `RF-PROJECTS-04` — Termo aplicado 300 ms depois da última tecla; "Limpar busca" e "Limpar filtros" na hora; Enter não recarrega [teste]
 - [ ] `RF-PROJECTS-05` — Grupo "Tipo" com "Todos" e só os tipos presentes no conteúdo, na ordem do enum, escolha única com `aria-pressed`; projeto com vários tipos aparece em cada um, nos três idiomas, sem chave no lugar de texto [teste]
 - [ ] `RF-PROJECTS-06` — Grupo "Categoria" com três botões, escolha única opcional com `aria-pressed`; clicar na ativa desmarca, nos três idiomas, sem chave no lugar de texto [teste]
-- [ ] `RF-PROJECTS-07` — Busca, tipo e categoria combinados por E; os exemplos do documento num teste da função pura [teste]
+- [ ] `RF-PROJECTS-07` — Busca, tipo e categoria combinados por #35; os exemplos do documento num teste da função pura [teste]
 - [ ] `RF-PROJECTS-08` — Botões de 44px com os tokens de ativo e inativo, separador `aria-hidden`; abaixo de 640px linha única rolável, sem barra, alcançável por Tab, sem foco cortado [e2e] [medição] [teclado]
 - [ ] `RF-PROJECTS-09` — `select` nativo "Ordenar" com "Mais recente", "Mais antigo" e "A–Z", desempate por título, data e id, sem ligar "Limpar filtros", nos três idiomas, sem chave no lugar de texto [teste]
 - [ ] `RF-PROJECTS-10` — Contagem em `role="status"` desde a primeira renderização, com singular, plural, sem resultado, carregando e vazia no erro, atualizada uma vez por mudança, nos três idiomas, sem chave no lugar de texto [teste] [leitor]
@@ -407,32 +407,32 @@ visual.
 De [`non-functional-requirements.md`](../product/non-functional-requirements.md), com o momento de
 verificação de lá.
 
-- [ ] `NF-IN-03` — Nenhuma tela mostra chave no lugar de texto [CI; K]
-- [ ] `NF-IN-11` — Todo link interno mantém o prefixo do idioma, montado por função única [CI; W]
-- [ ] `NF-IN-13` — Caminhos em inglês: `/projects` e `/projects/:id` [CI; W; F]
+- [ ] `NF-IN-03` — Nenhuma tela mostra chave no lugar de texto [CI; #41]
+- [ ] `NF-IN-11` — Todo link interno mantém o prefixo do idioma, montado por função única [CI; #53]
+- [ ] `NF-IN-13` — Caminhos em inglês: `/projects` e `/projects/:id` [CI; #53; #36]
 - [ ] `NF-DA-02` — A tela não importa JSON de conteúdo: o acesso é por endpoint do RTK Query [Review; CI]
-- [ ] `NF-DA-05` — A tela carrega só o conteúdo do idioma ativo [#10; K]
+- [ ] `NF-DA-05` — A tela carrega só o conteúdo do idioma ativo [#10; #41]
 - [ ] `NF-DE-03` — INP até 200 ms na busca e no filtro [DevTools, painel Performance com CPU 4x]
 - [ ] `NF-DE-08` — JS adicional de `/projects` até 40 KB gzip [DevTools Network, navegando pelo cabeçalho]
 - [ ] `NF-DE-14` — Imagem 16:9 de card com no máximo 80 KB, servida por `srcset`/`sizes` [DevTools em 390px]
-- [ ] `NF-DE-16` — Imagens e placeholders com `width` e `height` (ou `aspect-ratio`) reservados [Review; K]
-- [ ] `NF-DE-17` — Imagens abaixo da dobra com `loading="lazy"` e `decoding="async"`; nenhuma imagem do LCP `lazy` [Review; K]
-- [ ] `NF-RE-03` — Sem rolagem horizontal em 360, 390, 768 e 1280px, nos dois temas e nos estados sem resultado, vazio, carregando e erro [K]
-- [ ] `NF-RE-04` — Linha de filtros rolável no mobile (D16) e grade de colunas de 18rem (D17) [C, D a H; K]
-- [ ] `NF-MO-01` — `prefers-reduced-motion: reduce` desliga shimmer e `translateY` de hover [K]
-- [ ] `NF-TE-04` — A query e as quebras não mudam a primeira renderização em relação ao HTML [S; K]
-- [ ] `NF-IA-01` — `/projects`, `/en/projects` e `/es/projects` com HTML gerado no build, legível sem JavaScript [CI; S; K]
-- [ ] `NF-IA-02` — Projetos depois de "Carregar mais" em `llms-full*.txt` e todo projeto no `sitemap.xml` [CI; S; U]
-- [ ] `NF-IA-03` — Primeira renderização do cliente igual ao HTML, com os dados serializados na store [CI; S; K]
-- [ ] `NF-IA-08` — JSON-LD `CollectionPage` com `ItemList` dos projetos [CI; V; D a H; K]
-- [ ] `NF-IA-09` — JSON-LD gerado dos mesmos dados da tela, com `<` escapado [CI; V]
-- [ ] `NF-IA-11` — Canônica absoluta por idioma, sem query string, e `hreflang` recíproco [CI; V; K]
-- [ ] `NF-IA-16` — HTML semântico, com o conteúdo principal dentro do `main` e as tecnologias em texto [CI; C, D a H]
-- [ ] `NF-CO-03` — Sem JavaScript, a lista inicial é legível; busca, filtros, ordenação e "Carregar mais" precisam de JavaScript [K]
+- [ ] `NF-DE-16` — Imagens e placeholders com `width` e `height` (ou `aspect-ratio`) reservados [Review; #41]
+- [ ] `NF-DE-17` — Imagens abaixo da dobra com `loading="lazy"` e `decoding="async"`; nenhuma imagem do LCP `lazy` [Review; #41]
+- [ ] `NF-RE-03` — Sem rolagem horizontal em 360, 390, 768 e 1280px, nos dois temas e nos estados sem resultado, vazio, carregando e erro [#41]
+- [ ] `NF-RE-04` — Linha de filtros rolável no mobile (D16) e grade de colunas de 18rem (D17) [#33, #34 a #38; #41]
+- [ ] `NF-MO-01` — `prefers-reduced-motion: reduce` desliga shimmer e `translateY` de hover [#41]
+- [ ] `NF-TE-04` — A query e as quebras não mudam a primeira renderização em relação ao HTML [#49; #41]
+- [ ] `NF-IA-01` — `/projects`, `/en/projects` e `/es/projects` com HTML gerado no build, legível sem JavaScript [CI; #49; #41]
+- [ ] `NF-IA-02` — Projetos depois de "Carregar mais" em `llms-full*.txt` e todo projeto no `sitemap.xml` [CI; #49; #51]
+- [ ] `NF-IA-03` — Primeira renderização do cliente igual ao HTML, com os dados serializados na store [CI; #49; #41]
+- [ ] `NF-IA-08` — JSON-LD `CollectionPage` com `ItemList` dos projetos [CI; #52; #34 a #38; #41]
+- [ ] `NF-IA-09` — JSON-LD gerado dos mesmos dados da tela, com `<` escapado [CI; #52]
+- [ ] `NF-IA-11` — Canônica absoluta por idioma, sem query string, e `hreflang` recíproco [CI; #52; #41]
+- [ ] `NF-IA-16` — HTML semântico, com o conteúdo principal dentro do `main` e as tecnologias em texto [CI; #33, #34 a #38]
+- [ ] `NF-CO-03` — Sem JavaScript, a lista inicial é legível; busca, filtros, ordenação e "Carregar mais" precisam de JavaScript [#41]
 
 ### Gerais
 
 - [ ] A rota abre e recarrega em `/projects`, `/en/projects` e `/es/projects` no build com o `base` do Pages
 - [ ] `npm run build`, `npm run lint` e `npm test -- --run` passam
 - [ ] Textos novos de `projects` e `common` em `pt-BR`, `en` e `es`, e chaves sem uso removidas (R2)
-- [ ] `/projects` entra na suíte da Y
+- [ ] `/projects` entra na suíte da #55

@@ -504,8 +504,16 @@ O `<Tipo>` de branch, commit e título de PR vem sempre desta tabela:
 | Chore    | :see_no_evil: | Mudanças sem impacto direto na aplicação (ex.: alterações no `.gitignore`). |
 | Revert   |   :rewind:    | Reverter algum commit.                                                      |
 
-Nunca use uma label do GitHub (`enhancement`, `bug` como label, etc.) no lugar do tipo: a label
-classifica a issue, o tipo classifica a mudança.
+### Issues
+
+Toda issue entra no projeto [Portfolio](https://github.com/users/felipe-sant/projects/16), que
+reúne os repositórios do portfólio, com Status `Backlog` (o PO revisa e move), `Marco` do
+`docs/product/roadmap.md` (ou `Pessoal`, para a trilha fora da v1) e um único `Tipo` (`FEAT`, `DOC`
+ou `BUG`). O tipo vive só nesse campo: as labels `enhancement`, `bug` e `documentation` não são
+usadas. Labels indicam só a área (`frontend`, `backend`, `infra`, uma ou mais). Toda issue que
+depende de outra registra a relação como "blocked by" do GitHub
+(`POST /repos/{owner}/{repo}/issues/{n}/dependencies/blocked_by`), além da linha "Depende de" do
+corpo.
 
 ### Branches
 
@@ -542,8 +550,8 @@ Commits são atômicos: uma mudança concluída por commit, nunca várias tarefa
 - Toda alteração passa por PR para a `staging`, sem push direto (exceção: `hotfix/*`, ver
   "Branches"). A promoção para produção é um PR de `staging` para `main`, com título no padrão de
   commit (`Chore :see_no_evil: Promove staging para produção`) e a lista das issues incluídas.
-- O autor se atribui já na criação (`gh pr create --assignee @me`) e aplica labels que já existem
-  no repositório (`bug`, `enhancement`, `documentation`, etc.).
+- O autor se atribui já na criação (`gh pr create --assignee @me`) e aplica as labels de área
+  da issue (`frontend`, `backend`, `infra`).
 - A descrição referencia a issue relacionada (`Closes #<número>`). A branch padrão do repositório
   é a `staging`, então a issue fecha no merge do PR para a `staging`.
 - O título segue o padrão do commit principal (`<Tipo> <ícone> [#<número>] <descrição>`).
