@@ -19,7 +19,8 @@ API (#43) ser só a troca da origem. As entidades, os campos e as regras de cada
   (D55).
 - **Idioma do conteúdo:** toda leitura exige `lang` (`pt-BR`, `en` ou `es`) na query, e a resposta
   traz o conteúdo só nesse idioma, com `Content-Language` igual a ele
-  ([`data-model.md`](data-model.md#tradução-do-conteúdo)). `lang` ausente ou fora da lista responde
+  ([`data-model.md`](data-model.md#tradução-do-conteúdo)), salvo o conteúdo de documento neutro
+  ([`GET /projects/{id}/documents/{documentId}`](#get-projectsiddocumentsdocumentid)). `lang` ausente ou fora da lista responde
   `400 UNSUPPORTED_LANGUAGE`.
 - **Idioma da mensagem de erro:** o cliente envia `Accept-Language` com o idioma ativo em toda
   requisição (`getLanguage()`, convenção do `.claude/CLAUDE.md`); ele só escolhe o idioma de
@@ -64,7 +65,7 @@ Toda resposta de erro, salvo `503`, tem `Content-Type: application/json` e este 
 | ------ | ---------------------- | ---------------------------------------------------------------------------------------- |
 | 400    | `UNSUPPORTED_LANGUAGE` | `lang` ausente ou fora de `pt-BR`, `en`, `es`                                            |
 | 400    | `INVALID_PARAMETER`    | Parâmetro de query com valor inválido ou repetido (com `fields`)                         |
-| 400    | `INVALID_ID`           | `{id}` do caminho fora do formato UUID v7                                                |
+| 400    | `INVALID_ID`           | `{id}` ou `{documentId}` do caminho fora do formato UUID v7                              |
 | 400    | `VALIDATION_FAILED`    | Corpo inválido em `POST /contact-messages` (com `fields`)                                |
 | 404    | `NOT_FOUND`            | Projeto inexistente ou documento que não existe no projeto                               |
 | 429    | `RATE_LIMITED`         | Limite de envios excedido; o header `Retry-After` diz em quantos segundos tentar de novo |
@@ -934,13 +935,14 @@ este contrato. Decidido pelo PO (11-10-2026) para que a integração (#43) seja 
 origem, sem mudar telas.
 
 - **Onde ficam os dados:** os registros (JSON) e os documentos ficam em
-  `public/content/<lang>/`, um conjunto por idioma, e são lidos com `import.meta.env.BASE_URL`
-  (NF-DA-03). Sugestão para os documentos (a #13 decide): a lista em
-  `public/content/<lang>/projects/<id>/documents.json`, cada documento traduzido em
-  `public/content/<lang>/projects/<id>/docs/<name>` e cada documento neutro uma vez só, em
-  `public/content/shared/projects/<id>/docs/<name>`. A camada local simula os dois endpoints de
-  documento com esses arquivos. Página e componente nunca leem esses arquivos: o acesso é pelos endpoints do RTK
-  Query em `src/store/api/` (NF-DA-02), cujo `queryFn` chama a camada local.
+  `public/content/<lang>/`, um conjunto por idioma, salvo os documentos neutros, guardados uma vez
+  só, e são lidos com `import.meta.env.BASE_URL` (NF-DA-03). Sugestão para os documentos (a #13
+  decide): a lista vem do próprio registro do projeto (`documents`), sem arquivo à parte, e a
+  camada local deriva dela a resposta de `GET /projects/{id}/documents`; cada documento traduzido
+  em `public/content/<lang>/projects/<id>/docs/<name>` e cada documento neutro em
+  `public/content/shared/projects/<id>/docs/<name>`. Página e componente nunca leem esses
+  arquivos: o acesso é pelos endpoints do RTK Query em `src/store/api/` (NF-DA-02), cujo
+  `queryFn` chama a camada local.
 - **Forma dos registros:** cada registro guardado tem a forma da entidade de
   [`data-model.md`](data-model.md) no seu idioma (`Profile`, `TimelineItem` com `projectIds`,
   projeto na forma `ProjectDetail` com `related` como `{ id, reason }`), como o backend guardaria.
