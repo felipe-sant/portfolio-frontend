@@ -1,9 +1,9 @@
 # Início
 
 A tela Início (`/`, também sob `/en/` e `/es/`, D32) é a primeira impressão do portfólio e o fim da
-jornada do recrutador ("Baixar CV" no hero). Quem a implementa é a issue D, com A (tokens, tema e
-foco), B (componentes base e ícones, inclusive pausa e play de D28), C (layout), W (idioma no
-caminho), V (canônica, Open Graph e o mecanismo do JSON-LD), S (pré-renderização) e I (botões de CV
+jornada do recrutador ("Baixar CV" no hero). Quem a implementa é a issue #34, com #31 (tokens, tema e
+foco), #32 (componentes base e ícones, inclusive pausa e play de D28), #33 (layout), #53 (idioma no
+caminho), #52 (canônica, Open Graph e o mecanismo do JSON-LD), #49 (pré-renderização) e #39 (botões de CV
 ligados aos PDFs). Este documento diz o comportamento; não escolhe nome de componente nem de
 arquivo, além do namespace e da chave de tradução.
 
@@ -27,7 +27,7 @@ o professor à lista de projetos ou a um estudo de caso.
 
 ## Estados
 
-Na primeira carga de cada idioma o HTML pré-renderizado (S) já traz os dados (NF-IA-01, NF-IA-03),
+Na primeira carga de cada idioma o HTML pré-renderizado (#49) já traz os dados (NF-IA-01, NF-IA-03),
 então "carregando" só aparece em navegação interna, antes de o conteúdo estar no cache da store.
 Cada bloco de dados (perfil, status atual, stack e destaques) tem estado próprio. No hero, `h1` e
 botões nunca esperam dado; selo e parágrafo vêm do perfil.
@@ -61,7 +61,7 @@ conteúdo da #13, com o comportamento da tela se algo passar:
 | Imagem do destaque           | Primeira captura 16:9 do projeto (D26), com largura e altura                                 | Projeto sem captura mostra o placeholder neutro 16:9 (`--bg-placeholder`, borda de 1px, `aria-hidden`)                        |
 | Datas do status              | Início em `AAAA-MM`, exibido "desde `MM/AAAA`" por `Intl` dentro de `<time>` (NF-IN-04, D39) | Teste de conteúdo da #13                                                                                                      |
 | Texto do conteúdo por idioma | Presente no idioma ativo (NF-IN-02)                                                          | Teste de conteúdo da #13; a tela não cai para outro idioma                                                                    |
-| CV                           | Caminho `cv/cv-<idioma>.pdf` com `import.meta.env.BASE_URL` (D14, NF-DA-03)                  | Antes de X gerar os PDFs o link quebra (aceito até I, roadmap M6)                                                             |
+| CV                           | Caminho `cv/cv-<idioma>.pdf` com `import.meta.env.BASE_URL` (D14, NF-DA-03)                  | Antes de #54 gerar os PDFs o link quebra (aceito até #39, roadmap M6)                                                         |
 
 ## Permissões
 
@@ -84,9 +84,9 @@ Cada subseção lista os requisitos na ordem dos IDs.
 | ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------- |
 | `RF-HOME-03` | Selo de disponibilidade acima do `h1`, com indicador redondo em `currentColor` (`aria-hidden`), texto `--success-ink` sobre `--success-surface`, raio `--radius` (D11, sem pílula). O texto é a frase livre do perfil (`availability.label`, traduzida no conteúdo, ex.: "Disponível para projetos", "Disponível a partir de 01/2027"), não chave de tradução; aparece só com `availability.isAvailable` verdadeiro, e falso esconde o selo, sem selo de "indisponível" (D44). É o mesmo campo de Informações, Contato e do rodapé (RF-LAY-21). É texto, não link nem botão | Protótipo, D11, D44        |
 | `RF-HOME-04` | `h1` "Desenvolvedor full stack em TypeScript", sem ponto (D24), por chave (`home:heading`), Bricolage 800 em `--text-display` fluido, `text-wrap: balance`; é o `h1` da tela e o alvo de foco na navegação interna (RF-LAY-32, A11Y-IN01)                                                                                                                                                                                                                                                                                                                                   | D24, A11Y-IN01             |
-| `RF-HOME-05` | Parágrafo de apresentação limitado a `--measure`, `--lh-body`, `text-wrap: pretty` (A11Y-G09), vindo do conteúdo (texto de apresentação do perfil, traduzido), não de chave. Enquanto o perfil carrega, três linhas de skeleton `aria-hidden` reservam o espaço; na pré-renderização (S) ele já está no HTML. Se o perfil falha, o parágrafo some sem mensagem (RF-HOME-24)                                                                                                                                                                                                 | Protótipo, PO (11-10-2026) |
+| `RF-HOME-05` | Parágrafo de apresentação limitado a `--measure`, `--lh-body`, `text-wrap: pretty` (A11Y-G09), vindo do conteúdo (texto de apresentação do perfil, traduzido), não de chave. Enquanto o perfil carrega, três linhas de skeleton `aria-hidden` reservam o espaço; na pré-renderização (#49) ele já está no HTML. Se o perfil falha, o parágrafo some sem mensagem (RF-HOME-24)                                                                                                                                                                                               | Protótipo, PO (11-10-2026) |
 | `RF-HOME-06` | Dois links lado a lado, que quebram linha quando não cabem: "Ver projetos" (primário, degradê âmbar, seta `→` em ícone `aria-hidden`) para `/projects`, e "Baixar CV" (secundário, ícone de download `aria-hidden`), ambos com alvo de no mínimo 44px (o protótipo usa 3rem)                                                                                                                                                                                                                                                                                                | Protótipo, D14, A11Y-G08   |
-| `RF-HOME-07` | "Baixar CV" baixa o PDF do idioma ativo: `cv/cv-pt-BR.pdf`, `cv/cv-en.pdf` ou `cv/cv-es.pdf` em `public/cv/`, com `import.meta.env.BASE_URL`, atributo `download` (mesma origem), sem `target`; texto visível `common:resume.download` e nome acessível "Baixar CV (PDF)" (`common:resume.downloadPdf`, que começa pelo texto visível, A11Y-IN08). O link existe antes de X gerar os arquivos; I confere que ele aponta para o arquivo gerado                                                                                                                               | D14, D30, D36, A11Y-IN08   |
+| `RF-HOME-07` | "Baixar CV" baixa o PDF do idioma ativo: `cv/cv-pt-BR.pdf`, `cv/cv-en.pdf` ou `cv/cv-es.pdf` em `public/cv/`, com `import.meta.env.BASE_URL`, atributo `download` (mesma origem), sem `target`; texto visível `common:resume.download` e nome acessível "Baixar CV (PDF)" (`common:resume.downloadPdf`, que começa pelo texto visível, A11Y-IN08). O link existe antes de #54 gerar os arquivos; #39 confere que ele aponta para o arquivo gerado                                                                                                                           | D14, D30, D36, A11Y-IN08   |
 
 ### Status atual
 
@@ -132,9 +132,9 @@ Cada subseção lista os requisitos na ordem dos IDs.
 
 ### Link e idioma
 
-| ID           | Regra                                                                                                                                            | Fonte         |
-| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------ | ------------- |
-| `RF-HOME-25` | Todo link interno usa `<Link>` com o path de `ROUTES` e o prefixo do idioma atual, pela função de W (NF-IN-11, D36); a tela não tem link externo | D36, NF-IN-11 |
+| ID           | Regra                                                                                                                                              | Fonte         |
+| ------------ | -------------------------------------------------------------------------------------------------------------------------------------------------- | ------------- |
+| `RF-HOME-25` | Todo link interno usa `<Link>` com o path de `ROUTES` e o prefixo do idioma atual, pela função de #53 (NF-IN-11, D36); a tela não tem link externo | D36, NF-IN-11 |
 
 ### Divergências do protótipo e do corpo da #3
 
@@ -166,7 +166,7 @@ Caminhos de D32, sempre com o prefixo do idioma atual (NF-IN-11).
 | ------------------------------------- | -------------------------------------------- | --------------------------------------------------------- |
 | Qualquer tela                         | Gato e nome, "Início" na navegação           | `/` do idioma atual (RF-LAY-02, RF-LAY-03)                |
 | Página não encontrada, página de erro | "Voltar para o início"                       | `/` (RF-LAY-28, RF-LAY-29)                                |
-| Primeira carga em `/`                 | Escolha salva diferente de `pt-BR`           | `/en/` ou `/es/` (NF-IN-09, W)                            |
+| Primeira carga em `/`                 | Escolha salva diferente de `pt-BR`           | `/en/` ou `/es/` (NF-IN-09, #53)                          |
 | Hero                                  | "Ver projetos"                               | `/projects`                                               |
 | Hero                                  | "Baixar CV"                                  | Download do PDF do idioma ativo, sem sair da página (D36) |
 | Projetos em destaque                  | "Ver todos →"                                | `/projects`                                               |
@@ -178,7 +178,7 @@ Caminhos de D32, sempre com o prefixo do idioma atual (NF-IN-11).
 ## Textos fixos e chaves
 
 Todo texto fixo vem de chave (`react-i18next`). O valor `pt-BR` abaixo é a referência; `en` e `es`
-são escritos na implementação (D), com as mesmas chaves (R2). Nomes de tecnologia, "CV", "PDF" e
+são escritos na implementação (#34), com as mesmas chaves (R2). Nomes de tecnologia, "CV", "PDF" e
 os símbolos são iguais nos três JSON.
 
 O namespace `home` (existe) guarda o que só o Início usa. `common` guarda o que outras telas também
@@ -244,7 +244,7 @@ parágrafo do hero passa a vir do conteúdo (resposta do PO de 11-10-2026); o te
 que melhor mostram como resolvo problemas.") é a sugestão de valor `pt-BR` para a #13. O
 `common:symbols.download` do layout (`↓`) não é usado aqui: o hero usa o ícone de download (D14).
 "desde" é "since" em `en` e "desde" em `es`; o valor `es` de "Cursando" é "Estudiando" e o `en`
-"Studying" (sugestões para a D).
+"Studying" (sugestões para a #34).
 
 ## Conteúdo e contrato de dados
 
@@ -297,11 +297,11 @@ Lista de necessidades; a #10 decide nomes de campo, arquivos e endpoints.
   `<meta name="description">`, das chaves de `home`, com as tags nativas do React 19; o título da
   raiz é a exceção ao formato `<Tela> · Luiz Felipe dos Santos` ([`layout.md`](layout.md)).
 - Canônica, `hreflang`, Open Graph (`og:type` `website`, `og:image` a do site, 1200×630) e
-  `twitter:card`: pelo mecanismo de V, como em [`layout.md`](layout.md) ("Metadados por rota e
+  `twitter:card`: pelo mecanismo de #52, como em [`layout.md`](layout.md) ("Metadados por rota e
   idioma"); a tela não declara nada além disso.
 - JSON-LD (NF-IA-08, NF-IA-09), num `<script type="application/ld+json">` com `<` escapado,
   gerado dos mesmos dados da tela, um por idioma: `WebSite` e `Person`, ligados pelo `@id` da
-  `Person`. V fornece o mecanismo e D declara os dados, sem inventar campo que o conteúdo não tem.
+  `Person`. #52 fornece o mecanismo e #34 declara os dados, sem inventar campo que o conteúdo não tem.
 
 ```json
 {
@@ -328,15 +328,15 @@ Lista de necessidades; a #10 decide nomes de campo, arquivos e endpoints.
 ```
 
 O `@id` da `Person` é `<URL canônica de />#person`, o mesmo em todas as telas e idiomas (decisão
-transversal do PO de 11-10-2026), e `/about` o reutiliza na `ProfilePage` (G,
+transversal do PO de 11-10-2026), e `/about` o reutiliza na `ProfilePage` (#37,
 [`about.md`](about.md)). `sameAs` só tem as redes que existirem no conteúdo. `image` só entra
-depois de L (foto, D26). `jobTitle` vem da mesma chave do `h1`, para o cargo exibido e o declarado
-serem o mesmo dado (NF-IA-09). Sem `noindex`. A pré-renderização (S) gera `/`, `/en/` e `/es/` com
+depois de #42 (foto, D26). `jobTitle` vem da mesma chave do `h1`, para o cargo exibido e o declarado
+serem o mesmo dado (NF-IA-09). Sem `noindex`. A pré-renderização (#49) gera `/`, `/en/` e `/es/` com
 tudo isso no HTML.
 
 ## Critérios de aceite
 
-Copiáveis para a issue D. Verificação entre colchetes, com a legenda de
+Copiáveis para a issue #34. Verificação entre colchetes, com a legenda de
 [`accessibility.md`](../product/accessibility.md#checklist-por-tela) (`[teste]`, `[axe]`, `[lint]`,
 `[teclado]`, `[leitor]`, `[navegador]`, `[e2e]` e `[medição]`) e mais `[review]` para o que só a
 revisão do PR confere. Nos itens funcionais, `[teste]` usa Testing Library com `renderWithStore` e
@@ -369,7 +369,7 @@ revisão do PR confere. Nos itens funcionais, `[teste]` usa Testing Library com 
 - [ ] `RF-HOME-22` — "Ver todos os projetos" para `/projects` e "Ler sobre mim" para `/about`, alvos de 44px, nos três idiomas, sem chave no lugar de texto [teste] [medição]
 - [ ] `RF-HOME-23` — Cada bloco carrega e falha sozinho; skeletons `aria-hidden` e um único `role="status"` [teste]
 - [ ] `RF-HOME-24` — Erro de status ou destaques em `role="alert"` com "Tentar novamente" que refaz só aquela consulta, heading mantido; perfil e stack somem sem mensagem; nunca mensagem técnica, nos três idiomas, sem chave no lugar de texto [teste]
-- [ ] `RF-HOME-25` — Todo link interno por `<Link>` com o prefixo do idioma, montado pela função de W; nenhum link externo [teste] [review]
+- [ ] `RF-HOME-25` — Todo link interno por `<Link>` com o prefixo do idioma, montado pela função de #53; nenhum link externo [teste] [review]
 
 ### Acessibilidade
 
@@ -409,15 +409,15 @@ Lighthouse mobile no build publicado do Pages, como diz aquele documento.
 
 - [ ] `NF-IN-01` — Todo texto da tela existe em `pt-BR`, `en` e `es` [CI]
 - [ ] `NF-IN-02` — Perfil, trajetória, stack e projetos traduzidos nos três idiomas [CI; #13]
-- [ ] `NF-IN-03` — Nenhuma tela mostra chave no lugar de texto [CI; K]
-- [ ] `NF-IN-04` — Datas em `MM/AAAA` por `Intl.DateTimeFormat` nos três idiomas; o período em curso segue D39 ("desde MM/AAAA") [CI; G, F]
-- [ ] `NF-IN-05` — `<html lang>` acompanha o idioma do caminho, já no HTML pré-renderizado [CI; S; W]
-- [ ] `NF-IN-06` — `/`, `/en/` e `/es/` abrem a tela no idioma do caminho [CI; W]
-- [ ] `NF-IN-11` — Todo link interno mantém o prefixo do idioma, montado por função única [CI; W]
-- [ ] `NF-IN-13` — Caminhos em inglês: `/projects`, `/projects/:id` e `/about` [CI; W; F]
+- [ ] `NF-IN-03` — Nenhuma tela mostra chave no lugar de texto [CI; #41]
+- [ ] `NF-IN-04` — Datas em `MM/AAAA` por `Intl.DateTimeFormat` nos três idiomas; o período em curso segue D39 ("desde MM/AAAA") [CI; #37, #36]
+- [ ] `NF-IN-05` — `<html lang>` acompanha o idioma do caminho, já no HTML pré-renderizado [CI; #49; #53]
+- [ ] `NF-IN-06` — `/`, `/en/` e `/es/` abrem a tela no idioma do caminho [CI; #53]
+- [ ] `NF-IN-11` — Todo link interno mantém o prefixo do idioma, montado por função única [CI; #53]
+- [ ] `NF-IN-13` — Caminhos em inglês: `/projects`, `/projects/:id` e `/about` [CI; #53; #36]
 - [ ] `NF-DA-02` — A tela não importa JSON de conteúdo: o acesso é por endpoints do RTK Query [Review; CI]
-- [ ] `NF-DA-03` — JSONs e PDFs com caminho montado por `import.meta.env.BASE_URL` [Review; O; K]
-- [ ] `NF-DA-05` — A tela carrega só o conteúdo do idioma ativo [#10; K]
+- [ ] `NF-DA-03` — JSONs e PDFs com caminho montado por `import.meta.env.BASE_URL` [Review; #45; #41]
+- [ ] `NF-DA-05` — A tela carrega só o conteúdo do idioma ativo [#10; #41]
 - [ ] `NF-DE-01` — LCP até 2,5 s [Lighthouse mobile]
 - [ ] `NF-DE-02` — CLS até 0,1, rolando até o fim da página [Lighthouse mobile]
 - [ ] `NF-DE-05` — FCP até 1,8 s [Lighthouse mobile]
@@ -425,24 +425,24 @@ Lighthouse mobile no build publicado do Pages, como diz aquele documento.
 - [ ] `NF-DE-07` — JS da primeira carga de `/` até 180 KB gzip [DevTools Network, filtro JS, cache desligado]
 - [ ] `NF-DE-14` — Imagem 16:9 de destaque com no máximo 80 KB, servida por `srcset`/`sizes` [DevTools em 390px]
 - [ ] `NF-DE-15` — Total transferido na primeira carga de `/` até 800 KB [DevTools Network, rodapé]
-- [ ] `NF-DE-16` — Imagens e placeholders com `width` e `height` (ou `aspect-ratio`) reservados [Review; K]
-- [ ] `NF-DE-17` — Imagens de destaque, abaixo da dobra, com `loading="lazy"` e `decoding="async"` [Review; K]
+- [ ] `NF-DE-16` — Imagens e placeholders com `width` e `height` (ou `aspect-ratio`) reservados [Review; #41]
+- [ ] `NF-DE-17` — Imagens de destaque, abaixo da dobra, com `loading="lazy"` e `decoding="async"` [Review; #41]
 - [ ] `NF-DE-19` — Faixa de stack e hover animados só por `transform` e `opacity` [Review]
-- [ ] `NF-RE-01` — Quebra de 640px dos destaques por media query; tipografia contínua por `clamp()` [K]
+- [ ] `NF-RE-01` — Quebra de 640px dos destaques por media query; tipografia contínua por `clamp()` [#41]
 - [ ] `NF-RE-02` — Sem largura fixa em px fora das imagens [Review]
-- [ ] `NF-RE-03` — Sem rolagem horizontal em 360, 390, 768 e 1280px, nos dois temas e nos estados especiais [K]
-- [ ] `NF-TE-04` — Movimento reduzido e quebras não mudam a primeira renderização em relação ao HTML [S; K]
-- [ ] `NF-MO-01` — `prefers-reduced-motion: reduce` desliga marquee, shimmer e `translateY` de hover [K]
+- [ ] `NF-RE-03` — Sem rolagem horizontal em 360, 390, 768 e 1280px, nos dois temas e nos estados especiais [#41]
+- [ ] `NF-TE-04` — Movimento reduzido e quebras não mudam a primeira renderização em relação ao HTML [#49; #41]
+- [ ] `NF-MO-01` — `prefers-reduced-motion: reduce` desliga marquee, shimmer e `translateY` de hover [#41]
 - [ ] `NF-MO-02` — A faixa consulta a preferência pelo hook reutilizável de `src/hooks/` [CI; quem usar]
-- [ ] `NF-MO-03` — A faixa de stack tem pausa (D28) [D; K]
-- [ ] `NF-IA-01` — `/`, `/en/` e `/es/` com HTML gerado no build, legível sem JavaScript [CI; S; K]
-- [ ] `NF-IA-03` — Primeira renderização do cliente igual ao HTML, com os dados serializados na store [CI; S; K]
-- [ ] `NF-IA-08` — JSON-LD `WebSite` e `Person` com nome, cargo, URL, `sameAs` e `knowsAbout` [CI; V; D a H; K]
-- [ ] `NF-IA-09` — JSON-LD gerado dos mesmos dados da tela, com `<` escapado [CI; V]
-- [ ] `NF-IA-10` — `<title>`, descrição, Open Graph e `twitter:card` por idioma [CI; V; K]
-- [ ] `NF-IA-16` — HTML semântico, com o conteúdo principal dentro do `main` e a stack em texto [CI; C, D a H]
-- [ ] `NF-CO-03` — Sem JavaScript, o conteúdo é legível; pausa e "Tentar novamente" precisam de JavaScript [K]
-- [ ] `NF-PR-01` — Nenhuma requisição a terceiros: imagens, JSONs e PDFs da própria origem [K; Review]
+- [ ] `NF-MO-03` — A faixa de stack tem pausa (D28) [#34; #41]
+- [ ] `NF-IA-01` — `/`, `/en/` e `/es/` com HTML gerado no build, legível sem JavaScript [CI; #49; #41]
+- [ ] `NF-IA-03` — Primeira renderização do cliente igual ao HTML, com os dados serializados na store [CI; #49; #41]
+- [ ] `NF-IA-08` — JSON-LD `WebSite` e `Person` com nome, cargo, URL, `sameAs` e `knowsAbout` [CI; #52; #34 a #38; #41]
+- [ ] `NF-IA-09` — JSON-LD gerado dos mesmos dados da tela, com `<` escapado [CI; #52]
+- [ ] `NF-IA-10` — `<title>`, descrição, Open Graph e `twitter:card` por idioma [CI; #52; #41]
+- [ ] `NF-IA-16` — HTML semântico, com o conteúdo principal dentro do `main` e a stack em texto [CI; #33, #34 a #38]
+- [ ] `NF-CO-03` — Sem JavaScript, o conteúdo é legível; pausa e "Tentar novamente" precisam de JavaScript [#41]
+- [ ] `NF-PR-01` — Nenhuma requisição a terceiros: imagens, JSONs e PDFs da própria origem [#41; Review]
 
 ### Gerais
 

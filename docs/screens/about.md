@@ -2,8 +2,8 @@
 
 A tela Informações (`/about`, também sob `/en/about` e `/es/about`, D32) junta o que o recrutador
 procura antes de chamar alguém para conversar: quem é o autor, o que ele domina, por onde passou e
-o CV para baixar. Quem a implementa é a issue G, com C (layout), S (pré-renderização), V
-(canônica, Open Graph e JSON-LD), I (botões de CV), L (foto) e #13 (conteúdo). Este documento diz o
+o CV para baixar. Quem a implementa é a issue #37, com #33 (layout), #49 (pré-renderização), #52
+(canônica, Open Graph e JSON-LD), #39 (botões de CV), #42 (foto) e #13 (conteúdo). Este documento diz o
 comportamento; não escolhe nome de componente nem de arquivo, além do namespace e da chave de
 tradução.
 
@@ -36,21 +36,21 @@ um clique, sem sair da tela.
 | Foto ainda não entregue (D26 bloqueada) | Placeholder neutro 1:1 (`--bg-placeholder`, borda `--border-subtle`), decorativo (`aria-hidden`, sem `role="img"`, achado de `accessibility.md`)                                                                                                                                                                                                                                                             |
 | Modal aberto, a partir de 640px         | Fundo `--overlay` sobre a página; caixa centralizada de até 34rem, `--radius`, `--shadow-modal`, com cabeçalho fixo dentro dela (título, linha de metadados e "Fechar") e o corpo rolando; rolagem da página travada                                                                                                                                                                                         |
 | Modal aberto, abaixo de 640px (D20)     | Tela cheia, sem raio nem margem, mesmo conteúdo                                                                                                                                                                                                                                                                                                                                                              |
-| Sem JavaScript                          | HTML pré-renderizado (S) com todas as seções e o detalhe de cada item no HTML, fechado (D37); "Baixar CV", "Entrar em contato" e os links do layout funcionam; os itens de trajetória não abrem o modal (NF-CO-03)                                                                                                                                                                                           |
+| Sem JavaScript                          | HTML pré-renderizado (#49) com todas as seções e o detalhe de cada item no HTML, fechado (D37); "Baixar CV", "Entrar em contato" e os links do layout funcionam; os itens de trajetória não abrem o modal (NF-CO-03)                                                                                                                                                                                         |
 
 ## Validações
 
 Não há campo de formulário. As regras abaixo são do conteúdo, verificadas pelo teste de conteúdo
 da #13 (o build falha), com o comportamento da tela se algo passar:
 
-| Entrada                                 | Regra                                                                              | Na tela, se falhar                                                          |
-| --------------------------------------- | ---------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
-| Início e fim de item de trajetória      | `AAAA-MM` (ISO 8601); fim opcional (ausente = em curso) e maior ou igual ao início | Não se aplica: o teste de conteúdo barra                                    |
-| Tipo de item de trajetória              | `experience`, `education` ou `course`                                              | Item com tipo desconhecido não aparece                                      |
-| Categoria de stack                      | `frontend`, `backend` ou `tooling`                                                 | Grupo com categoria desconhecida não aparece                                |
-| Projeto relacionado                     | id (UUID v7, NF-DA-07) de um projeto existente no conteúdo do mesmo idioma         | O link não aparece; se nenhum sobrar, o bloco não aparece                   |
-| Resumo do item, apresentação, Sobre mim | Obrigatórios, não vazios                                                           | Não se aplica: o teste de conteúdo barra                                    |
-| Arquivo do CV                           | `cv/cv-<idioma>.pdf` sob `import.meta.env.BASE_URL`, gerado por X                  | Até X existir, o link quebra (aceito em M5, como em `layout.md`, RF-LAY-27) |
+| Entrada                                 | Regra                                                                              | Na tela, se falhar                                                            |
+| --------------------------------------- | ---------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| Início e fim de item de trajetória      | `AAAA-MM` (ISO 8601); fim opcional (ausente = em curso) e maior ou igual ao início | Não se aplica: o teste de conteúdo barra                                      |
+| Tipo de item de trajetória              | `experience`, `education` ou `course`                                              | Item com tipo desconhecido não aparece                                        |
+| Categoria de stack                      | `frontend`, `backend` ou `tooling`                                                 | Grupo com categoria desconhecida não aparece                                  |
+| Projeto relacionado                     | id (UUID v7, NF-DA-07) de um projeto existente no conteúdo do mesmo idioma         | O link não aparece; se nenhum sobrar, o bloco não aparece                     |
+| Resumo do item, apresentação, Sobre mim | Obrigatórios, não vazios                                                           | Não se aplica: o teste de conteúdo barra                                      |
+| Arquivo do CV                           | `cv/cv-<idioma>.pdf` sob `import.meta.env.BASE_URL`, gerado por #54                | Até #54 existir, o link quebra (aceito em M5, como em `layout.md`, RF-LAY-27) |
 
 ## Permissões
 
@@ -71,7 +71,7 @@ Cada subseção lista os requisitos na ordem dos IDs.
 
 | ID            | Regra                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | Fonte                                                       |
 | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
-| `RF-ABOUT-02` | Foto de perfil 1:1 (D26) com `alt` por chave, "Foto de Luiz Felipe dos Santos" (A11Y-IF01), `width` e `height` declarados (NF-DE-16), `srcset`/`sizes` com no máximo 80 KB (NF-DE-14), `fetchpriority="high"` e sem `loading="lazy"` por estar na primeira dobra (NF-DE-17), sem EXIF (NF-PR-05). Até L entregar a foto, placeholder neutro decorativo (`aria-hidden`)                                                                                                                                                                                        | D26, `accessibility.md` (Imagens e texto alternativo)       |
+| `RF-ABOUT-02` | Foto de perfil 1:1 (D26) com `alt` por chave, "Foto de Luiz Felipe dos Santos" (A11Y-IF01), `width` e `height` declarados (NF-DE-16), `srcset`/`sizes` com no máximo 80 KB (NF-DE-14), `fetchpriority="high"` e sem `loading="lazy"` por estar na primeira dobra (NF-DE-17), sem EXIF (NF-PR-05). Até #42 entregar a foto, placeholder neutro decorativo (`aria-hidden`)                                                                                                                                                                                      | D26, `accessibility.md` (Imagens e texto alternativo)       |
 | `RF-ABOUT-03` | Abaixo da foto, a localização com ícone de pin e o selo de disponibilidade, ambos do conteúdo. O selo usa `availability` do perfil, o mesmo campo de Início, Contato e rodapé (RF-LAY-21): o texto é `label`, frase livre do PO traduzida por idioma (ex.: "Disponível a partir de 01/2027"), nunca chave de tradução; o indicador redondo (único elemento redondo, D11) fica em `--success-ink`; com `isAvailable: false` o selo não aparece, e a localização fica sozinha. O texto carrega o estado (cor nunca sozinha). Ícone e indicador em `aria-hidden` | Protótipo, D15, D11, decisão transversal do PO (11-10-2026) |
 | `RF-ABOUT-04` | Rótulo "Informações" acima do `h1`; `h1` com o nome do autor (`common:authorName`), que não depende do conteúdo e existe já no carregamento (alvo do foco na troca de rota, RF-LAY-32); parágrafo de apresentação do conteúdo, com largura máxima `--measure`                                                                                                                                                                                                                                                                                                 | Protótipo, `layout.md`                                      |
 | `RF-ABOUT-05` | "Baixar CV": link com aparência de botão primário (degradê da marca) e ícone de download (`aria-hidden`), apontando para o PDF do idioma ativo (`cv/cv-pt-BR.pdf`, `cv/cv-en.pdf`, `cv/cv-es.pdf`, com `import.meta.env.BASE_URL`), com download direto (atributo `download`, mesma origem, sem nova aba) e nome acessível "Baixar CV (PDF)", que começa pelo texto visível (A11Y-IF05, 2.5.3). Não depende do conteúdo carregar                                                                                                                              | D14, D30, D36                                               |
@@ -130,11 +130,11 @@ Cada subseção lista os requisitos na ordem dos IDs.
 
 ### Metadados e pré-renderização
 
-| ID            | Regra                                                                                                                                                                                                                                                                                           | Fonte                             |
-| ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------- |
-| `RF-ABOUT-28` | `<title>` "Informações · Luiz Felipe dos Santos" e `<meta name="description">` por chave do namespace `about` (A11Y-G01); canônica, `hreflang`, Open Graph e `twitter:card` pelo mecanismo de V (NF-IA-10, NF-IA-11), com `og:type` `profile` e `og:image` do site (a foto é 1:1, não 1200×630) | `layout.md` (Metadados), NF-IA-10 |
-| `RF-ABOUT-29` | JSON-LD `ProfilePage` com `mainEntity` `Person` (ver [Metadados e dados estruturados](#metadados-e-dados-estruturados)), gerado dos mesmos dados da tela, com `<` escapado (NF-IA-08, NF-IA-09)                                                                                                 | NF-IA-08                          |
-| `RF-ABOUT-30` | `/about` é pré-renderizada nos três idiomas com `h1`, todas as seções e o detalhe dos itens no `main` (NF-IA-01, NF-IA-16, RF-ABOUT-23); os dados de perfil, trajetória e projetos usados no HTML vão serializados para a store (NF-IA-03), sem erro de hidratação                              | NF-IA-01, NF-IA-03                |
+| ID            | Regra                                                                                                                                                                                                                                                                                             | Fonte                             |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------- |
+| `RF-ABOUT-28` | `<title>` "Informações · Luiz Felipe dos Santos" e `<meta name="description">` por chave do namespace `about` (A11Y-G01); canônica, `hreflang`, Open Graph e `twitter:card` pelo mecanismo de #52 (NF-IA-10, NF-IA-11), com `og:type` `profile` e `og:image` do site (a foto é 1:1, não 1200×630) | `layout.md` (Metadados), NF-IA-10 |
+| `RF-ABOUT-29` | JSON-LD `ProfilePage` com `mainEntity` `Person` (ver [Metadados e dados estruturados](#metadados-e-dados-estruturados)), gerado dos mesmos dados da tela, com `<` escapado (NF-IA-08, NF-IA-09)                                                                                                   | NF-IA-08                          |
+| `RF-ABOUT-30` | `/about` é pré-renderizada nos três idiomas com `h1`, todas as seções e o detalhe dos itens no `main` (NF-IA-01, NF-IA-16, RF-ABOUT-23); os dados de perfil, trajetória e projetos usados no HTML vão serializados para a store (NF-IA-03), sem erro de hidratação                                | NF-IA-01, NF-IA-03                |
 
 ## Navegação
 
@@ -154,9 +154,9 @@ O Início pode ter um link para `/about`; isso é da spec da #3.
 ## Textos fixos e chaves
 
 Todo texto fixo vem de chave (`react-i18next`). O valor `pt-BR` abaixo é a referência; `en` e `es`
-são escritos na implementação (G), com as mesmas chaves (R2). O namespace novo é `about`,
+são escritos na implementação (#37), com as mesmas chaves (R2). O namespace novo é `about`,
 registrado em `src/locales/*/about.json`, em `src/i18n/resources.ts` e no `ns` de
-`src/i18n/i18n.ts` (na G). Texto usado por mais de uma tela vai para `common` (convenção do
+`src/i18n/i18n.ts` (na #37). Texto usado por mais de uma tela vai para `common` (convenção do
 `.claude/CLAUDE.md`).
 
 | Namespace | Chave                                             | Valor em `pt-BR`                                                        | Onde                                                        |
@@ -242,7 +242,7 @@ Um por idioma.
 | `summary`                                 | texto, obrigatório                                                      | Parágrafo de apresentação, JSON-LD `description`, CV                  |
 | `location`                                | `{ city, region, country }`                                             | "São José dos Campos · SP"; JSON-LD `homeLocation`; rodapé            |
 | `availability`                            | `{ isAvailable: boolean, label: texto }`                                | Selo de Informações, Início, Contato e rodapé; `false` esconde o selo |
-| `photo`                                   | `{ src, width, height }` (o `alt` é chave)                              | Foto 1:1 (D26, L)                                                     |
+| `photo`                                   | `{ src, width, height }` (o `alt` é chave)                              | Foto 1:1 (D26, #42)                                                   |
 | `about`                                   | texto[], pelo menos um                                                  | Sobre mim                                                             |
 | `workPrinciples`                          | texto[]                                                                 | "Como eu trabalho"                                                    |
 | `stack`                                   | `{ category: "frontend" \| "backend" \| "tooling", items: string[] }[]` | Stack, Início, JSON-LD, CV                                            |
@@ -278,7 +278,7 @@ muda e a URL depende do idioma.
 
 O CV não tem uma cópia própria de perfil, stack e trajetória. O "JSON do CV" de D30 é a composição
 desses mesmos dados (perfil, stack e trajetória) mais o que só o CV mostra (por exemplo, idiomas
-falados), que a #10 define. X gera PDF, Markdown e HTML lendo os mesmos JSONs da tela (NF-DA-04,
+falados), que a #10 define. #54 gera PDF, Markdown e HTML lendo os mesmos JSONs da tela (NF-DA-04,
 NF-IA-07), então mudar um item de trajetória muda tela, CV, `llms-full*.txt` e JSON-LD de uma vez.
 Se o PO quiser um item só no site ou só no CV, a #10 prevê um campo de visibilidade por destino; a
 tela mostra todo item que não for marcado como "só CV".
@@ -293,9 +293,9 @@ um.
 
 - `<title>` e descrição: RF-ABOUT-28, com os valores da tabela de chaves (iguais aos de
   `layout.md`).
-- Canônica, `hreflang`, Open Graph e `twitter:card`: mecanismo de V, com as regras de `layout.md`;
+- Canônica, `hreflang`, Open Graph e `twitter:card`: mecanismo de #52, com as regras de `layout.md`;
   `og:type` `profile`.
-- JSON-LD: V fornece o mecanismo e G declara os dados, sem inventar campo que o conteúdo não tem.
+- JSON-LD: #52 fornece o mecanismo e #37 declara os dados, sem inventar campo que o conteúdo não tem.
 
 ```json
 {
@@ -337,7 +337,7 @@ foto entregue (D26 bloqueada), o JSON-LD não tem `image`.
 
 ## Critérios de aceite
 
-Copiáveis para a issue G. Verificação entre colchetes, com a legenda de
+Copiáveis para a issue #37. Verificação entre colchetes, com a legenda de
 [`accessibility.md`](../product/accessibility.md#checklist-por-tela) (`[teste]`, `[axe]`, `[lint]`,
 `[teclado]`, `[leitor]`, `[navegador]`, `[e2e]` e `[medição]`) e mais `[review]` para o que só a
 revisão do PR confere. Nos itens funcionais, `[teste]` usa Testing Library, `user-event`,
@@ -347,7 +347,7 @@ tela cheia por media query, rolagem travada).
 ### Funcionais
 
 - [ ] `RF-ABOUT-01` — Seções na ordem Apresentação, Sobre mim, Stack, Complementos e Trajetória, cada uma em `section` com `aria-labelledby`, headings `h1`/`h2`/`h3` como na regra e sem depoimentos [teste]
-- [ ] `RF-ABOUT-02` — Foto 1:1 com `alt` "Foto de Luiz Felipe dos Santos" nos três idiomas, `width`/`height`, `srcset`/`sizes`, `fetchpriority="high"`, sem `lazy` e sem EXIF; placeholder decorativo até L [teste] [medição] [review]
+- [ ] `RF-ABOUT-02` — Foto 1:1 com `alt` "Foto de Luiz Felipe dos Santos" nos três idiomas, `width`/`height`, `srcset`/`sizes`, `fetchpriority="high"`, sem `lazy` e sem EXIF; placeholder decorativo até #42 [teste] [medição] [review]
 - [ ] `RF-ABOUT-03` — Localização e selo de disponibilidade vindos do conteúdo (`availability.label`), indicador em `--success-ink` e `aria-hidden`; com `isAvailable: false` o selo não aparece [teste] [review]
 - [ ] `RF-ABOUT-04` — Rótulo "Informações", `h1` com `common:authorName` presente já no carregamento e parágrafo de apresentação limitado a `--measure`, nos três idiomas, sem chave no lugar de texto [teste]
 - [ ] `RF-ABOUT-05` — "Baixar CV" aponta para o PDF do idioma ativo sob `BASE_URL`, com `download`, sem `target` e nome acessível "Baixar CV (PDF)", nos três idiomas, sem chave no lugar de texto [teste]
@@ -410,34 +410,34 @@ De [`non-functional-requirements.md`](../product/non-functional-requirements.md)
 verificação de lá.
 
 - [ ] `NF-IN-02` — Perfil, stack e trajetória traduzidos nos três idiomas [CI; #13]
-- [ ] `NF-IN-03` — Nenhuma tela mostra chave no lugar de texto [CI; K]
-- [ ] `NF-IN-04` — Datas em `MM/AAAA` por `Intl.DateTimeFormat` nos três idiomas; o período em curso segue D39 ("desde MM/AAAA" com selo "Atual"), não "atual" como valor [CI; G, F]
-- [ ] `NF-IN-11` — Todo link interno mantém o prefixo do idioma, montado por função única [CI; W]
+- [ ] `NF-IN-03` — Nenhuma tela mostra chave no lugar de texto [CI; #41]
+- [ ] `NF-IN-04` — Datas em `MM/AAAA` por `Intl.DateTimeFormat` nos três idiomas; o período em curso segue D39 ("desde MM/AAAA" com selo "Atual"), não "atual" como valor [CI; #37, #36]
+- [ ] `NF-IN-11` — Todo link interno mantém o prefixo do idioma, montado por função única [CI; #53]
 - [ ] `NF-DA-02` — A tela não importa JSON de conteúdo: o acesso é por endpoints do RTK Query [Review; CI]
-- [ ] `NF-DA-03` — JSONs em `public/`, com caminho montado por `import.meta.env.BASE_URL` [Review; O; K]
+- [ ] `NF-DA-03` — JSONs em `public/`, com caminho montado por `import.meta.env.BASE_URL` [Review; #45; #41]
 - [ ] `NF-DA-04` — Tela, pré-renderização, JSON-LD e CV leem os mesmos JSONs, sem texto duplicado à mão [Review]
-- [ ] `NF-DA-05` — A tela carrega só o conteúdo do idioma ativo [#10; K]
+- [ ] `NF-DA-05` — A tela carrega só o conteúdo do idioma ativo [#10; #41]
 - [ ] `NF-DE-14` — Foto 1:1 com no máximo 80 KB, servida por `srcset`/`sizes` [DevTools em 390px]
-- [ ] `NF-DE-16` — Foto e placeholder com `width` e `height` declarados, mantendo a proporção [Review; K]
-- [ ] `NF-DE-17` — Foto (LCP) com `fetchpriority="high"` e sem `lazy` [Review; K]
-- [ ] `NF-RE-03` — Sem rolagem horizontal em 360, 390, 768 e 1280px, inclusive com o modal aberto e nos estados especiais [K]
-- [ ] `NF-RE-04` — Decisão de layout por largura do modal e do item de trajetória (D20) [C, D a H; K]
-- [ ] `NF-MO-01` — `prefers-reduced-motion: reduce` desliga animação e transição (hover, modal, shimmer) [K]
-- [ ] `NF-IA-01` — `/about` com HTML gerado no build em cada idioma, legível sem JavaScript [CI; S; K]
-- [ ] `NF-IA-02` — O detalhe do modal também está em `llms-full*.txt` e no CV em texto [CI; S; U]
-- [ ] `NF-IA-03` — Primeira renderização do cliente igual ao HTML, com os dados serializados na store [CI; S; K]
-- [ ] `NF-IA-07` — `/about` traz as mesmas informações do CV em HTML pré-renderizado [CI; X; K]
-- [ ] `NF-IA-08` — JSON-LD `ProfilePage` com `Person`, `alumniOf` e `hasOccupation` da trajetória [CI; V; D a H; K]
-- [ ] `NF-IA-09` — JSON-LD gerado dos mesmos dados da tela, com `<` escapado [CI; V]
-- [ ] `NF-IA-10` — `<title>`, descrição, Open Graph e `twitter:card` por idioma [CI; V; K]
-- [ ] `NF-IA-11` — Canônica autorreferente sem query e `hreflang` recíproco com `x-default` [CI; V; K]
-- [ ] `NF-IA-16` — HTML semântico, com o conteúdo principal dentro do `main` [CI; C, D a H]
-- [ ] `NF-CO-03` — Sem JavaScript, o conteúdo é legível; o modal precisa de JavaScript [K]
-- [ ] `NF-PR-05` — Foto publicada sem metadado EXIF ou de localização [L]
+- [ ] `NF-DE-16` — Foto e placeholder com `width` e `height` declarados, mantendo a proporção [Review; #41]
+- [ ] `NF-DE-17` — Foto (LCP) com `fetchpriority="high"` e sem `lazy` [Review; #41]
+- [ ] `NF-RE-03` — Sem rolagem horizontal em 360, 390, 768 e 1280px, inclusive com o modal aberto e nos estados especiais [#41]
+- [ ] `NF-RE-04` — Decisão de layout por largura do modal e do item de trajetória (D20) [#33, #34 a #38; #41]
+- [ ] `NF-MO-01` — `prefers-reduced-motion: reduce` desliga animação e transição (hover, modal, shimmer) [#41]
+- [ ] `NF-IA-01` — `/about` com HTML gerado no build em cada idioma, legível sem JavaScript [CI; #49; #41]
+- [ ] `NF-IA-02` — O detalhe do modal também está em `llms-full*.txt` e no CV em texto [CI; #49; #51]
+- [ ] `NF-IA-03` — Primeira renderização do cliente igual ao HTML, com os dados serializados na store [CI; #49; #41]
+- [ ] `NF-IA-07` — `/about` traz as mesmas informações do CV em HTML pré-renderizado [CI; #54; #41]
+- [ ] `NF-IA-08` — JSON-LD `ProfilePage` com `Person`, `alumniOf` e `hasOccupation` da trajetória [CI; #52; #34 a #38; #41]
+- [ ] `NF-IA-09` — JSON-LD gerado dos mesmos dados da tela, com `<` escapado [CI; #52]
+- [ ] `NF-IA-10` — `<title>`, descrição, Open Graph e `twitter:card` por idioma [CI; #52; #41]
+- [ ] `NF-IA-11` — Canônica autorreferente sem query e `hreflang` recíproco com `x-default` [CI; #52; #41]
+- [ ] `NF-IA-16` — HTML semântico, com o conteúdo principal dentro do `main` [CI; #33, #34 a #38]
+- [ ] `NF-CO-03` — Sem JavaScript, o conteúdo é legível; o modal precisa de JavaScript [#41]
+- [ ] `NF-PR-05` — Foto publicada sem metadado EXIF ou de localização [#42]
 
 ### Gerais
 
 - [ ] `npm run build`, `npm run lint` e `npm test -- --run` passam
 - [ ] Namespace `about` em `pt-BR`, `en` e `es`, em `src/i18n/resources.ts` e no `ns` de `src/i18n/i18n.ts`; chaves sem uso removidas (R2)
 - [ ] A rota abre e recarrega nos três prefixos (`/about`, `/en/about`, `/es/about`) no build com o `base` do Pages
-- [ ] O roteiro de teclado do modal entra na suíte ponta a ponta da Y ([`roadmap.md`](../product/roadmap.md))
+- [ ] O roteiro de teclado do modal entra na suíte ponta a ponta da #55 ([`roadmap.md`](../product/roadmap.md))

@@ -12,11 +12,11 @@ Na v1 o propósito imediato é a entrega da faculdade (Fatec), avaliada pelo pro
 
 Três públicos. O professor é público da v1 (`DP01`); recrutador e cliente são das duas fases (handoff, "Visão geral", transcrito no "Público" desta página no commit `e974b8b`).
 
-| Público                      | Fase     | De onde chega                                                    | O que procura                                                                                     | Telas que respondem                                                                  | Ação final esperada                                                                                                                                                 |
-| ---------------------------- | -------- | ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Professor/avaliador da Fatec | v1       | URL do GitHub Pages e vídeo de demonstração entregues pelo autor | Se a entrega cumpre o pedido: cinco telas com conteúdo real, três idiomas, dois temas, responsiva | Todas: `/` → `/projects` → `/projects/:id` → `/about` → `/contact`                   | Em `/projects/:id`, "Ver código no GitHub" de um projeto                                                                                                            |
-| Recrutador                   | v1 e V2+ | Link no LinkedIn, no CV ou na candidatura                        | Perfil para vaga fixa: o que faz agora, stack, trajetória, formação e um projeto em profundidade  | `/` (status atual, destaques) → `/about` (sobre mim, stack, trajetória) → um projeto | "Baixar CV" em `/about` ou no hero de `/` (D14); alternativa: LinkedIn no rodapé (D04)                                                                              |
-| Cliente (projeto/freelance)  | v1 e V2+ | Indicação, GitHub ou LinkedIn                                    | Projeto parecido com o problema dele, como o autor trabalha e em quanto tempo responde            | `/` → `/projects` (busca e filtros) → `/projects/:id` → `/contact`                   | v1: em `/contact`, "Copiar" o e-mail direto, ou abri-lo pelo link de e-mail do rodapé das outras telas (D05, D21); V2+: "Enviar mensagem" pelo formulário (issue N) |
+| Público                      | Fase     | De onde chega                                                    | O que procura                                                                                     | Telas que respondem                                                                  | Ação final esperada                                                                                                                                                   |
+| ---------------------------- | -------- | ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Professor/avaliador da Fatec | v1       | URL do GitHub Pages e vídeo de demonstração entregues pelo autor | Se a entrega cumpre o pedido: cinco telas com conteúdo real, três idiomas, dois temas, responsiva | Todas: `/` → `/projects` → `/projects/:id` → `/about` → `/contact`                   | Em `/projects/:id`, "Ver código no GitHub" de um projeto                                                                                                              |
+| Recrutador                   | v1 e V2+ | Link no LinkedIn, no CV ou na candidatura                        | Perfil para vaga fixa: o que faz agora, stack, trajetória, formação e um projeto em profundidade  | `/` (status atual, destaques) → `/about` (sobre mim, stack, trajetória) → um projeto | "Baixar CV" em `/about` ou no hero de `/` (D14); alternativa: LinkedIn no rodapé (D04)                                                                                |
+| Cliente (projeto/freelance)  | v1 e V2+ | Indicação, GitHub ou LinkedIn                                    | Projeto parecido com o problema dele, como o autor trabalha e em quanto tempo responde            | `/` → `/projects` (busca e filtros) → `/projects/:id` → `/contact`                   | v1: em `/contact`, "Copiar" o e-mail direto, ou abri-lo pelo link de e-mail do rodapé das outras telas (D05, D21); V2+: "Enviar mensagem" pelo formulário (issue #44) |
 
 Fontes de cada linha: o [protótipo](../design/prototype/README.md) para os rótulos dos botões ("Ver código no GitHub" em `prototipo-projeto`, "Baixar CV" em `prototipo-inicio`, `prototipo-informacoes` e `prototipo-contato`, "Copiar" em `prototipo-contato` e "Copiar e-mail" no rodapé), D14 para o CV por idioma, D21 para os canais de Contato sem agendamento e sem lista de redes, D04 para as redes no rodapé e D05 para o formulário desligado na v1.
 
@@ -28,11 +28,11 @@ O PO aprova a spec (Status `aprovada`) e o escopo de cada versão; mudar o escop
 
 ## Objetivos e sinais de sucesso
 
-| Fase | Objetivo                                         | Sinal de sucesso                                                                                            | Como é verificado                                                         |
-| ---- | ------------------------------------------------ | ----------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
-| v1   | Entregar a v1 aprovada pela Fatec até 23/11/2026 | Todos os itens da definição da v1 em [`roadmap.md`](roadmap.md#v1) marcados; URL e vídeo entregues no prazo | Checklist da v1, CI (build, lint, testes com 80% ou mais) e verificação K |
-| v1   | Mostrar trabalho com profundidade                | Todo projeto publicado tem estudo de caso (documentação, ficha técnica e galeria ou placeholder, D26)       | Revisão do conteúdo de #13 pelo PO                                        |
-| V2+  | Converter visita em contato                      | Não definido agora: a métrica é definida junto com a ferramenta de analytics na V2 (`DP02`)                 | Pela ferramenta de analytics escolhida na V2                              |
+| Fase | Objetivo                                         | Sinal de sucesso                                                                                            | Como é verificado                                                           |
+| ---- | ------------------------------------------------ | ----------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| v1   | Entregar a v1 aprovada pela Fatec até 23/11/2026 | Todos os itens da definição da v1 em [`roadmap.md`](roadmap.md#v1) marcados; URL e vídeo entregues no prazo | Checklist da v1, CI (build, lint, testes com 80% ou mais) e verificação #41 |
+| v1   | Mostrar trabalho com profundidade                | Todo projeto publicado tem estudo de caso (documentação, ficha técnica e galeria ou placeholder, D26)       | Revisão do conteúdo de #13 pelo PO                                          |
+| V2+  | Converter visita em contato                      | Não definido agora: a métrica é definida junto com a ferramenta de analytics na V2 (`DP02`)                 | Pela ferramenta de analytics escolhida na V2                                |
 
 **Medição (`DP02`):**
 
@@ -53,7 +53,7 @@ Cinco rotas, cada uma com o propósito definido no handoff e o caminho em inglê
 
 - Cabeçalho igual nas cinco telas, com o item da rota atual destacado; rodapé igual em quatro delas (em `/contact` ele vira navegação). Fonte: handoff; protótipo, `ProtoHeader` e `ProtoFooter`; D01, D02, D04.
 - Temas claro e escuro, trocados por `data-theme` na raiz, com a escolha persistida e `prefers-color-scheme` respeitado na primeira visita. Fonte: D22.
-- Interface em três idiomas: `pt-BR` (língua de referência), `en` e `es`, com cada rota em três URLs: sem prefixo em `pt-BR`, `/en/` e `/es/` (W, `D31`). Fonte: R2; D12; D31.
+- Interface em três idiomas: `pt-BR` (língua de referência), `en` e `es`, com cada rota em três URLs: sem prefixo em `pt-BR`, `/en/` e `/es/` (#53, `D31`). Fonte: R2; D12; D31.
 - Página não encontrada e página de erro. Fonte: protótipo, `prototipo-404` e `prototipo-erro`; [`roadmap.md`](roadmap.md#v1), definição da v1.
 - CV em PDF por idioma, baixado pelo idioma ativo. Fonte: D14, D30 (gerado do JSON).
 - Conteúdo real em JSON local na v1, no formato do contrato da API. Fonte: [`roadmap.md`](roadmap.md#m2--conteúdo-real), M2; R1.
@@ -68,7 +68,7 @@ Já decididos no handoff, no protótipo, nos requisitos, em [`decisions.md`](../
 - **Idiomas além de `pt-BR`, `en` e `es`** (R2).
 - **Depoimentos** (D13).
 - **Agendamento de conversa e lista de redes na coluna de Contato** (D21).
-- **Envio real do formulário na v1:** volta na V2+, pela issue N (D05).
+- **Envio real do formulário na v1:** volta na V2+, pela issue #44 (D05).
 - **Deploy na Vercel, domínio próprio e AWS como requisito da v1** ([`roadmap.md`](roadmap.md#v1), v1).
 - **Analytics na v1** (`DP02`).
 
