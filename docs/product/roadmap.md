@@ -44,7 +44,7 @@ A ordem sugerida pelo handoff, citada na #11: (1) tokens e tema com `data-theme`
 | M3 Layout compartilhado   | #53: idioma no caminho da URL, `/en/` e `/es/`, sem `?lng=`. #33: cabeçalho com logo, navegação, idioma e tema; menu mobile. #60: rodapé e variante de Contato; 404 e erro; metadados. #52: canônica por idioma, `hreflang`, Open Graph e dados estruturados                                                                                                                                                                                                                                             | #2, #31, #32; #53: #2 e #8, com início possível em paralelo ao M1; #33 e #52 também #53; #60 e #52 também #33                     | #53, #33, #60, #52                                         | Nenhum (D01 e D02 decididos)               |
 | M4 Publicação Fatec       | #45: build com `base` `/ra2581392423047/`, `basename` no router, `404.html`, `.nojekyll` e workflow em modo de ensaio, que gera o artefato. #63: publicação desse build com commit em `main:/docs` do repositório da v1, com o token do PO. #55: teste de acessibilidade ponta a ponta com Playwright e axe no CI, contra esse build. #64: spike e ADR da pré-renderização. #49: pré-renderização das rotas públicas nos três idiomas, com página própria por rota e idioma e `404.html` pré-renderizado | #33; #63 e #64 também #45; #64 também #53; #49 também #64, #31, #60 e #10; #63 também o token do PO nos Secrets deste repositório | #45, #63, #64, #49, #55                                    | Credencial (token aceito pela organização) |
 | M5 Telas                  | #34 Início → #35 Projetos → #36 Projeto (com #61 galeria e #62 documentação) → #37 Informações → #38 Contato, com estados, dois temas e três idiomas                                                                                                                                                                                                                                                                                                                                                     | Cada tela: o próprio documento (#3 a #7), #13, #33, #60, #45, #49, #52 e #55; #36 também #35; #61 e #62 dependem de #36           | #34, #35, #36, #61, #62, #37, #38                          | Nenhum para implementar                    |
-| M6 Preparação da v1       | #47: versionamento por Changesets, tag e Release. #54: CV gerado do JSON em PDF, Markdown e HTML nos três idiomas (D30), com os botões de CV ligados aos PDFs gerados. #51: `robots.txt`, `sitemap.xml` e `llms.txt`. #42: capturas reais e foto (D26). #40: poda de pesos de fonte. #41: verificação de acessibilidade, responsividade e performance no build do Pages                                                                                                                                  | M5; #54 depende do conteúdo do CV (#58, #59) e #42 das imagens do PO; #41 também de #49, #51, #52 e #53                           | #47, #40, #41, #42, #51, #54                               | Material do PO (conteúdo do CV e imagens)  |
+| M6 Preparação da v1       | #47: versionamento por Changesets, tag e Release. #54: CV em Markdown por idioma, PDF gerado no build e modal de pré-visualização (D52), com os quatro pontos de CV ligados a ele. #51: `robots.txt`, `sitemap.xml` e `llms.txt`. #42: capturas reais e foto (D26). #40: poda de pesos de fonte. #41: verificação de acessibilidade, responsividade e performance no build do Pages                                                                                                                      | M5; #54 depende do conteúdo do CV (#58, #59) e #42 das imagens do PO; #41 também de #49, #51, #52 e #53                           | #47, #40, #41, #42, #51, #54                               | Material do PO (conteúdo do CV e imagens)  |
 | M7 Entrega da v1          | PR com changeset `major`, PR de versão (`1.0.0`), promoção `staging` → `main`, tag `v1.0.0` e Release criados pela Action, publicação no GitHub Pages do repositório da v1 e URL entregue ao professor; #48: vídeo de demonstração                                                                                                                                                                                                                                                                       | M6, #63 e #47                                                                                                                     | #48                                                        | Herda os de M6                             |
 | Trilha pessoal (paralela) | Deploy na Vercel: `staging` em testes, `main` em produção pessoal                                                                                                                                                                                                                                                                                                                                                                                                                                        | Nada além do PO configurar a conta                                                                                                | #15                                                        | Nenhum; não é requisito da v1              |
 | V2+ Uso pessoal           | Backend; troca da fonte local pela API; envio real do formulário com proteção contra spam e sem flag; domínio próprio; migração para AWS; destino só pessoal a partir de `v2.0.0`                                                                                                                                                                                                                                                                                                                        | Backend e banco                                                                                                                   | #43, #44, #46; domínio sem issue                           | Backend                                    |
@@ -79,7 +79,7 @@ O conteúdo é o real do PO: o "mock" de R1 quer dizer só que a fonte é local,
 
 ### M3 — Layout compartilhado
 
-#33 faz a estrutura e o cabeçalho; #60, o rodapé, as páginas de erro e os metadados. Aplica D01, D02 (inclui o favicon), D04, D12, D21, D22, D23 (com D27), D31, D34, D35, D36, PI1 e PI4. O link "Currículo em PDF" de #60 aponta para o arquivo de D14 mesmo antes de ele existir; o arquivo é gerado por #54 (D30).
+#33 faz a estrutura e o cabeçalho; #60, o rodapé, as páginas de erro e os metadados. Aplica D01, D02 (inclui o favicon), D04, D12, D21, D22, D23 (com D27), D31, D34, D35, D36, PI1 e PI4. O link "Currículo em PDF" de #60 aponta para o arquivo de D14 mesmo antes de ele existir; o arquivo é gerado por #54 e, com JavaScript, o link abre a pré-visualização (D52).
 
 #53 vem antes de #33 porque muda o roteamento e `src/i18n/`, que todas as telas e o seletor de #33 usam (NF-IN de [`non-functional-requirements.md`](non-functional-requirements.md)). Data-limite recomendada: na `staging` até 25/10/2026. #53 não tem plano B: mudar URL depois de publicada é pior que atrasar.
 
@@ -117,7 +117,7 @@ Cada tela é conferida no build com o `base` do Pages, entra na pré-renderizaç
 ### M6 — Preparação da v1
 
 - **#47** configura o versionamento antes do PR que marca a entrega (ver [Versionamento](#versionamento)).
-- **#54** gera no build, a partir do JSON do CV, `cv-pt-BR.pdf`, `cv-en.pdf` e `cv-es.pdf` em `public/cv/` (D14), com as versões em Markdown e HTML (D30), e liga os quatro pontos de CV aos PDFs gerados.
+- **#54** gera no build, a partir do CV em Markdown escrito pelo PO (`cv-<idioma>.md`), `cv-pt-BR.pdf`, `cv-en.pdf` e `cv-es.pdf` em `public/cv/` (D14), com padrões de design próprios para impressão, e faz o modal de pré-visualização que os quatro pontos de CV abrem (D52).
 - **#51** gera `robots.txt`, `sitemap.xml`, `llms.txt` e `llms-full*.txt` no build, a partir dos JSONs.
 - **#42** aplica D26 com as imagens do PO: substitui os placeholders pelas capturas e pela foto; o projeto sem captura mantém o placeholder neutro.
 - **#40** faz a poda de D08, depois da última tela e antes da `main`.
@@ -137,29 +137,29 @@ A #15 pode correr a qualquer momento (Vercel escolhida) e é recomendada cedo, p
 
 ## Onde entra cada item
 
-| Item                                     | Marco                         | Issue         | Decisão             |
-| ---------------------------------------- | ----------------------------- | ------------- | ------------------- |
-| Conteúdo real em JSON                    | M2                            | #13, #58, #59 | R1                  |
-| Menu mobile                              | M3                            | #33           | D01                 |
-| Logo e favicon                           | M3                            | #33           | D02, D34            |
-| Seletor de idioma                        | M3                            | #33, #53      | D12, D31, PI4       |
-| Ícones Lucide e de marca                 | M1                            | #32           | D15                 |
-| Renderizador de markdown                 | M5                            | #62           | D06                 |
-| Formulário de contato                    | M5 (desligado na v1); V2+     | #38; #44      | D05                 |
-| Imagens reais e foto                     | M6                            | #42           | D26 (substitui D03) |
-| CV em PDF                                | M6                            | #54           | D14, D30            |
-| CV gerado do JSON                        | M6                            | #54           | D30                 |
-| Poda de pesos de fonte                   | M6                            | #40           | D08                 |
-| Pausa da faixa de stack                  | M5                            | #34           | D28                 |
-| Publicação da v1                         | M4 (ensaio) e M7 (publicação) | #45, #63      | —                   |
-| Pré-renderização                         | M4                            | #64, #49      | NF-IA               |
-| Canônica, Open Graph e JSON-LD           | M3                            | #52           | NF-IA               |
-| `robots.txt`, `sitemap.xml` e `llms.txt` | M6                            | #51           | NF-IA               |
-| Idioma no caminho e `hreflang`           | M3                            | #53, #52      | NF-IN, D31, D32     |
-| Versionamento e release                  | M6                            | #47           | —                   |
-| Hospedagem pessoal                       | Trilha pessoal                | #15           | —                   |
-| AWS                                      | V2+                           | #46           | —                   |
-| Domínio próprio                          | V2+                           | —             | —                   |
+| Item                                        | Marco                         | Issue         | Decisão             |
+| ------------------------------------------- | ----------------------------- | ------------- | ------------------- |
+| Conteúdo real em JSON                       | M2                            | #13, #58, #59 | R1                  |
+| Menu mobile                                 | M3                            | #33           | D01                 |
+| Logo e favicon                              | M3                            | #33           | D02, D34            |
+| Seletor de idioma                           | M3                            | #33, #53      | D12, D31, PI4       |
+| Ícones Lucide e de marca                    | M1                            | #32           | D15                 |
+| Renderizador de markdown                    | M5                            | #62           | D06                 |
+| Formulário de contato                       | M5 (desligado na v1); V2+     | #38; #44      | D05                 |
+| Imagens reais e foto                        | M6                            | #42           | D26 (substitui D03) |
+| CV em PDF                                   | M6                            | #54           | D14, D52            |
+| CV gerado do Markdown, com pré-visualização | M6                            | #54           | D52                 |
+| Poda de pesos de fonte                      | M6                            | #40           | D08                 |
+| Pausa da faixa de stack                     | M5                            | #34           | D28                 |
+| Publicação da v1                            | M4 (ensaio) e M7 (publicação) | #45, #63      | —                   |
+| Pré-renderização                            | M4                            | #64, #49      | NF-IA               |
+| Canônica, Open Graph e JSON-LD              | M3                            | #52           | NF-IA               |
+| `robots.txt`, `sitemap.xml` e `llms.txt`    | M6                            | #51           | NF-IA               |
+| Idioma no caminho e `hreflang`              | M3                            | #53, #52      | NF-IN, D31, D32     |
+| Versionamento e release                     | M6                            | #47           | —                   |
+| Hospedagem pessoal                          | Trilha pessoal                | #15           | —                   |
+| AWS                                         | V2+                           | #46           | —                   |
+| Domínio próprio                             | V2+                           | —             | —                   |
 
 ## v1
 
@@ -172,7 +172,7 @@ A v1 é a entrega da faculdade, publicada no GitHub Pages do repositório da v1 
 - [ ] Imagens seguem D26: capturas e foto reais, placeholder neutro só para projeto sem captura.
 - [ ] O conteúdo em `en` e `es` foi traduzido a partir do `pt-BR` e revisado pelo PO.
 - [ ] O formulário de contato está implementado e desligado no build publicado (D05).
-- [ ] Os PDFs de CV nos três idiomas são gerados no build a partir do JSON, com as versões em Markdown e HTML, e "Baixar CV" baixa o do idioma ativo (D14, D30).
+- [ ] Os PDFs de CV nos três idiomas são gerados no build a partir do Markdown, e "Baixar CV" abre a pré-visualização do idioma ativo, que baixa (D14, D52).
 - [ ] Os pesos de fonte sem uso foram removidos (D08).
 - [ ] A verificação #41 passou no build publicado.
 - [ ] `npm run build`, `npm run lint` e `npm run test:cov` (80% ou mais) passam no CI.
@@ -191,7 +191,7 @@ Fica fora da v1: backend, envio real do formulário, deploy na Vercel, domínio 
 | Item                                                      | Tipo           | Motivo                                                              | Quem desbloqueia                                            | Referência |
 | --------------------------------------------------------- | -------------- | ------------------------------------------------------------------- | ----------------------------------------------------------- | ---------- |
 | Conteúdo real (#58, #59)                                  | Material do PO | JSONs ou textos ainda não entregues                                 | PO                                                          | R1, #10    |
-| CV (#54, #58)                                             | Material do PO | O conteúdo do CV ainda não está no JSON                             | PO                                                          | D30, #10   |
+| CV (#54, #58)                                             | Material do PO | Conteúdo do CV em Markdown ainda não entregue                       | PO                                                          | D52, #54   |
 | Capturas e foto (#42)                                     | Material do PO | Imagens ainda não entregues                                         | PO                                                          | D26        |
 | Publicação Fatec (#63)                                    | Credencial     | A organização pode não aceitar fine-grained PAT ou exigir aprovação | Admin da organização, ou o PO (classic PAT ou passo manual) | M4         |
 | Fonte local → API (#43), formulário real (#44), AWS (#46) | Backend        | O backend não existe                                                | Backend                                                     | R1, D05    |
@@ -202,37 +202,37 @@ Fica fora da v1: backend, envio real do formulário, deploy na Vercel, domínio 
 
 Criadas no GitHub, com o corpo completo de cada uma; esta tabela é o resumo. A #39 (botões de CV) foi juntada à #54.
 
-| Issue | Descrição                                                                                              | Marco                                                           | Depende de                                          |
-| ----- | ------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------- | --------------------------------------------------- |
-| #31   | Tokens do protótipo, foco visível e tema claro e escuro por `data-theme`                               | M1                                                              | #2, #8, #9                                          |
-| #32   | Componentes base (Button, Chip, TextField, SearchInput, Skeleton, Spinner) e ícones                    | M1                                                              | #31, #50                                            |
-| #33   | Cabeçalho com navegação, menu mobile, seletor de idioma e tema                                         | M3                                                              | #2, #31, #32, #53                                   |
-| #34   | Tela Início                                                                                            | M5                                                              | #3, #13, #33, #60, #45, #55, #49, #52               |
-| #35   | Listagem de Projetos com busca, filtros e carregamento incremental                                     | M5                                                              | #4, #13, #33, #60, #45, #55, #49, #52               |
-| #36   | Detalhe de Projeto com ficha técnica e relacionados                                                    | M5                                                              | #5, #13, #33, #60, #45, #35, #53, #55, #49, #52     |
-| #37   | Tela Informações com a trajetória                                                                      | M5                                                              | #6, #13, #33, #60, #45, #55, #49, #52               |
-| #38   | Tela Contato com o formulário atrás de flag                                                            | M5                                                              | #7, #13, #33, #60, #45, #55, #49, #52               |
-| #40   | Poda dos pesos de fonte sem uso                                                                        | M6                                                              | #34 a #38, #61, #62                                 |
-| #41   | Verificação de acessibilidade, responsividade e performance da v1                                      | M6                                                              | #34 a #38, #40, #42, #45, #49, #51 a #54, #59 a #63 |
-| #42   | Capturas dos projetos e foto no lugar dos placeholders                                                 | M6                                                              | Imagens do PO; D26; #58; #34, #35, #36, #37, #61    |
-| #43   | Troca da fonte local de dados pela API do backend                                                      | V2+                                                             | Backend publicado com o contrato de #10             |
-| #44   | Formulário de contato ligado ao backend, sem a flag                                                    | V2+                                                             | Endpoint de contato com proteção contra spam; #38   |
-| #45   | Build da v1 para o GitHub Pages da Fatec, com ensaio em artefato                                       | M4                                                              | #33                                                 |
-| #46   | Migração da hospedagem pessoal da Vercel para AWS junto do backend                                     | V2+                                                             | Backend e banco na mesma máquina; ADR da #15        |
-| #47   | SemVer automático com Changesets, tag e GitHub Release                                                 | M6                                                              | #63                                                 |
-| #48   | Roteiro e vídeo de demonstração da v1                                                                  | M7                                                              | v1 publicada (#63, #47)                             |
-| #49   | Pré-renderização das rotas públicas nos três idiomas, com hidratação no cliente                        | M4                                                              | #64, #31, #53, #33, #60, #45, #10                   |
-| #50   | Verificação automática de acessibilidade com `axe-core` nos testes do `jsdom`                          | M1 (antes de #32)                                               | #9                                                  |
-| #51   | `robots.txt`, `sitemap.xml` e `llms.txt` gerados no build                                              | M6                                                              | #13, #45, #34 a #38, #54                            |
-| #52   | URL canônica, `hreflang`, Open Graph e dados estruturados nas páginas                                  | M3                                                              | #53, #33, #60, #10                                  |
-| #53   | Idioma no caminho das URLs (`/en/`, `/es/`), sem `?lng=`                                               | M3                                                              | #2, #8                                              |
-| #54   | CV em PDF, Markdown e HTML gerado do JSON nos três idiomas, com os botões de CV ligados aos PDFs       | M6                                                              | #10, #13, #58, #59, #45, #60, #34, #37, #38         |
-| #55   | Teste de acessibilidade ponta a ponta com Playwright e axe no CI, contra o build com o `base` do Pages | M4                                                              | #33, #45, #50                                       |
-| #56   | Busca inteligente de projetos                                                                          | V2+ (degrau (a) pode entrar na v1 se sobrar tempo depois de M6) | #35, #13; degraus (b) e (c) também #49 e #43        |
-| #58   | Conteúdo real do portfólio em português                                                                | M2                                                              | #13; material do PO                                 |
-| #59   | Tradução do conteúdo real para inglês e espanhol                                                       | M2                                                              | #58                                                 |
-| #60   | Rodapé, página não encontrada, página de erro e metadados por página                                   | M3                                                              | #33                                                 |
-| #61   | Galeria e lightbox do detalhe de Projeto                                                               | M5                                                              | #32, #36                                            |
-| #62   | Documentação em markdown do detalhe de Projeto, com as rotas dos documentos                            | M5                                                              | #36, #49, #53                                       |
-| #63   | Publicação da v1 no repositório da Fatec com o token do PO                                             | M4 (pronta) e M7 (publicação)                                   | #45; token do PO aceito pela organização            |
-| #64   | Spike e ADR da forma de pré-renderizar as rotas                                                        | M4                                                              | #45, #53                                            |
+| Issue | Descrição                                                                                                   | Marco                                                           | Depende de                                          |
+| ----- | ----------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- | --------------------------------------------------- |
+| #31   | Tokens do protótipo, foco visível e tema claro e escuro por `data-theme`                                    | M1                                                              | #2, #8, #9                                          |
+| #32   | Componentes base (Button, Chip, TextField, SearchInput, Skeleton, Spinner) e ícones                         | M1                                                              | #31, #50                                            |
+| #33   | Cabeçalho com navegação, menu mobile, seletor de idioma e tema                                              | M3                                                              | #2, #31, #32, #53                                   |
+| #34   | Tela Início                                                                                                 | M5                                                              | #3, #13, #33, #60, #45, #55, #49, #52               |
+| #35   | Listagem de Projetos com busca, filtros e carregamento incremental                                          | M5                                                              | #4, #13, #33, #60, #45, #55, #49, #52               |
+| #36   | Detalhe de Projeto com ficha técnica e relacionados                                                         | M5                                                              | #5, #13, #33, #60, #45, #35, #53, #55, #49, #52     |
+| #37   | Tela Informações com a trajetória                                                                           | M5                                                              | #6, #13, #33, #60, #45, #55, #49, #52               |
+| #38   | Tela Contato com o formulário atrás de flag                                                                 | M5                                                              | #7, #13, #33, #60, #45, #55, #49, #52               |
+| #40   | Poda dos pesos de fonte sem uso                                                                             | M6                                                              | #34 a #38, #61, #62                                 |
+| #41   | Verificação de acessibilidade, responsividade e performance da v1                                           | M6                                                              | #34 a #38, #40, #42, #45, #49, #51 a #54, #59 a #63 |
+| #42   | Capturas dos projetos e foto no lugar dos placeholders                                                      | M6                                                              | Imagens do PO; D26; #58; #34, #35, #36, #37, #61    |
+| #43   | Troca da fonte local de dados pela API do backend                                                           | V2+                                                             | Backend publicado com o contrato de #10             |
+| #44   | Formulário de contato ligado ao backend, sem a flag                                                         | V2+                                                             | Endpoint de contato com proteção contra spam; #38   |
+| #45   | Build da v1 para o GitHub Pages da Fatec, com ensaio em artefato                                            | M4                                                              | #33                                                 |
+| #46   | Migração da hospedagem pessoal da Vercel para AWS junto do backend                                          | V2+                                                             | Backend e banco na mesma máquina; ADR da #15        |
+| #47   | SemVer automático com Changesets, tag e GitHub Release                                                      | M6                                                              | #63                                                 |
+| #48   | Roteiro e vídeo de demonstração da v1                                                                       | M7                                                              | v1 publicada (#63, #47)                             |
+| #49   | Pré-renderização das rotas públicas nos três idiomas, com hidratação no cliente                             | M4                                                              | #64, #31, #53, #33, #60, #45, #10                   |
+| #50   | Verificação automática de acessibilidade com `axe-core` nos testes do `jsdom`                               | M1 (antes de #32)                                               | #9                                                  |
+| #51   | `robots.txt`, `sitemap.xml` e `llms.txt` gerados no build                                                   | M6                                                              | #13, #45, #34 a #38, #54                            |
+| #52   | URL canônica, `hreflang`, Open Graph e dados estruturados nas páginas                                       | M3                                                              | #53, #33, #60, #10                                  |
+| #53   | Idioma no caminho das URLs (`/en/`, `/es/`), sem `?lng=`                                                    | M3                                                              | #2, #8                                              |
+| #54   | CV em Markdown nos três idiomas, PDF gerado no build e modal de pré-visualização (D52), com os pontos de CV | M6                                                              | #10, #13, #58, #59, #45, #60, #34, #37, #38         |
+| #55   | Teste de acessibilidade ponta a ponta com Playwright e axe no CI, contra o build com o `base` do Pages      | M4                                                              | #33, #45, #50                                       |
+| #56   | Busca inteligente de projetos                                                                               | V2+ (degrau (a) pode entrar na v1 se sobrar tempo depois de M6) | #35, #13; degraus (b) e (c) também #49 e #43        |
+| #58   | Conteúdo real do portfólio em português                                                                     | M2                                                              | #13; material do PO                                 |
+| #59   | Tradução do conteúdo real para inglês e espanhol                                                            | M2                                                              | #58                                                 |
+| #60   | Rodapé, página não encontrada, página de erro e metadados por página                                        | M3                                                              | #33                                                 |
+| #61   | Galeria e lightbox do detalhe de Projeto                                                                    | M5                                                              | #32, #36                                            |
+| #62   | Documentação em markdown do detalhe de Projeto, com as rotas dos documentos                                 | M5                                                              | #36, #49, #53                                       |
+| #63   | Publicação da v1 no repositório da Fatec com o token do PO                                                  | M4 (pronta) e M7 (publicação)                                   | #45; token do PO aceito pela organização            |
+| #64   | Spike e ADR da forma de pré-renderizar as rotas                                                             | M4                                                              | #45, #53                                            |

@@ -123,10 +123,10 @@ Vale em todas as telas, menos `/contact`.
 
 Vale só em `/contact`.
 
-| ID          | Regra                                                                                                                                                                                                                                                                                                                                                                                            | Fonte                     |
-| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------- |
-| `RF-LAY-26` | No lugar do bloco de contato, duas colunas: "Navegação", um `nav` com nome "Rodapé" (A11Y-L12) e lista com Início, Projetos e Informações; e "Redes", lista com "GitHub ↗", "LinkedIn ↗" (URLs do conteúdo, em nova aba com o aviso no nome, D36) e "Currículo em PDF ↓". Sem chamada para contato, e-mail e "Copiar e-mail" (a tela já os mostra). Setas em `aria-hidden`. Barra inferior igual | D04, D21, D36             |
-| `RF-LAY-27` | "Currículo em PDF" aponta para o PDF do idioma ativo (`cv/cv-pt-BR.pdf`, `cv/cv-en.pdf`, `cv/cv-es.pdf`, com `import.meta.env.BASE_URL`), mesmo antes de o arquivo existir (gerado por #54); é download direto (atributo `download`, mesma origem), sem abrir aba e sem sair da página; o nome acessível diz o formato                                                                           | D14, D30, D36, roadmap M3 |
+| ID          | Regra                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | Fonte                |
+| ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------- |
+| `RF-LAY-26` | No lugar do bloco de contato, duas colunas: "Navegação", um `nav` com nome "Rodapé" (A11Y-L12) e lista com Início, Projetos e Informações; e "Redes", lista com "GitHub ↗", "LinkedIn ↗" (URLs do conteúdo, em nova aba com o aviso no nome, D36) e "Currículo em PDF ↓". Sem chamada para contato, e-mail e "Copiar e-mail" (a tela já os mostra). Setas em `aria-hidden`. Barra inferior igual                                                                                                                                                                            | D04, D21, D36        |
+| `RF-LAY-27` | "Currículo em PDF" aponta para o PDF do idioma ativo (`cv/cv-pt-BR.pdf`, `cv/cv-en.pdf`, `cv/cv-es.pdf`, com `import.meta.env.BASE_URL`), mesmo antes de o arquivo existir (gerado por #54); é um link real, sem `download` nem `target`: com JavaScript, o clique abre o modal de pré-visualização de D52, onde está o download, sem sair da página; sem JavaScript, abre o PDF. O nome acessível começa pelo texto visível e diz o formato e a abertura da pré-visualização: "Currículo em PDF, abre a pré-visualização" (`common:footer.resumeName`; `en` e `es` na #60) | D14, D52, roadmap M3 |
 
 ### Página não encontrada
 
@@ -157,29 +157,30 @@ nesse caso vale o comportamento padrão do React Router. Fica fora do escopo da 
 Vale `D36` para todo link do layout: link interno navega na mesma aba, por `<Link>` do React Router
 com o path de `ROUTES`; link externo (GitHub, LinkedIn) abre em nova aba com `target="_blank"` e
 `rel="noopener noreferrer"`, com "(abre em nova aba)" no nome acessível; `mailto:` não leva
-`target`; o CV em PDF é download direto.
+`target`. O CV é a exceção (D52, que substitui D36 nesse ponto): link real para o PDF do idioma
+ativo que, com JavaScript, abre o modal de pré-visualização, onde está o download.
 
 ## Navegação
 
 Os caminhos são os de `D32`, sempre com o prefixo do idioma atual (sem prefixo em `pt-BR`, `/en/`,
 `/es/`).
 
-| De onde               | Ação                                       | Para onde                                                     |
-| --------------------- | ------------------------------------------ | ------------------------------------------------------------- |
-| Qualquer tela         | Gato e nome                                | `/` do idioma atual                                           |
-| Qualquer tela         | Início, Projetos, Informações, Contato     | `/`, `/projects`, `/about`, `/contact` do idioma atual        |
-| Qualquer tela         | `PT`, `EN`, `ES`                           | A mesma URL no idioma escolhido (sem prefixo, `/en/`, `/es/`) |
-| Qualquer tela         | Alternador de tema                         | Fica na mesma tela                                            |
-| Rodapé padrão         | "Entrar em contato"                        | `/contact`                                                    |
-| Rodapé padrão         | GitHub, LinkedIn                           | Perfis externos (URL do conteúdo), em nova aba (D36)          |
-| Rodapé padrão         | Ícone de e-mail                            | `mailto:` com o e-mail do conteúdo                            |
-| Rodapé de `/contact`  | Início, Projetos, Informações              | `/`, `/projects`, `/about` do idioma atual                    |
-| Rodapé de `/contact`  | GitHub, LinkedIn                           | Perfis externos, em nova aba (D36)                            |
-| Rodapé de `/contact`  | "Currículo em PDF"                         | Download do PDF do idioma ativo, sem sair da página (D36)     |
-| Página não encontrada | "Ver projetos", "Voltar para o início"     | `/projects`, `/`                                              |
-| Página de erro        | "Tentar novamente", "Voltar para o início" | A mesma URL (recarrega), `/`                                  |
-| URL sem rota          | Abrir                                      | Página não encontrada                                         |
-| Erro de renderização  | Abrir                                      | Página de erro                                                |
+| De onde               | Ação                                       | Para onde                                                                                         |
+| --------------------- | ------------------------------------------ | ------------------------------------------------------------------------------------------------- |
+| Qualquer tela         | Gato e nome                                | `/` do idioma atual                                                                               |
+| Qualquer tela         | Início, Projetos, Informações, Contato     | `/`, `/projects`, `/about`, `/contact` do idioma atual                                            |
+| Qualquer tela         | `PT`, `EN`, `ES`                           | A mesma URL no idioma escolhido (sem prefixo, `/en/`, `/es/`)                                     |
+| Qualquer tela         | Alternador de tema                         | Fica na mesma tela                                                                                |
+| Rodapé padrão         | "Entrar em contato"                        | `/contact`                                                                                        |
+| Rodapé padrão         | GitHub, LinkedIn                           | Perfis externos (URL do conteúdo), em nova aba (D36)                                              |
+| Rodapé padrão         | Ícone de e-mail                            | `mailto:` com o e-mail do conteúdo                                                                |
+| Rodapé de `/contact`  | Início, Projetos, Informações              | `/`, `/projects`, `/about` do idioma atual                                                        |
+| Rodapé de `/contact`  | GitHub, LinkedIn                           | Perfis externos, em nova aba (D36)                                                                |
+| Rodapé de `/contact`  | "Currículo em PDF"                         | Modal de pré-visualização do PDF do idioma ativo, sem sair da página; sem JavaScript, o PDF (D52) |
+| Página não encontrada | "Ver projetos", "Voltar para o início"     | `/projects`, `/`                                                                                  |
+| Página de erro        | "Tentar novamente", "Voltar para o início" | A mesma URL (recarrega), `/`                                                                      |
+| URL sem rota          | Abrir                                      | Página não encontrada                                                                             |
+| Erro de renderização  | Abrir                                      | Página de erro                                                                                    |
 
 A primeira carga em `/` com escolha salva diferente de `pt-BR` redireciona para `/en/` ou `/es/`
 (NF-IN-09, #53); nenhuma outra rota redireciona por idioma.
@@ -232,6 +233,7 @@ guarda texto fixo de componente). As chaves `mainLayout:brand` e `mainLayout:cop
 | `common`   | `footer.navigation.label`     | Rodapé                                                                                     | Nome do `nav` de `/contact`                                                            |
 | `common`   | `footer.navigation.heading`   | Navegação                                                                                  | Rótulo da coluna                                                                       |
 | `common`   | `footer.resume`               | Currículo em PDF                                                                           | Link do CV no rodapé de navegação                                                      |
+| `common`   | `footer.resumeName`           | Currículo em PDF, abre a pré-visualização                                                  | Nome acessível do link do CV no rodapé de navegação (D52)                              |
 | `common`   | `footer.copyright`            | © `{{year}}` · `{{name}}` (`year` do build)                                                | Barra inferior (era `mainLayout:copyright`)                                            |
 | `common`   | `footer.madeWith`             | Feito em TypeScript                                                                        | Barra inferior                                                                         |
 | `common`   | `symbols.external`            | ↗                                                                                          | Seta de link externo, em `aria-hidden`                                                 |
@@ -343,7 +345,7 @@ foco sob o cabeçalho); `[navegador]` cobre favicon, `theme-color` e movimento r
 - [ ] `RF-LAY-24` — Ícones de GitHub e LinkedIn em nova aba com `rel="noopener noreferrer"` e aviso no nome; `mailto:` sem `target`; rede sem URL não aparece [teste]
 - [ ] `RF-LAY-25` — Barra inferior com o ano do build e "Feito em TypeScript", igual no HTML pré-renderizado e na hidratação [teste]
 - [ ] `RF-LAY-26` — Em `/contact`, rodapé de navegação com `nav` "Rodapé", Início, Projetos, Informações, GitHub, LinkedIn e "Currículo em PDF", sem e-mail nem chamada para contato [teste]
-- [ ] `RF-LAY-27` — "Currículo em PDF" aponta para o PDF do idioma ativo com o atributo `download`, sem `target` [teste]
+- [ ] `RF-LAY-27` — "Currículo em PDF" aponta para o PDF do idioma ativo, sem `download` nem `target`, abre a pré-visualização de D52 com JavaScript e tem o nome acessível "Currículo em PDF, abre a pré-visualização", nos três idiomas [teste]
 - [ ] `RF-LAY-28` — Página não encontrada dentro do layout para URL sem rota, prefixo desconhecido, id inexistente e documento ausente, no idioma do prefixo, nos três idiomas [teste]
 - [ ] `RF-LAY-29` — Página de erro com os próprios landmarks e "Pular para o conteúdo", "Tentar novamente" e "Voltar para o início", nos três idiomas [teste]
 - [ ] `RF-LAY-30` — A mensagem técnica do erro nunca aparece; `error:unknown` removida [teste]

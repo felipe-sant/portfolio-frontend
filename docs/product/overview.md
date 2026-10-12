@@ -55,7 +55,7 @@ Cinco rotas, cada uma com o propósito definido no handoff e o caminho em inglê
 - Temas claro e escuro, trocados por `data-theme` na raiz, com a escolha persistida e `prefers-color-scheme` respeitado na primeira visita. Fonte: D22.
 - Interface em três idiomas: `pt-BR` (língua de referência), `en` e `es`, com cada rota em três URLs: sem prefixo em `pt-BR`, `/en/` e `/es/` (#53, `D31`). Fonte: R2; D12; D31.
 - Página não encontrada e página de erro. Fonte: protótipo, `prototipo-404` e `prototipo-erro`; [`roadmap.md`](roadmap.md#v1), definição da v1.
-- CV em PDF por idioma, baixado pelo idioma ativo. Fonte: D14, D30 (gerado do JSON).
+- CV por idioma, em Markdown escrito pelo PO e PDF gerado dele no build, com pré-visualização em modal antes de baixar, pelo idioma ativo. Fonte: D14, D52.
 - Conteúdo real em JSON local na v1, no formato do contrato da API. Fonte: [`roadmap.md`](roadmap.md#m2--conteúdo-real), M2; R1.
 
 ## Fora de escopo
@@ -102,7 +102,7 @@ Os pontos que o handoff deixava em aberto estão decididos em [`decisions.md`](.
 5. **Formulário de contato (D05):** implementado no frontend com envio simulado (R1) e escondido em produção atrás de uma flag até o backend existir; endpoint real e proteção contra spam vêm depois.
 6. **Renderizador de markdown (D06):** `react-markdown` com `rehype-highlight`, sem HTML embutido, com as cores de realce do protótipo.
 
-Os itens à espera de material são o conteúdo do CV no JSON (D30) e as capturas e a foto (D26).
+Os itens à espera de material são o conteúdo do CV em Markdown (D52) e as capturas e a foto (D26).
 
 ## Decisões de produto
 
