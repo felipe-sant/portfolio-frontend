@@ -74,7 +74,7 @@ links. Não há ação restrita nem conteúdo oculto por perfil.
 
 ## Regras de negócio
 
-Cada subseção lista os requisitos na ordem dos IDs.
+Cada subseção lista os requisitos na ordem dos IDs, salvo `RF-PROJECT-38` (ver a nota da subseção do markdown).
 
 ### Cabeçalho do projeto
 
@@ -147,8 +147,8 @@ Decisões `D06`, `D33` e `D50`.
 | `RF-PROJECT-38` | Tabela e lista de tarefas do GFM (D50): a tabela sai com `thead` e células de cabeçalho `th` com `scope="col"` (o GFM exige a linha de cabeçalho), bordas `--border-subtle`, cabeçalho em peso 600 e alinhamento das colunas do markdown; fica dentro de um contêiner com rolagem horizontal própria, focável (`tabIndex={0}`) e com nome "Tabela N" (`project:markdown.table`, N na ordem do documento), para a página não rolar na horizontal a 320px (exceção de A11Y-G11, como o bloco de código) e o contorno de foco não ser cortado (D27). Na lista de tarefas, a caixa de seleção é só leitura (`disabled`) e tem nome "Feito" ou "A fazer" (`project:markdown.taskDone`, `project:markdown.taskTodo`)                                                                                                                                                                                                     | PO (11-10-2026), D27, D50, `accessibility.md` (Zoom e reflow, HTML semântico), A11Y-G03 |
 | `RF-PROJECT-27` | Padrão de conteúdo (D33), conferido pela #13 e revisado pelo PO: `README.md` com as seções `##`, nesta ordem, Contexto, Meu papel, Solução, Decisões técnicas, Resultado e Aprendizados (opcional), com os títulos por idioma da tabela abaixo. `ARCHITECTURE.md` e `SETUP.md` sem seções fixas; `CHANGELOG.md` com um `##` por versão, a mais recente primeiro, no formato `vX.Y.Z · MM/AAAA`. Em todos: nada do que já está na ficha técnica (stack, links, situação, ano)                                                                                                                                                                                                                                                                                                                                                                                                                                       | D33                                                                                     |
 
-`RF-PROJECT-38` foi criado depois de `RF-PROJECT-37` e fica aqui por ser regra do markdown; o ID não
-muda de lugar na numeração.
+`RF-PROJECT-38` foi criado depois de `RF-PROJECT-37` e fica aqui por ser regra do markdown; a
+numeração não muda.
 
 Títulos das seções do `README.md` (RF-PROJECT-27):
 
