@@ -144,15 +144,17 @@ Página e componente nunca leem esses arquivos: o acesso é pelos endpoints, com
 pedidos com `import.meta.env.BASE_URL` (`src/utils/publicUrl.ts`), então funcionam na
 raiz (`npm run dev`) e no prefixo do GitHub Pages.
 
-O conteúdo de hoje é de exemplo, fictício, em três idiomas. Para escrever o conteúdo real, copie o
-modelo de `content/template/pt-BR/` (o `content/template/README.md` explica o passo a passo), gere os
-ids com `npm run content:id` e rode `npm run content:check`: o teste de conteúdo falha com o
-arquivo, o campo e a regra de qualquer desvio do contrato, e o CI roda a suíte inteira quando
-`public/content/`, `public/images/` ou `content/` mudam.
+O conteúdo é o real do portfólio, escrito em `pt-BR` (#58). `en` e `es` ainda repetem o `pt-BR`,
+com só os títulos das seções do `README.md` de cada projeto no idioma, até a tradução (#59). Para
+alterar ou acrescentar conteúdo, edite os arquivos de `public/content/pt-BR/` (o modelo de
+`content/template/pt-BR/` e o `content/template/README.md` explicam o passo a passo), gere os ids
+com `npm run content:id` e rode `npm run content:check`: o teste de conteúdo falha com o arquivo, o
+campo e a regra de qualquer desvio do contrato, e o CI roda a suíte inteira quando `public/content/`,
+`public/images/` ou `content/` mudam.
 
-As imagens de exemplo são placeholders neutros já nos caminhos finais. Para trocar por uma imagem
-real, coloque o arquivo por cima com o mesmo nome, em WebP, na mesma proporção (16:9 nas imagens de
-projeto, 1:1 na foto) e confira se `width` e `height` do JSON são os do arquivo novo; o
+As imagens ficam em `public/images/` já em WebP, em duas variantes (`large` e `small`). Para trocar
+uma imagem, coloque o arquivo por cima com o mesmo nome, em WebP, na mesma proporção (16:9 nas
+imagens de projeto, 1:1 na foto) e confira se `width` e `height` do JSON são os do arquivo novo; o
 `npm run content:check` acusa qualquer diferença.
 
 **Trocar pela API (#43):** em cada arquivo de `src/store/api/`, o `queryFn` vira `query` com o mesmo

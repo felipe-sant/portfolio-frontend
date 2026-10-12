@@ -12,7 +12,7 @@ describe("App", () => {
         render(<App />)
 
         expect(
-            await screen.findByRole("heading", { name: "Desenvolvedor full stack em TypeScript." })
+            await screen.findByRole("heading", { name: "Desenvolvedor full stack em TypeScript" })
         ).toBeInTheDocument()
     })
 
@@ -23,7 +23,7 @@ describe("App", () => {
         render(<App />)
 
         expect(
-            await screen.findByRole("heading", { name: "Desenvolvedor full stack em TypeScript." })
+            await screen.findByRole("heading", { name: "Desenvolvedor full stack em TypeScript" })
         ).toBeInTheDocument()
         expect(errorSpy).not.toHaveBeenCalled()
         expect(warnSpy).not.toHaveBeenCalled()
@@ -33,7 +33,7 @@ describe("App", () => {
         render(<App />)
 
         expect(
-            await screen.findByRole("heading", { name: "Desenvolvedor full stack em TypeScript." })
+            await screen.findByRole("heading", { name: "Desenvolvedor full stack em TypeScript" })
         ).toBeInTheDocument()
         expect(document.title).toBe("Luiz Felipe dos Santos · Desenvolvedor full stack")
         expect(document.querySelector('meta[name="description"]')?.getAttribute("content")).toBe(
