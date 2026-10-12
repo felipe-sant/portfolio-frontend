@@ -254,6 +254,9 @@ para editores compatíveis, coerente com o `.prettierrc`.
       página usa continua `useState` no hook da página; estado compartilhado vai para um slice;
       dado do servidor vai para um endpoint do RTK Query. Idioma continua em `src/i18n/`.
     - Refetch on focus/reconnect (`setupListeners`) segue desligado, o padrão do RTK Query.
+    - Endpoints de conteúdo (`profile.api.ts`, `timeline.api.ts`, `projects.api.ts`) usam `queryFn`
+      que chama `src/services/content/`, com `lang` no argumento (cache por idioma) e erro no
+      formato do contrato (`toQueryError`); a #43 troca cada `queryFn` por `query`.
 - **`src/pages/`** — convenção de nome `Nome.page.tsx`, componente `function NomePage()` com
   `export default`. Lógica de estado/efeito específica de uma página (`useState`, `useEffect`,
   chamada a service) não fica no componente: vive em `src/pages/hooks/use<Nome>.ts`, exportando
@@ -313,6 +316,16 @@ com `getLanguage()` a cada chamada e aceitam `options.signal` (`AbortSignal`); u
 cancelada rejeita com o `AbortError` do `fetch`, sem embrulho) e `parseResponse.ts` (resposta
 não-ok vira `Error` literal em português com o status e, quando há, o corpo). O chamador passa só
 o caminho relativo. Timeout próprio não existe: quem quiser usa `AbortSignal.timeout(ms)`.
+
+**`src/services/content/`** é a camada de dados local da v1 (R1), usada só pelos `queryFn` de
+`src/store/api/` (e removida na #43): `publicUrl.ts` é a **única** leitura de
+`import.meta.env.BASE_URL`, `readJson`/`readText` leem `public/` por `fetch`, os `load*` carregam os
+registros de um idioma, e funções puras montam o que a API calcularia (busca, ordenação, paginação,
+trajetória). Página e componente nunca importam essa pasta nem JSON de `public/`. O conteúdo fica
+em `public/content/<idioma>/` e `public/images/`, o modelo em branco em `content/template/` e a
+validação do conteúdo em `src/services/content/validation/`, executada por
+`src/services/content/test/content.test.ts` (`npm run content:check`). `scripts/` guarda os
+comandos `content:*` (rodam com `tsx` e `tsconfig.node.json`); ID novo vem de `npm run content:id`.
 
 A convenção de variáveis de ambiente é a do Vite: só variáveis com prefixo `VITE_`
 são expostas ao código do cliente, e a leitura é `import.meta.env.VITE_ALGO`, nunca
