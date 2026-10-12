@@ -16,7 +16,7 @@ estados de carregando, vazio, erro, enviando e enviado.
 O índice leva a todas as telas e a cada estado.
 
 As rotas do produto mudaram depois do protótipo: `/projects`, `/projects/:id` (com os documentos
-em subcaminhos), `/about` e `/contact` ([D32 e D33](../decisions.md)). O protótipo mantém os nomes
+em `/projects/:id/docs/<name>`), `/about` e `/contact` ([D32, D33 e D55](../decisions.md)). O protótipo mantém os nomes
 antigos (`/projetos`, `/informacoes`, `/contato`) como referência histórica.
 
 - Abrir o arquivo com duplo clique não funciona: o `support.js` busca os componentes `Proto*` por

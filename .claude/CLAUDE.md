@@ -41,8 +41,9 @@ com caminhos em inglês (D32), como os identificadores; o `:id` é um UUID v7, n
 
 - `/` (Início): primeira impressão, com quem é, o que faz agora, projetos em destaque e stack.
 - `/projects` (Projetos): encontrar um projeto por busca, tipo, categoria ou tecnologia.
-- `/projects/:id` (Projeto): estudo de caso, com galeria, documentação e ficha técnica; os
-  documentos opcionais ficam em `/projects/:id/architecture`, `/setup` e `/changelog` (D33).
+- `/projects/:id` (Projeto): estudo de caso, com galeria, documentação e ficha técnica; o
+  `README.md` abre em `/projects/:id` e cada outro documento do projeto (lista livre, D55) em
+  `/projects/:id/docs/<name>`, pelo nome do arquivo.
 - `/about` (Informações): sobre mim, stack, complementos e trajetória.
 - `/contact` (Contato): formulário de mensagem e canais diretos (formulário desligado na v1,
   D05).
@@ -71,7 +72,7 @@ são de uso pessoal (Vercel, depois AWS com backend). Ordem, dependências e cri
 `docs/product/roadmap.md`.
 
 **Decisões de design:** as pendências e contradições do handoff estão decididas em
-`docs/design/decisions.md`, com IDs (`D01`–`D50`, `PI1`–`PI5`) que specs e issues citam.
+`docs/design/decisions.md`, com IDs (`D01`–`D55`, `PI1`–`PI5`) que specs e issues citam.
 
 **Onde ler mais:** `docs/product/overview.md` (visão, público, jornadas, objetivos, escopo,
 requisitos e decisões), `docs/product/glossary.md` (glossário), `docs/product/roadmap.md` (versões,
@@ -79,7 +80,10 @@ marcos e definição da v1), `docs/product/accessibility.md` (meta, verificaçã
 acessibilidade por tela), `docs/product/non-functional-requirements.md` (requisitos transversais,
 metas de desempenho e legibilidade por IA), `docs/design/design-system.md` (design system),
 `docs/screens/` (requisitos de cada tela e do layout compartilhado), `docs/diagrams/` (fluxo de
-navegação e entidades) e `docs/architecture/frontend.md` (arquitetura).
+navegação e entidades), `docs/architecture/frontend.md` (arquitetura),
+`docs/architecture/data-model.md` (modelo de dados: entidades, campos, enums e tradução do
+conteúdo) e `docs/architecture/api-contract.md` (contrato esperado da API e a camada local da v1,
+que o simula).
 
 ## Comandos
 

@@ -5,7 +5,7 @@ Caminhos entre as telas do portfólio, conforme a arquitetura de informação do
 seções; o rodapé leva ao contato em todas as telas exceto em `/contact`, onde vira navegação.
 
 Hoje só `/` (Início) e a rota `*` (Página não encontrada) existem no código. As rotas
-`/projects`, `/projects/:id` (com os documentos em `/architecture`, `/setup` e `/changelog`, D33),
+`/projects`, `/projects/:id` (com os documentos em `/projects/:id/docs/<name>`, D55),
 `/about` e `/contact` chegam com as specs de cada tela, com os caminhos em inglês de D32.
 
 ```mermaid
