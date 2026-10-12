@@ -44,7 +44,8 @@ Documentos relacionados:
   outra origem. Imagem responsiva é `ResponsiveImage { large, small }`.
 - **URLs externas** (`demoUrl`, `repositoryUrl`, redes) são `https:` absolutas.
 - **Texto sem HTML:** todo texto de conteúdo é texto puro; o único conteúdo com marcação são os
-  documentos do projeto, em Markdown GFM (D50).
+  documentos do projeto em formato `markdown`, em GFM (D50); os de formato `text` são texto puro
+  pré-formatado (D55).
 
 ## Tradução do conteúdo
 
@@ -73,7 +74,8 @@ Regras que acompanham a escolha:
   de `pt-BR`, `en` e `es` responde `400 UNSUPPORTED_LANGUAGE`.
 - **Busca e ordenação por título** usam o texto e as regras do idioma pedido (RF-PROJECTS-03,
   RF-PROJECTS-09).
-- **Documento Markdown:** um arquivo por documento e idioma (D33).
+- **Documentos do projeto:** documento traduzido tem um arquivo por idioma; documento neutro
+  (`translated: false`, como `LICENSE`) tem o mesmo arquivo nos três idiomas (D55).
 - **Enum nunca é rótulo:** o rótulo vem de chave (`common:projectType.*`,
   `common:projectCategory.*`, `common:projectStatus.*`, `common:stackCategory.*`).
 - **Autoria:** o PO escreve em `pt-BR` (#58); `en` e `es` são traduzidos no projeto (#59).
@@ -82,7 +84,8 @@ Regras que acompanham a escolha:
 
 **Neutros** (o mesmo valor nos três idiomas, NF-IN-02, RF-PROJECT-13): ids (`id`, `projectIds`,
 id de `related` e de certificado), enums (`kind`, `types`, `category`, `status`,
-`StackGroup.category`, `documents`), datas (`date`, `start`, `end`, `updatedAt`), booleanos
+`StackGroup.category`, `ProjectDocument.format`), a lista de documentos (`id`, `name`, `format`,
+`translated`, `contentLanguage`), datas (`date`, `start`, `end`, `updatedAt`), booleanos
 (`featured`, `availability.isAvailable`, `isPrimary`, `isProgrammingLanguage`), nomes de tecnologia
 (`StackItem.name`, `technologies`, `cardTechnologies`), URLs e e-mail (`demoUrl`, `repositoryUrl`,
 `links.github`, `links.linkedin`, `contact.email`), `location.countryCode` e as imagens (`src`,
@@ -93,7 +96,7 @@ id de `related` e de certificado), enums (`kind`, `types`, `category`, `status`,
 `availability.label`, `location.city`, `location.region`, `location.detail`,
 `responseTime.label`, `responseTime.detail`, `aboutParagraphs`, `workPrinciples` (perfil);
 `title`, `organization`, `stage`, `details`, `summary`, `responsibilities`, `disciplines`,
-`Certificate.name`, `Certificate.issuer` (trajetória); e os documentos Markdown.
+`Certificate.name`, `Certificate.issuer` (trajetória); e o conteúdo dos documentos traduzidos.
 
 ## Decisões do contrato
 
@@ -359,19 +362,19 @@ O projeto inteiro. Resposta de `GET /projects/{id}`. Tem todos os campos de `Pro
 as mesmas regras, mais os abaixo. Guardado no conteúdo com `related` na forma `{ id, reason }`; na
 resposta, `related` é expandido (montado), e `technologies` e `cover` são montados.
 
-| Campo           | Tipo                | Obrigatório | Por idioma       | Regra                                                                                                                                                       | Fonte                             |
-| --------------- | ------------------- | ----------- | ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------- |
-| `role`          | `string`            | Sim         | Sim              | Papel do autor no projeto ("Full stack"); ficha técnica                                                                                                     | RF-PROJECT-11                     |
-| `duration`      | `string`            | Sim         | Sim              | Duração em texto ("4 meses")                                                                                                                                | RF-PROJECT-11                     |
-| `team`          | `string`            | Sim         | Sim              | Time em texto ("Sozinho", "3 pessoas")                                                                                                                      | RF-PROJECT-11                     |
-| `status`        | `ProjectStatus`     | Sim         | Não              | `inDevelopment`, `completed` ou `discontinued`                                                                                                              | D49, RF-PROJECT-12                |
-| `stack`         | `StackGroup[]`      | Sim         | Não              | Pelo menos um grupo com pelo menos um item; `technologies` sai daqui                                                                                        | RF-PROJECT-13                     |
-| `demoUrl`       | `string`            | Não         | Não              | URL `https:` absoluta; ausente, "Ver projeto ao vivo" não aparece                                                                                           | RF-PROJECT-14                     |
-| `repositoryUrl` | `string`            | Não         | Não              | URL `https://github.com/...` pública; ausente, "Ver código no GitHub" não aparece e o JSON-LD é `CreativeWork`                                              | RF-PROJECT-14, `project.md`       |
-| `images`        | `ProjectImage[]`    | Sim         | Em parte         | De zero a cinco, ordenadas, todas 16:9; a primeira é a capa (`cover`) e a imagem principal                                                                  | D48, RF-PROJECT-05                |
-| `documents`     | `ProjectDocument[]` | Sim         | Não (o conjunto) | Contém `readme`; sem repetição, na ordem do enum; o mesmo conjunto nos três idiomas. O conteúdo de cada um vem de `GET /projects/{id}/documents/{document}` | D33, RF-PROJECT-15, RF-PROJECT-20 |
-| `related`       | `RelatedProject[]`  | Sim         | Em parte         | Até três, na ordem do conteúdo, cada um com id de outro projeto existente, sem repetição; pode ser `[]` (a seção some). No conteúdo, `{ id, reason }`       | RF-PROJECT-28                     |
-| `updatedAt`     | `string`            | Não         | Não              | `AAAA-MM-DD`; `dateModified` do JSON-LD e `lastmod` do `sitemap.xml`                                                                                        | NF-IA-15, `project.md`            |
+| Campo           | Tipo                | Obrigatório | Por idioma | Regra                                                                                                                                                                                                                                                                             | Fonte                             |
+| --------------- | ------------------- | ----------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------- |
+| `role`          | `string`            | Sim         | Sim        | Papel do autor no projeto ("Full stack"); ficha técnica                                                                                                                                                                                                                           | RF-PROJECT-11                     |
+| `duration`      | `string`            | Sim         | Sim        | Duração em texto ("4 meses")                                                                                                                                                                                                                                                      | RF-PROJECT-11                     |
+| `team`          | `string`            | Sim         | Sim        | Time em texto ("Sozinho", "3 pessoas")                                                                                                                                                                                                                                            | RF-PROJECT-11                     |
+| `status`        | `ProjectStatus`     | Sim         | Não        | `inDevelopment`, `completed` ou `discontinued`                                                                                                                                                                                                                                    | D49, RF-PROJECT-12                |
+| `stack`         | `StackGroup[]`      | Sim         | Não        | Pelo menos um grupo com pelo menos um item; `technologies` sai daqui                                                                                                                                                                                                              | RF-PROJECT-13                     |
+| `demoUrl`       | `string`            | Não         | Não        | URL `https:` absoluta; ausente, "Ver projeto ao vivo" não aparece                                                                                                                                                                                                                 | RF-PROJECT-14                     |
+| `repositoryUrl` | `string`            | Não         | Não        | URL `https://github.com/...` pública; ausente, "Ver código no GitHub" não aparece e o JSON-LD é `CreativeWork`                                                                                                                                                                    | RF-PROJECT-14, `project.md`       |
+| `images`        | `ProjectImage[]`    | Sim         | Em parte   | De zero a cinco, ordenadas, todas 16:9; a primeira é a capa (`cover`) e a imagem principal                                                                                                                                                                                        | D48, RF-PROJECT-05                |
+| `documents`     | `ProjectDocument[]` | Sim         | Não        | Lista de documentos do projeto (D55): `README.md` primeiro, os outros na ordem do conteúdo; a mesma lista nos três idiomas. Vem embutida para a navegação entre documentos não depender de outro pedido; o conteúdo de cada um vem de `GET /projects/{id}/documents/{documentId}` | D55, RF-PROJECT-15, RF-PROJECT-20 |
+| `related`       | `RelatedProject[]`  | Sim         | Em parte   | Até três, na ordem do conteúdo, cada um com id de outro projeto existente, sem repetição; pode ser `[]` (a seção some). No conteúdo, `{ id, reason }`                                                                                                                             | RF-PROJECT-28                     |
+| `updatedAt`     | `string`            | Não         | Não        | `AAAA-MM-DD`; `dateModified` do JSON-LD e `lastmod` do `sitemap.xml`                                                                                                                                                                                                              | NF-IA-15, `project.md`            |
 
 ### `RelatedProject`
 
@@ -379,6 +382,38 @@ resposta, `related` é expandido (montado), e `technologies` e `cover` são mont
 | --------- | ---------------- | ----------- | ---------- | ------------------------------------------------------------------------------------ | ------------- |
 | `reason`  | `string`         | Sim         | Sim        | Motivo da relação ("Mesma stack"), em caixa normal (a caixa alta é por CSS)          | RF-PROJECT-28 |
 | `project` | `ProjectSummary` | Sim         | Em parte   | Montado na resposta a partir do `id` guardado; no conteúdo, o par é `{ id, reason }` | D51           |
+
+### `ProjectDocument`
+
+Um documento do projeto (D55), na lista `ProjectDetail.documents` e na resposta de
+`GET /projects/{id}/documents`. Guardado no conteúdo como está. O conteúdo do arquivo não faz parte
+do objeto: vem de `GET /projects/{id}/documents/{documentId}`.
+
+| Campo             | Tipo                | Obrigatório | Por idioma | Regra                                                                                                                                                                                                                    | Fonte         |
+| ----------------- | ------------------- | ----------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------- |
+| `id`              | `string`            | Sim         | Não        | UUID v7, igual nos três idiomas, único entre os documentos; usado nos pedidos à API                                                                                                                                      | D55           |
+| `name`            | `string`            | Sim         | Não        | Nome do arquivo (`README.md`, `SETUP.md`, `LICENSE`), mostrado como rótulo e usado na URL da tela; ver [Nome do documento](#nome-do-documento)                                                                           | D55           |
+| `format`          | `DocumentFormat`    | Sim         | Não        | `markdown` (renderizado, D50) ou `text` (texto pré-formatado, sem interpretação)                                                                                                                                         | D55           |
+| `translated`      | `boolean`           | Sim         | Não        | `true`: um conteúdo por idioma; `false`: o mesmo arquivo nos três idiomas (documento neutro)                                                                                                                             | D55           |
+| `contentLanguage` | `SupportedLanguage` | Não         | Não        | Só em documento neutro: o idioma em que o conteúdo está escrito (`LICENSE` em inglês é `en`), para a tela marcar o trecho com `lang` (WCAG 3.1.2); ausente quando o conteúdo não tem idioma (`.json`, `.yml`) ou é misto | D55, A11Y-G02 |
+| `updatedAt`       | `string`            | Não         | Não        | `AAAA-MM-DD`; `dateModified` do `TechArticle` e `lastmod` do documento no `sitemap.xml`                                                                                                                                  | NF-IA-15      |
+
+Campos além de `id`, `name`, `format` e `translated`: `contentLanguage` existe porque um documento
+neutro costuma estar num idioma diferente do da página, e a tela precisa dizer isso ao leitor de
+tela; `updatedAt` existe porque cada documento tem URL própria no `sitemap.xml` e JSON-LD próprio.
+Nada mais entra (tamanho, autor, título traduzido): a navegação mostra o nome do arquivo, igual nos
+três idiomas.
+
+#### Nome do documento
+
+- De 1 a 64 caracteres entre `A–Z`, `a–z`, `0–9`, `.`, `_` e `-`, começando por letra ou dígito,
+  sem espaço, barra nem acento, para caber na URL sem codificação (`/projects/:id/docs/SETUP.md`).
+- Único no projeto sem diferenciar maiúsculas de minúsculas (`README.md` e `readme.md` não
+  convivem), para não colidir em sistema de arquivos que ignora caixa; a URL compara o nome
+  exatamente como está no conteúdo.
+- `README.md` é obrigatório, em `markdown` e traduzido, com as seções de RF-PROJECT-27, e abre em
+  `/projects/:id`, não em `/projects/:id/docs/README.md`.
+- `ARCHITECTURE.md`, `SETUP.md` e `CHANGELOG.md` são convenções de nome, não obrigações.
 
 ### `ProjectPage`
 
@@ -492,16 +527,15 @@ Três valores (D49). "Em produção" não existe.
 | `education`  | Formações                  | `about:trajectory.groups.education`  |
 | `course`     | Cursos                     | `about:trajectory.groups.course`     |
 
-### `ProjectDocument`
+### `DocumentFormat`
 
-Os quatro documentos de D33, nesta ordem. Rótulo fixo em inglês, igual nos três idiomas.
+Formato de um documento do projeto (D55). O cliente trata valor desconhecido como `text`, para um
+valor novo (#69) não quebrar a tela.
 
-| Código         | Rótulo (`project:documents.*`) | Caminho da tela              | Obrigatório |
-| -------------- | ------------------------------ | ---------------------------- | ----------- |
-| `readme`       | `README.md`                    | `/projects/:id`              | Sim         |
-| `architecture` | `ARCHITECTURE.md`              | `/projects/:id/architecture` | Não         |
-| `setup`        | `SETUP.md`                     | `/projects/:id/setup`        | Não         |
-| `changelog`    | `CHANGELOG.md`                 | `/projects/:id/changelog`    | Não         |
+| Código     | Como a tela mostra                                                                                  | `Content-Type` do conteúdo     |
+| ---------- | --------------------------------------------------------------------------------------------------- | ------------------------------ |
+| `markdown` | Renderizado com as regras de D50 (GFM, sem HTML, sem imagem); bloco `mermaid` sai como código (#70) | `text/markdown; charset=utf-8` |
+| `text`     | Texto pré-formatado em fonte monoespaçada, sem interpretação (`LICENSE`, `.txt`, `.json`, `.yml`)   | `text/plain; charset=utf-8`    |
 
 ### `ProjectSort`
 
@@ -555,7 +589,7 @@ Os idiomas de `src/i18n/supportedLanguages.ts`, valores de `lang` e de `ContactM
 - esconder bloco sem dado (lista vazia, campo opcional ausente, grupo vazio).
 
 **Ordem do conteúdo**, preservada pela API e pela camada local: o desempate final da trajetória,
-`related`, `images`, `stack` e seus itens, `aboutParagraphs`, `workPrinciples`, `responsibilities`,
+`related`, `images`, `documents` (depois do `README.md`), `stack` e seus itens, `aboutParagraphs`, `workPrinciples`, `responsibilities`,
 `disciplines`, `technologies`, `certificates` e `projectIds` de cada item, `details` e
 `cardTechnologies`.
 
@@ -564,14 +598,14 @@ Os idiomas de `src/i18n/supportedLanguages.ts`, valores de `lang` e de `ContactM
 Sugestão de onde cada tipo vive em `src/types/`, um tipo por arquivo
 (`src/types/<dominio>/<Nome>.types.ts`, `.claude/CLAUDE.md`); a #13 decide os domínios.
 
-| Domínio    | Tipos                                                                                                                                                                                        |
-| ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `profile`  | `Profile`, `Availability`, `Location`, `ContactChannels`, `SocialLinks`, `ResponseTime`                                                                                                      |
-| `content`  | `ImageAsset`, `ResponsiveImage`, `StackGroup`, `StackItem`, `StackCategory`                                                                                                                  |
-| `timeline` | `TimelineItem`, `TimelineKind`, `TimelineGroup`, `Timeline`, `CurrentTimeline`, `Certificate`, `TimelineProjectRef`                                                                          |
-| `project`  | `ProjectSummary`, `ProjectDetail`, `ProjectImage`, `RelatedProject`, `ProjectPage`, `ProjectListParams`, `ProjectType`, `ProjectCategory`, `ProjectStatus`, `ProjectDocument`, `ProjectSort` |
-| `contact`  | `ContactMessage`, `ContactSubject`                                                                                                                                                           |
-| `api`      | `ApiError` (o corpo de [Formato de erro](api-contract.md#formato-de-erro)) e `ListResponse` (o envelope `{ items }`)                                                                         |
+| Domínio    | Tipos                                                                                                                                                                                                          |
+| ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `profile`  | `Profile`, `Availability`, `Location`, `ContactChannels`, `SocialLinks`, `ResponseTime`                                                                                                                        |
+| `content`  | `ImageAsset`, `ResponsiveImage`, `StackGroup`, `StackItem`, `StackCategory`                                                                                                                                    |
+| `timeline` | `TimelineItem`, `TimelineKind`, `TimelineGroup`, `Timeline`, `CurrentTimeline`, `Certificate`, `TimelineProjectRef`                                                                                            |
+| `project`  | `ProjectSummary`, `ProjectDetail`, `ProjectImage`, `RelatedProject`, `ProjectPage`, `ProjectListParams`, `ProjectType`, `ProjectCategory`, `ProjectStatus`, `ProjectDocument`, `DocumentFormat`, `ProjectSort` |
+| `contact`  | `ContactMessage`, `ContactSubject`                                                                                                                                                                             |
+| `api`      | `ApiError` (o corpo de [Formato de erro](api-contract.md#formato-de-erro)) e `ListResponse` (o envelope `{ items }`)                                                                                           |
 
 `ProjectListParams` são os parâmetros de `GET /projects` (`lang`, `q`, `type`, `category`,
 `featured`, `sort`, `offset`, `limit`, [`api-contract.md`](api-contract.md#get-projects)).
@@ -586,40 +620,40 @@ diz se o campo foi renomeado, mudou de forma, foi removido ou não foi adotado.
 
 ### Tipos do `README.md` do handoff
 
-| Handoff                                    | Código                                                                     | Mudança                                       | Motivo                                                                                                                  |
-| ------------------------------------------ | -------------------------------------------------------------------------- | --------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| `Projeto`                                  | `ProjectSummary` (listas) e `ProjectDetail` (detalhe)                      | Mudou: duas formas                            | A lista não baixa galeria nem documentos (NF-DA-05, NF-DE-15)                                                           |
-| `Projeto.slug`                             | `id`                                                                       | Mudou: UUID v7, sem slug                      | D32, NF-DA-07: renomear o projeto não pode quebrar links                                                                |
-| `Projeto.titulo`                           | `title`                                                                    | Renomeado                                     | Identificadores em inglês                                                                                               |
-| `Projeto.resumo`                           | `summary`                                                                  | Renomeado; até cerca de 160 caracteres        | `projects.md`, `project.md`                                                                                             |
-| `Projeto.ano: number`                      | `date` (`AAAA-MM`)                                                         | Mudou: mês e ano                              | Decisão do PO; ordenação por mês (D43, RF-PROJECTS-09)                                                                  |
-| `Projeto.tipo: "Web" \| "Mobile" \| "API"` | `types: ProjectType[]`                                                     | Mudou: lista, 12 códigos                      | Decisão do PO (RF-PROJECTS-05); projeto web com backend é `["web", "api"]`                                              |
-| `Projeto.categoria`                        | `category: ProjectCategory`                                                | Mudou: código em inglês                       | Enum é código, rótulo por chave                                                                                         |
-| `Projeto.destaque`                         | `featured`                                                                 | Renomeado                                     | D43                                                                                                                     |
-| `Projeto.papel`                            | `role`                                                                     | Renomeado                                     | Ficha técnica (RF-PROJECT-11)                                                                                           |
-| `Projeto.duracao`                          | `duration`                                                                 | Renomeado                                     | Ficha técnica                                                                                                           |
-| `Projeto.time`                             | `team`                                                                     | Renomeado                                     | Ficha técnica                                                                                                           |
-| `Projeto.situacao: string`                 | `status: ProjectStatus`                                                    | Mudou: três valores fixos                     | D49                                                                                                                     |
-| `Projeto.stack`                            | `stack: StackGroup[]` (`category`, `items: StackItem[]`)                   | Mudou: categoria é enum; item é objeto        | Marcações `isPrimary` e `isProgrammingLanguage` sem lista paralela                                                      |
-| `Projeto.imagens: string[]`                | `images: ProjectImage[]`                                                   | Mudou: variantes, dimensões e `alt`           | D48, NF-DE-13, NF-DE-14, NF-DE-16; `alt` obrigatório por idioma                                                         |
-| `Projeto.legendas: string[]`               | `images[].caption`                                                         | Mudou: junto da imagem, opcional              | Listas paralelas desalinham; D48                                                                                        |
-| `Projeto.documentos: { nome, conteudo }[]` | `documents: ProjectDocument[]` e `GET /projects/{id}/documents/{document}` | Mudou: códigos de D33 e um `.md` por idioma   | D33: cada documento tem rota e arquivo próprios                                                                         |
-| `Projeto.links: Link[]`                    | `demoUrl?`, `repositoryUrl?`                                               | Mudou                                         | A tela tem exatamente esses dois botões (RF-PROJECT-14)                                                                 |
-| `Projeto.relacionados: { slug, motivo }[]` | `related`: `{ id, reason }` no conteúdo, `RelatedProject` na resposta      | Mudou: por id, expandido na resposta          | D32, D51                                                                                                                |
-| `Experiencia`, `Formacao`                  | `TimelineItem` com `kind`                                                  | Mudou: uma entidade só                        | Curso não tinha tipo; os três têm a mesma forma (`about.md`)                                                            |
-| `inicio: Date`                             | `start` (`AAAA-MM`)                                                        | Mudou: sem dia nem hora                       | Decisão do PO; a tela mostra `MM/AAAA` (D39)                                                                            |
-| `fim?: Date`                               | `end?` (`AAAA-MM`)                                                         | Mudou: sem dia nem hora; ausente = em curso   | D39                                                                                                                     |
-| `titulo`                                   | `title` (cargo ou curso)                                                   | Renomeado; na formação, mudou de sentido      | Na formação o `titulo` era a instituição; agora é `organization` ([Destaque](#destaque-do-item-de-trajetória-por-kind)) |
-| `detalhes: string[]`                       | `organization`, `stage?` e `details`                                       | Mudou: organização e etapa em campos próprios | RF-HOME-09, RF-HOME-10, JSON-LD `worksFor` e `alumniOf`                                                                 |
-| `resumo`                                   | `summary`                                                                  | Renomeado; obrigatório                        | RF-ABOUT-18                                                                                                             |
-| `Experiencia.responsabilidades`            | `responsibilities`                                                         | Renomeado                                     | —                                                                                                                       |
-| `Formacao.disciplinas`                     | `disciplines` (formação e curso)                                           | Renomeado                                     | —                                                                                                                       |
-| `Experiencia.tecnologias`                  | `technologies` (todo `kind`)                                               | Renomeado; vale para todo `kind`              | RF-ABOUT-18                                                                                                             |
-| `Formacao.certificados: string[]`          | `certificates: Certificate[]` (todo `kind`)                                | Mudou: objeto com `id`, `name`, `issuer?`     | D38: deduplicação e mesmo nome na faixa, no modal e no CV                                                               |
-| `projetos: Link[]`                         | `projectIds` no conteúdo, `projects: TimelineProjectRef[]` na resposta     | Mudou: por id                                 | O título muda e a URL depende do idioma (`about.md`)                                                                    |
-| `Link`                                     | —                                                                          | Removido                                      | Substituído por id (trajetória, relacionados) e por `demoUrl`/`repositoryUrl` (projeto)                                 |
-| `Link.titulo`                              | —                                                                          | Removido                                      | O título vem do projeto, nunca copiado                                                                                  |
-| `Link.url`                                 | —                                                                          | Removido                                      | A URL é montada pela tela com o prefixo do idioma (#53)                                                                 |
+| Handoff                                    | Código                                                                                                              | Mudança                                                           | Motivo                                                                                                                  |
+| ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `Projeto`                                  | `ProjectSummary` (listas) e `ProjectDetail` (detalhe)                                                               | Mudou: duas formas                                                | A lista não baixa galeria nem documentos (NF-DA-05, NF-DE-15)                                                           |
+| `Projeto.slug`                             | `id`                                                                                                                | Mudou: UUID v7, sem slug                                          | D32, NF-DA-07: renomear o projeto não pode quebrar links                                                                |
+| `Projeto.titulo`                           | `title`                                                                                                             | Renomeado                                                         | Identificadores em inglês                                                                                               |
+| `Projeto.resumo`                           | `summary`                                                                                                           | Renomeado; até cerca de 160 caracteres                            | `projects.md`, `project.md`                                                                                             |
+| `Projeto.ano: number`                      | `date` (`AAAA-MM`)                                                                                                  | Mudou: mês e ano                                                  | Decisão do PO; ordenação por mês (D43, RF-PROJECTS-09)                                                                  |
+| `Projeto.tipo: "Web" \| "Mobile" \| "API"` | `types: ProjectType[]`                                                                                              | Mudou: lista, 12 códigos                                          | Decisão do PO (RF-PROJECTS-05); projeto web com backend é `["web", "api"]`                                              |
+| `Projeto.categoria`                        | `category: ProjectCategory`                                                                                         | Mudou: código em inglês                                           | Enum é código, rótulo por chave                                                                                         |
+| `Projeto.destaque`                         | `featured`                                                                                                          | Renomeado                                                         | D43                                                                                                                     |
+| `Projeto.papel`                            | `role`                                                                                                              | Renomeado                                                         | Ficha técnica (RF-PROJECT-11)                                                                                           |
+| `Projeto.duracao`                          | `duration`                                                                                                          | Renomeado                                                         | Ficha técnica                                                                                                           |
+| `Projeto.time`                             | `team`                                                                                                              | Renomeado                                                         | Ficha técnica                                                                                                           |
+| `Projeto.situacao: string`                 | `status: ProjectStatus`                                                                                             | Mudou: três valores fixos                                         | D49                                                                                                                     |
+| `Projeto.stack`                            | `stack: StackGroup[]` (`category`, `items: StackItem[]`)                                                            | Mudou: categoria é enum; item é objeto                            | Marcações `isPrimary` e `isProgrammingLanguage` sem lista paralela                                                      |
+| `Projeto.imagens: string[]`                | `images: ProjectImage[]`                                                                                            | Mudou: variantes, dimensões e `alt`                               | D48, NF-DE-13, NF-DE-14, NF-DE-16; `alt` obrigatório por idioma                                                         |
+| `Projeto.legendas: string[]`               | `images[].caption`                                                                                                  | Mudou: junto da imagem, opcional                                  | Listas paralelas desalinham; D48                                                                                        |
+| `Projeto.documentos: { nome, conteudo }[]` | `documents: ProjectDocument[]` (`id`, `name`, `format`, `translated`) e `GET /projects/{id}/documents/{documentId}` | Mudou: lista livre, conteúdo fora do objeto, por idioma ou neutro | D33, D55: cada documento tem URL e arquivo próprios                                                                     |
+| `Projeto.links: Link[]`                    | `demoUrl?`, `repositoryUrl?`                                                                                        | Mudou                                                             | A tela tem exatamente esses dois botões (RF-PROJECT-14)                                                                 |
+| `Projeto.relacionados: { slug, motivo }[]` | `related`: `{ id, reason }` no conteúdo, `RelatedProject` na resposta                                               | Mudou: por id, expandido na resposta                              | D32, D51                                                                                                                |
+| `Experiencia`, `Formacao`                  | `TimelineItem` com `kind`                                                                                           | Mudou: uma entidade só                                            | Curso não tinha tipo; os três têm a mesma forma (`about.md`)                                                            |
+| `inicio: Date`                             | `start` (`AAAA-MM`)                                                                                                 | Mudou: sem dia nem hora                                           | Decisão do PO; a tela mostra `MM/AAAA` (D39)                                                                            |
+| `fim?: Date`                               | `end?` (`AAAA-MM`)                                                                                                  | Mudou: sem dia nem hora; ausente = em curso                       | D39                                                                                                                     |
+| `titulo`                                   | `title` (cargo ou curso)                                                                                            | Renomeado; na formação, mudou de sentido                          | Na formação o `titulo` era a instituição; agora é `organization` ([Destaque](#destaque-do-item-de-trajetória-por-kind)) |
+| `detalhes: string[]`                       | `organization`, `stage?` e `details`                                                                                | Mudou: organização e etapa em campos próprios                     | RF-HOME-09, RF-HOME-10, JSON-LD `worksFor` e `alumniOf`                                                                 |
+| `resumo`                                   | `summary`                                                                                                           | Renomeado; obrigatório                                            | RF-ABOUT-18                                                                                                             |
+| `Experiencia.responsabilidades`            | `responsibilities`                                                                                                  | Renomeado                                                         | —                                                                                                                       |
+| `Formacao.disciplinas`                     | `disciplines` (formação e curso)                                                                                    | Renomeado                                                         | —                                                                                                                       |
+| `Experiencia.tecnologias`                  | `technologies` (todo `kind`)                                                                                        | Renomeado; vale para todo `kind`                                  | RF-ABOUT-18                                                                                                             |
+| `Formacao.certificados: string[]`          | `certificates: Certificate[]` (todo `kind`)                                                                         | Mudou: objeto com `id`, `name`, `issuer?`                         | D38: deduplicação e mesmo nome na faixa, no modal e no CV                                                               |
+| `projetos: Link[]`                         | `projectIds` no conteúdo, `projects: TimelineProjectRef[]` na resposta                                              | Mudou: por id                                                     | O título muda e a URL depende do idioma (`about.md`)                                                                    |
+| `Link`                                     | —                                                                                                                   | Removido                                                          | Substituído por id (trajetória, relacionados) e por `demoUrl`/`repositoryUrl` (projeto)                                 |
+| `Link.titulo`                              | —                                                                                                                   | Removido                                                          | O título vem do projeto, nunca copiado                                                                                  |
+| `Link.url`                                 | —                                                                                                                   | Removido                                                          | A URL é montada pela tela com o prefixo do idioma (#53)                                                                 |
 
 ### Entidades que o handoff não tipa
 
@@ -637,23 +671,23 @@ diz se o campo foi renomeado, mudou de forma, foi removido ou não foi adotado.
 
 ### Dados e estado das telas do handoff
 
-| Handoff                                                                                              | Código                                                                          | Mudança                   | Motivo                                                                                           |
-| ---------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- | ------------------------- | ------------------------------------------------------------------------------------------------ |
-| `PROJETOS[].id` curto (`"maps"`)                                                                     | `id` UUID v7                                                                    | Não adotado               | D32                                                                                              |
-| `PROJETOS[].tags` (tecnologias do card)                                                              | `cardTechnologies`                                                              | Renomeado                 | RF-PROJECTS-14                                                                                   |
-| `PROJETOS[].papel` combinado com a duração (`"Fullstack · 4 meses"`)                                 | `role` e `duration`, só na ficha técnica                                        | Não adotado no card       | O card do protótipo validado não mostra papel                                                    |
-| `GALERIA[].rotulo` (texto do placeholder, "Visão geral")                                             | `images[].alt`                                                                  | Mudou                     | É o que mais se aproxima do `alt`; agora obrigatório e por idioma (D48)                          |
-| `GALERIA[].legenda`                                                                                  | `images[].caption`                                                              | Renomeado                 | —                                                                                                |
-| `DOCS[].atualizado` ("há 2 meses")                                                                   | `updatedAt?` do projeto                                                         | Não adotado por documento | Não é exibido no handoff nem no protótipo; a data do projeto serve ao JSON-LD e ao `sitemap.xml` |
-| `relacionados[].motivo` em caixa alta nos dados                                                      | `related[].reason` em caixa normal                                              | Mudou                     | A caixa alta é por CSS                                                                           |
-| `REDES[].detalhe` (`"@luizfelipe"`, `"in/luizfelipe"`)                                               | só a URL em `Profile.links`                                                     | Não adotado               | As redes saíram de Contato (D21); o rodapé mostra só o nome da rede                              |
-| Item "Currículo" de `REDES` ("PDF · 180 KB")                                                         | Arquivo do CV por idioma                                                        | Não adotado               | O CV é arquivo próprio (D52), fora do modelo                                                     |
-| Organização em `detalhes[0]` da experiência (`["Empresa", "CLT"]`)                                   | `organization`                                                                  | Mudou                     | Campo próprio ([Destaque](#destaque-do-item-de-trajetória-por-kind))                             |
-| `titulo` da formação com a instituição (`"Fatec"`) e o curso em `detalhes`                           | `organization` = instituição, `title` = curso                                   | Mudou                     | Contrato semântico; a tela destaca a instituição pelo `kind`                                     |
-| Organização do curso às vezes em `detalhes` (`"Microcamp"`), às vezes ausente                        | `organization?` em `course`                                                     | Mudou                     | Opcional só em curso                                                                             |
-| Etapa em `detalhes` ("6º semestre") e no card "Cursando" ("5º semestre · desde 2023")                | `stage?`                                                                        | Mudou                     | RF-HOME-10                                                                                       |
-| Datas `Date` com hora (`"2021-01-01T00:00:00.000Z"`) no tipo e `"MM/AAAA"` com `fim: null` nos dados | `start`/`end` em `AAAA-MM`, `end` ausente                                       | Mudou                     | Opcional é ausente, nunca `null`; a tela formata `MM/AAAA`                                       |
-| Estado de Projetos: `busca`, `tipo`, `categoria`, `ordenacao`, `visiveis`                            | Parâmetros `q`, `type`, `category`, `sort`, `offset`/`limit` de `GET /projects` | Mudou                     | D45 (estado na URL), D51 (aplicado pela API)                                                     |
+| Handoff                                                                                              | Código                                                                          | Mudança                                        | Motivo                                                                                                |
+| ---------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- | ---------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `PROJETOS[].id` curto (`"maps"`)                                                                     | `id` UUID v7                                                                    | Não adotado                                    | D32                                                                                                   |
+| `PROJETOS[].tags` (tecnologias do card)                                                              | `cardTechnologies`                                                              | Renomeado                                      | RF-PROJECTS-14                                                                                        |
+| `PROJETOS[].papel` combinado com a duração (`"Fullstack · 4 meses"`)                                 | `role` e `duration`, só na ficha técnica                                        | Não adotado no card                            | O card do protótipo validado não mostra papel                                                         |
+| `GALERIA[].rotulo` (texto do placeholder, "Visão geral")                                             | `images[].alt`                                                                  | Mudou                                          | É o que mais se aproxima do `alt`; agora obrigatório e por idioma (D48)                               |
+| `GALERIA[].legenda`                                                                                  | `images[].caption`                                                              | Renomeado                                      | —                                                                                                     |
+| `DOCS[].atualizado` ("há 2 meses")                                                                   | `ProjectDocument.updatedAt?` (`AAAA-MM-DD`)                                     | Mudou: data, não texto relativo, e não exibida | Serve ao `TechArticle` e ao `lastmod` de cada documento (D55); a tela não a mostra, como no protótipo |
+| `relacionados[].motivo` em caixa alta nos dados                                                      | `related[].reason` em caixa normal                                              | Mudou                                          | A caixa alta é por CSS                                                                                |
+| `REDES[].detalhe` (`"@luizfelipe"`, `"in/luizfelipe"`)                                               | só a URL em `Profile.links`                                                     | Não adotado                                    | As redes saíram de Contato (D21); o rodapé mostra só o nome da rede                                   |
+| Item "Currículo" de `REDES` ("PDF · 180 KB")                                                         | Arquivo do CV por idioma                                                        | Não adotado                                    | O CV é arquivo próprio (D52), fora do modelo                                                          |
+| Organização em `detalhes[0]` da experiência (`["Empresa", "CLT"]`)                                   | `organization`                                                                  | Mudou                                          | Campo próprio ([Destaque](#destaque-do-item-de-trajetória-por-kind))                                  |
+| `titulo` da formação com a instituição (`"Fatec"`) e o curso em `detalhes`                           | `organization` = instituição, `title` = curso                                   | Mudou                                          | Contrato semântico; a tela destaca a instituição pelo `kind`                                          |
+| Organização do curso às vezes em `detalhes` (`"Microcamp"`), às vezes ausente                        | `organization?` em `course`                                                     | Mudou                                          | Opcional só em curso                                                                                  |
+| Etapa em `detalhes` ("6º semestre") e no card "Cursando" ("5º semestre · desde 2023")                | `stage?`                                                                        | Mudou                                          | RF-HOME-10                                                                                            |
+| Datas `Date` com hora (`"2021-01-01T00:00:00.000Z"`) no tipo e `"MM/AAAA"` com `fim: null` nos dados | `start`/`end` em `AAAA-MM`, `end` ausente                                       | Mudou                                          | Opcional é ausente, nunca `null`; a tela formata `MM/AAAA`                                            |
+| Estado de Projetos: `busca`, `tipo`, `categoria`, `ordenacao`, `visiveis`                            | Parâmetros `q`, `type`, `category`, `sort`, `offset`/`limit` de `GET /projects` | Mudou                                          | D45 (estado na URL), D51 (aplicado pela API)                                                          |
 
 ## Origem dos dados por tela
 
@@ -726,30 +760,30 @@ levam sempre `lang` com o idioma ativo, omitido abaixo quando é o único parâm
 [`project.md`](../screens/project.md). Todos os dados do projeto vêm de um pedido; o documento
 aberto, de outro.
 
-| Dado exibido                                                                     | Origem                                                                                   | Endpoint                                                        |
-| -------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
-| Badge "Em destaque"                                                              | `ProjectDetail.featured`                                                                 | `GET /projects/{id}`                                            |
-| Badge da categoria, rótulo de tipos e ano                                        | `ProjectDetail.category`, `types` (por chave) e ano derivado de `date`                   | `GET /projects/{id}`                                            |
-| `h1` e resumo                                                                    | `ProjectDetail.title`, `summary`                                                         | `GET /projects/{id}`                                            |
-| Imagem principal, miniaturas, lightbox                                           | `ProjectDetail.images[]` (`large`, `small`, `alt`)                                       | `GET /projects/{id}`                                            |
-| Legenda                                                                          | `ProjectDetail.images[].caption`                                                         | `GET /projects/{id}`                                            |
-| Contador "N de M", modo da galeria (zero, uma, duas a cinco)                     | Derivado de `ProjectDetail.images.length`                                                | `GET /projects/{id}`                                            |
-| Ficha: Ano, Tipo, Categoria                                                      | Derivado de `date`; `types` e `category` por chave                                       | `GET /projects/{id}`                                            |
-| Ficha: Papel, Duração, Time                                                      | `ProjectDetail.role`, `duration`, `team`                                                 | `GET /projects/{id}`                                            |
-| Ficha: Situação                                                                  | `ProjectDetail.status`, por chave `common:projectStatus.*`                               | `GET /projects/{id}`                                            |
-| Stack por categoria                                                              | `ProjectDetail.stack[].category` (chave `common:stackCategory.*`) e `items[].name`       | `GET /projects/{id}`                                            |
-| "Ver projeto ao vivo", "Ver código no GitHub"                                    | `ProjectDetail.demoUrl`, `repositoryUrl`                                                 | `GET /projects/{id}`                                            |
-| Navegação entre documentos                                                       | `ProjectDetail.documents`; rótulos pelas chaves `project:documents.*`                    | `GET /projects/{id}`                                            |
-| Documento aberto (Markdown)                                                      | Resposta de `GET /projects/{id}/documents/{document}`                                    | `GET /projects/{id}/documents/{document}`                       |
-| Relacionados: motivo                                                             | `ProjectDetail.related[].reason`                                                         | `GET /projects/{id}`                                            |
-| Relacionados: card (título, resumo, capa, ano, tipos, categoria, chips, estrela) | `ProjectDetail.related[].project` (`ProjectSummary`)                                     | `GET /projects/{id}`                                            |
-| Página não encontrada                                                            | Resposta `404 NOT_FOUND` de qualquer dos dois endpoints; id fora do formato não é pedido | `GET /projects/{id}`, `GET /projects/{id}/documents/{document}` |
-| `<title>` e descrição                                                            | `ProjectDetail.title`, `summary`; chaves `project:meta.*`                                | `GET /projects/{id}`                                            |
-| `og:image` e `og:image:alt`                                                      | `ProjectDetail.images[0].large` e `images[0].alt`                                        | `GET /projects/{id}`                                            |
-| JSON-LD: `dateCreated`, `dateModified`                                           | `ProjectDetail.date`, `updatedAt`                                                        | `GET /projects/{id}`                                            |
-| JSON-LD: `genre`, `keywords`                                                     | Rótulos de `types` no idioma; `technologies`                                             | `GET /projects/{id}`                                            |
-| JSON-LD: `codeRepository`, `programmingLanguage`                                 | `ProjectDetail.repositoryUrl`; `stack[].items[]` com `isProgrammingLanguage`             | `GET /projects/{id}`                                            |
-| Textos fixos (galeria, ficha, links, erros, markdown)                            | Chaves `project:*` e `common:*`                                                          | —                                                               |
+| Dado exibido                                                                     | Origem                                                                                                                                                                           | Endpoint                                    |
+| -------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------- |
+| Badge "Em destaque"                                                              | `ProjectDetail.featured`                                                                                                                                                         | `GET /projects/{id}`                        |
+| Badge da categoria, rótulo de tipos e ano                                        | `ProjectDetail.category`, `types` (por chave) e ano derivado de `date`                                                                                                           | `GET /projects/{id}`                        |
+| `h1` e resumo                                                                    | `ProjectDetail.title`, `summary`                                                                                                                                                 | `GET /projects/{id}`                        |
+| Imagem principal, miniaturas, lightbox                                           | `ProjectDetail.images[]` (`large`, `small`, `alt`)                                                                                                                               | `GET /projects/{id}`                        |
+| Legenda                                                                          | `ProjectDetail.images[].caption`                                                                                                                                                 | `GET /projects/{id}`                        |
+| Contador "N de M", modo da galeria (zero, uma, duas a cinco)                     | Derivado de `ProjectDetail.images.length`                                                                                                                                        | `GET /projects/{id}`                        |
+| Ficha: Ano, Tipo, Categoria                                                      | Derivado de `date`; `types` e `category` por chave                                                                                                                               | `GET /projects/{id}`                        |
+| Ficha: Papel, Duração, Time                                                      | `ProjectDetail.role`, `duration`, `team`                                                                                                                                         | `GET /projects/{id}`                        |
+| Ficha: Situação                                                                  | `ProjectDetail.status`, por chave `common:projectStatus.*`                                                                                                                       | `GET /projects/{id}`                        |
+| Stack por categoria                                                              | `ProjectDetail.stack[].category` (chave `common:stackCategory.*`) e `items[].name`                                                                                               | `GET /projects/{id}`                        |
+| "Ver projeto ao vivo", "Ver código no GitHub"                                    | `ProjectDetail.demoUrl`, `repositoryUrl`                                                                                                                                         | `GET /projects/{id}`                        |
+| Navegação entre documentos                                                       | `ProjectDetail.documents[].name` (rótulo e URL), na ordem da lista                                                                                                               | `GET /projects/{id}`                        |
+| Documento aberto                                                                 | Resposta de `GET /projects/{id}/documents/{documentId}`, com o `id` resolvido pelo `name` da URL; renderizado conforme `format`; `lang` de `contentLanguage` em documento neutro | `GET /projects/{id}/documents/{documentId}` |
+| Relacionados: motivo                                                             | `ProjectDetail.related[].reason`                                                                                                                                                 | `GET /projects/{id}`                        |
+| Relacionados: card (título, resumo, capa, ano, tipos, categoria, chips, estrela) | `ProjectDetail.related[].project` (`ProjectSummary`)                                                                                                                             | `GET /projects/{id}`                        |
+| Página não encontrada                                                            | Resposta `404 NOT_FOUND` de `GET /projects/{id}`, ou nome da URL que não está em `ProjectDetail.documents`; id fora do formato não é pedido                                      | `GET /projects/{id}`                        |
+| `<title>` e descrição                                                            | `ProjectDetail.title`, `summary`; chaves `project:meta.*`                                                                                                                        | `GET /projects/{id}`                        |
+| `og:image` e `og:image:alt`                                                      | `ProjectDetail.images[0].large` e `images[0].alt`                                                                                                                                | `GET /projects/{id}`                        |
+| JSON-LD: `dateCreated`, `dateModified`                                           | `ProjectDetail.date`, `updatedAt`                                                                                                                                                | `GET /projects/{id}`                        |
+| JSON-LD: `genre`, `keywords`                                                     | Rótulos de `types` no idioma; `technologies`                                                                                                                                     | `GET /projects/{id}`                        |
+| JSON-LD: `codeRepository`, `programmingLanguage`                                 | `ProjectDetail.repositoryUrl`; `stack[].items[]` com `isProgrammingLanguage`                                                                                                     | `GET /projects/{id}`                        |
+| Textos fixos (galeria, ficha, links, erros, markdown)                            | Chaves `project:*` e `common:*`                                                                                                                                                  | —                                           |
 
 ### Informações
 
@@ -809,7 +843,7 @@ Quando o backend existir, ele aplica as mesmas regras na escrita.
 - **Datas:** `date`, `start` e `end` em `AAAA-MM` válido; `updatedAt` em `AAAA-MM-DD` válido; `end`
   não anterior a `start`.
 - **Enums:** todo valor de `types`, `category`, `status`, `kind`, `StackGroup.category` e
-  `documents` está no enum; `types` com pelo menos um código e sem repetição.
+  `ProjectDocument.format` está no enum; `types` com pelo menos um código e sem repetição.
 - **Projeto:** no máximo quatro com `featured` (D43); `cardTechnologies` com um a três nomes, todos
   em `technologies`; `stack` com pelo menos um item, sem categoria repetida e na ordem do enum;
   `summary` com até cerca de 160 caracteres; `related` com até três; `demoUrl` e `repositoryUrl`
@@ -817,12 +851,16 @@ Quando o backend existir, ele aplica as mesmas regras na escrita.
 - **Imagens:** de zero a cinco por projeto (D48), todas 16:9 nas duas variantes, com `width` e
   `height` reais do arquivo, `alt` presente nos três idiomas e o arquivo existente em `public/`;
   foto do perfil 1:1.
-- **Documentos** (de [`project.md`](../screens/project.md), "O que o teste de conteúdo da #13
-  verifica"): `readme` presente; o mesmo conjunto de documentos nos três idiomas, cada um com o
-  arquivo `.md` existente; `README.md` com as seções de RF-PROJECT-27 na ordem; Markdown GFM sem
+- **Documentos** (D55 e [`project.md`](../screens/project.md), "O que o teste de conteúdo da #13
+  verifica"): `README.md` presente, em `markdown` e traduzido; `id` UUID v7 único; `name` na regra
+  de [Nome do documento](#nome-do-documento) e único sem diferenciar caixa; a mesma lista (`id`,
+  `name`, `format`, `translated`, `contentLanguage`) nos três idiomas; documento traduzido com um
+  arquivo por idioma e neutro com um arquivo só; `contentLanguage` só em documento neutro; arquivo
+  em UTF-8; `README.md` com as seções de RF-PROJECT-27 na ordem; Markdown GFM sem
   HTML, sem imagem, sem nota de rodapé e sem título `#`; linguagem em todo bloco de código; toda
   tabela com linha de cabeçalho; só links `https:`, `http:`, `mailto:`, `project:<id existente>` (e
-  o documento citado, se houver, existente) e `#âncora`.
+  o documento citado, `project:<id>/docs/<name>`, se houver, existente) e `#âncora`. Documento
+  `text` não é interpretado e não tem outra regra de conteúdo.
 - **Trajetória:** `organization` presente em `experience` e `education`; `summary` presente;
   `responsibilities` vazio fora de `experience` e `disciplines` vazio em `experience`; `stage` só em
   `education` e `course`.
