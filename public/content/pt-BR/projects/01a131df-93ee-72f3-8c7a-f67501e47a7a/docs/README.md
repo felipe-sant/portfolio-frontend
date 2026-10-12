@@ -1,6 +1,6 @@
 ## Contexto
 
-Projeto pessoal pra praticar o ciclo completo de um produto com IA: treinar/usar um modelo de reconhecimento de dígitos manuscritos e expor isso numa aplicação web interativa, do desenho até a predição.
+Projeto pessoal para praticar o ciclo completo de um produto com IA: treinar/usar um modelo de reconhecimento de dígitos manuscritos e expor isso numa aplicação web interativa, do desenho até a predição.
 
 ## Meu papel
 

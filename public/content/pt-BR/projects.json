@@ -9,8 +9,8 @@
             "category": "academic",
             "featured": true,
             "cardTechnologies": ["React", "Express", "Leaflet"],
-            "role": "Full Stack",
-            "duration": "13 Meses",
+            "role": "Full stack",
+            "duration": "13 meses",
             "team": "Sozinho",
             "status": "inDevelopment",
             "stack": [
@@ -21,7 +21,7 @@
                             "name": "React"
                         },
                         {
-                            "name": "Typescript",
+                            "name": "TypeScript",
                             "isProgrammingLanguage": true
                         },
                         {
@@ -39,7 +39,7 @@
                             "name": "Express"
                         },
                         {
-                            "name": "Typescript",
+                            "name": "TypeScript",
                             "isProgrammingLanguage": true
                         }
                     ]
@@ -103,7 +103,7 @@
             "featured": true,
             "cardTechnologies": ["React", "TensorFlow", "FastAPI"],
             "role": "Full stack + IA (desenvolvi frontend, backend e o serviço de inferência)",
-            "duration": "2 Semanas",
+            "duration": "2 semanas",
             "team": "Sozinho",
             "status": "completed",
             "stack": [
@@ -111,7 +111,7 @@
                     "category": "frontend",
                     "items": [
                         {
-                            "name": "Typescript",
+                            "name": "TypeScript",
                             "isProgrammingLanguage": true
                         },
                         {
@@ -123,7 +123,7 @@
                     "category": "backend",
                     "items": [
                         {
-                            "name": "Typescript",
+                            "name": "TypeScript",
                             "isProgrammingLanguage": true
                         },
                         {
@@ -196,15 +196,15 @@
         },
         {
             "id": "01a131fc-d24c-7c70-887b-0d055f57d251",
-            "title": "Pedido de Namoro Irrecusavel",
+            "title": "Pedido de Namoro Irrecusável",
             "summary": "Site divertido de pedido de namoro onde o botão \"Não\" foge do cursor sempre que o usuário tenta clicar nele.",
             "date": "2024-02",
             "types": ["web"],
             "category": "personal",
             "featured": false,
-            "cardTechnologies": ["React", "Typescript"],
+            "cardTechnologies": ["React", "TypeScript"],
             "role": "Frontend",
-            "duration": "1 Dia",
+            "duration": "1 dia",
             "team": "Sozinho",
             "status": "completed",
             "stack": [
@@ -212,7 +212,7 @@
                     "category": "frontend",
                     "items": [
                         {
-                            "name": "Typescript",
+                            "name": "TypeScript",
                             "isProgrammingLanguage": true
                         },
                         {
@@ -260,7 +260,7 @@
             "featured": false,
             "cardTechnologies": ["React", "Express", "MongoDB"],
             "role": "Full stack",
-            "duration": "2 Semanas",
+            "duration": "2 semanas",
             "team": "Sozinho",
             "status": "inDevelopment",
             "stack": [
@@ -268,7 +268,7 @@
                     "category": "frontend",
                     "items": [
                         {
-                            "name": "Typescript",
+                            "name": "TypeScript",
                             "isProgrammingLanguage": true
                         },
                         {
@@ -280,7 +280,7 @@
                     "category": "backend",
                     "items": [
                         {
-                            "name": "Typescript",
+                            "name": "TypeScript",
                             "isProgrammingLanguage": true
                         },
                         {
@@ -340,7 +340,7 @@
             "types": ["web"],
             "category": "academic",
             "featured": false,
-            "cardTechnologies": ["React", "Typescript"],
+            "cardTechnologies": ["React", "TypeScript"],
             "role": "Frontend",
             "duration": "5 dias",
             "team": "Sozinho",
@@ -350,7 +350,7 @@
                     "category": "frontend",
                     "items": [
                         {
-                            "name": "Typescript",
+                            "name": "TypeScript",
                             "isProgrammingLanguage": true
                         },
                         {
@@ -398,7 +398,7 @@
             "featured": true,
             "cardTechnologies": ["scikit-learn", "ONNX Runtime", "Node.js"],
             "role": "Full stack + IA (modelo + API)",
-            "duration": "1 Semana",
+            "duration": "1 semana",
             "team": "Sozinho",
             "status": "completed",
             "stack": [
@@ -406,7 +406,7 @@
                     "category": "backend",
                     "items": [
                         {
-                            "name": "Typescript",
+                            "name": "TypeScript",
                             "isProgrammingLanguage": true
                         },
                         {

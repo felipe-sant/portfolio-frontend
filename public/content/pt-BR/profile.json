@@ -33,8 +33,8 @@
     "workPrinciples": [
         "Discuto as regras com o PO antes de implementar, não só sigo o que está escrito na task",
         "Quebro features grandes em partes menores antes de começar",
-        "Testo minha própria entrega antes de mandar pra QA",
-        "Uso IA no fluxo de desenvolvimento, não só pra escrever código mais rápido"
+        "Testo minha própria entrega antes de mandar para QA",
+        "Uso IA no fluxo de desenvolvimento, não só para escrever código mais rápido"
     ],
     "stack": [
         {
@@ -45,7 +45,7 @@
                     "isPrimary": true
                 },
                 {
-                    "name": "Typescript"
+                    "name": "TypeScript"
                 },
                 {
                     "name": "Redux"
@@ -54,7 +54,7 @@
                     "name": "MFE"
                 },
                 {
-                    "name": "Javascript"
+                    "name": "JavaScript"
                 },
                 {
                     "name": "HTML5"
@@ -91,7 +91,7 @@
                     "name": "Git"
                 },
                 {
-                    "name": "Github"
+                    "name": "GitHub"
                 },
                 {
                     "name": "Docker"
@@ -108,11 +108,12 @@
     "contact": {
         "email": "contact.felipesant@gmail.com",
         "responseTime": {
-            "label": "3",
+            "label": "Em até 3 dias",
             "detail": "UTC-3"
         }
     },
     "links": {
-        "github": "https://github.com/felipe-sant/"
+        "github": "https://github.com/felipe-sant/",
+        "linkedin": "https://www.linkedin.com/in/lfelipesant/"
     }
 }

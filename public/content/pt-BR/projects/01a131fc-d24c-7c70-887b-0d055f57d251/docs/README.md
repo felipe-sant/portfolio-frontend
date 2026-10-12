@@ -16,8 +16,8 @@ A lógica de "fuga" é simples e direta: no evento de mouseover (e no clique, co
 
 ## Resultado
 
-Projeto pequeno e funcional, public
+Projeto pequeno e funcional, publicado e no ar.
 
 ## Aprendizados
 
-Às vezes um projeto não precisa resolver um problema sério pra ser um bom exercício de front-end — foi uma forma leve de praticar manipulação de DOM e posicionamento dinâmico de elementos.
+Às vezes um projeto não precisa resolver um problema sério para ser um bom exercício de front-end — foi uma forma leve de praticar manipulação de DOM e posicionamento dinâmico de elementos.

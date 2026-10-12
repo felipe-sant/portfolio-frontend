@@ -5,7 +5,7 @@
             "kind": "experience",
             "title": "Estagiário de Desenvolvimento Frontend",
             "organization": "Incicle",
-            "details": ["Estagio - Hibrido"],
+            "details": ["Estágio · Híbrido"],
             "start": "2026-05",
             "summary": "Atuação fullstack em squad ágil, passando por diferentes módulos de produto dentro de uma arquitetura de micro frontends — da implementação de novas features à evolução de versões já existentes. Desenvolvimento com React, TypeScript e Node.js, integração de APIs REST e trabalho com bancos de dados SQL e NoSQL. Revisão de Pull Requests, testes de QA e resolução de hotfixes em produção.",
             "responsibilities": [
@@ -15,7 +15,7 @@
                 "Revisão de Pull Requests de colegas de squad",
                 "Execução de testes de QA em tasks próprias e de terceiros",
                 "Resolução de hotfixes urgentes em produção",
-                "Manutenção de repositorios"
+                "Manutenção de repositórios"
             ],
             "disciplines": [],
             "technologies": [
@@ -37,7 +37,7 @@
             "kind": "experience",
             "title": "Auxiliar Pedagógico (Jovem Aprendiz)",
             "organization": "Poliedro Educação",
-            "details": ["Jovem Aprendiz - Presencial"],
+            "details": ["Jovem Aprendiz · Presencial"],
             "start": "2024-06",
             "end": "2026-04",
             "summary": "Gerenciamento e controle de dados de frequência das turmas, com formatação e organização de materiais de aula e apoio às demais áreas do departamento pedagógico.",
@@ -57,7 +57,7 @@
             "kind": "education",
             "title": "Tecnólogo em Desenvolvimento de Software Multiplataforma",
             "organization": "FATEC – Faculdade de Tecnologia do Estado de São Paulo (Jacareí)",
-            "stage": "6º Semestre",
+            "stage": "6º semestre",
             "details": [],
             "start": "2023-02",
             "summary": "Formação em desenvolvimento de software com foco em lógica de programação, POO, frameworks web e boas práticas de código, incluindo projetos acadêmicos e em parceria com empresas.",
@@ -115,7 +115,7 @@
                 "Ética e Cidadania Organizacional",
                 "Operação de Software Aplicativo"
             ],
-            "technologies": ["Python", "C#", "PHP", "Javascript", "HTML5", "CSS3"],
+            "technologies": ["Python", "C#", "PHP", "JavaScript", "HTML5", "CSS3"],
             "certificates": [],
             "projectIds": []
         },
@@ -142,7 +142,7 @@
             "details": ["+200 horas"],
             "start": "2017-01",
             "end": "2019-12",
-            "summary": "Curso de informatica com atuação como monitor auxiliando professores e alunos nas aulas de Informática, com 200 horas de experiência.",
+            "summary": "Curso de informática com atuação como monitor auxiliando professores e alunos nas aulas de Informática, com 200 horas de experiência.",
             "responsibilities": [],
             "disciplines": [],
             "technologies": [],

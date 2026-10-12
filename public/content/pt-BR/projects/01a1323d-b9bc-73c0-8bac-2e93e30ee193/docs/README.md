@@ -12,7 +12,7 @@ O modelo foi treinado em Python com scikit-learn (pipeline de normalização + K
 
 ## Decisões técnicas
 
-Exportar o modelo pra ONNX e rodar a inferência em Node.js (em vez de manter um serviço Python em produção) simplifica o deploy e evita manter dois runtimes diferentes rodando. Os parâmetros do normalizador (média e desvio padrão) são exportados junto do modelo, para garantir que o pré-processamento em produção seja idêntico ao do treinamento.
+Exportar o modelo para ONNX e rodar a inferência em Node.js (em vez de manter um serviço Python em produção) simplifica o deploy e evita manter dois runtimes diferentes rodando. Os parâmetros do normalizador (média e desvio padrão) são exportados junto do modelo, para garantir que o pré-processamento em produção seja idêntico ao do treinamento.
 
 ## Resultado
 

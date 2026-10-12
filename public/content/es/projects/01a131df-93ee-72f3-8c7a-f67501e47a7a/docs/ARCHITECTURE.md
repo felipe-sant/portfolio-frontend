@@ -16,4 +16,4 @@ O projeto é dividido em três serviços independentes, cada um em seu próprio 
 
 ## Por que três serviços separados
 
-O back em Node não tem um runtime adequado pra rodar modelos TensorFlow/Keras diretamente. Separar a IA num serviço Python permite usar as bibliotecas nativas do ecossistema, mantendo o back em Node como uma camada fina de integração (upload, validação, roteamento) entre o front e a IA.
+O back em Node não tem um runtime adequado para rodar modelos TensorFlow/Keras diretamente. Separar a IA num serviço Python permite usar as bibliotecas nativas do ecossistema, mantendo o back em Node como uma camada fina de integração (upload, validação, roteamento) entre o front e a IA.
