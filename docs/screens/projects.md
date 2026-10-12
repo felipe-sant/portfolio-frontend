@@ -171,7 +171,7 @@ Caminhos de D32, sempre com o prefixo do idioma atual (NF-IN-11).
 
 ### Notas
 
-- **"← Voltar para Projetos" na tela do projeto:** recomendação para a #5, que decide. Se a entrada
+- **"← Voltar para Projetos" na tela do projeto:** decidido na #5 (RF-PROJECT-01 de `project.md`). Se a entrada
   anterior do histórico for a lista, voltar pelo histórico (restaura tudo, RF-PROJECTS-25); senão,
   ir para `/projects` sem query.
 
