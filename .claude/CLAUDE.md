@@ -510,7 +510,7 @@ Toda issue entra no projeto [Portfolio](https://github.com/users/felipe-sant/pro
 reúne os repositórios do portfólio, com Status `Backlog` (o PO revisa e move), `Marco` do
 `docs/product/roadmap.md` e um único `Tipo` (`FEATURE`, `DOCUMENTATION` ou `BUG`). O tipo vive só
 nesse campo: as labels `enhancement`, `bug` e `documentation` não são usadas. Labels indicam a área
-(`FRONTEND`, `BACKEND`, `INFRA`, uma ou mais) e, quando cabe, `accessibility`. Toda issue que
+(`frontend`, `backend`, `infra`, uma ou mais) e, quando cabe, `accessibility`. Toda issue que
 depende de outra registra a relação como "blocked by" do GitHub
 (`POST /repos/{owner}/{repo}/issues/{n}/dependencies/blocked_by`), além da linha "Depende de" do
 corpo.
@@ -551,7 +551,7 @@ Commits são atômicos: uma mudança concluída por commit, nunca várias tarefa
   "Branches"). A promoção para produção é um PR de `staging` para `main`, com título no padrão de
   commit (`Chore :see_no_evil: Promove staging para produção`) e a lista das issues incluídas.
 - O autor se atribui já na criação (`gh pr create --assignee @me`) e aplica as labels de área
-  da issue (`FRONTEND`, `BACKEND`, `INFRA`).
+  da issue (`frontend`, `backend`, `infra`).
 - A descrição referencia a issue relacionada (`Closes #<número>`). A branch padrão do repositório
   é a `staging`, então a issue fecha no merge do PR para a `staging`.
 - O título segue o padrão do commit principal (`<Tipo> <ícone> [#<número>] <descrição>`).
