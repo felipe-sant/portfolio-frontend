@@ -89,14 +89,14 @@
     --success-text: #3d6b2c;
     --warning-bg: #fcefd9;
     --warning-text: #8a5a00;
-    --error-bg: #f7e3de;
-    --error-text: #a23b22;
+    --danger-bg: #f7e3de;
+    --danger-text: #a23b22;
     --success-bg-dark: #1e2a19;
     --success-text-dark: #7fbd63;
     --warning-bg-dark: #33270f;
     --warning-text-dark: #e0a83d;
-    --error-bg-dark: #3a1e17;
-    --error-text-dark: #e28564;
+    --danger-bg-dark: #3a1e17;
+    --danger-text-dark: #e28564;
 
     --bg-page: var(--neutral-050);
     --bg-raised: var(--neutral-100);
@@ -117,8 +117,8 @@
     --success-ink: var(--success-text);
     --warning-surface: var(--warning-bg);
     --warning-ink: var(--warning-text);
-    --error-surface: var(--error-bg);
-    --error-ink: var(--error-text);
+    --danger-surface: var(--danger-bg);
+    --danger-ink: var(--danger-text);
 
     --font-heading: "Bricolage Grotesque", system-ui, sans-serif;
     --font-body: "IBM Plex Sans", system-ui, sans-serif;
@@ -207,8 +207,8 @@
         --success-ink: var(--success-text-dark);
         --warning-surface: var(--warning-bg-dark);
         --warning-ink: var(--warning-text-dark);
-        --error-surface: var(--error-bg-dark);
-        --error-ink: var(--error-text-dark);
+        --danger-surface: var(--danger-bg-dark);
+        --danger-ink: var(--danger-text-dark);
     }
 }
 
@@ -222,7 +222,9 @@
         --dur-spin: 0ms;
     }
 
-    * {
+    *,
+    *::before,
+    *::after {
         animation-duration: 0.01ms !important;
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
@@ -234,7 +236,13 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: var(--font-body);
+}
+
+button,
+input,
+select,
+textarea {
+    font: inherit;
 }
 
 body {
@@ -280,8 +288,4 @@ h4 {
 
 a {
     color: var(--text-link);
-}
-
-main {
-    min-height: 100dvh;
 }

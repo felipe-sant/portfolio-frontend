@@ -1,8 +1,8 @@
 {
     "meta": {
-        "title": "An error occurred.",
+        "title": "Unexpected error · Luiz Felipe dos Santos",
         "description": "Something went wrong while loading this page."
     },
-    "heading": "An unexpected error occurred.",
+    "heading": "Unexpected error",
     "unknown": "Unknown error."
 }

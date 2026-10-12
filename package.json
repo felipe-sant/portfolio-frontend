@@ -1,5 +1,6 @@
 {
-  "name": "template-react",
+  "name": "portfolio-frontend",
+  "description": "Portfólio pessoal de Luiz Felipe dos Santos, desenvolvedor full stack.",
   "version": "0.1.0",
   "private": true,
   "type": "module",

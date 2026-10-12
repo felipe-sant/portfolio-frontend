@@ -21,6 +21,66 @@ do tipo das chaves e os testes de tela afirmam o texto em português. **O fallba
 `en`**, o que o usuário vê quando nenhuma fonte de detecção dá um idioma suportado. As duas coisas
 são independentes.
 
+## Produto
+
+Este repositório é o frontend do **portfólio pessoal de Luiz Felipe dos Santos**, desenvolvedor
+full stack. O usuário é ao mesmo tempo cliente, PO e dev: ele decide escopo e prioridade e aprova
+as specs. Esta seção é um resumo; o detalhe vive em `docs/` e no handoff de design.
+
+**Handoff de design:** `/home/felipe/faculdade/design_handoff_portfolio` é a base do design
+(R3). Reaproveite `tokens/` (nomes e valores dos tokens) e use `components/` como ponto de
+partida dos componentes. Não copie o HTML das telas (`*.dc.html`), `support.js`, `image-slot.js`
+nem os sketches de `assets/` (não são imagens de produção). Onde o handoff diverge das convenções
+deste repositório, as convenções prevalecem: fonte self-hospedada em vez de Google Fonts, CSS
+Module em vez de classe global `.ds-*` e código sem comentários. `docs/design/prototype/` é a
+referência visual validada pelo PO (abre por `npm run dev` em
+`/docs/design/prototype/prototipo-indice.dc.html`).
+
+**Rotas:** cinco telas, das quais hoje só `/` existe no código (as demais vêm nas specs de tela),
+com caminhos em inglês (D32), como os identificadores; o `:id` é um UUID v7, não slug:
+
+- `/` (Início): primeira impressão, com quem é, o que faz agora, projetos em destaque e stack.
+- `/projects` (Projetos): encontrar um projeto por busca, tipo, categoria ou tecnologia.
+- `/projects/:id` (Projeto): estudo de caso, com galeria, documentação e ficha técnica; os
+  documentos opcionais ficam em `/projects/:id/architecture`, `/setup` e `/changelog` (D33).
+- `/about` (Informações): sobre mim, stack, complementos e trajetória.
+- `/contact` (Contato): formulário de mensagem e canais diretos (formulário desligado na v1,
+  D05).
+
+A interface tem tema claro e escuro.
+
+**Voz e copy:** texto em `pt-BR` como referência, na primeira pessoa do singular, direto, sem
+emoji e sem superlativo. Títulos são substantivos curtos sem ponto final, botões usam verbo no
+infinitivo + objeto ("Ver projetos", "Enviar mensagem") e o separador de metadados é `·`.
+
+**Requisitos obrigatórios de toda spec:**
+
+- **R1 — Frontend-only com dados mock.** O backend ainda não existe: a aplicação funciona sozinha
+  com dados mock até ele existir. Redux Toolkit, RTK Query e `src/services/http/` ficam no projeto
+  para a troca do mock pela API.
+- **R2 — Tradução em `pt-BR`, `en` e `es`.** Toda feature ou tarefa que cria ou altera texto de UI
+  entrega o texto nos três idiomas, com `pt-BR` como referência. Chave de tradução sem uso é
+  removida.
+- **R3 — O design segue as decisões, o protótipo e o handoff.** Tokens, componentes, voz e copy,
+  acessibilidade e responsividade seguem, nesta ordem de precedência: convenções do repositório >
+  `docs/design/decisions.md` > protótipo > handoff.
+
+**Versões:** a v1 é a entrega da faculdade (Fatec), publicada no GitHub Pages de um repositório da
+organização da Fatec, com dados reais em JSON servidos pela camada local (R1) e sem backend, com prazo em 22/11/2026; V2+
+são de uso pessoal (Vercel, depois AWS com backend). Ordem, dependências e critério da v1 em
+`docs/product/roadmap.md`.
+
+**Decisões de design:** as pendências e contradições do handoff estão decididas em
+`docs/design/decisions.md`, com IDs (`D01`–`D50`, `PI1`–`PI5`) que specs e issues citam.
+
+**Onde ler mais:** `docs/product/overview.md` (visão, público, jornadas, objetivos, escopo,
+requisitos e decisões), `docs/product/glossary.md` (glossário), `docs/product/roadmap.md` (versões,
+marcos e definição da v1), `docs/product/accessibility.md` (meta, verificação e checklist de
+acessibilidade por tela), `docs/product/non-functional-requirements.md` (requisitos transversais,
+metas de desempenho e legibilidade por IA), `docs/design/design-system.md` (design system),
+`docs/screens/` (requisitos de cada tela e do layout compartilhado), `docs/diagrams/` (fluxo de
+navegação e entidades) e `docs/architecture/frontend.md` (arquitetura).
+
 ## Comandos
 
 ```bash
@@ -145,7 +205,7 @@ para editores compatíveis, coerente com o `.prettierrc`.
   três idiomas. Um namespace por dono do texto, com o nome do CSS Module correspondente (ex.:
   `home`, `notFound`, `mainLayout`); `common` guarda texto compartilhado (`backHome`, `loading`)
   e texto fixo de componente de `src/components/`. Chave em inglês, lowerCamelCase, hierárquica por
-  papel (`meta.title`, `meta.description`, `heading`, `showcase.status.success`). Página com
+  papel (`meta.title`, `meta.description`, `heading`, `filters.category.academic`). Página com
   namespace próprio chama `useTranslation("home")`; quem também usa chave de `common` carrega os
   dois, `useTranslation(["notFound", "common"])`, e chama `t("common:backHome")`, senão a chave não
   tipa. Texto com marcação no meio usa `<Trans>` com `t={t}`, `i18nKey` e
@@ -222,8 +282,10 @@ para editores compatíveis, coerente com o `.prettierrc`.
 
 - **`src/styles/`** — `global.css` guarda as CSS custom properties (cor, tipografia, espaçamento e
   afins) e o reset. CSS Module usa essas custom properties em vez de valor hardcoded; confira os
-  nomes em `src/styles/global.css` antes de usar, e token global novo entra lá. Estilos de página
-  ficam em `src/styles/pages/<nome>.module.css` e de componente em
+  nomes em `src/styles/global.css` antes de usar, e token global novo entra lá. Os nomes dos
+  tokens seguem os de `tokens/` do handoff de design (ex.: `--danger-surface`/`--danger-ink`,
+  nunca um prefixo próprio como `error`). Estilos de página ficam em
+  `src/styles/pages/<nome>.module.css` e de componente em
   `src/styles/components/<nome>.module.css` (CSS Modules), importados como `import css from "..."`.
   A tipagem dos módulos vem de `src/types/declarations.d.ts` (`{ [key: string]: string }`): toda
   classe usada como `css.<algo>` precisa existir no módulo importado, porque uma classe inexistente
@@ -442,8 +504,16 @@ O `<Tipo>` de branch, commit e título de PR vem sempre desta tabela:
 | Chore    | :see_no_evil: | Mudanças sem impacto direto na aplicação (ex.: alterações no `.gitignore`). |
 | Revert   |   :rewind:    | Reverter algum commit.                                                      |
 
-Nunca use uma label do GitHub (`enhancement`, `bug` como label, etc.) no lugar do tipo: a label
-classifica a issue, o tipo classifica a mudança.
+### Issues
+
+Toda issue entra no projeto [Portfolio](https://github.com/users/felipe-sant/projects/16), que
+reúne os repositórios do portfólio, com Status `Backlog` (o PO revisa e move), `Marco` do
+`docs/product/roadmap.md` (ou `Pessoal`, para a trilha fora da v1) e um único `Tipo` (`FEAT`, `DOC`
+ou `BUG`). O tipo vive só nesse campo: as labels `enhancement`, `bug` e `documentation` não são
+usadas. Labels indicam só a área (`frontend`, `backend`, `infra`, uma ou mais). Toda issue que
+depende de outra registra a relação como "blocked by" do GitHub
+(`POST /repos/{owner}/{repo}/issues/{n}/dependencies/blocked_by`), além da linha "Depende de" do
+corpo.
 
 ### Branches
 
@@ -453,6 +523,16 @@ classifica a issue, o tipo classifica a mudança.
 
 Tipo em minúsculas (`feat/<número>-agentes-e-skills`). Sem issue aberta, o número é omitido
 (`chore/update-gitignore`).
+
+Duas branches de ambiente, nenhuma recebe push direto:
+
+- **`staging`** — ambiente de testes e base do desenvolvimento. Toda branch de trabalho nasce de
+  `origin/staging` atualizada e volta para ela por PR.
+- **`main`** — produção. Só recebe PR vindo de `staging` (promoção do que foi validado) ou de
+  `hotfix/*`.
+
+Hotfix é a exceção: nasce de `origin/main`, volta por PR para a `main` e, depois do merge, a `main`
+é levada de volta para a `staging` por PR, para as duas não divergirem.
 
 ### Commits
 
@@ -467,10 +547,13 @@ Commits são atômicos: uma mudança concluída por commit, nunca várias tarefa
 
 ### Pull Requests
 
-- Toda alteração passa por PR para a `main`, sem push direto.
-- O autor se atribui já na criação (`gh pr create --assignee @me`) e aplica labels que já existem
-  no repositório (`bug`, `enhancement`, `documentation`, etc.).
-- A descrição referencia a issue relacionada (`Closes #<número>`), para que ela feche no merge.
+- Toda alteração passa por PR para a `staging`, sem push direto (exceção: `hotfix/*`, ver
+  "Branches"). A promoção para produção é um PR de `staging` para `main`, com título no padrão de
+  commit (`Chore :see_no_evil: Promove staging para produção`) e a lista das issues incluídas.
+- O autor se atribui já na criação (`gh pr create --assignee @me`) e aplica as labels de área
+  da issue (`frontend`, `backend`, `infra`).
+- A descrição referencia a issue relacionada (`Closes #<número>`). A branch padrão do repositório
+  é a `staging`, então a issue fecha no merge do PR para a `staging`.
 - O título segue o padrão do commit principal (`<Tipo> <ícone> [#<número>] <descrição>`).
 - A descrição segue a estrutura de `.github/PULL_REQUEST_TEMPLATE.md`, não um corpo livre, com as
   seções Descrição, Alterações, Decisões técnicas, Como testar, Evidências e Impactos e pontos de
@@ -499,10 +582,12 @@ novo, então repetir via hook no momento do push seria redundante.
   `.specs/_template/`. As pastas de spec são gitignored: planejamento local, fora do histórico.
   O estado vive no campo `**Status:**` do `spec.md` (`rascunho` → `em-revisao` → `aprovada` →
   `em-andamento` → `implementada`); só humano promove para `aprovada`.
-- `docs/` — documentação versionada **só deste frontend** (arquitetura, ADRs, diagramas, telas). O
-  sistema inteiro fica no repositório pai, que reúne backend e frontend como submódulos, e o
-  contrato da API fica no backend. Índice em `docs/README.md`; o `sdd` não escreve lá, só em
-  `.specs/`.
+- `docs/` — documentação versionada **só deste frontend**: visão do produto e glossário
+  (`docs/product/`), design system (`docs/design/`), arquitetura (`docs/architecture/`), ADRs
+  (`docs/adr/`), diagramas de fluxo e entidades (`docs/diagrams/`), ambientes (`docs/setup/`) e o
+  modelo de documentação de tela (`docs/screens/`). O sistema inteiro fica no repositório pai,
+  que reúne backend e frontend como submódulos, e o contrato da API fica no backend. Índice em
+  `docs/README.md`; o `sdd` não escreve lá, só em `.specs/`.
 
 Ao mudar uma convenção deste arquivo, verifique se algum agente ou skill a repete — eles citam
 este `CLAUDE.md` como fonte da verdade, mas duplicam os pontos que precisam aplicar sozinhos.

@@ -23,7 +23,9 @@ describe("routes", () => {
     it("renderiza o header e o footer do MainLayout ao redor da página em uma rota válida", async () => {
         renderRoutes(["/"])
 
-        expect(await screen.findByRole("heading", { name: "Olá, mundo!" })).toBeInTheDocument()
+        expect(
+            await screen.findByRole("heading", { name: "Desenvolvedor full stack em TypeScript." })
+        ).toBeInTheDocument()
         expect(screen.getByRole("banner")).toBeInTheDocument()
         expect(screen.getByRole("contentinfo")).toBeInTheDocument()
     })
@@ -32,7 +34,7 @@ describe("routes", () => {
         renderRoutes(["/rota-que-nao-existe"])
 
         expect(
-            await screen.findByRole("heading", { name: "404 - Página não encontrada" })
+            await screen.findByRole("heading", { name: "Página não encontrada" })
         ).toBeInTheDocument()
     })
 
@@ -40,9 +42,11 @@ describe("routes", () => {
         const user = userEvent.setup()
         renderRoutes(["/rota-que-nao-existe"])
 
-        await screen.findByRole("link", { name: "Vá para a página inicial." })
-        await user.click(screen.getByRole("link", { name: "Vá para a página inicial." }))
+        await screen.findByRole("link", { name: "Voltar para o início" })
+        await user.click(screen.getByRole("link", { name: "Voltar para o início" }))
 
-        expect(await screen.findByRole("heading", { name: "Olá, mundo!" })).toBeInTheDocument()
+        expect(
+            await screen.findByRole("heading", { name: "Desenvolvedor full stack em TypeScript." })
+        ).toBeInTheDocument()
     })
 })

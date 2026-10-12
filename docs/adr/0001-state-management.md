@@ -1,25 +1,27 @@
 # 0001. Gerenciamento de estado
 
-> Exemplo: decisão fictícia da loja. Substitua pelas decisões reais do projeto.
-
 - **Status:** aceita
 - **Data:** 01-10-2026
 
 ## Contexto
 
-O carrinho é lido por várias telas e o catálogo vem da API. Passar esses dados por props deixou o código frágil, e cada tela buscava os mesmos produtos de novo.
+O repositório nasceu com Redux Toolkit, RTK Query (`src/store/`) e um cliente HTTP sobre `fetch` (`src/services/http/`), sem nenhum slice nem endpoint em uso. O portfólio não tem backend hoje, mas vai ter: os dados de projetos e de trajetória (experiências, formações, stack) e o envio do formulário de contato virão dele. No handoff de design, a submissão do formulário é simulada e o backend do formulário aparece como pendência.
+
+Até o backend existir, a aplicação precisa funcionar sozinha, com dados mock no frontend. O estado de cada tela definido no handoff (filtros de Projetos, galeria de Projeto, item aberto de Informações, campos do formulário de Contato) é local à tela; o tema vale para todas.
 
 ## Decisão
 
-Estado de cliente (carrinho, filtros) em slices do Redux Toolkit e estado de servidor (catálogo, pedidos) em endpoints do RTK Query, ambos em `src/store/`.
+Manter Redux Toolkit, RTK Query e `src/services/http/` para o backend futuro, e começar frontend-only, com os dados servidos por mock no frontend.
 
 ## Consequências
 
-- Uma única fonte de verdade para o carrinho e cache automático das respostas da API.
-- Toda tela que lê a store passa a depender dela nos testes, que precisam de um provider.
-- A equipe precisa conhecer o modelo de slices e endpoints.
+- A aplicação roda e é testada sem backend; a fonte dos mocks e o jeito de servi-los ficam para uma issue própria.
+- Estado de uma tela continua em `useState` no hook da página; estado compartilhado entre telas vai para um slice em `src/store/slices/`.
+- Quando o backend existir, cada domínio vira um endpoint do RTK Query injetado em `src/store/api/<dominio>.api.ts`, sem trocar de biblioteca, e o formulário de contato passa a enviar ao backend.
+- Até lá a store e o cliente HTTP ficam no bundle e na suíte de testes sem uso pela interface.
+- `VITE_API_URL` fica vazia enquanto não há backend.
 
 ## Alternativas
 
-- **Context API:** simples, mas re-renderiza os consumidores a cada mudança e não resolve cache de servidor.
-- **Zustand mais uma biblioteca de dados:** menos código, porém dois modelos mentais para estado de cliente e de servidor.
+- **Remover a store e o cliente HTTP:** deixaria a base menor agora, mas obrigaria a reintroduzir e reconfigurar tudo quando o backend chegar, que já é certo.
+- **Context API:** suficiente para o tema, mas não oferece cache de servidor nem os hooks gerados por endpoint que o RTK Query entrega para os dados do backend.

@@ -1,7 +1,5 @@
 # Decisões de arquitetura (ADR)
 
-> Exemplo: o índice abaixo lista um ADR fictício. Substitua pelos ADRs do projeto.
-
 Um ADR registra uma decisão técnica que continua valendo depois da mudança que a motivou.
 
 ## Quando escrever

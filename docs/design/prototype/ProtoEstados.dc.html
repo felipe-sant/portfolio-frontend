@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<aside aria-label="Estado do protótipo (fora do layout)" style="position:fixed;right:16px;bottom:16px;z-index:40;max-width:calc(100vw - 32px);background:var(--bg-page);border:1px solid var(--border-strong);border-radius:0.3rem;box-shadow:var(--shadow-modal);font-family:var(--font-body)">
+<sc-if value="{{ aberto }}" hint-placeholder-val="{{ true }}">
+<div style="padding:0.625rem 0.75rem 0.75rem">
+<div style="display:flex;justify-content:space-between;align-items:center;gap:0.75rem;margin-bottom:0.5rem">
+<span style="font:500 0.6875rem var(--font-mono);letter-spacing:.1em;color:var(--text-label)">ESTADO · PROTÓTIPO</span>
+<button type="button" aria-label="Recolher seletor de estado" onClick="{{ alternar }}" style="display:inline-flex;align-items:center;justify-content:center;width:2rem;height:2rem;padding:0;background:transparent;border:none;cursor:pointer;color:var(--text-body)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></button>
+</div>
+<div style="display:flex;flex-wrap:wrap;gap:0.375rem">
+<sc-for list="{{ opcoes }}" as="o" hint-placeholder-count="3">
+<a href="{{ o.href }}" aria-current="{{ o.current }}" style="display:inline-flex;align-items:center;min-height:2.75rem;padding:0 0.75rem;font:600 0.8125rem var(--font-body);text-decoration:none;border-radius:0.3rem;color:{{ o.cor }};background:{{ o.fundo }};border:1px solid {{ o.borda }}">{{ o.rotulo }}</a>
+</sc-for>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{ fechado }}" hint-placeholder-val="{{ false }}">
+<button type="button" onClick="{{ alternar }}" style="display:inline-flex;align-items:center;gap:0.5rem;min-height:2.75rem;padding:0 0.875rem;background:transparent;border:none;cursor:pointer;font:600 0.8125rem var(--font-body);color:var(--text-strong)">Estado: {{ atualRotulo }}</button>
+</sc-if>
+</aside>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:&quot;360px&quot;,&quot;height&quot;:&quot;140px&quot;},&quot;opcoes&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;{id:string, rotulo:string}[]&quot;}}">
+class Component extends DCLogic {
+  state = { aberto: window.innerWidth >= 640 };
+  alternar = () => this.setState((s) => ({ aberto: !s.aberto }));
+  renderVals() {
+    const lista = this.props.opcoes || [];
+    const atual = new URLSearchParams(location.search).get("estado") || (lista[0] && lista[0].id);
+    const sel = lista.find((o) => o.id === atual) || lista[0] || { rotulo: "" };
+    return {
+      aberto: this.state.aberto, fechado: !this.state.aberto, alternar: this.alternar,
+      atualRotulo: sel.rotulo,
+      opcoes: lista.map((o) => {
+        const on = o.id === sel.id;
+        return { rotulo: o.rotulo, href: "?estado=" + o.id, current: on ? "true" : undefined,
+          cor: on ? "var(--text-strong)" : "var(--text-body)",
+          fundo: on ? "var(--bg-highlight)" : "transparent",
+          borda: on ? "var(--brand-variant)" : "var(--border-subtle)" };
+      })
+    };
+  }
+}
+</script>
+</body>
+</html>

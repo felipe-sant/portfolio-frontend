@@ -11,7 +11,9 @@ describe("App", () => {
     it("renderiza a página inicial na rota raiz", async () => {
         render(<App />)
 
-        expect(await screen.findByRole("heading", { name: "Olá, mundo!" })).toBeInTheDocument()
+        expect(
+            await screen.findByRole("heading", { name: "Desenvolvedor full stack em TypeScript." })
+        ).toBeInTheDocument()
     })
 
     it("renderiza dentro do Provider da store sem avisos no console", async () => {
@@ -20,7 +22,9 @@ describe("App", () => {
 
         render(<App />)
 
-        expect(await screen.findByRole("heading", { name: "Olá, mundo!" })).toBeInTheDocument()
+        expect(
+            await screen.findByRole("heading", { name: "Desenvolvedor full stack em TypeScript." })
+        ).toBeInTheDocument()
         expect(errorSpy).not.toHaveBeenCalled()
         expect(warnSpy).not.toHaveBeenCalled()
     })
@@ -28,10 +32,12 @@ describe("App", () => {
     it("define título e meta description da página no head", async () => {
         render(<App />)
 
-        expect(await screen.findByRole("heading", { name: "Olá, mundo!" })).toBeInTheDocument()
-        expect(document.title).toBe("Título da Página")
+        expect(
+            await screen.findByRole("heading", { name: "Desenvolvedor full stack em TypeScript." })
+        ).toBeInTheDocument()
+        expect(document.title).toBe("Luiz Felipe dos Santos · Desenvolvedor full stack")
         expect(document.querySelector('meta[name="description"]')?.getAttribute("content")).toBe(
-            "Minha descrição personalizada."
+            "Portfólio de Luiz Felipe dos Santos, desenvolvedor full stack em TypeScript: projetos, trajetória e contato."
         )
     })
 
@@ -41,11 +47,11 @@ describe("App", () => {
         render(<App />)
 
         expect(
-            await screen.findByRole("heading", { name: "404 - Página não encontrada" })
+            await screen.findByRole("heading", { name: "Página não encontrada" })
         ).toBeInTheDocument()
-        expect(document.title).toBe("Página não encontrada.")
+        expect(document.title).toBe("Página não encontrada · Luiz Felipe dos Santos")
         expect(document.querySelector('meta[name="description"]')?.getAttribute("content")).toBe(
-            "A página não existe ou você não possui acesso."
+            "O endereço acessado não existe neste portfólio."
         )
     })
 })

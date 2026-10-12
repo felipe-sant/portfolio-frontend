@@ -58,7 +58,7 @@ const { t } = useTranslation(["about", "common"])
 Texto com marcação no meio (negrito, link) usa `<Trans>` em vez de quebrar a frase em várias chaves. A tag fica no valor do JSON (`"... um trecho em <strong>destaque</strong>."`) e o componente correspondente vai em `components`:
 
 ```tsx
-<Trans t={t} i18nKey="showcase.description" components={{ strong: <strong /> }} />
+<Trans t={t} i18nKey="about.description" components={{ strong: <strong /> }} />
 ```
 
 ### 2. Hook de página (quando houver lógica de estado/efeito) — `src/pages/hooks/use<Nome>.ts`
@@ -137,7 +137,7 @@ Use as custom properties de `src/styles/global.css` (cor, tipografia, espaçamen
 
 ### 4. Namespace de tradução — `src/locales/{pt-BR,en,es}/<nome>.json`
 
-O namespace tem o mesmo nome do CSS Module da página (`about.module.css` → `about`; `UserProfile.page.tsx` → `userProfile`). Chaves em inglês, lowerCamelCase e hierárquicas por papel: `meta.title`, `meta.description`, `heading`, `showcase.status.success`. JSON com 4 espaços de indentação.
+O namespace tem o mesmo nome do CSS Module da página (`about.module.css` → `about`; `UserProfile.page.tsx` → `userProfile`). Chaves em inglês, lowerCamelCase e hierárquicas por papel: `meta.title`, `meta.description`, `heading`, `filters.category.academic`. JSON com 4 espaços de indentação.
 
 1. Crie `src/locales/pt-BR/<nome>.json` primeiro. `pt-BR` é a língua de referência: o texto novo nasce em português e os JSON de `pt-BR` são a fonte do tipo das chaves.
 

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="styles.css">
+<style>body{margin:0;background:var(--bg-page);color:var(--text-body);font-family:var(--font-body)}a{color:var(--text-link)}a:hover{color:var(--brand-variant)}</style>
+</helmet>
+<div style="min-height:100vh;display:flex;flex-direction:column;background:var(--bg-page);overflow-x:clip">
+<dc-import name="ProtoHeader" ativo="" hint-size="100%,64px" style="position:sticky;top:0;z-index:20"></dc-import>
+<main style="flex:1;width:100%;max-width:80rem;margin:0 auto;padding:clamp(3rem,10vw,7rem) clamp(1rem,4vw,3rem)">
+<div style="font:500 0.8125rem var(--font-mono);letter-spacing:.1em;color:var(--text-label);margin-bottom:1rem">ERRO 404</div>
+<h1 style="margin:0 0 1rem;max-width:32rem;font-family:var(--font-heading);font-weight:800;font-size:clamp(2rem,6vw,3rem);line-height:1.05;letter-spacing:-.03em;color:var(--text-strong)">Página não encontrada</h1>
+<p style="margin:0 0 2rem;max-width:30rem;font:400 1rem/1.65 var(--font-body);color:var(--text-body);text-wrap:pretty">O endereço pode ter mudado ou o projeto saiu do ar. A lista completa continua em Projetos.</p>
+<div style="display:flex;gap:0.75rem;flex-wrap:wrap">
+<a href="prototipo-projetos.dc.html" style="display:inline-flex;align-items:center;min-height:3rem;padding:0 1.5rem;font:600 1rem var(--font-body);color:#202020;background:linear-gradient(180deg,#FFCC00,#F19100);border-radius:0.3rem;text-decoration:none">Ver projetos</a>
+<a href="prototipo-inicio.dc.html" style="display:inline-flex;align-items:center;min-height:3rem;padding:0 1.5rem;font:600 1rem var(--font-body);color:var(--text-strong);border:1px solid var(--border-strong);border-radius:0.3rem;text-decoration:none" style-hover="border-color:var(--text-strong);color:var(--text-strong)">Voltar ao início</a>
+</div>
+</main>
+<dc-import name="ProtoFooter" modo="padrao" hint-size="100%,320px"></dc-import>
+</div>
+</x-dc>
+</body>
+</html>

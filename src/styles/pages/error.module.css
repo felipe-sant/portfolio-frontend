@@ -1,5 +1,6 @@
 .main {
     display: flex;
+    min-height: 100dvh;
     justify-content: center;
     align-items: center;
 }

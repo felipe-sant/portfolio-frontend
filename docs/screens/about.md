@@ -1,0 +1,443 @@
+# Informações
+
+A tela Informações (`/about`, também sob `/en/about` e `/es/about`, D32) junta o que o recrutador
+procura antes de chamar alguém para conversar: quem é o autor, o que ele domina, por onde passou e
+o CV para baixar. Quem a implementa é a issue #37, com #33 e #60 (layout), #49 (pré-renderização), #52
+(canônica, Open Graph e JSON-LD), #54 (botões de CV), #42 (foto), #13 (dados) e #58 e #59 (conteúdo). Este documento diz o
+comportamento; não escolhe nome de componente nem de arquivo, além do namespace e da chave de
+tradução.
+
+Fontes: [`decisions.md`](../design/decisions.md), o protótipo (`prototipo-informacoes`, em
+[`prototype/`](../design/prototype/README.md)), [`accessibility.md`](../product/accessibility.md),
+[`non-functional-requirements.md`](../product/non-functional-requirements.md) e
+[`layout.md`](layout.md) (cabeçalho, rodapé, foco na troca de rota e abertura de links).
+
+Cada requisito funcional tem um ID `RF-ABOUT-nn`, estável e nunca reaproveitado: item que deixa de
+valer é riscado, não apagado nem renumerado (mesma regra de `layout.md`). O texto do protótipo é
+provisório (PI5): nenhum valor dele vira dado, e o conteúdo real vem da #58.
+
+## Objetivo
+
+Mostrar quem é o autor, o que ele domina e por onde passou, com a saída que o recrutador procura
+("Baixar CV") à vista na primeira dobra, e deixar o detalhe de cada experiência, formação e curso a
+um clique, sem sair da tela.
+
+## Estados
+
+| Estado                                  | O que aparece                                                                                                                                                                                                                                                                                                                                                                                                |
+| --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Normal, a partir de 640px               | Apresentação com a foto à esquerda (localização e disponibilidade abaixo dela) e, à direita, rótulo "Informações", `h1` com o nome, parágrafo de apresentação, "Baixar CV" e "Entrar em contato". Depois: Sobre mim (duas colunas quando cabem), Stack (três grupos), Complementos (faixa escura, duas colunas) e Trajetória (três grupos)                                                                   |
+| Normal, abaixo de 640px                 | Mesma ordem em uma coluna: foto em cima do texto; complementos empilhados (abaixo de 900–980px já empilham, [`design-system.md`](../design/design-system.md)); no item de trajetória, o período quebra para baixo do título (D20)                                                                                                                                                                            |
+| Carregando                              | `h1`, títulos de seção, "Baixar CV" e "Entrar em contato" visíveis (não dependem do conteúdo); skeleton `aria-hidden` no lugar da foto (1:1), do parágrafo de apresentação, de localização e disponibilidade, dos parágrafos de Sobre mim, dos chips de Stack e Complementos e dos itens de trajetória (altura de um item); um único status "Carregando..." visualmente oculto em `role="status"` (A11Y-G13) |
+| Erro ao carregar o perfil               | Nas partes que dependem do perfil (parágrafo de apresentação, localização e disponibilidade, Sobre mim, Stack, "Como eu trabalho"): mensagem "Não foi possível carregar esta parte da página." e o botão "Tentar novamente", que refaz só essa carga; o anúncio em `role="alert"` acontece uma vez, na primeira parte afetada (A11Y-G14). O resto da tela segue normal                                       |
+| Erro ao carregar a trajetória           | O mesmo, em Trajetória e na coluna "Certificados" (derivada da trajetória, D38)                                                                                                                                                                                                                                                                                                                              |
+| Erro ao carregar os projetos            | Só o bloco "Projetos relacionados" do modal deixa de aparecer; sem mensagem (o resto do detalhe é útil sozinho)                                                                                                                                                                                                                                                                                              |
+| Vazio                                   | Parte sem dado não aparece, com o título junto (nunca título sem conteúdo): grupo de stack ou de trajetória sem itens, coluna de complementos sem itens, faixa de complementos com as duas colunas vazias, seção Stack ou Trajetória sem nenhum item. Apresentação e Sobre mim são obrigatórios no contrato e nunca ficam vazios                                                                             |
+| Foto ainda não entregue (D26 bloqueada) | Placeholder neutro 1:1 (`--bg-placeholder`, borda `--border-subtle`), decorativo (`aria-hidden`, sem `role="img"`, achado de `accessibility.md`)                                                                                                                                                                                                                                                             |
+| Modal aberto, a partir de 640px         | Fundo `--overlay` sobre a página; caixa centralizada de até 34rem, `--radius`, `--shadow-modal`, com cabeçalho fixo dentro dela (título, linha de metadados e "Fechar") e o corpo rolando; rolagem da página travada                                                                                                                                                                                         |
+| Modal aberto, abaixo de 640px (D20)     | Tela cheia, sem raio nem margem, mesmo conteúdo                                                                                                                                                                                                                                                                                                                                                              |
+| Sem JavaScript                          | HTML pré-renderizado (#49) com todas as seções e o detalhe de cada item no HTML, fechado (D37); "Baixar CV", "Entrar em contato" e os links do layout funcionam; os itens de trajetória não abrem o modal (NF-CO-03)                                                                                                                                                                                         |
+
+## Validações
+
+Não há campo de formulário. As regras abaixo são do conteúdo, verificadas pelo teste de conteúdo
+da #13 (o build falha), com o comportamento da tela se algo passar:
+
+| Entrada                                 | Regra                                                                              | Na tela, se falhar                                                            |
+| --------------------------------------- | ---------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| Início e fim de item de trajetória      | `AAAA-MM` (ISO 8601); fim opcional (ausente = em curso) e maior ou igual ao início | Não se aplica: o teste de conteúdo barra                                      |
+| Tipo de item de trajetória              | `experience`, `education` ou `course`                                              | Item com tipo desconhecido não aparece                                        |
+| Categoria de stack                      | `frontend`, `backend` ou `tooling`                                                 | Grupo com categoria desconhecida não aparece                                  |
+| Projeto relacionado                     | id (UUID v7, NF-DA-07) de um projeto existente no conteúdo do mesmo idioma         | O link não aparece; se nenhum sobrar, o bloco não aparece                     |
+| Resumo do item, apresentação, Sobre mim | Obrigatórios, não vazios                                                           | Não se aplica: o teste de conteúdo barra                                      |
+| Arquivo do CV                           | `cv/cv-<idioma>.pdf` sob `import.meta.env.BASE_URL`, gerado por #54                | Até #54 existir, o link quebra (aceito em M5, como em `layout.md`, RF-LAY-27) |
+
+## Permissões
+
+Site público, sem login nem perfil (DP03): qualquer visitante vê tudo e usa todas as ações. Não há
+ação restrita.
+
+## Regras de negócio
+
+Cada subseção lista os requisitos na ordem dos IDs.
+
+### Estrutura
+
+| ID            | Regra                                                                                                                                                                                                                                                                                                                                                                                                  | Fonte                                                                  |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------- |
+| `RF-ABOUT-01` | Ordem fixa das seções: Apresentação, Sobre mim, Stack, Complementos e Trajetória; sem depoimentos (D13). Cada seção é `section` com `aria-labelledby` no seu heading (a Apresentação aponta para o `h1`). Headings: `h1` com o nome; `h2` Sobre mim, Stack, Certificados, Como eu trabalho e Trajetória; `h3` nos grupos de stack e de trajetória. Rótulos em caixa normal no JSON, caixa alta por CSS | Protótipo, D13, `accessibility.md` (HTML semântico e nomes acessíveis) |
+
+### Apresentação
+
+| ID            | Regra                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | Fonte                                                       |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
+| `RF-ABOUT-02` | Foto de perfil 1:1 (D26) com `alt` por chave, "Foto de Luiz Felipe dos Santos" (A11Y-IF01), `width` e `height` declarados (NF-DE-16), `srcset`/`sizes` com no máximo 80 KB (NF-DE-14), `fetchpriority="high"` e sem `loading="lazy"` por estar na primeira dobra (NF-DE-17), sem EXIF (NF-PR-05). Até #42 entregar a foto, placeholder neutro decorativo (`aria-hidden`)                                                                                                                                                                                      | D26, `accessibility.md` (Imagens e texto alternativo)       |
+| `RF-ABOUT-03` | Abaixo da foto, a localização com ícone de pin e o selo de disponibilidade, ambos do conteúdo. O selo usa `availability` do perfil, o mesmo campo de Início, Contato e rodapé (RF-LAY-21): o texto é `label`, frase livre do PO traduzida por idioma (ex.: "Disponível a partir de 01/2027"), nunca chave de tradução; o indicador redondo (único elemento redondo, D11) fica em `--success-ink`; com `isAvailable: false` o selo não aparece, e a localização fica sozinha. O texto carrega o estado (cor nunca sozinha). Ícone e indicador em `aria-hidden` | Protótipo, D15, D11, decisão transversal do PO (11-10-2026) |
+| `RF-ABOUT-04` | Rótulo "Informações" acima do `h1`; `h1` com o nome do autor (`common:authorName`), que não depende do conteúdo e existe já no carregamento (alvo do foco na troca de rota, RF-LAY-32); parágrafo de apresentação do conteúdo, com largura máxima `--measure`                                                                                                                                                                                                                                                                                                 | Protótipo, `layout.md`                                      |
+| `RF-ABOUT-05` | "Baixar CV": link com aparência de botão primário (degradê da marca) e ícone de download (`aria-hidden`), apontando para o PDF do idioma ativo (`cv/cv-pt-BR.pdf`, `cv/cv-en.pdf`, `cv/cv-es.pdf`, com `import.meta.env.BASE_URL`), com download direto (atributo `download`, mesma origem, sem nova aba) e nome acessível "Baixar CV (PDF)", que começa pelo texto visível (A11Y-IF05, 2.5.3). Não depende do conteúdo carregar                                                                                                                              | D14, D30, D36                                               |
+| `RF-ABOUT-06` | "Entrar em contato": link secundário para `/contact` com o prefixo do idioma (NF-IN-11), com a mesma chave do rodapé (`common:footer.contact.cta`). Substitui o "Enviar mensagem" do protótipo                                                                                                                                                                                                                                                                                                                                                                | `layout.md` (RF-LAY-22, resposta do PO a Q1)                |
+
+### Sobre mim
+
+| ID            | Regra                                                                                                                                                                                                                                                                                                                                                   | Fonte               |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------- |
+| `RF-ABOUT-07` | `h2` "Sobre mim" e os parágrafos do conteúdo (o protótipo tem quatro; o número vem do conteúdo), em grade de colunas de no mínimo 22rem (duas quando cabem, uma no celular), cada parágrafo com no máximo `--measure` e entrelinha `--lh-body` (1.4.8). Faixa `--bg-raised` com bordas `--border-subtle`. É conteúdo, não chave (ver "Vem do conteúdo") | Protótipo, NF-IN-02 |
+
+### Stack
+
+| ID            | Regra                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | Fonte                                                  |
+| ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| `RF-ABOUT-08` | `h2` "Stack" e três grupos em ordem fixa, Frontend, Backend e Infra e ferramentas, cada um com `h3` (rótulo por `common:stackCategory.frontend`, `.backend` e `.tooling`, porque a categoria é enum) e a contagem, e os itens em `ul` de chips em `--font-mono` com `--radius` (D11). A stack nunca aparece como lista única sem categoria. Ordem dos itens: a do conteúdo. Nome de tecnologia sem tradução e sem `lang`. Os dados são os mesmos da faixa de stack do Início, do `knowsAbout` do JSON-LD e do CV (NF-DA-04) | Protótipo, glossário (Stack)                           |
+| `RF-ABOUT-09` | Contagem de grupo (stack e trajetória): o número visível fica em `aria-hidden` e um texto visualmente oculto diz a contagem com o substantivo, por chave com plural ("4 tecnologias", "2 itens"), para o leitor de tela não ouvir um número solto                                                                                                                                                                                                                                                                           | `accessibility.md` (HTML semântico e nomes acessíveis) |
+
+### Complementos
+
+| ID            | Regra                                                                                                                                                                                                                                                                           | Fonte               |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------- |
+| `RF-ABOUT-10` | Faixa escura `--neutral-900` (o `--focus-ring` é redefinido nela, D27, caso algum elemento focável entre), com duas colunas de no mínimo 18rem, "Certificados" e "Como eu trabalho", cada uma com `h2` (caixa alta por CSS) e os itens em `ul` de chips                         | Protótipo, D27      |
+| `RF-ABOUT-11` | "Certificados" lista os certificados dos itens de trajetória (D38), na ordem da trajetória (RF-ABOUT-14, grupos na ordem fixa), sem repetir o mesmo certificado; o chip mostra o nome e, se houver, o emissor separado por `·`. É o mesmo dado do bloco "Certificados" do modal | D38                 |
+| `RF-ABOUT-12` | "Como eu trabalho": frases curtas do conteúdo, na ordem do conteúdo                                                                                                                                                                                                             | Protótipo, NF-IN-02 |
+
+### Trajetória
+
+| ID            | Regra                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | Fonte                                          |
+| ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------- |
+| `RF-ABOUT-13` | `h2` "Trajetória", a instrução "Selecione um item para ver o detalhe." e três grupos em ordem fixa, Experiências profissionais, Formações e Cursos, cada um com `h3` e contagem (RF-ABOUT-09) e os itens em `ul`                                                                                                                                                                                                                                                                                                        | Protótipo, A11Y-IF02                           |
+| `RF-ABOUT-14` | Ordenação dentro de cada grupo, mais recente primeiro: itens em curso antes (início mais recente primeiro), depois os encerrados por fim mais recente e, no empate, início mais recente; empate total mantém a ordem do conteúdo. Calculada pela tela (função pura com teste), sem depender da ordem do JSON                                                                                                                                                                                                            | Issue #6                                       |
+| `RF-ABOUT-15` | Cada item é um `button` (`type="button"`, `aria-haspopup="dialog"`, A11Y-IF03) de largura total e alvo mínimo de 44px, com o título (Bricolage 700), o selo "Atual" (`common:period.current`) quando não há fim (texto e indicador, nunca só cor), a linha de detalhes (organização e detalhes do conteúdo, separados por `·` em `aria-hidden`) e o período à direita (abaixo do título em menos de 640px, D20). Hover: borda `--text-strong` e fundo `--bg-raised`, sem deslocamento, desligado com movimento reduzido | Protótipo, D20, `design-system.md`             |
+| `RF-ABOUT-16` | Período: datas em `MM/AAAA` por `Intl.DateTimeFormat` do idioma ativo com `month: "2-digit"` e `year: "numeric"` (NF-IN-04), cada data em `<time datetime="AAAA-MM">` (A11Y-IF02). Encerrado: "06/2024 – 05/2026" (`common:period.range`). Em curso: "desde 06/2026", "since 06/2026", "desde 06/2026" (`common:period.since`, D39), com o selo "Atual" (`common:period.current`) à parte, nunca como valor do período. A mesma função formata o período no modal e no "status atual" do Início                         | `design-system.md` (Voz e copy), NF-IN-04, D39 |
+
+### Modal de trajetória
+
+| ID            | Regra                                                                                                                                                                                                                                                                                                                                                                                                                                                        | Fonte                                    |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------- |
+| `RF-ABOUT-17` | Clique, Enter ou Espaço no item abre o detalhe em `role="dialog"` com `aria-modal="true"` e `aria-labelledby` no título (`h2`). Cabeçalho fixo dentro do modal: título do item, linha de metadados (organização, detalhes e período, com `·`) e o botão "Fechar" só de ícone (×, 44px, `aria-label` por chave). Um modal por vez                                                                                                                             | Protótipo, A11Y-IF04                     |
+| `RF-ABOUT-18` | Ordem canônica do corpo: resumo → responsabilidades (experiência) ou principais disciplinas (formação e curso) → tecnologias → certificados → projetos relacionados. Cada bloco tem rótulo `h3` (caixa alta por CSS); responsabilidades e disciplinas em `ul` com marcador; tecnologias e certificados em `ul` de chips; projetos em lista de links. Bloco sem itens não aparece, com o rótulo junto; o resumo é obrigatório, então o modal nunca fica vazio | Protótipo (`blocos()`), issue #6         |
+| `RF-ABOUT-19` | Projetos relacionados: um link por projeto para `/projects/:id` com o prefixo do idioma (NF-IN-11), na mesma aba (D36), com texto igual ao título do projeto vindo do conteúdo de projetos (não duplicado na trajetória) e seta `→` em `aria-hidden`; alvo de 44px. Clicar navega: o modal fecha, a rolagem é liberada e o foco vai para o `h1` do projeto (RF-LAY-32). Id que não resolve não vira link                                                     | Issue #6, D32, D36, 2.4.9                |
+| `RF-ABOUT-20` | Foco e fechamento (PI1, A11Y-IF04): ao abrir, o foco vai para o título do modal (`tabIndex={-1}`); Tab e Shift+Tab circulam só dentro; o resto da página fica `inert`; a rolagem da página trava. Fecha por "Fechar", por clique no fundo (fora da caixa) e por Esc; ao fechar, o foco volta ao item que abriu e a rolagem é liberada na mesma posição                                                                                                       | PI1, `accessibility.md` (Teclado e foco) |
+| `RF-ABOUT-21` | Tamanho e movimento: a partir de 640px, caixa de até 34rem; abaixo, tela cheia (D20). A troca é por media query no CSS, não por largura lida em JavaScript (como RF-LAY-05, NF-TE-04). Abrir e fechar não animam com `prefers-reduced-motion: reduce` (2.3.3). Sem rolagem horizontal com o modal aberto em 360, 390, 768 e 1280px (NF-RE-03; 320px pela A11Y-G11)                                                                                           | D20, A11Y-G12                            |
+| `RF-ABOUT-22` | O modal não tem URL própria: abrir não muda a URL nem o histórico, e a canônica de `/about` continua sem query (NF-IA-11). Se a rota muda com o modal aberto (voltar do navegador), ele fecha e a rolagem é liberada. Motivo: o detalhe é complemento da tela, não destino, e o conteúdo já está no HTML da própria `/about` (RF-ABOUT-23)                                                                                                                   | PO (spec da #6)                          |
+| `RF-ABOUT-23` | O detalhe de todo item está no HTML pré-renderizado de `/about` em cada idioma, fechado e fora da árvore de acessibilidade até abrir (D37); com JavaScript, abrir o item mostra esse mesmo conteúdo como modal. Cumpre NF-IA-07 ("`/about` traz as mesmas informações em HTML pré-renderizado") além de NF-IA-02 (o detalhe também está em `llms-full*.txt` e no CV em texto)                                                                                | D37                                      |
+
+### Dados e estados
+
+| ID            | Regra                                                                                                                                                                                                                                                                                                                                                                                                                                         | Fonte                                     |
+| ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
+| `RF-ABOUT-24` | A tela lê o conteúdo só por endpoints do RTK Query em `src/store/api/` (NF-DA-02), dos JSONs em `public/` com `import.meta.env.BASE_URL` (NF-DA-03), só no idioma ativo (NF-DA-05). Fontes: perfil (apresentação, localização, disponibilidade, foto, Sobre mim, stack e "Como eu trabalho"), trajetória e projetos (só id e título, para os relacionados). Trocar de idioma leva à URL equivalente (D31) e carrega o conteúdo do novo idioma | R1, NF-DA                                 |
+| `RF-ABOUT-25` | Carregando: como em [Estados](#estados); o shimmer para com movimento reduzido (NF-MO-01). Um único `role="status"` para a tela inteira, não um por seção                                                                                                                                                                                                                                                                                     | A11Y-G13, `design-system.md`              |
+| `RF-ABOUT-26` | Erro por fonte: como em [Estados](#estados); mensagem e "Tentar novamente" por parte afetada, `role="alert"` uma vez por fonte (na primeira parte afetada); "Tentar novamente" refaz só a carga daquela fonte; a mensagem nunca mostra detalhe técnico                                                                                                                                                                                        | A11Y-G14, `design-system.md` (Voz e copy) |
+| `RF-ABOUT-27` | Vazio: como em [Estados](#estados); parte sem dado some com o título                                                                                                                                                                                                                                                                                                                                                                          | Issue #6, `design-system.md` (Voz e copy) |
+
+### Metadados e pré-renderização
+
+| ID            | Regra                                                                                                                                                                                                                                                                                             | Fonte                             |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------- |
+| `RF-ABOUT-28` | `<title>` "Informações · Luiz Felipe dos Santos" e `<meta name="description">` por chave do namespace `about` (A11Y-G01); canônica, `hreflang`, Open Graph e `twitter:card` pelo mecanismo de #52 (NF-IA-10, NF-IA-11), com `og:type` `profile` e `og:image` do site (a foto é 1:1, não 1200×630) | `layout.md` (Metadados), NF-IA-10 |
+| `RF-ABOUT-29` | JSON-LD `ProfilePage` com `mainEntity` `Person` (ver [Metadados e dados estruturados](#metadados-e-dados-estruturados)), gerado dos mesmos dados da tela, com `<` escapado (NF-IA-08, NF-IA-09)                                                                                                   | NF-IA-08                          |
+| `RF-ABOUT-30` | `/about` é pré-renderizada nos três idiomas com `h1`, todas as seções e o detalhe dos itens no `main` (NF-IA-01, NF-IA-16, RF-ABOUT-23); os dados de perfil, trajetória e projetos usados no HTML vão serializados para a store (NF-IA-03), sem erro de hidratação                                | NF-IA-01, NF-IA-03                |
+
+## Navegação
+
+| De onde                               | Ação                                       | Para onde                                               |
+| ------------------------------------- | ------------------------------------------ | ------------------------------------------------------- |
+| Cabeçalho, menu, rodapé de `/contact` | "Informações"                              | `/about` do idioma atual                                |
+| Qualquer link externo ou URL digitada | Abrir `/about`, `/en/about` ou `/es/about` | A tela no idioma do caminho                             |
+| Apresentação                          | "Baixar CV"                                | Download do PDF do idioma ativo, sem sair da tela (D36) |
+| Apresentação                          | "Entrar em contato"                        | `/contact` do idioma atual                              |
+| Item de trajetória                    | Clique, Enter ou Espaço                    | Modal de detalhe, na mesma URL                          |
+| Modal                                 | "Fechar", fundo ou Esc                     | Fecha; o foco volta ao item                             |
+| Modal, projetos relacionados          | Título do projeto                          | `/projects/:id` do idioma atual                         |
+| Seletor de idioma                     | `PT`, `EN`, `ES`                           | `/about`, `/en/about`, `/es/about` (D31)                |
+
+O Início pode ter um link para `/about`; isso é da spec da #3.
+
+## Textos fixos e chaves
+
+Todo texto fixo vem de chave (`react-i18next`). O valor `pt-BR` abaixo é a referência; `en` e `es`
+são escritos na implementação (#37), com as mesmas chaves (R2). O namespace novo é `about`,
+registrado em `src/locales/*/about.json`, em `src/i18n/resources.ts` e no `ns` de
+`src/i18n/i18n.ts` (na #37). Texto usado por mais de uma tela vai para `common` (convenção do
+`.claude/CLAUDE.md`).
+
+| Namespace | Chave                                             | Valor em `pt-BR`                                                        | Onde                                                        |
+| --------- | ------------------------------------------------- | ----------------------------------------------------------------------- | ----------------------------------------------------------- |
+| `about`   | `meta.title`                                      | Informações · Luiz Felipe dos Santos                                    | `<title>` (valor de `layout.md`)                            |
+| `about`   | `meta.description`                                | Quem é Luiz Felipe dos Santos: sobre mim, stack, trajetória e formação. | Descrição (valor de `layout.md`)                            |
+| `about`   | `hero.label`                                      | Informações                                                             | Rótulo acima do `h1`                                        |
+| `about`   | `hero.photoAlt`                                   | Foto de `{{name}}`                                                      | `alt` da foto, com `common:authorName`                      |
+| `about`   | `aboutMe.heading`                                 | Sobre mim                                                               | `h2`                                                        |
+| `about`   | `stack.heading`                                   | Stack                                                                   | `h2`                                                        |
+| `about`   | `stack.count_one` / `stack.count_other`           | `{{count}}` tecnologia / `{{count}}` tecnologias                        | Contagem oculta (RF-ABOUT-09)                               |
+| `about`   | `complements.certificates`                        | Certificados                                                            | `h2` da faixa                                               |
+| `about`   | `complements.workStyle`                           | Como eu trabalho                                                        | `h2` da faixa                                               |
+| `about`   | `trajectory.heading`                              | Trajetória                                                              | `h2`                                                        |
+| `about`   | `trajectory.hint`                                 | Selecione um item para ver o detalhe.                                   | Instrução                                                   |
+| `about`   | `trajectory.groups.experience`                    | Experiências profissionais                                              | `h3`                                                        |
+| `about`   | `trajectory.groups.education`                     | Formações                                                               | `h3`                                                        |
+| `about`   | `trajectory.groups.course`                        | Cursos                                                                  | `h3`                                                        |
+| `about`   | `trajectory.count_one` / `trajectory.count_other` | `{{count}}` item / `{{count}}` itens                                    | Contagem oculta                                             |
+| `about`   | `modal.close`                                     | Fechar                                                                  | `aria-label` do botão ×                                     |
+| `about`   | `modal.responsibilities`                          | Responsabilidades                                                       | Rótulo de bloco                                             |
+| `about`   | `modal.disciplines`                               | Principais disciplinas                                                  | Rótulo de bloco                                             |
+| `about`   | `modal.technologies`                              | Tecnologias                                                             | Rótulo de bloco                                             |
+| `about`   | `modal.certificates`                              | Certificados                                                            | Rótulo de bloco                                             |
+| `about`   | `modal.relatedProjects`                           | Projetos relacionados                                                   | Rótulo de bloco                                             |
+| `about`   | `loadError.message`                               | Não foi possível carregar esta parte da página.                         | Erro por fonte                                              |
+| `about`   | `loadError.retry`                                 | Tentar novamente                                                        | Botão do erro                                               |
+| `common`  | `resume.download`                                 | Baixar CV                                                               | Texto visível do botão (Início, Informações e Contato; D14) |
+| `common`  | `resume.downloadPdf`                              | Baixar CV (PDF)                                                         | Nome acessível (A11Y-IF05)                                  |
+| `common`  | `period.range`                                    | `{{start}}` – `{{end}}`                                                 | Período encerrado (Informações e Início)                    |
+| `common`  | `period.since`                                    | desde `{{date}}`                                                        | Período em curso (D39)                                      |
+| `common`  | `period.current`                                  | Atual                                                                   | Selo do item em curso                                       |
+| `common`  | `stackCategory.frontend`                          | Frontend                                                                | `h3` do grupo de stack                                      |
+| `common`  | `stackCategory.backend`                           | Backend                                                                 | `h3` do grupo de stack                                      |
+| `common`  | `stackCategory.tooling`                           | Infra e ferramentas                                                     | `h3` do grupo de stack                                      |
+| `common`  | `symbols.forward`                                 | →                                                                       | Seta de link de continuação, em `aria-hidden`               |
+| `common`  | `authorName`                                      | Luiz Felipe dos Santos (de `layout.md`)                                 | `h1`                                                        |
+| `common`  | `loading`                                         | Carregando... (existe)                                                  | Status da tela                                              |
+| `common`  | `footer.contact.cta`                              | Entrar em contato (de `layout.md`)                                      | Link secundário                                             |
+| `common`  | `symbols.separator`                               | · (de `layout.md`)                                                      | Linha de detalhes e de metadados                            |
+
+`resume.*`, `period.*`, `stackCategory.*` e `symbols.forward` são as chaves compartilhadas pelas
+cinco telas (decisão transversal do PO de 11-10-2026), com esses nomes exatos: a tela que chegar
+primeiro cria, as outras reaproveitam. "desde" é "since" em `en` e "desde" em `es`. A contagem usa
+o plural do i18next (`_one`/`_other`), nos três idiomas.
+
+## Vem do conteúdo
+
+Campo definido pela #10, com valor da #58 e da #59 nos três idiomas quando é texto, lido por endpoint
+(NF-DA-02):
+
+| Dado                                                     | Onde aparece                                           |
+| -------------------------------------------------------- | ------------------------------------------------------ |
+| Cargo                                                    | JSON-LD (`jobTitle`) e CV; não aparece escrito na tela |
+| Parágrafo de apresentação                                | Apresentação, JSON-LD (`description`)                  |
+| Localização                                              | Apresentação, rodapé, JSON-LD                          |
+| Disponibilidade (`label` livre e `isAvailable`)          | Apresentação, Início, Contato, rodapé                  |
+| Foto (arquivo e dimensões)                               | Apresentação, JSON-LD (`image`)                        |
+| Parágrafos de Sobre mim                                  | Sobre mim                                              |
+| Stack por categoria                                      | Stack, faixa do Início, JSON-LD (`knowsAbout`), CV     |
+| Frases de "Como eu trabalho"                             | Complementos                                           |
+| Itens de trajetória (com certificados e ids de projetos) | Trajetória, modal, Certificados, JSON-LD, CV           |
+| Título do projeto                                        | Projetos relacionados do modal                         |
+
+Texto fixo, não conteúdo: rótulos de seção, de grupo e de bloco, instrução, selo "Atual", "Baixar
+CV", "Entrar em contato", "Fechar", `alt` da foto e o nome do autor (`common:authorName`,
+`layout.md`). Sobre mim, apresentação e "Como eu trabalho" são conteúdo, e não chave, porque são
+escritos pelo PO, mudam sem mexer em código, são traduzidos com o resto do conteúdo (NF-IN-02) e
+alimentam o CV e os arquivos para IA da mesma fonte (NF-DA-04).
+
+## O que a tela pede ao contrato (#10)
+
+Lista de necessidades da tela, com nomes sugeridos em inglês; a #10 decide nomes, arquivos e
+endpoints.
+
+### Perfil
+
+Um por idioma.
+
+| Campo sugerido                            | Tipo                                                                    | Uso                                                                   |
+| ----------------------------------------- | ----------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| `role`                                    | texto                                                                   | JSON-LD `jobTitle`, CV                                                |
+| `summary`                                 | texto, obrigatório                                                      | Parágrafo de apresentação, JSON-LD `description`, CV                  |
+| `location`                                | `{ city, region, country }`                                             | "São José dos Campos · SP"; JSON-LD `homeLocation`; rodapé            |
+| `availability`                            | `{ isAvailable: boolean, label: texto }`                                | Selo de Informações, Início, Contato e rodapé; `false` esconde o selo |
+| `photo`                                   | `{ src, width, height }` (o `alt` é chave)                              | Foto 1:1 (D26, #42)                                                   |
+| `about`                                   | texto[], pelo menos um                                                  | Sobre mim                                                             |
+| `workPrinciples`                          | texto[]                                                                 | "Como eu trabalho"                                                    |
+| `stack`                                   | `{ category: "frontend" \| "backend" \| "tooling", items: string[] }[]` | Stack, Início, JSON-LD, CV                                            |
+| `email`, `links.github`, `links.linkedin` | (já pedidos por `layout.md`)                                            | JSON-LD `sameAs`, CV                                                  |
+
+### Item de trajetória
+
+Entidade única para experiência, formação e curso; substitui `Experiencia` e `Formacao` de
+[`entity.md`](../diagrams/entity.md), que não tipam curso.
+
+| Campo sugerido     | Tipo                                                         | Uso                                                                |
+| ------------------ | ------------------------------------------------------------ | ------------------------------------------------------------------ |
+| `id`               | texto estável, igual nos três idiomas (sugestão: UUID v7)    | Chave do item, ids de `aria-labelledby`, referência a partir do CV |
+| `kind`             | `"experience" \| "education" \| "course"`                    | Grupo e escolha entre responsabilidades e disciplinas              |
+| `title`            | texto                                                        | Título do item e do modal                                          |
+| `organization`     | texto                                                        | Linha de detalhes; JSON-LD `worksFor`/`alumniOf`                   |
+| `details`          | texto[]                                                      | Linha de detalhes ("CLT", "6º semestre", "120 horas")              |
+| `start`, `end?`    | `AAAA-MM`; `end` ausente = em curso; iguais nos três idiomas | Período, selo "Atual", ordenação                                   |
+| `summary`          | texto, obrigatório                                           | Resumo do modal, JSON-LD `Occupation.description`                  |
+| `responsibilities` | texto[] (experiência)                                        | Bloco do modal, CV                                                 |
+| `disciplines`      | texto[] (formação e curso)                                   | Bloco do modal, CV                                                 |
+| `technologies`     | string[] (nomes, sem tradução)                               | Bloco do modal, CV                                                 |
+| `certificates`     | `{ id, name, issuer? }[]`                                    | Bloco do modal, coluna Certificados (D38), JSON-LD `hasCredential` |
+| `projectIds`       | UUID v7[] de projetos (NF-DA-07)                             | Projetos relacionados; o título vem do projeto, nunca copiado      |
+
+### Projeto
+
+Só `id` e `title` do conteúdo de projetos que a #4 e a #5 já pedem. O `Link` (`titulo`/`url`) em
+`projetos` de `Experiencia` e `Formacao` de `entity.md` sai: a referência é por id, porque o título
+muda e a URL depende do idioma.
+
+### Ligação com o CV (D30)
+
+O CV não tem uma cópia própria de perfil, stack e trajetória. O "JSON do CV" de D30 é a composição
+desses mesmos dados (perfil, stack e trajetória) mais o que só o CV mostra (por exemplo, idiomas
+falados), que a #10 define. #54 gera PDF, Markdown e HTML lendo os mesmos JSONs da tela (NF-DA-04,
+NF-IA-07), então mudar um item de trajetória muda tela, CV, `llms-full*.txt` e JSON-LD de uma vez.
+Se o PO quiser um item só no site ou só no CV, a #10 prevê um campo de visibilidade por destino; a
+tela mostra todo item que não for marcado como "só CV".
+
+### Endpoints
+
+Perfil, trajetória e projetos por idioma, com erro independente (a tela trata erro por fonte,
+RF-ABOUT-26). Se a #10 juntar perfil e trajetória num documento só, os dois estados de erro viram
+um.
+
+## Metadados e dados estruturados
+
+- `<title>` e descrição: RF-ABOUT-28, com os valores da tabela de chaves (iguais aos de
+  `layout.md`).
+- Canônica, `hreflang`, Open Graph e `twitter:card`: mecanismo de #52, com as regras de `layout.md`;
+  `og:type` `profile`.
+- JSON-LD: #52 fornece o mecanismo e #37 declara os dados, sem inventar campo que o conteúdo não tem.
+
+```json
+{
+    "@context": "https://schema.org",
+    "@type": "ProfilePage",
+    "url": "<canônica de /about no idioma>",
+    "inLanguage": "<idioma>",
+    "mainEntity": {
+        "@type": "Person",
+        "@id": "<URL canônica de />#person",
+        "name": "Luiz Felipe dos Santos",
+        "jobTitle": "<role>",
+        "description": "<summary>",
+        "image": "<URL absoluta da foto, quando existir>",
+        "url": "<canônica de / no idioma>",
+        "sameAs": ["<GitHub>", "<LinkedIn>"],
+        "knowsAbout": ["<itens da stack>"],
+        "homeLocation": {
+            "@type": "Place",
+            "address": {
+                "@type": "PostalAddress",
+                "addressLocality": "<city>",
+                "addressRegion": "<region>",
+                "addressCountry": "<country>"
+            }
+        },
+        "alumniOf": [{ "@type": "EducationalOrganization", "name": "<organization de cada formação>" }],
+        "worksFor": [{ "@type": "Organization", "name": "<organization de cada experiência em curso>" }],
+        "hasOccupation": [{ "@type": "Occupation", "name": "<title de cada experiência>", "description": "<summary>" }],
+        "hasCredential": [{ "@type": "EducationalOccupationalCredential", "name": "<nome do certificado>" }]
+    }
+}
+```
+
+O `@id` da `Person` é `<URL canônica de />#person`, o mesmo em todas as telas (decisão transversal
+do PO de 11-10-2026). Cursos não entram em `alumniOf` (só formação), mas os certificados deles
+entram em `hasCredential`. Sem `dateModified` inventado: só entra se o conteúdo tiver a data. Sem
+foto entregue (D26 bloqueada), o JSON-LD não tem `image`.
+
+## Critérios de aceite
+
+Copiáveis para a issue #37. Verificação entre colchetes, com a legenda de
+[`accessibility.md`](../product/accessibility.md#checklist-por-tela) (`[teste]`, `[axe]`, `[lint]`,
+`[teclado]`, `[leitor]`, `[navegador]`, `[e2e]` e `[medição]`) e mais `[review]` para o que só a
+revisão do PR confere. Nos itens funcionais, `[teste]` usa Testing Library, `user-event`,
+`createMemoryRouter` e `renderWithStore`; `[e2e]` cobre o que o `jsdom` não mede (`inert` real,
+tela cheia por media query, rolagem travada).
+
+### Funcionais
+
+- [ ] `RF-ABOUT-01` — Seções na ordem Apresentação, Sobre mim, Stack, Complementos e Trajetória, cada uma em `section` com `aria-labelledby`, headings `h1`/`h2`/`h3` como na regra e sem depoimentos [teste]
+- [ ] `RF-ABOUT-02` — Foto 1:1 com `alt` "Foto de Luiz Felipe dos Santos" nos três idiomas, `width`/`height`, `srcset`/`sizes`, `fetchpriority="high"`, sem `lazy` e sem EXIF; placeholder decorativo até #42 [teste] [medição] [review]
+- [ ] `RF-ABOUT-03` — Localização e selo de disponibilidade vindos do conteúdo (`availability.label`), indicador em `--success-ink` e `aria-hidden`; com `isAvailable: false` o selo não aparece [teste] [review]
+- [ ] `RF-ABOUT-04` — Rótulo "Informações", `h1` com `common:authorName` presente já no carregamento e parágrafo de apresentação limitado a `--measure`, nos três idiomas, sem chave no lugar de texto [teste]
+- [ ] `RF-ABOUT-05` — "Baixar CV" aponta para o PDF do idioma ativo sob `BASE_URL`, com `download`, sem `target` e nome acessível "Baixar CV (PDF)", nos três idiomas, sem chave no lugar de texto [teste]
+- [ ] `RF-ABOUT-06` — "Entrar em contato" leva a `/contact` com o prefixo do idioma, com a chave `common:footer.contact.cta`, nos três idiomas, sem chave no lugar de texto [teste]
+- [ ] `RF-ABOUT-07` — "Sobre mim" com os parágrafos do conteúdo em grade de colunas de no mínimo 22rem, cada um com até `--measure` e `--lh-body` [teste] [medição]
+- [ ] `RF-ABOUT-08` — Stack em três grupos na ordem Frontend, Backend e Infra e ferramentas, com `h3` por `common:stackCategory.*`, itens em `ul` na ordem do conteúdo e nunca lista única, nos três idiomas, sem chave no lugar de texto [teste]
+- [ ] `RF-ABOUT-09` — Contagem visível em `aria-hidden` e contagem com substantivo e plural em texto visualmente oculto, nos três idiomas [teste]
+- [ ] `RF-ABOUT-10` — Faixa de complementos em `--neutral-900` com `--focus-ring` redefinido e duas colunas com `h2` e `ul` de chips [teste] [medição]
+- [ ] `RF-ABOUT-11` — "Certificados" derivados dos itens de trajetória, na ordem da trajetória, sem repetição, com emissor quando houver [teste]
+- [ ] `RF-ABOUT-12` — "Como eu trabalho" com as frases do conteúdo, na ordem do conteúdo [teste]
+- [ ] `RF-ABOUT-13` — Trajetória com instrução e três grupos na ordem Experiências profissionais, Formações e Cursos, cada um com `h3`, contagem e `ul`, nos três idiomas, sem chave no lugar de texto [teste]
+- [ ] `RF-ABOUT-14` — Ordenação por grupo: em curso primeiro, depois encerrados por fim e início mais recentes, empate total na ordem do conteúdo; teste da função pura [teste]
+- [ ] `RF-ABOUT-15` — Item é `button` com `type="button"`, `aria-haspopup="dialog"`, alvo de 44px, selo "Atual" quando não há fim e período abaixo do título em menos de 640px [teste] [e2e] [medição]
+- [ ] `RF-ABOUT-16` — Período em `MM/AAAA` por `Intl.DateTimeFormat` dentro de `<time datetime>`, "MM/AAAA – MM/AAAA" ou "desde MM/AAAA" com o selo à parte; teste da função pura nos três idiomas [teste]
+- [ ] `RF-ABOUT-17` — Modal em `role="dialog"`, `aria-modal="true"`, `aria-labelledby` no título, cabeçalho com metadados e "Fechar" de 44px com nome por chave, nos três idiomas [teste]
+- [ ] `RF-ABOUT-18` — Corpo na ordem resumo, responsabilidades ou disciplinas, tecnologias, certificados e projetos; bloco sem itens some com o rótulo [teste]
+- [ ] `RF-ABOUT-19` — Projetos relacionados como links para `/projects/:id` com o prefixo do idioma, título do conteúdo de projetos, seta em `aria-hidden`; id que não resolve não vira link; navegar fecha o modal [teste]
+- [ ] `RF-ABOUT-20` — Foco no título ao abrir, Tab preso, resto da página `inert`, rolagem travada; fecha por "Fechar", fundo e Esc, devolvendo o foco ao item e a rolagem à mesma posição [teste] [e2e] [leitor]
+- [ ] `RF-ABOUT-21` — Caixa de até 34rem a partir de 640px e tela cheia abaixo, por media query; sem animação com movimento reduzido; sem rolagem horizontal com o modal aberto [e2e] [navegador] [medição]
+- [ ] `RF-ABOUT-22` — Abrir o modal não muda URL nem histórico; mudar de rota com o modal aberto o fecha e libera a rolagem [teste]
+- [ ] `RF-ABOUT-23` — Detalhe de todo item no HTML pré-renderizado de cada idioma, fechado e fora da árvore de acessibilidade até abrir [teste] [review]
+- [ ] `RF-ABOUT-24` — Conteúdo lido só por endpoints do RTK Query, dos JSONs sob `BASE_URL`, só no idioma ativo; trocar de idioma carrega o novo [teste] [review]
+- [ ] `RF-ABOUT-25` — Carregando: skeletons `aria-hidden`, um único `role="status"` e shimmer parado com movimento reduzido [teste] [navegador]
+- [ ] `RF-ABOUT-26` — Erro por fonte com mensagem e "Tentar novamente", `role="alert"` uma vez por fonte e nova carga só daquela fonte, nos três idiomas, sem chave no lugar de texto [teste]
+- [ ] `RF-ABOUT-27` — Parte sem dado some com o título [teste]
+- [ ] `RF-ABOUT-28` — `<title>` e descrição por chave de `about`, nos três idiomas, sem chave no lugar de texto; `og:type` `profile` e `og:image` do site [teste] [review]
+- [ ] `RF-ABOUT-29` — JSON-LD `ProfilePage` com `Person` gerado dos dados da tela, `<` escapado e sem campo inventado [teste]
+- [ ] `RF-ABOUT-30` — `/about` pré-renderizada nos três idiomas com `h1`, seções e detalhe dos itens no `main`, dados serializados na store e sem erro de hidratação [teste] [navegador]
+
+### Acessibilidade
+
+Copiados de [`accessibility.md`](../product/accessibility.md#checklist-por-tela), sem renumerar.
+
+- [ ] `A11Y-G01` — Um `main`, um `h1` e um `<title>` próprio e traduzido [teste]
+- [ ] `A11Y-G02` — `<html lang>` igual ao idioma da URL (`/`, `/en/`, `/es/`) [teste]
+- [ ] `A11Y-G03` — Nenhuma violação do axe em cada estado da tela [axe]
+- [ ] `A11Y-G04` — Nenhuma violação do axe no navegador, nos dois temas [e2e]
+- [ ] `A11Y-G05` — Ordem de foco igual à visual e foco visível em todo elemento focável [teclado]
+- [ ] `A11Y-G06` — Contorno de foco de D27 com 2px, afastado, 3:1 em toda superfície e nunca cortado (2.4.13) [e2e] [medição]
+- [ ] `A11Y-G07` — Todo link tem um nome que diz o destino sozinho (2.4.9) [teste]
+- [ ] `A11Y-G08` — Controles e links isolados com alvo de 44px em todas as larguras (2.5.5) [e2e] [medição]
+- [ ] `A11Y-G09` — Texto corrido com até 80 caracteres por linha, entrelinha de pelo menos 1,5 e sem justificar (1.4.8) [navegador]
+- [ ] `A11Y-G10` — Contraste AA nos dois temas e em todos os estados [e2e] [medição]
+- [ ] `A11Y-G11` — Sem rolagem horizontal a 320px e sem perda com texto a 200% [medição]
+- [ ] `A11Y-G12` — Movimento reduzido respeitado, inclusive a animação disparada por interação (2.3.3) [navegador]
+- [ ] `A11Y-G13` — Skeleton com `aria-hidden` e status "Carregando" visualmente oculto [teste]
+- [ ] `A11Y-G14` — Erro de carregamento em `role="alert"`, com a saída [teste]
+- [ ] `A11Y-G15` — Texto em `pt-BR`, `en` e `es`, inclusive os nomes acessíveis [teste]
+- [ ] `A11Y-G16` — Nenhum erro de `jsx-a11y` [lint]
+
+- [ ] `A11Y-IF01` — Foto de perfil com `alt` (D26) [teste]
+- [ ] `A11Y-IF02` — Stack e trajetória em listas, datas em `time` [teste]
+- [ ] `A11Y-IF03` — Item de trajetória é `button` com `aria-haspopup="dialog"` [teste]
+- [ ] `A11Y-IF04` — Modal de trajetória com `aria-labelledby`, foco preso, Esc, devolução do foco e tela cheia abaixo de 640px (D20) [teste] [e2e] [leitor]
+- [ ] `A11Y-IF05` — "Baixar CV (PDF)" no nome do link [teste]
+
+### Não funcionais
+
+De [`non-functional-requirements.md`](../product/non-functional-requirements.md), com o momento de
+verificação de lá.
+
+- [ ] `NF-IN-02` — Perfil, stack e trajetória traduzidos nos três idiomas [CI; #59]
+- [ ] `NF-IN-03` — Nenhuma tela mostra chave no lugar de texto [CI; #41]
+- [ ] `NF-IN-04` — Datas em `MM/AAAA` por `Intl.DateTimeFormat` nos três idiomas; o período em curso segue D39 ("desde MM/AAAA" com selo "Atual"), não "atual" como valor [CI; #37, #36]
+- [ ] `NF-IN-11` — Todo link interno mantém o prefixo do idioma, montado por função única [CI; #53]
+- [ ] `NF-DA-02` — A tela não importa JSON de conteúdo: o acesso é por endpoints do RTK Query [Review; CI]
+- [ ] `NF-DA-03` — JSONs em `public/`, com caminho montado por `import.meta.env.BASE_URL` [Review; #45; #41]
+- [ ] `NF-DA-04` — Tela, pré-renderização, JSON-LD e CV leem os mesmos JSONs, sem texto duplicado à mão [Review]
+- [ ] `NF-DA-05` — A tela carrega só o conteúdo do idioma ativo [#10; #41]
+- [ ] `NF-DE-14` — Foto 1:1 com no máximo 80 KB, servida por `srcset`/`sizes` [DevTools em 390px]
+- [ ] `NF-DE-16` — Foto e placeholder com `width` e `height` declarados, mantendo a proporção [Review; #41]
+- [ ] `NF-DE-17` — Foto (LCP) com `fetchpriority="high"` e sem `lazy` [Review; #41]
+- [ ] `NF-RE-03` — Sem rolagem horizontal em 360, 390, 768 e 1280px, inclusive com o modal aberto e nos estados especiais [#41]
+- [ ] `NF-RE-04` — Decisão de layout por largura do modal e do item de trajetória (D20) [#33, #34 a #38; #41]
+- [ ] `NF-MO-01` — `prefers-reduced-motion: reduce` desliga animação e transição (hover, modal, shimmer) [#41]
+- [ ] `NF-IA-01` — `/about` com HTML gerado no build em cada idioma, legível sem JavaScript [CI; #49; #41]
+- [ ] `NF-IA-02` — O detalhe do modal também está em `llms-full*.txt` e no CV em texto [CI; #49; #51]
+- [ ] `NF-IA-03` — Primeira renderização do cliente igual ao HTML, com os dados serializados na store [CI; #49; #41]
+- [ ] `NF-IA-07` — `/about` traz as mesmas informações do CV em HTML pré-renderizado [CI; #54; #41]
+- [ ] `NF-IA-08` — JSON-LD `ProfilePage` com `Person`, `alumniOf` e `hasOccupation` da trajetória [CI; #52; #34 a #38; #41]
+- [ ] `NF-IA-09` — JSON-LD gerado dos mesmos dados da tela, com `<` escapado [CI; #52]
+- [ ] `NF-IA-10` — `<title>`, descrição, Open Graph e `twitter:card` por idioma [CI; #52; #41]
+- [ ] `NF-IA-11` — Canônica autorreferente sem query e `hreflang` recíproco com `x-default` [CI; #52; #41]
+- [ ] `NF-IA-16` — HTML semântico, com o conteúdo principal dentro do `main` [CI; #33, #34 a #38]
+- [ ] `NF-CO-03` — Sem JavaScript, o conteúdo é legível; o modal precisa de JavaScript [#41]
+- [ ] `NF-PR-05` — Foto publicada sem metadado EXIF ou de localização [#42]
+
+### Gerais
+
+- [ ] `npm run build`, `npm run lint` e `npm test -- --run` passam
+- [ ] Namespace `about` em `pt-BR`, `en` e `es`, em `src/i18n/resources.ts` e no `ns` de `src/i18n/i18n.ts`; chaves sem uso removidas (R2)
+- [ ] A rota abre e recarrega nos três prefixos (`/about`, `/en/about`, `/es/about`) no build com o `base` do Pages
+- [ ] O roteiro de teclado do modal entra na suíte ponta a ponta da #55 ([`roadmap.md`](../product/roadmap.md))
