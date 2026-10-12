@@ -675,7 +675,7 @@
             "types": ["cli"],
             "category": "professional",
             "featured": false,
-            "cardTechnologies": ["Go", "Docker"],
+            "cardTechnologies": ["Go"],
             "role": "Backend",
             "duration": "1 mês",
             "team": "Sozinho",
