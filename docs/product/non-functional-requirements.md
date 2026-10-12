@@ -214,7 +214,7 @@ de idioma do `.claude/CLAUDE.md` descrevem o código atual.
 
 ### Custo e prazo
 
-Custo no prazo de 23/11/2026 (em 11/10/2026, cerca de seis semanas, perto de 30 dias úteis para
+Custo no prazo de 22/11/2026 (em 11/10/2026, cerca de seis semanas, perto de 30 dias úteis para
 M0 a M7):
 
 | Issue | O quê                                                                        | Antes (só `pt-BR`) | Com idioma no caminho |

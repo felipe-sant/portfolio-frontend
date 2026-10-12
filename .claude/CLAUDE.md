@@ -66,7 +66,7 @@ infinitivo + objeto ("Ver projetos", "Enviar mensagem") e o separador de metadad
   `docs/design/decisions.md` > protótipo > handoff.
 
 **Versões:** a v1 é a entrega da faculdade (Fatec), publicada no GitHub Pages de um repositório da
-organização da Fatec, com dados reais em JSON servidos pela camada local (R1) e sem backend, com prazo em 23/11/2026; V2+
+organização da Fatec, com dados reais em JSON servidos pela camada local (R1) e sem backend, com prazo em 22/11/2026; V2+
 são de uso pessoal (Vercel, depois AWS com backend). Ordem, dependências e critério da v1 em
 `docs/product/roadmap.md`.
 

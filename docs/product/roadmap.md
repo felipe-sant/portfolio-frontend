@@ -1,6 +1,6 @@
 # Roadmap
 
-Este documento diz em que ordem as entregas do portfólio acontecem e o que define cada versão. Não é cronograma nem quadro de status: datas e andamento vivem nas issues do GitHub e no `**Status:**` de cada spec. A única data fixa é o prazo da v1: **23/11/2026**. O produto tem duas fases: a **v1** é a entrega da faculdade (Fatec) e as versões **V2+** são de uso pessoal. As issues de implementação são #31 a #56, resumidas em [Issues de implementação](#issues-de-implementação). Mudar a ordem dos marcos ou o escopo de uma versão é decisão do PO e muda este documento no mesmo PR. Os requisitos R1 a R3 estão em [`overview.md`](overview.md) e as decisões de design (`Dnn`, `PIn`) em [`decisions.md`](../design/decisions.md).
+Este documento diz em que ordem as entregas do portfólio acontecem e o que define cada versão. Não é cronograma nem quadro de status: datas e andamento vivem nas issues do GitHub e no `**Status:**` de cada spec. A única data fixa é o prazo da v1: **22/11/2026**. O produto tem duas fases: a **v1** é a entrega da faculdade (Fatec) e as versões **V2+** são de uso pessoal. As issues de implementação são #31 a #56, resumidas em [Issues de implementação](#issues-de-implementação). Mudar a ordem dos marcos ou o escopo de uma versão é decisão do PO e muda este documento no mesmo PR. Os requisitos R1 a R3 estão em [`overview.md`](overview.md) e as decisões de design (`Dnn`, `PIn`) em [`decisions.md`](../design/decisions.md).
 
 ## Versões
 
@@ -125,7 +125,7 @@ Cada tela é conferida no build com o `base` do Pages, entra na pré-renderizaç
 
 ### M7 — Entrega da v1
 
-Um PR para a `staging` só com o changeset `major` da entrega; o PR de versão gera `1.0.0` e o `CHANGELOG.md`; a promoção `staging` → `main` segue o padrão do `CLAUDE.md`; o push na `main` faz a Action da #47 criar a tag `v1.0.0` e o Release e chamar a publicação de #63, que publica em `main:/docs` do repositório da v1; a URL pública do Pages é registrada no Release. Com o build publicado, o PO grava o vídeo de demonstração da v1 (#48), com roteiro preparado no projeto, e entrega URL e vídeo até 23/11/2026. Se a #15 já existir, a mesma `main` também vai para a produção pessoal na Vercel, mas isso não faz parte do critério.
+Um PR para a `staging` só com o changeset `major` da entrega; o PR de versão gera `1.0.0` e o `CHANGELOG.md`; a promoção `staging` → `main` segue o padrão do `CLAUDE.md`; o push na `main` faz a Action da #47 criar a tag `v1.0.0` e o Release e chamar a publicação de #63, que publica em `main:/docs` do repositório da v1; a URL pública do Pages é registrada no Release. Com o build publicado, o PO grava o vídeo de demonstração da v1 (#48), com roteiro preparado no projeto, e entrega URL e vídeo até 22/11/2026. Se a #15 já existir, a mesma `main` também vai para a produção pessoal na Vercel, mas isso não faz parte do critério.
 
 ### Trilha pessoal
 
@@ -163,7 +163,7 @@ A #15 pode correr a qualquer momento (Vercel escolhida) e é recomendada cedo, p
 
 ## v1
 
-A v1 é a entrega da faculdade, publicada no GitHub Pages do repositório da v1 a partir da tag `v1.0.0` da `main`, criada pelo versionamento automático, com a URL entregue ao professor. **Prazo: 23/11/2026.** Ela só sai com todos os itens marcados:
+A v1 é a entrega da faculdade, publicada no GitHub Pages do repositório da v1 a partir da tag `v1.0.0` da `main`, criada pelo versionamento automático, com a URL entregue ao professor. **Prazo: 22/11/2026.** Ela só sai com todos os itens marcados:
 
 - [ ] As rotas `/`, `/projects`, `/projects/:id`, `/about` e `/contact`, a página não encontrada e a página de erro cumprem os critérios de aceite dos documentos de #2 a #7.
 - [ ] Todo dado exibido é o conteúdo real do PO, vindo dos JSONs locais de #58 e #59, no formato do contrato de #10, sem requisição a backend.
