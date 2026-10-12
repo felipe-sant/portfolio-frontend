@@ -32,7 +32,7 @@ Critérios novos da WCAG 2.2 que pesam neste produto:
 - **2.5.7 Movimentos de arrastar:** não se aplica hoje, porque nenhuma interação depende de arrastar (as linhas roláveis de filtros e miniaturas também rolam por Tab e pela barra de rolagem). Se um carrossel com arrasto entrar, ele precisa de botões equivalentes.
 - **3.3.7 Entrada redundante e 3.3.8 Autenticação acessível:** não se aplicam hoje. O formulário de contato tem uma etapa só e não pede o mesmo dado duas vezes, e não há login.
 
-O **PDF do CV** (D14, issue #39) entra na meta: PDF marcado (tagged), com o idioma do documento definido.
+O **PDF do CV** (D14, issue #54) entra na meta: PDF marcado (tagged), com o idioma do documento definido.
 
 ## Método de verificação
 
@@ -44,7 +44,7 @@ O **PDF do CV** (D14, issue #39) entra na meta: PDF marcado (tagged), com o idio
 | Ponta a ponta      | Playwright (Chromium) e `@axe-core/playwright` contra o build servido por `vite preview` com o `base` do Pages (issue #55) | Regras do axe com layout real, inclusive contraste, nas rotas principais, nos dois temas, em 390 e 1280px; roteiros de teclado: pular para o conteúdo, menu mobile que abre, fecha e devolve o foco, foco preso nos modais, navegação entre documentos do projeto | CI em cada PR, a partir de M4; cada tela acrescenta as suas rotas e roteiros | Automático |
 | Navegador          | Lighthouse (aba de acessibilidade do Chrome) e a extensão axe DevTools (gratuita)                                          | Contraste real, layout, o que o `jsdom` não calcula                                                                                                                                                                                                               | Opcional em cada PR de tela; obrigatório na #41                              | PO         |
 | Teclado            | Manual, sem mouse                                                                                                          | Ordem de foco, foco visível, foco preso e devolvido, pular para o conteúdo                                                                                                                                                                                        | Cada PR de tela (no `npm run dev`) e na #41                                  | PO         |
-| Leitor de tela     | NVDA com Chrome no Windows; TalkBack no Android do PO                                                                      | Anúncios (`aria-live`), nomes, ordem de leitura, modais, menu                                                                                                                                                                                                     | #33 (menu), #36 e #37 (modais) por amostra; #41 inteira                      | PO         |
+| Leitor de tela     | NVDA com Chrome no Windows; TalkBack no Android do PO                                                                      | Anúncios (`aria-live`), nomes, ordem de leitura, modais, menu                                                                                                                                                                                                     | #33 (menu), #61 e #37 (modais) por amostra; #41 inteira                      | PO         |
 | Zoom e espaçamento | Zoom do navegador (200% e 400%), zoom só de texto do Firefox e um bookmarklet de espaçamento de texto                      | Reflow a 320px, texto a 200%, 1.4.12                                                                                                                                                                                                                              | #41                                                                          | PO         |
 | Contraste de token | Fórmula da WCAG (como em ["D02 — logo"](../design/decisions.md#d02--logo)) e as ferramentas do navegador                   | Par de token novo ou alterado                                                                                                                                                                                                                                     | Cada spec que cria ou muda token; #41                                        | `sdd` e PO |
 | Cores forçadas     | Temas de contraste do Windows                                                                                              | Contorno de foco e bordas que somem                                                                                                                                                                                                                               | #41                                                                          | PO         |
@@ -62,7 +62,7 @@ Lighthouse e axe DevTools continuam como checagem manual de apoio na #41.
 
 **Limite da automação.** Leitor de tela real (NVDA, TalkBack) continua manual. Não há forma confiável de automatizar o que o leitor anuncia, em que ordem e com que entonação; os testes verificam a árvore de acessibilidade que o leitor consome, não a experiência de ouvir.
 
-**Leitor de tela (decisão do PO).** NVDA (gratuito, Windows) com Chrome, obrigatório na #41. Há amostra em #33 (menu mobile e seletor de idioma), em #36 (lightbox) e em #37 (modal de trajetória) logo depois de implementados, porque foco preso é onde mais quebra. No celular, TalkBack no Android do PO, na #41, para o menu, um modal e o formulário.
+**Leitor de tela (decisão do PO).** NVDA (gratuito, Windows) com Chrome, obrigatório na #41. Há amostra em #33 (menu mobile e seletor de idioma), em #61 (lightbox) e em #37 (modal de trajetória) logo depois de implementados, porque foco preso é onde mais quebra. No celular, TalkBack no Android do PO, na #41, para o menu, um modal e o formulário.
 
 **Registro.** A #41 registra o resultado em `docs/`, conforme o corpo da #41, e abre uma issue `Fix` por falha.
 
@@ -120,8 +120,8 @@ Com a issue dona (resumo no [roadmap](roadmap.md#issues-de-implementação)):
 | ---------------------------------------------------------------------------------------- | ----------------------- |
 | Foco visível global                                                                      | #31                     |
 | Link "Pular para o conteúdo", `main` único como alvo e foco no `h1` a cada troca de rota | #33                     |
-| Foco preso e devolvido no menu (PI1), na lightbox e no modal de trajetória               | #33, #36, #37           |
-| `aria-live` da busca e dos filtros, do "Copiar e-mail" e do formulário                   | #35; #33 e #38; #38     |
+| Foco preso e devolvido no menu (PI1), na lightbox e no modal de trajetória               | #33, #61, #37           |
+| `aria-live` da busca e dos filtros, do "Copiar e-mail" e do formulário                   | #35; #60 e #38; #38     |
 | Teste automático com `axe-core`                                                          | #50                     |
 | Teste ponta a ponta no navegador                                                         | #55                     |
 | Pausa da faixa de stack (D28)                                                            | #34                     |
@@ -144,7 +144,7 @@ Pontos do protótipo e do design que viram falha se forem copiados como estão. 
 | O contador de caracteres em `aria-live` anuncia a cada tecla                                                  | 4.1.3          | Contador ligado por `aria-describedby`; anúncio só ao cruzar 60 restantes e ao chegar a 0                                                              | #38       |
 | Assunto em chips com `aria-pressed`, com escolha única obrigatória                                            | 1.3.1, 4.1.2   | `fieldset` com `legend` e `input type="radio"` estilizado como chip                                                                                    | #38       |
 | O painel do menu é `role="dialog"` com `aria-modal`, mas o botão que fecha fica fora dele                     | 4.1.2, 2.1.2   | Painel como disclosure (`aria-expanded` no botão), resto da página `inert` enquanto aberto, foco circulando entre botão e painel, Esc devolve ao botão | #33       |
-| O botão "Ampliar imagem" tem o mesmo nome para toda imagem                                                    | 2.4.6          | Nome com a posição e o texto alternativo da imagem                                                                                                     | #36       |
+| O botão "Ampliar imagem" tem o mesmo nome para toda imagem                                                    | 2.4.6          | Nome com a posição e o texto alternativo da imagem                                                                                                     | #61       |
 | Rótulos de seção escritos em caixa alta no texto ("PROJETOS EM DESTAQUE")                                     | 1.3.1          | Texto em caixa normal no JSON; caixa alta por `text-transform`                                                                                         | #33 a #38 |
 | Placeholder de foto com `role="img"` e "(placeholder)" no nome                                                | 1.1.1          | Com D26 a foto é real; o placeholder de projeto sem captura é decorativo (`aria-hidden`)                                                               | #37, #42  |
 
@@ -217,7 +217,7 @@ A região de anúncio existe no DOM desde a primeira renderização, vazia, para
 | Logo (D02) e ícones (D15)                       | `aria-hidden`; o nome vem do link ou do `aria-label` do botão                                                                                                     |
 | Imagem ampliada (lightbox)                      | O mesmo `alt` da captura                                                                                                                                          |
 
-Exigência para a #10: cada imagem do modelo de dados tem `alt` (e legenda, se houver) traduzido por idioma. A #13 preenche, e a #42 confere.
+Exigência para a #10: cada imagem do modelo de dados tem `alt` (e legenda, se houver) traduzido por idioma. A #58 e a #59 preenchem, e a #42 confere.
 
 ## Movimento
 

@@ -4,7 +4,7 @@ A tela Projetos (`/projects`, também `/en/projects` e `/es/projects`, D32) é o
 jornada do cliente (Início → Projetos → Projeto, [`overview.md`](../product/overview.md)): a lista
 completa de projetos, com busca, filtros de tipo e categoria, ordenação e carregamento incremental.
 Quem a implementa é a issue #35, com #32 (componentes base, inclusive chip, campo de busca e skeleton),
-#33 (layout), #53 (idioma no caminho), #49 (pré-renderização) e #52 (canônica e o mecanismo do JSON-LD).
+#33 e #60 (layout), #53 (idioma no caminho), #49 (pré-renderização) e #52 (canônica e o mecanismo do JSON-LD).
 Este documento diz o comportamento; não escolhe nome de componente nem de arquivo, além do
 namespace e da chave de tradução.
 
@@ -248,7 +248,7 @@ pelo PO para as cinco telas (decisão transversal de 11-10-2026): os de tipo, ca
 já estão em [`home.md`](home.md) e [`layout.md`](layout.md) e são reaproveitados com o mesmo nome;
 `projectCard.featured` aparece pela primeira vez aqui. Não usar outro nome.
 
-**Vem do conteúdo, não de chave** (campo da #10, valor da #13, por idioma quando é texto): título,
+**Vem do conteúdo, não de chave** (campo da #10, valor da #58 e da #59, por idioma quando é texto): título,
 resumo, data (`date`), tipos, categoria, destaque, tecnologias (todas e as principais do card),
 captura e as variantes dela.
 

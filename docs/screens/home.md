@@ -2,8 +2,8 @@
 
 A tela Início (`/`, também sob `/en/` e `/es/`, D32) é a primeira impressão do portfólio e o fim da
 jornada do recrutador ("Baixar CV" no hero). Quem a implementa é a issue #34, com #31 (tokens, tema e
-foco), #32 (componentes base e ícones, inclusive pausa e play de D28), #33 (layout), #53 (idioma no
-caminho), #52 (canônica, Open Graph e o mecanismo do JSON-LD), #49 (pré-renderização) e #39 (botões de CV
+foco), #32 (componentes base e ícones, inclusive pausa e play de D28), #33 e #60 (layout), #53 (idioma no
+caminho), #52 (canônica, Open Graph e o mecanismo do JSON-LD), #49 (pré-renderização) e #54 (CV gerado e botões de CV
 ligados aos PDFs). Este documento diz o comportamento; não escolhe nome de componente nem de
 arquivo, além do namespace e da chave de tradução.
 
@@ -61,7 +61,7 @@ conteúdo da #13, com o comportamento da tela se algo passar:
 | Imagem do destaque           | Primeira captura 16:9 do projeto (D26), com largura e altura                                 | Projeto sem captura mostra o placeholder neutro 16:9 (`--bg-placeholder`, borda de 1px, `aria-hidden`)                        |
 | Datas do status              | Início em `AAAA-MM`, exibido "desde `MM/AAAA`" por `Intl` dentro de `<time>` (NF-IN-04, D39) | Teste de conteúdo da #13                                                                                                      |
 | Texto do conteúdo por idioma | Presente no idioma ativo (NF-IN-02)                                                          | Teste de conteúdo da #13; a tela não cai para outro idioma                                                                    |
-| CV                           | Caminho `cv/cv-<idioma>.pdf` com `import.meta.env.BASE_URL` (D14, NF-DA-03)                  | Antes de #54 gerar os PDFs o link quebra (aceito até #39, roadmap M6)                                                         |
+| CV                           | Caminho `cv/cv-<idioma>.pdf` com `import.meta.env.BASE_URL` (D14, NF-DA-03)                  | Antes de #54 gerar os PDFs o link quebra (aceito até #54, roadmap M6)                                                         |
 
 ## Permissões
 
@@ -86,7 +86,7 @@ Cada subseção lista os requisitos na ordem dos IDs.
 | `RF-HOME-04` | `h1` "Desenvolvedor full stack em TypeScript", sem ponto (D24), por chave (`home:heading`), Bricolage 800 em `--text-display` fluido, `text-wrap: balance`; é o `h1` da tela e o alvo de foco na navegação interna (RF-LAY-32, A11Y-IN01)                                                                                                                                                                                                                                                                                                                                   | D24, A11Y-IN01             |
 | `RF-HOME-05` | Parágrafo de apresentação limitado a `--measure`, `--lh-body`, `text-wrap: pretty` (A11Y-G09), vindo do conteúdo (texto de apresentação do perfil, traduzido), não de chave. Enquanto o perfil carrega, três linhas de skeleton `aria-hidden` reservam o espaço; na pré-renderização (#49) ele já está no HTML. Se o perfil falha, o parágrafo some sem mensagem (RF-HOME-24)                                                                                                                                                                                               | Protótipo, PO (11-10-2026) |
 | `RF-HOME-06` | Dois links lado a lado, que quebram linha quando não cabem: "Ver projetos" (primário, degradê âmbar, seta `→` em ícone `aria-hidden`) para `/projects`, e "Baixar CV" (secundário, ícone de download `aria-hidden`), ambos com alvo de no mínimo 44px (o protótipo usa 3rem)                                                                                                                                                                                                                                                                                                | Protótipo, D14, A11Y-G08   |
-| `RF-HOME-07` | "Baixar CV" baixa o PDF do idioma ativo: `cv/cv-pt-BR.pdf`, `cv/cv-en.pdf` ou `cv/cv-es.pdf` em `public/cv/`, com `import.meta.env.BASE_URL`, atributo `download` (mesma origem), sem `target`; texto visível `common:resume.download` e nome acessível "Baixar CV (PDF)" (`common:resume.downloadPdf`, que começa pelo texto visível, A11Y-IN08). O link existe antes de #54 gerar os arquivos; #39 confere que ele aponta para o arquivo gerado                                                                                                                           | D14, D30, D36, A11Y-IN08   |
+| `RF-HOME-07` | "Baixar CV" baixa o PDF do idioma ativo: `cv/cv-pt-BR.pdf`, `cv/cv-en.pdf` ou `cv/cv-es.pdf` em `public/cv/`, com `import.meta.env.BASE_URL`, atributo `download` (mesma origem), sem `target`; texto visível `common:resume.download` e nome acessível "Baixar CV (PDF)" (`common:resume.downloadPdf`, que começa pelo texto visível, A11Y-IN08). O link existe antes de #54 gerar os arquivos, e a própria #54 confere que ele aponta para o arquivo gerado                                                                                                               | D14, D30, D36, A11Y-IN08   |
 
 ### Status atual
 
@@ -241,7 +241,7 @@ O rótulo de metadados do destaque é montado na tela com os rótulos de `common
 `aria-hidden` (RF-HOME-18). `home:intro` sai de `src/locales/` nos três idiomas (R2), porque o
 parágrafo do hero passa a vir do conteúdo (resposta do PO de 11-10-2026); o texto do protótipo
 ("Trabalho em produtos web de ponta a ponta, do banco de dados à interface. Aqui estão os projetos
-que melhor mostram como resolvo problemas.") é a sugestão de valor `pt-BR` para a #13. O
+que melhor mostram como resolvo problemas.") é a sugestão de valor `pt-BR` para a #58. O
 `common:symbols.download` do layout (`↓`) não é usado aqui: o hero usa o ícone de download (D14).
 "desde" é "since" em `en` e "desde" em `es`; o valor `es` de "Cursando" é "Estudiando" e o `en`
 "Studying" (sugestões para a #34).
@@ -250,7 +250,7 @@ que melhor mostram como resolvo problemas.") é a sugestão de valor `pt-BR` par
 
 ### Vem do conteúdo, não de chave
 
-Campo definido na #10, valor na #13, texto nos três idiomas, lido por endpoint (NF-DA-02). Enquanto
+Campo definido na #10, valor na #58 e na #59, texto nos três idiomas, lido por endpoint (NF-DA-02). Enquanto
 não há backend, cada fonte é um JSON local servido por endpoint do RTK Query com `queryFn` (R1).
 
 | Bloco                | Dado                                                                                                   | Onde aparece                            | Observação                                                                                   |
@@ -408,7 +408,7 @@ verificação de lá. As metas de desempenho NF-DE-01, NF-DE-02, NF-DE-05 e NF-D
 Lighthouse mobile no build publicado do Pages, como diz aquele documento.
 
 - [ ] `NF-IN-01` — Todo texto da tela existe em `pt-BR`, `en` e `es` [CI]
-- [ ] `NF-IN-02` — Perfil, trajetória, stack e projetos traduzidos nos três idiomas [CI; #13]
+- [ ] `NF-IN-02` — Perfil, trajetória, stack e projetos traduzidos nos três idiomas [CI; #59]
 - [ ] `NF-IN-03` — Nenhuma tela mostra chave no lugar de texto [CI; #41]
 - [ ] `NF-IN-04` — Datas em `MM/AAAA` por `Intl.DateTimeFormat` nos três idiomas; o período em curso segue D39 ("desde MM/AAAA") [CI; #37, #36]
 - [ ] `NF-IN-05` — `<html lang>` acompanha o idioma do caminho, já no HTML pré-renderizado [CI; #49; #53]

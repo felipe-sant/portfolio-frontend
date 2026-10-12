@@ -2,8 +2,8 @@
 
 A tela Informações (`/about`, também sob `/en/about` e `/es/about`, D32) junta o que o recrutador
 procura antes de chamar alguém para conversar: quem é o autor, o que ele domina, por onde passou e
-o CV para baixar. Quem a implementa é a issue #37, com #33 (layout), #49 (pré-renderização), #52
-(canônica, Open Graph e JSON-LD), #39 (botões de CV), #42 (foto) e #13 (conteúdo). Este documento diz o
+o CV para baixar. Quem a implementa é a issue #37, com #33 e #60 (layout), #49 (pré-renderização), #52
+(canônica, Open Graph e JSON-LD), #54 (botões de CV), #42 (foto), #13 (dados) e #58 e #59 (conteúdo). Este documento diz o
 comportamento; não escolhe nome de componente nem de arquivo, além do namespace e da chave de
 tradução.
 
@@ -14,7 +14,7 @@ Fontes: [`decisions.md`](../design/decisions.md), o protótipo (`prototipo-infor
 
 Cada requisito funcional tem um ID `RF-ABOUT-nn`, estável e nunca reaproveitado: item que deixa de
 valer é riscado, não apagado nem renumerado (mesma regra de `layout.md`). O texto do protótipo é
-provisório (PI5): nenhum valor dele vira dado, e o conteúdo real vem da #13.
+provisório (PI5): nenhum valor dele vira dado, e o conteúdo real vem da #58.
 
 ## Objetivo
 
@@ -205,7 +205,7 @@ o plural do i18next (`_one`/`_other`), nos três idiomas.
 
 ## Vem do conteúdo
 
-Campo definido pela #10, com valor da #13 nos três idiomas quando é texto, lido por endpoint
+Campo definido pela #10, com valor da #58 e da #59 nos três idiomas quando é texto, lido por endpoint
 (NF-DA-02):
 
 | Dado                                                     | Onde aparece                                           |
@@ -409,7 +409,7 @@ Copiados de [`accessibility.md`](../product/accessibility.md#checklist-por-tela)
 De [`non-functional-requirements.md`](../product/non-functional-requirements.md), com o momento de
 verificação de lá.
 
-- [ ] `NF-IN-02` — Perfil, stack e trajetória traduzidos nos três idiomas [CI; #13]
+- [ ] `NF-IN-02` — Perfil, stack e trajetória traduzidos nos três idiomas [CI; #59]
 - [ ] `NF-IN-03` — Nenhuma tela mostra chave no lugar de texto [CI; #41]
 - [ ] `NF-IN-04` — Datas em `MM/AAAA` por `Intl.DateTimeFormat` nos três idiomas; o período em curso segue D39 ("desde MM/AAAA" com selo "Atual"), não "atual" como valor [CI; #37, #36]
 - [ ] `NF-IN-11` — Todo link interno mantém o prefixo do idioma, montado por função única [CI; #53]

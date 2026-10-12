@@ -2,7 +2,7 @@
 
 A tela Contato (`/contact`, também sob `/en/contact` e `/es/contact`, D32) é o fim da jornada de
 quem quer falar com o autor: na v1 ela termina em copiar ou abrir o e-mail. Quem a implementa é a
-issue #38, com #32 (campo, chip, botão e spinner), #33 (rodapé de navegação e cópia de e-mail), #39 (botão
+issue #38, com #32 (campo, chip, botão e spinner), #60 (rodapé de navegação e cópia de e-mail), #54 (botão
 de CV), #49 (pré-renderização) e #52 (canônica, Open Graph e JSON-LD). Este documento diz o
 comportamento; não escolhe nome de componente, hook nem arquivo, além do namespace, da chave de
 tradução e do nome da variável de ambiente.
@@ -19,7 +19,7 @@ Cada requisito funcional tem um ID `RF-CONTACT-nn`, estável e nunca reaproveita
 de valer é riscado, não apagado nem renumerado (mesma regra de `layout.md`). O protótipo usa o
 caminho `/contato`; vale D32 (`/contact`). O envio simulado, o e-mail `luiz@email.com`, a
 localização e o "Baixar CV" com `href="#"` do protótipo são provisórios (PI5): nenhum valor dele
-vira dado, e o conteúdo real vem da #13.
+vira dado, e o conteúdo real vem da #58.
 
 ## Objetivo
 
@@ -95,15 +95,15 @@ Vale com a flag ligada ou desligada.
 
 Vale com a flag ligada ou desligada.
 
-| ID              | Regra                                                                                                                                                                                                                                                                                                                                                                                                                   | Fonte                                                             |
-| --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
-| `RF-CONTACT-03` | Cada bloco de canal tem rótulo em `h2` ("E-mail direto", "Localização", "Resposta"), em `--font-mono` e `--text-label`, caixa normal no JSON e caixa alta por CSS. Os canais não são `aside` nem landmark próprio: ficam no `main`, com a mesma estrutura nos dois modos                                                                                                                                                | Protótipo, `accessibility.md` (HTML semântico e nomes acessíveis) |
-| `RF-CONTACT-04` | "E-mail direto": o e-mail do conteúdo em `--font-mono`, inteiro e quebrando linha se precisar (o protótipo corta com reticências, o que esconde parte do endereço), o botão "Copiar e-mail" com o mesmo comportamento, as mesmas chaves e o mesmo `role="status"` do rodapé (RF-LAY-23), e o link "Enviar e-mail" (`mailto:` com o e-mail, sem `target`, ícone de e-mail `aria-hidden`), alvos de 44px                  | Protótipo, RF-LAY-23, D36, D40, A11Y-CT01                         |
-| `RF-CONTACT-05` | "Localização": linha principal e detalhe do conteúdo (no protótipo, "São José dos Campos · SP" e "Remoto ou híbrido na região")                                                                                                                                                                                                                                                                                         | Protótipo, #10                                                    |
-| `RF-CONTACT-06` | "Resposta": linha principal e detalhe do conteúdo (no protótipo, "Em até 1 dia útil" e "Fuso GMT-3")                                                                                                                                                                                                                                                                                                                    | Protótipo, #10                                                    |
-| `RF-CONTACT-07` | Localização e resposta ficam lado a lado quando cabem (grade `auto-fit` com mínimo de 10rem) e empilham quando não. Bloco sem valor no conteúdo não aparece; detalhe sem valor some sem deixar espaço. O e-mail é obrigatório no contrato                                                                                                                                                                               | Protótipo, #10                                                    |
-| `RF-CONTACT-08` | "Baixar CV" (botão secundário com ícone de download `aria-hidden`) baixa o PDF do idioma ativo, com o atributo `download` e caminho montado com `import.meta.env.BASE_URL`, mesmo antes de o arquivo existir (gerado por #54, ligado por #39). Texto visível `common:resume.download` ("Baixar CV") e nome acessível `common:resume.downloadPdf` ("Baixar CV (PDF)"), as chaves compartilhadas com Início e Informações | D14, D30, D36                                                     |
-| `RF-CONTACT-09` | Não há "Agendar uma conversa", lista de redes nem bloco "Procurando vaga fixa?" na tela; GitHub, LinkedIn e "Currículo em PDF" ficam no rodapé de navegação (RF-LAY-26, RF-LAY-27), que não tem e-mail nem chamada para contato                                                                                                                                                                                         | D04, D21, protótipo                                               |
+| ID              | Regra                                                                                                                                                                                                                                                                                                                                                                                                            | Fonte                                                             |
+| --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| `RF-CONTACT-03` | Cada bloco de canal tem rótulo em `h2` ("E-mail direto", "Localização", "Resposta"), em `--font-mono` e `--text-label`, caixa normal no JSON e caixa alta por CSS. Os canais não são `aside` nem landmark próprio: ficam no `main`, com a mesma estrutura nos dois modos                                                                                                                                         | Protótipo, `accessibility.md` (HTML semântico e nomes acessíveis) |
+| `RF-CONTACT-04` | "E-mail direto": o e-mail do conteúdo em `--font-mono`, inteiro e quebrando linha se precisar (o protótipo corta com reticências, o que esconde parte do endereço), o botão "Copiar e-mail" com o mesmo comportamento, as mesmas chaves e o mesmo `role="status"` do rodapé (RF-LAY-23), e o link "Enviar e-mail" (`mailto:` com o e-mail, sem `target`, ícone de e-mail `aria-hidden`), alvos de 44px           | Protótipo, RF-LAY-23, D36, D40, A11Y-CT01                         |
+| `RF-CONTACT-05` | "Localização": linha principal e detalhe do conteúdo (no protótipo, "São José dos Campos · SP" e "Remoto ou híbrido na região")                                                                                                                                                                                                                                                                                  | Protótipo, #10                                                    |
+| `RF-CONTACT-06` | "Resposta": linha principal e detalhe do conteúdo (no protótipo, "Em até 1 dia útil" e "Fuso GMT-3")                                                                                                                                                                                                                                                                                                             | Protótipo, #10                                                    |
+| `RF-CONTACT-07` | Localização e resposta ficam lado a lado quando cabem (grade `auto-fit` com mínimo de 10rem) e empilham quando não. Bloco sem valor no conteúdo não aparece; detalhe sem valor some sem deixar espaço. O e-mail é obrigatório no contrato                                                                                                                                                                        | Protótipo, #10                                                    |
+| `RF-CONTACT-08` | "Baixar CV" (botão secundário com ícone de download `aria-hidden`) baixa o PDF do idioma ativo, com o atributo `download` e caminho montado com `import.meta.env.BASE_URL`, mesmo antes de o arquivo existir (gerado e ligado por #54). Texto visível `common:resume.download` ("Baixar CV") e nome acessível `common:resume.downloadPdf` ("Baixar CV (PDF)"), as chaves compartilhadas com Início e Informações | D14, D30, D36                                                     |
+| `RF-CONTACT-09` | Não há "Agendar uma conversa", lista de redes nem bloco "Procurando vaga fixa?" na tela; GitHub, LinkedIn e "Currículo em PDF" ficam no rodapé de navegação (RF-LAY-26, RF-LAY-27), que não tem e-mail nem chamada para contato                                                                                                                                                                                  | D04, D21, protótipo                                               |
 
 ### Flag do formulário
 
@@ -218,7 +218,7 @@ Chaves de outros namespaces, usadas e não criadas aqui:
 
 ### Vem do conteúdo, não de chave
 
-Campo definido pela #10, com valor da #13 nos três idiomas quando é texto, lido por endpoint
+Campo definido pela #10, com valor da #58 e da #59 nos três idiomas quando é texto, lido por endpoint
 (NF-DA-02):
 
 | Dado                                                                | Onde aparece                               |
@@ -344,7 +344,7 @@ não mede (quebra de 900px por media query, foco real).
 ### Acessibilidade
 
 Copiados de [`accessibility.md`](../product/accessibility.md#checklist-por-tela), sem renumerar.
-`A11Y-L12` (rodapé de Contato) fica na #33.
+`A11Y-L12` (rodapé de Contato) fica na #60.
 
 - [ ] `A11Y-G01` — Um `main`, um `h1` e um `<title>` próprio e traduzido [teste]
 - [ ] `A11Y-G02` — `<html lang>` igual ao idioma da URL (`/`, `/en/`, `/es/`) [teste]

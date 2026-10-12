@@ -31,7 +31,7 @@ O PO aprova a spec (Status `aprovada`) e o escopo de cada versão; mudar o escop
 | Fase | Objetivo                                         | Sinal de sucesso                                                                                            | Como é verificado                                                           |
 | ---- | ------------------------------------------------ | ----------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
 | v1   | Entregar a v1 aprovada pela Fatec até 23/11/2026 | Todos os itens da definição da v1 em [`roadmap.md`](roadmap.md#v1) marcados; URL e vídeo entregues no prazo | Checklist da v1, CI (build, lint, testes com 80% ou mais) e verificação #41 |
-| v1   | Mostrar trabalho com profundidade                | Todo projeto publicado tem estudo de caso (documentação, ficha técnica e galeria ou placeholder, D26)       | Revisão do conteúdo de #13 pelo PO                                          |
+| v1   | Mostrar trabalho com profundidade                | Todo projeto publicado tem estudo de caso (documentação, ficha técnica e galeria ou placeholder, D26)       | Revisão do conteúdo de #58 pelo PO                                          |
 | V2+  | Converter visita em contato                      | Não definido agora: a métrica é definida junto com a ferramenta de analytics na V2 (`DP02`)                 | Pela ferramenta de analytics escolhida na V2                                |
 
 **Medição (`DP02`):**

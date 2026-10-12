@@ -508,9 +508,9 @@ O `<Tipo>` de branch, commit e título de PR vem sempre desta tabela:
 
 Toda issue entra no projeto [Portfolio](https://github.com/users/felipe-sant/projects/16), que
 reúne os repositórios do portfólio, com Status `Backlog` (o PO revisa e move), `Marco` do
-`docs/product/roadmap.md` e um único `Tipo` (`FEATURE`, `DOCUMENTATION` ou `BUG`). O tipo vive só
-nesse campo: as labels `enhancement`, `bug` e `documentation` não são usadas. Labels indicam a área
-(`frontend`, `backend`, `infra`, uma ou mais) e, quando cabe, `accessibility`. Toda issue que
+`docs/product/roadmap.md` (ou `Pessoal`, para a trilha fora da v1) e um único `Tipo` (`FEAT`, `DOC`
+ou `BUG`). O tipo vive só nesse campo: as labels `enhancement`, `bug` e `documentation` não são
+usadas. Labels indicam só a área (`frontend`, `backend`, `infra`, uma ou mais). Toda issue que
 depende de outra registra a relação como "blocked by" do GitHub
 (`POST /repos/{owner}/{repo}/issues/{n}/dependencies/blocked_by`), além da linha "Depende de" do
 corpo.

@@ -2,7 +2,8 @@
 
 O layout é tudo que aparece em mais de uma tela: cabeçalho, menu mobile, seletor de idioma,
 alternador de tema, rodapé (padrão e a variação de navegação em `/contact`), página não
-encontrada, página de erro e metadados por rota e idioma. Quem o implementa é a issue #33, com #31
+encontrada, página de erro e metadados por rota e idioma. Quem o implementa são as issues #33
+(estrutura, cabeçalho, menu, idioma e tema) e #60 (rodapé, páginas de erro e metadados), com #31
 (tokens, tema e foco), #32 (componentes e ícones), #53 (idioma no caminho, função de URL equivalente e
 redirecionamento da raiz) e #52 (canônica, Open Graph e JSON-LD). Este documento diz o
 comportamento; não escolhe nome de componente nem de arquivo, além do namespace e da chave de
@@ -112,7 +113,7 @@ Vale em todas as telas, menos `/contact`.
 | ID          | Regra                                                                                                                                                                                                                                                                                                                                                                                                                                                                           | Fonte                   |
 | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------- |
 | `RF-LAY-20` | Linha superior de 2px em degradê horizontal (`#FFCC00` → `#F19100`) e fundo `--surface-chrome` (D04). Landmark `contentinfo`                                                                                                                                                                                                                                                                                                                                                    | D04, A11Y-L03           |
-| `RF-LAY-21` | Bloco de contato: rótulo "Contato"; a frase de disponibilidade, a localização e o e-mail vêm do JSON de conteúdo (#10 define os campos do perfil e do contato, #13 preenche nos três idiomas), não de chave de tradução                                                                                                                                                                                                                                                         | #10, R1, NF-DA-02       |
+| `RF-LAY-21` | Bloco de contato: rótulo "Contato"; a frase de disponibilidade, a localização e o e-mail vêm do JSON de conteúdo (#10 define os campos do perfil e do contato, #58 e #59 preenchem nos três idiomas), não de chave de tradução                                                                                                                                                                                                                                                  | #10, R1, NF-DA-02       |
 | `RF-LAY-22` | Link primário para `/contact` com o rótulo "Entrar em contato", numa chave só, válida com o formulário ligado ou desligado (D05); a #44 não precisa mexer nela e a #6 reaproveita a mesma chave                                                                                                                                                                                                                                                                                 | Protótipo, D05, PO (Q1) |
 | `RF-LAY-23` | Botão "Copiar e-mail" (ícone de cópia, `aria-hidden`): copia o e-mail do conteúdo, troca o rótulo por 2,2 s ("E-mail copiado" ou "Não foi possível copiar") e anuncia o resultado em `role="status"` que existe vazio desde a primeira renderização                                                                                                                                                                                                                             | Protótipo, A11Y-L11     |
 | `RF-LAY-24` | Ícones de GitHub, LinkedIn e e-mail (`mailto:`), com alvos de 44px; as URLs e o e-mail vêm do conteúdo; os nomes acessíveis vêm de chave com o nome do autor ("GitHub de Luiz Felipe dos Santos (abre em nova aba)"). Rede sem URL no conteúdo não aparece. GitHub e LinkedIn abrem em nova aba (`target="_blank"`, `rel="noopener noreferrer"`), com o aviso no nome acessível; o `mailto:` não leva `target` (abre o cliente de e-mail, não uma aba) e o nome não fala em aba | D04, D21, D36, 2.4.9    |
@@ -141,14 +142,14 @@ Vale só em `/contact`.
 | `RF-LAY-30` | A mensagem técnica do erro nunca aparece (hoje a página mostra `error.message`, que é literal em português e técnico); a chave `error:unknown` sai. O protótipo diz "ERRO 500" e "Falha no servidor", que não descrevem um erro do cliente sem backend, e cita o e-mail, que vem do conteúdo e pode ser justamente o que falhou: a página não tem rótulo de código nem e-mail                                                                | R1, voz e copy ("dizem o que aconteceu e oferecem a saída") |
 
 Um erro lançado pelo próprio cabeçalho ou rodapé também quebra a página de erro, que os renderiza;
-nesse caso vale o comportamento padrão do React Router. Fica fora do escopo da #33.
+nesse caso vale o comportamento padrão do React Router. Fica fora do escopo da #33 e da #60.
 
 ### Comum a todas as telas
 
 | ID          | Regra                                                                                                                                                                                                                                                                                                                                  | Fonte                                         |
 | ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------- |
 | `RF-LAY-31` | "Pular para o conteúdo" é o primeiro elemento focável, visível ao receber foco, e leva ao `main` (`id` estável, `tabIndex={-1}`). O `main` é do layout, em volta do `<Outlet />`; as páginas deixam de renderizar o próprio `main` (a de erro mantém o seu)                                                                            | A11Y-L01, `accessibility.md` (Teclado e foco) |
-| `RF-LAY-32` | Na navegação interna o foco vai para o `h1` da nova tela e o `<title>` muda; na primeira carga o foco não se move. A rolagem vai para o topo na navegação nova e é restaurada no voltar e avançar do navegador; com âncora na URL, vai para a âncora. Exceções: troca de idioma (RF-LAY-14) e troca de documento do projeto (D33, #36) | A11Y-L02, D33                                 |
+| `RF-LAY-32` | Na navegação interna o foco vai para o `h1` da nova tela e o `<title>` muda; na primeira carga o foco não se move. A rolagem vai para o topo na navegação nova e é restaurada no voltar e avançar do navegador; com âncora na URL, vai para a âncora. Exceções: troca de idioma (RF-LAY-14) e troca de documento do projeto (D33, #62) | A11Y-L02, D33                                 |
 | `RF-LAY-33` | O favicon é o gato (D34): corpo `#7C7770` e detalhe por `<style>` interno com `@media (prefers-color-scheme: dark)` (`#202020` no claro, `#F2EEE7` no escuro), substituindo `public/favicon.svg`. Segue o tema do sistema, não o do site, porque o favicon não lê `data-theme`                                                         | D02, D34                                      |
 
 ### Abertura de links
@@ -186,7 +187,7 @@ A primeira carga em `/` com escolha salva diferente de `pt-BR` redireciona para 
 ## Textos fixos e chaves
 
 Todo texto do layout vem de chave (`react-i18next`). O valor `pt-BR` abaixo é a referência; `en` e
-`es` são escritos na implementação (#33), com os mesmos namespaces e chaves (R2). Os nomes dos
+`es` são escritos na implementação (#33 e #60), com os mesmos namespaces e chaves (R2). Os nomes dos
 idiomas ("Português", "English", "Español"), as siglas, "GitHub", "LinkedIn", "TypeScript" e os
 símbolos são iguais nos três JSON.
 
@@ -250,7 +251,7 @@ Os símbolos ficam em chave porque `react/jsx-no-literals` acusa string literal 
 
 ### Vem do conteúdo, não de chave
 
-O campo é definido na #10 e o valor é preenchido na #13, nos três idiomas quando é texto. Página e
+O campo é definido na #10 e o valor é preenchido na #58 e na #59, nos três idiomas quando é texto. Página e
 componente leem esses dados pelos endpoints do RTK Query (NF-DA-02), nunca pelo JSON direto.
 
 | Dado                       | Onde aparece                                          |
@@ -292,7 +293,7 @@ que também revisa o texto sem mudar a chave:
 | ---------------------------------------------------- | --------------------- | ------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------- |
 | `/`                                                  | `home` (existe)       | Luiz Felipe dos Santos · Desenvolvedor full stack em TypeScript                | Portfólio de Luiz Felipe dos Santos, desenvolvedor full stack em TypeScript: projetos, trajetória e contato. (existe) |
 | `/projects`                                          | `projects` (previsto) | Projetos · Luiz Felipe dos Santos                                              | Projetos de Luiz Felipe dos Santos, com busca por tipo, categoria e tecnologia.                                       |
-| `/projects/:id`                                      | `project` (previsto)  | `{{project}}` · Luiz Felipe dos Santos                                         | Resumo do projeto, do conteúdo (#10, #13), sem chave                                                                  |
+| `/projects/:id`                                      | `project` (previsto)  | `{{project}}` · Luiz Felipe dos Santos                                         | Resumo do projeto, do conteúdo (#10, #58), sem chave                                                                  |
 | `/projects/:id/architecture`, `/setup`, `/changelog` | `project` (previsto)  | `{{document}}` · `{{project}}` · Luiz Felipe dos Santos (`meta.documentTitle`) | Resumo do projeto, do conteúdo                                                                                        |
 | `/about`                                             | `about` (previsto)    | Informações · Luiz Felipe dos Santos                                           | Quem é Luiz Felipe dos Santos: sobre mim, stack, trajetória e formação.                                               |
 | `/contact`                                           | `contact` (previsto)  | Contato · Luiz Felipe dos Santos                                               | Como falar com Luiz Felipe dos Santos: e-mail e currículo.                                                            |
@@ -307,7 +308,7 @@ já está no HTML.
 
 ## Critérios de aceite
 
-Copiáveis para a issue #33. Verificação entre colchetes, com a legenda de
+Copiáveis para as issues #33 (`RF-LAY-01` a `RF-LAY-19` e `RF-LAY-31` a `RF-LAY-33`) e #60 (`RF-LAY-20` a `RF-LAY-30` e metadados). Verificação entre colchetes, com a legenda de
 [`accessibility.md`](../product/accessibility.md#checklist-por-tela) (`[teste]`, `[axe]`, `[lint]`,
 `[teclado]`, `[leitor]`, `[navegador]`, `[e2e]` e `[medição]`) e mais `[review]` para o que só a
 revisão do PR confere. Nos itens funcionais, `[teste]` usa Testing Library, `user-event` e
