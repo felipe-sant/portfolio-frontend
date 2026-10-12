@@ -13,7 +13,7 @@ pip install -r requirements.txt
 uvicorn index:app --host 0.0.0.0 --port 8000
 ```
 
-Sobe em http://localhost:8000.
+Sobe em `http://localhost:8000`.
 
 ## Backend (Node)
 
@@ -23,7 +23,7 @@ npm install
 npx tsc && node dist/index.js
 ```
 
-Sobe em http://localhost:3001. Observação: `npm run dev` (ts-node) está quebrado por uma incompatibilidade de tipos do multer — ver issue #1. Use o build manual acima como alternativa enquanto isso não é corrigido.
+Sobe em `http://localhost:3001`. Observação: `npm run dev` (ts-node) está quebrado por uma incompatibilidade de tipos do multer — ver [issue #1](https://github.com/felipe-sant/mnist-classifier-back/issues/1). Use o build manual acima como alternativa enquanto isso não é corrigido.
 
 ## Frontend (React)
 
@@ -33,7 +33,7 @@ npm install
 npm start
 ```
 
-Sobe em http://localhost:3000.
+Sobe em `http://localhost:3000`.
 
 ## Observação
 

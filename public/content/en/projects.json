@@ -3,7 +3,7 @@
         {
             "id": "01a13188-a1da-7d4b-901c-e7bcc81d497b",
             "title": "Maps",
-            "summary": "Simulador de rota de voo entre dois pontos aleatórios do Brasil, calculando a trajetória real com curvatura da Terra e dados geográficos via API do IBGE.",
+            "summary": "Simulador de rota de voo entre dois pontos do Brasil, com a trajetória real pela curvatura da Terra e dados geográficos da API do IBGE.",
             "date": "2025-12",
             "types": ["web", "api"],
             "category": "academic",
@@ -96,13 +96,13 @@
         {
             "id": "01a131df-93ee-72f3-8c7a-f67501e47a7a",
             "title": "MNIST Classifier",
-            "summary": "Aplicativo que reconhece dígitos manuscritos desenhados pelo usuário, usando uma rede neural treinada com o dataset MNIST (Keras/TensorFlow).",
+            "summary": "Aplicação que reconhece dígitos manuscritos desenhados pelo usuário, usando uma rede neural treinada com o dataset MNIST (Keras/TensorFlow).",
             "date": "2025-07",
             "types": ["web", "api", "data"],
             "category": "personal",
             "featured": true,
             "cardTechnologies": ["React", "TensorFlow", "FastAPI"],
-            "role": "Full stack + IA (desenvolvi frontend, backend e o serviço de inferência)",
+            "role": "Full stack + IA",
             "duration": "2 semanas",
             "team": "Sozinho",
             "status": "completed",
@@ -373,7 +373,7 @@
                         "width": 640,
                         "height": 360
                     },
-                    "alt": "Conversor de unidades mostrando 10 quilômetros convertidos para 10000 metros",
+                    "alt": "Conversor de unidades mostrando 10 quilômetros convertidos para 10.000 metros",
                     "caption": "Conversão de comprimento em ação"
                 }
             ],
@@ -452,7 +452,7 @@
                         "width": 640,
                         "height": 360
                     },
-                    "alt": "Gráfico de dispersão mostrando quatro clusters de desempenho de atletas separados visualmente com centróides marcados",
+                    "alt": "Gráfico de dispersão mostrando quatro clusters de desempenho de atletas separados visualmente com centroides marcados",
                     "caption": "Visualização dos clusters por PCA"
                 }
             ],

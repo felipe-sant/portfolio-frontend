@@ -8,7 +8,7 @@ Desenvolvi sozinho todo o pipeline: desde o treinamento do modelo em Python até
 
 ## Solução
 
-O modelo foi treinado em Python com scikit-learn (pipeline de normalização + K-Means com 4 clusters), incluindo uma métrica derivada de "explosividade" calculada a partir da distância de sprint e velocidade máxima. Os clusters resultantes são nomeados automaticamente com base nas características dos centróides (ex. maior distância de sprint = "explosivo"). O modelo treinado é exportado para o formato ONNX e servido por uma API em Node.js/TypeScript, que roda a inferência via ONNX Runtime sem depender de Python em produção — e também calcula o perfil predominante de um atleta ao longo de várias partidas, consultando um banco PostgreSQL.
+O modelo foi treinado em Python com scikit-learn (pipeline de normalização + K-Means com 4 clusters), incluindo uma métrica derivada de "explosividade" calculada a partir da distância de sprint e velocidade máxima. Os clusters resultantes são nomeados automaticamente com base nas características dos centroides (ex.: maior distância de sprint = "explosivo"). O modelo treinado é exportado para o formato ONNX e servido por uma API em Node.js/TypeScript, que roda a inferência via ONNX Runtime sem depender de Python em produção — e também calcula o perfil predominante de um atleta ao longo de várias partidas, consultando um banco PostgreSQL.
 
 ## Decisões técnicas
 
@@ -20,4 +20,4 @@ Testado com múltiplos perfis de entrada sintéticos: métricas de alta intensid
 
 ## Aprendizados
 
-Nomear clusters automaticamente com base nas características dos centróides (em vez de rotular manualmente após cada treino) torna o pipeline mais robusto a retreinos com dados diferentes.
+Nomear clusters automaticamente com base nas características dos centroides (em vez de rotular manualmente após cada treino) torna o pipeline mais robusto a retreinos com dados diferentes.

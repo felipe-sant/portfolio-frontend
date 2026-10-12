@@ -20,4 +20,4 @@ Projeto pequeno e funcional, publicado e no ar.
 
 ## Aprendizados
 
-Às vezes um projeto não precisa resolver um problema sério para ser um bom exercício de front-end — foi uma forma leve de praticar manipulação de DOM e posicionamento dinâmico de elementos.
+Às vezes um projeto não precisa resolver um problema sério para ser um bom exercício de frontend — foi uma forma leve de praticar manipulação de DOM e posicionamento dinâmico de elementos.

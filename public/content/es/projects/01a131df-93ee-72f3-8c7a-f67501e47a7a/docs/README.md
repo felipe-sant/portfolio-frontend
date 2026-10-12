@@ -20,4 +20,4 @@ A aplicação funciona corretamente de ponta a ponta — testado localmente dese
 
 ## Aprendizajes
 
-Arquitetar um sistema poliglota (Node.js + Python) com responsabilidades bem separadas, e lidar com os desafios de manter múltiplos serviços de deploys gratuitos diferentes no ar ao mesmo tempo.
+Arquitetar um sistema poliglota (Node.js + Python) com responsabilidades bem separadas, e lidar com os desafios de manter no ar vários serviços hospedados em planos gratuitos diferentes ao mesmo tempo.

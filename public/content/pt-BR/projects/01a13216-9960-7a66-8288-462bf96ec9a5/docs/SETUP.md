@@ -1,6 +1,6 @@
 ## Pré-requisitos
 
-Node.js, npm, e uma instância do MongoDB (local ou Atlas).
+Node.js, npm e uma instância do MongoDB (local ou Atlas).
 
 ## Backend
 

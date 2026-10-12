@@ -16,7 +16,7 @@ Toda a lógica de conversão roda no cliente, sem necessidade de API externa —
 
 ## Outcome
 
-Funciona corretamente — testado convertendo comprimento (km para m) com resultado correto.
+Funciona como esperado — testado convertendo comprimento (km para m).
 
 ## Learnings
 

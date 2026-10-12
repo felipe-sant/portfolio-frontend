@@ -20,4 +20,4 @@ O frontend está no ar e funcional isoladamente, mas aponta para uma versão ant
 
 ## Aprendizajes
 
-Entender a diferença entre interpolação linear e esférica para cálculos geográficos, e a importância de manter frontend e backend sincronizados quando são repositórios separados — a quebra de compatibilidade só foi percebida durante essa revisão.
+Entender a diferença entre interpolação linear e esférica para cálculos geográficos, e a importância de manter frontend e backend sincronizados quando são repositórios separados — a quebra de compatibilidade só foi percebida numa revisão posterior dos projetos.

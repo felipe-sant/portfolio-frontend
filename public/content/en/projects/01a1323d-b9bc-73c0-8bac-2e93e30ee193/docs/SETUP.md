@@ -1,4 +1,4 @@
-## Treinamento do modelo (opcional — já existe um modelo treinado em model/)
+## Treinamento do modelo (opcional)
 
 ```bash
 cd player-profile-clustering-ai
@@ -14,13 +14,13 @@ cd player-profile-clustering-service
 npm install
 ```
 
-Criar um `.env` com:
+Crie um `.env` com:
 
 ```env
 POSTGRESQL_URL=sua_connection_string_do_postgres
 ```
 
-(obrigatório só para o endpoint `/api/athlete/metrics`; o endpoint `/api/match/predict` funciona sem banco, só com o modelo.)
+A variável é obrigatória só para o endpoint `/api/athlete/metrics`; o `/api/match/predict` funciona sem banco, só com o modelo.
 
 ```bash
 npm run dev

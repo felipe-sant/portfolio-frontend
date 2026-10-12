@@ -20,4 +20,4 @@ O CRUD funciona de ponta a ponta — testado criando, listando e confirmando a p
 
 ## Learnings
 
-A ideia e a base funcional do projeto são sólidas — o maior gap hoje é só de acabamento de interface, não de lógica ou arquitetura.
+A ideia e a base funcional do projeto são sólidas — a maior lacuna hoje é só de acabamento de interface, não de lógica ou arquitetura.
