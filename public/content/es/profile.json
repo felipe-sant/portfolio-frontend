@@ -1,48 +1,118 @@
 {
-    "role": "Desarrollador full stack",
-    "homeIntro": "Trabajo en productos web de punta a punta, desde la base de datos hasta la interfaz. Aquí hay proyectos de ejemplo que muestran cómo resuelvo problemas.",
-    "summary": "Desarrollador full stack en TypeScript, estudiante de Análisis y Desarrollo de Sistemas.",
+    "role": "Estagiário de Desenvolvimento Frontend",
+    "homeIntro": "Estudante de Desenvolvimento de Software Multiplataforma e estagiário de desenvolvimento frontend, construindo produtos reais com React, TypeScript e Node.js",
+    "summary": "Sou Luiz Felipe dos Santos, desenvolvedor frontend e estudante de Desenvolvimento de Software Multiplataforma na FATEC. Trabalho com React, TypeScript e Node.js no desenvolvimento de aplicações web, com experiência em integração de APIs REST, bancos de dados SQL/NoSQL e metodologias ágeis. Aqui você encontra minha trajetória, projetos e habilidades técnicas.",
     "location": {
         "city": "São José dos Campos",
         "region": "SP",
         "countryCode": "BR",
-        "detail": "Remoto o híbrido en la región"
+        "detail": "Híbrido"
     },
-    "availability": { "isAvailable": true, "label": "Disponible para nuevos proyectos" },
+    "availability": {
+        "isAvailable": true,
+        "label": "Procurando novos projetos e trabalhos"
+    },
     "photo": {
-        "large": { "src": "images/profile/photo-large.webp", "width": 800, "height": 800 },
-        "small": { "src": "images/profile/photo-small.webp", "width": 320, "height": 320 }
+        "large": {
+            "src": "images/profile/photo-large.webp",
+            "width": 362,
+            "height": 362
+        },
+        "small": {
+            "src": "images/profile/photo-small.webp",
+            "width": 320,
+            "height": 320
+        }
     },
     "aboutParagraphs": [
-        "Empecé a programar en un curso técnico y no paré más. Me gusta entender el problema antes de elegir la herramienta.",
-        "Hoy trabajo principalmente con TypeScript, React y Node.js, y estudio ingeniería de software en la facultad."
+        "Comecei a me interessar por tecnologia ainda no ensino médio, na ETEC, onde tive meu primeiro contato com programação, banco de dados e metodologias ágeis. Hoje curso Desenvolvimento de Software Multiplataforma na FATEC, já no 6º semestre, e é de lá que seguem vindo boa parte dos fundamentos que uso no dia a dia.",
+        "Atualmente sou estagiário de desenvolvimento na Incicle, onde atuo em diferentes módulos de produto dentro de uma arquitetura de micro frontends — passando por várias frentes de entrega, da implementação de novas features à evolução de versões de módulos já existentes. Trabalho com React, TypeScript e Node.js no ciclo completo de desenvolvimento, do levantamento de regras com o time de produto até o deploy em produção.",
+        "No dia a dia, gosto de entender bem o contexto de cada entrega antes de implementar, discutindo regras de negócio diretamente com quem define o produto para garantir que a solução técnica realmente atenda à necessidade do usuário. Também uso ferramentas de Inteligência Artificial no fluxo de desenvolvimento, não só para escrever código mais rápido, mas para manter a qualidade e a organização do que entrego.",
+        "Estou em um momento de bastante crescimento técnico, buscando evoluir de estagiário para uma posição júnior e, no médio prazo, pleno. Gosto de aprender fazendo, então boa parte do que sei veio de colocar a mão na massa em projetos reais, dentro e fora do trabalho."
     ],
     "workPrinciples": [
-        "Escribo la prueba junto con el código",
-        "Prefiero entregar pequeño y temprano",
-        "Documento las decisiones que no son obvias"
+        "Discuto as regras com o PO antes de implementar, não só sigo o que está escrito na task",
+        "Quebro features grandes em partes menores antes de começar",
+        "Testo minha própria entrega antes de mandar pra QA",
+        "Uso IA no fluxo de desenvolvimento, não só pra escrever código mais rápido"
     ],
     "stack": [
         {
             "category": "frontend",
             "items": [
-                { "name": "TypeScript", "isPrimary": true },
-                { "name": "React" },
-                { "name": "CSS Modules" }
+                {
+                    "name": "React",
+                    "isPrimary": true
+                },
+                {
+                    "name": "Typescript"
+                },
+                {
+                    "name": "Redux"
+                },
+                {
+                    "name": "MFE"
+                },
+                {
+                    "name": "Javascript"
+                },
+                {
+                    "name": "HTML5"
+                },
+                {
+                    "name": "CSS3"
+                }
             ]
         },
-        { "category": "backend", "items": [{ "name": "Node.js" }, { "name": "PostgreSQL" }] },
+        {
+            "category": "backend",
+            "items": [
+                {
+                    "name": "Node.js"
+                },
+                {
+                    "name": "Express"
+                },
+                {
+                    "name": "PostgreSQL"
+                },
+                {
+                    "name": "MongoDB"
+                },
+                {
+                    "name": "Redis"
+                }
+            ]
+        },
         {
             "category": "tooling",
-            "items": [{ "name": "Docker" }, { "name": "GitHub Actions" }, { "name": "Vitest" }]
+            "items": [
+                {
+                    "name": "Git"
+                },
+                {
+                    "name": "Github"
+                },
+                {
+                    "name": "Docker"
+                },
+                {
+                    "name": "Jest"
+                },
+                {
+                    "name": "AWS"
+                }
+            ]
         }
     ],
     "contact": {
-        "email": "contato@example.com",
-        "responseTime": { "label": "En hasta 1 día hábil", "detail": "Huso horario GMT-3" }
+        "email": "contact.felipesant@gmail.com",
+        "responseTime": {
+            "label": "3",
+            "detail": "UTC-3"
+        }
     },
     "links": {
-        "github": "https://github.com/example",
-        "linkedin": "https://www.linkedin.com/in/example"
+        "github": "https://github.com/felipe-sant/"
     }
 }
