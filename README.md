@@ -214,14 +214,19 @@ de versão) e falha se statements, branches, functions ou lines ficarem abaixo d
 
 ## CI e git hooks
 
-`.github/workflows/ci.yml` roda em todo push para `main` e em todo Pull Request, com o Node do
-`.nvmrc` e três jobs: `build` (`npm run build`), `lint` (`npm run lint`) e `test`. O `test` roda
-`npm run test:cov` em push para `main`, em PR que mira `main` ou quando o diff altera arquivo que
+`.github/workflows/ci.yml` roda em todo push para `main` e `staging` e em todo Pull Request, com o
+Node do `.nvmrc` e três jobs: `build` (`npm run build`), `lint` (`npm run lint`) e `test`. O `test`
+roda `npm run test:cov` em push, em PR que mira `main` ou quando o diff altera arquivo que
 afeta a suíte inteira (`package.json`, `package-lock.json`, `vite.config.ts`, `tsconfig*.json`,
 `src/setupTests.ts`, `public/content/`, `public/images/`, `content/`), publicando `coverage/` como
 artifact; nos demais PRs roda só os testes
 afetados pelo diff. O `.github/dependabot.yml` atualiza as dependências de `npm` e
 `github-actions` uma vez por mês.
+
+`.github/workflows/deploy.yml` publica na Vercel depois que o CI de um push termina verde: a
+`staging` vai para o ambiente de testes (beta) e a `main` para produção. CI falhando, cancelado ou
+vindo de PR não publica. O fluxo `PR -> staging -> main`, os domínios, as variáveis e os segredos
+estão em [`docs/setup/environments.md`](docs/setup/environments.md).
 
 `npm install` configura o Husky pelo script `prepare`. O hook de `pre-commit` (`.husky/pre-commit`)
 roda `npx lint-staged`, que, conforme `.lintstagedrc.json`, aplica `oxlint --fix` e
