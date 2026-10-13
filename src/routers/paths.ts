@@ -1,4 +1,5 @@
 const ROUTES = {
+    root: "/",
     home: "/",
     notFound: "*"
 } as const
