@@ -156,7 +156,9 @@ stuba com `vi.stubGlobal`/`vi.stubEnv` restaura no `afterEach` com
 `vi.unstubAllGlobals()`/`vi.unstubAllEnvs()`.
 
 O CI (`.github/workflows/`) roda `npm run build`, `npm run lint` e a suíte de testes, os mesmos
-comandos da verificação local.
+comandos da verificação local, em PR e em push na `main` e na `staging`. O `deploy.yml` publica na
+Vercel (`staging` = beta, `main` = produção) só depois do CI de push verde; detalhe em
+`docs/setup/environments.md`.
 
 `vite build` sozinho não checa tipos (usa esbuild, que só transpila); por isso o script `build`
 roda `npm run typecheck` (`tsc -b`, que cobre `src/` via `tsconfig.app.json` e `vite.config.ts` via `tsconfig.node.json`) antes.

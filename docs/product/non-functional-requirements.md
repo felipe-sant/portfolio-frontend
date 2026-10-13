@@ -301,13 +301,13 @@ interface. A escolha do método é da #54; as opções abaixo, avaliadas quando 
 
 ## Qualidade e CI (`NF-QA`)
 
-| ID       | Requisito                                                                                                                                                                                                | Como é verificado  | Quando   |
-| -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------ | -------- |
-| NF-QA-01 | `npm run build` (com `typecheck` em `strict`), `npm run lint` e testes passam no CI; PR para a `main` e push na `main` rodam `npm run test:cov`, os demais PRs rodam os testes afetados (`ci.yml` atual) | CI                 | CI       |
-| NF-QA-02 | Cobertura mínima de 80% em statements, branches, functions e lines                                                                                                                                       | `npm run test:cov` | CI       |
-| NF-QA-03 | Todo requisito deste documento que muda comportamento tem teste em `test/`; o que teste não cobre (visual, rede real, Lighthouse) é checado em #41                                                       | Review; #41        | Review   |
-| NF-QA-04 | A pré-renderização (#49) e a geração dos arquivos para máquinas (#51) rodam dentro de `npm run build`: uma rota que falha ao renderizar ou um JSON inválido falha o build e o CI                         | CI                 | #49; #51 |
-| NF-QA-05 | Formatação por Prettier e lint no `pre-commit` (Husky e lint-staged)                                                                                                                                     | Hook local         | —        |
+| ID       | Requisito                                                                                                                                                                                                                | Como é verificado  | Quando   |
+| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------ | -------- |
+| NF-QA-01 | `npm run build` (com `typecheck` em `strict`), `npm run lint` e testes passam no CI; PR para a `main` e push na `main` ou na `staging` rodam `npm run test:cov`, os demais PRs rodam os testes afetados (`ci.yml` atual) | CI                 | CI       |
+| NF-QA-02 | Cobertura mínima de 80% em statements, branches, functions e lines                                                                                                                                                       | `npm run test:cov` | CI       |
+| NF-QA-03 | Todo requisito deste documento que muda comportamento tem teste em `test/`; o que teste não cobre (visual, rede real, Lighthouse) é checado em #41                                                                       | Review; #41        | Review   |
+| NF-QA-04 | A pré-renderização (#49) e a geração dos arquivos para máquinas (#51) rodam dentro de `npm run build`: uma rota que falha ao renderizar ou um JSON inválido falha o build e o CI                                         | CI                 | #49; #51 |
+| NF-QA-05 | Formatação por Prettier e lint no `pre-commit` (Husky e lint-staged)                                                                                                                                                     | Hook local         | —        |
 
 ## Hospedagem da v1 — GitHub Pages (`NF-HO`)
 
