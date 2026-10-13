@@ -316,19 +316,19 @@ Não precisa desfazer a troca: o `beforeEach` do setup volta para `pt-BR` e apag
 
 ### Simular uma nova carga de página
 
-A detecção de idioma (`?lng=` → escolha salva → navegador → `en`) e a persistência do `?lng=` rodam uma vez só, quando `src/i18n/i18n.ts` é importado. `i18n.changeLanguage()` sem argumento não serve para reproduzir isso: ele não executa a persistência do `?lng=`. Para testar a inicialização, prepare a URL, o navegador e o `localStorage`, descarte o cache de módulos com `vi.resetModules()` e importe a instância de novo com `await import("@/i18n/i18n")` — como o `i18n.ts` cria a instância com `createInstance()`, cada import depois do reset é uma instância nova, sem estado da anterior. É o helper de `src/i18n/test/i18n.test.ts`:
+O idioma inicial é lido do caminho (`window.location.pathname`, sem o `base`) uma vez só, quando `src/i18n/i18n.ts` é importado; `?lng=`, navegador e `localStorage` não decidem (só a raiz `/` os lê, por `getPreferredLanguage`). Para testar a inicialização, prepare a URL, descarte o cache de módulos com `vi.resetModules()` e importe a instância de novo com `await import("@/i18n/i18n")` — como o `i18n.ts` cria a instância com `createInstance()`, cada import depois do reset é uma instância nova, sem estado da anterior. É o helper de `src/i18n/test/i18n.test.ts`:
 
 ```ts
 import { afterEach, describe, expect, it, vi } from "vitest"
 import LANGUAGE_STORAGE_KEY from "@/i18n/languageStorageKey"
 
 interface PageLoad {
-    search?: string
+    path?: string
     browserLanguages?: string[]
 }
 
-async function loadPage({ search = "", browserLanguages = ["en-US"] }: PageLoad = {}) {
-    window.history.pushState({}, "", `/${search}`)
+async function loadPage({ path = "/", browserLanguages = ["en-US"] }: PageLoad = {}) {
+    window.history.pushState({}, "", path)
     vi.spyOn(navigator, "languages", "get").mockReturnValue(browserLanguages)
     vi.spyOn(navigator, "language", "get").mockReturnValue(browserLanguages[0] ?? "")
     vi.resetModules()
@@ -345,16 +345,18 @@ afterEach(() => {
 })
 
 describe("i18n", () => {
-    it("ativa e grava o idioma de um ?lng= válido", async () => {
-        const i18n = await loadPage({ search: "?lng=es", browserLanguages: ["en"] })
+    it("abre no idioma do prefixo do caminho", async () => {
+        const i18n = await loadPage({ path: "/es", browserLanguages: ["en"] })
 
         expect(i18n.resolvedLanguage).toBe("es")
-        expect(localStorage.getItem(LANGUAGE_STORAGE_KEY)).toBe("es")
+        expect(localStorage.getItem(LANGUAGE_STORAGE_KEY)).toBeNull()
     })
 })
 ```
 
-O `?lng=` é stubado com `window.history.pushState` e o `navigator` com `vi.spyOn` no getter. **Restaure os dois no `afterEach`**: `vi.restoreAllMocks()` desfaz os spies e `pushState` de volta para `"/"` limpa a URL, senão o `?lng=` e o idioma do navegador vazam para o teste seguinte (inclusive o `App.test.tsx`, que lê a URL real). Um teste que muda a URL por outro motivo, como o cenário de rota desconhecida em `src/test/App.test.tsx`, segue a mesma regra.
+A URL é stubada com `window.history.pushState` e o `navigator` com `vi.spyOn` no getter. **Restaure os dois no `afterEach`**: `vi.restoreAllMocks()` desfaz os spies e `pushState` de volta para `"/"` limpa a URL, senão o caminho e o idioma do navegador vazam para o teste seguinte (inclusive o `App.test.tsx`, que lê a URL real). Um teste que muda a URL por outro motivo, como o cenário de rota desconhecida em `src/test/App.test.tsx`, segue a mesma regra.
+
+Teste de rota (`createMemoryRouter(routes, { initialEntries })`) abre o caminho com prefixo (`/pt-BR`, `/en`, `/es`): `/` só redireciona, e o `jsdom` reporta `en-US`. Não use `vi.resetModules()` junto de `routes` já importado: o `.use(initReactI18next)` da instância nova substitui a global e o `loader` da rota passa a trocar o idioma de outra instância.
 
 ## 8. Queries do Testing Library
 
@@ -387,7 +389,7 @@ Ordem de preferência: **`getByRole` com `name`** > `getByLabelText` / `getByTex
 | `Found multiple elements with the role ...`                                                       | render anterior não foi desmontado: alguém removeu o `afterEach(cleanup)` do `src/setupTests.ts` (item 4)                                        |
 | `describe is not defined` / `vi is not defined`                                                   | falta o `import` de `vitest` — não há `globals: true`                                                                                            |
 | teste de tela não acha o texto em português, mas acha o texto em inglês                           | o `beforeEach` do `src/setupTests.ts` sumiu ou trocou o `"pt-BR"` pelo fallback `en`, e o idioma veio do navegador do `jsdom` (`en-US`) (item 4) |
-| teste passa sozinho e falha na suíte, com o idioma ou a URL de outro teste                        | um teste stubou `?lng=` ou o `navigator` e não restaurou no `afterEach` (item 7)                                                                 |
+| teste passa sozinho e falha na suíte, com o idioma ou a URL de outro teste                        | um teste stubou a URL ou o `navigator` e não restaurou no `afterEach` (item 7)                                                                   |
 | o texto renderizado é a própria chave (`heading`, `meta.title`)                                   | chave sem valor, ou namespace não registrado em `src/i18n/resources.ts`: o i18next devolve a chave quando não acha tradução (item 7)             |
 | asserção logo após `user.click(...)` falha de forma intermitente, ou passa sem o efeito acontecer | a interação da v14 é assíncrona e faltou o `await` (item 9)                                                                                      |
 

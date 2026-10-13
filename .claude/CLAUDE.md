@@ -17,9 +17,10 @@ Texto de UI não é escrito no código: é referenciado por chave de tradução 
 `<Trans>`), e o valor de cada idioma fica em `src/locales/<idioma>/` (i18next + react-i18next,
 ver "Onde fica cada coisa"). Os idiomas suportados são `pt-BR`, `en` e `es`. **`pt-BR` é a língua de
 referência**: texto novo nasce primeiro em `src/locales/pt-BR/`, os JSON de `pt-BR` são a fonte
-do tipo das chaves e os testes de tela afirmam o texto em português. **O fallback de runtime é
-`en`**, o que o usuário vê quando nenhuma fonte de detecção dá um idioma suportado. As duas coisas
-são independentes.
+do tipo das chaves e os testes de tela afirmam o texto em português. **O idioma de uma página é
+decidido pelo caminho da URL** (`/pt-BR`, `/en`, `/es`); `en` é o `fallbackLng` do i18next, o destino
+da raiz `/` sem escolha salva nem idioma de navegador suportado e o idioma da página não encontrada
+sem prefixo válido. As duas coisas são independentes.
 
 ## Produto
 
@@ -36,8 +37,11 @@ Module em vez de classe global `.ds-*` e código sem comentários. `docs/design/
 referência visual validada pelo PO (abre por `npm run dev` em
 `/docs/design/prototype/prototipo-indice.dc.html`).
 
-**Rotas:** cinco telas, das quais hoje só `/` existe no código (as demais vêm nas specs de tela),
-com caminhos em inglês (D32), como os identificadores; o `:id` é um UUID v7, não slug:
+**Rotas:** cinco telas, das quais hoje só a Início existe no código (as demais vêm nas specs de tela),
+com caminhos em inglês (D32), como os identificadores, sempre sob o prefixo do idioma
+(`/<idioma>`, onde `<idioma>` é `pt-BR`, `en` ou `es`, sem barra final); a raiz `/` só
+redireciona e `/projects` sem prefixo cai em não encontrada. O `:id` é um UUID v7, não slug. Os
+caminhos abaixo omitem o prefixo:
 
 - `/` (Início): primeira impressão, com quem é, o que faz agora, projetos em destaque e stack.
 - `/projects` (Projetos): encontrar um projeto por busca, tipo, categoria ou tecnologia.
@@ -113,12 +117,15 @@ alias. Use `.test.ts` (sem `x`) para o que não renderiza JSX — hook, util, se
 O mesmo setup roda um `beforeEach` que remove `LANGUAGE_STORAGE_KEY` do `localStorage` e aguarda
 `i18n.changeLanguage("pt-BR")` direto na instância: todo teste começa sem escolha salva e na
 língua de referência, independente do navegador do `jsdom` (que reporta `en-US`). O literal é
-`"pt-BR"`, não `FALLBACK_LANGUAGE`, e o reset não grava nada por causa do `caches: []`. Teste de
+`"pt-BR"`, não `FALLBACK_LANGUAGE`, e o reset não grava nada. Teste de rota abre o caminho com
+prefixo (`createMemoryRouter(routes, { initialEntries: ["/pt-BR"] })`), porque `/` só redireciona e o
+`jsdom` reporta `en-US`. Teste de
 tela afirma o texto em português, nunca a chave (o i18next devolve a própria chave quando falta
 tradução), não mocka `react-i18next` e troca de idioma com `setLanguage` dentro do `it`. Para
-simular uma nova carga de página (detecção do zero e persistência do `?lng=`), prepare URL,
-`navigator` e `localStorage`, rode `vi.resetModules()` e faça `await import("@/i18n/i18n")`,
-como em `src/i18n/test/i18n.test.ts`; restaure URL e stubs no fim.
+simular uma nova carga de página (idioma inicial lido do caminho), prepare a URL, rode
+`vi.resetModules()` e faça `await import("@/i18n/i18n")`, como em
+`src/i18n/test/i18n.test.ts`; restaure URL e stubs no fim, e não combine isso com `routes` já
+importado (a instância nova vira a global do `react-i18next`).
 Teste de componente ou hook que lê a store usa `renderWithStore(ui, { preloadedState })` de
 `src/testUtils/renderWithStore.tsx`, que cria `createStore(preloadedState)` por chamada (estado e
 cache do RTK Query isolados) e devolve o `render` junto da `store`. O teste de store injeta o
@@ -174,26 +181,28 @@ para editores compatíveis, coerente com o `.prettierrc`.
   página, que sobem sozinhas para o `<head>`, sem biblioteca nem wrapper, e com valor vindo de chave:
   `<title>{t("meta.title")}</title>` e
   `<meta name="description" content={t("meta.description")} />`.
-- **`src/i18n/`** — configuração de idioma (i18next, react-i18next e
-  i18next-browser-languagedetector), um símbolo público por arquivo com `export default`.
-  `i18n.ts` cria a instância com `createInstance()` (import nomeado de `i18next`; `i18next.use(...)`
-  no export default cai em `import/no-named-as-default-member`), registra `LanguageDetector` e
-  `initReactI18next` — que torna a instância global, sem provider nem wrapper de render — e inicia
-  de forma síncrona (`initAsync: false`) com `resources` (`resources.ts`), `defaultNS: "common"`,
-  `supportedLngs: SUPPORTED_LANGUAGES` (`supportedLanguages.ts`) e
-  `fallbackLng: FALLBACK_LANGUAGE` (`fallbackLanguage.ts`, valor `en`). Não existe constante de
-  "idioma padrão" nem de língua de referência: `pt-BR` é referência pelo tipo de `resources.ts`,
-  não pelo runtime. A detecção segue `["querystring", "localStorage", "navigator"]`, com
-  `?lng=` e `LANGUAGE_STORAGE_KEY` (`languageStorageKey.ts`, único lugar onde o valor da chave
-  aparece), e `convertDetectedLanguage` passa todo código por `resolveSupportedLanguage`
-  (`resolveSupportedLanguage.ts`: código exato, ou `es-*` → `es`, `en-*` → `en`, `pt`/`pt-*` →
-  `pt-BR`, ou `undefined`). A ordem efetiva é escolha salva (por `setLanguage` ou por um `?lng=`
-  válido) → idioma do navegador → `en`; navegador em `fr` abre em `en`.
-    - **`caches: []`: o detector nunca grava**, para que quem não escolheu idioma acompanhe o
-      idioma do navegador a cada carga.
-    - **`saveLanguage` é o único código que escreve em `LANGUAGE_STORAGE_KEY`**, interno à pasta,
-      chamado só por `setLanguage` e por `i18n.ts` logo depois do `init()`, quando a URL tem `?lng=`
-      suportado. `i18n.ts` não importa `setLanguage`, para não criar ciclo.
+- **`src/i18n/`** — configuração de idioma (i18next e react-i18next), um símbolo público por
+  arquivo com `export default`. `i18n.ts` cria a instância com `createInstance()` (import nomeado
+  de `i18next`; `i18next.use(...)` no export default cai em `import/no-named-as-default-member`),
+  registra `initReactI18next` — que torna a instância global, sem provider nem wrapper de render —
+  e inicia de forma síncrona (`initAsync: false`) com `resources` (`resources.ts`),
+  `defaultNS: "common"`, `supportedLngs: SUPPORTED_LANGUAGES` (`supportedLanguages.ts`),
+  `fallbackLng: FALLBACK_LANGUAGE` (`fallbackLanguage.ts`, valor `en`) e
+  `lng: getLanguageFromPath(removeBasePath(window.location.pathname))` (indefinido, sem prefixo
+  válido, vale o `fallbackLng`). Não há detector do i18next, nem `?lng=`: o caminho é a única fonte
+  do idioma e o `loader` de cada rota-pai o troca na navegação. Não existe constante de "idioma
+  padrão" nem de língua de referência: `pt-BR` é referência pelo tipo de `resources.ts`, não pelo
+  runtime.
+    - **Funções de caminho** (puras, sobre o `pathname` relativo ao `basename`):
+      `getLanguageFromPath` (primeiro segmento exatamente igual a um idioma suportado, senão
+      `undefined`), `stripLanguagePrefix`, `addLanguagePrefix` (`/` vira `/en`),
+      `getEquivalentPath(pathname, language)` (URL equivalente em outro idioma; query e hash o
+      chamador anexa) e `getPreferredLanguage()` (escolha salva → `navigator` → `en`, **só usada
+      na raiz `/`**, o único leitor de `navigator`). `resolveSupportedLanguage.ts`: código exato,
+      ou `es-*` → `es`, `en-*` → `en`, `pt`/`pt-*` → `pt-BR`, ou `undefined`.
+    - **`saveLanguage` é o único código que escreve em `LANGUAGE_STORAGE_KEY`**
+      (`languageStorageKey.ts`, único lugar onde o valor da chave aparece), interno à pasta e
+      chamado só por `setLanguage`. Visitar `/en` por link não grava escolha.
     - **API de idioma:** `getLanguage(): SupportedLanguage` (idioma ativo, função comum, usável fora
       de React) e `setLanguage(language): Promise<void>` (troca e salva a escolha). Componente e
       página usam só essas duas, nunca `saveLanguage` nem `localStorage` direto.
@@ -217,16 +226,26 @@ para editores compatíveis, coerente com o `.prettierrc`.
   Namespace novo entra nos três idiomas, em `src/i18n/resources.ts` e no `ns` de
   `src/i18n/i18n.ts`.
 - **`src/routers/`** — ponto único de registro de rotas. `routes.tsx` tem `routes`
-  (`RouteObject[]`, export default, com `MainLayout` como rota-pai e as páginas como filhas, os
-  paths vindos de `ROUTES` em `paths.ts`) e `Router.tsx` tem o `Router` (export default), que cria
-  o data router com `createBrowserRouter(routes)` e renderiza um `RouterProvider`. A rota `*` cai
-  em `NotFound` e fica por último. Toda página nova entra em `routes.tsx`. O teste renderiza
-  `routes` com `createMemoryRouter(routes, { initialEntries })` e `RouterProvider`.
+  (`RouteObject[]`, export default): as páginas ficam em `pageRoutes`, definidas uma vez (Início
+  como `index`, `*` de não encontrada, caminhos relativos), e uma função local gera **três
+  rotas-pai idênticas** (`pt-BR`, `en`, `es`) com `MainLayout`, `errorElement`,
+  `loader: createLanguageLoader(idioma)` (chama `i18n.changeLanguage`, não `setLanguage`) e as
+  mesmas `pageRoutes`. Depois delas, a rota `/` (`redirectRootLoader`: escolha salva → navegador →
+  `en`, preservando query e hash) e a rota `*` sem prefixo, que renderiza a não encontrada em
+  inglês. Os paths vêm de `ROUTES` em `paths.ts` (`root` é a raiz que redireciona, `home` a
+  Início do idioma). `Router.tsx` tem o `Router` (export default), que cria o data router com
+  `createBrowserRouter(routes, { basename: publicUrl("/") })` e renderiza um `RouterProvider`.
+  Toda página nova entra em `pageRoutes`. O teste renderiza `routes` com
+  `createMemoryRouter(routes, { initialEntries })` e `RouterProvider`.
   As rotas-filhas de `MainLayout` são `lazy` e o único `<Suspense>` fica em volta do `<Outlet />`
   de `src/layouts/Main.layout.tsx`: página nova não precisa (nem deve) ter o próprio `<Suspense>`.
-  Navegação interna usa `<Link to="...">`/`useNavigate` do `react-router-dom` com o path de
-  `ROUTES`, nunca `<a href="...">`: âncora crua força reload completo da página e descarta o estado
-  da aplicação.
+  Navegação interna usa `<Link to="...">`/`useNavigate` do `react-router-dom`, nunca
+  `<a href="...">` (âncora crua força reload completo e descarta o estado), e o caminho é montado
+  por `buildPath(path, language, params?)` ou, em componente, por `useLocalizedPath()` de
+  `src/hooks/`, a partir de `ROUTES`: nunca se escreve caminho com prefixo à mão nem se usa
+  `ROUTES.home` cru em `<Link>`. O `index.html` tem um script inline que faz na raiz o mesmo
+  redirecionamento (a chave e o mapa de idiomas estão duplicados nele; `rootRedirect.test.ts`
+  compara com `getPreferredLanguage`).
 - **`src/store/`** — estado global: **Redux Toolkit + react-redux** para estado de cliente e
   **RTK Query** (`@reduxjs/toolkit/query/react`, sem dependência extra) para estado de servidor.
   Um símbolo público por arquivo, `export default` no final:

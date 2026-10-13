@@ -49,7 +49,7 @@ toda tarefa:
 - **react-router-dom** — roteamento client-side com data router e páginas `lazy`.
 - **Redux Toolkit**, **react-redux** e **RTK Query** — estado global e, quando o backend existir,
   estado de servidor (R1).
-- **i18next**, **react-i18next** e **i18next-browser-languagedetector** — internacionalização.
+- **i18next** e **react-i18next** — internacionalização.
 - **CSS Modules** — estilo com escopo por arquivo, lendo os tokens de `src/styles/global.css`.
 - **Vitest** e **Testing Library** — testes em ambiente `jsdom`, com cobertura por
   `@vitest/coverage-v8`.
@@ -172,11 +172,13 @@ Para adicionar uma chave, escreva-a primeiro em `src/locales/pt-BR/<namespace>.j
 `en` e `es`. Para adicionar um namespace, crie o JSON nos três idiomas, registre-o em
 `src/i18n/resources.ts` e inclua o nome no `ns` de `src/i18n/i18n.ts`.
 
-O idioma ativo segue esta ordem: escolha salva, idioma do navegador e, por último, `en` (fallback).
-A escolha é salva no `localStorage` sob `LANGUAGE_STORAGE_KEY = "portfolio-frontend:language"`
-(`src/i18n/languageStorageKey.ts`) quando o código chama `setLanguage` ou quando a URL traz um
-`?lng=` suportado (`?lng=es`, por exemplo), que vence e substitui uma escolha anterior. O idioma do
-navegador nunca é gravado. `<html lang>` acompanha o idioma ativo.
+O idioma ativo é o do primeiro segmento do caminho: `/pt-BR`, `/en` ou `/es`. Prefixo
+desconhecido ou ausente (`/fr`, `/pt`, `/projects`) cai na página não encontrada, em inglês, e `?lng=`
+não tem efeito. A raiz `/` só redireciona, nesta ordem: escolha salva, idioma do navegador e, por
+último, `/en` (fallback). A escolha é salva no `localStorage` sob
+`LANGUAGE_STORAGE_KEY = "portfolio-frontend:language"` (`src/i18n/languageStorageKey.ts`) quando o
+código chama `setLanguage`; o idioma do navegador nunca é gravado. `<html lang>` acompanha o idioma
+ativo. Link interno usa `useLocalizedPath()`, que mantém o prefixo do idioma.
 
 ## Design system
 
