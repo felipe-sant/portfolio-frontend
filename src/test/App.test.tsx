@@ -8,7 +8,18 @@ afterEach(() => {
 })
 
 describe("App", () => {
-    it("renderiza a página inicial na rota raiz", async () => {
+    it("redireciona a raiz para o idioma do navegador", async () => {
+        render(<App />)
+
+        expect(
+            await screen.findByRole("heading", { name: "Full stack developer in TypeScript" })
+        ).toBeInTheDocument()
+        expect(window.location.pathname).toBe("/en")
+    })
+
+    it("renderiza a página inicial na rota do idioma", async () => {
+        window.history.pushState({}, "", "/pt-BR")
+
         render(<App />)
 
         expect(
@@ -19,6 +30,7 @@ describe("App", () => {
     it("renderiza dentro do Provider da store sem avisos no console", async () => {
         const errorSpy = vi.spyOn(console, "error").mockImplementation(() => undefined)
         const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => undefined)
+        window.history.pushState({}, "", "/pt-BR")
 
         render(<App />)
 
@@ -30,6 +42,8 @@ describe("App", () => {
     })
 
     it("define título e meta description da página no head", async () => {
+        window.history.pushState({}, "", "/pt-BR")
+
         render(<App />)
 
         expect(
@@ -42,7 +56,7 @@ describe("App", () => {
     })
 
     it("usa o título e a meta description de NotFound.page numa rota desconhecida", async () => {
-        window.history.pushState({}, "", "/rota-que-nao-existe")
+        window.history.pushState({}, "", "/pt-BR/rota-que-nao-existe")
 
         render(<App />)
 
