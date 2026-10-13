@@ -23,7 +23,7 @@ describe("NotFoundPage", () => {
 
         expect(screen.getByRole("link", { name: "Voltar para o início" })).toHaveAttribute(
             "href",
-            "/"
+            "/pt-BR"
         )
     })
 
