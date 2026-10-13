@@ -54,4 +54,4 @@ Os três segredos do deploy ficam em GitHub Secrets do repositório (Settings > 
 | `VERCEL_ORG_ID`     | Team ID, em Settings do time na Vercel                     |
 | `VERCEL_PROJECT_ID` | Project ID, em Settings > General do projeto `felipe-sant` |
 
-Os GitHub Environments `production` (restrito à branch `main`) e `staging` (restrito à branch `staging`) entregam as variáveis a cada job do `deploy.yml`. A integração Git da Vercel fica desconectada: quem publica é o GitHub Actions.
+Os GitHub Environments `production` e `staging` entregam as variáveis a cada job do `deploy.yml`. Em `workflow_run`, o GitHub avalia a regra de branches do Environment contra a branch padrão (`staging`), não contra a do push: a regra de ambos precisa permitir `staging` (o `if` de cada job já garante que `production` só publica o CI da `main`). A integração Git da Vercel fica desconectada: quem publica é o GitHub Actions.
