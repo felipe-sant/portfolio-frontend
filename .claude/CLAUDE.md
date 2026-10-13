@@ -134,6 +134,12 @@ próprio endpoint com `api.injectEndpoints`, stuba o `fetch` com `vi.stubGlobal`
 `vi.resetModules()` e import dinâmico para a constante ser relida; o endpoint injetado persiste
 enquanto o módulo vive, então o nome é único por arquivo (ver `src/store/test/api.test.ts` e
 `src/testUtils/test/renderWithStore.test.tsx`).
+Todo teste de página, layout e componente tem ao menos um `it` que chama
+`expectNoAxeViolations(container)` de `src/testUtils/expectNoAxeViolations.ts`, com o `container`
+devolvido pelo `render` (ou por `renderWithStore`): roda o `axe-core` no contêiner e rejeita com
+`id` e alvo de cada violação. É função comum, sem `expect.extend` (`vitest-axe` e `jest-axe` não
+entram). A regra `color-contrast` fica desligada porque o `jsdom` não calcula cor; o contraste é
+verificado no navegador real (#55). Teste de rota (`App.test.tsx`, `Router.test.tsx`) não chama.
 Cada formato de teste tem seu jeito: página renderizada direto, árvore de rotas em
 `createMemoryRouter` (para verificar a rota `*`, por exemplo), layout com `<Outlet />` preenchido
 por rota-filha, módulo com `fetch` stubado via `vi.stubGlobal`, componente com interação
