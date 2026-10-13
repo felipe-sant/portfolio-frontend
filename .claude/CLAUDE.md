@@ -318,6 +318,15 @@ para editores compatíveis, coerente com o `.prettierrc`.
   A tipagem dos módulos vem de `src/types/declarations.d.ts` (`{ [key: string]: string }`): toda
   classe usada como `css.<algo>` precisa existir no módulo importado, porque uma classe inexistente
   vira `undefined` em runtime, sem erro de compilação.
+- **Tema (claro/escuro)** — `[data-theme="dark"]` em `global.css` (o claro é `:root`), com
+  `color-scheme`. `useTheme()` de `src/hooks/useTheme.ts` (`{ theme, setTheme, toggleTheme }`) é
+  chamado em `App.tsx` e é a única via de escrita da escolha (`saveTheme`, chave
+  `portfolio-frontend:theme` em `themeStorageKey.ts`); leitura, sistema e aplicação ficam em
+  `src/utils/` (`readStoredTheme`, `getSystemTheme`, `applyTheme`). Um segundo script inline do
+  `index.html` aplica `data-theme` e `theme-color` antes da pintura (chave e cores duplicadas;
+  `themeScript.test.ts` compara com os utilitários). `?tema=` não existe. Foco é global
+  (`:focus-visible` com `--focus-ring`; faixa escura usa `data-surface="band"`), e `a` em
+  `global.css` é sublinhado: componente que se apresenta como botão zera no próprio módulo.
 - **Alias de import `@/`** — `@/*` resolve para `src/*`. Configurado em dois lugares que precisam
   continuar concordando: `paths` no `tsconfig.app.json` (para o `tsc` e o editor) e `resolve.alias` no
   `vite.config.ts` (para o dev server e o build). Mexer em um sem o outro deixa o `tsc -b`
