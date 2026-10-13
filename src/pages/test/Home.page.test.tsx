@@ -2,12 +2,19 @@ import { describe, expect, it } from "vitest"
 import { act, render, screen } from "@testing-library/react"
 import setLanguage from "@/i18n/setLanguage"
 import HomePage from "@/pages/Home.page"
+import expectNoAxeViolations from "@/testUtils/expectNoAxeViolations"
 
 function renderHomePage() {
     return render(<HomePage />)
 }
 
 describe("HomePage", () => {
+    it("não tem violações de acessibilidade", async () => {
+        const { container } = renderHomePage()
+
+        await expectNoAxeViolations(container)
+    })
+
     it("renderiza o título principal", () => {
         renderHomePage()
 
