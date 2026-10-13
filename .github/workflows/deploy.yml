@@ -1,0 +1,88 @@
+name: Deploy
+
+on:
+    workflow_run:
+        workflows: [CI]
+        types: [completed]
+        branches: [main, staging]
+
+permissions:
+    contents: read
+    actions: read
+
+concurrency:
+    group: deploy-${{ github.event.workflow_run.head_branch }}
+    cancel-in-progress: false
+
+jobs:
+    production:
+        name: Production
+        if: github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push' && github.event.workflow_run.head_branch == 'main'
+        runs-on: ubuntu-latest
+        environment: production
+        env:
+            VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+            VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+            VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v7
+              with:
+                  ref: ${{ github.event.workflow_run.head_sha }}
+            - name: Setup Node
+              uses: actions/setup-node@v7
+              with:
+                  node-version-file: ".nvmrc"
+                  cache: npm
+                  cache-dependency-path: package-lock.json
+            - name: Install dependencies
+              run: npm ci
+            - name: Pull Vercel environment
+              run: npx vercel@63.1.2 pull --yes --environment=production
+            - name: Build
+              env:
+                  VITE_API_URL: ${{ vars.VITE_API_URL }}
+              run: npx vercel@63.1.2 build --prod
+            - name: Deploy
+              run: npx vercel@63.1.2 deploy --prebuilt --prod
+
+    staging:
+        name: Staging
+        if: github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push' && github.event.workflow_run.head_branch == 'staging'
+        runs-on: ubuntu-latest
+        environment: staging
+        env:
+            VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+            VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+            VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+            STAGING_ALIAS: ${{ vars.STAGING_ALIAS }}
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v7
+              with:
+                  ref: ${{ github.event.workflow_run.head_sha }}
+            - name: Setup Node
+              uses: actions/setup-node@v7
+              with:
+                  node-version-file: ".nvmrc"
+                  cache: npm
+                  cache-dependency-path: package-lock.json
+            - name: Install dependencies
+              run: npm ci
+            - name: Block indexing
+              run: |
+                  jq '. + {headers: [{source: "/(.*)", headers: [{key: "X-Robots-Tag", value: "noindex"}]}]}' vercel.json > vercel.staging.json
+                  mv vercel.staging.json vercel.json
+            - name: Pull Vercel environment
+              run: npx vercel@63.1.2 pull --yes --environment=preview
+            - name: Build
+              env:
+                  VITE_API_URL: ${{ vars.VITE_API_URL }}
+              run: npx vercel@63.1.2 build
+            - name: Deploy
+              id: deploy
+              run: echo "url=$(npx vercel@63.1.2 deploy --prebuilt)" >> "$GITHUB_OUTPUT"
+            - name: Set alias
+              env:
+                  DEPLOYMENT_URL: ${{ steps.deploy.outputs.url }}
+              run: npx vercel@63.1.2 alias set "$DEPLOYMENT_URL" "$STAGING_ALIAS"
