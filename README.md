@@ -49,7 +49,7 @@ toda tarefa:
 - **react-router-dom** — roteamento client-side com data router e páginas `lazy`.
 - **Redux Toolkit**, **react-redux** e **RTK Query** — estado global e, quando o backend existir,
   estado de servidor (R1).
-- **i18next**, **react-i18next** e **i18next-browser-languagedetector** — internacionalização.
+- **i18next** e **react-i18next** — internacionalização.
 - **CSS Modules** — estilo com escopo por arquivo, lendo os tokens de `src/styles/global.css`.
 - **Vitest** e **Testing Library** — testes em ambiente `jsdom`, com cobertura por
   `@vitest/coverage-v8`.
@@ -91,6 +91,16 @@ variáveis com prefixo `VITE_` chegam ao código do cliente; ver
 | `npm run lint:fix`  | O mesmo lint, aplicando as correções automáticas possíveis                         |
 | `npm run format`    | `prettier --write` em `**/*.{ts,tsx,css,json,md,yml,html}`, conforme `.prettierrc` |
 
+Comandos do conteúdo (detalhes em [Dados do conteúdo](#dados-do-conteúdo)):
+
+| Comando                                            | O que faz                                                                                     |
+| -------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| `npm run content:id`                               | Imprime um UUID v7 novo; `npm run content:id -- 5` imprime cinco                              |
+| `npm run content:check`                            | Valida `public/content/` e `public/images/` contra o contrato e aponta arquivo, campo e regra |
+| `npm run content:template`                         | Regera `content/template/pt-BR/` a partir dos tipos (só quem muda o contrato precisa)         |
+| `npm run content:placeholders -- profile`          | Gera a foto placeholder do perfil, sem sobrescrever arquivo existente (`--force` sobrescreve) |
+| `npm run content:placeholders -- project <id> [n]` | Gera de 1 a 5 imagens placeholder do projeto, nos caminhos finais                             |
+
 ## Estrutura de `src/` e convenções
 
 | Pasta        | O que guarda                                                                          |
@@ -98,13 +108,13 @@ variáveis com prefixo `VITE_` chegam ao código do cliente; ver
 | `pages/`     | Telas ligadas a uma rota (`<Nome>.page.tsx`); lógica de página em `pages/hooks/`      |
 | `layouts/`   | `MainLayout`, com header, footer e o único `<Suspense>` em volta do `<Outlet />`      |
 | `routers/`   | `paths.ts` (`ROUTES`), `routes.tsx` e `Router.tsx` (data router)                      |
-| `store/`     | Store do Redux Toolkit e `api.ts` do RTK Query, sem slice nem endpoint por enquanto   |
-| `services/`  | Cliente HTTP (`get`, `post`) para uso fora do RTK Query                               |
+| `store/`     | Store do Redux Toolkit, `api.ts` do RTK Query e os endpoints em `store/api/`          |
+| `services/`  | Cliente HTTP (`http/`) e a camada de dados local da v1 (`content/`)                   |
 | `i18n/`      | Configuração do i18next e a API de idioma (`getLanguage`, `setLanguage`)              |
 | `locales/`   | Traduções: `<idioma>/<namespace>.json`                                                |
 | `styles/`    | `global.css` (tokens e reset) e CSS Modules em `styles/pages/` e `styles/components/` |
 | `types/`     | Tipos compartilhados, um por arquivo (`<dominio>/<NomeDoTipo>.types.ts`), e `*.d.ts`  |
-| `testUtils/` | Utilitários de teste, como `renderWithStore`                                          |
+| `testUtils/` | Utilitários de teste, como `renderWithStore`, `stubContentFetch` e fixtures           |
 
 Pastas como `components/` e `hooks/` nascem no primeiro uso. Em resumo: identificadores em inglês,
 import interno pelo alias `@/` (nunca `../`), import nomeado, export no final do arquivo com um
@@ -112,6 +122,44 @@ símbolo por arquivo (`export default`), texto de UI sempre por chave de traduç
 comentários. As regras completas, com o que o oxlint verifica sozinho e o padrão de branches,
 commits e PRs, estão em [`.claude/CLAUDE.md`](.claude/CLAUDE.md). A visão de arquitetura está em
 [`docs/architecture/frontend.md`](docs/architecture/frontend.md).
+
+## Dados do conteúdo
+
+Na v1 não há backend (R1). Os dados vêm de arquivos locais que uma camada de dados responde como a
+API responderia, com os mesmos parâmetros, respostas e erros de
+[`docs/architecture/api-contract.md`](docs/architecture/api-contract.md):
+
+| Onde                                          | O que guarda                                                                             |
+| --------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| `public/content/<idioma>/`                    | `profile.json`, `timeline.json` e `projects.json` de `pt-BR`, `en` e `es`                |
+| `public/content/<idioma>/projects/<id>/docs/` | Documentos traduzidos do projeto (`README.md`, `SETUP.md` ...)                           |
+| `public/content/shared/projects/<id>/docs/`   | Documentos neutros do projeto (`LICENSE`), um arquivo só para os três idiomas            |
+| `public/images/`                              | Imagens dos projetos (`projects/<id>/<n>-large.webp` e `-small.webp`) e a foto do perfil |
+| `content/template/`                           | Modelo em branco do conteúdo, com README de uso (não é publicado)                        |
+| `src/services/content/`                       | A camada local: leitura dos arquivos, busca, ordenação, trajetória e validação           |
+| `src/store/api/`                              | Endpoints do RTK Query (`profile.api.ts`, `timeline.api.ts`, `projects.api.ts`)          |
+
+Página e componente nunca leem esses arquivos: o acesso é pelos endpoints, com `lang` no argumento
+(`projectsApi.useGetProjectsQuery({ lang, sort: "recent" })`). Os arquivos de `public/` são
+pedidos com `import.meta.env.BASE_URL` (`src/utils/publicUrl.ts`), então funcionam na
+raiz (`npm run dev`) e no prefixo do GitHub Pages.
+
+O conteúdo é o real do portfólio, escrito em `pt-BR` (#58). `en` e `es` ainda repetem o `pt-BR`,
+com só os títulos das seções do `README.md` de cada projeto no idioma, até a tradução (#59). Para
+alterar ou acrescentar conteúdo, edite os arquivos de `public/content/pt-BR/` (o modelo de
+`content/template/pt-BR/` e o `content/template/README.md` explicam o passo a passo), gere os ids
+com `npm run content:id` e rode `npm run content:check`: o teste de conteúdo falha com o arquivo, o
+campo e a regra de qualquer desvio do contrato, e o CI roda a suíte inteira quando `public/content/`,
+`public/images/` ou `content/` mudam.
+
+As imagens ficam em `public/images/` já em WebP, em duas variantes (`large` e `small`). Para trocar
+uma imagem, coloque o arquivo por cima com o mesmo nome, em WebP, na mesma proporção (16:9 nas
+imagens de projeto, 1:1 na foto) e confira se `width` e `height` do JSON são os do arquivo novo; o
+`npm run content:check` acusa qualquer diferença.
+
+**Trocar pela API (#43):** em cada arquivo de `src/store/api/`, o `queryFn` vira `query` com o mesmo
+argumento e o mesmo tipo de resposta; depois remova `src/services/content/`, defina `VITE_API_URL`
+e mantenha as páginas como estão.
 
 ## Internacionalização
 
@@ -124,11 +172,13 @@ Para adicionar uma chave, escreva-a primeiro em `src/locales/pt-BR/<namespace>.j
 `en` e `es`. Para adicionar um namespace, crie o JSON nos três idiomas, registre-o em
 `src/i18n/resources.ts` e inclua o nome no `ns` de `src/i18n/i18n.ts`.
 
-O idioma ativo segue esta ordem: escolha salva, idioma do navegador e, por último, `en` (fallback).
-A escolha é salva no `localStorage` sob `LANGUAGE_STORAGE_KEY = "portfolio-frontend:language"`
-(`src/i18n/languageStorageKey.ts`) quando o código chama `setLanguage` ou quando a URL traz um
-`?lng=` suportado (`?lng=es`, por exemplo), que vence e substitui uma escolha anterior. O idioma do
-navegador nunca é gravado. `<html lang>` acompanha o idioma ativo.
+O idioma ativo é o do primeiro segmento do caminho: `/pt-BR`, `/en` ou `/es`. Prefixo
+desconhecido ou ausente (`/fr`, `/pt`, `/projects`) cai na página não encontrada, em inglês, e `?lng=`
+não tem efeito. A raiz `/` só redireciona, nesta ordem: escolha salva, idioma do navegador e, por
+último, `/en` (fallback). A escolha é salva no `localStorage` sob
+`LANGUAGE_STORAGE_KEY = "portfolio-frontend:language"` (`src/i18n/languageStorageKey.ts`) quando o
+código chama `setLanguage`; o idioma do navegador nunca é gravado. `<html lang>` acompanha o idioma
+ativo. Link interno usa `useLocalizedPath()`, que mantém o prefixo do idioma.
 
 ## Design system
 
@@ -164,13 +214,19 @@ de versão) e falha se statements, branches, functions ou lines ficarem abaixo d
 
 ## CI e git hooks
 
-`.github/workflows/ci.yml` roda em todo push para `main` e em todo Pull Request, com o Node do
-`.nvmrc` e três jobs: `build` (`npm run build`), `lint` (`npm run lint`) e `test`. O `test` roda
-`npm run test:cov` em push para `main`, em PR que mira `main` ou quando o diff altera arquivo que
+`.github/workflows/ci.yml` roda em todo push para `main` e `staging` e em todo Pull Request, com o
+Node do `.nvmrc` e três jobs: `build` (`npm run build`), `lint` (`npm run lint`) e `test`. O `test`
+roda `npm run test:cov` em push, em PR que mira `main` ou quando o diff altera arquivo que
 afeta a suíte inteira (`package.json`, `package-lock.json`, `vite.config.ts`, `tsconfig*.json`,
-`src/setupTests.ts`), publicando `coverage/` como artifact; nos demais PRs roda só os testes
+`src/setupTests.ts`, `public/content/`, `public/images/`, `content/`), publicando `coverage/` como
+artifact; nos demais PRs roda só os testes
 afetados pelo diff. O `.github/dependabot.yml` atualiza as dependências de `npm` e
 `github-actions` uma vez por mês.
+
+`.github/workflows/deploy.yml` publica na Vercel depois que o CI de um push termina verde: a
+`staging` vai para o ambiente de testes (beta) e a `main` para produção. CI falhando, cancelado ou
+vindo de PR não publica. O fluxo `PR -> staging -> main`, os domínios, as variáveis e os segredos
+estão em [`docs/setup/environments.md`](docs/setup/environments.md).
 
 `npm install` configura o Husky pelo script `prepare`. O hook de `pre-commit` (`.husky/pre-commit`)
 roda `npx lint-staged`, que, conforme `.lintstagedrc.json`, aplica `oxlint --fix` e

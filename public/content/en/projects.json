@@ -1,0 +1,481 @@
+{
+    "items": [
+        {
+            "id": "01a13188-a1da-7d4b-901c-e7bcc81d497b",
+            "title": "Maps",
+            "summary": "Simulador de rota de voo entre dois pontos do Brasil, com a trajetória real pela curvatura da Terra e dados geográficos da API do IBGE.",
+            "date": "2025-12",
+            "types": ["web", "api"],
+            "category": "academic",
+            "featured": true,
+            "cardTechnologies": ["React", "Express", "Leaflet"],
+            "role": "Full stack",
+            "duration": "13 meses",
+            "team": "Sozinho",
+            "status": "inDevelopment",
+            "stack": [
+                {
+                    "category": "frontend",
+                    "items": [
+                        {
+                            "name": "React"
+                        },
+                        {
+                            "name": "TypeScript",
+                            "isProgrammingLanguage": true
+                        },
+                        {
+                            "name": "Leaflet"
+                        }
+                    ]
+                },
+                {
+                    "category": "backend",
+                    "items": [
+                        {
+                            "name": "Node.js"
+                        },
+                        {
+                            "name": "Express"
+                        },
+                        {
+                            "name": "TypeScript",
+                            "isProgrammingLanguage": true
+                        }
+                    ]
+                },
+                {
+                    "category": "tooling",
+                    "items": [
+                        {
+                            "name": "Git"
+                        },
+                        {
+                            "name": "Jest"
+                        }
+                    ]
+                }
+            ],
+            "repositoryUrl": "https://github.com/felipe-sant/maps",
+            "images": [
+                {
+                    "large": {
+                        "src": "images/projects/01a13188-a1da-7d4b-901c-e7bcc81d497b/1-large.webp",
+                        "width": 1600,
+                        "height": 900
+                    },
+                    "small": {
+                        "src": "images/projects/01a13188-a1da-7d4b-901c-e7bcc81d497b/1-small.webp",
+                        "width": 640,
+                        "height": 360
+                    },
+                    "alt": "Mapa do Brasil com campos para inserir coordenadas inicial e final e botão para iniciar a simulação de voo",
+                    "caption": "Tela inicial"
+                }
+            ],
+            "documents": [
+                {
+                    "id": "01a13188-a1db-70f1-a77a-36fc1e8c4ef8",
+                    "name": "README.md",
+                    "format": "markdown",
+                    "translated": true,
+                    "updatedAt": "2025-12-19"
+                },
+                {
+                    "id": "01a131de-4d37-7801-8309-5c6678a5e5bb",
+                    "name": "SETUP.md",
+                    "format": "markdown",
+                    "translated": true,
+                    "updatedAt": "2025-02-19"
+                }
+            ],
+            "related": [],
+            "updatedAt": "2025-12-19"
+        },
+        {
+            "id": "01a131df-93ee-72f3-8c7a-f67501e47a7a",
+            "title": "MNIST Classifier",
+            "summary": "Aplicação que reconhece dígitos manuscritos desenhados pelo usuário, usando uma rede neural treinada com o dataset MNIST (Keras/TensorFlow).",
+            "date": "2025-07",
+            "types": ["web", "api", "data"],
+            "category": "personal",
+            "featured": true,
+            "cardTechnologies": ["React", "TensorFlow", "FastAPI"],
+            "role": "Full stack + IA",
+            "duration": "2 semanas",
+            "team": "Sozinho",
+            "status": "completed",
+            "stack": [
+                {
+                    "category": "frontend",
+                    "items": [
+                        {
+                            "name": "TypeScript",
+                            "isProgrammingLanguage": true
+                        },
+                        {
+                            "name": "React"
+                        }
+                    ]
+                },
+                {
+                    "category": "backend",
+                    "items": [
+                        {
+                            "name": "TypeScript",
+                            "isProgrammingLanguage": true
+                        },
+                        {
+                            "name": "Node.js"
+                        },
+                        {
+                            "name": "Express"
+                        },
+                        {
+                            "name": "Multer"
+                        }
+                    ]
+                },
+                {
+                    "category": "tooling",
+                    "items": [
+                        {
+                            "name": "Python",
+                            "isProgrammingLanguage": true
+                        },
+                        {
+                            "name": "TensorFlow"
+                        },
+                        {
+                            "name": "FastAPI"
+                        }
+                    ]
+                }
+            ],
+            "repositoryUrl": "https://github.com/felipe-sant/mnist-classifier",
+            "images": [
+                {
+                    "large": {
+                        "src": "images/projects/01a131df-93ee-72f3-8c7a-f67501e47a7a/1-large.webp",
+                        "width": 1600,
+                        "height": 900
+                    },
+                    "small": {
+                        "src": "images/projects/01a131df-93ee-72f3-8c7a-f67501e47a7a/1-small.webp",
+                        "width": 640,
+                        "height": 360
+                    },
+                    "alt": "Resultado da previsão da IA mostrando corretamente o número sete após o desenho",
+                    "caption": "IA acertando a previsão"
+                }
+            ],
+            "documents": [
+                {
+                    "id": "01a131df-93ef-7e0d-9b54-0e725d9f9c4d",
+                    "name": "README.md",
+                    "format": "markdown",
+                    "translated": true,
+                    "updatedAt": "2025-07-10"
+                },
+                {
+                    "id": "01a131fb-193b-7065-bea0-59df4e8fec28",
+                    "name": "ARCHITECTURE.md",
+                    "format": "markdown",
+                    "translated": true
+                },
+                {
+                    "id": "01a131fc-1e60-7eeb-9495-8dbe3349a860",
+                    "name": "SETUP.md",
+                    "format": "markdown",
+                    "translated": true
+                }
+            ],
+            "related": []
+        },
+        {
+            "id": "01a131fc-d24c-7c70-887b-0d055f57d251",
+            "title": "Pedido de Namoro Irrecusável",
+            "summary": "Site divertido de pedido de namoro onde o botão \"Não\" foge do cursor sempre que o usuário tenta clicar nele.",
+            "date": "2024-12",
+            "types": ["web"],
+            "category": "personal",
+            "featured": false,
+            "cardTechnologies": ["React", "TypeScript"],
+            "role": "Frontend",
+            "duration": "1 dia",
+            "team": "Sozinho",
+            "status": "completed",
+            "stack": [
+                {
+                    "category": "frontend",
+                    "items": [
+                        {
+                            "name": "TypeScript",
+                            "isProgrammingLanguage": true
+                        },
+                        {
+                            "name": "React"
+                        }
+                    ]
+                }
+            ],
+            "demoUrl": "https://pedido-de-namoro-irrecusavel-iota.vercel.app",
+            "repositoryUrl": "https://github.com/felipe-sant/pedido-de-namoro",
+            "images": [
+                {
+                    "large": {
+                        "src": "images/projects/01a131fc-d24c-7c70-887b-0d055f57d251/1-large.webp",
+                        "width": 1600,
+                        "height": 900
+                    },
+                    "small": {
+                        "src": "images/projects/01a131fc-d24c-7c70-887b-0d055f57d251/1-small.webp",
+                        "width": 640,
+                        "height": 360
+                    },
+                    "alt": "Tela de pedido de namoro com botão \"Não\" reposicionado após tentativa de clique",
+                    "caption": "O botão \"Não\" sempre foge"
+                }
+            ],
+            "documents": [
+                {
+                    "id": "01a131fc-d24d-7ae9-ac5b-ee3a952b39e4",
+                    "name": "README.md",
+                    "format": "markdown",
+                    "translated": true,
+                    "updatedAt": "2024-12-27"
+                }
+            ],
+            "related": []
+        },
+        {
+            "id": "01a13216-9960-7a66-8288-462bf96ec9a5",
+            "title": "Expense Control (Controle de Despesas)",
+            "summary": "Aplicação de controle de despesas pessoais com CRUD completo — criar, listar, editar e excluir — usando MongoDB.",
+            "date": "2025-06",
+            "types": ["web", "api"],
+            "category": "academic",
+            "featured": false,
+            "cardTechnologies": ["React", "Express", "MongoDB"],
+            "role": "Full stack",
+            "duration": "2 semanas",
+            "team": "Sozinho",
+            "status": "inDevelopment",
+            "stack": [
+                {
+                    "category": "frontend",
+                    "items": [
+                        {
+                            "name": "TypeScript",
+                            "isProgrammingLanguage": true
+                        },
+                        {
+                            "name": "React"
+                        }
+                    ]
+                },
+                {
+                    "category": "backend",
+                    "items": [
+                        {
+                            "name": "TypeScript",
+                            "isProgrammingLanguage": true
+                        },
+                        {
+                            "name": "Node.js"
+                        },
+                        {
+                            "name": "Express"
+                        },
+                        {
+                            "name": "MongoDB"
+                        },
+                        {
+                            "name": "Mongoose"
+                        }
+                    ]
+                }
+            ],
+            "repositoryUrl": "https://github.com/felipe-sant/controle-despesas",
+            "images": [
+                {
+                    "large": {
+                        "src": "images/projects/01a13216-9960-7a66-8288-462bf96ec9a5/1-large.webp",
+                        "width": 1600,
+                        "height": 900
+                    },
+                    "small": {
+                        "src": "images/projects/01a13216-9960-7a66-8288-462bf96ec9a5/1-small.webp",
+                        "width": 640,
+                        "height": 360
+                    },
+                    "alt": "Lista de despesas com um item cadastrado, mostrando data, descrição, valor e botões de editar e excluir",
+                    "caption": "CRUD funcionando — despesa cadastrada e listada"
+                }
+            ],
+            "documents": [
+                {
+                    "id": "01a13216-9961-79fc-b492-5563c549f098",
+                    "name": "README.md",
+                    "format": "markdown",
+                    "translated": true
+                },
+                {
+                    "id": "01a13219-e5bf-773f-99e9-c808e0b55c92",
+                    "name": "SETUP.md",
+                    "format": "markdown",
+                    "translated": true
+                }
+            ],
+            "related": [],
+            "updatedAt": "2025-06-19"
+        },
+        {
+            "id": "01a13229-0594-7b2f-a012-ecf61257f6ad",
+            "title": "Unit Converter (Conversor de Unidades)",
+            "summary": "Conversor de unidades de comprimento, peso e temperatura, com interface simples e troca rápida entre unidade de origem e destino.",
+            "date": "2024-09",
+            "types": ["web"],
+            "category": "academic",
+            "featured": false,
+            "cardTechnologies": ["React", "TypeScript"],
+            "role": "Frontend",
+            "duration": "5 dias",
+            "team": "Sozinho",
+            "status": "completed",
+            "stack": [
+                {
+                    "category": "frontend",
+                    "items": [
+                        {
+                            "name": "TypeScript",
+                            "isProgrammingLanguage": true
+                        },
+                        {
+                            "name": "React"
+                        }
+                    ]
+                }
+            ],
+            "demoUrl": "https://conversor-de-unidades-ecru.vercel.app",
+            "repositoryUrl": "https://github.com/felipe-sant/conversor-de-unidades",
+            "images": [
+                {
+                    "large": {
+                        "src": "images/projects/01a13229-0594-7b2f-a012-ecf61257f6ad/1-large.webp",
+                        "width": 1600,
+                        "height": 900
+                    },
+                    "small": {
+                        "src": "images/projects/01a13229-0594-7b2f-a012-ecf61257f6ad/1-small.webp",
+                        "width": 640,
+                        "height": 360
+                    },
+                    "alt": "Conversor de unidades mostrando 10 quilômetros convertidos para 10.000 metros",
+                    "caption": "Conversão de comprimento em ação"
+                }
+            ],
+            "documents": [
+                {
+                    "id": "01a13229-0595-7edc-911b-5722af2f1a5b",
+                    "name": "README.md",
+                    "format": "markdown",
+                    "translated": true
+                }
+            ],
+            "related": [],
+            "updatedAt": "2024-09-13"
+        },
+        {
+            "id": "01a1323d-b9bc-73c0-8bac-2e93e30ee193",
+            "title": "Player Profile Clustering",
+            "summary": "Modelo de Machine Learning (K-Means) que classifica atletas de futebol em perfis de desempenho físico a partir de métricas de sessão, servido via API com ONNX.",
+            "date": "2026-04",
+            "types": ["api", "data"],
+            "category": "personal",
+            "featured": true,
+            "cardTechnologies": ["scikit-learn", "ONNX Runtime", "Node.js"],
+            "role": "IA (modelo e treinamento)",
+            "duration": "1 semana",
+            "team": "Sozinho",
+            "status": "completed",
+            "stack": [
+                {
+                    "category": "backend",
+                    "items": [
+                        {
+                            "name": "TypeScript",
+                            "isProgrammingLanguage": true
+                        },
+                        {
+                            "name": "Node.js"
+                        },
+                        {
+                            "name": "Express"
+                        },
+                        {
+                            "name": "PostgreSQL"
+                        },
+                        {
+                            "name": "ONNX Runtime"
+                        }
+                    ]
+                },
+                {
+                    "category": "tooling",
+                    "items": [
+                        {
+                            "name": "Python",
+                            "isProgrammingLanguage": true
+                        },
+                        {
+                            "name": "scikit-learn"
+                        },
+                        {
+                            "name": "pandas"
+                        }
+                    ]
+                }
+            ],
+            "repositoryUrl": "https://github.com/felipe-sant/player-profile-clustering-ai",
+            "images": [
+                {
+                    "large": {
+                        "src": "images/projects/01a1323d-b9bc-73c0-8bac-2e93e30ee193/1-large.webp",
+                        "width": 989,
+                        "height": 556
+                    },
+                    "small": {
+                        "src": "images/projects/01a1323d-b9bc-73c0-8bac-2e93e30ee193/1-small.webp",
+                        "width": 640,
+                        "height": 360
+                    },
+                    "alt": "Gráfico de dispersão mostrando quatro clusters de desempenho de atletas separados visualmente com centroides marcados",
+                    "caption": "Visualização dos clusters por PCA"
+                }
+            ],
+            "documents": [
+                {
+                    "id": "01a1323d-b9bd-7ea9-aec7-1010c65fad4c",
+                    "name": "README.md",
+                    "format": "markdown",
+                    "translated": true
+                },
+                {
+                    "id": "01a13243-761a-7d1f-9a82-1c1a72aa8f89",
+                    "name": "ARCHITECTURE.md",
+                    "format": "markdown",
+                    "translated": true
+                },
+                {
+                    "id": "01a13243-d3c3-7292-95d0-fb0f335a167c",
+                    "name": "SETUP.md",
+                    "format": "markdown",
+                    "translated": true
+                }
+            ],
+            "related": [],
+            "updatedAt": "2026-04-19"
+        }
+    ]
+}

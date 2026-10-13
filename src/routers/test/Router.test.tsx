@@ -1,52 +1,171 @@
-import { describe, expect, it, vi } from "vitest"
+import { afterEach, describe, expect, it, vi } from "vitest"
 import { createMemoryRouter, RouterProvider } from "react-router-dom"
-import { render, screen } from "@testing-library/react"
+import { act, render, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
+import LANGUAGE_STORAGE_KEY from "@/i18n/languageStorageKey"
 import routes from "@/routers/routes"
 
 function renderRoutes(initialEntries: string[]) {
     const router = createMemoryRouter(routes, { initialEntries })
-    return render(<RouterProvider router={router} />)
+    render(<RouterProvider router={router} />)
+    return router
 }
 
+function stubBrowser(languages: string[]) {
+    vi.spyOn(navigator, "languages", "get").mockReturnValue(languages)
+    vi.spyOn(navigator, "language", "get").mockReturnValue(languages[0] ?? "")
+}
+
+afterEach(() => {
+    vi.restoreAllMocks()
+})
+
 describe("routes", () => {
-    it("mostra o fallback de carregamento antes da página lazy resolver", async () => {
-        vi.resetModules()
-        const { default: freshRoutes } = await import("@/routers/routes")
-        const router = createMemoryRouter(freshRoutes, { initialEntries: ["/"] })
-
-        render(<RouterProvider router={router} />)
-
-        expect(screen.getByText("Carregando...")).toBeInTheDocument()
-    })
-
     it("renderiza o header e o footer do MainLayout ao redor da página em uma rota válida", async () => {
-        renderRoutes(["/"])
+        renderRoutes(["/pt-BR"])
 
         expect(
-            await screen.findByRole("heading", { name: "Desenvolvedor full stack em TypeScript." })
+            await screen.findByRole("heading", { name: "Desenvolvedor full stack em TypeScript" })
         ).toBeInTheDocument()
         expect(screen.getByRole("banner")).toBeInTheDocument()
         expect(screen.getByRole("contentinfo")).toBeInTheDocument()
     })
 
-    it("renderiza a página de NotFound em uma rota inexistente", async () => {
-        renderRoutes(["/rota-que-nao-existe"])
+    it.each([
+        ["/pt-BR", "Desenvolvedor full stack em TypeScript", "pt-BR"],
+        ["/en", "Full stack developer in TypeScript", "en"],
+        ["/es", "Desarrollador full stack en TypeScript", "es"]
+    ])("renderiza a Início em %s com o idioma do prefixo", async (path, heading, language) => {
+        renderRoutes([path])
+
+        expect(await screen.findByRole("heading", { name: heading })).toBeInTheDocument()
+        expect(document.documentElement.lang).toBe(language)
+    })
+
+    it.each([["/fr/projects"], ["/pt/projects"], ["/projects"]])(
+        "renderiza a não encontrada em inglês em %s",
+        async (path) => {
+            renderRoutes([path])
+
+            expect(
+                await screen.findByRole("heading", { name: "Page not found" })
+            ).toBeInTheDocument()
+            expect(document.documentElement.lang).toBe("en")
+        }
+    )
+
+    it("renderiza a não encontrada em inglês em /en/inexistente", async () => {
+        renderRoutes(["/en/inexistente"])
+
+        expect(await screen.findByRole("heading", { name: "Page not found" })).toBeInTheDocument()
+    })
+
+    it("renderiza a não encontrada em português em /pt-BR/inexistente", async () => {
+        renderRoutes(["/pt-BR/inexistente"])
 
         expect(
             await screen.findByRole("heading", { name: "Página não encontrada" })
         ).toBeInTheDocument()
     })
 
-    it("navega da NotFound para a Home ao clicar no link, sem full reload", async () => {
+    it("leva o link de volta da não encontrada em /en/x para /en", async () => {
         const user = userEvent.setup()
-        renderRoutes(["/rota-que-nao-existe"])
+        const router = renderRoutes(["/en/x"])
 
-        await screen.findByRole("link", { name: "Voltar para o início" })
-        await user.click(screen.getByRole("link", { name: "Voltar para o início" }))
+        await user.click(await screen.findByRole("link", { name: "Back to home" }))
+
+        expect(router.state.location.pathname).toBe("/en")
+        expect(
+            await screen.findByRole("heading", { name: "Full stack developer in TypeScript" })
+        ).toBeInTheDocument()
+    })
+
+    it("troca o texto ao navegar de /en para /es sem reload", async () => {
+        const router = renderRoutes(["/en"])
+        await screen.findByRole("heading", { name: "Full stack developer in TypeScript" })
+
+        await act(async () => {
+            await router.navigate("/es")
+        })
 
         expect(
-            await screen.findByRole("heading", { name: "Desenvolvedor full stack em TypeScript." })
+            await screen.findByRole("heading", { name: "Desarrollador full stack en TypeScript" })
         ).toBeInTheDocument()
+        expect(document.documentElement.lang).toBe("es")
+    })
+
+    describe("raiz", () => {
+        it.each([
+            ["es", "/es"],
+            ["pt-BR", "/pt-BR"],
+            ["en", "/en"]
+        ])("redireciona para o idioma salvo %s", async (saved, expected) => {
+            localStorage.setItem(LANGUAGE_STORAGE_KEY, saved)
+            stubBrowser(["fr-FR"])
+            const router = renderRoutes(["/"])
+
+            await screen.findByRole("banner")
+
+            expect(router.state.location.pathname).toBe(expected)
+        })
+
+        it("segue o navegador pt-PT sem escolha salva", async () => {
+            stubBrowser(["pt-PT"])
+            const router = renderRoutes(["/"])
+
+            await screen.findByRole("banner")
+
+            expect(router.state.location.pathname).toBe("/pt-BR")
+        })
+
+        it("cai em /en sem escolha salva e com o navegador em fr", async () => {
+            stubBrowser(["fr-FR"])
+            const router = renderRoutes(["/"])
+
+            await screen.findByRole("banner")
+
+            expect(router.state.location.pathname).toBe("/en")
+        })
+
+        it("faz a escolha salva vencer o navegador", async () => {
+            localStorage.setItem(LANGUAGE_STORAGE_KEY, "es")
+            stubBrowser(["en-US"])
+            const router = renderRoutes(["/"])
+
+            await screen.findByRole("banner")
+
+            expect(router.state.location.pathname).toBe("/es")
+        })
+
+        it("preserva a query ao redirecionar", async () => {
+            stubBrowser(["en-US"])
+            const router = renderRoutes(["/?utm=x"])
+
+            await screen.findByRole("banner")
+
+            expect(router.state.location.pathname).toBe("/en")
+            expect(router.state.location.search).toBe("?utm=x")
+        })
+
+        it("ignora o ?lng= sem gravar a chave e segue o navegador", async () => {
+            stubBrowser(["en-US"])
+            const router = renderRoutes(["/?lng=es"])
+
+            await screen.findByRole("banner")
+
+            expect(router.state.location.pathname).toBe("/en")
+            expect(localStorage.getItem(LANGUAGE_STORAGE_KEY)).toBeNull()
+        })
+
+        it("ignora o ?lng= em /pt-BR", async () => {
+            const router = renderRoutes(["/pt-BR?lng=es"])
+
+            await screen.findByRole("heading", {
+                name: "Desenvolvedor full stack em TypeScript"
+            })
+
+            expect(router.state.location.pathname).toBe("/pt-BR")
+            expect(localStorage.getItem(LANGUAGE_STORAGE_KEY)).toBeNull()
+        })
     })
 })

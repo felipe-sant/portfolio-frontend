@@ -10,7 +10,6 @@
   "dependencies": {
     "@reduxjs/toolkit": "^2.13.0",
     "i18next": "^26.4.2",
-    "i18next-browser-languagedetector": "^8.2.1",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-i18next": "^17.0.15",
@@ -27,6 +26,10 @@
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
     "format": "prettier --write \"**/*.{ts,tsx,css,json,md,yml,html}\"",
+    "content:id": "tsx --tsconfig tsconfig.node.json scripts/newId.ts",
+    "content:template": "tsx --tsconfig tsconfig.node.json scripts/generateContentTemplate.ts",
+    "content:placeholders": "tsx --tsconfig tsconfig.node.json scripts/generatePlaceholderImages.ts",
+    "content:check": "vitest run src/services/content/test/content.test.ts",
     "prepare": "husky"
   },
   "devDependencies": {
@@ -34,17 +37,23 @@
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.7",
+    "@types/mdast": "^4.0.4",
     "@types/node": "^26.6.4",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.1.1",
     "@vitest/coverage-v8": "^5.0.3",
+    "axe-core": "^4.14.0",
     "husky": "^9.1.7",
     "jsdom": "^30.1.1",
     "lint-staged": "^17.6.0",
     "oxlint": "^1.86.0",
     "prettier": "^3.9.9",
+    "remark-gfm": "^4.0.1",
+    "remark-parse": "^11.0.0",
+    "tsx": "^4.23.15",
     "typescript": "^7.0.2",
+    "unified": "^11.0.5",
     "vite": "^8.3.2",
     "vitest": "^5.0.3"
   }

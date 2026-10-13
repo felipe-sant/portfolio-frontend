@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest"
 import { RouterProvider, createMemoryRouter } from "react-router-dom"
 import { render, screen } from "@testing-library/react"
 import ErrorPage from "@/pages/Error.page"
+import expectNoAxeViolations from "@/testUtils/expectNoAxeViolations"
 
 function ThrowingPage(): never {
     throw new Error("Falha proposital de teste")
@@ -21,6 +22,12 @@ function renderErrorPage(Page: () => never = ThrowingPage) {
 }
 
 describe("ErrorPage", () => {
+    it("não tem violações de acessibilidade", async () => {
+        const { container } = renderErrorPage()
+
+        await expectNoAxeViolations(container)
+    }, 15000)
+
     it("renderiza o heading genérico de erro e a mensagem da exceção lançada", () => {
         renderErrorPage()
 
@@ -39,7 +46,7 @@ describe("ErrorPage", () => {
 
         expect(screen.getByRole("link", { name: "Voltar para o início" })).toHaveAttribute(
             "href",
-            "/"
+            "/pt-BR"
         )
     })
 

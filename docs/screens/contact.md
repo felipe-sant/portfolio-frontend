@@ -1,6 +1,6 @@
 # Contato
 
-A tela Contato (`/contact`, também sob `/en/contact` e `/es/contact`, D32) é o fim da jornada de
+A tela Contato (`/pt-BR/contact`, `/en/contact` e `/es/contact`, D32) é o fim da jornada de
 quem quer falar com o autor: na v1 ela termina em copiar ou abrir o e-mail. Quem a implementa é a
 issue #38, com #32 (campo, chip, botão e spinner), #60 (rodapé de navegação e cópia de e-mail), #54 (botão
 de CV), #49 (pré-renderização) e #52 (canônica, Open Graph e JSON-LD). Este documento diz o
@@ -347,7 +347,7 @@ Copiados de [`accessibility.md`](../product/accessibility.md#checklist-por-tela)
 `A11Y-L12` (rodapé de Contato) fica na #60.
 
 - [ ] `A11Y-G01` — Um `main`, um `h1` e um `<title>` próprio e traduzido [teste]
-- [ ] `A11Y-G02` — `<html lang>` igual ao idioma da URL (`/`, `/en/`, `/es/`) [teste]
+- [ ] `A11Y-G02` — `<html lang>` igual ao idioma da URL (`/pt-BR`, `/en`, `/es`) [teste]
 - [ ] `A11Y-G03` — Nenhuma violação do axe em cada estado da tela [axe]
 - [ ] `A11Y-G04` — Nenhuma violação do axe no navegador, nos dois temas [e2e]
 - [ ] `A11Y-G05` — Ordem de foco igual à visual e foco visível em todo elemento focável [teclado]

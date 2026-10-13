@@ -938,13 +938,17 @@ origem, sem mudar telas.
 
 - **Onde ficam os dados:** os registros (JSON) e os documentos ficam em
   `public/content/<lang>/`, um conjunto por idioma, salvo os documentos neutros, guardados uma vez
-  só, e são lidos com `import.meta.env.BASE_URL` (NF-DA-03). Sugestão para os documentos (a #13
-  decide): a lista vem do próprio registro do projeto (`documents`), sem arquivo à parte, e a
-  camada local deriva dela a resposta de `GET /projects/{id}/documents`; cada documento traduzido
-  em `public/content/<lang>/projects/<id>/docs/<name>` e cada documento neutro em
-  `public/content/shared/projects/<id>/docs/<name>`. Página e componente nunca leem esses
-  arquivos: o acesso é pelos endpoints do RTK Query em `src/store/api/` (NF-DA-02), cujo
-  `queryFn` chama a camada local.
+  só, e são lidos com `import.meta.env.BASE_URL` (NF-DA-03). Cada idioma tem três arquivos,
+  `profile.json` (`Profile`), `timeline.json` (`{ items: TimelineItem[] }`, com `projectIds`) e
+  `projects.json` (`{ items: ProjectDetail[] }`, com `related` como `{ id, reason }`). A lista de
+  documentos vem do próprio registro do projeto (`documents`), sem arquivo à parte, e a camada local
+  deriva dela a resposta de `GET /projects/{id}/documents`; cada documento traduzido fica em
+  `public/content/<lang>/projects/<id>/docs/<name>` e cada documento neutro em
+  `public/content/shared/projects/<id>/docs/<name>`. As imagens ficam em `public/images/`
+  (`projects/<id>/<n>-large.webp`, `<n>-small.webp` e `profile/photo-*.webp`). O conteúdo é escrito
+  direto nos três idiomas, com o teste de conteúdo barrando divergência dos campos neutros, e os ids
+  vêm de `npm run content:id`. Página e componente nunca leem esses arquivos: o acesso é pelos
+  endpoints do RTK Query em `src/store/api/` (NF-DA-02), cujo `queryFn` chama a camada local.
 - **Forma dos registros:** cada registro guardado tem a forma da entidade de
   [`data-model.md`](data-model.md) no seu idioma (`Profile`, `TimelineItem` com `projectIds`,
   projeto na forma `ProjectDetail` com `related` como `{ id, reason }`), como o backend guardaria.
@@ -964,13 +968,10 @@ origem, sem mudar telas.
   ficam em funções puras testadas, usadas só pela camada local; a tela não filtra nem ordena. Na
   #43 essa implementação sai do frontend, e a regra passa a ser do backend, descrita neste
   documento.
-- **Sugestão de lugar** (a #13 decide): a camada local como service em `src/services/` (acesso a
-  dado externo vira service, `.claude/CLAUDE.md`), chamada pelo `queryFn` de cada endpoint. A #43
-  troca cada `queryFn` por `query` só em `src/store/api/` e remove o service, sem mexer nas
+- **Onde vive a camada local:** em `src/services/content/` (acesso a dado externo vira service,
+  `.claude/CLAUDE.md`), chamada pelo `queryFn` de cada endpoint, que recebe `lang` no argumento. A
+  #43 troca cada `queryFn` por `query` só em `src/store/api/` e remove o service, sem mexer nas
   páginas.
-- **Fora daqui, para a #13:** a autoria e a organização dos arquivos (um arquivo por coleção ou por
-  registro, fonte normalizada com gerador ou escrita direta, como evitar repetir à mão campos
-  neutros nos três idiomas, NF-DA-04) e o comando de geração de UUID v7 (NF-DA-07).
 - **Envio de contato:** `POST /contact-messages` continua com a `queryFn` simulada de
   RF-CONTACT-22, que não lê arquivo nem faz requisição.
 

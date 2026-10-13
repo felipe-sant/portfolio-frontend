@@ -1,6 +1,6 @@
 # Projeto
 
-A tela Projeto (`/projects/:id`, também `/en/projects/:id` e `/es/projects/:id`, D32) é o estudo de
+A tela Projeto (`/pt-BR/projects/:id`, `/en/projects/:id` e `/es/projects/:id`, D32) é o estudo de
 caso de um projeto: cabeçalho, galeria com lightbox, ficha técnica, stack, links, documentos com
 endereço próprio (`README.md` e qualquer outro arquivo que o projeto publique, como `SETUP.md` ou
 `LICENSE`, D33, D55) e
@@ -62,7 +62,7 @@ Não há formulário. Entradas e o que acontece quando falham:
 | ----------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
 | `:id` no caminho                          | UUID v7 de um projeto do conteúdo (D32, NF-DA-07)                                                                                  | Fora do formato: página não encontrada sem buscar dado. No formato, mas sem projeto: página não encontrada |
 | Documento no caminho                      | `/docs/<name>`, com `<name>` igual, sem diferenciar caixa, ao `name` de um documento da lista do projeto, exceto `README.md` (D55) | Página não encontrada; com outra caixa, a URL é trocada pela do nome exato (RF-PROJECT-15)                 |
-| Prefixo de idioma                         | Sem prefixo, `/en/`, `/es/` (RF-LAY-11)                                                                                            | Página não encontrada (RF-LAY-28)                                                                          |
+| Prefixo de idioma                         | `/pt-BR`, `/en`, `/es` (RF-LAY-11)                                                                                                 | Página não encontrada (RF-LAY-28)                                                                          |
 | Âncora (`#...`) na URL                    | Id de um título do documento aberto                                                                                                | Ignorada: a tela abre no topo, sem erro                                                                    |
 | Link `project:<id>` no markdown           | Id de projeto existente; documento, se citado (`project:<id>/docs/<name>`), existente (teste de conteúdo da #13)                   | Em runtime, o texto do link aparece sem link                                                               |
 | URL de link no markdown                   | Só `https:`, `http:`, `mailto:`, `project:` e `#âncora`                                                                            | O texto aparece sem link                                                                                   |
@@ -442,7 +442,7 @@ NF-DE-09.
 Copiados de [`accessibility.md`](../product/accessibility.md#checklist-por-tela), sem renumerar.
 
 - [ ] `A11Y-G01` — Um `main`, um `h1` e um `<title>` próprio e traduzido [teste]
-- [ ] `A11Y-G02` — `<html lang>` igual ao idioma da URL (`/`, `/en/`, `/es/`) [teste]
+- [ ] `A11Y-G02` — `<html lang>` igual ao idioma da URL (`/pt-BR`, `/en`, `/es`) [teste]
 - [ ] `A11Y-G03` — Nenhuma violação do axe em cada estado da tela [axe]
 - [ ] `A11Y-G04` — Nenhuma violação do axe no navegador, nos dois temas [e2e]
 - [ ] `A11Y-G05` — Ordem de foco igual à visual e foco visível em todo elemento focável [teclado]

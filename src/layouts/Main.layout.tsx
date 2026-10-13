@@ -1,16 +1,18 @@
 import { Suspense } from "react"
 import { useTranslation } from "react-i18next"
 import { Link, Outlet } from "react-router-dom"
+import useLocalizedPath from "@/hooks/useLocalizedPath"
 import ROUTES from "@/routers/paths"
 import css from "@/styles/layouts/main.module.css"
 
 function MainLayout() {
+    const localizedPath = useLocalizedPath()
     const { t } = useTranslation(["mainLayout", "common"])
 
     return (
         <div className={css.layout}>
             <header className={css.header}>
-                <Link to={ROUTES.home}>{t("brand")}</Link>
+                <Link to={localizedPath(ROUTES.home)}>{t("brand")}</Link>
             </header>
             <div className={css.content}>
                 <Suspense fallback={<p>{t("common:loading")}</p>}>

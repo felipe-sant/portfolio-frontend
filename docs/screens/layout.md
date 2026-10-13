@@ -47,15 +47,15 @@ O estado "Vazio" do molde não se aplica ao layout, que não tem lista própria.
 
 Não há campo de formulário no layout. Regras de entrada e o que acontece quando falham:
 
-| Entrada                                 | Regra                                                                                                                                 | Quando falha                                                                   |
-| --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
-| Prefixo de idioma no caminho            | Só sem prefixo (`pt-BR`), `/en/` e `/es/` (NF-IN-06)                                                                                  | Prefixo desconhecido (`/fr/projects`) cai na página não encontrada, em `pt-BR` |
-| `?lng=` na URL                          | Ignorado (NF-IN-08)                                                                                                                   | Nada muda; o caminho decide                                                    |
-| Tema salvo no navegador                 | Só `light` ou `dark`                                                                                                                  | Valor ausente ou inválido é ignorado: vale `prefers-color-scheme` (NF-TE-02)   |
-| Idioma salvo no navegador               | Só `pt-BR`, `en` ou `es`; só redireciona a raiz `/` (NF-IN-09, #53)                                                                   | Valor inválido é ignorado                                                      |
-| `?tema=` na URL                         | Não é recurso do produto (D35, RF-LAY-19)                                                                                             | Ignorado                                                                       |
-| Área de transferência ("Copiar e-mail") | `navigator.clipboard.writeText` precisa existir e resolver                                                                            | "Não foi possível copiar" (ver Estados)                                        |
-| Rota de tela, id de projeto, documento  | Só os caminhos de D32; id inexistente, documento que não está na lista do projeto, `/docs/README.md` ou subcaminho desconhecido (D55) | Página não encontrada                                                          |
+| Entrada                                 | Regra                                                                                                                                 | Quando falha                                                                                           |
+| --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| Prefixo de idioma no caminho            | Só `/pt-BR`, `/en` e `/es` (NF-IN-06)                                                                                                 | Prefixo desconhecido (`/fr/projects`) ou ausente (`/projects`) cai na página não encontrada, em inglês |
+| `?lng=` na URL                          | Ignorado (NF-IN-08)                                                                                                                   | Nada muda; o caminho decide                                                                            |
+| Tema salvo no navegador                 | Só `light` ou `dark`                                                                                                                  | Valor ausente ou inválido é ignorado: vale `prefers-color-scheme` (NF-TE-02)                           |
+| Idioma salvo no navegador               | Só `pt-BR`, `en` ou `es`; só redireciona a raiz `/` (NF-IN-09, #53)                                                                   | Valor inválido é ignorado                                                                              |
+| `?tema=` na URL                         | Não é recurso do produto (D35, RF-LAY-19)                                                                                             | Ignorado                                                                                               |
+| Área de transferência ("Copiar e-mail") | `navigator.clipboard.writeText` precisa existir e resolver                                                                            | "Não foi possível copiar" (ver Estados)                                                                |
+| Rota de tela, id de projeto, documento  | Só os caminhos de D32; id inexistente, documento que não está na lista do projeto, `/docs/README.md` ou subcaminho desconhecido (D55) | Página não encontrada                                                                                  |
 
 ## Permissões
 
@@ -91,7 +91,7 @@ Cada subseção lista os requisitos na ordem dos IDs.
 
 | ID          | Regra                                                                                                                                                                                                                                                                                                                                                                                                              | Fonte                                  |
 | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------- |
-| `RF-LAY-11` | O idioma da página vem do caminho: sem prefixo é `pt-BR`, `/en/` é `en`, `/es/` é `es`; `<html lang>` acompanha o caminho. O navegador e o `?lng=` não decidem; a única exceção é o redirecionamento da raiz `/` por escolha salva, que é de #53                                                                                                                                                                   | NF-IN-05, NF-IN-06, NF-IN-08, NF-IN-09 |
+| `RF-LAY-11` | O idioma da página vem do caminho: `/pt-BR` é `pt-BR`, `/en` é `en`, `/es` é `es`; `<html lang>` acompanha o caminho. O navegador e o `?lng=` não decidem; a única exceção é o redirecionamento da raiz `/` por escolha salva, que é de #53                                                                                                                                                                        | NF-IN-05, NF-IN-06, NF-IN-08, NF-IN-09 |
 | `RF-LAY-12` | Seletor `PT · EN · ES` entre a navegação e o alternador de tema, em grupo com nome "Idioma". Cada opção é um link (`<Link>`) para a URL equivalente no idioma de destino (mesma rota, mesmo id, mesmo documento, mesma query e mesma âncora), montada pela função de #53, com `hreflang` e `lang` do destino; a ativa tem `aria-current="true"`, peso 600 e `--text-strong`. O separador `·` fica em `aria-hidden` | D12, D31, NF-IN-10, A11Y-L05           |
 | `RF-LAY-13` | O nome acessível de cada opção começa pela sigla visível e traz o nome do idioma escrito nele mesmo ("PT Português", "EN English", "ES Español"), com a sigla visível e o nome em texto visualmente oculto; os valores são iguais nos três JSON                                                                                                                                                                    | `accessibility.md` (Idioma), 2.5.3     |
 | `RF-LAY-14` | Escolher um idioma navega para a URL equivalente sem recarregar, salva a escolha por `setLanguage` (D31), atualiza `<html lang>` e `<title>`, preserva a posição de rolagem e devolve o foco à opção escolhida no seletor (exceção à regra de foco no `h1`)                                                                                                                                                        | D31, NF-IN-10, A11Y-L06                |
@@ -101,7 +101,7 @@ Cada subseção lista os requisitos na ordem dos IDs.
 
 | ID          | Regra                                                                                                                                                                                                                                                                                                              | Fonte                                  |
 | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------- |
-| `RF-LAY-16` | Claro e escuro por `data-theme` no `<html>`, com `color-scheme` correspondente; a primeira visita segue `prefers-color-scheme`; sem escolha salva, o tema acompanha o sistema inclusive quando ele muda com a página aberta; a escolha pelo alternador fica salva no navegador (chave definida em #31) e prevalece | D22, NF-TE-01, NF-TE-02                |
+| `RF-LAY-16` | Claro e escuro por `data-theme` no `<html>`, com `color-scheme` correspondente; a primeira visita segue `prefers-color-scheme`; sem escolha salva, o tema acompanha o sistema inclusive quando ele muda com a página aberta; a escolha pelo alternador fica salva no navegador (chave `portfolio-frontend:theme`) e prevalece | D22, NF-TE-01, NF-TE-02                |
 | `RF-LAY-17` | Sem piscar o tema errado: o tema é aplicado antes da primeira pintura por script inline no `<head>`, e o `theme-color` acompanha o tema escolhido, não só o do sistema                                                                                                                                             | NF-TE-03 (implementado em #31)         |
 | `RF-LAY-18` | Alternador: botão de 44px com nome fixo "Tema escuro" e `aria-pressed="true"` no tema escuro; no cabeçalho é só ícone (lua no claro, sol no escuro, `aria-hidden`), no menu tem o texto visível "Tema escuro". Trocar não move o foco nem usa região de anúncio                                                    | Achado de `accessibility.md`, A11Y-L07 |
 | `RF-LAY-19` | `?tema=` não é recurso do produto (D35): é ferramenta do protótipo para conferência; no produto, o tema vem só da escolha salva ou do sistema                                                                                                                                                                      | D22, D35                               |
@@ -162,14 +162,14 @@ ativo que, com JavaScript, abre o modal de pré-visualização, onde está o dow
 
 ## Navegação
 
-Os caminhos são os de `D32`, sempre com o prefixo do idioma atual (sem prefixo em `pt-BR`, `/en/`,
-`/es/`).
+Os caminhos são os de `D32`, sempre com o prefixo do idioma atual (`/pt-BR`, `/en`,
+`/es`).
 
 | De onde               | Ação                                       | Para onde                                                                                         |
 | --------------------- | ------------------------------------------ | ------------------------------------------------------------------------------------------------- |
 | Qualquer tela         | Gato e nome                                | `/` do idioma atual                                                                               |
 | Qualquer tela         | Início, Projetos, Informações, Contato     | `/`, `/projects`, `/about`, `/contact` do idioma atual                                            |
-| Qualquer tela         | `PT`, `EN`, `ES`                           | A mesma URL no idioma escolhido (sem prefixo, `/en/`, `/es/`)                                     |
+| Qualquer tela         | `PT`, `EN`, `ES`                           | A mesma URL no idioma escolhido (`/pt-BR`, `/en`, `/es`)                                          |
 | Qualquer tela         | Alternador de tema                         | Fica na mesma tela                                                                                |
 | Rodapé padrão         | "Entrar em contato"                        | `/contact`                                                                                        |
 | Rodapé padrão         | GitHub, LinkedIn                           | Perfis externos (URL do conteúdo), em nova aba (D36)                                              |
@@ -182,8 +182,8 @@ Os caminhos são os de `D32`, sempre com o prefixo do idioma atual (sem prefixo 
 | URL sem rota          | Abrir                                      | Página não encontrada                                                                             |
 | Erro de renderização  | Abrir                                      | Página de erro                                                                                    |
 
-A primeira carga em `/` com escolha salva diferente de `pt-BR` redireciona para `/en/` ou `/es/`
-(NF-IN-09, #53); nenhuma outra rota redireciona por idioma.
+A carga em `/` redireciona para `/pt-BR`, `/en` ou `/es` (escolha salva, depois navegador, depois
+`en`; NF-IN-09, #53); nenhuma outra rota redireciona por idioma.
 
 ## Textos fixos e chaves
 
@@ -358,7 +358,7 @@ foco sob o cabeçalho); `[navegador]` cobre favicon, `theme-color` e movimento r
 Copiados de [`accessibility.md`](../product/accessibility.md#checklist-por-tela), sem renumerar.
 
 - [ ] `A11Y-G01` — Um `main`, um `h1` e um `<title>` próprio e traduzido [teste]
-- [ ] `A11Y-G02` — `<html lang>` igual ao idioma da URL (`/`, `/en/`, `/es/`) [teste]
+- [ ] `A11Y-G02` — `<html lang>` igual ao idioma da URL (`/pt-BR`, `/en`, `/es`) [teste]
 - [ ] `A11Y-G03` — Nenhuma violação do axe em cada estado da tela [axe]
 - [ ] `A11Y-G04` — Nenhuma violação do axe no navegador, nos dois temas [e2e]
 - [ ] `A11Y-G05` — Ordem de foco igual à visual e foco visível em todo elemento focável [teclado]

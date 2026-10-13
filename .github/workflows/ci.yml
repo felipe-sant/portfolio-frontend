@@ -2,7 +2,7 @@ name: CI
 
 on:
     push:
-        branches: [main]
+        branches: [main, staging]
     pull_request:
 
 permissions:
@@ -78,7 +78,7 @@ jobs:
                     CHANGED_FILES=$(git diff --name-only "origin/$BASE_REF...HEAD")
                     echo "Arquivos alterados no PR:"
                     echo "$CHANGED_FILES"
-                    if echo "$CHANGED_FILES" | grep -E '^(package\.json|package-lock\.json|vite\.config\.ts|tsconfig.*\.json|src/setupTests\.ts)$'; then
+                    if echo "$CHANGED_FILES" | grep -E '^(package\.json|package-lock\.json|vite\.config\.ts|tsconfig.*\.json|src/setupTests\.ts)$|^(public/content/|public/images/|content/)'; then
                       echo "mode=full" >> "$GITHUB_OUTPUT"
                     else
                       echo "mode=changed" >> "$GITHUB_OUTPUT"

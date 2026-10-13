@@ -2,17 +2,24 @@ import { describe, expect, it } from "vitest"
 import { act, render, screen } from "@testing-library/react"
 import setLanguage from "@/i18n/setLanguage"
 import HomePage from "@/pages/Home.page"
+import expectNoAxeViolations from "@/testUtils/expectNoAxeViolations"
 
 function renderHomePage() {
     return render(<HomePage />)
 }
 
 describe("HomePage", () => {
+    it("não tem violações de acessibilidade", async () => {
+        const { container } = renderHomePage()
+
+        await expectNoAxeViolations(container)
+    }, 15000)
+
     it("renderiza o título principal", () => {
         renderHomePage()
 
         expect(
-            screen.getByRole("heading", { name: "Desenvolvedor full stack em TypeScript." })
+            screen.getByRole("heading", { name: "Desenvolvedor full stack em TypeScript" })
         ).toBeInTheDocument()
     })
 
@@ -44,13 +51,13 @@ describe("HomePage", () => {
     it("atualiza texto, metadados e lang do html ao trocar o idioma com a página aberta", async () => {
         renderHomePage()
         expect(
-            screen.getByRole("heading", { name: "Desenvolvedor full stack em TypeScript." })
+            screen.getByRole("heading", { name: "Desenvolvedor full stack em TypeScript" })
         ).toBeInTheDocument()
 
         await act(() => setLanguage("es"))
 
         expect(
-            screen.getByRole("heading", { name: "Desarrollador full stack en TypeScript." })
+            screen.getByRole("heading", { name: "Desarrollador full stack en TypeScript" })
         ).toBeInTheDocument()
         expect(document.title).toBe("Luiz Felipe dos Santos · Desarrollador full stack")
         expect(document.querySelector('meta[name="description"]')?.getAttribute("content")).toBe(

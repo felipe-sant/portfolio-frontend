@@ -52,7 +52,7 @@ Texto compartilhado entre telas (`backHome`, `loading`) fica no namespace `commo
 ```tsx
 const { t } = useTranslation(["about", "common"])
 
-<Link to={ROUTES.home}>{t("common:backHome")}</Link>
+<Link to={localizedPath(ROUTES.home)}>{t("common:backHome")}</Link>
 ```
 
 Texto com marcação no meio (negrito, link) usa `<Trans>` em vez de quebrar a frase em várias chaves. A tag fica no valor do JSON (`"... um trecho em <strong>destaque</strong>."`) e o componente correspondente vai em `components`:
@@ -182,7 +182,7 @@ O namespace tem o mesmo nome do CSS Module da página (`about.module.css` → `a
 
 ### 5. Rota — `src/routers/paths.ts` e `src/routers/routes.tsx`
 
-Adicione o path em `ROUTES` (`src/routers/paths.ts`) e registre a página como filha do `MainLayout` em `routes` (`RouteObject[]`, em `src/routers/routes.tsx`). A página é importada com `lazy` — o único `<Suspense>` já fica no `MainLayout`, em volta do `<Outlet />` — e a rota `*` (NotFound) tem que continuar sendo a **última**:
+Adicione o path em `ROUTES` (`src/routers/paths.ts`) e registre a página em `pageRoutes` (`RouteObject[]`, em `src/routers/routes.tsx`), que `routes.tsx` repete sob as três rotas-pai de idioma (`/pt-BR`, `/en`, `/es`), cada uma com `MainLayout`. O caminho da página é relativo ao prefixo e o link para ela usa `useLocalizedPath()` (`const localizedPath = useLocalizedPath()`), nunca `ROUTES` cru. A página é importada com `lazy` — o único `<Suspense>` já fica no `MainLayout`, em volta do `<Outlet />` — e a rota `*` (NotFound) tem que continuar sendo a **última**:
 
 ```tsx
 const ROUTES = {
@@ -197,19 +197,11 @@ export default ROUTES
 ```tsx
 const About = lazy(() => import("@/pages/About.page"))
 
-const routes: RouteObject[] = [
-    {
-        element: <MainLayout />,
-        errorElement: <ErrorPage />,
-        children: [
-            { path: ROUTES.home, element: <Home /> },
-            { path: ROUTES.about, element: <About /> },
-            { path: ROUTES.notFound, element: <NotFound /> }
-        ]
-    }
+const pageRoutes: RouteObject[] = [
+    { index: true, element: <Home /> },
+    { path: ROUTES.about.slice(1), element: <About /> },
+    { path: ROUTES.notFound, element: <NotFound /> }
 ]
-
-export default routes
 ```
 
 ### 6. Metadados da página (quando necessário)

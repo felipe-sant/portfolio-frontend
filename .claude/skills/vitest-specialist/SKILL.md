@@ -81,7 +81,7 @@ Esse erro ao menos aponta o arquivo. O sintoma de o `setupFiles` ter sumido do `
 
 **O `afterEach(cleanup)` também é obrigatório, e não é redundante.** O cleanup automático do Testing Library se registra num `afterEach` global; sem `globals: true` esse global não existe, então o RTL não liga nada sozinho (ele testa `if (typeof afterEach === 'function')`). É esta linha que desmonta o DOM entre um `it` e o seguinte. Apagá-la por parecer supérflua faz todo arquivo com mais de um `render` começar a falhar com `Found multiple elements`.
 
-**O `beforeEach` reseta o idioma, e o reset não grava nada.** Ele apaga a escolha salva em `LANGUAGE_STORAGE_KEY` e chama `i18n.changeLanguage("pt-BR")` direto na instância — não `setLanguage`, que gravaria a escolha via `saveLanguage`. O detector de `src/i18n/i18n.ts` é configurado com `caches: []`, então `changeLanguage` não escreve no `localStorage`: a ordem dos dois passos não importa e todo teste começa sem escolha salva. Sem esse reset, a suíte dependeria do navegador do `jsdom`, que reporta `en-US`, e um teste que troca o idioma vazaria o idioma para o seguinte.
+**O `beforeEach` reseta o idioma, e o reset não grava nada.** Ele apaga a escolha salva em `LANGUAGE_STORAGE_KEY` e chama `i18n.changeLanguage("pt-BR")` direto na instância — não `setLanguage`, que gravaria a escolha via `saveLanguage`. `src/i18n/i18n.ts` não tem detector e só `saveLanguage` (chamado por `setLanguage`) escreve no `localStorage`, então `changeLanguage` não grava: a ordem dos dois passos não importa e todo teste começa sem escolha salva. Sem esse reset, a suíte dependeria do navegador do `jsdom`, que reporta `en-US`, e um teste que troca o idioma vazaria o idioma para o seguinte.
 
 **O literal é `"pt-BR"`, não o fallback `en`.** São duas coisas independentes: `pt-BR` é a língua de referência — o texto nasce nela e os testes de tela afirmam o texto em português —, e `en` (`FALLBACK_LANGUAGE`) é o que o usuário vê quando nenhuma fonte de detecção dá um idioma suportado. Trocar o literal por `FALLBACK_LANGUAGE` "por consistência" faz todo teste de tela falhar, porque passaria a renderizar em inglês. Não existe constante para a língua de referência de propósito: ela seria um símbolo público só para este arquivo.
 
@@ -110,6 +110,25 @@ describe("HomePage", () => {
 ```
 
 Não há provider nem wrapper de render: a página chama `useTranslation()` e o texto sai em `pt-BR` porque o `src/setupTests.ts` resetou o idioma (item 4) e o `initReactI18next` registra a instância globalmente. Import interno com `@/`, nunca `../`. O nome do `describe` é o identificador testado (inglês); a descrição do `it` é uma frase em português, como todo texto lido por gente.
+
+### Acessibilidade com `expectNoAxeViolations`
+
+Todo teste de página, layout e componente tem ao menos um `it` que passa o `container` do `render` para `expectNoAxeViolations` (`src/testUtils/expectNoAxeViolations.ts`). O helper roda o `axe-core` e rejeita com o `id` e o alvo de cada violação; com `renderWithStore`, o `container` vem do retorno do `render` dele. A regra `color-contrast` fica desligada, porque o `jsdom` não calcula cor (o contraste é do teste no navegador, #55). Teste de rota não chama o helper. O `axe.run` é lento no `jsdom`: o `it` que o chama recebe `15000` como terceiro argumento, senão estoura os 5s padrão com a suíte em paralelo.
+
+```tsx
+import { describe, it } from "vitest"
+import { render } from "@testing-library/react"
+import HomePage from "@/pages/Home.page"
+import expectNoAxeViolations from "@/testUtils/expectNoAxeViolations"
+
+describe("HomePage", () => {
+    it("não tem violações de acessibilidade", async () => {
+        const { container } = render(<HomePage />)
+
+        await expectNoAxeViolations(container)
+    }, 15000)
+})
+```
 
 ### Mais de um `render` no mesmo arquivo
 
@@ -316,19 +335,19 @@ Não precisa desfazer a troca: o `beforeEach` do setup volta para `pt-BR` e apag
 
 ### Simular uma nova carga de página
 
-A detecção de idioma (`?lng=` → escolha salva → navegador → `en`) e a persistência do `?lng=` rodam uma vez só, quando `src/i18n/i18n.ts` é importado. `i18n.changeLanguage()` sem argumento não serve para reproduzir isso: ele não executa a persistência do `?lng=`. Para testar a inicialização, prepare a URL, o navegador e o `localStorage`, descarte o cache de módulos com `vi.resetModules()` e importe a instância de novo com `await import("@/i18n/i18n")` — como o `i18n.ts` cria a instância com `createInstance()`, cada import depois do reset é uma instância nova, sem estado da anterior. É o helper de `src/i18n/test/i18n.test.ts`:
+O idioma inicial é lido do caminho (`window.location.pathname`, sem o `base`) uma vez só, quando `src/i18n/i18n.ts` é importado; `?lng=`, navegador e `localStorage` não decidem (só a raiz `/` os lê, por `getPreferredLanguage`). Para testar a inicialização, prepare a URL, descarte o cache de módulos com `vi.resetModules()` e importe a instância de novo com `await import("@/i18n/i18n")` — como o `i18n.ts` cria a instância com `createInstance()`, cada import depois do reset é uma instância nova, sem estado da anterior. É o helper de `src/i18n/test/i18n.test.ts`:
 
 ```ts
 import { afterEach, describe, expect, it, vi } from "vitest"
 import LANGUAGE_STORAGE_KEY from "@/i18n/languageStorageKey"
 
 interface PageLoad {
-    search?: string
+    path?: string
     browserLanguages?: string[]
 }
 
-async function loadPage({ search = "", browserLanguages = ["en-US"] }: PageLoad = {}) {
-    window.history.pushState({}, "", `/${search}`)
+async function loadPage({ path = "/", browserLanguages = ["en-US"] }: PageLoad = {}) {
+    window.history.pushState({}, "", path)
     vi.spyOn(navigator, "languages", "get").mockReturnValue(browserLanguages)
     vi.spyOn(navigator, "language", "get").mockReturnValue(browserLanguages[0] ?? "")
     vi.resetModules()
@@ -345,16 +364,18 @@ afterEach(() => {
 })
 
 describe("i18n", () => {
-    it("ativa e grava o idioma de um ?lng= válido", async () => {
-        const i18n = await loadPage({ search: "?lng=es", browserLanguages: ["en"] })
+    it("abre no idioma do prefixo do caminho", async () => {
+        const i18n = await loadPage({ path: "/es", browserLanguages: ["en"] })
 
         expect(i18n.resolvedLanguage).toBe("es")
-        expect(localStorage.getItem(LANGUAGE_STORAGE_KEY)).toBe("es")
+        expect(localStorage.getItem(LANGUAGE_STORAGE_KEY)).toBeNull()
     })
 })
 ```
 
-O `?lng=` é stubado com `window.history.pushState` e o `navigator` com `vi.spyOn` no getter. **Restaure os dois no `afterEach`**: `vi.restoreAllMocks()` desfaz os spies e `pushState` de volta para `"/"` limpa a URL, senão o `?lng=` e o idioma do navegador vazam para o teste seguinte (inclusive o `App.test.tsx`, que lê a URL real). Um teste que muda a URL por outro motivo, como o cenário de rota desconhecida em `src/test/App.test.tsx`, segue a mesma regra.
+A URL é stubada com `window.history.pushState` e o `navigator` com `vi.spyOn` no getter. **Restaure os dois no `afterEach`**: `vi.restoreAllMocks()` desfaz os spies e `pushState` de volta para `"/"` limpa a URL, senão o caminho e o idioma do navegador vazam para o teste seguinte (inclusive o `App.test.tsx`, que lê a URL real). Um teste que muda a URL por outro motivo, como o cenário de rota desconhecida em `src/test/App.test.tsx`, segue a mesma regra.
+
+Teste de rota (`createMemoryRouter(routes, { initialEntries })`) abre o caminho com prefixo (`/pt-BR`, `/en`, `/es`): `/` só redireciona, e o `jsdom` reporta `en-US`. Não use `vi.resetModules()` junto de `routes` já importado: o `.use(initReactI18next)` da instância nova substitui a global e o `loader` da rota passa a trocar o idioma de outra instância.
 
 ## 8. Queries do Testing Library
 
@@ -387,7 +408,7 @@ Ordem de preferência: **`getByRole` com `name`** > `getByLabelText` / `getByTex
 | `Found multiple elements with the role ...`                                                       | render anterior não foi desmontado: alguém removeu o `afterEach(cleanup)` do `src/setupTests.ts` (item 4)                                        |
 | `describe is not defined` / `vi is not defined`                                                   | falta o `import` de `vitest` — não há `globals: true`                                                                                            |
 | teste de tela não acha o texto em português, mas acha o texto em inglês                           | o `beforeEach` do `src/setupTests.ts` sumiu ou trocou o `"pt-BR"` pelo fallback `en`, e o idioma veio do navegador do `jsdom` (`en-US`) (item 4) |
-| teste passa sozinho e falha na suíte, com o idioma ou a URL de outro teste                        | um teste stubou `?lng=` ou o `navigator` e não restaurou no `afterEach` (item 7)                                                                 |
+| teste passa sozinho e falha na suíte, com o idioma ou a URL de outro teste                        | um teste stubou a URL ou o `navigator` e não restaurou no `afterEach` (item 7)                                                                   |
 | o texto renderizado é a própria chave (`heading`, `meta.title`)                                   | chave sem valor, ou namespace não registrado em `src/i18n/resources.ts`: o i18next devolve a chave quando não acha tradução (item 7)             |
 | asserção logo após `user.click(...)` falha de forma intermitente, ou passa sem o efeito acontecer | a interação da v14 é assíncrona e faltou o `await` (item 9)                                                                                      |
 
@@ -400,6 +421,7 @@ Ordem de preferência: **`getByRole` com `name`** > `getByLabelText` / `getByTex
 - [ ] Import do arquivo testado com `@/`, nunca `../`
 - [ ] Query por `getByRole` com `name` sempre que possível; `getByTestId` só como último recurso
 - [ ] Componente que lê a store renderizado com `renderWithStore` (nunca um `Provider` montado à mão); endpoint injetado com `fetch` stubado e `VITE_API_URL` absoluta
+- [ ] Teste de página, layout ou componente com um `it` que chama `expectNoAxeViolations(container)`
 - [ ] Router em memória em volta do que depende de rota (`createMemoryRouter(routes, ...)` + `RouterProvider`), não o `Router` default
 - [ ] Nenhum `afterEach(cleanup)` local — o `src/setupTests.ts` já faz isso em toda suíte
 - [ ] Texto afirmado em `pt-BR`, nunca a chave; outro idioma só com `await setLanguage(...)` dentro do `it`

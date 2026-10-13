@@ -2,8 +2,19 @@ import { describe, expect, it } from "vitest"
 import { MemoryRouter } from "react-router-dom"
 import { render, screen } from "@testing-library/react"
 import NotFoundPage from "@/pages/NotFound.page"
+import expectNoAxeViolations from "@/testUtils/expectNoAxeViolations"
 
 describe("NotFoundPage", () => {
+    it("não tem violações de acessibilidade", async () => {
+        const { container } = render(
+            <MemoryRouter>
+                <NotFoundPage />
+            </MemoryRouter>
+        )
+
+        await expectNoAxeViolations(container)
+    }, 15000)
+
     it("renderiza o título de página não encontrada", () => {
         render(
             <MemoryRouter>
@@ -23,7 +34,7 @@ describe("NotFoundPage", () => {
 
         expect(screen.getByRole("link", { name: "Voltar para o início" })).toHaveAttribute(
             "href",
-            "/"
+            "/pt-BR"
         )
     })
 

@@ -1,0 +1,26 @@
+{
+    "items": [
+        {
+            "id": "",
+            "kind": "experience",
+            "title": "",
+            "organization": "",
+            "stage": "",
+            "details": [""],
+            "start": "",
+            "end": "",
+            "summary": "",
+            "responsibilities": [""],
+            "disciplines": [""],
+            "technologies": [""],
+            "certificates": [
+                {
+                    "id": "",
+                    "name": "",
+                    "issuer": ""
+                }
+            ],
+            "projectIds": [""]
+        }
+    ]
+}
