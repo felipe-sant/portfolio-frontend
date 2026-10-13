@@ -13,7 +13,7 @@ describe("NotFoundPage", () => {
         )
 
         await expectNoAxeViolations(container)
-    })
+    }, 15000)
 
     it("renderiza o título de página não encontrada", () => {
         render(

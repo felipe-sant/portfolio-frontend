@@ -2,7 +2,8 @@ import axe from "axe-core"
 
 async function expectNoAxeViolations(container: Element): Promise<void> {
     const { violations } = await axe.run(container, {
-        rules: { "color-contrast": { enabled: false } }
+        rules: { "color-contrast": { enabled: false } },
+        resultTypes: ["violations"]
     })
 
     if (violations.length === 0) {

@@ -113,7 +113,7 @@ Não há provider nem wrapper de render: a página chama `useTranslation()` e o 
 
 ### Acessibilidade com `expectNoAxeViolations`
 
-Todo teste de página, layout e componente tem ao menos um `it` que passa o `container` do `render` para `expectNoAxeViolations` (`src/testUtils/expectNoAxeViolations.ts`). O helper roda o `axe-core` e rejeita com o `id` e o alvo de cada violação; com `renderWithStore`, o `container` vem do retorno do `render` dele. A regra `color-contrast` fica desligada, porque o `jsdom` não calcula cor (o contraste é do teste no navegador, #55). Teste de rota não chama o helper.
+Todo teste de página, layout e componente tem ao menos um `it` que passa o `container` do `render` para `expectNoAxeViolations` (`src/testUtils/expectNoAxeViolations.ts`). O helper roda o `axe-core` e rejeita com o `id` e o alvo de cada violação; com `renderWithStore`, o `container` vem do retorno do `render` dele. A regra `color-contrast` fica desligada, porque o `jsdom` não calcula cor (o contraste é do teste no navegador, #55). Teste de rota não chama o helper. O `axe.run` é lento no `jsdom`: o `it` que o chama recebe `15000` como terceiro argumento, senão estoura os 5s padrão com a suíte em paralelo.
 
 ```tsx
 import { describe, it } from "vitest"
@@ -126,7 +126,7 @@ describe("HomePage", () => {
         const { container } = render(<HomePage />)
 
         await expectNoAxeViolations(container)
-    })
+    }, 15000)
 })
 ```
 

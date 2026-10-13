@@ -13,7 +13,7 @@ describe("HomePage", () => {
         const { container } = renderHomePage()
 
         await expectNoAxeViolations(container)
-    })
+    }, 15000)
 
     it("renderiza o título principal", () => {
         renderHomePage()

@@ -26,7 +26,7 @@ describe("ErrorPage", () => {
         const { container } = renderErrorPage()
 
         await expectNoAxeViolations(container)
-    })
+    }, 15000)
 
     it("renderiza o heading genérico de erro e a mensagem da exceção lançada", () => {
         renderErrorPage()

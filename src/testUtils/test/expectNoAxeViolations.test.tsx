@@ -3,6 +3,8 @@ import { describe, expect, it } from "vitest"
 import { render } from "@testing-library/react"
 import expectNoAxeViolations from "@/testUtils/expectNoAxeViolations"
 
+const AXE_TIMEOUT = 15000
+
 describe("expectNoAxeViolations", () => {
     it("resolve quando a marcação não tem violação", async () => {
         const { container } = render(
@@ -13,7 +15,7 @@ describe("expectNoAxeViolations", () => {
         )
 
         await expect(expectNoAxeViolations(container)).resolves.toBeUndefined()
-    })
+    }, AXE_TIMEOUT)
 
     it("rejeita com o id da regra e o alvo quando há imagem sem alt", async () => {
         const { container } = render(
@@ -21,7 +23,7 @@ describe("expectNoAxeViolations", () => {
         )
 
         await expect(expectNoAxeViolations(container)).rejects.toThrow(/image-alt[\s\S]*#avatar/)
-    })
+    }, AXE_TIMEOUT)
 
     it("rejeita com o id da regra quando o botão não tem nome", async () => {
         const { container } = render(
@@ -29,7 +31,7 @@ describe("expectNoAxeViolations", () => {
         )
 
         await expect(expectNoAxeViolations(container)).rejects.toThrow(/button-name[\s\S]*#empty/)
-    })
+    }, AXE_TIMEOUT)
 
     it("não falha por contraste ruim, que o jsdom não calcula", async () => {
         const { container } = render(
@@ -39,5 +41,5 @@ describe("expectNoAxeViolations", () => {
         )
 
         await expect(expectNoAxeViolations(container)).resolves.toBeUndefined()
-    })
+    }, AXE_TIMEOUT)
 })

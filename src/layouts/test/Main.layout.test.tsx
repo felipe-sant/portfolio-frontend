@@ -24,7 +24,7 @@ describe("MainLayout", () => {
         const { container } = renderLayout()
 
         await expectNoAxeViolations(container)
-    })
+    }, 15000)
 
     it("renderiza o header e o footer", () => {
         renderLayout()
