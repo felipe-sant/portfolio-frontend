@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
 import { render, screen } from "@testing-library/react"
 import App from "@/App"
+import THEME_STORAGE_KEY from "@/utils/themeStorageKey"
 
 afterEach(() => {
     window.history.pushState({}, "", "/")
@@ -53,6 +54,29 @@ describe("App", () => {
         expect(document.querySelector('meta[name="description"]')?.getAttribute("content")).toBe(
             "Portfólio de Luiz Felipe dos Santos, desenvolvedor full stack em TypeScript: projetos, trajetória e contato."
         )
+    })
+
+    it("aplica o tema escuro salvo no html", async () => {
+        localStorage.setItem(THEME_STORAGE_KEY, "dark")
+        window.history.pushState({}, "", "/pt-BR")
+
+        render(<App />)
+
+        expect(
+            await screen.findByRole("heading", { name: "Desenvolvedor full stack em TypeScript" })
+        ).toBeInTheDocument()
+        expect(document.documentElement).toHaveAttribute("data-theme", "dark")
+    })
+
+    it("ignora ?tema= na URL e segue o sistema", async () => {
+        window.history.pushState({}, "", "/pt-BR?tema=dark")
+
+        render(<App />)
+
+        expect(
+            await screen.findByRole("heading", { name: "Desenvolvedor full stack em TypeScript" })
+        ).toBeInTheDocument()
+        expect(document.documentElement).toHaveAttribute("data-theme", "light")
     })
 
     it("usa o título e a meta description de NotFound.page numa rota desconhecida", async () => {
