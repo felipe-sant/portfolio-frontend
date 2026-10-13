@@ -19,3 +19,4 @@ Quatro dígitos sequenciais e um tema curto em inglês: `0002-routing-library.md
 | [0000](0000-template.md)         | Molde de ADR             | molde  |
 | [0001](0001-state-management.md) | Gerenciamento de estado  | aceita |
 | [0002](0002-language-in-path.md) | Idioma no caminho da URL | aceita |
+| [0003](0003-hosting-vercel.md)   | Hospedagem na Vercel     | aceita |
