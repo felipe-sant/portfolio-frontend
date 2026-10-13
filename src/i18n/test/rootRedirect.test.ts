@@ -13,6 +13,8 @@ interface Scenario {
     storageThrows?: boolean
 }
 
+let requestedKeys: string[] = []
+
 const html = readFileSync("index.html", "utf-8")
 const inlineScript = /<script>([\s\S]*?)<\/script>/.exec(html)?.[1] ?? ""
 
@@ -26,9 +28,11 @@ function runScript({
     storageThrows = false
 }: Scenario = {}): string | undefined {
     const replace = vi.fn()
+    requestedKeys = []
     const fakeLocation = { pathname, search, hash, replace }
     const fakeStorage = {
-        getItem: () => {
+        getItem: (key: string) => {
+            requestedKeys.push(key)
             if (storageThrows) {
                 throw new Error("storage bloqueado")
             }
@@ -56,6 +60,12 @@ afterEach(() => {
 describe("script de redirecionamento da raiz", () => {
     it("existe no index.html com o marcador de base", () => {
         expect(inlineScript).toContain("%BASE_URL%")
+    })
+
+    it("lê a mesma chave de LANGUAGE_STORAGE_KEY", () => {
+        runScript()
+
+        expect(requestedKeys).toEqual([LANGUAGE_STORAGE_KEY])
     })
 
     it.each([
