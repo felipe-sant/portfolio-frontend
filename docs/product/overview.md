@@ -53,7 +53,7 @@ Cinco rotas, cada uma com o propósito definido no handoff e o caminho em inglê
 
 - Cabeçalho igual nas cinco telas, com o item da rota atual destacado; rodapé igual em quatro delas (em `/contact` ele vira navegação). Fonte: handoff; protótipo, `ProtoHeader` e `ProtoFooter`; D01, D02, D04.
 - Temas claro e escuro, trocados por `data-theme` na raiz, com a escolha persistida e `prefers-color-scheme` respeitado na primeira visita. Fonte: D22.
-- Interface em três idiomas: `pt-BR` (língua de referência), `en` e `es`, com cada rota em três URLs: sem prefixo em `pt-BR`, `/en/` e `/es/` (#53, `D31`). Fonte: R2; D12; D31.
+- Interface em três idiomas: `pt-BR` (língua de referência), `en` e `es`, com cada rota em três URLs, uma por idioma: `/pt-BR`, `/en` e `/es` (#53, `D31`); a raiz `/` só redireciona. Fonte: R2; D12; D31.
 - Página não encontrada e página de erro. Fonte: protótipo, `prototipo-404` e `prototipo-erro`; [`roadmap.md`](roadmap.md#v1), definição da v1.
 - CV por idioma, em Markdown escrito pelo PO e PDF gerado dele no build, com pré-visualização em modal antes de baixar, pelo idioma ativo. Fonte: D14, D52.
 - Conteúdo real em JSON local na v1, no formato do contrato da API. Fonte: [`roadmap.md`](roadmap.md#m2--conteúdo-real), M2; R1.

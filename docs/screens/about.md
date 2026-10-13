@@ -1,6 +1,6 @@
 # Informações
 
-A tela Informações (`/about`, também sob `/en/about` e `/es/about`, D32) junta o que o recrutador
+A tela Informações (`/pt-BR/about`, `/en/about` e `/es/about`, D32) junta o que o recrutador
 procura antes de chamar alguém para conversar: quem é o autor, o que ele domina, por onde passou e
 o CV para baixar. Quem a implementa é a issue #37, com #33 e #60 (layout), #49 (pré-renderização), #52
 (canônica, Open Graph e JSON-LD), #54 (botões de CV), #42 (foto), #13 (dados) e #58 e #59 (conteúdo). Este documento diz o
@@ -137,16 +137,16 @@ Cada subseção lista os requisitos na ordem dos IDs.
 
 ## Navegação
 
-| De onde                               | Ação                                       | Para onde                                                                                       |
-| ------------------------------------- | ------------------------------------------ | ----------------------------------------------------------------------------------------------- |
-| Cabeçalho, menu, rodapé de `/contact` | "Informações"                              | `/about` do idioma atual                                                                        |
-| Qualquer link externo ou URL digitada | Abrir `/about`, `/en/about` ou `/es/about` | A tela no idioma do caminho                                                                     |
-| Apresentação                          | "Baixar CV"                                | Modal de pré-visualização do PDF do idioma ativo, sem sair da tela; sem JavaScript, o PDF (D52) |
-| Apresentação                          | "Entrar em contato"                        | `/contact` do idioma atual                                                                      |
-| Item de trajetória                    | Clique, Enter ou Espaço                    | Modal de detalhe, na mesma URL                                                                  |
-| Modal                                 | "Fechar", fundo ou Esc                     | Fecha; o foco volta ao item                                                                     |
-| Modal, projetos relacionados          | Título do projeto                          | `/projects/:id` do idioma atual                                                                 |
-| Seletor de idioma                     | `PT`, `EN`, `ES`                           | `/about`, `/en/about`, `/es/about` (D31)                                                        |
+| De onde                               | Ação                                             | Para onde                                                                                       |
+| ------------------------------------- | ------------------------------------------------ | ----------------------------------------------------------------------------------------------- |
+| Cabeçalho, menu, rodapé de `/contact` | "Informações"                                    | `/about` do idioma atual                                                                        |
+| Qualquer link externo ou URL digitada | Abrir `/pt-BR/about`, `/en/about` ou `/es/about` | A tela no idioma do caminho                                                                     |
+| Apresentação                          | "Baixar CV"                                      | Modal de pré-visualização do PDF do idioma ativo, sem sair da tela; sem JavaScript, o PDF (D52) |
+| Apresentação                          | "Entrar em contato"                              | `/contact` do idioma atual                                                                      |
+| Item de trajetória                    | Clique, Enter ou Espaço                          | Modal de detalhe, na mesma URL                                                                  |
+| Modal                                 | "Fechar", fundo ou Esc                           | Fecha; o foco volta ao item                                                                     |
+| Modal, projetos relacionados          | Título do projeto                                | `/projects/:id` do idioma atual                                                                 |
+| Seletor de idioma                     | `PT`, `EN`, `ES`                                 | `/pt-BR/about`, `/en/about`, `/es/about` (D31)                                                  |
 
 O Início pode ter um link para `/about`; isso é da spec da #3.
 
@@ -382,7 +382,7 @@ tela cheia por media query, rolagem travada).
 Copiados de [`accessibility.md`](../product/accessibility.md#checklist-por-tela), sem renumerar.
 
 - [ ] `A11Y-G01` — Um `main`, um `h1` e um `<title>` próprio e traduzido [teste]
-- [ ] `A11Y-G02` — `<html lang>` igual ao idioma da URL (`/`, `/en/`, `/es/`) [teste]
+- [ ] `A11Y-G02` — `<html lang>` igual ao idioma da URL (`/pt-BR`, `/en`, `/es`) [teste]
 - [ ] `A11Y-G03` — Nenhuma violação do axe em cada estado da tela [axe]
 - [ ] `A11Y-G04` — Nenhuma violação do axe no navegador, nos dois temas [e2e]
 - [ ] `A11Y-G05` — Ordem de foco igual à visual e foco visível em todo elemento focável [teclado]
@@ -439,5 +439,5 @@ verificação de lá.
 
 - [ ] `npm run build`, `npm run lint` e `npm test -- --run` passam
 - [ ] Namespace `about` em `pt-BR`, `en` e `es`, em `src/i18n/resources.ts` e no `ns` de `src/i18n/i18n.ts`; chaves sem uso removidas (R2)
-- [ ] A rota abre e recarrega nos três prefixos (`/about`, `/en/about`, `/es/about`) no build com o `base` do Pages
+- [ ] A rota abre e recarrega nos três prefixos (`/pt-BR/about`, `/en/about`, `/es/about`) no build com o `base` do Pages
 - [ ] O roteiro de teclado do modal entra na suíte ponta a ponta da #55 ([`roadmap.md`](../product/roadmap.md))

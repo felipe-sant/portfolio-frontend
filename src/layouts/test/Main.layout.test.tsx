@@ -26,7 +26,7 @@ describe("MainLayout", () => {
             name: "Luiz Felipe"
         })
 
-        expect(brandLink).toHaveAttribute("href", "/")
+        expect(brandLink).toHaveAttribute("href", "/pt-BR")
         expect(screen.getByRole("contentinfo")).toHaveTextContent("© 2026 · Luiz Felipe dos Santos")
     })
 

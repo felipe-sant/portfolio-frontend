@@ -27,17 +27,20 @@ flowchart TD
 
 ## Roteamento
 
-Todas as rotas ficam em `src/routers/routes.tsx`, com os paths em `src/routers/paths.ts`. O `MainLayout` é a rota-pai, as páginas são filhas carregadas sob demanda (`lazy`) e o único `<Suspense>` fica em volta do `<Outlet />` do layout. A rota `*` leva à página não encontrada e fica por último; a página de erro é o `errorElement` da rota do layout e renderiza sem ele.
+Todas as rotas ficam em `src/routers/routes.tsx`, com os paths em `src/routers/paths.ts`. O idioma é o primeiro segmento do caminho (ADR [0002](../adr/0002-language-in-path.md)): `routes.tsx` define as páginas uma vez (`pageRoutes`) e gera três rotas-pai idênticas, `/pt-BR`, `/en` e `/es`, cada uma com `MainLayout`, `errorElement` e um `loader` (`createLanguageLoader`) que troca o idioma do i18next antes do render. As páginas são filhas carregadas sob demanda (`lazy`) e o único `<Suspense>` fica em volta do `<Outlet />` do layout. Fora das três rotas-pai, a rota `/` só redireciona (`redirectRootLoader`: escolha salva, idioma do navegador, `en`) e a rota `*` sem prefixo leva à página não encontrada em inglês, por último. A página de erro é o `errorElement` da rota do layout e renderiza sem ele. O `Router` passa o `base` do Vite como `basename` ao `createBrowserRouter`.
 
-| Rota                        | Tela                  | Situação                   |
-| --------------------------- | --------------------- | -------------------------- |
-| `/`                         | Início                | Existe, com o hero mínimo  |
-| `*`                         | Página não encontrada | Existe                     |
-| `/projects`                 | Projetos              | Prevista (D32), sem página |
-| `/projects/:id`             | Projeto               | Prevista (D32), sem página |
-| `/projects/:id/docs/<name>` | Documentos do projeto | Prevista (D55), sem página |
-| `/about`                    | Informações           | Prevista (D32), sem página |
-| `/contact`                  | Contato               | Prevista (D32), sem página |
+Link interno é montado por `buildPath(path, language, params?)` ou, em componente, por `useLocalizedPath()`, que usa o idioma ativo. `getEquivalentPath(pathname, language)` devolve a URL equivalente em outro idioma, para o seletor.
+
+| Rota                                 | Tela                  | Situação                   |
+| ------------------------------------ | --------------------- | -------------------------- |
+| `/`                                  | Redireciona           | Existe                     |
+| `/<idioma>`                          | Início                | Existe, com o hero mínimo  |
+| `/<idioma>/*`, `*`                   | Página não encontrada | Existe                     |
+| `/<idioma>/projects`                 | Projetos              | Prevista (D32), sem página |
+| `/<idioma>/projects/:id`             | Projeto               | Prevista (D32), sem página |
+| `/<idioma>/projects/:id/docs/<name>` | Documentos do projeto | Prevista (D55), sem página |
+| `/<idioma>/about`                    | Informações           | Prevista (D32), sem página |
+| `/<idioma>/contact`                  | Contato               | Prevista (D32), sem página |
 
 Uma rota só entra em `paths.ts` junto com a página que ela renderiza. Navegação interna usa `<Link>` ou `useNavigate` com o path de `ROUTES`.
 
@@ -102,11 +105,11 @@ As fontes são as três famílias do handoff (Bricolage Grotesque para títulos,
 
 ## Internacionalização
 
-Todo texto visível vem de uma chave de tradução, com o valor de cada idioma em `src/locales/<idioma>/<namespace>.json`. Os idiomas suportados são `pt-BR`, `en` e `es`; `pt-BR` é a língua de referência e `en` é o fallback de runtime.
+Todo texto visível vem de uma chave de tradução, com o valor de cada idioma em `src/locales/<idioma>/<namespace>.json`. Os idiomas suportados são `pt-BR`, `en` e `es`; `pt-BR` é a língua de referência e `en` é o `fallbackLng`.
 
-A detecção segue a escolha salva (por `setLanguage` ou por `?lng=`), depois o idioma do navegador e por fim `en`. A escolha fica em `localStorage` na chave `portfolio-frontend:language`.
+O caminho da URL decide o idioma (`/pt-BR`, `/en`, `/es`); o i18next inicia com o idioma do primeiro segmento e o `loader` de cada rota-pai o troca na navegação. `?lng=` não tem efeito. A escolha salva por `setLanguage` fica em `localStorage` na chave `portfolio-frontend:language` e só é lida na raiz `/`, que redireciona por ela, depois pelo idioma do navegador e por fim `en`.
 
-Toda feature com texto de UI entrega o texto nos três idiomas, e chave sem uso é removida (R2). O seletor de idioma fica no cabeçalho (`PT · EN · ES`, entre a navegação e o tema) e no menu mobile, e troca o idioma por `setLanguage` (D12, em [`decisions.md`](../design/decisions.md)).
+Toda feature com texto de UI entrega o texto nos três idiomas, e chave sem uso é removida (R2). O seletor de idioma fica no cabeçalho (`PT · EN · ES`, entre a navegação e o tema) e no menu mobile, e navega para a URL equivalente no outro idioma, salvando a escolha por `setLanguage` (D31, em [`decisions.md`](../design/decisions.md)).
 
 ## Testes
 

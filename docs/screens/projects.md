@@ -1,6 +1,6 @@
 # Projetos
 
-A tela Projetos (`/projects`, também `/en/projects` e `/es/projects`, D32) é o passo do meio da
+A tela Projetos (`/pt-BR/projects`, `/en/projects` e `/es/projects`, D32) é o passo do meio da
 jornada do cliente (Início → Projetos → Projeto, [`overview.md`](../product/overview.md)): a lista
 completa de projetos, com busca, filtros de tipo e categoria, ordenação e carregamento incremental.
 Quem a implementa é a issue #35, com #32 (componentes base, inclusive chip, campo de busca e skeleton),
@@ -311,7 +311,7 @@ do que a tela usa:
   `/projects/<id>` no mesmo idioma e `name` igual ao título. A página referencia o autor por
   `author` com o `@id` único da `Person` (`<URL canônica de />#person`, o mesmo em todas as telas,
   decisão transversal do PO de 11-10-2026), sem repetir a `Person` inteira.
-- Na pré-renderização (#49), `/projects`, `/en/projects` e `/es/projects` têm cada um seu HTML com o
+- Na pré-renderização (#49), `/pt-BR/projects`, `/en/projects` e `/es/projects` têm cada um seu HTML com o
   primeiro lote na ordem padrão e o JSON-LD completo.
 
 ```json
@@ -382,7 +382,7 @@ colunas da grade, restauração de rolagem ao voltar, hidratação) e `[mediçã
 Copiados de [`accessibility.md`](../product/accessibility.md#checklist-por-tela), sem renumerar.
 
 - [ ] `A11Y-G01` — Um `main`, um `h1` e um `<title>` próprio e traduzido [teste]
-- [ ] `A11Y-G02` — `<html lang>` igual ao idioma da URL (`/`, `/en/`, `/es/`) [teste]
+- [ ] `A11Y-G02` — `<html lang>` igual ao idioma da URL (`/pt-BR`, `/en`, `/es`) [teste]
 - [ ] `A11Y-G03` — Nenhuma violação do axe em cada estado da tela [axe]
 - [ ] `A11Y-G04` — Nenhuma violação do axe no navegador, nos dois temas [e2e]
 - [ ] `A11Y-G05` — Ordem de foco igual à visual e foco visível em todo elemento focável [teclado]
@@ -429,7 +429,7 @@ verificação de lá.
 - [ ] `NF-RE-04` — Linha de filtros rolável no mobile (D16) e grade de colunas de 18rem (D17) [#33, #34 a #38; #41]
 - [ ] `NF-MO-01` — `prefers-reduced-motion: reduce` desliga shimmer e `translateY` de hover [#41]
 - [ ] `NF-TE-04` — A query e as quebras não mudam a primeira renderização em relação ao HTML [#49; #41]
-- [ ] `NF-IA-01` — `/projects`, `/en/projects` e `/es/projects` com HTML gerado no build, legível sem JavaScript [CI; #49; #41]
+- [ ] `NF-IA-01` — `/pt-BR/projects`, `/en/projects` e `/es/projects` com HTML gerado no build, legível sem JavaScript [CI; #49; #41]
 - [ ] `NF-IA-02` — Projetos depois de "Carregar mais" em `llms-full*.txt` e todo projeto no `sitemap.xml` [CI; #49; #51]
 - [ ] `NF-IA-03` — Primeira renderização do cliente igual ao HTML, com os dados serializados na store [CI; #49; #41]
 - [ ] `NF-IA-08` — JSON-LD `CollectionPage` com `ItemList` dos projetos [CI; #52; #34 a #38; #41]
@@ -440,7 +440,7 @@ verificação de lá.
 
 ### Gerais
 
-- [ ] A rota abre e recarrega em `/projects`, `/en/projects` e `/es/projects` no build com o `base` do Pages
+- [ ] A rota abre e recarrega em `/pt-BR/projects`, `/en/projects` e `/es/projects` no build com o `base` do Pages
 - [ ] `npm run build`, `npm run lint` e `npm test -- --run` passam
 - [ ] Textos novos de `projects` e `common` em `pt-BR`, `en` e `es`, e chaves sem uso removidas (R2)
 - [ ] `/projects` entra na suíte da #55

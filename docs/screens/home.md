@@ -1,6 +1,6 @@
 # Início
 
-A tela Início (`/`, também sob `/en/` e `/es/`, D32) é a primeira impressão do portfólio e o fim da
+A tela Início (`/pt-BR`, `/en` e `/es`, D32) é a primeira impressão do portfólio e o fim da
 jornada do recrutador ("Baixar CV" no hero). Quem a implementa é a issue #34, com #31 (tokens, tema e
 foco), #32 (componentes base e ícones, inclusive pausa e play de D28), #33 e #60 (layout), #53 (idioma no
 caminho), #52 (canônica, Open Graph e o mecanismo do JSON-LD), #49 (pré-renderização) e #54 (CV e modal de pré-visualização
@@ -75,7 +75,7 @@ Cada subseção lista os requisitos na ordem dos IDs.
 
 | ID           | Regra                                                                                                                                                                                                                                                                                                                                                                                                             | Fonte                       |
 | ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------- |
-| `RF-HOME-01` | A rota é `/` (também `/en/` e `/es/`, D32, NF-IN-06), filha do `MainLayout`, que dá cabeçalho, rodapé padrão, `main` e "Pular para o conteúdo" (RF-LAY-31); a página não renderiza o próprio `main`. Item ativo "Início" (RF-LAY-04). Ordem das seções: hero, status atual, faixa de stack, projetos em destaque com as saídas. Sem depoimentos (D13)                                                             | Protótipo, D13, `layout.md` |
+| `RF-HOME-01` | A rota é `/pt-BR`, `/en` e `/es` (D32, NF-IN-06), filha do `MainLayout`, que dá cabeçalho, rodapé padrão, `main` e "Pular para o conteúdo" (RF-LAY-31); a página não renderiza o próprio `main`. Item ativo "Início" (RF-LAY-04). Ordem das seções: hero, status atual, faixa de stack, projetos em destaque com as saídas. Sem depoimentos (D13)                                                                 | Protótipo, D13, `layout.md` |
 | `RF-HOME-02` | Toda informação vem do conteúdo por endpoints do RTK Query com `queryFn` local (R1, NF-DA-02), só no idioma ativo (NF-DA-05); a página não importa JSON. A seleção e a ordem dos destaques e dos itens em curso vêm prontas da API (D51, D53, D54); o que a tela calcula (ano a partir de `date`, card pelo `kind`) fica fora do JSX: no hook da página (`src/pages/hooks/useHome.ts`) ou em função pura testável | R1, `.claude/CLAUDE.md`     |
 
 ### Hero
@@ -166,7 +166,7 @@ Caminhos de D32, sempre com o prefixo do idioma atual (NF-IN-11).
 | ------------------------------------- | -------------------------------------------- | ------------------------------------------------------------------------------------------------- |
 | Qualquer tela                         | Gato e nome, "Início" na navegação           | `/` do idioma atual (RF-LAY-02, RF-LAY-03)                                                        |
 | Página não encontrada, página de erro | "Voltar para o início"                       | `/` (RF-LAY-28, RF-LAY-29)                                                                        |
-| Primeira carga em `/`                 | Escolha salva diferente de `pt-BR`           | `/en/` ou `/es/` (NF-IN-09, #53)                                                                  |
+| Carga em `/`                          | Qualquer                                     | `/pt-BR`, `/en` ou `/es` (NF-IN-09, #53)                                                          |
 | Hero                                  | "Ver projetos"                               | `/projects`                                                                                       |
 | Hero                                  | "Baixar CV"                                  | Modal de pré-visualização do PDF do idioma ativo, sem sair da página; sem JavaScript, o PDF (D52) |
 | Projetos em destaque                  | "Ver todos →"                                | `/projects`                                                                                       |
@@ -335,7 +335,7 @@ O `@id` da `Person` é `<URL canônica de />#person`, o mesmo em todas as telas 
 transversal do PO de 11-10-2026), e `/about` o reutiliza na `ProfilePage` (#37,
 [`about.md`](about.md)). `sameAs` só tem as redes que existirem no conteúdo. `image` só entra
 depois de #42 (foto, D26). `jobTitle` vem da mesma chave do `h1`, para o cargo exibido e o declarado
-serem o mesmo dado (NF-IA-09). Sem `noindex`. A pré-renderização (#49) gera `/`, `/en/` e `/es/` com
+serem o mesmo dado (NF-IA-09). Sem `noindex`. A pré-renderização (#49) gera `/pt-BR`, `/en` e `/es` com
 tudo isso no HTML.
 
 ## Critérios de aceite
@@ -349,7 +349,7 @@ revisão do PR confere. Nos itens funcionais, `[teste]` usa Testing Library com 
 
 ### Funcionais
 
-- [ ] `RF-HOME-01` — Rota `/`, `/en/` e `/es/` dentro do `MainLayout`, sem `main` próprio, "Início" ativo, seções na ordem hero, status atual, faixa de stack e destaques com saídas, sem depoimentos [teste]
+- [ ] `RF-HOME-01` — Rota `/pt-BR`, `/en` e `/es` dentro do `MainLayout`, sem `main` próprio, "Início" ativo, seções na ordem hero, status atual, faixa de stack e destaques com saídas, sem depoimentos [teste]
 - [ ] `RF-HOME-02` — Conteúdo só por endpoints do RTK Query, no idioma ativo; seleção e ordenação vindas da API; o que a tela calcula fica no hook da página ou em função pura com teste [teste] [review]
 - [ ] `RF-HOME-03` — Selo com `availability.label` do conteúdo, indicador `aria-hidden`, em `--success-surface`/`--success-ink` e `--radius`; com `isAvailable: false` não aparece [teste] [medição]
 - [ ] `RF-HOME-04` — `h1` "Desenvolvedor full stack em TypeScript", sem ponto, por `home:heading`, alvo de foco na navegação interna, nos três idiomas, sem chave no lugar de texto [teste]
@@ -380,7 +380,7 @@ revisão do PR confere. Nos itens funcionais, `[teste]` usa Testing Library com 
 Copiados de [`accessibility.md`](../product/accessibility.md#checklist-por-tela), sem renumerar.
 
 - [ ] `A11Y-G01` — Um `main`, um `h1` e um `<title>` próprio e traduzido [teste]
-- [ ] `A11Y-G02` — `<html lang>` igual ao idioma da URL (`/`, `/en/`, `/es/`) [teste]
+- [ ] `A11Y-G02` — `<html lang>` igual ao idioma da URL (`/pt-BR`, `/en`, `/es`) [teste]
 - [ ] `A11Y-G03` — Nenhuma violação do axe em cada estado da tela [axe]
 - [ ] `A11Y-G04` — Nenhuma violação do axe no navegador, nos dois temas [e2e]
 - [ ] `A11Y-G05` — Ordem de foco igual à visual e foco visível em todo elemento focável [teclado]
@@ -416,7 +416,7 @@ Lighthouse mobile no build publicado do Pages, como diz aquele documento.
 - [ ] `NF-IN-03` — Nenhuma tela mostra chave no lugar de texto [CI; #41]
 - [ ] `NF-IN-04` — Datas em `MM/AAAA` por `Intl.DateTimeFormat` nos três idiomas; o período em curso segue D39 ("desde MM/AAAA") [CI; #37, #36]
 - [ ] `NF-IN-05` — `<html lang>` acompanha o idioma do caminho, já no HTML pré-renderizado [CI; #49; #53]
-- [ ] `NF-IN-06` — `/`, `/en/` e `/es/` abrem a tela no idioma do caminho [CI; #53]
+- [ ] `NF-IN-06` — `/pt-BR`, `/en` e `/es` abrem a tela no idioma do caminho [CI; #53]
 - [ ] `NF-IN-11` — Todo link interno mantém o prefixo do idioma, montado por função única [CI; #53]
 - [ ] `NF-IN-13` — Caminhos em inglês: `/projects`, `/projects/:id` e `/about` [CI; #53; #36]
 - [ ] `NF-DA-02` — A tela não importa JSON de conteúdo: o acesso é por endpoints do RTK Query [Review; CI]
@@ -439,7 +439,7 @@ Lighthouse mobile no build publicado do Pages, como diz aquele documento.
 - [ ] `NF-MO-01` — `prefers-reduced-motion: reduce` desliga marquee, shimmer e `translateY` de hover [#41]
 - [ ] `NF-MO-02` — A faixa consulta a preferência pelo hook reutilizável de `src/hooks/` [CI; quem usar]
 - [ ] `NF-MO-03` — A faixa de stack tem pausa (D28) [#34; #41]
-- [ ] `NF-IA-01` — `/`, `/en/` e `/es/` com HTML gerado no build, legível sem JavaScript [CI; #49; #41]
+- [ ] `NF-IA-01` — `/pt-BR`, `/en` e `/es` com HTML gerado no build, legível sem JavaScript [CI; #49; #41]
 - [ ] `NF-IA-03` — Primeira renderização do cliente igual ao HTML, com os dados serializados na store [CI; #49; #41]
 - [ ] `NF-IA-08` — JSON-LD `WebSite` e `Person` com nome, cargo, URL, `sameAs` e `knowsAbout` [CI; #52; #34 a #38; #41]
 - [ ] `NF-IA-09` — JSON-LD gerado dos mesmos dados da tela, com `<` escapado [CI; #52]
@@ -452,4 +452,4 @@ Lighthouse mobile no build publicado do Pages, como diz aquele documento.
 
 - [ ] `npm run build`, `npm run lint` e `npm test -- --run` passam
 - [ ] Textos novos de `home` e `common` em `pt-BR`, `en` e `es`; `home:intro` e outras chaves sem uso removidas (R2)
-- [ ] A rota abre e recarrega nos três prefixos (`/`, `/en/`, `/es/`) no build com o `base` do Pages
+- [ ] A rota abre e recarrega nos três prefixos (`/pt-BR`, `/en`, `/es`) no build com o `base` do Pages
