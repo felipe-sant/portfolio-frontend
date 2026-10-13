@@ -3,11 +3,12 @@ import { describe, expect, it } from "vitest"
 import { MemoryRouter, Route, Routes as Switch } from "react-router-dom"
 import { render, screen, within } from "@testing-library/react"
 import MainLayout from "@/layouts/Main.layout"
+import expectNoAxeViolations from "@/testUtils/expectNoAxeViolations"
 
 const NeverResolves = lazy(() => new Promise<never>(() => {}))
 
 function renderLayout() {
-    render(
+    return render(
         <MemoryRouter initialEntries={["/"]}>
             <Switch>
                 <Route element={<MainLayout />}>
@@ -19,6 +20,12 @@ function renderLayout() {
 }
 
 describe("MainLayout", () => {
+    it("não tem violações de acessibilidade", async () => {
+        const { container } = renderLayout()
+
+        await expectNoAxeViolations(container)
+    }, 15000)
+
     it("renderiza o header e o footer", () => {
         renderLayout()
 

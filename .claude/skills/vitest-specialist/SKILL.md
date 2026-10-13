@@ -111,6 +111,25 @@ describe("HomePage", () => {
 
 Não há provider nem wrapper de render: a página chama `useTranslation()` e o texto sai em `pt-BR` porque o `src/setupTests.ts` resetou o idioma (item 4) e o `initReactI18next` registra a instância globalmente. Import interno com `@/`, nunca `../`. O nome do `describe` é o identificador testado (inglês); a descrição do `it` é uma frase em português, como todo texto lido por gente.
 
+### Acessibilidade com `expectNoAxeViolations`
+
+Todo teste de página, layout e componente tem ao menos um `it` que passa o `container` do `render` para `expectNoAxeViolations` (`src/testUtils/expectNoAxeViolations.ts`). O helper roda o `axe-core` e rejeita com o `id` e o alvo de cada violação; com `renderWithStore`, o `container` vem do retorno do `render` dele. A regra `color-contrast` fica desligada, porque o `jsdom` não calcula cor (o contraste é do teste no navegador, #55). Teste de rota não chama o helper. O `axe.run` é lento no `jsdom`: o `it` que o chama recebe `15000` como terceiro argumento, senão estoura os 5s padrão com a suíte em paralelo.
+
+```tsx
+import { describe, it } from "vitest"
+import { render } from "@testing-library/react"
+import HomePage from "@/pages/Home.page"
+import expectNoAxeViolations from "@/testUtils/expectNoAxeViolations"
+
+describe("HomePage", () => {
+    it("não tem violações de acessibilidade", async () => {
+        const { container } = render(<HomePage />)
+
+        await expectNoAxeViolations(container)
+    }, 15000)
+})
+```
+
 ### Mais de um `render` no mesmo arquivo
 
 Não precisa de nada: o `afterEach(cleanup)` do `src/setupTests.ts` desmonta o DOM entre um `it` e o seguinte, em toda suíte. Um teste com dois `render` não precisa de boilerplate de limpeza:
@@ -402,6 +421,7 @@ Ordem de preferência: **`getByRole` com `name`** > `getByLabelText` / `getByTex
 - [ ] Import do arquivo testado com `@/`, nunca `../`
 - [ ] Query por `getByRole` com `name` sempre que possível; `getByTestId` só como último recurso
 - [ ] Componente que lê a store renderizado com `renderWithStore` (nunca um `Provider` montado à mão); endpoint injetado com `fetch` stubado e `VITE_API_URL` absoluta
+- [ ] Teste de página, layout ou componente com um `it` que chama `expectNoAxeViolations(container)`
 - [ ] Router em memória em volta do que depende de rota (`createMemoryRouter(routes, ...)` + `RouterProvider`), não o `Router` default
 - [ ] Nenhum `afterEach(cleanup)` local — o `src/setupTests.ts` já faz isso em toda suíte
 - [ ] Texto afirmado em `pt-BR`, nunca a chave; outro idioma só com `await setLanguage(...)` dentro do `it`
