@@ -1,5 +1,5 @@
 import { fileURLToPath } from "node:url"
-import { defineConfig, coverageConfigDefaults } from "vitest/config"
+import { defineConfig, configDefaults, coverageConfigDefaults } from "vitest/config"
 import react from "@vitejs/plugin-react"
 
 export default defineConfig({
@@ -13,6 +13,7 @@ export default defineConfig({
         environment: "jsdom",
         pool: "vmThreads",
         setupFiles: ["./src/setupTests.ts"],
+        exclude: [...configDefaults.exclude, ".claude/**"],
         coverage: {
             provider: "v8",
             reporter: ["text", "json", "json-summary", "html"],
