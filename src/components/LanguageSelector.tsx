@@ -10,6 +10,7 @@ import getLanguageFromPath from "@/i18n/getLanguageFromPath"
 import resolveSupportedLanguage from "@/i18n/resolveSupportedLanguage"
 import setLanguage from "@/i18n/setLanguage"
 import SUPPORTED_LANGUAGES from "@/i18n/supportedLanguages"
+import dropdown from "@/styles/components/dropdownPanel.module.css"
 import css from "@/styles/components/languageSelector.module.css"
 import type SupportedLanguage from "@/types/language/SupportedLanguage.types"
 
@@ -84,7 +85,7 @@ function LanguageSelector({ variant = "inline" }: LanguageSelectorProps) {
                 <Icon name="chevronDown" size={16} />
             </button>
             {isMounted && (
-                <ul id={listId} className={css.list} {...panelProps}>
+                <ul id={listId} className={`${css.list} ${dropdown.panel}`} {...panelProps}>
                     {SUPPORTED_LANGUAGES.map((language) => (
                         <LanguageOption
                             key={language}

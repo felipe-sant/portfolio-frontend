@@ -4,6 +4,7 @@ import IconButton from "@/components/IconButton"
 import MotionToggle from "@/components/MotionToggle"
 import ThemeToggle from "@/components/ThemeToggle"
 import useDropdown from "@/hooks/useDropdown"
+import dropdown from "@/styles/components/dropdownPanel.module.css"
 import css from "@/styles/components/settingsMenu.module.css"
 
 function SettingsMenu() {
@@ -22,7 +23,7 @@ function SettingsMenu() {
                 onClick={toggle}
             />
             {isMounted && (
-                <div id={panelId} className={css.panel} {...panelProps}>
+                <div id={panelId} className={`${css.panel} ${dropdown.panel}`} {...panelProps}>
                     <ThemeToggle variant="labeled" />
                     <MotionToggle variant="labeled" />
                 </div>

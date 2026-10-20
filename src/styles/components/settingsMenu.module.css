@@ -17,23 +17,4 @@
     border-radius: var(--radius);
     background-color: var(--bg-page);
     box-shadow: var(--shadow-modal);
-    animation: dropdown-in var(--dur-base) var(--ease);
-}
-
-.panel[data-state="closed"] {
-    animation: dropdown-out var(--dur-fast) var(--ease) forwards;
-}
-
-@keyframes dropdown-out {
-    to {
-        opacity: 0;
-        transform: translateY(-0.25rem);
-    }
-}
-
-@keyframes dropdown-in {
-    from {
-        opacity: 0;
-        transform: translateY(-0.25rem);
-    }
 }
