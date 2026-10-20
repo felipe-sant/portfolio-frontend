@@ -5,6 +5,7 @@ import IconButton from "@/components/IconButton"
 import LanguageSelector from "@/components/LanguageSelector"
 import ThemeToggle from "@/components/ThemeToggle"
 import useLocalizedPath from "@/hooks/useLocalizedPath"
+import useNavIndicator from "@/hooks/useNavIndicator"
 import ROUTES from "@/routers/paths"
 import css from "@/styles/components/header.module.css"
 import type MobileMenu from "@/types/navigation/MobileMenu.types"
@@ -19,6 +20,7 @@ interface NavLinksProps {
     activeItem?: NavItemId
     onNavigate?: () => void
     className: string
+    hasIndicator?: boolean
 }
 
 const NAV_ITEMS = [
@@ -28,12 +30,13 @@ const NAV_ITEMS = [
     { id: "contact", path: ROUTES.contact }
 ] as const
 
-function NavLinks({ activeItem, onNavigate, className }: NavLinksProps) {
+function NavLinks({ activeItem, onNavigate, className, hasIndicator = false }: NavLinksProps) {
     const { t } = useTranslation()
     const localizedPath = useLocalizedPath()
+    const { navRef, indicatorStyle, isAnimated } = useNavIndicator()
 
     return (
-        <nav aria-label={t("navigation.label")} className={className}>
+        <nav aria-label={t("navigation.label")} className={className} ref={navRef}>
             {NAV_ITEMS.map((item) => (
                 <Link
                     key={item.id}
@@ -45,6 +48,13 @@ function NavLinks({ activeItem, onNavigate, className }: NavLinksProps) {
                     {t(`navigation.${item.id}`)}
                 </Link>
             ))}
+            {hasIndicator && (
+                <span
+                    aria-hidden="true"
+                    className={`${css.indicator} ${isAnimated ? css.indicatorAnimated : ""}`}
+                    style={indicatorStyle}
+                />
+            )}
         </nav>
     )
 }
@@ -61,7 +71,7 @@ function Header({ menu, activeItem }: HeaderProps) {
                     <CatLogo />
                     <span>{t("authorName")}</span>
                 </Link>
-                <NavLinks activeItem={activeItem} className={css.desktopNav} />
+                <NavLinks activeItem={activeItem} className={css.desktopNav} hasIndicator />
                 <div className={css.desktopControls}>
                     <LanguageSelector />
                     <ThemeToggle />

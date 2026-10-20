@@ -43,19 +43,32 @@
 }
 
 .desktopNav {
+    position: relative;
     display: none;
     align-items: stretch;
-    gap: var(--space-6);
+    gap: var(--space-1);
     margin-inline-start: auto;
 }
 
 .desktopNav .link {
     min-height: var(--hit-min);
-    border-bottom: var(--border-width-active) solid transparent;
+    padding-inline: var(--space-4);
 }
 
-.desktopNav .link[aria-current="page"] {
-    border-bottom-color: var(--brand-variant);
+.indicator {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: var(--border-width-active);
+    background-color: var(--brand-variant);
+    pointer-events: none;
+}
+
+.indicatorAnimated {
+    transition:
+        transform var(--dur-slow) var(--ease),
+        width var(--dur-slow) var(--ease),
+        opacity var(--dur-base) var(--ease);
 }
 
 .desktopControls {
@@ -82,8 +95,19 @@
     background-color: var(--surface-chrome);
 }
 
+.panel:not([hidden]) {
+    animation: panel-in var(--dur-base) var(--ease);
+}
+
 .panel[hidden] {
     display: none;
+}
+
+@keyframes panel-in {
+    from {
+        opacity: 0;
+        transform: translateY(-0.5rem);
+    }
 }
 
 .panelNav {
