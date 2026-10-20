@@ -27,3 +27,5 @@ Thumbs.db
 
 .specs/bugs/*/
 .specs/features/*/
+!.specs/bugs/_archive/
+!.specs/features/_archive/
