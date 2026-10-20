@@ -317,7 +317,7 @@ para editores compatíveis, coerente com o `.prettierrc`.
 
 - **`src/components/`** — componentes base reutilizáveis (`Button`, `Chip`, `TextField`, `SearchInput`,
   `Skeleton`, `Spinner`, `VisuallyHidden`, `Icon`, `IconButton`, `CatLogo`, `ThemeToggle`,
-  `LanguageSelector`, `Header`, `SkipLink`). O desenho de cada ícone fica num mapa local de
+  `MotionToggle`, `SettingsMenu`, `Flag`, `LanguageSelector`, `Header`, `SkipLink`). O desenho de cada ícone fica num mapa local de
   `Icon.tsx`, com os nomes em `src/enum/iconNames.enum.ts`. Texto fixo de componente vive em `common`
   (`searchInput.clear`); o resto chega por prop. O `jsx-a11y/prefer-tag-over-role` acusa `role="status"`
   literal: passe `role={"status"}`. Controle de formulário tem borda `--border-control`, nunca
@@ -329,7 +329,7 @@ para editores compatíveis, coerente com o `.prettierrc`.
   (`src/hooks/`), que o layout repassa ao `Header` e usa para aplicar `inert` em skip link, `main` e
   rodapé; `useRouteFocus` foca o `h1` na troca de rota (não na primeira carga nem na troca só de
   idioma). O item ativo vem de `getActiveNavItem` (`src/utils/`) sobre o caminho sem prefixo. Texto
-  do cabeçalho vive em `common`. Teste de layout usa `createMemoryRouter` com os loaders de idioma.
+  do cabeçalho vive em `common`. `useDropdown` (`src/hooks/`) é o disclosure de `LanguageSelector` e `SettingsMenu` (abrir, fechar com Esc, clique ou foco fora, saída animada antes de desmontar, painel `inert` fechado), com a animação em `dropdownPanel.module.css`; `useNavIndicator` posiciona o indicador da navegação desktop. Teste de layout usa `createMemoryRouter` com os loaders de idioma.
 - **`src/styles/`** — `global.css` guarda as CSS custom properties (cor, tipografia, espaçamento e
   afins) e o reset. CSS Module usa essas custom properties em vez de valor hardcoded; confira os
   nomes em `src/styles/global.css` antes de usar, e token global novo entra lá. Os nomes dos
@@ -349,6 +349,15 @@ para editores compatíveis, coerente com o `.prettierrc`.
   `themeScript.test.ts` compara com os utilitários). `?tema=` não existe. Foco é global
   (`:focus-visible` com `--focus-ring`; faixa escura usa `data-surface="band"`), e `a` em
   `global.css` é sublinhado: componente que se apresenta como botão zera no próprio módulo.
+- **Movimento** — `useMotion()` de `src/hooks/useMotion.ts` (`{ motion, setMotion, toggleMotion }`,
+  `full` ou `reduced`) espelha o tema: chamado em `App.tsx`, única via de escrita da escolha
+  (`saveMotion`, chave `portfolio-frontend:motion` em `motionStorageKey.ts`), leitura, sistema e
+  aplicação em `src/utils/` (`readStoredMotion`, `getSystemMotion`, `applyMotion`). A escolha vale
+  mais que `prefers-reduced-motion`; sem ela, o sistema decide. `global.css` zera os `--dur-*`,
+  animações e transições com `[data-motion="reduced"]` (e pela media query só enquanto não há
+  `data-motion`); um terceiro script inline do `index.html` aplica `data-motion` antes da pintura
+  (chave duplicada; `motionScript.test.ts` compara com os utilitários). Animação nova usa
+  `--dur-*` e `--ease`, nunca duração fixa, para o botão e o sistema a desligarem.
 - **Alias de import `@/`** — `@/*` resolve para `src/*`. Configurado em dois lugares que precisam
   continuar concordando: `paths` no `tsconfig.app.json` (para o `tsc` e o editor) e `resolve.alias` no
   `vite.config.ts` (para o dev server e o build). Mexer em um sem o outro deixa o `tsc -b`

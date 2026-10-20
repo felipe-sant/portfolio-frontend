@@ -106,7 +106,7 @@ Fonte: [`decisions.md`](../design/decisions.md).
 Conferido na `staging` em `afa717b`:
 
 - `<html lang>` acompanha o idioma ativo, pelo listener de `languageChanged` em `src/i18n/i18n.ts`. Hoje o idioma vem da detecção; a #8 o passa para o caminho da URL (`/en/`, `/es/`) já na v1.
-- `prefers-reduced-motion` zera os `--dur-*`, encurta animação e transição e desliga `scroll-behavior` em `src/styles/global.css`.
+- `prefers-reduced-motion` zera os `--dur-*`, encurta animação e transição e desliga `scroll-behavior` em `src/styles/global.css`. O botão "Reduzir movimento" do cabeçalho faz o mesmo por escolha manual (`data-motion="reduced"`), que vale mais que a preferência do sistema.
 - `jsx-a11y` ativo no lint, e `react/jsx-no-literals` cobrindo `alt` e `aria-label`.
 - Viewport sem bloqueio de zoom no `index.html`.
 - `<title>` e `<meta>` declarados por página.
