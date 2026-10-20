@@ -153,6 +153,9 @@ nesse caso vale o comportamento padrão do React Router. Fica fora do escopo da 
 | `RF-LAY-33` | O favicon é o gato (D34): corpo `#7C7770` e detalhe por `<style>` interno com `@media (prefers-color-scheme: dark)` (`#202020` no claro, `#F2EEE7` no escuro), substituindo `public/favicon.svg`. Segue o tema do sistema, não o do site, porque o favicon não lê `data-theme`                                                                                                                                                                                            | D02, D34                                      |
 | `RF-LAY-34` | No desktop, a barra sob o item ativo da navegação é um único indicador que desliza até o item da nova página, animando posição e largura (`--dur-slow`, `--ease`); a primeira renderização não anima, a barra se reposiciona ao redimensionar e ao trocar de idioma e some sem item ativo. O painel mobile entra com fade curto                                                                                                                                           | NF-MO-01, A11Y-G12                            |
 | `RF-LAY-35` | Botão "Reduzir movimento" no menu de configurações e no painel mobile (grupo "Acessibilidade"), com `aria-pressed="true"` quando reduzido. A escolha grava `portfolio-frontend:motion` (`full` ou `reduced`), vale mais que `prefers-reduced-motion`, e sem escolha o sistema decide, inclusive quando muda com a página aberta. `data-motion` no `<html>` zera os `--dur-*`, animações e transições; um script inline do `index.html` o aplica antes da primeira pintura | 2.3.3, NF-MO-01, A11Y-G12                     |
+| `RF-LAY-36` | Com movimento pleno, a navegação por link do cabeçalho, logo e "Voltar ao início" (não encontrada e erro) usa View Transitions de `--dur-page` (150ms), pela prop `viewTransition`; sem suporte do navegador ou com movimento reduzido navega normal. Os links do `LanguageSelector` ficam sem transição (D58). O foco no `h1` (RF-LAY-32) não espera a transição                                                                                                         |
+| `RF-LAY-37` | Ao trocar o tema, as cores fazem crossfade de `--dur-base` por `data-theme-transition` no `<html>`, ligado só durante a troca e nunca com movimento reduzido nem na primeira pintura (D60)                                                                                                                                                                                                                                                                                |
+| `RF-LAY-38` | `Button`, `IconButton` e os links do cabeçalho reduzem a escala para `--press-scale` (0.97) enquanto pressionados; com movimento reduzido o token vale `1` (D59)                                                                                                                                                                                                                                                                                                          |
 
 ### Abertura de links
 
@@ -312,7 +315,7 @@ já está no HTML.
 
 ## Critérios de aceite
 
-Copiáveis para as issues #33 (`RF-LAY-01` a `RF-LAY-19` e `RF-LAY-31` a `RF-LAY-35`) e #60 (`RF-LAY-20` a `RF-LAY-30` e metadados). Verificação entre colchetes, com a legenda de
+Copiáveis para as issues #33 (`RF-LAY-01` a `RF-LAY-19` e `RF-LAY-31` a `RF-LAY-35`; `RF-LAY-36` a `RF-LAY-38` na #84) e #60 (`RF-LAY-20` a `RF-LAY-30` e metadados). Verificação entre colchetes, com a legenda de
 [`accessibility.md`](../product/accessibility.md#checklist-por-tela) (`[teste]`, `[axe]`, `[lint]`,
 `[teclado]`, `[leitor]`, `[navegador]`, `[e2e]` e `[medição]`) e mais `[review]` para o que só a
 revisão do PR confere. Nos itens funcionais, `[teste]` usa Testing Library, `user-event` e
@@ -356,6 +359,9 @@ foco sob o cabeçalho); `[navegador]` cobre favicon, `theme-color` e movimento r
 - [ ] `RF-LAY-33` — Favicon do gato com detalhe por `prefers-color-scheme` [navegador]
 - [ ] `RF-LAY-34` — Indicador único desliza até o item ativo, sem animar na primeira renderização [teste] [navegador]
 - [ ] `RF-LAY-35` — Botão de reduzir movimento grava a escolha, aplica `data-motion` antes da pintura e zera as animações [teste] [navegador]
+- [ ] `RF-LAY-36` — View Transition de 150ms nos links de navegação, sem ela com movimento reduzido nem no seletor de idioma, e foco no `h1` mantido [teste] [navegador]
+- [ ] `RF-LAY-37` — Crossfade de tema só durante a troca e desligado com movimento reduzido [teste] [navegador]
+- [ ] `RF-LAY-38` — Escala de pressão em botões e links do cabeçalho, `1` com movimento reduzido [navegador]
 
 ### Acessibilidade
 

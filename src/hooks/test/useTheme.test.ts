@@ -26,6 +26,7 @@ function stubSystemTheme(initial: "light" | "dark") {
 afterEach(() => {
     vi.unstubAllGlobals()
     window.history.pushState({}, "", "/")
+    document.documentElement.removeAttribute("data-theme-transition")
 })
 
 describe("useTheme", () => {
@@ -141,5 +142,33 @@ describe("useTheme", () => {
         const { result } = renderHook(() => useTheme())
 
         expect(result.current.theme).toBe("dark")
+    })
+})
+
+describe("useTheme crossfade", () => {
+    it("não liga o atributo de transição na primeira renderização", () => {
+        stubSystemTheme("light")
+
+        renderHook(() => useTheme())
+
+        expect(document.documentElement).not.toHaveAttribute("data-theme-transition")
+    })
+
+    it("liga o atributo de transição ao trocar o tema", () => {
+        stubSystemTheme("light")
+        const { result } = renderHook(() => useTheme())
+
+        act(() => result.current.setTheme("dark"))
+
+        expect(document.documentElement).toHaveAttribute("data-theme-transition")
+    })
+
+    it("liga o atributo de transição ao alternar o tema", () => {
+        stubSystemTheme("light")
+        const { result } = renderHook(() => useTheme())
+
+        act(() => result.current.toggleTheme())
+
+        expect(document.documentElement).toHaveAttribute("data-theme-transition")
     })
 })

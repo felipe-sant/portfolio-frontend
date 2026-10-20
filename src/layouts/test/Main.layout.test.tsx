@@ -1,5 +1,5 @@
 import { lazy } from "react"
-import { describe, expect, it } from "vitest"
+import { afterEach, describe, expect, it } from "vitest"
 import { act, render, screen, within } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { createMemoryRouter, RouterProvider } from "react-router-dom"
@@ -7,6 +7,7 @@ import MainLayout from "@/layouts/Main.layout"
 import SUPPORTED_LANGUAGES from "@/i18n/supportedLanguages"
 import createLanguageLoader from "@/routers/createLanguageLoader"
 import expectNoAxeViolations from "@/testUtils/expectNoAxeViolations"
+import stubViewTransition from "@/testUtils/stubViewTransition"
 
 const NeverResolves = lazy(() => new Promise<never>(() => {}))
 
@@ -29,6 +30,10 @@ async function renderLayout(entry = "/pt-BR", page?: React.JSX.Element) {
     await screen.findByRole("banner")
     return { router, ...utils }
 }
+
+afterEach(() => {
+    Reflect.deleteProperty(document, "startViewTransition")
+})
 
 describe("MainLayout", () => {
     it("não tem violações de acessibilidade", async () => {
@@ -132,6 +137,17 @@ describe("MainLayout", () => {
         })
 
         expect(screen.getByRole("heading", { name: "Projetos da rota" })).toHaveFocus()
+    })
+
+    it("foca o h1 depois de navegar por link com View Transition", async () => {
+        const startViewTransition = stubViewTransition()
+        await renderLayout("/pt-BR")
+        const nav = screen.getAllByRole("navigation", { name: "Principal", hidden: true })[0]
+
+        await userEvent.click(within(nav).getByRole("link", { name: "Projetos" }))
+
+        expect(startViewTransition).toHaveBeenCalled()
+        expect(await screen.findByRole("heading", { name: "Projetos da rota" })).toHaveFocus()
     })
 
     it("mostra o fallback no lugar do Outlet sem esconder header e footer", async () => {

@@ -1,5 +1,5 @@
-import { describe, expect, it } from "vitest"
-import { render, screen, within } from "@testing-library/react"
+import { afterEach, describe, expect, it } from "vitest"
+import { render, screen, waitFor, within } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { createMemoryRouter, RouterProvider } from "react-router-dom"
 import Header from "@/components/Header"
@@ -7,6 +7,8 @@ import useMobileMenu from "@/hooks/useMobileMenu"
 import SUPPORTED_LANGUAGES from "@/i18n/supportedLanguages"
 import createLanguageLoader from "@/routers/createLanguageLoader"
 import expectNoAxeViolations from "@/testUtils/expectNoAxeViolations"
+import stubViewTransition from "@/testUtils/stubViewTransition"
+import MOTION_STORAGE_KEY from "@/utils/motionStorageKey"
 import type NavItemId from "@/types/navigation/NavItemId.types"
 
 interface FrameProps {
@@ -38,6 +40,12 @@ function getPanel() {
         screen.getByRole("button", { name: "Menu" }).getAttribute("aria-controls") ?? ""
     ) as HTMLElement
 }
+
+afterEach(() => {
+    Reflect.deleteProperty(document, "startViewTransition")
+    localStorage.removeItem(MOTION_STORAGE_KEY)
+    document.documentElement.removeAttribute("data-motion")
+})
 
 describe("Header", () => {
     it("expõe banner e navegação Principal", async () => {
@@ -216,4 +224,46 @@ describe("Header", () => {
 
         await expectNoAxeViolations(container)
     }, 15000)
+
+    it("usa View Transition ao navegar por um item do cabeçalho com movimento pleno", async () => {
+        const startViewTransition = stubViewTransition()
+        await renderHeader()
+        const nav = screen.getAllByRole("navigation", { name: "Principal", hidden: true })[0]
+
+        await userEvent.click(within(nav).getByRole("link", { name: "Projetos" }))
+
+        await waitFor(() => expect(startViewTransition).toHaveBeenCalledTimes(1))
+    })
+
+    it("usa View Transition ao navegar pelo logo com movimento pleno", async () => {
+        const startViewTransition = stubViewTransition()
+        await renderHeader(undefined, "/pt-BR/projects")
+
+        await userEvent.click(screen.getByRole("link", { name: "Luiz Felipe dos Santos" }))
+
+        await waitFor(() => expect(startViewTransition).toHaveBeenCalledTimes(1))
+    })
+
+    it("não usa View Transition com movimento reduzido", async () => {
+        localStorage.setItem(MOTION_STORAGE_KEY, "reduced")
+        const startViewTransition = stubViewTransition()
+        const { router } = await renderHeader()
+        const nav = screen.getAllByRole("navigation", { name: "Principal", hidden: true })[0]
+
+        await userEvent.click(within(nav).getByRole("link", { name: "Projetos" }))
+
+        await waitFor(() => expect(router.state.location.pathname).toBe("/pt-BR/projects"))
+        expect(startViewTransition).not.toHaveBeenCalled()
+    })
+
+    it("não usa View Transition ao trocar só de idioma", async () => {
+        const startViewTransition = stubViewTransition()
+        const { router } = await renderHeader()
+
+        await userEvent.click(screen.getAllByRole("button", { name: "Idioma: Português" })[0])
+        await userEvent.click(screen.getAllByRole("link", { name: "English" })[0])
+
+        await waitFor(() => expect(router.state.location.pathname).toBe("/en"))
+        expect(startViewTransition).not.toHaveBeenCalled()
+    })
 })

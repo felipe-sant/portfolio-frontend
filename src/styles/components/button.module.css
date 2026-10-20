@@ -14,7 +14,12 @@
         color var(--dur-fast) ease,
         background-color var(--dur-fast) ease,
         border-color var(--dur-fast) ease,
-        filter var(--dur-fast) ease;
+        filter var(--dur-fast) ease,
+        transform var(--dur-fast) var(--ease);
+}
+
+.button:active:not(:disabled):not([aria-disabled="true"]) {
+    transform: scale(var(--press-scale));
 }
 
 .button:disabled {

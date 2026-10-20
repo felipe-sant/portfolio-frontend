@@ -1,8 +1,29 @@
-import { describe, expect, it } from "vitest"
-import { MemoryRouter } from "react-router-dom"
+import { afterEach, describe, expect, it } from "vitest"
+import { MemoryRouter, RouterProvider, createMemoryRouter } from "react-router-dom"
 import { render, screen } from "@testing-library/react"
+import userEvent from "@testing-library/user-event"
 import NotFoundPage from "@/pages/NotFound.page"
 import expectNoAxeViolations from "@/testUtils/expectNoAxeViolations"
+import stubViewTransition from "@/testUtils/stubViewTransition"
+import MOTION_STORAGE_KEY from "@/utils/motionStorageKey"
+
+function renderInDataRouter() {
+    const router = createMemoryRouter(
+        [
+            { path: "/pt-BR/missing", element: <NotFoundPage /> },
+            { path: "/pt-BR", element: <p>Início</p> }
+        ],
+        { initialEntries: ["/pt-BR/missing"] }
+    )
+
+    return render(<RouterProvider router={router} />)
+}
+
+afterEach(() => {
+    Reflect.deleteProperty(document, "startViewTransition")
+    localStorage.removeItem(MOTION_STORAGE_KEY)
+    document.documentElement.removeAttribute("data-motion")
+})
 
 describe("NotFoundPage", () => {
     it("não tem violações de acessibilidade", async () => {
@@ -61,5 +82,24 @@ describe("NotFoundPage", () => {
         expect(document.querySelector('meta[name="description"]')?.getAttribute("content")).toBe(
             "O endereço acessado não existe neste portfólio."
         )
+    })
+
+    it("usa View Transition ao voltar para o início com movimento pleno", async () => {
+        const startViewTransition = stubViewTransition()
+        renderInDataRouter()
+
+        await userEvent.click(screen.getByRole("link", { name: "Voltar para o início" }))
+
+        expect(startViewTransition).toHaveBeenCalledTimes(1)
+    })
+
+    it("não usa View Transition com movimento reduzido", async () => {
+        localStorage.setItem(MOTION_STORAGE_KEY, "reduced")
+        const startViewTransition = stubViewTransition()
+        renderInDataRouter()
+
+        await userEvent.click(screen.getByRole("link", { name: "Voltar para o início" }))
+
+        expect(startViewTransition).not.toHaveBeenCalled()
     })
 })
