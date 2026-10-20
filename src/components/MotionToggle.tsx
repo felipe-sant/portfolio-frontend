@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next"
 import Icon from "@/components/Icon"
 import IconButton from "@/components/IconButton"
 import useMotion from "@/hooks/useMotion"
-import css from "@/styles/components/themeToggle.module.css"
+import css from "@/styles/components/motionToggle.module.css"
 
 interface MotionToggleProps {
     variant?: "icon" | "labeled"
