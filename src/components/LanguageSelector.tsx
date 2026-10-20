@@ -69,7 +69,10 @@ function LanguageSelector({ variant = "inline" }: LanguageSelectorProps) {
     }
 
     return (
-        <div ref={containerRef} className={`${css.selector} ${css[variant]}`}>
+        <div
+            ref={containerRef}
+            className={`${css.selector} ${variant === "block" ? css.block : ""}`}
+        >
             <button
                 ref={buttonRef}
                 type="button"
