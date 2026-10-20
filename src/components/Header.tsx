@@ -1,3 +1,4 @@
+import type { ReactNode, Ref } from "react"
 import { useTranslation } from "react-i18next"
 import { Link } from "react-router-dom"
 import CatLogo from "@/components/CatLogo"
@@ -22,7 +23,12 @@ interface NavLinksProps {
     activeItem?: NavItemId
     onNavigate?: () => void
     className: string
-    hasIndicator?: boolean
+    navRef?: Ref<HTMLElement>
+    children?: ReactNode
+}
+
+interface DesktopNavProps {
+    activeItem?: NavItemId
 }
 
 const NAV_ITEMS = [
@@ -32,10 +38,9 @@ const NAV_ITEMS = [
     { id: "contact", path: ROUTES.contact }
 ] as const
 
-function NavLinks({ activeItem, onNavigate, className, hasIndicator = false }: NavLinksProps) {
+function NavLinks({ activeItem, onNavigate, className, navRef, children }: NavLinksProps) {
     const { t } = useTranslation()
     const localizedPath = useLocalizedPath()
-    const { navRef, indicatorStyle, isAnimated } = useNavIndicator()
 
     return (
         <nav aria-label={t("navigation.label")} className={className} ref={navRef}>
@@ -50,14 +55,22 @@ function NavLinks({ activeItem, onNavigate, className, hasIndicator = false }: N
                     {t(`navigation.${item.id}`)}
                 </Link>
             ))}
-            {hasIndicator && (
-                <span
-                    aria-hidden="true"
-                    className={`${css.indicator} ${isAnimated ? css.indicatorAnimated : ""}`}
-                    style={indicatorStyle}
-                />
-            )}
+            {children}
         </nav>
+    )
+}
+
+function DesktopNav({ activeItem }: DesktopNavProps) {
+    const { navRef, indicatorStyle, isAnimated } = useNavIndicator()
+
+    return (
+        <NavLinks activeItem={activeItem} className={css.desktopNav} navRef={navRef}>
+            <span
+                aria-hidden="true"
+                className={`${css.indicator} ${isAnimated ? css.indicatorAnimated : ""}`}
+                style={indicatorStyle}
+            />
+        </NavLinks>
     )
 }
 
@@ -73,7 +86,7 @@ function Header({ menu, activeItem }: HeaderProps) {
                     <CatLogo />
                     <span>{t("authorName")}</span>
                 </Link>
-                <NavLinks activeItem={activeItem} className={css.desktopNav} hasIndicator />
+                <DesktopNav activeItem={activeItem} />
                 <div className={css.desktopControls}>
                     <LanguageSelector />
                     <SettingsMenu />
