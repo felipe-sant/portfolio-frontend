@@ -104,6 +104,7 @@
     --bg-highlight: var(--brand-wash);
     --border-subtle: var(--neutral-200);
     --border-strong: var(--neutral-300);
+    --border-control: var(--neutral-500);
     --text-strong: var(--neutral-900);
     --text-body: var(--neutral-700);
     --text-weak: var(--neutral-700);
@@ -207,6 +208,7 @@
     --bg-highlight: var(--brand-wash-dark);
     --border-subtle: var(--dark-border);
     --border-strong: var(--dark-border);
+    --border-control: var(--dark-500);
     --text-strong: var(--dark-050);
     --text-body: var(--dark-200);
     --text-weak: var(--dark-300);
