@@ -16,6 +16,10 @@ function SkeletonSwap({ isLoading, skeleton, children }: SkeletonSwapProps) {
         setIsOverlayGone(false)
     }
 
+    if (!isLoading && motion !== "full" && !isOverlayGone) {
+        setIsOverlayGone(true)
+    }
+
     if (isLoading) {
         return <>{skeleton}</>
     }

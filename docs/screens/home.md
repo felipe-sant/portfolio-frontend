@@ -125,7 +125,7 @@ Cada subseção lista os requisitos na ordem dos IDs.
 
 ### Carregamento e erro
 
-Os cards de projetos em destaque aparecem com `useReveal` (fade e deslocamento ao rolar, atraso crescente entre irmãos por `--stagger`) e os skeletons dos blocos saem por `SkeletonSwap`, ambos desligados com movimento reduzido (D57, NF-MO-07).
+Os cards de projetos em destaque devem usar `useReveal` (fade e deslocamento ao rolar, atraso crescente entre irmãos por `--stagger`) e os skeletons dos blocos devem sair por `SkeletonSwap`, ambos desligados com movimento reduzido (D57, NF-MO-07).
 
 | ID           | Regra                                                                                                                                                                                                                                                                                                                                                                  | Fonte                                                |
 | ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
