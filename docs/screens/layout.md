@@ -84,7 +84,7 @@ Cada subseção lista os requisitos na ordem dos IDs.
 | `RF-LAY-06` | Abaixo de 640px, botão de 44px com nome fixo "Menu", `aria-expanded` e `aria-controls` apontando o painel; ícone hambúrguer fechado e × aberto (`aria-hidden`). O protótipo troca o nome ("Abrir menu"/"Fechar menu"); vale o nome fixo, pelo mesmo motivo do alternador de tema (o estado já está em `aria-expanded`) | D01, A11Y-L08                                    |
 | `RF-LAY-07` | O painel é disclosure, não diálogo: ao abrir, o foco vai para o primeiro link; Tab e Shift+Tab circulam entre o botão de menu e o painel; o resto da página fica `inert`; a rolagem da página trava                                                                                                                    | D01, PI1, achado de `accessibility.md`, A11Y-L09 |
 | `RF-LAY-08` | Fecha por Esc (o foco volta ao botão), pelo botão, por clique num link de navegação, quando a rota muda por outro meio (voltar do navegador) e ao alargar a janela para 640px ou mais. Trocar de idioma ou de tema dentro do painel não fecha: o foco fica no controle usado                                           | D01, PI1                                         |
-| `RF-LAY-09` | Conteúdo do painel: os quatro links (coluna de 52px), o rótulo "Idioma" com os três idiomas em alvos de 44px (ativo em `--bg-highlight` com borda `--brand-variant`) e o rótulo "Tema" com o alternador com texto visível "Tema escuro". Rótulos em caixa normal no JSON, caixa alta por CSS                           | D01, D12                                         |
+| `RF-LAY-09` | Conteúdo do painel: os quatro links (coluna de 52px), o rótulo "Idioma" com o seletor em dropdown (ativo em `--bg-highlight`), o rótulo "Tema" com o alternador com texto visível "Tema escuro" e o rótulo "Acessibilidade" com o botão "Reduzir movimento". Rótulos em caixa normal no JSON, caixa alta por CSS       | D01, D12                                         |
 | `RF-LAY-10` | Com `prefers-reduced-motion: reduce`, abrir e fechar o painel não anima (2.3.3)                                                                                                                                                                                                                                        | A11Y-G12                                         |
 
 ### Idioma
@@ -329,12 +329,12 @@ foco sob o cabeçalho); `[navegador]` cobre favicon, `theme-color` e movimento r
 - [ ] `RF-LAY-06` — Botão de menu de 44px com nome fixo "Menu", `aria-expanded` e `aria-controls` [teste]
 - [ ] `RF-LAY-07` — Painel como disclosure: foco no primeiro link ao abrir, Tab circula entre botão e painel, resto da página `inert` e rolagem travada [teste] [e2e]
 - [ ] `RF-LAY-08` — Menu fecha por Esc (foco no botão), botão, link, mudança de rota e janela a partir de 640px; não fecha na troca de idioma ou tema [teste] [e2e]
-- [ ] `RF-LAY-09` — Painel com os quatro links, "Idioma" com três alvos de 44px e "Tema" com o alternador, nos três idiomas, sem chave no lugar de texto [teste] [medição]
+- [ ] `RF-LAY-09` — Painel com os quatro links, "Idioma" com o seletor, "Tema" com o alternador e "Acessibilidade" com o botão de movimento, nos três idiomas, sem chave no lugar de texto [teste] [medição]
 - [ ] `RF-LAY-10` — Sem animação do painel com `prefers-reduced-motion: reduce` [navegador]
 - [ ] `RF-LAY-11` — Idioma e `<html lang>` vêm do caminho; navegador e `?lng=` não decidem [teste]
-- [ ] `RF-LAY-12` — Seletor `PT · EN · ES` em grupo "Idioma", com links para a URL equivalente (rota, id, documento, query e âncora), `hreflang`, `lang` e `aria-current="true"` no ativo [teste]
-- [ ] `RF-LAY-13` — Nome acessível de cada idioma começa pela sigla e traz o nome no próprio idioma, igual nos três JSON [teste]
-- [ ] `RF-LAY-14` — Trocar de idioma navega sem recarregar, salva a escolha, atualiza `<html lang>` e `<title>`, preserva a rolagem e devolve o foco ao seletor [teste] [e2e]
+- [ ] `RF-LAY-12` — Botão com a bandeira do idioma ativo que abre uma lista de links para a URL equivalente (rota, id, documento, query e âncora), com `hreflang`, `lang` e `aria-current="true"` no ativo; Esc, clique e foco fora fecham [teste]
+- [ ] `RF-LAY-13` — Botão "Idioma: <nome>" e opções com o nome do idioma escrito nele mesmo, bandeiras `aria-hidden`, igual nos três JSON [teste]
+- [ ] `RF-LAY-14` — Trocar de idioma navega sem recarregar, salva a escolha, atualiza `<html lang>` e `<title>`, preserva a rolagem e devolve o foco ao botão do seletor [teste] [e2e]
 - [ ] `RF-LAY-15` — Todo link interno do layout mantém o prefixo do idioma, montado pela função de #53 [teste] [review]
 - [ ] `RF-LAY-16` — Tema por `data-theme` e `color-scheme`, seguindo o sistema até haver escolha salva, que prevalece [teste]
 - [ ] `RF-LAY-17` — Tema aplicado antes da primeira pintura e `theme-color` do tema escolhido [navegador]
@@ -383,7 +383,7 @@ Copiados de [`accessibility.md`](../product/accessibility.md#checklist-por-tela)
 - [ ] `A11Y-L03` — Landmarks `banner`, `navigation` "Principal" e `contentinfo` [teste]
 - [ ] `A11Y-L04` — `aria-current="page"` no item da rota atual [teste]
 - [ ] `A11Y-L05` — Seletor de idioma em grupo nomeado, com um link para a URL equivalente de cada idioma, `hreflang` e `lang` em cada link e `aria-current` no ativo [teste]
-- [ ] `A11Y-L06` — Trocar de idioma navega para a URL equivalente, atualiza `<html lang>` e `<title>` e devolve o foco ao seletor [teste] [e2e]
+- [ ] `A11Y-L06` — Trocar de idioma navega para a URL equivalente, atualiza `<html lang>` e `<title>` e devolve o foco ao botão do seletor [teste] [e2e]
 - [ ] `A11Y-L07` — Alternador de tema com nome fixo e `aria-pressed` [teste]
 - [ ] `A11Y-L08` — Botão de menu com `aria-expanded` e `aria-controls` [teste]
 - [ ] `A11Y-L09` — Menu aberto: foco preso, Esc fecha e devolve o foco ao botão, resto da página `inert` [teste] [e2e] [leitor]

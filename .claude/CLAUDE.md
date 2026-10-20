@@ -37,7 +37,7 @@ Module em vez de classe global `.ds-*` e código sem comentários. `docs/design/
 referência visual validada pelo PO (abre por `npm run dev` em
 `/docs/design/prototype/prototipo-indice.dc.html`).
 
-**Rotas:** cinco telas, das quais hoje só a Início existe no código (os links de Projetos, Informações e Contato do cabeçalho levam à não encontrada até lá) (as demais vêm nas specs de tela),
+**Rotas:** cinco telas, das quais hoje só a Início existe no código (os links de Projetos, Informações e Contato do cabeçalho levam à não encontrada até lá; as demais vêm nas specs de tela),
 com caminhos em inglês (D32), como os identificadores, sempre sob o prefixo do idioma
 (`/<idioma>`, onde `<idioma>` é `pt-BR`, `en` ou `es`, sem barra final); a raiz `/` só
 redireciona e `/projects` sem prefixo cai em não encontrada. O `:id` é um UUID v7, não slug. Os
