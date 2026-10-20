@@ -1,0 +1,50 @@
+@keyframes shimmer {
+    from {
+        background-position: 200% 0;
+    }
+
+    to {
+        background-position: -200% 0;
+    }
+}
+
+.skeleton {
+    display: block;
+    border-radius: var(--radius);
+    background-image: linear-gradient(
+        90deg,
+        var(--skeleton-base) 25%,
+        var(--skeleton-sheen) 50%,
+        var(--skeleton-base) 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer var(--dur-shimmer) linear infinite;
+}
+
+.line {
+    height: var(--space-4);
+}
+
+.title {
+    height: var(--space-8);
+}
+
+.media {
+    aspect-ratio: var(--ratio-media);
+}
+
+.photo {
+    aspect-ratio: 1 / 1;
+}
+
+.full {
+    width: 100%;
+}
+
+.medium {
+    width: 60%;
+}
+
+.short {
+    width: 30%;
+}
