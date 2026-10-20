@@ -114,6 +114,7 @@
     --skeleton-base: var(--neutral-150);
     --skeleton-sheen: var(--neutral-100);
     --shadow-modal: 0 12px 32px rgba(32, 32, 32, 0.18);
+    --brand-hover-brightness: 0.94;
     --success-surface: var(--success-bg);
     --success-ink: var(--success-text);
     --warning-surface: var(--warning-bg);
@@ -218,6 +219,7 @@
     --skeleton-base: #242422;
     --skeleton-sheen: #302f2c;
     --shadow-modal: 0 12px 32px rgba(0, 0, 0, 0.4);
+    --brand-hover-brightness: 0.82;
     --success-surface: var(--success-bg-dark);
     --success-ink: var(--success-text-dark);
     --warning-surface: var(--warning-bg-dark);

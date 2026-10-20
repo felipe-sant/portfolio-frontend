@@ -12,7 +12,9 @@
     cursor: pointer;
     transition:
         color var(--dur-fast) ease,
-        border-color var(--dur-fast) ease;
+        background-color var(--dur-fast) ease,
+        border-color var(--dur-fast) ease,
+        filter var(--dur-fast) ease;
 }
 
 .button:disabled {
@@ -42,6 +44,7 @@
 
 .primary {
     background-image: var(--brand-gradient);
+    background-origin: border-box;
     color: var(--brand-ink);
 }
 
@@ -49,6 +52,18 @@
     background-color: transparent;
     border-color: var(--border-strong);
     color: var(--text-body);
+}
+
+@media (hover: hover) {
+    .primary:hover:not(:disabled):not([aria-disabled="true"]) {
+        filter: brightness(var(--brand-hover-brightness));
+    }
+
+    .secondary:hover:not(:disabled):not([aria-disabled="true"]) {
+        background-color: var(--bg-raised);
+        border-color: var(--border-control);
+        color: var(--text-strong);
+    }
 }
 
 .secondary:hover:not(:disabled) {
