@@ -16,7 +16,7 @@
         transform var(--dur-fast) var(--ease);
 }
 
-.iconButton:active:not(:disabled) {
+.iconButton:active:not(:disabled):not([aria-disabled="true"]) {
     transform: scale(var(--press-scale));
 }
 

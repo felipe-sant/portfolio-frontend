@@ -179,7 +179,8 @@ Tokens da #84 (D59): `--dur-page` (150ms, transição de página), `--stagger` (
 irmãos na entrada, no máximo 5 degraus por `data-reveal-step`) e `--press-scale` (0.97, escala de
 `:active` em `Button`, `IconButton` e links do cabeçalho). Regras de uso: o crossfade de tema só
 existe durante a troca, por `data-theme-transition` no `<html>` (D60); a entrada ao rolar usa só
-opacidade e `translateY` (`useReveal`, `[data-reveal]` em `global.css`), nunca `visibility` nem
+opacidade e `translateY`, por `animation` (`useReveal`, `[data-reveal]` em `global.css`), para não
+entrar em conflito com a `transition` de hover do card e sem atraso residual, nunca `visibility` nem
 `display`; o skeleton sai por fade (`SkeletonSwap`) e a tela que o usa aplica `useReveal` nos
 cards e `SkeletonSwap` na troca (D57). Movimento novo usa `--dur-*` e `--ease`, nunca duração fixa.
 
