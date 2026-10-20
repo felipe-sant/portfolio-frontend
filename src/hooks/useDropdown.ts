@@ -48,7 +48,7 @@ function useDropdown() {
         }
 
         function closeWhenOutside(event: Event) {
-            if (!containerRef.current?.contains(event.target as Node)) {
+            if (event.target instanceof Node && !containerRef.current?.contains(event.target)) {
                 setIsOpen(false)
             }
         }
