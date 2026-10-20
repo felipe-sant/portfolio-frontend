@@ -37,7 +37,7 @@ Module em vez de classe global `.ds-*` e código sem comentários. `docs/design/
 referência visual validada pelo PO (abre por `npm run dev` em
 `/docs/design/prototype/prototipo-indice.dc.html`).
 
-**Rotas:** cinco telas, das quais hoje só a Início existe no código (as demais vêm nas specs de tela),
+**Rotas:** cinco telas, das quais hoje só a Início existe no código (os links de Projetos, Informações e Contato do cabeçalho levam à não encontrada até lá) (as demais vêm nas specs de tela),
 com caminhos em inglês (D32), como os identificadores, sempre sob o prefixo do idioma
 (`/<idioma>`, onde `<idioma>` é `pt-BR`, `en` ou `es`, sem barra final); a raiz `/` só
 redireciona e `/projects` sem prefixo cai em não encontrada. O `:id` é um UUID v7, não slug. Os
@@ -316,12 +316,20 @@ para editores compatíveis, coerente com o `.prettierrc`.
     Se `src/pages/hooks/` ou `src/hooks/` não existir, crie a pasta no primeiro uso.
 
 - **`src/components/`** — componentes base reutilizáveis (`Button`, `Chip`, `TextField`, `SearchInput`,
-  `Skeleton`, `Spinner`, `VisuallyHidden`, `Icon`). O desenho de cada ícone fica num mapa local de
+  `Skeleton`, `Spinner`, `VisuallyHidden`, `Icon`, `IconButton`, `CatLogo`, `ThemeToggle`,
+  `LanguageSelector`, `Header`, `SkipLink`). O desenho de cada ícone fica num mapa local de
   `Icon.tsx`, com os nomes em `src/enum/iconNames.enum.ts`. Texto fixo de componente vive em `common`
   (`searchInput.clear`); o resto chega por prop. O `jsx-a11y/prefer-tag-over-role` acusa `role="status"`
   literal: passe `role={"status"}`. Controle de formulário tem borda `--border-control`, nunca
   `--border-subtle`. `TextField` aceita `reserveMessageSpace` (campo com aviso possível) e
   `focusOnError` (hook `useFocusOnError` de `src/hooks/`, só no primeiro campo inválido do envio).
+- **Layout compartilhado** — `src/layouts/Main.layout.tsx` monta `SkipLink`, `Header`, o único
+  `<main id="main-content">` (as páginas não renderizam `main`; a de erro, fora do layout, mantém o
+  seu), o rodapé e `<ScrollRestoration />`. O estado do menu mobile vem de `useMobileMenu`
+  (`src/hooks/`), que o layout repassa ao `Header` e usa para aplicar `inert` em skip link, `main` e
+  rodapé; `useRouteFocus` foca o `h1` na troca de rota (não na primeira carga nem na troca só de
+  idioma). O item ativo vem de `getActiveNavItem` (`src/utils/`) sobre o caminho sem prefixo. Texto
+  do cabeçalho vive em `common`. Teste de layout usa `createMemoryRouter` com os loaders de idioma.
 - **`src/styles/`** — `global.css` guarda as CSS custom properties (cor, tipografia, espaçamento e
   afins) e o reset. CSS Module usa essas custom properties em vez de valor hardcoded; confira os
   nomes em `src/styles/global.css` antes de usar, e token global novo entra lá. Os nomes dos
