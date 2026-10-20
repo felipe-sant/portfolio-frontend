@@ -644,7 +644,8 @@ novo, então repetir via hook no momento do push seria redundante.
   `redux-store-scaffold` (slice em `src/store/slices/` + registro no `rootReducer` + hooks tipados)
   e `rtk-query-endpoint-scaffold` (endpoints em `src/store/api/` via `api.injectEndpoints`).
 - `.specs/` — specs por feature/bug (`.specs/features/<slug>/`, `.specs/bugs/<slug>/`), a partir de
-  `.specs/_template/`. As pastas de spec são gitignored: planejamento local, fora do histórico.
+  `.specs/_template/`. As pastas de trabalho de cada spec são gitignored (planejamento local); só o resumo
+  `_archive/<slug>.md` de cada spec fechada, escrito pelo `executor`, é versionado.
   O estado vive no campo `**Status:**` do `spec.md` (`rascunho` → `em-revisao` → `aprovada` →
   `em-andamento` → `implementada`); só humano promove para `aprovada`.
 - `docs/` — documentação versionada **só deste frontend**: visão do produto e glossário

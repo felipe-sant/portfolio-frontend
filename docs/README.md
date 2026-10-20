@@ -15,7 +15,7 @@ Esta pasta guarda a documentação versionada **só do frontend do portfólio** 
 |            | `docs/`                              | `.specs/`                          |
 | ---------- | ------------------------------------ | ---------------------------------- |
 | Descreve   | O frontend como ele é                | Uma mudança planejada              |
-| Versionada | Sim, revisada em PR                  | Não, local e gitignored            |
+| Versionada | Sim, revisada em PR                  | Só o resumo em `_archive/`         |
 | Vida       | Longa, atualizada junto com o código | Descartável depois de implementada |
 
 Uma decisão que sobrevive à mudança que a motivou vira um ADR em [`adr/`](adr/README.md).

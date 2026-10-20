@@ -32,7 +32,7 @@ tools: Read, Grep, Glob, Bash
 - Se houver um PR aberto, confira se a descrição segue a estrutura de `.github/PULL_REQUEST_TEMPLATE.md` (Descrição, Alterações, Decisões técnicas, Como testar, Evidências, Impactos e pontos de atenção) em vez de um corpo livre — aponte como bloqueante se o template não foi seguido.
 - Confira se o PR tem assignee definido (deve ser quem abriu o PR) — aponte como bloqueante se estiver sem assignee.
 - Confira se o título do commit/PR segue o padrão da seção "Padrão de branches, commits e PRs" do `CLAUDE.md` (`<Tipo> <ícone> [#<número>] <descrição>`), com o `<Tipo>` vindo da tabela "Tipos de alteração" daquela seção — não de uma label do GitHub.
-- Aponte como bloqueante se o diff/commit incluir arquivos de `.specs/bugs/<slug>/` ou `.specs/features/<slug>/` — essas pastas são planejamento local e não devem ser commitadas.
+- Aponte como bloqueante se o diff/commit incluir arquivos de `.specs/bugs/<slug>/` ou `.specs/features/<slug>/` — essas pastas são planejamento local e não devem ser commitadas. Só `_archive/<slug>.md` (resumo da spec fechada) e `_archive/_TEMPLATE.md` entram no histórico.
 - Aponte cada problema encontrado com arquivo e linha, classificando como bloqueante ou sugestão.
 - Não invente problemas hipotéticos — reporte apenas o que realmente diverge do que está documentado ou do que o código faz. Dívida já registrada em issue aberta não é achado contra o autor do diff, salvo se o diff piorou o ponto ou a tarefa em revisão era justamente resolvê-lo.
 
