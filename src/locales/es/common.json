@@ -39,8 +39,5 @@
     },
     "settings": {
         "label": "Configuración"
-    },
-    "symbols": {
-        "separator": "·"
     }
 }
