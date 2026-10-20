@@ -1,8 +1,11 @@
-import { describe, expect, it } from "vitest"
+import { afterEach, describe, expect, it } from "vitest"
 import { RouterProvider, createMemoryRouter } from "react-router-dom"
 import { render, screen } from "@testing-library/react"
+import userEvent from "@testing-library/user-event"
 import ErrorPage from "@/pages/Error.page"
 import expectNoAxeViolations from "@/testUtils/expectNoAxeViolations"
+import stubViewTransition from "@/testUtils/stubViewTransition"
+import MOTION_STORAGE_KEY from "@/utils/motionStorageKey"
 
 function ThrowingPage(): never {
     throw new Error("Falha proposital de teste")
@@ -20,6 +23,12 @@ function renderErrorPage(Page: () => never = ThrowingPage) {
 
     return render(<RouterProvider router={router} />)
 }
+
+afterEach(() => {
+    Reflect.deleteProperty(document, "startViewTransition")
+    localStorage.removeItem(MOTION_STORAGE_KEY)
+    document.documentElement.removeAttribute("data-motion")
+})
 
 describe("ErrorPage", () => {
     it("não tem violações de acessibilidade", async () => {
@@ -57,5 +66,24 @@ describe("ErrorPage", () => {
         expect(document.querySelector('meta[name="description"]')?.getAttribute("content")).toBe(
             "Algo deu errado ao carregar esta página."
         )
+    })
+
+    it("usa View Transition ao voltar para o início com movimento pleno", async () => {
+        const startViewTransition = stubViewTransition()
+        renderErrorPage()
+
+        await userEvent.click(screen.getByRole("link", { name: "Voltar para o início" }))
+
+        expect(startViewTransition).toHaveBeenCalledTimes(1)
+    })
+
+    it("não usa View Transition com movimento reduzido", async () => {
+        localStorage.setItem(MOTION_STORAGE_KEY, "reduced")
+        const startViewTransition = stubViewTransition()
+        renderErrorPage()
+
+        await userEvent.click(screen.getByRole("link", { name: "Voltar para o início" }))
+
+        expect(startViewTransition).not.toHaveBeenCalled()
     })
 })

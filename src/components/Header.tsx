@@ -9,6 +9,7 @@ import SettingsMenu from "@/components/SettingsMenu"
 import ThemeToggle from "@/components/ThemeToggle"
 import useLocalizedPath from "@/hooks/useLocalizedPath"
 import useNavIndicator from "@/hooks/useNavIndicator"
+import usePageTransition from "@/hooks/usePageTransition"
 import ROUTES from "@/routers/paths"
 import css from "@/styles/components/header.module.css"
 import type MobileMenu from "@/types/navigation/MobileMenu.types"
@@ -47,10 +48,12 @@ const NAV_ITEMS = [
 
 function NavLinkItem({ id, to, isActive, onNavigate }: NavLinkItemProps) {
     const { t } = useTranslation()
+    const viewTransition = usePageTransition()
 
     return (
         <Link
             to={to}
+            viewTransition={viewTransition}
             className={css.link}
             aria-current={isActive ? "page" : undefined}
             onClick={onNavigate}
@@ -97,12 +100,18 @@ function DesktopNav({ activeItem }: DesktopNavProps) {
 function Header({ menu, activeItem }: HeaderProps) {
     const { t } = useTranslation()
     const localizedPath = useLocalizedPath()
+    const viewTransition = usePageTransition()
     const { isOpen, panelId, buttonRef, panelRef, toggle, close } = menu
 
     return (
         <header className={css.header}>
             <div className={css.bar}>
-                <Link to={localizedPath(ROUTES.home)} className={css.brand} inert={isOpen}>
+                <Link
+                    to={localizedPath(ROUTES.home)}
+                    viewTransition={viewTransition}
+                    className={css.brand}
+                    inert={isOpen}
+                >
                     <CatLogo />
                     <span>{t("authorName")}</span>
                 </Link>
