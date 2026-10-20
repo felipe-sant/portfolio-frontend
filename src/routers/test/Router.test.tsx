@@ -4,6 +4,7 @@ import { act, render, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import LANGUAGE_STORAGE_KEY from "@/i18n/languageStorageKey"
 import routes from "@/routers/routes"
+import Router from "@/routers/Router"
 
 function renderRoutes(initialEntries: string[]) {
     const router = createMemoryRouter(routes, { initialEntries })
@@ -18,6 +19,8 @@ function stubBrowser(languages: string[]) {
 
 afterEach(() => {
     vi.restoreAllMocks()
+    vi.unstubAllEnvs()
+    window.history.pushState({}, "", "/")
 })
 
 describe("routes", () => {
@@ -167,5 +170,18 @@ describe("routes", () => {
             expect(router.state.location.pathname).toBe("/pt-BR")
             expect(localStorage.getItem(LANGUAGE_STORAGE_KEY)).toBeNull()
         })
+    })
+})
+
+describe("Router", () => {
+    it("usa o BASE_URL como basename", async () => {
+        vi.stubEnv("BASE_URL", "/ra2581392423047/")
+        window.history.pushState({}, "", "/ra2581392423047/en")
+
+        render(<Router />)
+
+        expect(
+            await screen.findByRole("heading", { name: "Full stack developer in TypeScript" })
+        ).toBeInTheDocument()
     })
 })
