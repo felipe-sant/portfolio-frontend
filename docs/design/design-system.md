@@ -89,6 +89,13 @@ A paleta semântica fica, e erro de campo usa `--danger-ink` na borda e na mensa
 `aria-invalid` e `aria-describedby`, não o `--brand-variant`/`--brand-deep` do `TextField` do
 handoff (D07).
 
+O `TextField` marca o campo obrigatório com um `*` em `--danger-ink` depois do rótulo, desenhado por
+CSS e fora do nome acessível (o leitor de tela ouve `aria-required`). Campo que pode mostrar aviso
+usa `reserveMessageSpace`: a linha do aviso existe sempre, vazia até ele aparecer, para o campo não
+crescer e deslocar a página. O erro é um `role="alert"` ligado por `aria-describedby`, e
+`focusOnError` leva o foco ao campo quando o erro aparece; só se liga no primeiro campo inválido do
+envio, nunca na validação por `blur`, que prenderia o foco.
+
 O repositório usa o prefixo `--danger-*`, igual ao handoff (o nome antigo `--error-*` saiu).
 
 ## Tipografia
@@ -224,8 +231,9 @@ check, alerta, GitHub, LinkedIn, envelope, arquivo, lupa com mais, pausa e play 
 são caracteres unicode (`→ ← ↗ ↓ ▾`), não ícones.
 
 A recomendação do handoff é trocar por `lucide-react` e usar um pacote de marcas (ou os SVGs
-oficiais) para GitHub e LinkedIn. Nada disso está instalado ainda: entra com o primeiro componente
-que precisar de ícone.
+oficiais) para GitHub e LinkedIn. A #32 não instalou nada: os ícones são SVG inline no componente
+`Icon` (`src/components/Icon.tsx`), com o nome em `src/enum/iconNames.enum.ts`. Pausa e play de D28
+entram com a #34 e o botão só de ícone com a #33.
 
 ## Acessibilidade
 
