@@ -3,7 +3,7 @@ import css from "@/styles/components/visuallyHidden.module.css"
 
 interface VisuallyHiddenProps {
     children: ReactNode
-    as?: "span" | "div"
+    as?: "span" | "div" | "legend"
     role?: AriaRole
 }
 
