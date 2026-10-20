@@ -1,0 +1,16 @@
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.spinner {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.arc {
+    display: inline-flex;
+    animation: spin var(--dur-spin) linear infinite;
+}

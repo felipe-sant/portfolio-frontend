@@ -44,6 +44,11 @@ describe("global.css", () => {
         expect(darkBlock).toContain("--bg-page: var(--dark-bg)")
     })
 
+    it("declara a borda de campo de texto nos dois temas", () => {
+        expect(rootBlock).toContain("--border-control: var(--neutral-500)")
+        expect(darkBlock).toContain("--border-control: var(--dark-500)")
+    })
+
     it("não usa prefers-color-scheme para o tema", () => {
         expect(css).not.toContain("prefers-color-scheme")
     })

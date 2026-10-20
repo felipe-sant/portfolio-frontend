@@ -1,4 +1,7 @@
 {
     "backHome": "Back to home",
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "searchInput": {
+        "clear": "Clear search"
+    }
 }

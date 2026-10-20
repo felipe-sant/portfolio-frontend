@@ -1,4 +1,7 @@
 {
     "backHome": "Volver al inicio",
-    "loading": "Cargando..."
+    "loading": "Cargando...",
+    "searchInput": {
+        "clear": "Borrar búsqueda"
+    }
 }

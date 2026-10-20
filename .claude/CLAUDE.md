@@ -76,7 +76,7 @@ são de uso pessoal (Vercel, depois AWS com backend). Ordem, dependências e cri
 `docs/product/roadmap.md`.
 
 **Decisões de design:** as pendências e contradições do handoff estão decididas em
-`docs/design/decisions.md`, com IDs (`D01`–`D55`, `PI1`–`PI5`) que specs e issues citam.
+`docs/design/decisions.md`, com IDs (`D01`–`D56`, `PI1`–`PI5`) que specs e issues citam.
 
 **Onde ler mais:** `docs/product/overview.md` (visão, público, jornadas, objetivos, escopo,
 requisitos e decisões), `docs/product/glossary.md` (glossário), `docs/product/roadmap.md` (versões,
@@ -315,6 +315,13 @@ para editores compatíveis, coerente com o `.prettierrc`.
     componentes, não específicos de uma única página (por exemplo, um `useDebounce` ou `useMediaQuery`).
     Se `src/pages/hooks/` ou `src/hooks/` não existir, crie a pasta no primeiro uso.
 
+- **`src/components/`** — componentes base reutilizáveis (`Button`, `Chip`, `TextField`, `SearchInput`,
+  `Skeleton`, `Spinner`, `VisuallyHidden`, `Icon`). O desenho de cada ícone fica num mapa local de
+  `Icon.tsx`, com os nomes em `src/enum/iconNames.enum.ts`. Texto fixo de componente vive em `common`
+  (`searchInput.clear`); o resto chega por prop. O `jsx-a11y/prefer-tag-over-role` acusa `role="status"`
+  literal: passe `role={"status"}`. Controle de formulário tem borda `--border-control`, nunca
+  `--border-subtle`. `TextField` aceita `reserveMessageSpace` (campo com aviso possível) e
+  `focusOnError` (hook `useFocusOnError` de `src/hooks/`, só no primeiro campo inválido do envio).
 - **`src/styles/`** — `global.css` guarda as CSS custom properties (cor, tipografia, espaçamento e
   afins) e o reset. CSS Module usa essas custom properties em vez de valor hardcoded; confira os
   nomes em `src/styles/global.css` antes de usar, e token global novo entra lá. Os nomes dos
