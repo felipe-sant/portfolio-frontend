@@ -57,7 +57,7 @@ assinatura visual.
   deixa a ação sem para onde ir.
 - O único uso horizontal é a borda superior de 2px do rodapé, uma linha
   (`border-image: linear-gradient(90deg, ...) 1`), não um preenchimento.
-- No hover o degradê não muda; `--brand-variant` cobre o caso de fundo sólido.
+- No hover o botão primário escurece o degradê com `filter: brightness(var(--brand-hover-brightness))`, 0.94 no claro e 0.82 no escuro (`D56`), sem trocar as cores; `--brand-variant` cobre o caso de fundo sólido.
 
 ### Papéis semânticos
 
@@ -286,13 +286,13 @@ favicon em `decisions.md` (D34).
 
 As convenções do repositório prevalecem onde divergem do handoff (R3):
 
-| Handoff                                                    | Repositório                                                                                                                             |
-| ---------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| Fontes do Google Fonts por `@import` em `tokens/fonts.css` | Fontes self-hospedadas: `woff2` e licença em `public/fonts/`, `@font-face` em `src/styles/global.css` e `preload` no `index.html` (D09) |
-| Classes globais `.ds-*` e regras de `tokens/layout.css`    | CSS Module por página (`src/styles/pages/`) e componente (`src/styles/components/`), com as media queries no próprio módulo             |
+| Handoff                                                    | Repositório                                                                                                                                       |
+| ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Fontes do Google Fonts por `@import` em `tokens/fonts.css` | Fontes self-hospedadas: `woff2` e licença em `public/fonts/`, `@font-face` em `src/styles/global.css` e `preload` no `index.html` (D09)           |
+| Classes globais `.ds-*` e regras de `tokens/layout.css`    | CSS Module por página (`src/styles/pages/`) e componente (`src/styles/components/`), com as media queries no próprio módulo                       |
 | Tema por `data-theme="dark"` na raiz, com persistência     | Tema por `[data-theme="dark"]` em `global.css`, aplicado por `useTheme` e por script inline, com persistência em `portfolio-frontend:theme` (D22) |
-| `tokens/*.css` e `components/*.jsx` com comentários        | Código sem comentários                                                                                                                  |
-| Componentes React em JSX                                   | Recriados em TypeScript, com texto de UI por chave de tradução nos três idiomas                                                         |
+| `tokens/*.css` e `components/*.jsx` com comentários        | Código sem comentários                                                                                                                            |
+| Componentes React em JSX                                   | Recriados em TypeScript, com texto de UI por chave de tradução nos três idiomas                                                                   |
 
 ## Decisões de design
 
