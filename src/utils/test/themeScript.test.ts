@@ -68,7 +68,7 @@ afterEach(() => {
 
 describe("script de tema", () => {
     it("existe no index.html depois do script de redirecionamento", () => {
-        expect(inlineScripts).toHaveLength(2)
+        expect(inlineScripts).toHaveLength(3)
         expect(inlineScripts[0]).toContain("%BASE_URL%")
         expect(themeScript).not.toContain("%BASE_URL%")
     })
@@ -141,10 +141,7 @@ describe("script de tema", () => {
             if (saved) {
                 localStorage.setItem(THEME_STORAGE_KEY, saved)
             }
-            vi.stubGlobal(
-                "matchMedia",
-                hasMatchMedia ? () => ({ matches: systemDark }) : undefined
-            )
+            vi.stubGlobal("matchMedia", hasMatchMedia ? () => ({ matches: systemDark }) : undefined)
             applyTheme(readStoredTheme() ?? getSystemTheme())
             const expected = readAppliedState()
             document.documentElement.removeAttribute("data-theme")

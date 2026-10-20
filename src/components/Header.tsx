@@ -3,6 +3,8 @@ import { Link } from "react-router-dom"
 import CatLogo from "@/components/CatLogo"
 import IconButton from "@/components/IconButton"
 import LanguageSelector from "@/components/LanguageSelector"
+import MotionToggle from "@/components/MotionToggle"
+import SettingsMenu from "@/components/SettingsMenu"
 import ThemeToggle from "@/components/ThemeToggle"
 import useLocalizedPath from "@/hooks/useLocalizedPath"
 import useNavIndicator from "@/hooks/useNavIndicator"
@@ -74,7 +76,7 @@ function Header({ menu, activeItem }: HeaderProps) {
                 <NavLinks activeItem={activeItem} className={css.desktopNav} hasIndicator />
                 <div className={css.desktopControls}>
                     <LanguageSelector />
-                    <ThemeToggle />
+                    <SettingsMenu />
                 </div>
                 <div className={css.menuToggle}>
                     <IconButton
@@ -96,6 +98,10 @@ function Header({ menu, activeItem }: HeaderProps) {
                 <div className={css.group}>
                     <p className={css.label}>{t("menu.theme")}</p>
                     <ThemeToggle variant="labeled" />
+                </div>
+                <div className={css.group}>
+                    <p className={css.label}>{t("menu.accessibility")}</p>
+                    <MotionToggle variant="labeled" />
                 </div>
             </div>
         </header>

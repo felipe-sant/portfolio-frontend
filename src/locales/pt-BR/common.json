@@ -15,7 +15,8 @@
     },
     "menu": {
         "toggle": "Menu",
-        "theme": "Tema"
+        "theme": "Tema",
+        "accessibility": "Acessibilidade"
     },
     "languageSelector": {
         "label": "Idioma",
@@ -32,6 +33,12 @@
     },
     "themeToggle": {
         "label": "Tema escuro"
+    },
+    "motionToggle": {
+        "label": "Reduzir movimento"
+    },
+    "settings": {
+        "label": "Configurações"
     },
     "symbols": {
         "separator": "·"

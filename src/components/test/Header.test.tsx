@@ -172,6 +172,26 @@ describe("Header", () => {
         ).toHaveFocus()
     })
 
+    it("reúne tema e movimento no menu de configurações do cabeçalho", async () => {
+        await renderHeader()
+        const settings = screen.getByRole("button", { name: "Configurações" })
+
+        await userEvent.click(settings)
+
+        expect(settings).toHaveAttribute("aria-expanded", "true")
+        expect(screen.getByRole("button", { name: "Tema escuro" })).toBeInTheDocument()
+        expect(screen.getByRole("button", { name: "Reduzir movimento" })).toBeInTheDocument()
+    })
+
+    it("oferece o botão de movimento no painel do menu mobile", async () => {
+        await renderHeader()
+        await userEvent.click(screen.getByRole("button", { name: "Menu" }))
+
+        expect(
+            within(getPanel()).getByRole("button", { name: "Reduzir movimento" })
+        ).toBeInTheDocument()
+    })
+
     it("não fecha e mantém o foco ao trocar de tema dentro do painel", async () => {
         await renderHeader()
         const button = screen.getByRole("button", { name: "Menu" })

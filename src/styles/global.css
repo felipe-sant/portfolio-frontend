@@ -244,7 +244,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-    :root {
+    :root:not([data-motion]) {
         --dur-fast: 0ms;
         --dur-base: 0ms;
         --dur-slow: 0ms;
@@ -253,14 +253,32 @@
         --dur-spin: 0ms;
     }
 
-    *,
-    *::before,
-    *::after {
+    :root:not([data-motion]) *,
+    :root:not([data-motion]) *::before,
+    :root:not([data-motion]) *::after {
         animation-duration: 0.01ms !important;
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
         scroll-behavior: auto !important;
     }
+}
+
+:root[data-motion="reduced"] {
+    --dur-fast: 0ms;
+    --dur-base: 0ms;
+    --dur-slow: 0ms;
+    --dur-shimmer: 0s;
+    --dur-marquee: 0s;
+    --dur-spin: 0ms;
+}
+
+:root[data-motion="reduced"] *,
+:root[data-motion="reduced"] *::before,
+:root[data-motion="reduced"] *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
 }
 
 * {
