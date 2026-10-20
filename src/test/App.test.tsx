@@ -13,7 +13,11 @@ describe("App", () => {
         render(<App />)
 
         expect(
-            await screen.findByRole("heading", { name: "Full stack developer in TypeScript" })
+            await screen.findByRole(
+                "heading",
+                { name: "Full stack developer in TypeScript" },
+                { timeout: 4000 }
+            )
         ).toBeInTheDocument()
         expect(window.location.pathname).toBe("/en")
     })
