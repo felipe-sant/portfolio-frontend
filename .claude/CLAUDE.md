@@ -315,6 +315,12 @@ para editores compatíveis, coerente com o `.prettierrc`.
     componentes, não específicos de uma única página (por exemplo, um `useDebounce` ou `useMediaQuery`).
     Se `src/pages/hooks/` ou `src/hooks/` não existir, crie a pasta no primeiro uso.
 
+- **`src/components/`** — componentes base reutilizáveis (`Button`, `Chip`, `TextField`, `SearchInput`,
+  `Skeleton`, `Spinner`, `VisuallyHidden`, `Icon`). O desenho de cada ícone fica num mapa local de
+  `Icon.tsx`, com os nomes em `src/enum/iconNames.enum.ts`. Texto fixo de componente vive em `common`
+  (`searchInput.clear`); o resto chega por prop. O `jsx-a11y/prefer-tag-over-role` acusa `role="status"`
+  literal: passe `role={"status"}`. Controle de formulário tem borda `--border-control`, nunca
+  `--border-subtle`.
 - **`src/styles/`** — `global.css` guarda as CSS custom properties (cor, tipografia, espaçamento e
   afins) e o reset. CSS Module usa essas custom properties em vez de valor hardcoded; confira os
   nomes em `src/styles/global.css` antes de usar, e token global novo entra lá. Os nomes dos
