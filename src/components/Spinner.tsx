@@ -9,22 +9,18 @@ interface SpinnerProps {
 }
 
 function Spinner({ size = 14, label }: SpinnerProps) {
-    if (label === undefined) {
-        return (
-            <span className={css.spinner} aria-hidden="true">
-                <span className={css.arc}>
-                    <Icon name="spinner" size={size} />
-                </span>
-            </span>
-        )
-    }
+    const isLabelled = label !== undefined
 
     return (
-        <span className={css.spinner} role={"status"}>
+        <span
+            className={css.spinner}
+            role={isLabelled ? "status" : undefined}
+            aria-hidden={isLabelled ? undefined : "true"}
+        >
             <span className={css.arc} aria-hidden="true">
                 <Icon name="spinner" size={size} />
             </span>
-            <VisuallyHidden>{label}</VisuallyHidden>
+            {isLabelled && <VisuallyHidden>{label}</VisuallyHidden>}
         </span>
     )
 }

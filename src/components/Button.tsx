@@ -38,7 +38,7 @@ function Button({
         onClick?.(event)
     }
 
-    const visual = loading ? <Spinner size={16} /> : icon && <Icon name={icon} />
+    const visual = loading ? <Spinner /> : icon && <Icon name={icon} />
     const showStart = iconPosition === "start" && visual
     const showEnd = iconPosition === "end" && visual
 
