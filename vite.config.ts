@@ -1,7 +1,7 @@
 import { fileURLToPath } from "node:url"
 import { defineConfig, configDefaults, coverageConfigDefaults } from "vitest/config"
 import react from "@vitejs/plugin-react"
-import resolveBase from "./scripts/resolveBase"
+import resolveBase from "./scripts/resolveBase.ts"
 
 export default defineConfig({
     base: resolveBase(process.env.BASE_PATH),
