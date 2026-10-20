@@ -1,7 +1,8 @@
-import { useId } from "react"
+import { useId, useRef } from "react"
 import type { ChangeEventHandler, ComponentPropsWithoutRef, FocusEventHandler } from "react"
 import css from "@/styles/components/textField.module.css"
 import Icon from "@/components/Icon"
+import useFocusOnError from "@/hooks/useFocusOnError"
 
 interface TextFieldProps {
     label: string
@@ -11,6 +12,8 @@ interface TextFieldProps {
     rows?: number
     required?: boolean
     describedBy?: string
+    reserveMessageSpace?: boolean
+    focusOnError?: boolean
     type?: ComponentPropsWithoutRef<"input">["type"]
     name?: string
     value?: string
@@ -32,16 +35,21 @@ function TextField({
     rows = 4,
     required = false,
     describedBy,
+    reserveMessageSpace = false,
+    focusOnError = false,
     type = "text",
     ...fieldProps
 }: TextFieldProps) {
     const id = useId()
+    const fieldRef = useRef<HTMLInputElement & HTMLTextAreaElement>(null)
+    useFocusOnError(fieldRef, error, focusOnError)
     const messageId = `${id}-message`
     const message = error ?? hint
     const describedByIds = [message ? messageId : undefined, describedBy].filter(Boolean).join(" ")
     const sharedProps = {
         ...fieldProps,
         id,
+        ref: fieldRef,
         className: error ? `${css.field} ${css.invalid}` : css.field,
         "aria-invalid": error ? true : undefined,
         "aria-required": required || undefined,
@@ -50,7 +58,7 @@ function TextField({
 
     return (
         <div className={css.wrapper}>
-            <label htmlFor={id} className={css.label}>
+            <label htmlFor={id} className={required ? `${css.label} ${css.required}` : css.label}>
                 {label}
             </label>
             {multiline ? (
@@ -58,11 +66,19 @@ function TextField({
             ) : (
                 <input {...sharedProps} type={type} />
             )}
-            {message && (
-                <p id={messageId} className={error ? css.error : css.hint}>
-                    {error && <Icon name="alert" size={14} />}
-                    {message}
-                </p>
+            {(message || reserveMessageSpace) && (
+                <div className={css.message}>
+                    {message && (
+                        <p
+                            id={messageId}
+                            className={error ? css.error : css.hint}
+                            role={error ? "alert" : undefined}
+                        >
+                            {error && <Icon name="alert" size={14} />}
+                            {message}
+                        </p>
+                    )}
+                </div>
             )}
         </div>
     )

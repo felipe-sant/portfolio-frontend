@@ -13,6 +13,12 @@
     text-transform: uppercase;
 }
 
+.required::after {
+    content: " *";
+    content: " *" / "";
+    color: var(--danger-ink);
+}
+
 .field {
     width: 100%;
     min-height: var(--hit-min);
@@ -42,6 +48,10 @@ textarea.field {
     border-color: var(--danger-ink);
 }
 
+.message {
+    min-height: calc(var(--text-caption) * 1.5);
+}
+
 .hint,
 .error {
     display: flex;
@@ -49,6 +59,7 @@ textarea.field {
     gap: var(--space-2);
     margin: 0;
     font-size: var(--text-caption);
+    line-height: 1.5;
 }
 
 .hint {

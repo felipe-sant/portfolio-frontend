@@ -59,6 +59,65 @@ describe("TextField", () => {
         expect(screen.queryByText("Como devo te chamar")).not.toBeInTheDocument()
     })
 
+    it("reserva o espaço da mensagem sem alterar a altura quando o erro aparece", () => {
+        const { container, rerender } = render(<TextField label="Nome" reserveMessageSpace />)
+        const wrapper = container.firstElementChild as HTMLElement
+        const reserved = wrapper.querySelector("div")
+
+        expect(reserved).toBeInTheDocument()
+        expect(reserved).toBeEmptyDOMElement()
+
+        rerender(<TextField label="Nome" reserveMessageSpace error="Informe o nome" />)
+
+        expect(wrapper.querySelectorAll("div")).toHaveLength(1)
+        expect(screen.getByRole("alert")).toHaveTextContent("Informe o nome")
+    })
+
+    it("não cria o espaço da mensagem por padrão", () => {
+        const { container } = render(<TextField label="Nome" />)
+
+        expect((container.firstElementChild as HTMLElement).querySelector("div")).toBeNull()
+    })
+
+    it("foca o campo quando o erro aparece com focusOnError", () => {
+        const { rerender } = render(<TextField label="Nome" focusOnError />)
+
+        expect(screen.getByLabelText("Nome")).not.toHaveFocus()
+
+        rerender(<TextField label="Nome" focusOnError error="Informe o nome" />)
+
+        expect(screen.getByLabelText("Nome")).toHaveFocus()
+    })
+
+    it("não foca o campo quando o erro aparece sem focusOnError", () => {
+        const { rerender } = render(<TextField label="Nome" />)
+
+        rerender(<TextField label="Nome" error="Informe o nome" />)
+
+        expect(screen.getByLabelText("Nome")).not.toHaveFocus()
+    })
+
+    it("marca o rótulo de campo obrigatório sem mudar o nome acessível", () => {
+        const { rerender } = render(<TextField label="Nome" required />)
+
+        expect(screen.getByLabelText("Nome")).toHaveAttribute("aria-required", "true")
+        expect(screen.getByText("Nome").className).toContain("required")
+
+        rerender(<TextField label="Nome" />)
+
+        expect(screen.getByText("Nome").className).not.toContain("required")
+    })
+
+    it("anuncia o erro como alerta e não anuncia a dica", () => {
+        const { rerender } = render(<TextField label="Nome" hint="Como devo te chamar" />)
+
+        expect(screen.queryByRole("alert")).not.toBeInTheDocument()
+
+        rerender(<TextField label="Nome" error="Informe o nome" />)
+
+        expect(screen.getByRole("alert")).toHaveTextContent("Informe o nome")
+    })
+
     it("concatena o describedBy extra ao da mensagem", () => {
         render(
             <>
