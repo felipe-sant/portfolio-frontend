@@ -1,0 +1,70 @@
+.selector {
+    position: relative;
+    min-width: 0;
+}
+
+.toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-width: var(--hit-min);
+    min-height: var(--hit-min);
+    padding: var(--space-2) var(--space-3);
+    border: 0;
+    border-radius: var(--radius);
+    background-color: transparent;
+    color: var(--text-body);
+    cursor: pointer;
+}
+
+.list {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    z-index: 20;
+    min-width: 11rem;
+    margin: var(--space-1) 0 0;
+    padding: var(--space-1);
+    list-style: none;
+    border: var(--border-width) solid var(--border-strong);
+    border-radius: var(--radius);
+    background-color: var(--bg-page);
+    box-shadow: var(--shadow-modal);
+}
+
+.block .list {
+    position: static;
+    margin-top: var(--space-2);
+    box-shadow: none;
+}
+
+.option {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    min-height: var(--hit-min);
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius);
+    color: var(--text-body);
+    font-family: var(--font-body);
+    font-size: var(--text-body-sm);
+    font-weight: var(--weight-medium);
+    text-decoration: none;
+}
+
+.active {
+    background-color: var(--bg-highlight);
+    color: var(--text-strong);
+    font-weight: var(--weight-semibold);
+}
+
+@media (hover: hover) {
+    .toggle:hover,
+    .option:hover {
+        color: var(--text-strong);
+    }
+
+    .option:not(.active):hover {
+        background-color: var(--bg-raised);
+    }
+}

@@ -17,7 +17,9 @@ const ICON_NAMES = [
     "mail",
     "file",
     "zoomIn",
-    "star"
+    "star",
+    "motion",
+    "settings"
 ] as const
 
 export default ICON_NAMES

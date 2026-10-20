@@ -3,5 +3,41 @@
     "loading": "Loading...",
     "searchInput": {
         "clear": "Clear search"
+    },
+    "authorName": "Luiz Felipe dos Santos",
+    "skipToContent": "Skip to content",
+    "navigation": {
+        "label": "Main",
+        "home": "Home",
+        "projects": "Projects",
+        "about": "About",
+        "contact": "Contact"
+    },
+    "menu": {
+        "toggle": "Menu",
+        "theme": "Theme",
+        "accessibility": "Accessibility"
+    },
+    "languageSelector": {
+        "label": "Language",
+        "ptBR": {
+            "name": "Português"
+        },
+        "en": {
+            "name": "English"
+        },
+        "es": {
+            "name": "Español"
+        },
+        "current": "Language: {{name}}"
+    },
+    "themeToggle": {
+        "label": "Dark theme"
+    },
+    "motionToggle": {
+        "label": "Reduce motion"
+    },
+    "settings": {
+        "label": "Settings"
     }
 }

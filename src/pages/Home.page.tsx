@@ -8,10 +8,10 @@ function HomePage() {
         <>
             <title>{t("meta.title")}</title>
             <meta name="description" content={t("meta.description")} />
-            <main className={css.main}>
+            <div className={css.main}>
                 <h1>{t("heading")}</h1>
                 <p className={css.intro}>{t("intro")}</p>
-            </main>
+            </div>
         </>
     )
 }

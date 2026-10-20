@@ -1,0 +1,161 @@
+.header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background-color: var(--surface-chrome);
+    border-bottom: var(--border-width) solid var(--border-chrome);
+}
+
+.bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-6);
+    width: 100%;
+    max-width: var(--container-max);
+    min-height: var(--header-height);
+    margin-inline: auto;
+    padding-inline: var(--pad-page);
+}
+
+.brand {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3);
+    min-height: var(--hit-min);
+    color: var(--text-strong);
+    font-family: var(--font-heading);
+    font-weight: var(--weight-bold);
+    text-decoration: none;
+}
+
+.link {
+    display: inline-flex;
+    align-items: center;
+    color: var(--text-body);
+    font-weight: var(--weight-medium);
+    text-decoration: none;
+}
+
+.link[aria-current="page"] {
+    color: var(--text-strong);
+    font-weight: var(--weight-semibold);
+}
+
+.desktopNav {
+    position: relative;
+    display: none;
+    align-items: stretch;
+    gap: var(--space-1);
+    margin-inline-start: auto;
+}
+
+.desktopNav .link {
+    min-height: var(--hit-min);
+    padding-inline: var(--space-4);
+}
+
+.indicator {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: var(--border-width-active);
+    background-color: var(--brand-variant);
+    pointer-events: none;
+}
+
+.indicatorAnimated {
+    transition:
+        transform var(--dur-slow) var(--ease),
+        width var(--dur-slow) var(--ease),
+        opacity var(--dur-base) var(--ease);
+}
+
+.desktopControls {
+    display: none;
+    align-items: center;
+    gap: var(--space-4);
+}
+
+.menuToggle {
+    display: flex;
+}
+
+.panel {
+    position: fixed;
+    top: var(--header-height);
+    right: 0;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+    overflow-y: auto;
+    padding: var(--space-4) var(--pad-page) var(--space-8);
+    background-color: var(--surface-chrome);
+}
+
+.panel:not([hidden]) {
+    animation: panel-in var(--dur-base) var(--ease);
+}
+
+.panel[hidden] {
+    display: none;
+}
+
+@keyframes panel-in {
+    from {
+        opacity: 0;
+        transform: translateY(-0.5rem);
+    }
+}
+
+.panelNav {
+    display: flex;
+    flex-direction: column;
+}
+
+.panelNav .link {
+    min-height: 3.25rem;
+    padding-inline: var(--space-4);
+    border-inline-start: var(--border-width-active) solid transparent;
+    font-size: var(--text-body-lg);
+}
+
+.panelNav .link[aria-current="page"] {
+    border-inline-start-color: var(--brand-variant);
+    font-weight: var(--weight-black);
+}
+
+.group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.label {
+    color: var(--text-label);
+    font-size: var(--text-label-sm);
+    font-weight: var(--weight-semibold);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+@media (min-width: 640px) {
+    .desktopNav {
+        display: flex;
+    }
+
+    .desktopControls {
+        display: flex;
+    }
+
+    .menuToggle {
+        display: none;
+    }
+
+    .panel,
+    .panel[hidden] {
+        display: none;
+    }
+}

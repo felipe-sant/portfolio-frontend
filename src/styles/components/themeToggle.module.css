@@ -1,0 +1,29 @@
+.labeled {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: var(--space-3);
+    width: 100%;
+    min-height: var(--hit-min);
+    padding: var(--space-2) var(--space-4);
+    border: 0;
+    border-radius: var(--radius);
+    background-color: transparent;
+    color: var(--text-strong);
+    font-family: var(--font-body);
+    font-size: var(--text-body-md);
+    font-weight: var(--weight-semibold);
+    text-align: left;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.labeled[aria-pressed="true"] {
+    background-color: var(--bg-highlight);
+}
+
+@media (hover: hover) {
+    .labeled:not([aria-pressed="true"]):hover {
+        background-color: var(--bg-raised);
+    }
+}
