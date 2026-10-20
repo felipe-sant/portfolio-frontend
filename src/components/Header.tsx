@@ -27,6 +27,13 @@ interface NavLinksProps {
     children?: ReactNode
 }
 
+interface NavLinkItemProps {
+    id: NavItemId
+    to: string
+    isActive: boolean
+    onNavigate?: () => void
+}
+
 interface DesktopNavProps {
     activeItem?: NavItemId
 }
@@ -38,6 +45,21 @@ const NAV_ITEMS = [
     { id: "contact", path: ROUTES.contact }
 ] as const
 
+function NavLinkItem({ id, to, isActive, onNavigate }: NavLinkItemProps) {
+    const { t } = useTranslation()
+
+    return (
+        <Link
+            to={to}
+            className={css.link}
+            aria-current={isActive ? "page" : undefined}
+            onClick={onNavigate}
+        >
+            {t(`navigation.${id}`)}
+        </Link>
+    )
+}
+
 function NavLinks({ activeItem, onNavigate, className, navRef, children }: NavLinksProps) {
     const { t } = useTranslation()
     const localizedPath = useLocalizedPath()
@@ -45,15 +67,13 @@ function NavLinks({ activeItem, onNavigate, className, navRef, children }: NavLi
     return (
         <nav aria-label={t("navigation.label")} className={className} ref={navRef}>
             {NAV_ITEMS.map((item) => (
-                <Link
+                <NavLinkItem
                     key={item.id}
+                    id={item.id}
                     to={localizedPath(item.path)}
-                    className={css.link}
-                    aria-current={item.id === activeItem ? "page" : undefined}
-                    onClick={onNavigate}
-                >
-                    {t(`navigation.${item.id}`)}
-                </Link>
+                    isActive={item.id === activeItem}
+                    onNavigate={onNavigate}
+                />
             ))}
             {children}
         </nav>
