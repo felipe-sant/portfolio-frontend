@@ -100,6 +100,8 @@ npm test -- --run                            # execução one-shot (CI, agente, 
 npm test -- --run src/pages/test/Home.page.test.tsx   # um arquivo específico
 npm run typecheck # checagem de tipos (tsc -b) de src/ e vite.config.ts
 npm run lint      # oxlint sobre o projeto (configuração em .oxlintrc.json)
+npm run build:fatec   # build com BASE_PATH=/ra2581392423047/ + 404.html e .nojekyll em dist/ (GitHub Pages da Fatec)
+npm run preview:fatec # serve esse dist/ em http://localhost:4173/ra2581392423047/
 npm run lint:fix  # mesma coisa, aplicando as correções automáticas possíveis (oxlint --fix)
 npm run format    # prettier --write em **/*.{ts,tsx,css,json,md,yml,html}, conforme .prettierrc e .prettierignore
 npm run test:cov  # vitest run --coverage — suíte inteira + relatório de cobertura
@@ -403,6 +405,10 @@ são expostas ao código do cliente, e a leitura é `import.meta.env.VITE_ALGO`,
 `process.env.REACT_APP_ALGO`. A convenção é
 materializada em `.env.example` (na raiz, com `VITE_API_URL` como exemplo) e na augmentação de
 `ImportMetaEnv`/`ImportMeta` em `src/vite-env.d.ts`.
+
+`BASE_PATH` (sem prefixo `VITE_`) é lida só em `vite.config.ts`, por `scripts/resolveBase.ts`, e define o `base`
+do Vite (`/` por padrão); o código do cliente só vê `import.meta.env.BASE_URL`. `scripts/` tem o alias
+`@scripts/*` (em `tsconfig.node.json` e `resolve.alias`) para os testes de `scripts/test/`.
 
 A configuração de build fica em `vite.config.ts` na raiz (plugin React + bloco `test` do Vitest),
 e a entrada da aplicação é o `index.html` da raiz, que carrega `/src/index.tsx` como módulo.
