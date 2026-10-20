@@ -162,10 +162,14 @@ describe("Header", () => {
         const button = screen.getByRole("button", { name: "Menu" })
         await userEvent.click(button)
 
-        await userEvent.click(within(getPanel()).getByRole("link", { name: "EN English" }))
+        await userEvent.click(within(getPanel()).getByRole("button", { name: "Idioma: Português" }))
+
+        await userEvent.click(within(getPanel()).getByRole("link", { name: "English" }))
 
         expect(button).toHaveAttribute("aria-expanded", "true")
-        expect(within(getPanel()).getByRole("link", { name: "EN English" })).toHaveFocus()
+        expect(
+            await within(getPanel()).findByRole("button", { name: "Language: English" })
+        ).toHaveFocus()
     })
 
     it("não fecha e mantém o foco ao trocar de tema dentro do painel", async () => {

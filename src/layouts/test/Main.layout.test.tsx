@@ -114,13 +114,14 @@ describe("MainLayout", () => {
     it("troca de idioma pelo seletor atualizando html lang e preservando query e âncora", async () => {
         const { router } = await renderLayout("/pt-BR/projects?q=a#topo")
 
-        await userEvent.click(screen.getAllByRole("link", { name: "ES Español" })[0])
+        await userEvent.click(screen.getAllByRole("button", { name: "Idioma: Português" })[0])
+        await userEvent.click(screen.getByRole("link", { name: "Español" }))
 
         expect(router.state.location.pathname).toBe("/es/projects")
         expect(router.state.location.search).toBe("?q=a")
         expect(router.state.location.hash).toBe("#topo")
         expect(document.documentElement).toHaveAttribute("lang", "es")
-        expect(screen.getAllByRole("link", { name: "ES Español" })[0]).toHaveFocus()
+        expect((await screen.findAllByRole("button", { name: "Idioma: Español" }))[0]).toHaveFocus()
     })
 
     it("foca o h1 na navegação interna", async () => {

@@ -20,17 +20,15 @@
     "languageSelector": {
         "label": "Language",
         "ptBR": {
-            "short": "PT",
             "name": "Português"
         },
         "en": {
-            "short": "EN",
             "name": "English"
         },
         "es": {
-            "short": "ES",
             "name": "Español"
-        }
+        },
+        "current": "Language: {{name}}"
     },
     "themeToggle": {
         "label": "Dark theme"
