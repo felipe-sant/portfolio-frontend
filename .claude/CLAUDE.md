@@ -357,7 +357,13 @@ para editores compatíveis, coerente com o `.prettierrc`.
   animações e transições com `[data-motion="reduced"]` (e pela media query só enquanto não há
   `data-motion`); um terceiro script inline do `index.html` aplica `data-motion` antes da pintura
   (chave duplicada; `motionScript.test.ts` compara com os utilitários). Animação nova usa
-  `--dur-*` e `--ease`, nunca duração fixa, para o botão e o sistema a desligarem.
+  `--dur-*` e `--ease`, nunca duração fixa, para o botão e o sistema a desligarem. Movimentos
+  extras (D57 a D60): `usePageTransition()` (`src/hooks/`, `true` só com movimento pleno) alimenta a
+  prop `viewTransition` dos `Link` de navegação (o `LanguageSelector` fica sem); `startThemeTransition`
+  (`src/utils/`, chamada por `useTheme.setTheme`) liga `data-theme-transition` no `<html>` durante a
+  troca; `useReveal()` (`src/hooks/`, devolve `ref` e `revealProps`) e o componente `SkeletonSwap`
+  ficam prontos para as telas adotarem (Início e Projetos ainda não os usam); tokens `--dur-page`,
+  `--stagger` e `--press-scale` são neutralizados nos dois blocos de movimento reduzido.
 - **Alias de import `@/`** — `@/*` resolve para `src/*`. Configurado em dois lugares que precisam
   continuar concordando: `paths` no `tsconfig.app.json` (para o `tsc` e o editor) e `resolve.alias` no
   `vite.config.ts` (para o dev server e o build). Mexer em um sem o outro deixa o `tsc -b`
