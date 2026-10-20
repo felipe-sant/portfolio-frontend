@@ -27,6 +27,11 @@
     font-family: var(--font-heading);
     font-weight: var(--weight-bold);
     text-decoration: none;
+    transition: transform var(--dur-fast) var(--ease);
+}
+
+.brand:active {
+    transform: scale(var(--press-scale));
 }
 
 .link {
@@ -35,6 +40,11 @@
     color: var(--text-body);
     font-weight: var(--weight-medium);
     text-decoration: none;
+    transition: transform var(--dur-fast) var(--ease);
+}
+
+.link:active {
+    transform: scale(var(--press-scale));
 }
 
 .link[aria-current="page"] {
