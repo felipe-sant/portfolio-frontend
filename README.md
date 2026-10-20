@@ -238,7 +238,7 @@ roda `npx lint-staged`, que, conforme `.lintstagedrc.json`, aplica `oxlint --fix
 | Onde                                 | O que é                                                                                                                                                    |
 | ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [`docs/`](docs/README.md)            | Documentação versionada do frontend: produto, glossário, design system, arquitetura, ADRs, diagramas, ambientes e o molde de tela (`screens/_template.md`) |
-| `.specs/`                            | Planejamento local por feature ou bug (`spec.md` e `tasks.md`), gitignored                                                                                 |
+| `.specs/`                            | Planejamento local por feature ou bug (`spec.md` e `tasks.md`), gitignored; só o resumo de `_archive/` é versionado                                        |
 | [`CONTRIBUTING.md`](CONTRIBUTING.md) | Padrão de branches, commits e Pull Requests                                                                                                                |
 
 O índice completo de `docs/` está em [`docs/README.md`](docs/README.md). Pull Requests seguem
