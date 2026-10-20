@@ -12,14 +12,14 @@ function NotFoundPage() {
         <>
             <title>{t("meta.title")}</title>
             <meta name="description" content={t("meta.description")} />
-            <main className={css.main}>
+            <div className={css.main}>
                 <div>
                     <h1>{t("heading")}</h1>
                     <p>
                         <Link to={localizedPath(ROUTES.home)}>{t("common:backHome")}</Link>
                     </p>
                 </div>
-            </main>
+            </div>
         </>
     )
 }
