@@ -1,8 +1,10 @@
 import { fileURLToPath } from "node:url"
 import { defineConfig, configDefaults, coverageConfigDefaults } from "vitest/config"
 import react from "@vitejs/plugin-react"
+import resolveBase from "./scripts/resolveBase"
 
 export default defineConfig({
+    base: resolveBase(process.env.BASE_PATH),
     plugins: [react()],
     resolve: {
         alias: {
@@ -23,6 +25,8 @@ export default defineConfig({
                 "src/index.tsx",
                 "src/types/**",
                 "vite.config.ts",
+                "scripts/buildFatec.ts",
+                "scripts/previewFatec.ts",
                 "src/setupTests.ts"
             ],
             thresholds: {
