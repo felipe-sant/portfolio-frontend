@@ -106,6 +106,8 @@ Cada subseção lista os requisitos na ordem dos IDs.
 
 ### Carregamento incremental
 
+Os cards entram com `useReveal` (fade e deslocamento ao rolar, atraso crescente entre irmãos por `--stagger`) e os skeletons saem por `SkeletonSwap`, ambos desligados com movimento reduzido (D57, NF-MO-07).
+
 Decisão `D51`.
 
 | ID               | Regra                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | Fonte                                                                     |

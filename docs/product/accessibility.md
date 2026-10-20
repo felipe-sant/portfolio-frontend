@@ -224,6 +224,7 @@ Exigência para a #10: cada imagem do modelo de dados tem `alt` (e legenda, se h
 - `prefers-reduced-motion: reduce` desliga transição, hover com deslocamento, shimmer e rolagem suave (já feito em `global.css`). A faixa de stack vira uma lista estática que quebra linha, em vez de ficar congelada e cortada.
 - **Faixa de stack (2.2.2, D28):** botão de pausa visível na própria faixa, com rótulo por chave nos três idiomas e `aria-pressed`.
 - **Animação por interação (2.3.3, AAA obrigatório):** hover com deslocamento, abertura de menu e de modal e troca de documento ficam sem movimento com `prefers-reduced-motion: reduce`. A faixa de stack, que não depende de interação, tem a pausa de D28.
+- **Movimentos da #84 (D57 a D60):** transição de página (View Transitions, `--dur-page`), crossfade de tema, escala de pressão em botões e links, entrada dos cards ao rolar e skeleton que se dissolve. Todos desligam com `prefers-reduced-motion: reduce` e com o botão "Reduzir movimento": os tokens `--dur-page`, `--stagger` e `--press-scale` viram `0ms`, `0ms` e `1`, a prop `viewTransition` só liga com movimento pleno (`usePageTransition`), `data-theme-transition` nunca é ligado e `useReveal` e `SkeletonSwap` mostram o conteúdo direto. Nenhum esconde conteúdo com `visibility` ou `display` (só opacidade e `translateY`), o skeleton que sai fica `aria-hidden` e `inert` sem anunciar de novo, e a transição de página não atrasa o foco no `h1` (RF-LAY-32).
 - Nada pisca mais de três vezes por segundo (2.3.1), e a galeria não troca de imagem sozinha.
 
 ## Contraste e cor

@@ -175,6 +175,14 @@ contínuas: `--dur-shimmer` (1.4s, skeleton), `--dur-spin` (700ms, spinner) e `-
 (22s, faixa de stack). Nada de bounce, entrada em escala ou parallax. A faixa de stack tem botão de
 pausa (D28).
 
+Tokens da #84 (D59): `--dur-page` (150ms, transição de página), `--stagger` (60ms, atraso entre
+irmãos na entrada, no máximo 5 degraus por `data-reveal-step`) e `--press-scale` (0.97, escala de
+`:active` em `Button`, `IconButton` e links do cabeçalho). Regras de uso: o crossfade de tema só
+existe durante a troca, por `data-theme-transition` no `<html>` (D60); a entrada ao rolar usa só
+opacidade e `translateY` (`useReveal`, `[data-reveal]` em `global.css`), nunca `visibility` nem
+`display`; o skeleton sai por fade (`SkeletonSwap`) e a tela que o usa aplica `useReveal` nos
+cards e `SkeletonSwap` na troca (D57). Movimento novo usa `--dur-*` e `--ease`, nunca duração fixa.
+
 `prefers-reduced-motion: reduce` desliga tudo. No `global.css` isso zera os tokens de duração e
 encurta animação e transição em `*`, `*::before` e `*::after`; a faixa de stack vira lista estática
 (D28). Os keyframes do handoff (`ds-shimmer`, `ds-spin`, `ds-marquee`) ainda não existem no código:
