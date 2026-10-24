@@ -1,6 +1,7 @@
 import { Suspense, useRef } from "react"
 import { useTranslation } from "react-i18next"
 import { Outlet, ScrollRestoration, useLocation } from "react-router-dom"
+import Footer from "@/components/Footer"
 import Header from "@/components/Header"
 import SkipLink from "@/components/SkipLink"
 import VisuallyHidden from "@/components/VisuallyHidden"
@@ -14,7 +15,7 @@ import getActiveNavItem from "@/utils/getActiveNavItem"
 const MAIN_ID = "main-content"
 
 function MainLayout() {
-    const { t } = useTranslation(["mainLayout", "common"])
+    const { t } = useTranslation()
     const { pathname } = useLocation()
     const menu = useMobileMenu()
     const mainRef = useRef<HTMLElement>(null)
@@ -36,16 +37,15 @@ function MainLayout() {
                 inert={menu.isOpen}
             >
                 <Suspense
-                    fallback={
-                        <VisuallyHidden role={"status"}>{t("common:loading")}</VisuallyHidden>
-                    }
+                    fallback={<VisuallyHidden role={"status"}>{t("loading")}</VisuallyHidden>}
                 >
                     <Outlet />
                 </Suspense>
             </main>
-            <footer className={css.footer} inert={menu.isOpen}>
-                <p>{t("copyright")}</p>
-            </footer>
+            <Footer
+                variant={activeItem === "contact" ? "navigation" : "default"}
+                inert={menu.isOpen}
+            />
             <ScrollRestoration />
         </div>
     )
