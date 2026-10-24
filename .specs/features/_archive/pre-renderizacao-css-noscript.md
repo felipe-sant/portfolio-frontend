@@ -14,6 +14,8 @@ Causa confirmada: as telas são `lazy` e o CSS do chunk só era injetado pelo JS
 
 O aviso do `<noscript>` é estilizado por `body > noscript` em `global.css` com `--brand-primary` e `--brand-ink` (contraste alto), dentro de `@media (scripting: none)` para não aparecer faixa vazia com JavaScript.
 
+O skip link espiava na tela sem JavaScript: o `.skipLink` era `absolute` e seu bloco de posicionamento é o layout, que começa abaixo da faixa do `<noscript>`, então o `top` e o `-200%` partiam de cerca de 50px mais baixo (medido: `bottom` em +4,7px). Passou a `position: fixed`, ancorado à viewport (`bottom` em -42px em todos os casos, e `top: 8px` ao receber foco por Tab como primeiro foco).
+
 ## Notas
 
 Sem `modulepreload` do JS da tela. Navegador sem suporte a `scripting: none` não mostra a faixa estilizada (o texto continua visível).
