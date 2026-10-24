@@ -364,6 +364,17 @@ body {
     line-height: var(--lh-body);
 }
 
+@media (scripting: none) {
+    body > noscript {
+        display: block;
+        padding: var(--space-1) var(--pad-page);
+        background-color: var(--danger-surface);
+        color: var(--danger-ink);
+        font-size: var(--text-body-sm);
+        text-align: center;
+    }
+}
+
 h1,
 h2,
 h3,
