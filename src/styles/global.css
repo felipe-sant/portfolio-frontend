@@ -367,9 +367,9 @@ body {
 @media (scripting: none) {
     body > noscript {
         display: block;
-        padding: var(--space-3) var(--pad-page);
-        background-color: var(--brand-primary);
-        color: var(--brand-ink);
+        padding: var(--space-1) var(--pad-page);
+        background-color: var(--danger-surface);
+        color: var(--danger-ink);
         font-size: var(--text-body-sm);
         text-align: center;
     }
