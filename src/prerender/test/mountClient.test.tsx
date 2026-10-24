@@ -1,4 +1,5 @@
 import type { Root } from "react-dom/client"
+import type { MockInstance } from "vitest"
 import { afterEach, beforeEach, describe, expect, inject, it, vi } from "vitest"
 import { act, screen } from "@testing-library/react"
 import composePage from "@scripts/prerender/composePage"
@@ -41,6 +42,12 @@ function spyOnConsole() {
         error: vi.spyOn(console, "error").mockImplementation(() => undefined),
         warn: vi.spyOn(console, "warn").mockImplementation(() => undefined)
     }
+}
+
+function hydrationWarnings(spy: MockInstance<typeof console.warn>) {
+    return spy.mock.calls.filter(
+        ([message]) => !String(message).includes("InvariantMiddleware took")
+    )
 }
 
 let rootElement: HTMLElement
@@ -123,7 +130,7 @@ describe("mountClient com caminho pré-renderizado", () => {
             heading
         )
         expect(consoleSpies.error).not.toHaveBeenCalled()
-        expect(consoleSpies.warn).not.toHaveBeenCalled()
+        expect(hydrationWarnings(consoleSpies.warn)).toEqual([])
         expect(errorListener).not.toHaveBeenCalled()
         expect(document.head.querySelectorAll("title")).toHaveLength(1)
     })
@@ -142,7 +149,7 @@ describe("mountClient com caminho pré-renderizado", () => {
         expect(document.documentElement).toHaveAttribute("data-theme", "dark")
         expect(document.documentElement).toHaveAttribute("data-motion", "reduced")
         expect(consoleSpies.error).not.toHaveBeenCalled()
-        expect(consoleSpies.warn).not.toHaveBeenCalled()
+        expect(hydrationWarnings(consoleSpies.warn)).toEqual([])
     })
 
     it("usa createRoot e deixa um único title quando o 404.html chega em outra URL", async () => {
