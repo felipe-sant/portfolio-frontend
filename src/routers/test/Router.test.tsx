@@ -1,14 +1,17 @@
-import { afterEach, describe, expect, it, vi } from "vitest"
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { createMemoryRouter, RouterProvider } from "react-router-dom"
-import { act, render, screen } from "@testing-library/react"
+import { act, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import LANGUAGE_STORAGE_KEY from "@/i18n/languageStorageKey"
 import routes from "@/routers/routes"
 import Router from "@/routers/Router"
+import buildProfile from "@/testUtils/buildProfile"
+import renderWithStore from "@/testUtils/renderWithStore"
+import stubContentFetch from "@/testUtils/stubContentFetch"
 
 function renderRoutes(initialEntries: string[]) {
     const router = createMemoryRouter(routes, { initialEntries })
-    render(<RouterProvider router={router} />)
+    renderWithStore(<RouterProvider router={router} />)
     return router
 }
 
@@ -17,7 +20,16 @@ function stubBrowser(languages: string[]) {
     vi.spyOn(navigator, "language", "get").mockReturnValue(languages[0] ?? "")
 }
 
+beforeEach(() => {
+    stubContentFetch({
+        "content/pt-BR/profile.json": buildProfile(),
+        "content/en/profile.json": buildProfile(),
+        "content/es/profile.json": buildProfile()
+    })
+})
+
 afterEach(() => {
+    vi.unstubAllGlobals()
     vi.restoreAllMocks()
     vi.unstubAllEnvs()
     window.history.pushState({}, "", "/")
@@ -54,6 +66,25 @@ describe("routes", () => {
                 await screen.findByRole("heading", { name: "Page not found" })
             ).toBeInTheDocument()
             expect(document.documentElement.lang).toBe("en")
+        }
+    )
+
+    it.each([["/fr/projects"], ["/projects"], ["/pt-BR/inexistente"]])(
+        "renderiza a não encontrada em %s dentro do layout com cabeçalho e rodapé padrão",
+        async (path) => {
+            renderRoutes([path])
+
+            expect(await screen.findByRole("heading", { level: 1 })).toHaveTextContent(
+                /Page not found|Página não encontrada/
+            )
+            expect(screen.getByRole("banner")).toBeInTheDocument()
+            expect(screen.getByRole("contentinfo")).toBeInTheDocument()
+            expect(
+                screen.queryByRole("navigation", { name: /Rodapé|Footer/ })
+            ).not.toBeInTheDocument()
+            expect(
+                screen.getByRole("link", { name: /Ver projetos|View projects/ })
+            ).toBeInTheDocument()
         }
     )
 
@@ -178,7 +209,7 @@ describe("Router", () => {
         vi.stubEnv("BASE_URL", "/ra2581392423047/")
         window.history.pushState({}, "", "/ra2581392423047/en")
 
-        render(<Router />)
+        renderWithStore(<Router />)
 
         expect(
             await screen.findByRole("heading", { name: "Full stack developer in TypeScript" })
