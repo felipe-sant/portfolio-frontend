@@ -28,7 +28,7 @@ function ErrorPage() {
             <main id={MAIN_ID} tabIndex={-1} className={css.main} inert={menu.isOpen}>
                 <div className={css.content}>
                     <span className={css.icon}>
-                        <Icon name="alert" size={32} />
+                        <Icon name="alert" size={20} />
                     </span>
                     <h1>{t("heading")}</h1>
                     <p className={css.description}>{t("description")}</p>
