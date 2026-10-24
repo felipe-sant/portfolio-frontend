@@ -227,8 +227,8 @@ para editores compatíveis, coerente com o `.prettierrc`.
 - **`src/locales/`** — tradução é dado, separado da configuração em `src/i18n/`:
   `src/locales/<idioma>/<namespace>.json`, JSON com 4 espaços, os mesmos namespaces e chaves nos
   três idiomas. Um namespace por dono do texto, com o nome do CSS Module correspondente (ex.:
-  `home`, `notFound`, `mainLayout`); `common` guarda texto compartilhado (`backHome`, `loading`)
-  e texto fixo de componente de `src/components/`. Chave em inglês, lowerCamelCase, hierárquica por
+  `home`, `notFound`, `error`); `common` guarda texto compartilhado (`backHome`, `loading`)
+  e texto fixo de componente de `src/components/` (inclusive o do rodapé, `footer.*`). Chave em inglês, lowerCamelCase, hierárquica por
   papel (`meta.title`, `meta.description`, `heading`, `filters.category.academic`). Página com
   namespace próprio chama `useTranslation("home")`; quem também usa chave de `common` carrega os
   dois, `useTranslation(["notFound", "common"])`, e chama `t("common:backHome")`, senão a chave não
@@ -319,19 +319,24 @@ para editores compatíveis, coerente com o `.prettierrc`.
 
 - **`src/components/`** — componentes base reutilizáveis (`Button`, `Chip`, `TextField`, `SearchInput`,
   `Skeleton`, `Spinner`, `VisuallyHidden`, `Icon`, `IconButton`, `CatLogo`, `ThemeToggle`,
-  `MotionToggle`, `SettingsMenu`, `Flag`, `LanguageSelector`, `Header`, `SkipLink`). O desenho de cada ícone fica num mapa local de
+  `MotionToggle`, `SettingsMenu`, `Flag`, `LanguageSelector`, `Header`, `SkipLink`, `Footer`, `CopyEmailButton`, `ButtonLink`). O desenho de cada ícone fica num mapa local de
   `Icon.tsx`, com os nomes em `src/enum/iconNames.enum.ts`. Texto fixo de componente vive em `common`
   (`searchInput.clear`); o resto chega por prop. O `jsx-a11y/prefer-tag-over-role` acusa `role="status"`
   literal: passe `role={"status"}`. Controle de formulário tem borda `--border-control`, nunca
   `--border-subtle`. `TextField` aceita `reserveMessageSpace` (campo com aviso possível) e
   `focusOnError` (hook `useFocusOnError` de `src/hooks/`, só no primeiro campo inválido do envio).
 - **Layout compartilhado** — `src/layouts/Main.layout.tsx` monta `SkipLink`, `Header`, o único
-  `<main id="main-content">` (as páginas não renderizam `main`; a de erro, fora do layout, mantém o
-  seu), o rodapé e `<ScrollRestoration />`. O estado do menu mobile vem de `useMobileMenu`
+  `<main id="main-content">` (as páginas não renderizam `main`; a de erro, fora do layout, monta a
+  própria moldura com `SkipLink`, `Header`, `main` e `Footer`, sem ler o erro lançado), o `Footer` e
+  `<ScrollRestoration />`. O estado do menu mobile vem de `useMobileMenu`
   (`src/hooks/`), que o layout repassa ao `Header` e usa para aplicar `inert` em skip link, `main` e
   rodapé; `useRouteFocus` foca o `h1` na troca de rota (não na primeira carga nem na troca só de
   idioma). O item ativo vem de `getActiveNavItem` (`src/utils/`) sobre o caminho sem prefixo. Texto
-  do cabeçalho vive em `common`. `useDropdown` (`src/hooks/`) é o disclosure de `LanguageSelector` e `SettingsMenu` (abrir, fechar com Esc, clique ou foco fora, saída animada antes de desmontar, painel `inert` fechado), com a animação em `dropdownPanel.module.css`; `useNavIndicator` posiciona o indicador da navegação desktop. Teste de layout usa `createMemoryRouter` com os loaders de idioma.
+  do cabeçalho e do rodapé vive em `common`. `Footer` (`variant` `default` ou `navigation`, esta só em
+  `/contact`) lê o perfil por `profileApi`, nunca mostra skeleton nem erro e usa `CopyEmailButton`
+  (hook `useCopyToClipboard`) e `ButtonLink` (`Link` com a aparência do `Button`); o ano do rodapé vem
+  de `getBuildYear` (`src/utils/`), única leitura da constante `__BUILD_YEAR__` do `define` do
+  `vite.config.ts`. Página não encontrada e de erro declaram `<meta name="robots" content={"noindex"} />`. `useDropdown` (`src/hooks/`) é o disclosure de `LanguageSelector` e `SettingsMenu` (abrir, fechar com Esc, clique ou foco fora, saída animada antes de desmontar, painel `inert` fechado), com a animação em `dropdownPanel.module.css`; `useNavIndicator` posiciona o indicador da navegação desktop. Teste de layout usa `createMemoryRouter` com os loaders de idioma.
 - **`src/styles/`** — `global.css` guarda as CSS custom properties (cor, tipografia, espaçamento e
   afins) e o reset. CSS Module usa essas custom properties em vez de valor hardcoded; confira os
   nomes em `src/styles/global.css` antes de usar, e token global novo entra lá. Os nomes dos
