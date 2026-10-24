@@ -61,6 +61,21 @@ describe("composePage", () => {
         expect(head).toContain('<link rel="icon" href="/favicon.svg" />')
     })
 
+    it("acrescenta ao head o link dos CSS da rota sem repetir o que o template já tem", () => {
+        const page = composePage(
+            TEMPLATE.replace("</head>", '<link rel="stylesheet" href="/assets/main.css"></head>'),
+            buildResult(),
+            TARGET,
+            "Needs JavaScript",
+            "/",
+            ["/assets/main.css", "/assets/Page.css"]
+        )
+        const head = page.slice(0, page.indexOf("</head>"))
+
+        expect(head).toContain('<link rel="stylesheet" crossorigin href="/assets/Page.css">')
+        expect(head.match(/assets\/main\.css/g)).toHaveLength(1)
+    })
+
     it("coloca o corpo dentro de #root", () => {
         expect(compose()).toContain('<div id="root"><div><h1>Hello</h1></div></div>')
     })

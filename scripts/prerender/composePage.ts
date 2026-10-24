@@ -19,7 +19,8 @@ function composePage(
     result: PrerenderResult,
     target: PrerenderTarget,
     noscriptText: string,
-    base: string
+    base: string,
+    stylesheets: string[] = []
 ): string {
     if (result.html.includes(SUSPENSE_BOUNDARY)) {
         throw new Error(
@@ -37,6 +38,11 @@ function composePage(
     const body = result.html.slice(head.length)
     const scripts = `<script>window.prerenderedPath=${escapeScriptJson(JSON.stringify(`${base}${target.path}`))};window.preloadedState=${result.state};window.routerData=${result.routerData}</script>`
 
+    const stylesheetLinks = stylesheets
+        .filter((href) => !template.includes(`href="${href}"`))
+        .map((href) => `<link rel="stylesheet" crossorigin href="${href}">`)
+        .join("")
+
     return template
         .replace(/<title>[^<]*<\/title>/, () => "")
         .replace(/<meta\s+name="description"[^>]*>/, () => "")
@@ -45,7 +51,7 @@ function composePage(
             /<noscript\s*>[\s\S]*?<\/noscript\s*>/,
             () => `<noscript>${escapeText(noscriptText)}</noscript>`
         )
-        .replace("</head>", () => `${head}</head>`)
+        .replace("</head>", () => `${head}${stylesheetLinks}</head>`)
         .replace(ROOT_PLACEHOLDER, () => `<div id="root">${body}</div>${scripts}`)
 }
 
