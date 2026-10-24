@@ -16,8 +16,8 @@ Seguir a **opção 1** (script próprio, sem biblioteca nova). Funcionou sem blo
 O que a #49 herda do spike, em resumo:
 
 - Duas entradas, `src/entry-server.tsx` (`render(url, lang)`) e `src/entry-client.tsx` (`hydrateRoot`), mais `scripts/prerender.ts`, que faz o `prerender` de cada alvo e escreve os arquivos a partir do `index.html` buildado.
-- O `index.html` buildado é o molde: a página gerada troca `lang`, injeta o `<title>`/`<meta name="description">` que o React emite e coloca o corpo em `#root`, mais um `<script>` com `prerenderedPath`, `preloadedState` (store) e `routerData` (`loaderData`/`errors`), com `<` escapado como `<`.
-- `i18n.ts` ganhou guarda `typeof window`/`typeof document`; o resto de `src/` ficou intacto.
+- O `index.html` buildado é o molde: a página gerada troca `lang`, injeta o `<title>`/`<meta name="description">` que o React emite e coloca o corpo em `#root`, mais um `<script>` com `prerenderedPath`, `preloadedState` (store) e `routerData` (`loaderData`, `actionData` e `errors`), com o caractere de menor (`<`) escapado como a sequência `\u003c` (seis caracteres: barra invertida, `u003c`).
+- `i18n.ts` ganhou guarda `typeof window`/`typeof document`; fora as duas entradas novas e a troca do script de entrada no `index.html`, o resto de `src/` ficou intacto.
 
 ## Evidência
 
@@ -36,7 +36,7 @@ $ curl -s http://localhost:4173/ra2581392423047/nao-existe | grep -o "<h1[^>]*>[
 
 O último é o conteúdo de `404.html` (gerado em inglês, o idioma da não encontrada sem prefixo). Cada arquivo tem `<html lang>` correto, um único `<title>` e um único `<meta name="description">` no `<head>` e o rodapé com o perfil (e-mail, localização) já no HTML.
 
-Hidratação (Chrome, build de produção, `base` do Pages): em `/pt-BR`, `/en`, `/es` e no `404.html` aberto no próprio caminho, console sem erro nem aviso, e o `<h1>` do servidor não é substituído (conferido por `MutationObserver`: nenhuma remoção do `<h1>`). O mesmo resultado com tema escuro salvo e movimento reduzido ligados (NF-TE-04). Só foi conferido o build de produção, que não imprime o detalhe de mismatch do modo dev: um mismatch aparece como erro recuperável (`Minified React error #418`), que não ocorreu nesses casos.
+Os arquivos `pt-BR/__404.html`, `en/__404.html` e `es/__404.html` do spike são só amostra do 404 por idioma; a #49 emite apenas o `404.html`. Hidratação (Chrome, build de produção, `base` do Pages): em `/pt-BR`, `/en`, `/es` e no `404.html` aberto no próprio caminho, console sem erro nem aviso, e o `<h1>` do servidor não é substituído (conferido por `MutationObserver`: nenhuma remoção do `<h1>`). O mesmo resultado com tema escuro salvo e movimento reduzido ligados (NF-TE-04). A captura foi feita à mão com Playwright (`playwright-core` com o Chrome instalado, fora do repositório), abrindo cada URL, lendo o console e o `MutationObserver`; não há script reproduzível no spike. Só foi conferido o build de produção, que não imprime o detalhe de mismatch do modo dev: um mismatch aparece como erro recuperável (`Minified React error #418`), que não ocorreu nesses casos.
 
 ## O que foi testado
 
@@ -74,7 +74,7 @@ Resposta provisória, no servidor local que imita o Pages: `/<idioma>/projects/<
 
 ## Plano para a #49
 
-Ordem das tarefas e estimativa revista (era 4 a 6 dias; ficaria em torno de 5):
+Ordem das tarefas e estimativa revista (era 4 a 6 dias; ficaria em torno de 5 dias):
 
 1. Partir da `spike/64-prerender` e trazer `entry-server.tsx`, `entry-client.tsx`, `scripts/prerender.ts` e a guarda de `i18n.ts` com testes (0,5 dia). Ajustar o `index.html` (`/src/entry-client.tsx`) e a saída `dist/` no lugar de `dist-spike/`.
 2. Enumerar os alvos: Início, Projetos, Informações, Contato e Projeto/documentos (lendo `public/content/<idioma>/projects.json` e a lista de documentos de cada projeto), nos três idiomas, mais o `404.html` (1 dia).
@@ -84,7 +84,7 @@ Ordem das tarefas e estimativa revista (era 4 a 6 dias; ficaria em torno de 5):
 6. Testes: unitários do script e da regra de hidratação, e o teste ponta a ponta de #55 contra o build (1 dia).
 7. Validação no Pages real e ajustes (0,5 dia).
 
-Soma de 4 a 5,5 dias. A #49 só começa com o ADR mergeado (28/10): do dia 28 ao dia 06/11 são cerca de 8 dias úteis (11 corridos, com o feriado de 02/11), então cabe antes de 08/11 com folga de 2 a 3 dias.
+Soma de 4 a 5,5 dias. A #49 só começa com o ADR mergeado (28/10): do dia 28 ao dia 06/11 são cerca de 8 dias úteis (11 corridos, com o feriado de 02/11), então cabe antes de 08/11 (a spec previa 11 dias úteis; a conta foi refeita em dias úteis, com o feriado de 02/11) com folga de 2 a 3 dias.
 
 Riscos que restam: Pages real divergir do servidor local (`en.html` com pasta `en/`, `.md.html`), cada nova tela exigir consultas próprias no passo 3, mismatch de hidratação em telas com estado de cliente na primeira renderização (filtros de Projetos, formulário de Contato), páginas `lazy` novas voltarem a sair como bloco de Suspense se alguém tirar `progressiveChunkSize`, e a piscada do `404.html` em outro idioma.
 
