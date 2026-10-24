@@ -29,7 +29,7 @@ export default defineConfig({
             reporter: ["text", "json", "json-summary", "html"],
             exclude: [
                 ...coverageConfigDefaults.exclude,
-                "src/index.tsx",
+                "src/entry-client.tsx",
                 "src/types/**",
                 "vite.config.ts",
                 "scripts/buildFatec.ts",

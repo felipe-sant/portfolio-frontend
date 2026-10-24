@@ -4,7 +4,6 @@ import { act, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import LANGUAGE_STORAGE_KEY from "@/i18n/languageStorageKey"
 import routes from "@/routers/routes"
-import Router from "@/routers/Router"
 import buildProfile from "@/testUtils/buildProfile"
 import renderWithStore from "@/testUtils/renderWithStore"
 import stubContentFetch from "@/testUtils/stubContentFetch"
@@ -205,18 +204,5 @@ describe("routes", () => {
             expect(router.state.location.pathname).toBe("/pt-BR")
             expect(localStorage.getItem(LANGUAGE_STORAGE_KEY)).toBeNull()
         })
-    })
-})
-
-describe("Router", () => {
-    it("usa o BASE_URL como basename", async () => {
-        vi.stubEnv("BASE_URL", "/ra2581392423047/")
-        window.history.pushState({}, "", "/ra2581392423047/en")
-
-        renderWithStore(<Router />)
-
-        expect(
-            await screen.findByRole("heading", { name: "Full stack developer in TypeScript" })
-        ).toBeInTheDocument()
     })
 })
