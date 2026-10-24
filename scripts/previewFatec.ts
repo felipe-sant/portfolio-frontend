@@ -41,7 +41,11 @@ const server = createServer((request, response) => {
             : resolvePagesFile(DIRECTORY, relativePath)
 
     if (resolution.status === 301 && resolution.location !== undefined) {
-        response.writeHead(301, { Location: `${FATEC_BASE_PATH}${resolution.location}` })
+        try {
+            response.writeHead(301, { Location: `${FATEC_BASE_PATH}${resolution.location}` })
+        } catch {
+            response.writeHead(400)
+        }
         response.end()
         return
     }

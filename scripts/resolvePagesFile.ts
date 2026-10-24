@@ -1,5 +1,5 @@
 import { statSync } from "node:fs"
-import { join, normalize } from "node:path"
+import { join, resolve, sep } from "node:path"
 import type PagesResolution from "@/types/prerender/PagesResolution.types"
 
 function isFile(path: string): boolean {
@@ -37,7 +37,10 @@ function resolvePagesFile(directory: string, relativePath: string): PagesResolut
         return notFound(directory)
     }
 
-    if (normalize(decoded).split("/").includes("..")) {
+    const root = resolve(directory)
+    const resolved = resolve(join(directory, decoded))
+
+    if (decoded.includes("\0") || (resolved !== root && !resolved.startsWith(`${root}${sep}`))) {
         return notFound(directory)
     }
 
@@ -59,7 +62,7 @@ function resolvePagesFile(directory: string, relativePath: string): PagesResolut
     }
 
     if (isDirectory(target) && isFile(join(target, "index.html"))) {
-        return { status: 301, location: `${decoded}/` }
+        return { status: 301, location: `${relativePath}/` }
     }
 
     return notFound(directory)

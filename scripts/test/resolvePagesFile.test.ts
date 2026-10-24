@@ -21,6 +21,8 @@ beforeEach(() => {
     write("en/projects/abc/docs/SETUP.md.html")
     write("assets/app.js")
     write("docs/guide/index.html")
+    write("docs/my guide/index.html")
+    write("docs/café/index.html")
 })
 
 afterEach(() => {
@@ -94,6 +96,22 @@ describe("resolvePagesFile", () => {
 
     it("não trata uma pasta sem index.html como arquivo exato", () => {
         expect(resolvePagesFile(directory, "assets").status).toBe(404)
+    })
+
+    it("mantém o caminho original codificado no Location do 301", () => {
+        expect(resolvePagesFile(directory, "docs/my%20guide").location).toBe("docs/my%20guide/")
+        expect(resolvePagesFile(directory, "docs/caf%C3%A9").location).toBe("docs/caf%C3%A9/")
+    })
+
+    it.each([
+        ["..%5c"],
+        ["%2e%2e%2f"],
+        ["%2e%2e/%2e%2e/etc"],
+        ["//etc/passwd"],
+        ["pt-BR%00"],
+        ["docs%0a"]
+    ])("responde 404 para o caminho suspeito %s", (path) => {
+        expect(resolvePagesFile(directory, path).status).toBe(404)
     })
 
     it("responde 404 para escape de URL inválido", () => {
