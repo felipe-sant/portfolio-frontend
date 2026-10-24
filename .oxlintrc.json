@@ -15,7 +15,7 @@
             { "allow": ["**/*.css", "@testing-library/jest-dom/vitest", "@/i18n/i18n"] }
         ],
         "import/no-relative-parent-imports": "error",
-        "no-underscore-dangle": ["error", { "allow": ["__BUILD_YEAR__"] }],
+        "no-underscore-dangle": ["error", { "allow": ["__BUILD_YEAR__", "__APP_VERSION__"] }],
         "react/jsx-no-literals": [
             "error",
             {

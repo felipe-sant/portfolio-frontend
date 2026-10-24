@@ -65,7 +65,7 @@
         "resume": "Currículum en PDF",
         "resumeName": "Currículum en PDF, no disponible por ahora",
         "copyright": "© {{year}} · {{name}}",
-        "madeWith": "Hecho en TypeScript"
+        "version": "v{{version}}"
     },
     "symbols": {
         "external": "↗",

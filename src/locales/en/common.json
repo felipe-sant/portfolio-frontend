@@ -65,7 +65,7 @@
         "resume": "Resume in PDF",
         "resumeName": "Resume in PDF, currently unavailable",
         "copyright": "© {{year}} · {{name}}",
-        "madeWith": "Made with TypeScript"
+        "version": "v{{version}}"
     },
     "symbols": {
         "external": "↗",

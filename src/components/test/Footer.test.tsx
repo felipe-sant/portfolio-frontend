@@ -8,6 +8,7 @@ import buildProfile from "@/testUtils/buildProfile"
 import expectNoAxeViolations from "@/testUtils/expectNoAxeViolations"
 import renderWithStore from "@/testUtils/renderWithStore"
 import stubContentFetch from "@/testUtils/stubContentFetch"
+import getAppVersion from "@/utils/getAppVersion"
 
 const LINKS = {
     github: "https://github.com/example",
@@ -107,7 +108,7 @@ describe("Footer padrão", () => {
 
         expect(screen.queryByRole("alert")).not.toBeInTheDocument()
         expect(screen.queryByText("contato@example.com")).not.toBeInTheDocument()
-        expect(screen.getByText("Feito em TypeScript")).toBeInTheDocument()
+        expect(screen.getByText(`v${getAppVersion()}`)).toBeInTheDocument()
     })
 
     it.each([
@@ -123,14 +124,14 @@ describe("Footer padrão", () => {
         await screen.findByText(/Dispon|Available/)
     })
 
-    it("mostra o ano do build e Feito em TypeScript", async () => {
+    it("mostra o ano do build e a versão do projeto", async () => {
         stubProfiles()
         renderFooter()
 
         expect(
             screen.getByText(`© ${new Date().getFullYear()} · Luiz Felipe dos Santos`)
         ).toBeInTheDocument()
-        expect(screen.getByText("Feito em TypeScript")).toBeInTheDocument()
+        expect(screen.getByText(`v${getAppVersion()}`)).toBeInTheDocument()
         await screen.findByText("Disponível para projetos")
     })
 
@@ -144,14 +145,14 @@ describe("Footer padrão", () => {
         expect(await screen.findByText("Available for projects")).toBeInTheDocument()
         expect(screen.getByText("Contact")).toBeInTheDocument()
         expect(screen.getByRole("button", { name: "Copy email" })).toBeInTheDocument()
-        expect(screen.getByText("Made with TypeScript")).toBeInTheDocument()
+        expect(screen.getByText(`v${getAppVersion()}`)).toBeInTheDocument()
 
         await act(() => setLanguage("es"))
 
         expect(await screen.findByText("Disponible para proyectos")).toBeInTheDocument()
         expect(screen.getByText("Contacto")).toBeInTheDocument()
         expect(screen.getByRole("button", { name: "Copiar correo" })).toBeInTheDocument()
-        expect(screen.getByText("Hecho en TypeScript")).toBeInTheDocument()
+        expect(screen.getByText(`v${getAppVersion()}`)).toBeInTheDocument()
     })
 
     it("não tem violações de acessibilidade", async () => {
@@ -232,7 +233,7 @@ describe("Footer de navegação", () => {
         expect(
             screen.getByText(`© ${new Date().getFullYear()} · Luiz Felipe dos Santos`)
         ).toBeInTheDocument()
-        expect(screen.getByText("Feito em TypeScript")).toBeInTheDocument()
+        expect(screen.getByText(`v${getAppVersion()}`)).toBeInTheDocument()
         await screen.findByRole("link", { name: /GitHub de/ })
     })
 

@@ -11,6 +11,7 @@ import ROUTES from "@/routers/paths"
 import css from "@/styles/components/footer.module.css"
 import profileApi from "@/store/api/profile.api"
 import type Profile from "@/types/profile/Profile.types"
+import getAppVersion from "@/utils/getAppVersion"
 import getBuildYear from "@/utils/getBuildYear"
 
 interface FooterProps {
@@ -182,7 +183,7 @@ function BottomBar() {
         <div className={css.bottom}>
             <div className={css.bottomInner}>
                 <p>{t("footer.copyright", { year: getBuildYear(), name: t("authorName") })}</p>
-                <p>{t("footer.madeWith")}</p>
+                <p>{t("footer.version", { version: getAppVersion() })}</p>
             </div>
         </div>
     )
