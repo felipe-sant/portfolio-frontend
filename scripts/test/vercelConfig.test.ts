@@ -32,15 +32,14 @@ describe("vercel.json", () => {
     })
 
     it.skipIf(!hasJq)("mantém as chaves quando o deploy da staging acrescenta o noindex", () => {
-        expect(deployWorkflow).toContain("jq '. + {headers:")
+        const expression = /jq '(\. \+ \{headers:.*\})' vercel\.json/.exec(deployWorkflow)?.[1]
 
-        const merged = spawnSync(
-            "jq",
-            [
-                '. + {headers: [{source: "/(.*)", headers: [{key: "X-Robots-Tag", value: "noindex"}]}]}'
-            ],
-            { input: readFileSync("vercel.json", "utf-8"), encoding: "utf-8" }
-        )
+        expect(expression).toBeDefined()
+
+        const merged = spawnSync("jq", [expression ?? ""], {
+            input: readFileSync("vercel.json", "utf-8"),
+            encoding: "utf-8"
+        })
 
         expect(merged.error).toBeUndefined()
         const staging: VercelConfig = JSON.parse(merged.stdout)
