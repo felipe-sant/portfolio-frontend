@@ -70,9 +70,14 @@ function listTargets(
     const ignored = prerenderRoutes
         .filter((route) => !existing.includes(route))
         .map((route) => route.pattern)
+    SUPPORTED_LANGUAGES.forEach((lang) => {
+        if (!projectRecordsByLanguage[lang]) {
+            throw new Error(`Faltam os projetos do idioma "${lang}" para enumerar os alvos.`)
+        }
+    })
     const targets = existing.flatMap((route) =>
         SUPPORTED_LANGUAGES.flatMap((lang) =>
-            listParams(route, projectRecordsByLanguage[lang]).map((params) =>
+            listParams(route, projectRecordsByLanguage[lang] ?? []).map((params) =>
                 toTarget(route, lang, params)
             )
         )

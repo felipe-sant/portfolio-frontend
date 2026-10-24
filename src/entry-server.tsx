@@ -26,6 +26,11 @@ async function render(target: PrerenderTarget): Promise<PrerenderResult> {
     }
 
     const route = prerenderRoutes.find((candidate) => candidate.pattern === target.pattern)
+
+    if (target.pattern !== undefined && !route) {
+        throw new Error(`A rota "${target.pattern}" não está no registro de pré-renderização.`)
+    }
+
     const store = createStore()
     await loadPrerenderData(store, route, target.params ?? {}, target.lang)
 

@@ -42,6 +42,14 @@ function buildFixtureRoutes(): RouteObject[] {
     }))
 }
 
+describe("listTargets com conteúdo incompleto", () => {
+    it("falha em português quando falta um idioma", () => {
+        expect(() => listTargets(routes, prerenderRoutes, { "pt-BR": [], en: [] })).toThrow(
+            /Faltam os projetos/
+        )
+    })
+})
+
 describe("listTargets com as rotas atuais", () => {
     const { targets, ignored } = listTargets(routes, prerenderRoutes, recordsOf([]))
 

@@ -101,6 +101,12 @@ describe("render", () => {
         )
     })
 
+    it("rejeita em português um alvo cujo padrão não está no registro", async () => {
+        await expect(
+            render({ path: "pt-BR/x", file: "pt-BR/x.html", lang: "pt-BR", pattern: "x" })
+        ).rejects.toThrow(/não está no registro/)
+    })
+
     it("falha com a rota e a causa quando o conteúdo não existe", async () => {
         stubContentFetch({})
 
