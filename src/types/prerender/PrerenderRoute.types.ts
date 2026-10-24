@@ -1,10 +1,9 @@
 import type SupportedLanguage from "@/types/language/SupportedLanguage.types"
 import type PrerenderParams from "@/types/prerender/PrerenderParams.types"
 import type PrerenderQuery from "@/types/prerender/PrerenderQuery.types"
+import type PrerenderRouteDescriptor from "@/types/prerender/PrerenderRouteDescriptor.types"
 
-type PrerenderRoute = {
-    pattern: string
-    scope: "none" | "project" | "document"
+type PrerenderRoute = PrerenderRouteDescriptor & {
     queries: (lang: SupportedLanguage, params: PrerenderParams) => PrerenderQuery[]
 }
 
