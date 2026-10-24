@@ -2,7 +2,7 @@
 
 > Status: `em-andamento` (falta só a verificação real na Vercel)
 > Encerrada em: `2026-10-24`
-> Commits: `4121ad7..HEAD` da branch `feat/49-pre-renderizacao-rotas` · PR: a abrir após o merge do #88 (já na `staging`) · Issue: [#49](https://github.com/felipe-sant/portfolio-frontend/issues/49)
+> Commits: `4121ad7..HEAD` da branch `feat/49-pre-renderizacao-rotas` · PR: a abrir · Issue: [#49](https://github.com/felipe-sant/portfolio-frontend/issues/49)
 
 ## O que foi pedido
 

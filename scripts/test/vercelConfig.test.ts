@@ -1,3 +1,4 @@
+import { spawnSync } from "node:child_process"
 import { readFileSync } from "node:fs"
 import { describe, expect, it } from "vitest"
 
@@ -11,6 +12,8 @@ type VercelConfig = {
 
 const config: VercelConfig = JSON.parse(readFileSync("vercel.json", "utf-8"))
 const deployWorkflow = readFileSync(".github/workflows/deploy.yml", "utf-8")
+
+const hasJq = spawnSync("jq", ["--version"]).error === undefined
 
 const NOINDEX_HEADERS = [{ source: "/(.*)", headers: [{ key: "X-Robots-Tag", value: "noindex" }] }]
 
@@ -28,11 +31,19 @@ describe("vercel.json", () => {
         expect(catchAll).toEqual([])
     })
 
-    it("mantém as chaves quando o deploy da staging acrescenta o noindex", () => {
+    it.skipIf(!hasJq)("mantém as chaves quando o deploy da staging acrescenta o noindex", () => {
         expect(deployWorkflow).toContain("jq '. + {headers:")
 
-        const staging = { ...config, headers: NOINDEX_HEADERS }
+        const merged = spawnSync(
+            "jq",
+            [
+                '. + {headers: [{source: "/(.*)", headers: [{key: "X-Robots-Tag", value: "noindex"}]}]}'
+            ],
+            { input: readFileSync("vercel.json", "utf-8"), encoding: "utf-8" }
+        )
 
+        expect(merged.error).toBeUndefined()
+        const staging: VercelConfig = JSON.parse(merged.stdout)
         expect(staging.cleanUrls).toBe(true)
         expect(staging.trailingSlash).toBe(false)
         expect(staging.headers).toEqual(NOINDEX_HEADERS)

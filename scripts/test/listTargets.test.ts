@@ -58,8 +58,7 @@ describe("listTargets com as rotas atuais", () => {
         expect(targets.at(-1)).toEqual({
             path: "not-found",
             file: "404.html",
-            lang: "en",
-            status: 404
+            lang: "en"
         })
     })
 

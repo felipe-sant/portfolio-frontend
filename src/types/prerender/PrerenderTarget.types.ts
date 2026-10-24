@@ -5,7 +5,6 @@ type PrerenderTarget = {
     path: string
     file: string
     lang: SupportedLanguage
-    status?: number
     pattern?: string
     params?: PrerenderParams
 }

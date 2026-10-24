@@ -19,8 +19,7 @@ const README_NAME = "README.md"
 const NOT_FOUND_TARGET: PrerenderTarget = {
     path: "not-found",
     file: "404.html",
-    lang: "en",
-    status: 404
+    lang: "en"
 }
 
 function listParams(route: PrerenderRouteDescriptor, records: ProjectRecord[]): PrerenderParams[] {

@@ -11,9 +11,8 @@ function installPublicFetch(base: string, publicDirectory = "public"): () => voi
             return originalFetch(input, init)
         }
 
-        const file = join(publicDirectory, decodeURIComponent(url.slice(base.length)))
-
         try {
+            const file = join(publicDirectory, decodeURIComponent(url.slice(base.length)))
             return new Response(new Uint8Array(await readFile(file)), { status: 200 })
         } catch {
             return new Response("", { status: 404 })

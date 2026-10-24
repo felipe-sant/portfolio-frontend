@@ -54,7 +54,9 @@ const server = createServer((request, response) => {
         return
     }
 
-    createReadStream(resolution.file).pipe(response)
+    const stream = createReadStream(resolution.file)
+    stream.on("error", () => response.end())
+    stream.pipe(response)
 })
 
 server.listen(PORT, () => {
