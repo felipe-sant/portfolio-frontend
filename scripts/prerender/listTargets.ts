@@ -59,7 +59,7 @@ function toTarget(
 ): PrerenderTarget {
     const path = [lang, generatePath(route.pattern, params)].filter(Boolean).join("/")
 
-    return { path, file: getTargetFile(path), lang }
+    return { path, file: getTargetFile(path), lang, pattern: route.pattern, params }
 }
 
 function listTargets(
