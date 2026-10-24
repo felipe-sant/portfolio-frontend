@@ -167,6 +167,7 @@ describe("mountClient com caminho pré-renderizado", () => {
         expect(document.head.querySelectorAll("title")).toHaveLength(1)
         expect(document.title).toBe("Página não encontrada · Luiz Felipe dos Santos")
         expect(document.head.querySelectorAll("meta[name='description']")).toHaveLength(1)
+        expect(document.head.querySelectorAll("meta[name='robots']")).toHaveLength(1)
         expect(consoleSpies.error).not.toHaveBeenCalled()
         expect(document.documentElement.lang).toBe("pt-BR")
     })

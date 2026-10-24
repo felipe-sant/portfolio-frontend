@@ -6,14 +6,15 @@ afterEach(() => {
 })
 
 describe("removePrerenderedHead", () => {
-    it("remove o title e a meta description do head", () => {
+    it("remove o title, a meta description e a meta robots do head", () => {
         document.head.innerHTML =
-            '<title>A</title><meta name="description" content="B" /><title>C</title>'
+            '<title>A</title><meta name="description" content="B" /><meta name="robots" content="noindex" /><title>C</title>'
 
         removePrerenderedHead(document.head)
 
         expect(document.head.querySelector("title")).toBeNull()
         expect(document.head.querySelector("meta[name='description']")).toBeNull()
+        expect(document.head.querySelector("meta[name='robots']")).toBeNull()
     })
 
     it("preserva as demais tags", () => {
