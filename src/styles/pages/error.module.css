@@ -1,18 +1,50 @@
-.main {
-    display: flex;
-    min-height: 100dvh;
-    justify-content: center;
-    align-items: center;
-}
-
-.main div {
-    text-align: center;
+.layout {
+    position: relative;
     display: flex;
     flex-direction: column;
-    gap: var(--space-4);
+    min-height: 100dvh;
 }
 
-.main p {
-    margin-inline: auto;
+.main {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-16) var(--pad-page);
+}
+
+.main:focus {
+    outline: none;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-4);
+    max-width: var(--measure);
     text-align: center;
+}
+
+.icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--space-16);
+    height: var(--space-16);
+    border-radius: var(--radius-pill);
+    background-color: var(--danger-surface);
+    color: var(--danger-ink);
+}
+
+.description {
+    text-wrap: pretty;
+}
+
+.actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-3);
+    margin-top: var(--space-4);
 }
