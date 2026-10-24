@@ -1,11 +1,18 @@
+import { readFileSync } from "node:fs"
 import { fileURLToPath } from "node:url"
 import { defineConfig, configDefaults, coverageConfigDefaults } from "vitest/config"
 import react from "@vitejs/plugin-react"
 import resolveBase from "./scripts/resolveBase.ts"
 
+const { version } = JSON.parse(readFileSync(new URL("./package.json", import.meta.url), "utf-8"))
+
 export default defineConfig({
     base: resolveBase(process.env.BASE_PATH),
     plugins: [react()],
+    define: {
+        __BUILD_YEAR__: JSON.stringify(new Date().getFullYear()),
+        __APP_VERSION__: JSON.stringify(version)
+    },
     resolve: {
         alias: {
             "@": fileURLToPath(new URL("./src", import.meta.url)),

@@ -4,5 +4,6 @@
         "description": "Algo salió mal al cargar esta página."
     },
     "heading": "Error inesperado",
-    "unknown": "Error desconocido."
+    "description": "Algo falló de mi lado, no del tuyo. Inténtalo de nuevo en unos segundos.",
+    "retry": "Intentar de nuevo"
 }

@@ -40,6 +40,17 @@ describe("HomePage", () => {
         )
     })
 
+    it("traduz título e meta description quando o idioma é en", async () => {
+        await setLanguage("en")
+
+        renderHomePage()
+
+        expect(document.title).toBe("Luiz Felipe dos Santos · Full stack developer")
+        expect(document.querySelector('meta[name="description"]')?.getAttribute("content")).toBe(
+            "Portfolio of Luiz Felipe dos Santos, full stack developer in TypeScript: projects, background and contact."
+        )
+    })
+
     it("traduz os metadados quando o idioma é es", async () => {
         await setLanguage("es")
 

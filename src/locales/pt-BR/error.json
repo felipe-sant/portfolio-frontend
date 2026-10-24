@@ -4,5 +4,6 @@
         "description": "Algo deu errado ao carregar esta página."
     },
     "heading": "Erro inesperado",
-    "unknown": "Erro desconhecido."
+    "description": "Algo quebrou do meu lado, não do seu. Tente de novo em alguns segundos.",
+    "retry": "Tentar novamente"
 }

@@ -1,12 +1,15 @@
 import { lazy } from "react"
-import { afterEach, describe, expect, it } from "vitest"
-import { act, render, screen, within } from "@testing-library/react"
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
+import { act, screen, within } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { createMemoryRouter, RouterProvider } from "react-router-dom"
 import MainLayout from "@/layouts/Main.layout"
 import SUPPORTED_LANGUAGES from "@/i18n/supportedLanguages"
 import createLanguageLoader from "@/routers/createLanguageLoader"
+import buildProfile from "@/testUtils/buildProfile"
 import expectNoAxeViolations from "@/testUtils/expectNoAxeViolations"
+import renderWithStore from "@/testUtils/renderWithStore"
+import stubContentFetch from "@/testUtils/stubContentFetch"
 import stubViewTransition from "@/testUtils/stubViewTransition"
 
 const NeverResolves = lazy(() => new Promise<never>(() => {}))
@@ -19,6 +22,8 @@ function createRoutes(page = <h1>Conteúdo da rota</h1>) {
         children: [
             { index: true, element: page },
             { path: "projects", element: <h1>Projetos da rota</h1> },
+            { path: "contact", element: <h1>Contato da rota</h1> },
+            { path: "not-found", element: <h1>Rota de teste não encontrada</h1> },
             { path: "*", element: <h1>Não encontrada</h1> }
         ]
     }))
@@ -26,12 +31,21 @@ function createRoutes(page = <h1>Conteúdo da rota</h1>) {
 
 async function renderLayout(entry = "/pt-BR", page?: React.JSX.Element) {
     const router = createMemoryRouter(createRoutes(page), { initialEntries: [entry] })
-    const utils = render(<RouterProvider router={router} />)
+    const utils = renderWithStore(<RouterProvider router={router} />)
     await screen.findByRole("banner")
     return { router, ...utils }
 }
 
+beforeEach(() => {
+    stubContentFetch({
+        "content/pt-BR/profile.json": buildProfile(),
+        "content/en/profile.json": buildProfile(),
+        "content/es/profile.json": buildProfile()
+    })
+})
+
 afterEach(() => {
+    vi.unstubAllGlobals()
     Reflect.deleteProperty(document, "startViewTransition")
 })
 
@@ -46,7 +60,9 @@ describe("MainLayout", () => {
         await renderLayout()
 
         expect(screen.getByRole("banner")).toBeInTheDocument()
-        expect(screen.getByRole("contentinfo")).toHaveTextContent("© 2026 · Luiz Felipe dos Santos")
+        expect(screen.getByRole("contentinfo")).toHaveTextContent(
+            `© ${new Date().getFullYear()} · Luiz Felipe dos Santos`
+        )
         expect(screen.getByRole("heading", { name: "Conteúdo da rota" })).toBeInTheDocument()
     })
 
@@ -84,6 +100,24 @@ describe("MainLayout", () => {
         expect(skip).not.toHaveAttribute("inert")
         expect(document.getElementById("main-content")).not.toHaveAttribute("inert")
         expect(document.querySelector("footer")).not.toHaveAttribute("inert")
+    })
+
+    it.each(["/pt-BR", "/pt-BR/not-found"])("mostra o rodapé padrão em %s", async (entry) => {
+        await renderLayout(entry)
+
+        expect(await screen.findByRole("button", { name: "Copiar e-mail" })).toBeInTheDocument()
+        expect(screen.queryByRole("navigation", { name: "Rodapé" })).not.toBeInTheDocument()
+    })
+
+    it.each([
+        ["/pt-BR/contact", "Rodapé"],
+        ["/en/contact", "Footer"],
+        ["/es/contact", "Pie de página"]
+    ])("mostra o rodapé de navegação em %s", async (entry, name) => {
+        await renderLayout(entry)
+
+        expect(screen.getByRole("navigation", { name })).toBeInTheDocument()
+        expect(screen.queryByRole("button", { name: /Copiar|Copy/ })).not.toBeInTheDocument()
     })
 
     it("marca Início ativo em /pt-BR", async () => {

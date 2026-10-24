@@ -3,5 +3,8 @@
         "title": "Página não encontrada · Luiz Felipe dos Santos",
         "description": "O endereço acessado não existe neste portfólio."
     },
-    "heading": "Página não encontrada"
+    "heading": "Página não encontrada",
+    "label": "Erro 404",
+    "description": "O endereço pode ter mudado ou o projeto saiu do ar. A lista completa continua em Projetos.",
+    "viewProjects": "Ver projetos"
 }
