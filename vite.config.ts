@@ -6,6 +6,9 @@ import resolveBase from "./scripts/resolveBase.ts"
 export default defineConfig({
     base: resolveBase(process.env.BASE_PATH),
     plugins: [react()],
+    define: {
+        __BUILD_YEAR__: JSON.stringify(new Date().getFullYear())
+    },
     resolve: {
         alias: {
             "@": fileURLToPath(new URL("./src", import.meta.url)),
