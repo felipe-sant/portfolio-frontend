@@ -23,22 +23,24 @@ test("menu mobile abre, prende o foco, fecha com Esc e devolve o foco ao botão"
     test.skip((page.viewportSize()?.width ?? 0) > MOBILE_MAX_WIDTH, "menu existe só no mobile")
 
     const button = page.getByRole("button", { name: "Menu" })
-    const panel = page.locator("header [id]").filter({ has: page.getByRole("navigation") })
-
     await button.click()
     await expect(button).toHaveAttribute("aria-expanded", "true")
+    const panelId = (await button.getAttribute("aria-controls")) ?? ""
+    expect(panelId).not.toBe("")
+    const panel = page.locator(`[id="${panelId}"]`)
     await expect(panel.getByRole("link").first()).toBeFocused()
 
     const panelFocusable = panel.locator("a, button")
     const insideCount = await panelFocusable.count()
     for (let step = 0; step < insideCount + 3; step++) {
         await page.keyboard.press("Tab")
-        const isInside = await page.evaluate(() => {
+        const isAllowed = await page.evaluate((id) => {
             const active = document.activeElement
-            const header = document.querySelector("header")
-            return Boolean(active && header && header.contains(active))
-        })
-        expect(isInside).toBe(true)
+            const toggle = document.querySelector(`[aria-controls="${id}"]`)
+            const menuPanel = document.getElementById(id)
+            return Boolean(active && (active === toggle || menuPanel?.contains(active)))
+        }, panelId)
+        expect(isAllowed).toBe(true)
     }
 
     await page.keyboard.press("Escape")
