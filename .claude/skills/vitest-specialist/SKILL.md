@@ -45,7 +45,7 @@ Rodar `npm test` puro dentro de um agente trava a sessão até o timeout: o proc
 | ------------------------------- | ----------------------------------------- |
 | `src/pages/Home.page.tsx`       | `src/pages/test/Home.page.test.tsx`       |
 | `src/services/http/get.ts`      | `src/services/http/test/get.test.ts`      |
-| `src/routers/Router.tsx`        | `src/routers/test/Router.test.tsx`        |
+| `src/routers/routes.tsx`        | `src/routers/test/routes.test.tsx`        |
 | `src/components/SaveButton.tsx` | `src/components/test/SaveButton.test.tsx` |
 | `src/hooks/useCounter.ts`       | `src/hooks/test/useCounter.test.ts`       |
 
@@ -223,7 +223,7 @@ describe("get", () => {
 
 ## 6. Testar algo que depende de rota
 
-`src/routers/routes.tsx` tem `routes` (export default, um `RouteObject[]`) e `src/routers/Router.tsx` tem `Router` (export default, que faz `createBrowserRouter(routes)` e renderiza um `RouterProvider`). No teste você cria o router em memória com **`createMemoryRouter(routes, { initialEntries })`** e o renderiza com `RouterProvider`, como em `src/routers/test/Router.test.tsx`. As páginas são `lazy`, então a primeira asserção usa `findBy*` com `await`:
+`src/routers/routes.tsx` tem `routes` (export default, um `RouteObject[]`) e `src/prerender/mountClient.tsx` cria o `createBrowserRouter(routes)` do cliente. No teste você cria o router em memória com **`createMemoryRouter(routes, { initialEntries })`** e o renderiza com `RouterProvider`, como em `src/routers/test/routes.test.tsx`. As páginas são `lazy`, então a primeira asserção usa `findBy*` com `await`:
 
 ```tsx
 import { describe, expect, it } from "vitest"
@@ -245,9 +245,9 @@ describe("routes", () => {
 
 **Fallback do `<Suspense>`:** o `lazy()` guarda o módulo carregado no próprio `routes.tsx`, então depois que qualquer teste do arquivo renderizou a página, o fallback (`Carregando...`) não aparece mais e um teste dele passa ou falha conforme a ordem. O teste do fallback chama `vi.resetModules()` e importa `routes` de novo com `const { default: freshRoutes } = await import("@/routers/routes")`, recebendo um `lazy()` ainda não resolvido — como em `src/routers/test/Router.test.tsx`.
 
-**Por que não renderizar o `Router` (export default):** ele usa `createBrowserRouter`, que lê a URL real do jsdom (`/`) e não aceita entrada inicial — não há como testar outra rota. O `createMemoryRouter` recebe as mesmas `routes` e deixa escolher a URL de partida.
+**Por que não renderizar o `mountClient`:** ele usa `createBrowserRouter`, que lê a URL real do jsdom (`/`) e não aceita entrada inicial — não há como testar outra rota. O `createMemoryRouter` recebe as mesmas `routes` e deixa escolher a URL de partida.
 
-**Para testar o conteúdo de uma tela, importe a página direto** (como no item 5) em vez de atravessar a árvore de rotas. Assim o teste falha por um motivo só: se ele renderiza via rota, uma quebra no `Router.tsx` derruba junto o teste da página, e você perde tempo procurando no lugar errado. O teste de rota testa **roteamento** (qual URL cai em qual tela); o teste de página testa conteúdo.
+**Para testar o conteúdo de uma tela, importe a página direto** (como no item 5) em vez de atravessar a árvore de rotas. Assim o teste falha por um motivo só: se ele renderiza via rota, uma quebra no roteador derruba junto o teste da página, e você perde tempo procurando no lugar errado. O teste de rota testa **roteamento** (qual URL cai em qual tela); o teste de página testa conteúdo.
 
 Componente que usa `<Link>` ou `useNavigate` também precisa de um router em volta — sem ele o render estoura na hora.
 

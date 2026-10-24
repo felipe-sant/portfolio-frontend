@@ -93,15 +93,17 @@ que o simula).
 
 ```bash
 npm run dev      # dev server do Vite (porta padrão 5173)
-npm run build    # typecheck + build de produção em dist/
+npm run build    # typecheck + vite build (cliente) + build:server + prerender: HTML por rota e idioma + 404.html em dist/
+npm run build:server # build SSR (dist-server/, intermediário e gitignored) das entradas de servidor
+npm run prerender    # scripts/prerender.ts: lê dist-server/ e escreve os HTML pré-renderizados em dist/
 npm run preview  # serve o conteúdo de dist/ já gerado — depende de um npm run build anterior
 npm test         # Vitest em watch mode (o script é `vitest`, sem `run`)
 npm test -- --run                            # execução one-shot (CI, agente, terminal não-interativo)
 npm test -- --run src/pages/test/Home.page.test.tsx   # um arquivo específico
 npm run typecheck # checagem de tipos (tsc -b) de src/ e vite.config.ts
 npm run lint      # oxlint sobre o projeto (configuração em .oxlintrc.json)
-npm run build:fatec   # build com BASE_PATH=/ra2581392423047/ + 404.html e .nojekyll em dist/ (GitHub Pages da Fatec)
-npm run preview:fatec # serve esse dist/ em http://localhost:4173/ra2581392423047/
+npm run build:fatec   # build com BASE_PATH=/ra2581392423047/ + .nojekyll em dist/; falha sem o 404.html pré-renderizado (GitHub Pages da Fatec)
+npm run preview:fatec # servidor Node que imita o Pages (arquivo, <caminho>.html, pasta com 301, 404.html) em http://localhost:4173/ra2581392423047/
 npm run lint:fix  # mesma coisa, aplicando as correções automáticas possíveis (oxlint --fix)
 npm run format    # prettier --write em **/*.{ts,tsx,css,json,md,yml,html}, conforme .prettierrc e .prettierignore
 npm run test:cov  # vitest run --coverage — suíte inteira + relatório de cobertura
@@ -149,14 +151,22 @@ por rota-filha, módulo com `fetch` stubado via `vi.stubGlobal`, componente com 
 (`user-event`), hook com `renderHook` e função pura. A skill `vitest-specialist` traz um trecho de
 cada formato.
 
-Ficam sem teste `src/index.tsx`, que só chama `createRoot` num `#root` que não existe fora do
-`index.html`, e a pasta `src/types/`, que só declara tipo e não tem runtime.
+Ficam sem teste `src/entry-client.tsx`, que só procura o `#root` do `index.html` e chama
+`mountClient` (testado), e a pasta `src/types/`, que só declara tipo e não tem runtime.
+
+O `render` de `src/entry-server.tsx` usa `react-dom/static`, que precisa de `ReadableStream`: no
+`jsdom` o teste faz `vi.stubGlobal("ReadableStream", ReadableStream)` com o de `node:stream/web`. Como o
+`react-dom/server` deixa os contextos do React sujos no processo em que roda, teste que hidrata o HTML
+gerado não chama `render` no mesmo arquivo: pega o resultado em `inject("prerenderFixtures")`, produzido
+por `src/testUtils/prerenderGlobalSetup.ts` (`test.globalSetup`, processo principal do Vitest). Teste que
+precisa de `window` e `document` indefinidos usa `// @vitest-environment node` (o `setupTests` tolera).
 
 `npm run test:cov` roda a suíte inteira com `@vitest/coverage-v8` (bloco `test.coverage` em
 `vite.config.ts`), gerando relatório nos formatos `text`, `json`, `json-summary` e `html` em
 `coverage/` (gitignored) e aplicando um threshold mínimo de 80% em statements, branches, functions
 e lines — abaixo disso o comando termina com erro. `exclude` cobre os arquivos sem runtime
-relevante já citados acima, mais `vite.config.ts`, `src/setupTests.ts` e o glob `src/types/**`.
+relevante já citados acima, mais `vite.config.ts`, `src/setupTests.ts`, `src/testUtils/prerenderGlobalSetup.ts`,
+`scripts/prerender.ts` e o glob `src/types/**`.
 
 O bloco `test` usa `pool: "vmThreads"`: o `jsdom` é criado uma vez por worker e cada arquivo roda
 num contexto de VM isolado. Não troque por `isolate: false`, que compartilha o estado entre
@@ -185,7 +195,7 @@ para editores compatíveis, coerente com o `.prettierrc`.
 
 ## Onde fica cada coisa
 
-- **`App.tsx`** renderiza o `Router` dentro do `<Provider store={store}>` do react-redux e importa, por efeito colateral, `@/i18n/i18n` (que
+- **`App.tsx`** recebe `store` e `router` por props, renderiza o `RouterProvider` dentro do `<Provider store={store}>` do react-redux e importa, por efeito colateral, `@/i18n/i18n` (que
   inicializa a instância do i18next) e o `global.css`; `@/i18n/i18n` está no `allow` de
   `import/no-unassigned-import` no `.oxlintrc.json`. Metadados (`<title>`, `<meta>`) são
   declarados por cada página com as tags nativas do React 19, escritas dentro do JSX da própria
@@ -244,8 +254,9 @@ para editores compatíveis, coerente com o `.prettierrc`.
   mesmas `pageRoutes`. Depois delas, a rota `/` (`redirectRootLoader`: escolha salva → navegador →
   `en`, preservando query e hash) e a rota `*` sem prefixo, que renderiza a não encontrada em
   inglês. Os paths vêm de `ROUTES` em `paths.ts` (`root` é a raiz que redireciona, `home` a
-  Início do idioma). `Router.tsx` tem o `Router` (export default), que cria o data router com
-  `createBrowserRouter(routes, { basename: publicUrl("/") })` e renderiza um `RouterProvider`.
+  Início do idioma). O data router é criado em `src/prerender/mountClient.tsx` com
+  `createBrowserRouter(routes, { basename: publicUrl("/"), hydrationData })`, chamado por
+  `src/entry-client.tsx` (a entrada do `index.html`).
   Toda página nova entra em `pageRoutes`. O teste renderiza `routes` com
   `createMemoryRouter(routes, { initialEntries })` e `RouterProvider`.
   As rotas-filhas de `MainLayout` são `lazy` e o único `<Suspense>` fica em volta do `<Outlet />`
@@ -257,6 +268,23 @@ para editores compatíveis, coerente com o `.prettierrc`.
   `ROUTES.home` cru em `<Link>`. O `index.html` tem um script inline que faz na raiz o mesmo
   redirecionamento (a chave e o mapa de idiomas estão duplicados nele; `rootRedirect.test.ts`
   compara com `getPreferredLanguage`).
+- **Pré-renderização** (ADR 0004, `docs/architecture/frontend.md#pré-renderização`) — `npm run build`
+  gera em `dist/` um HTML por rota pública e idioma, mais o `404.html`. `src/entry-server.tsx`
+  (`render(target)`, só `react-dom/static` com `progressiveChunkSize: Infinity`, uma URL por vez),
+  `src/prerender/` (`prerenderRoutes.ts`, o registro das rotas pré-renderizáveis com padrão, escopo dos
+  parâmetros e consultas RTK Query; `loadPrerenderData.ts`; `mountClient.tsx`) e `scripts/prerender.ts`
+  com `scripts/prerender/` (`listTargets`, `getTargetFile`, `composePage`, `installPublicFetch`, que lê
+  `public/` no Node sem tocar em `src/services/`). O servidor nunca importa `App.tsx`. Arquivos: `<idioma>.html`
+  para a Início, `<idioma>/<rota>.html` para as demais e `<nome>.md.html` para documento (nunca pasta com
+  `index.html`, que o Pages redireciona); `/` continua o `index.html`. O `404.html` é a não encontrada em
+  inglês: o cliente só chama `hydrateRoot` quando o caminho é o `prerenderedPath`, senão remove o
+  `title` e a `meta description` do HTML e usa `createRoot` (`shouldHydrate`, `removePrerenderedHead`).
+  **Toda tela nova entrega a própria pré-renderização**: acrescenta a entrada ao registro (rota e
+  consultas) e um teste de `<h1>` e conteúdo principal nos três idiomas (`src/test/entry-server.test.tsx`
+  já percorre o registro existente); rota no registro sem tela em `routes` é ignorada no build. Em
+  `src/i18n/i18n.ts`, `typeof window` e `typeof document` guardam o import no Node. O `vercel.json` usa
+  `cleanUrls` e `trailingSlash: false`, sem reescrita genérica para o `index.html` (URL desconhecida
+  responde 404 com o `404.html`); o `noindex` da `staging` é acrescentado pelo `deploy.yml`.
 - **`src/store/`** — estado global: **Redux Toolkit + react-redux** para estado de cliente e
   **RTK Query** (`@reduxjs/toolkit/query/react`, sem dependência extra) para estado de servidor.
   Um símbolo público por arquivo, `export default` no final:
@@ -272,7 +300,7 @@ para editores compatíveis, coerente com o `.prettierrc`.
       projeto precisar de invalidação.
     - `rootReducer.ts` (`combineReducers` com `[api.reducerPath]: api.reducer`, onde slices entram),
       `createStore.ts` (`createStore(preloadedState?)`, `configureStore` com `api.middleware`
-      concatenado, store nova a cada chamada) e `store.ts` (a instância da aplicação).
+      concatenado, store nova a cada chamada) (a store da aplicação é criada em `mountClient`, com o `preloadedState` do HTML quando há).
     - `useAppDispatch.ts` e `useAppSelector.ts`: `useDispatch.withTypes<AppDispatch>()` e
       `useSelector.withTypes<RootState>()`; código de aplicação usa só esses, com seletor estreito
       (`useAppSelector((state) => state.x.y)`), nunca o estado inteiro.
@@ -280,7 +308,7 @@ para editores compatíveis, coerente com o `.prettierrc`.
     - Tipos em `src/types/store/RootState.types.ts` (`ReturnType<typeof rootReducer>`),
       `AppStore.types.ts` (`ReturnType<typeof createStore>`) e `AppDispatch.types.ts`
       (`AppStore["dispatch"]`), um por arquivo, importados com `import type`.
-    - O `<Provider store={store}>` fica em `App.tsx`, em volta do `<Router />`. Estado que só uma
+    - O `<Provider store={store}>` fica em `App.tsx`, em volta do `RouterProvider`. Estado que só uma
       página usa continua `useState` no hook da página; estado compartilhado vai para um slice;
       dado do servidor vai para um endpoint do RTK Query. Idioma continua em `src/i18n/`.
     - Refetch on focus/reconnect (`setupListeners`) segue desligado, o padrão do RTK Query.
@@ -416,7 +444,7 @@ do Vite (`/` por padrão); o código do cliente só vê `import.meta.env.BASE_UR
 `@scripts/*` (em `tsconfig.node.json` e `resolve.alias`) para os testes de `scripts/test/`.
 
 A configuração de build fica em `vite.config.ts` na raiz (plugin React + bloco `test` do Vitest),
-e a entrada da aplicação é o `index.html` da raiz, que carrega `/src/index.tsx` como módulo.
+e a entrada da aplicação é o `index.html` da raiz, que carrega `/src/entry-client.tsx` como módulo.
 
 ## Estilo de código
 
@@ -433,7 +461,7 @@ linguagem do produto — `<SaveButton label={t("profile.saveChanges")} />` está
 JSON correspondente.
 
 Duas exceções ao "texto vem de chave". Mensagem de `Error` lançada no código do cliente
-(`src/services/http/parseResponse.ts`, `src/index.tsx`) é literal em português, como diagnóstico.
+(`src/services/http/parseResponse.ts`, `src/entry-client.tsx`) é literal em português, como diagnóstico.
 Mensagem de erro de API vem traduzida pelo backend: `get`/`post` de `src/services/http/` e o
 `prepareHeaders` do RTK Query enviam o idioma ativo (`getLanguage()`) no header `Accept-Language`
 de toda requisição. A descrição de `describe`/`it` nos testes é escrita em português.
@@ -542,7 +570,7 @@ importa.
 **Import interno usa o alias `@/`, nunca `../`.** Um import que sobe de pasta (`../`,
 `../../`) é frágil: quebra ao mover o arquivo de lugar. Use `@/styles/pages/home.module.css` em
 vez de `../styles/pages/home.module.css`. Import para a mesma pasta ou descendo a partir da
-própria localização (`./routers/Router` em `src/App.tsx`) continua válido — o problema é subir,
+própria localização (`./styles/global.css` em `src/App.tsx`) continua válido — o problema é subir,
 não descer. Imports de pacote (`react`, `react-router-dom`) não são afetados.
 
 **Import nomeado, nunca import de namespace.** Importe só o que for usado — prefira

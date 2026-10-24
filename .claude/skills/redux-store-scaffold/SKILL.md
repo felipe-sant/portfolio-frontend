@@ -7,7 +7,7 @@ description: Como criar estado de cliente (slice) neste projeto React com Redux 
 
 Estado de cliente compartilhado entre telas vive num **slice** em `src/store/slices/<nome>.slice.ts`. Estado que só uma página usa continua `useState` no hook da página; dado do servidor não é slice, é endpoint do RTK Query (skill `rtk-query-endpoint-scaffold`). Os trechos abaixo usam um `counter` hipotético para ilustrar o formato.
 
-A infraestrutura da store fica em `src/store/rootReducer.ts` (com `api.reducer`), `src/store/createStore.ts`, `src/store/store.ts`, `useAppDispatch`, `useAppSelector` e no `Provider` de `src/App.tsx`; slice novo só se registra nela, sem recriá-la.
+A infraestrutura da store fica em `src/store/rootReducer.ts` (com `api.reducer`), `src/store/createStore.ts`, `useAppDispatch`, `useAppSelector` e no `Provider` de `src/App.tsx` (a store é criada em `src/prerender/mountClient.tsx`); slice novo só se registra nela, sem recriá-la.
 
 | Peça     | Caminho                                      | Se faltar                                                                      |
 | -------- | -------------------------------------------- | ------------------------------------------------------------------------------ |
