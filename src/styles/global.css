@@ -364,13 +364,15 @@ body {
     line-height: var(--lh-body);
 }
 
-body > noscript {
-    display: block;
-    padding: var(--space-3) var(--pad-page);
-    background-color: var(--brand-primary);
-    color: var(--brand-ink);
-    font-size: var(--text-body-sm);
-    text-align: center;
+@media (scripting: none) {
+    body > noscript {
+        display: block;
+        padding: var(--space-3) var(--pad-page);
+        background-color: var(--brand-primary);
+        color: var(--brand-ink);
+        font-size: var(--text-body-sm);
+        text-align: center;
+    }
 }
 
 h1,
