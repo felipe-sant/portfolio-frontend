@@ -6,8 +6,16 @@ import resolveBase from "./scripts/resolveBase.ts"
 
 const { version } = JSON.parse(readFileSync(new URL("./package.json", import.meta.url), "utf-8"))
 
-export default defineConfig({
+const serverEntries = {
+    "entry-server": fileURLToPath(new URL("./src/entry-server.tsx", import.meta.url)),
+    routes: fileURLToPath(new URL("./src/routers/routes.tsx", import.meta.url)),
+    prerenderRoutes: fileURLToPath(new URL("./src/prerender/prerenderRoutes.ts", import.meta.url))
+}
+
+export default defineConfig(({ isSsrBuild }) => ({
     base: resolveBase(process.env.BASE_PATH),
+    build: isSsrBuild ? { rollupOptions: { input: serverEntries } } : {},
+    publicDir: isSsrBuild ? false : "public",
     plugins: [react()],
     define: {
         __BUILD_YEAR__: JSON.stringify(new Date().getFullYear()),
@@ -23,18 +31,21 @@ export default defineConfig({
         environment: "jsdom",
         pool: "vmThreads",
         setupFiles: ["./src/setupTests.ts"],
+        globalSetup: ["./src/testUtils/prerenderGlobalSetup.ts"],
         exclude: [...configDefaults.exclude, ".claude/**"],
         coverage: {
             provider: "v8",
             reporter: ["text", "json", "json-summary", "html"],
             exclude: [
                 ...coverageConfigDefaults.exclude,
-                "src/index.tsx",
+                "src/entry-client.tsx",
                 "src/types/**",
                 "vite.config.ts",
                 "scripts/buildFatec.ts",
+                "scripts/prerender.ts",
                 "scripts/previewFatec.ts",
-                "src/setupTests.ts"
+                "src/setupTests.ts",
+                "src/testUtils/prerenderGlobalSetup.ts"
             ],
             thresholds: {
                 statements: 80,
@@ -44,4 +55,4 @@ export default defineConfig({
             }
         }
     }
-})
+}))

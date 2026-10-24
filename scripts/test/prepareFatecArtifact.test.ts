@@ -1,4 +1,4 @@
-import { mkdtempSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs"
+import { mkdtempSync, rmSync, statSync, writeFileSync } from "node:fs"
 import { tmpdir } from "node:os"
 import { join } from "node:path"
 import { afterEach, beforeEach, describe, expect, it } from "vitest"
@@ -16,18 +16,38 @@ afterEach(() => {
 })
 
 describe("prepareFatecArtifact", () => {
-    it("copia o index.html para 404.html e cria o .nojekyll vazio", () => {
-        const html = `<script src="${FATEC_BASE_PATH}assets/index.js"></script>`
-        writeFileSync(join(directory, "index.html"), html)
+    it("cria o .nojekyll vazio quando o 404.html tem o base da Fatec", () => {
+        writeFileSync(
+            join(directory, "404.html"),
+            `<script src="${FATEC_BASE_PATH}assets/index.js"></script>`
+        )
 
         prepareFatecArtifact(directory)
 
-        expect(readFileSync(join(directory, "404.html"), "utf-8")).toBe(html)
         expect(statSync(join(directory, ".nojekyll")).size).toBe(0)
     })
 
-    it("falha em português quando o index.html não contém o base da Fatec", () => {
-        writeFileSync(join(directory, "index.html"), '<script src="/assets/index.js"></script>')
+    it("não sobrescreve o 404.html pré-renderizado", () => {
+        const html = `<h1>Page not found</h1><script src="${FATEC_BASE_PATH}assets/index.js"></script>`
+        writeFileSync(join(directory, "404.html"), html)
+        writeFileSync(join(directory, "index.html"), "outro")
+
+        prepareFatecArtifact(directory)
+
+        expect(statSync(join(directory, "404.html")).size).toBe(Buffer.byteLength(html))
+    })
+
+    it("falha em português quando o 404.html não existe", () => {
+        writeFileSync(
+            join(directory, "index.html"),
+            `<script src="${FATEC_BASE_PATH}a.js"></script>`
+        )
+
+        expect(() => prepareFatecArtifact(directory)).toThrow(/404.html não existe/)
+    })
+
+    it("falha em português quando o 404.html não contém o base da Fatec", () => {
+        writeFileSync(join(directory, "404.html"), '<script src="/assets/index.js"></script>')
 
         expect(() => prepareFatecArtifact(directory)).toThrow(/não contém o base/)
     })

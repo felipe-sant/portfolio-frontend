@@ -1,0 +1,174 @@
+import type { Root } from "react-dom/client"
+import type { MockInstance } from "vitest"
+import { afterEach, beforeEach, describe, expect, inject, it, vi } from "vitest"
+import { act, screen } from "@testing-library/react"
+import composePage from "@scripts/prerender/composePage"
+import i18n from "@/i18n/i18n"
+import mountClient from "@/prerender/mountClient"
+import buildProfile from "@/testUtils/buildProfile"
+import stubContentFetch from "@/testUtils/stubContentFetch"
+import MOTION_STORAGE_KEY from "@/utils/motionStorageKey"
+import THEME_STORAGE_KEY from "@/utils/themeStorageKey"
+
+const TEMPLATE =
+    '<!doctype html><html lang="pt-BR"><head><title>Estático</title><meta name="description" content="Estática" /></head><body><noscript>x</noscript><div id="root"></div></body></html>'
+
+function injectPrerendered(file: string, rootElement: HTMLElement) {
+    const fixture = inject("prerenderFixtures").find((candidate) => candidate.target.file === file)
+
+    if (!fixture) {
+        throw new Error(`Fixture ${file} não gerada pelo globalSetup`)
+    }
+
+    const { target, result } = fixture
+    const page = composePage(TEMPLATE, result, target, "x", "/")
+    const parsed = new DOMParser().parseFromString(page, "text/html")
+
+    document.head.innerHTML = parsed.head.innerHTML
+    rootElement.innerHTML = parsed.getElementById("root")?.innerHTML ?? ""
+    window.prerenderedPath = `/${target.path}`
+    window.preloadedState = JSON.parse(result.state)
+    window.routerData = JSON.parse(result.routerData)
+}
+
+async function settle() {
+    await act(async () => {
+        await new Promise((resolve) => setTimeout(resolve, 150))
+    })
+}
+
+function spyOnConsole() {
+    return {
+        error: vi.spyOn(console, "error").mockImplementation(() => undefined),
+        warn: vi.spyOn(console, "warn").mockImplementation(() => undefined)
+    }
+}
+
+function hydrationWarnings(spy: MockInstance<typeof console.warn>) {
+    return spy.mock.calls.filter(
+        ([message]) => !String(message).includes("InvariantMiddleware took")
+    )
+}
+
+let rootElement: HTMLElement
+let mountedRoots: Root[] = []
+
+async function mount() {
+    await act(async () => {
+        mountedRoots.push(mountClient(rootElement))
+    })
+}
+
+beforeEach(() => {
+    rootElement = document.createElement("div")
+    document.body.appendChild(rootElement)
+    stubContentFetch({
+        "content/pt-BR/profile.json": buildProfile(),
+        "content/en/profile.json": buildProfile(),
+        "content/es/profile.json": buildProfile()
+    })
+})
+
+afterEach(async () => {
+    await act(async () => {
+        mountedRoots.forEach((root) => root.unmount())
+    })
+    mountedRoots = []
+    rootElement.remove()
+    localStorage.removeItem(MOTION_STORAGE_KEY)
+    document.documentElement.removeAttribute("data-motion")
+    document.head.innerHTML = ""
+    window.prerenderedPath = undefined
+    window.preloadedState = undefined
+    window.routerData = undefined
+    vi.unstubAllGlobals()
+    vi.unstubAllEnvs()
+    window.history.pushState({}, "", "/")
+})
+
+describe("mountClient sem caminho pré-renderizado", () => {
+    it("renderiza no cliente usando o BASE_URL como basename", async () => {
+        vi.stubEnv("BASE_URL", "/ra2581392423047/")
+        window.history.pushState({}, "", "/ra2581392423047/en")
+
+        await mount()
+
+        expect(
+            await screen.findByRole("heading", { name: "Full stack developer in TypeScript" })
+        ).toBeInTheDocument()
+    })
+
+    it("remove o title e a meta description do index.html e deixa só os da página", async () => {
+        document.head.innerHTML =
+            '<title>Estático</title><meta name="description" content="Estática" />'
+        window.history.pushState({}, "", "/pt-BR")
+
+        await mount()
+
+        await screen.findByRole("heading", { name: "Desenvolvedor full stack em TypeScript" })
+        expect(document.head.querySelectorAll("title")).toHaveLength(1)
+        expect(document.title).toBe("Luiz Felipe dos Santos · Desenvolvedor full stack")
+        expect(document.head.querySelectorAll("meta[name='description']")).toHaveLength(1)
+    })
+})
+
+describe("mountClient com caminho pré-renderizado", () => {
+    it("hidrata o HTML gerado sem erro nem aviso e mantém o h1 do servidor", async () => {
+        injectPrerendered("en.html", rootElement)
+        await i18n.changeLanguage("en")
+        window.history.pushState({}, "", "/en")
+        const heading = screen.getByRole("heading", { name: "Full stack developer in TypeScript" })
+        const consoleSpies = spyOnConsole()
+        const errorListener = vi.fn()
+        window.addEventListener("error", errorListener)
+
+        await mount()
+        await settle()
+
+        window.removeEventListener("error", errorListener)
+        expect(screen.getByRole("heading", { name: "Full stack developer in TypeScript" })).toBe(
+            heading
+        )
+        expect(consoleSpies.error).not.toHaveBeenCalled()
+        expect(hydrationWarnings(consoleSpies.warn)).toEqual([])
+        expect(errorListener).not.toHaveBeenCalled()
+        expect(document.head.querySelectorAll("title")).toHaveLength(1)
+    })
+
+    it("hidrata sem erro com tema escuro salvo e movimento reduzido", async () => {
+        localStorage.setItem(THEME_STORAGE_KEY, "dark")
+        localStorage.setItem(MOTION_STORAGE_KEY, "reduced")
+        injectPrerendered("pt-BR.html", rootElement)
+        await i18n.changeLanguage("pt-BR")
+        window.history.pushState({}, "", "/pt-BR")
+        const consoleSpies = spyOnConsole()
+
+        await mount()
+        await settle()
+
+        expect(document.documentElement).toHaveAttribute("data-theme", "dark")
+        expect(document.documentElement).toHaveAttribute("data-motion", "reduced")
+        expect(consoleSpies.error).not.toHaveBeenCalled()
+        expect(hydrationWarnings(consoleSpies.warn)).toEqual([])
+    })
+
+    it("usa createRoot e deixa um único title quando o 404.html chega em outra URL", async () => {
+        injectPrerendered("404.html", rootElement)
+        await i18n.changeLanguage("pt-BR")
+        window.history.pushState({}, "", "/pt-BR/xyz")
+        const consoleSpies = spyOnConsole()
+
+        await mount()
+        await settle()
+
+        expect(
+            await screen.findByRole("heading", { name: "Página não encontrada" })
+        ).toBeInTheDocument()
+        expect(document.head.querySelectorAll("title")).toHaveLength(1)
+        expect(document.title).toBe("Página não encontrada · Luiz Felipe dos Santos")
+        expect(document.head.querySelectorAll("meta[name='description']")).toHaveLength(1)
+        expect(document.head.querySelectorAll("meta[name='robots']")).toHaveLength(1)
+        expect(consoleSpies.error).not.toHaveBeenCalled()
+        expect(document.documentElement.lang).toBe("pt-BR")
+    })
+})

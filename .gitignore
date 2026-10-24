@@ -2,6 +2,7 @@ node_modules/
 
 # Saida do build do Vite (npm run build)
 dist/
+dist-server/
 
 coverage/
 
