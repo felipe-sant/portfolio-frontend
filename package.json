@@ -19,7 +19,9 @@
   "scripts": {
     "dev": "vite",
     "typecheck": "tsc -b",
-    "build": "npm run typecheck && vite build",
+    "build": "npm run typecheck && vite build && npm run build:server && npm run prerender",
+    "build:server": "vite build --ssr --outDir dist-server",
+    "prerender": "tsx --tsconfig tsconfig.node.json scripts/prerender.ts",
     "preview": "vite preview",
     "build:fatec": "tsx --tsconfig tsconfig.node.json scripts/buildFatec.ts",
     "preview:fatec": "tsx --tsconfig tsconfig.node.json scripts/previewFatec.ts",
