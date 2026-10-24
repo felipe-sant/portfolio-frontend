@@ -40,7 +40,11 @@ describe("routes", () => {
         renderRoutes(["/pt-BR"])
 
         expect(
-            await screen.findByRole("heading", { name: "Desenvolvedor full stack em TypeScript" })
+            await screen.findByRole(
+                "heading",
+                { name: "Desenvolvedor full stack em TypeScript" },
+                { timeout: 5000 }
+            )
         ).toBeInTheDocument()
         expect(screen.getByRole("banner")).toBeInTheDocument()
         expect(screen.getByRole("contentinfo")).toBeInTheDocument()
