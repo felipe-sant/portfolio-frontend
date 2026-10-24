@@ -38,6 +38,7 @@
 }
 
 .description {
+    text-align: center;
     text-wrap: pretty;
 }
 
