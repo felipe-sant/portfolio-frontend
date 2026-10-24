@@ -187,7 +187,9 @@ describe("MainLayout", () => {
     it("mostra o fallback no lugar do Outlet sem esconder header e footer", async () => {
         await renderLayout("/pt-BR", <NeverResolves />)
 
-        expect(screen.getByRole("status")).toHaveTextContent("Carregando...")
+        expect(within(screen.getByRole("main")).getByRole("status")).toHaveTextContent(
+            "Carregando..."
+        )
         expect(screen.getByRole("banner")).toBeInTheDocument()
         expect(screen.getByRole("contentinfo")).toBeInTheDocument()
     })
