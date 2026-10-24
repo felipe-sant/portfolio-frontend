@@ -107,6 +107,7 @@ npm run preview:fatec # servidor Node que imita o Pages (arquivo, <caminho>.html
 npm run lint:fix  # mesma coisa, aplicando as correções automáticas possíveis (oxlint --fix)
 npm run format    # prettier --write em **/*.{ts,tsx,css,json,md,yml,html}, conforme .prettierrc e .prettierignore
 npm run test:cov  # vitest run --coverage — suíte inteira + relatório de cobertura
+npm run test:e2e  # Playwright (Chromium) + axe em e2e/ contra o build do Pages; exige npm run build:fatec antes
 ```
 
 O teste fica em **`test/` dentro do diretório do arquivo testado**:
@@ -174,8 +175,19 @@ arquivos e faz o resultado depender da ordem de execução. Como o worker é rea
 stuba com `vi.stubGlobal`/`vi.stubEnv` restaura no `afterEach` com
 `vi.unstubAllGlobals()`/`vi.unstubAllEnvs()`.
 
-O CI (`.github/workflows/`) roda `npm run build`, `npm run lint` e a suíte de testes, os mesmos
-comandos da verificação local, em PR e em push na `main` e na `staging`. O `deploy.yml` publica na
+A suíte ponta a ponta fica em `e2e/` (`playwright.config.ts` na raiz, `tsconfig.e2e.json`), com
+sufixo `.spec.ts`, fora do Vitest (`e2e/**` em `test.exclude`) e da cobertura. Roda só em Chromium
+contra `npm run preview:fatec` (`base` `/ra2581392423047/`), que serve o `dist/` já pronto: rode
+`npm run build:fatec` antes, porque `test:e2e` não builda. Os quatro projetos (`mobile-light`,
+`mobile-dark`, `desktop-light`, `desktop-dark`: 390 e 1280px, `colorScheme` claro e escuro,
+`reducedMotion`) rodam cada teste. Seletor é `getByRole` com nome em português, rota abre sem barra
+inicial (relativa ao `baseURL`). Toda tela nova acrescenta o caminho em `e2e/support/routesUnderTest.ts`
+(o axe, com `color-contrast` ligada, roda em todas) e, se tiver teclado próprio, um roteiro em
+`e2e/<tema>.spec.ts`. Violação do axe se corrige na marcação ou no CSS, nunca desligando regra.
+
+O CI (`.github/workflows/`) roda `npm run build`, `npm run lint`, a suíte de testes e o job `e2e`
+(`E2E`: instala o Chromium, `npm run build:fatec`, `npm run test:e2e`, relatório como artefato em
+falha), os mesmos comandos da verificação local, em PR e em push na `main` e na `staging`. O `deploy.yml` publica na
 Vercel (`staging` = beta, `main` = produção) só depois do CI de push verde; detalhe em
 `docs/setup/environments.md`.
 

@@ -414,6 +414,26 @@ Ordem de preferência: **`getByRole` com `name`** > `getByLabelText` / `getByTex
 
 **Teste que passaria com o setup desligado não prova nada.** `expect(element).toBeTruthy()` é verdadeiro para qualquer objeto, inclusive um nó fora do documento; prefira um matcher do `jest-dom` (`toBeInTheDocument`, `toHaveTextContent`, `toBeDisabled`) que afirma algo sobre o DOM. Vale o mesmo teste de sanidade de sempre: quebre a asserção de propósito uma vez e confirme que ela fica vermelha.
 
+## 11. Teste ponta a ponta (Playwright)
+
+A suíte `e2e/` não é Vitest: usa `@playwright/test` e `@axe-core/playwright`, arquivo `e2e/<tema>.spec.ts` (sufixo `.spec.ts`, ao contrário de `src/`), fora da cobertura. Roda em Chromium contra `npm run preview:fatec`, que serve o `dist/` existente: `npm run build:fatec` antes de `npm run test:e2e`, senão o teste vê um build velho ou nenhum.
+
+- Os quatro projetos (`mobile-light`, `mobile-dark`, `desktop-light`, `desktop-dark`) rodam todo teste; roteiro só de uma largura usa `test.skip` pela `viewportSize()`.
+- Seletor por `getByRole` e nome em português; `page.goto` com caminho relativo sem barra inicial (`"pt-BR"`), por causa do `baseURL`.
+- Tela nova acrescenta o caminho em `e2e/support/routesUnderTest.ts`; `e2e/accessibility.spec.ts` roda o axe (todas as regras, `color-contrast` incluída) em cada um.
+- Violação do axe se corrige na tela; não se usa `disableRules` nem `exclude`.
+
+```ts
+test("Esc fecha o menu e devolve o foco ao botão", async ({ page }) => {
+    await page.goto("pt-BR")
+    const button = page.getByRole("button", { name: "Menu" })
+    await button.click()
+    await expect(button).toHaveAttribute("aria-expanded", "true")
+    await page.keyboard.press("Escape")
+    await expect(button).toBeFocused()
+})
+```
+
 ## Checklist
 
 - [ ] Arquivo em `<diretório-do-arquivo-testado>/test/<arquivo>.test.tsx`
