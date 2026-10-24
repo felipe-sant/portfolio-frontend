@@ -8,7 +8,7 @@ import type PrerenderRouteDescriptor from "@/types/prerender/PrerenderRouteDescr
 import type PrerenderTarget from "@/types/prerender/PrerenderTarget.types"
 import type ProjectRecord from "@/types/project/ProjectRecord.types"
 
-type ProjectRecordsByLanguage = Record<SupportedLanguage, ProjectRecord[]>
+type ProjectRecordsByLanguage = Record<string, ProjectRecord[]>
 
 type ListedTargets = {
     targets: PrerenderTarget[]

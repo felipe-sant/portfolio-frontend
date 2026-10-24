@@ -9,14 +9,7 @@ import api from "@/store/api"
 import createStore from "@/store/createStore"
 import publicUrl from "@/utils/publicUrl"
 import type PrerenderResult from "@/types/prerender/PrerenderResult.types"
-import type PrerenderRoute from "@/types/prerender/PrerenderRoute.types"
 import type PrerenderTarget from "@/types/prerender/PrerenderTarget.types"
-
-const FOOTER_ONLY_ROUTE: PrerenderRoute = {
-    pattern: "not-found",
-    scope: "none",
-    queries: () => []
-}
 
 function toScriptJson(value: unknown): string {
     return JSON.stringify(value).replace(/</g, "\\u003c")
@@ -32,9 +25,7 @@ async function render(target: PrerenderTarget): Promise<PrerenderResult> {
         )
     }
 
-    const route =
-        prerenderRoutes.find((candidate) => candidate.pattern === target.pattern) ??
-        FOOTER_ONLY_ROUTE
+    const route = prerenderRoutes.find((candidate) => candidate.pattern === target.pattern)
     const store = createStore()
     await loadPrerenderData(store, route, target.params ?? {}, target.lang)
 

@@ -7,17 +7,18 @@ import loadServerBundle from "@scripts/prerender/loadServerBundle"
 import readNoscriptText from "@scripts/prerender/readNoscriptText"
 import readProjectRecords from "@scripts/prerender/readProjectRecords"
 import resolveBase from "@scripts/resolveBase"
+import SUPPORTED_LANGUAGES from "@/i18n/supportedLanguages"
 
 const CLIENT_DIRECTORY = "dist"
 const SERVER_DIRECTORY = "dist-server"
 
 async function prerenderSite(base: string) {
     const { render, routes, prerenderRoutes } = await loadServerBundle(SERVER_DIRECTORY)
-    const recordsByLanguage = {
-        "pt-BR": await readProjectRecords("pt-BR"),
-        en: await readProjectRecords("en"),
-        es: await readProjectRecords("es")
-    }
+    const recordsByLanguage = Object.fromEntries(
+        await Promise.all(
+            SUPPORTED_LANGUAGES.map(async (lang) => [lang, await readProjectRecords(lang)] as const)
+        )
+    )
     const { targets, ignored } = listTargets(routes, prerenderRoutes, recordsByLanguage)
     const template = await readFile(join(CLIENT_DIRECTORY, "index.html"), "utf-8")
     for (const target of targets) {

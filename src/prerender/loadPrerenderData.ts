@@ -14,13 +14,13 @@ function describeError(error: unknown): string {
 
 async function loadPrerenderData(
     store: AppStore,
-    route: PrerenderRoute,
+    route: PrerenderRoute | undefined,
     params: PrerenderParams,
     lang: SupportedLanguage
 ) {
     const footerQuery = (dispatch: AppStore["dispatch"]) =>
         dispatch(profileApi.endpoints.getProfile.initiate({ lang }))
-    const subscriptions = [footerQuery, ...route.queries(lang, params)].map((query) =>
+    const subscriptions = [footerQuery, ...(route?.queries(lang, params) ?? [])].map((query) =>
         query(store.dispatch)
     )
 
@@ -30,7 +30,7 @@ async function loadPrerenderData(
 
         if (failed) {
             throw new Error(
-                `Falha ao carregar os dados da rota "${route.pattern}" (${lang}): ${describeError(failed.error)}`
+                `Falha ao carregar os dados da rota ${route ? `"${route.pattern}"` : "sem registro"} (${lang}): ${describeError(failed.error)}`
             )
         }
     } finally {

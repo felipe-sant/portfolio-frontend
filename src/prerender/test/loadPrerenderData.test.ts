@@ -34,6 +34,16 @@ describe("loadPrerenderData", () => {
         })
     })
 
+    it("carrega só o perfil do rodapé quando a rota não está no registro", async () => {
+        const profile = buildProfile()
+        stubContentFetch({ "content/en/profile.json": profile })
+        const store = createStore()
+
+        await loadPrerenderData(store, undefined, {}, "en")
+
+        expect(store.getState().api.queries['getProfile({"lang":"en"})']?.data).toEqual(profile)
+    })
+
     it("rejeita em português com a rota e a causa quando uma consulta falha", async () => {
         stubContentFetch({})
         const store = createStore()
