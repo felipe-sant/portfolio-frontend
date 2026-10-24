@@ -2,7 +2,7 @@
 
 > Status: `implementada`
 > Encerrada em: `2026-10-24`
-> Commits: `origin/staging..feat/55-teste-acessibilidade-e2e-playwright` · PR: `a preencher` · Issue: `https://github.com/felipe-sant/portfolio-frontend/issues/55`
+> Commits: `origin/staging..feat/55-teste-acessibilidade-e2e-playwright` · PR: `https://github.com/felipe-sant/portfolio-frontend/pull/92` · Issue: `https://github.com/felipe-sant/portfolio-frontend/issues/55`
 
 ## O que foi pedido
 
