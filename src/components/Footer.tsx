@@ -22,6 +22,11 @@ interface ProfileBlockProps {
     profile?: Profile
 }
 
+interface FooterNavItemProps {
+    id: (typeof FOOTER_NAV_ITEMS)[number]["id"]
+    path: string
+}
+
 interface ExternalLinkProps {
     network: "github" | "linkedin"
     url: string
@@ -111,10 +116,22 @@ function ContactBlock({ profile }: ProfileBlockProps) {
     )
 }
 
-function NavigationBlock({ profile }: ProfileBlockProps) {
+function FooterNavItem({ id, path }: FooterNavItemProps) {
     const { t } = useTranslation()
     const localizedPath = useLocalizedPath()
     const viewTransition = usePageTransition()
+
+    return (
+        <li>
+            <Link to={localizedPath(path)} viewTransition={viewTransition} className={css.textLink}>
+                {t(`navigation.${id}`)}
+            </Link>
+        </li>
+    )
+}
+
+function NavigationBlock({ profile }: ProfileBlockProps) {
+    const { t } = useTranslation()
 
     return (
         <>
@@ -123,15 +140,7 @@ function NavigationBlock({ profile }: ProfileBlockProps) {
                 <nav aria-label={t("footer.navigation.label")}>
                     <ul className={css.list}>
                         {FOOTER_NAV_ITEMS.map((item) => (
-                            <li key={item.id}>
-                                <Link
-                                    to={localizedPath(item.path)}
-                                    viewTransition={viewTransition}
-                                    className={css.textLink}
-                                >
-                                    {t(`navigation.${item.id}`)}
-                                </Link>
-                            </li>
+                            <FooterNavItem key={item.id} id={item.id} path={item.path} />
                         ))}
                     </ul>
                 </nav>
