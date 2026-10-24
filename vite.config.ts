@@ -31,6 +31,7 @@ export default defineConfig(({ isSsrBuild }) => ({
         environment: "jsdom",
         pool: "vmThreads",
         setupFiles: ["./src/setupTests.ts"],
+        globalSetup: ["./src/testUtils/prerenderGlobalSetup.ts"],
         exclude: [...configDefaults.exclude, ".claude/**"],
         coverage: {
             provider: "v8",
@@ -43,7 +44,8 @@ export default defineConfig(({ isSsrBuild }) => ({
                 "scripts/buildFatec.ts",
                 "scripts/prerender.ts",
                 "scripts/previewFatec.ts",
-                "src/setupTests.ts"
+                "src/setupTests.ts",
+                "src/testUtils/prerenderGlobalSetup.ts"
             ],
             thresholds: {
                 statements: 80,
