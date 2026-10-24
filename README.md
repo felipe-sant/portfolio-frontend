@@ -78,20 +78,22 @@ variáveis com prefixo `VITE_` chegam ao código do cliente; ver
 
 ## Comandos
 
-| Comando                 | O que faz                                                                                           |
-| ----------------------- | --------------------------------------------------------------------------------------------------- |
-| `npm run dev`           | Dev server do Vite (porta padrão 5173)                                                              |
-| `npm run build`         | `npm run typecheck` e build de produção em `dist/`                                                  |
-| `npm run preview`       | Serve o `dist/` já gerado; depende de um `npm run build` anterior                                   |
-| `npm run build:fatec`   | `npm run build` com o base da Fatec (`/ra2581392423047/`), mais `404.html` e `.nojekyll` em `dist/` |
-| `npm run preview:fatec` | Serve esse `dist/` em `http://localhost:4173/ra2581392423047/`                                      |
-| `npm run typecheck`     | Checagem de tipos com `tsc -b` (`src/` e `vite.config.ts`)                                          |
-| `npm test`              | Vitest em watch mode                                                                                |
-| `npm test -- --run`     | Execução única da suíte (CI, terminal não interativo)                                               |
-| `npm run test:cov`      | Suíte inteira com relatório de cobertura em `coverage/` e threshold de 80%                          |
-| `npm run lint`          | oxlint sobre o projeto, com a configuração de `.oxlintrc.json`                                      |
-| `npm run lint:fix`      | O mesmo lint, aplicando as correções automáticas possíveis                                          |
-| `npm run format`        | `prettier --write` em `**/*.{ts,tsx,css,json,md,yml,html}`, conforme `.prettierrc`                  |
+| Comando                 | O que faz                                                                                                        |
+| ----------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `npm run dev`           | Dev server do Vite (porta padrão 5173)                                                                           |
+| `npm run build`         | `npm run typecheck`, build de produção e pré-renderização: HTML por rota e idioma e `404.html` em `dist/`        |
+| `npm run build:server`  | Build SSR das entradas de servidor em `dist-server/` (intermediário, não publicado)                              |
+| `npm run prerender`     | Escreve em `dist/` os HTML pré-renderizados a partir do `dist-server/`                                           |
+| `npm run preview`       | Serve o `dist/` já gerado; depende de um `npm run build` anterior                                                |
+| `npm run build:fatec`   | `npm run build` com o base da Fatec (`/ra2581392423047/`), mais `.nojekyll` em `dist/`                           |
+| `npm run preview:fatec` | Serve esse `dist/` como o Pages (HTML por rota, 404 pelo `404.html`) em `http://localhost:4173/ra2581392423047/` |
+| `npm run typecheck`     | Checagem de tipos com `tsc -b` (`src/` e `vite.config.ts`)                                                       |
+| `npm test`              | Vitest em watch mode                                                                                             |
+| `npm test -- --run`     | Execução única da suíte (CI, terminal não interativo)                                                            |
+| `npm run test:cov`      | Suíte inteira com relatório de cobertura em `coverage/` e threshold de 80%                                       |
+| `npm run lint`          | oxlint sobre o projeto, com a configuração de `.oxlintrc.json`                                                   |
+| `npm run lint:fix`      | O mesmo lint, aplicando as correções automáticas possíveis                                                       |
+| `npm run format`        | `prettier --write` em `**/*.{ts,tsx,css,json,md,yml,html}`, conforme `.prettierrc`                               |
 
 Comandos do conteúdo (detalhes em [Dados do conteúdo](#dados-do-conteúdo)):
 
@@ -105,18 +107,19 @@ Comandos do conteúdo (detalhes em [Dados do conteúdo](#dados-do-conteúdo)):
 
 ## Estrutura de `src/` e convenções
 
-| Pasta        | O que guarda                                                                          |
-| ------------ | ------------------------------------------------------------------------------------- |
-| `pages/`     | Telas ligadas a uma rota (`<Nome>.page.tsx`); lógica de página em `pages/hooks/`      |
-| `layouts/`   | `MainLayout`, com header, footer e o único `<Suspense>` em volta do `<Outlet />`      |
-| `routers/`   | `paths.ts` (`ROUTES`), `routes.tsx` e `Router.tsx` (data router)                      |
-| `store/`     | Store do Redux Toolkit, `api.ts` do RTK Query e os endpoints em `store/api/`          |
-| `services/`  | Cliente HTTP (`http/`) e a camada de dados local da v1 (`content/`)                   |
-| `i18n/`      | Configuração do i18next e a API de idioma (`getLanguage`, `setLanguage`)              |
-| `locales/`   | Traduções: `<idioma>/<namespace>.json`                                                |
-| `styles/`    | `global.css` (tokens e reset) e CSS Modules em `styles/pages/` e `styles/components/` |
-| `types/`     | Tipos compartilhados, um por arquivo (`<dominio>/<NomeDoTipo>.types.ts`), e `*.d.ts`  |
-| `testUtils/` | Utilitários de teste, como `renderWithStore`, `stubContentFetch` e fixtures           |
+| Pasta        | O que guarda                                                                                  |
+| ------------ | --------------------------------------------------------------------------------------------- |
+| `pages/`     | Telas ligadas a uma rota (`<Nome>.page.tsx`); lógica de página em `pages/hooks/`              |
+| `layouts/`   | `MainLayout`, com header, footer e o único `<Suspense>` em volta do `<Outlet />`              |
+| `routers/`   | `paths.ts` (`ROUTES`), `routes.tsx` (o data router é criado em `prerender/mountClient.tsx`)   |
+| `prerender/` | Registro das rotas pré-renderizáveis, carregamento de dados do servidor e montagem do cliente |
+| `store/`     | Store do Redux Toolkit, `api.ts` do RTK Query e os endpoints em `store/api/`                  |
+| `services/`  | Cliente HTTP (`http/`) e a camada de dados local da v1 (`content/`)                           |
+| `i18n/`      | Configuração do i18next e a API de idioma (`getLanguage`, `setLanguage`)                      |
+| `locales/`   | Traduções: `<idioma>/<namespace>.json`                                                        |
+| `styles/`    | `global.css` (tokens e reset) e CSS Modules em `styles/pages/` e `styles/components/`         |
+| `types/`     | Tipos compartilhados, um por arquivo (`<dominio>/<NomeDoTipo>.types.ts`), e `*.d.ts`          |
+| `testUtils/` | Utilitários de teste, como `renderWithStore`, `stubContentFetch` e fixtures                   |
 
 Pastas como `components/` e `hooks/` nascem no primeiro uso. Em resumo: identificadores em inglês,
 import interno pelo alias `@/` (nunca `../`), import nomeado, export no final do arquivo com um
