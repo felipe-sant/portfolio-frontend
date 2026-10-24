@@ -2,7 +2,7 @@
 
 > Status: `em-andamento` (falta só a verificação real na Vercel)
 > Encerrada em: `2026-10-24`
-> Commits: `4121ad7..HEAD` da branch `feat/49-pre-renderizacao-rotas` · PR: a abrir · Issue: [#49](https://github.com/felipe-sant/portfolio-frontend/issues/49)
+> Branch: `feat/49-pre-renderizacao-rotas` · Issue: [#49](https://github.com/felipe-sant/portfolio-frontend/issues/49)
 
 ## O que foi pedido
 
@@ -19,4 +19,5 @@ Decisões que valem guardar: o `fetch` local de `installPublicFetch` lê `public
 - A verificação real na Vercel (beta e produção) depende do deploy da `staging`; a lista de `curl` está na T15 do `tasks.md` e em `docs/setup/environments.md`. Antes do merge, confirmar que o projeto da Vercel usa o Build Command padrão `npm run build` e o Output Directory `dist`, senão a pré-renderização não roda.
 - As consultas das rotas de M5 (Projetos, Projeto, Documento, Informações, Contato) no registro são provisórias: cada spec de tela as confirma ao entrar.
 - O console do navegador foi conferido em Chrome headless (`--dump-dom` com log do console) no `preview:fatec`, sem mensagem; tema escuro e movimento reduzido ficaram cobertos no teste com jsdom.
+- Bug do tester corrigido: a `<meta name="robots">` da não encontrada ficava duplicada depois do JS, porque `removePrerenderedHead` não a removia antes do `createRoot`; agora remove também a robots, com teste, e o Chrome headless no `preview:fatec` mostra 1 robots, 1 title e 1 description em `/pt-BR/xyz`, `/en/xyz` e `/xyz`.
 - O critério "um HTML por rota pública, projeto e documento" só fecha de verdade na #41, quando as telas existirem.
