@@ -1,12 +1,11 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
 import loadPrerenderData from "@/prerender/loadPrerenderData"
-import prerenderRoutes from "@/prerender/prerenderRoutes"
 import createStore from "@/store/createStore"
 import buildProfile from "@/testUtils/buildProfile"
 import stubContentFetch from "@/testUtils/stubContentFetch"
 import type PrerenderRoute from "@/types/prerender/PrerenderRoute.types"
 
-const homeRoute = prerenderRoutes[0] as PrerenderRoute
+const homeRoute: PrerenderRoute = { pattern: "", scope: "none", queries: () => [] }
 
 afterEach(() => {
     vi.unstubAllGlobals()
