@@ -4,5 +4,7 @@
         "description": "Something went wrong while loading this page."
     },
     "heading": "Unexpected error",
-    "unknown": "Unknown error."
+    "unknown": "Unknown error.",
+    "description": "Something broke on my side, not yours. Try again in a few seconds.",
+    "retry": "Try again"
 }

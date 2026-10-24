@@ -39,5 +39,36 @@
     },
     "settings": {
         "label": "Settings"
+    },
+    "footer": {
+        "contact": {
+            "label": "Contact",
+            "cta": "Get in touch"
+        },
+        "copyEmail": {
+            "idle": "Copy email",
+            "copied": "Email copied",
+            "failed": "Could not copy"
+        },
+        "social": {
+            "heading": "Social",
+            "github": "GitHub",
+            "githubName": "GitHub of {{name}} (opens in a new tab)",
+            "linkedin": "LinkedIn",
+            "linkedinName": "LinkedIn of {{name}} (opens in a new tab)",
+            "emailName": "Send an email to {{name}}"
+        },
+        "navigation": {
+            "label": "Footer",
+            "heading": "Navigation"
+        },
+        "resume": "Resume in PDF",
+        "resumeName": "Resume in PDF, currently unavailable",
+        "copyright": "© {{year}} · {{name}}",
+        "madeWith": "Made with TypeScript"
+    },
+    "symbols": {
+        "external": "↗",
+        "download": "↓"
     }
 }
