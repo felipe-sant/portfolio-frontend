@@ -72,6 +72,18 @@ describe("composePage", () => {
         expect(page).not.toContain("Texto antigo")
     })
 
+    it("troca o noscript quebrado em várias linhas pelo prettier", () => {
+        const template = TEMPLATE.replace(
+            "<noscript>Texto antigo</noscript>",
+            "<noscript\n            >Texto antigo</noscript\n        >"
+        )
+
+        const page = composePage(template, buildResult(), TARGET, "Needs JavaScript", "/")
+
+        expect(page).toContain("<noscript>Needs JavaScript</noscript>")
+        expect(page).not.toContain("Texto antigo")
+    })
+
     it("escapa o texto do noscript", () => {
         const page = composePage(TEMPLATE, buildResult(), TARGET, "A < B", "/")
 

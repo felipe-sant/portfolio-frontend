@@ -70,5 +70,6 @@
     "symbols": {
         "external": "↗",
         "download": "↓"
-    }
+    },
+    "noscript": "Search, filters, language and theme switching need JavaScript. The content of this page is available without it."
 }

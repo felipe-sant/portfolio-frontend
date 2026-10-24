@@ -42,7 +42,7 @@ function composePage(
         .replace(/<meta\s+name="description"[^>]*>/, () => "")
         .replace(/<html lang="[^"]*"/, () => `<html lang="${result.language}"`)
         .replace(
-            /<noscript>[\s\S]*?<\/noscript>/,
+            /<noscript\s*>[\s\S]*?<\/noscript\s*>/,
             () => `<noscript>${escapeText(noscriptText)}</noscript>`
         )
         .replace("</head>", () => `${head}</head>`)
