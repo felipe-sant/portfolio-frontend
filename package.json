@@ -27,6 +27,7 @@
     "preview:fatec": "tsx --tsconfig tsconfig.node.json scripts/previewFatec.ts",
     "test": "vitest",
     "test:cov": "vitest run --coverage",
+    "test:e2e": "playwright test",
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
     "format": "prettier --write \"**/*.{ts,tsx,css,json,md,yml,html}\"",
@@ -37,6 +38,8 @@
     "prepare": "husky"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
+    "@playwright/test": "^1.64.1",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.0",
