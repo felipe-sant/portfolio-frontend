@@ -1,0 +1,56 @@
+{
+    "meta": {
+        "title": "Projetos · Luiz Felipe dos Santos",
+        "description": "Projetos de Luiz Felipe dos Santos, com busca por tipo, categoria e tecnologia."
+    },
+    "heading": "Projetos",
+    "intro": "Tudo o que construí e posso mostrar: trabalho profissional, projetos da faculdade e o que fiz por conta própria.",
+    "search": {
+        "label": "Buscar projeto",
+        "placeholder": "Busque por nome ou tecnologia"
+    },
+    "sort": {
+        "label": "Ordenar",
+        "recent": "Mais recente",
+        "oldest": "Mais antigo",
+        "title": "A–Z"
+    },
+    "filters": {
+        "type": {
+            "label": "Tipo",
+            "all": "Todos"
+        },
+        "category": {
+            "label": "Categoria",
+            "academic": "Acadêmicos",
+            "personal": "Pessoais",
+            "professional": "Profissionais"
+        }
+    },
+    "results": {
+        "count_one": "{{shown}} de {{count}} projeto",
+        "count_other": "{{shown}} de {{count}} projetos",
+        "countNone": "0 projetos",
+        "loading": "Carregando projetos…",
+        "clearFilters": "Limpar filtros"
+    },
+    "noResults": {
+        "heading": "Nenhum projeto encontrado",
+        "withSearch": "Nenhum resultado para “{{query}}”. Tente outro termo ou remova os filtros.",
+        "withoutSearch": "Nenhum projeto com essa combinação de filtros."
+    },
+    "empty": {
+        "heading": "Nenhum projeto publicado",
+        "description": "Os projetos aparecem aqui assim que eu publicar o primeiro."
+    },
+    "error": {
+        "heading": "Não consegui carregar a lista de projetos",
+        "description": "Verifique sua conexão e tente de novo. Seus filtros foram mantidos.",
+        "retry": "Tentar novamente"
+    },
+    "loadMore": "Carregar mais",
+    "loadMoreError": {
+        "heading": "Não consegui carregar mais projetos",
+        "retry": "Tentar novamente"
+    }
+}

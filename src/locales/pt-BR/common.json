@@ -102,6 +102,9 @@
         "personal": "Pessoal",
         "professional": "Profissional"
     },
+    "projectCard": {
+        "featured": "Em destaque"
+    },
     "period": {
         "since": "desde {{date}}"
     }

@@ -1,0 +1,56 @@
+{
+    "meta": {
+        "title": "Projects · Luiz Felipe dos Santos",
+        "description": "Projects by Luiz Felipe dos Santos, with search by type, category and technology."
+    },
+    "heading": "Projects",
+    "intro": "Everything I built and can show: professional work, college projects and what I made on my own.",
+    "search": {
+        "label": "Search projects",
+        "placeholder": "Search by name or technology"
+    },
+    "sort": {
+        "label": "Sort",
+        "recent": "Most recent",
+        "oldest": "Oldest",
+        "title": "A–Z"
+    },
+    "filters": {
+        "type": {
+            "label": "Type",
+            "all": "All"
+        },
+        "category": {
+            "label": "Category",
+            "academic": "Academic",
+            "personal": "Personal",
+            "professional": "Professional"
+        }
+    },
+    "results": {
+        "count_one": "{{shown}} of {{count}} project",
+        "count_other": "{{shown}} of {{count}} projects",
+        "countNone": "0 projects",
+        "loading": "Loading projects…",
+        "clearFilters": "Clear filters"
+    },
+    "noResults": {
+        "heading": "No projects found",
+        "withSearch": "No results for “{{query}}”. Try another term or remove the filters.",
+        "withoutSearch": "No project matches this combination of filters."
+    },
+    "empty": {
+        "heading": "No projects published",
+        "description": "Projects will appear here as soon as I publish the first one."
+    },
+    "error": {
+        "heading": "I couldn't load the list of projects",
+        "description": "Check your connection and try again. Your filters were kept.",
+        "retry": "Try again"
+    },
+    "loadMore": "Load more",
+    "loadMoreError": {
+        "heading": "I couldn't load more projects",
+        "retry": "Try again"
+    }
+}
