@@ -371,7 +371,7 @@ colunas da grade, restauração de rolagem ao voltar, hidratação) e `[mediçã
 
 ### Funcionais
 
-- [ ] `RF-PROJECTS-01` — `h1` "Projetos", introdução, busca e botão "Filtros", filtros, contagem, resultado e "Carregar mais" nessa ordem, sem heading entre o `h1` e os títulos dos cards, nos três idiomas, sem chave no lugar de texto [teste]
+- [x] `RF-PROJECTS-01` — `h1` "Projetos", introdução, busca e botão "Filtros", filtros, contagem, resultado e "Carregar mais" nessa ordem, sem heading entre o `h1` e os títulos dos cards, nos três idiomas, sem chave no lugar de texto [teste]
 - [ ] `RF-PROJECTS-02` — Campo `type="search"` com rótulo oculto, placeholder, `maxLength` 100 e 44px; lupa `aria-hidden` sem texto e "Limpar busca" com texto, que esvazia, aplica e devolve o foco, nos três idiomas, sem chave no lugar de texto [teste] [medição]
 - [x] `RF-PROJECTS-03` — Busca por título e todas as tecnologias, sem resumo, sem caixa e acento, cada palavra como trecho em qualquer campo, aplicada pela API; a tela envia o termo em `q`; os exemplos do documento num teste da função pura da camada local (#13) [teste]
 - [x] `RF-PROJECTS-04` — Termo aplicado 300 ms depois da última tecla; "Limpar busca" e "Limpar filtros" na hora; Enter não recarrega [teste]
@@ -426,7 +426,7 @@ Copiados de [`accessibility.md`](../product/accessibility.md#checklist-por-tela)
 
 - [x] `A11Y-PS01` — Busca com rótulo [teste]
 - [x] `A11Y-PS02` — Filtros em grupo nomeado, com `aria-pressed` [teste]
-- [ ] `A11Y-PS03` — Ordenação no modal: grupo de opções exclusivas em `fieldset` com `legend` "Ordenar", cada opção um `input type="radio"` com `label` e o mesmo `name`, a atual marcada [teste]
+- [x] `A11Y-PS03` — Ordenação no modal: grupo de opções exclusivas em `fieldset` com `legend` "Ordenar", cada opção um `input type="radio"` com `label` e o mesmo `name`, a atual marcada [teste]
 - [ ] `A11Y-PS08` — Teclado do grupo de ordenação no modal: Tab entra na opção marcada, setas movem e marcam no rascunho, Espaço marca, Tab sai para a próxima seção; foco visível só no teclado nos controles do modal, nunca no clique de mouse [teste] [e2e]
 - [ ] `A11Y-PS04` — Contagem de resultados e lista vazia anunciadas em `aria-live` [teste] [leitor]
 - [x] `A11Y-PS05` — "Carregar mais" leva o foco ao primeiro card novo [teste]

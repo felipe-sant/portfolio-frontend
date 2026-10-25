@@ -311,7 +311,7 @@ Cada item tem um ID estável e a forma de verificação entre colchetes: `[teste
 
 - [ ] `A11Y-PS01` — Busca com rótulo [teste]
 - [ ] `A11Y-PS02` — Filtros em grupo nomeado, com `aria-pressed` [teste]
-- [ ] `A11Y-PS03` — Ordenação no modal de filtros: grupo de opções exclusivas em `fieldset` com `legend` "Ordenar", cada opção um `input type="radio"` com `label` e o mesmo `name`, a atual marcada (D63) [teste]
+- [x] `A11Y-PS03` — Ordenação no modal de filtros: grupo de opções exclusivas em `fieldset` com `legend` "Ordenar", cada opção um `input type="radio"` com `label` e o mesmo `name`, a atual marcada (D63) [teste]
 - [ ] `A11Y-PS08` — Teclado do grupo de ordenação no modal: Tab entra na opção marcada, setas movem e marcam no rascunho, Espaço marca, Tab sai; foco visível só no teclado nos controles do modal, nunca no clique de mouse [teste] [e2e]
 - [ ] `A11Y-PS04` — Contagem de resultados e lista vazia anunciadas em `aria-live` [teste] [leitor]
 - [ ] `A11Y-PS05` — "Carregar mais" leva o foco ao primeiro card novo [teste]
