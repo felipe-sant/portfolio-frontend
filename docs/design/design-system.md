@@ -37,7 +37,9 @@ hardcoded; token novo entra lá.
 Cabeçalho e rodapé leem `--surface-chrome` (fundo) e `--border-chrome` (borda), que no tema claro
 apontam para `--bg-page` e `--border-subtle` e no escuro valem `#141210` (um passo abaixo de
 `--dark-bg`) e `#2C2925`. Os dois tokens substituem os hex soltos do handoff e entram em
-`global.css` com a spec de cabeçalho e rodapé (D04).
+`global.css` com a spec de cabeçalho e rodapé (D04). O fundo do rodapé lê `--surface-footer`
+(D66): no tema claro `--bg-raised`, um degrau abaixo da página, e no escuro o próprio
+`--surface-chrome`.
 
 ### Marca
 

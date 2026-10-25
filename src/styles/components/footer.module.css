@@ -1,6 +1,6 @@
 .footer {
     position: relative;
-    background-color: var(--surface-chrome);
+    background-color: var(--surface-footer);
     color: var(--text-body);
     font-family: var(--font-body);
 }
