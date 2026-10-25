@@ -27,7 +27,6 @@ function useProjects() {
         hasFilters
     } = useProjectsFilters()
     const pages = useProjectsPages(buildProjectsQueryArgs(language, filters))
-    const indexQuery = projectsApi.useGetProjectsIndexQuery({ lang: language })
     const filterOptionsQuery = projectsApi.useGetProjectFilterOptionsQuery({ lang: language })
 
     const [isFiltersOpen, setIsFiltersOpen] = useState(false)
@@ -78,11 +77,11 @@ function useProjects() {
         t,
         language,
         ids: projectsElementIds,
-        jsonLd: indexQuery.data
+        jsonLd: pages.firstPageItems
             ? buildProjectsJsonLd(
                   language,
                   { title: t("meta.title"), description: t("meta.description") },
-                  indexQuery.data.items
+                  pages.firstPageItems
               )
             : undefined,
         filters,

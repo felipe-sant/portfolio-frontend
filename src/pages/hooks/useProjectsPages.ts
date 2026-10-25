@@ -95,6 +95,7 @@ function useProjectsPages(args: ProjectsQueryArgs) {
         shown,
         total,
         availableTypes: firstPage?.availableTypes ?? [],
+        firstPageItems: firstPage?.items,
         isLoading: query.isLoading,
         isError: query.isError && !isFetchNextPageError && !isFetching,
         hasMore: shown < total && !loadMoreError,

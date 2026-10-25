@@ -230,7 +230,7 @@ describe("render", () => {
             ["en/projects.html", "en", "Projects · Luiz Felipe dos Santos"],
             ["es/projects.html", "es", "Proyectos · Luiz Felipe dos Santos"]
         ])(
-            "declara título, canônica, hreflang e JSON-LD com os dez projetos em %s",
+            "declara título, canônica, hreflang e JSON-LD com os nove projetos do primeiro lote em %s",
             async (file, language, title) => {
                 stubTenProjects()
 
@@ -249,8 +249,9 @@ describe("render", () => {
                 )?.[1]
                 const data = JSON.parse(jsonLd ?? "null")
                 expect(data["@type"]).toBe("CollectionPage")
-                expect(data.mainEntity.itemListElement).toHaveLength(10)
-                expect(data.mainEntity.itemListElement[9].name).toBe("Projeto 1")
+                expect(data.mainEntity.itemListElement).toHaveLength(9)
+                expect(data.mainEntity.itemListElement[8].name).toBe("Projeto 2")
+                expect(JSON.stringify(data)).not.toContain('Projeto 1"')
             }
         )
 

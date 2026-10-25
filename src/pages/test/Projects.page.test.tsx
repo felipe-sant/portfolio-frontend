@@ -557,7 +557,7 @@ describe("ProjectsPage", () => {
         await waitFor(() => expect(cards()).toHaveLength(9), { timeout: 5000 })
     }, 20000)
 
-    it("publica o JSON-LD CollectionPage com todos os projetos, igual com ou sem query", async () => {
+    it("publica o JSON-LD CollectionPage com os 9 projetos do primeiro lote, sem numberOfItems, com ou sem query", async () => {
         stubProjects(20)
 
         const { unmount } = renderPage()
@@ -573,15 +573,32 @@ describe("ProjectsPage", () => {
         expect(plain.inLanguage).toBe("pt-BR")
         expect(plain.author).toEqual({ "@id": `${SITE_URL}/pt-BR#person` })
         expect(plain.mainEntity["@type"]).toBe("ItemList")
-        expect(plain.mainEntity.itemListElement).toHaveLength(20)
+        expect(plain.mainEntity.itemListElement).toHaveLength(9)
+        expect(plain.mainEntity).not.toHaveProperty("numberOfItems")
         expect(plain.mainEntity.itemListElement[0]).toEqual({
             "@type": "ListItem",
             position: 1,
             url: `${SITE_URL}/pt-BR/projects/0192f1a0-0000-7000-8000-000000000020`,
             name: "Projeto 20"
         })
-        expect(plain.mainEntity.itemListElement[19].position).toBe(20)
-        expect(readJsonLd()).toEqual(plain)
+        expect(plain.mainEntity.itemListElement[8].position).toBe(9)
+        expect(readJsonLd().mainEntity.itemListElement).toHaveLength(9)
+        expect(readJsonLd().url).toBe(plain.url)
+        expect(readJsonLd().name).toBe(plain.name)
+    })
+
+    it("abre só a lista e as opções, sem consulta de índice", async () => {
+        stubProjects(10)
+
+        const { store } = renderPage()
+        await listLoaded()
+
+        const endpoints = Object.values(store.getState().api.queries).map(
+            (entry) => entry?.endpointName
+        )
+        expect(endpoints).toContain("getProjectsPages")
+        expect(endpoints).toContain("getProjectFilterOptions")
+        expect(endpoints).not.toContain("getProjectsIndex")
     })
 
     it("declara a canônica sem query e nenhum noindex com query", async () => {

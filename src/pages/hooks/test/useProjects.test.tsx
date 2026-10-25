@@ -98,6 +98,22 @@ function projectRequests(fetchMock: ReturnType<typeof stubContentFetch>) {
     return fetchMock.mock.calls.filter(([url]) => String(url).includes("projects.json")).length
 }
 
+function listedTitles() {
+    const list = latest.jsonLd?.mainEntity
+    const elements =
+        typeof list === "object" && list !== null && "itemListElement" in list
+            ? list.itemListElement
+            : []
+
+    return Array.isArray(elements)
+        ? elements.map((element) =>
+              typeof element === "object" && element !== null && "name" in element
+                  ? element.name
+                  : undefined
+          )
+        : []
+}
+
 async function settled() {
     await waitFor(() => expect(latest.isLoading).toBe(false))
 }
@@ -611,27 +627,121 @@ describe("useProjects", () => {
         })
     })
 
-    it("devolve o JSON-LD com todos os projetos, sem aplicar a query, só quando o índice chega", async () => {
-        const fetchMock = stubProjects(buildProjectRecords(20))
-        const store = createStore()
-        const release = holdFetchAfter(fetchMock, 1)
+    describe("JSON-LD do primeiro lote", () => {
+        it("fica indefinido enquanto a lista carrega e aparece quando ela chega", async () => {
+            const fetchMock = stubProjects(buildProjectRecords(3))
+            const release = holdFetchAfter(fetchMock, 0)
 
-        mount(`${PATH}?q=projeto%201`, store)
-        expect(latest.jsonLd).toBeUndefined()
+            mount()
+            expect(latest.jsonLd).toBeUndefined()
 
-        await act(async () => {
-            release()
+            await act(async () => {
+                release()
+            })
+            await waitFor(() => expect(latest.jsonLd).toBeDefined())
         })
-        await waitFor(() => expect(latest.jsonLd).toBeDefined())
 
-        const list = latest.jsonLd?.mainEntity
-        expect(list).toMatchObject({ "@type": "ItemList" })
-        expect(
-            Object.values(store.getState().api.queries).some(
-                (entry) => entry?.endpointName === projectsApi.endpoints.getProjectsIndex.name
+        it("fica indefinido quando a lista falha", async () => {
+            const fetchMock = stubProjects(buildProjectRecords(3))
+            failFetchAfter(fetchMock, 0)
+
+            mount()
+            await waitFor(() => expect(latest.isError).toBe(true))
+
+            expect(latest.jsonLd).toBeUndefined()
+        })
+
+        it("lista os 3 projetos de um conteúdo pequeno", async () => {
+            stubProjects(buildProjectRecords(3))
+
+            mount()
+            await waitFor(() => expect(latest.jsonLd).toBeDefined())
+
+            expect(listedTitles()).toEqual(["Projeto 3", "Projeto 2", "Projeto 1"])
+        })
+
+        it("lista só os 9 do primeiro lote de 10 projetos, na ordem recent", async () => {
+            stubProjects(buildProjectRecords(10))
+
+            mount()
+            await waitFor(() => expect(latest.jsonLd).toBeDefined())
+
+            const titles = listedTitles()
+            expect(titles).toHaveLength(9)
+            expect(titles[0]).toBe("Projeto 10")
+            expect(titles).not.toContain("Projeto 1")
+            expect(JSON.stringify(latest.jsonLd)).not.toContain("numberOfItems")
+        })
+
+        it("não cresce com o Carregar mais", async () => {
+            stubProjects(buildProjectRecords(10))
+
+            mount()
+            await waitFor(() => expect(latest.jsonLd).toBeDefined())
+            act(() => latest.loadMore())
+            await waitFor(() => expect(latest.shown).toBe(10))
+
+            expect(listedTitles()).toHaveLength(9)
+        })
+
+        it("segue o primeiro lote do resultado filtrado e ordenado", async () => {
+            stubProjects(buildProjectRecords(20))
+
+            mount(`${PATH}?type=web&sort=title`)
+            await waitFor(() => expect(latest.jsonLd).toBeDefined())
+
+            const titles = listedTitles()
+            expect(titles).toHaveLength(9)
+            expect(titles).toEqual(latest.items.map((item) => item.title))
+            expect(latest.jsonLd?.url).toBe("http://localhost:5173/pt-BR/projects")
+        })
+
+        it("mantém o resultado anterior até o novo chegar e acompanha a lista mostrada", async () => {
+            const fetchMock = stubProjects(buildProjectRecords(20))
+            const store = createStore()
+            const { router } = mount(PATH, store)
+            await waitFor(() => expect(latest.jsonLd).toBeDefined())
+            const before = listedTitles()
+            const release = holdFetchAfter(fetchMock, 0)
+
+            await act(async () => {
+                await router.navigate(`${PATH}?q=projeto%201`)
+            })
+
+            expect(latest.items.map((item) => item.title)).toEqual(before)
+            expect(listedTitles()).toEqual(before)
+
+            await act(async () => {
+                release()
+            })
+            await waitFor(() => expect(listedTitles()).not.toEqual(before))
+            expect(listedTitles()).toEqual(latest.items.map((item) => item.title))
+        })
+
+        it("deixa o ItemList vazio numa busca sem resultado", async () => {
+            stubProjects(buildProjectRecords(3))
+
+            mount(`${PATH}?q=zzzz`)
+            await waitFor(() => expect(latest.isNoResults).toBe(true))
+
+            expect(listedTitles()).toEqual([])
+            expect(latest.jsonLd?.mainEntity).toMatchObject({ itemListElement: [] })
+        })
+
+        it("não abre a consulta de índice", async () => {
+            stubProjects(buildProjectRecords(3))
+            const store = createStore()
+
+            mount(PATH, store)
+            await waitFor(() => expect(latest.jsonLd).toBeDefined())
+
+            const endpoints = Object.values(store.getState().api.queries).map(
+                (entry) => entry?.endpointName
             )
-        ).toBe(true)
-        expect(JSON.stringify(latest.jsonLd).match(/"@type":"ListItem"/g)).toHaveLength(20)
+            expect(endpoints).toContain(projectsApi.endpoints.getProjectsPages.name)
+            expect(endpoints).toContain(projectsApi.endpoints.getProjectFilterOptions.name)
+            expect(endpoints).not.toContain("getProjectsIndex")
+        })
     })
 
     describe("filtros por tecnologia e ano", () => {
