@@ -122,4 +122,14 @@
     .card:hover {
         transform: translateY(-3px);
     }
+
+    :global(:root[data-motion="reduced"]) .card:hover {
+        transform: none;
+    }
+}
+
+@media (hover: hover) and (prefers-reduced-motion: reduce) {
+    :global(:root:not([data-motion])) .card:hover {
+        transform: none;
+    }
 }
