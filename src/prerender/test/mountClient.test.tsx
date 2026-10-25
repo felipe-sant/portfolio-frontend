@@ -271,6 +271,25 @@ describe("mountClient com caminho pré-renderizado", () => {
         expect(hydrationWarnings(consoleSpies.warn)).toEqual([])
     })
 
+    it("hidrata com sort e tech na URL, mostra Filtros (1) e abre o modal com A–Z e Leaflet marcados", async () => {
+        stubProjectsContent()
+        injectPrerendered("pt-BR/projects.html", rootElement)
+        await i18n.changeLanguage("pt-BR")
+        window.history.pushState({}, "", "/pt-BR/projects?sort=title&tech=Leaflet")
+        const consoleSpies = spyOnConsole()
+
+        await mount()
+        await settle()
+
+        const button = await screen.findByRole("button", { name: "Filtros (1)" })
+        expect(cardTitles()).toEqual(["Maps"])
+        await userEvent.click(button)
+        expect(screen.getByRole("radio", { name: "A–Z" })).toBeChecked()
+        expect(screen.getByRole("checkbox", { name: "Leaflet" })).toBeChecked()
+        expect(consoleSpies.error).not.toHaveBeenCalled()
+        expect(hydrationWarnings(consoleSpies.warn)).toEqual([])
+    })
+
     it("não deixa a tela em Carregando projetos ao hidratar", async () => {
         injectPrerendered("pt-BR/projects.html", rootElement)
         await i18n.changeLanguage("pt-BR")

@@ -209,6 +209,23 @@ describe("render", () => {
         })
 
         it.each([
+            ["pt-BR/projects.html", "Ordenar"],
+            ["en/projects.html", "Sort"],
+            ["es/projects.html", "Ordenar"]
+        ])("não traz nenhum controle de ordenação no HTML de %s", async (file, label) => {
+            stubTenProjects()
+
+            const { html } = await renderProjects(file)
+
+            expect(html).not.toMatch(new RegExp(`<button[^>]*>[^<]*${label}`))
+            expect(html).not.toContain('role="listbox"')
+            expect(html).not.toContain('type="radio"')
+            expect(html).not.toMatch(new RegExp(`<legend[^>]*>${label}</legend>`))
+            expect(html).not.toContain('role="dialog"')
+            expect(html).toContain('aria-haspopup="dialog"')
+        })
+
+        it.each([
             ["pt-BR/projects.html", "pt-BR", "Projetos · Luiz Felipe dos Santos"],
             ["en/projects.html", "en", "Projects · Luiz Felipe dos Santos"],
             ["es/projects.html", "es", "Proyectos · Luiz Felipe dos Santos"]
