@@ -4,7 +4,6 @@
         "description": "Portfolio of Luiz Felipe dos Santos, full stack developer in TypeScript: projects, background and contact."
     },
     "heading": "Full stack developer in TypeScript",
-    "intro": "I build web products end to end, from the database to the interface.",
     "hero": {
         "viewProjects": "View projects"
     },
