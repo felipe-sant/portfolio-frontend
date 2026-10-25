@@ -48,9 +48,6 @@
                     "category": "tooling",
                     "items": [
                         {
-                            "name": "Git"
-                        },
-                        {
                             "name": "Jest"
                         }
                     ]
