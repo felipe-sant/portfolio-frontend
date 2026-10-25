@@ -172,8 +172,8 @@ O sistema é **desenhado com linha, não com sombra**.
 Discreto e curto: `--ease` (`cubic-bezier(0.2, 0, 0.2, 1)`) com `--dur-fast` (120ms),
 `--dur-base` (180ms, transição de cor, borda, fundo e transform) e `--dur-slow` (320ms). Animações
 contínuas: `--dur-shimmer` (1.4s, skeleton), `--dur-spin` (700ms, spinner) e `--dur-marquee`
-(22s, faixa de stack). Nada de bounce, entrada em escala ou parallax. A faixa de stack tem botão de
-pausa (D28).
+(22s, faixa de stack). Nada de bounce, entrada em escala ou parallax. O botão "Reduzir movimento" do menu da
+engrenagem desliga o movimento da faixa de stack (D28).
 
 Tokens da #84 (D59): `--dur-page` (150ms, transição de página), `--stagger` (60ms, atraso entre
 irmãos na entrada, no máximo 5 degraus por `data-reveal-step`) e `--press-scale` (0.97, escala de
@@ -235,14 +235,13 @@ seguem as mesmas regras (requisito R2).
 SVG inline traçado, no vocabulário do Lucide: `viewBox="0 0 24 24"`, `fill="none"`,
 `stroke="currentColor"`, `stroke-linecap="round"`, traço de 2 a 2.4 e tamanho de 12 a 20px (D15). O
 inventário é fechado (lupa, ×, chevrons, download, hambúrguer, lua, sol, arco de spinner, pin,
-check, alerta, GitHub, LinkedIn, envelope, arquivo, lupa com mais, pausa e play da faixa de stack
-(D28) e a estrela preenchida, único ícone com `fill`, que marca projeto em destaque). Setas no texto
+check, alerta, GitHub, LinkedIn, envelope, arquivo, lupa com mais, seta para a direita (D15) e a estrela preenchida, único ícone com `fill`, que marca projeto em destaque). Setas no texto
 são caracteres unicode (`→ ← ↗ ↓ ▾`), não ícones.
 
 A recomendação do handoff é trocar por `lucide-react` e usar um pacote de marcas (ou os SVGs
 oficiais) para GitHub e LinkedIn. A #32 não instalou nada: os ícones são SVG inline no componente
-`Icon` (`src/components/Icon.tsx`), com o nome em `src/enum/iconNames.enum.ts`. Pausa e play de D28
-entram com a #34 e o botão só de ícone com a #33.
+`Icon` (`src/components/Icon.tsx`), com o nome em `src/enum/iconNames.enum.ts`. A seta para a direita entrou com a
+#34 e o botão só de ícone com a #33.
 
 ## Acessibilidade
 
