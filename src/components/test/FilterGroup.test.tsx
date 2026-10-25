@@ -15,6 +15,19 @@ function renderGroup(value: string | undefined, onChange = vi.fn()) {
 }
 
 describe("FilterGroup", () => {
+    it("rola o botão focado para dentro da área visível", async () => {
+        const scrollIntoView = vi.fn()
+        Element.prototype.scrollIntoView = scrollIntoView
+        const user = userEvent.setup()
+        renderGroup("")
+
+        await user.tab()
+        await user.tab()
+
+        expect(scrollIntoView).toHaveBeenLastCalledWith({ block: "nearest", inline: "nearest" })
+        expect(screen.getByRole("button", { name: "Web" })).toHaveFocus()
+    })
+
     it("renderiza o grupo com um botão quando há uma só opção", () => {
         render(
             <FilterGroup

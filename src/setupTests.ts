@@ -7,6 +7,9 @@ import clearContentCache from "@/services/content/clearContentCache"
 import THEME_STORAGE_KEY from "@/utils/themeStorageKey"
 
 beforeEach(async () => {
+    if (typeof Element !== "undefined") {
+        Element.prototype.scrollIntoView = () => undefined
+    }
     clearContentCache()
     if (typeof localStorage !== "undefined") {
         localStorage.removeItem(LANGUAGE_STORAGE_KEY)

@@ -47,6 +47,7 @@
     margin-inline: calc(-1 * var(--pad-page));
     padding: var(--space-1) var(--pad-page);
     overflow-x: auto;
+    scroll-padding-inline: var(--pad-page);
     scrollbar-width: none;
 }
 

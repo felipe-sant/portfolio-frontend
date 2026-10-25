@@ -22,6 +22,9 @@ function FilterGroup({ label, options, value, onChange }: FilterGroupProps) {
                     className={css.button}
                     aria-pressed={option.value === value}
                     onClick={() => onChange(option.value)}
+                    onFocus={(event) =>
+                        event.currentTarget.scrollIntoView({ block: "nearest", inline: "nearest" })
+                    }
                 >
                     {option.label}
                 </button>
