@@ -57,6 +57,10 @@ A fonte das variáveis é o `.env.example` da raiz. Só variáveis com prefixo `
 | -------------- | ----- | ------- | -------- | ------------------------------------------------------------- |
 | `VITE_API_URL` | vazia | ausente | ausente  | URL base do backend, lida só em `src/services/http/apiUrl.ts` |
 
+| `VITE_SITE_URL` | `http://localhost:5173` (padrão sem a variável) | `https://felipe-sant-beta.vercel.app` | `https://felipe-sant.vercel.app` | Origem pública do site (só `http(s)://host`, sem caminho nem barra final), lida só em `src/utils/getSiteUrl.ts`; base de canônica, Open Graph e sitemap (NF-HO-06) |
+
+`VITE_SITE_URL` é obrigatória em `npm run build`: ausente, vazia, sem `http(s)` ou com caminho, query ou hash, o build falha em português (`scripts/resolveSiteUrl.ts`, chamada em `vite.config.ts` só no `build`; `dev` e testes não falham). Na Fatec a origem é `https://fatec-jacarei-dsm-portfolio.github.io` e o subcaminho `/ra2581392423047/` vem de `BASE_PATH`, nunca da variável. Os workflows definem o valor literal (é público): o `deploy.yml` em cada job, o `ci.yml` e o `fatec-pages.yml` o valor de produção só para o build passar, e `npm run build:fatec` força a origem da Fatec (`scripts/fatecSiteUrl.ts`).
+
 O backend ainda não existe e a aplicação usa dados mock, então `VITE_API_URL` fica vazia ou ausente: nos Environments ela não está definida, porque o GitHub não aceita variável vazia, e o workflow funciona sem ela. Sem a variável, `apiUrl.ts` usa string vazia e as requisições saem com caminho relativo. O valor do `.env.example` é só um modelo do formato. Quando o backend existir, a URL entra como variável de cada Environment.
 
 Variável de build, fora do cliente e sem prefixo `VITE_`:

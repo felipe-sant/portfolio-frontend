@@ -7,7 +7,9 @@ const prerenderRoutes: PrerenderRoute[] = [
     {
         pattern: "",
         scope: "none",
-        queries: () => []
+        queries: (lang) => [
+            (dispatch) => dispatch(profileApi.endpoints.getProfile.initiate({ lang }))
+        ]
     },
     {
         pattern: "projects",

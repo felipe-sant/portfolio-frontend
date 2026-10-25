@@ -5,6 +5,9 @@
         "clear": "Limpar busca"
     },
     "authorName": "Luiz Felipe dos Santos",
+    "meta": {
+        "imageAlt": "Gato ao lado do nome Luiz Felipe dos Santos"
+    },
     "skipToContent": "Pular para o conteúdo",
     "navigation": {
         "label": "Principal",
