@@ -5,7 +5,17 @@
     padding-inline: var(--pad-page);
 }
 
+.firstScreen {
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100svh - var(--header-height) - 3.9rem);
+}
+
 .hero {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    justify-content: center;
     padding-block: clamp(2.5rem, 6vw, 5rem);
 }
 
@@ -121,6 +131,16 @@
     font-weight: var(--weight-semibold);
     text-decoration: none;
     white-space: nowrap;
+}
+
+@media (hover: hover) {
+    .viewAll {
+        transition: filter var(--dur-base) var(--ease);
+    }
+
+    .viewAll:hover {
+        filter: brightness(var(--brand-hover-brightness));
+    }
 }
 
 .featuredList {
