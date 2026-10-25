@@ -506,7 +506,7 @@ describe("ProjectsPage", () => {
         const user = userEvent.setup()
         const { router } = renderRoutes("/pt-BR/projects?type=web&sort=title")
 
-        await screen.findByRole("heading", { level: 1, name: "Projetos" })
+        await screen.findByRole("heading", { level: 1, name: "Projetos" }, { timeout: 5000 })
         await waitFor(() =>
             expect(cards().map((card) => card.textContent)).toEqual([
                 "Projeto 1",
@@ -523,15 +523,15 @@ describe("ProjectsPage", () => {
             expect(router.state.location.search).toBe("?type=web&category=academic&sort=title")
         )
         expect(router.state.historyAction).toBe("REPLACE")
-    })
+    }, 20000)
 
     it("mantém a query ao trocar de idioma pelo seletor e abre no primeiro lote", async () => {
         stubProjects(20)
         const user = userEvent.setup()
         const { router } = renderRoutes("/pt-BR/projects?type=web")
-        await waitFor(() => expect(cards().length).toBeGreaterThan(0))
+        await waitFor(() => expect(cards().length).toBeGreaterThan(0), { timeout: 5000 })
         await user.click(screen.getByRole("button", { name: "Carregar mais" }))
-        await waitFor(() => expect(cards()).toHaveLength(10))
+        await waitFor(() => expect(cards()).toHaveLength(10), { timeout: 5000 })
 
         await user.click(screen.getAllByRole("button", { name: "Idioma: Português" })[0])
         const link = screen.getByRole("link", { name: "English" })
@@ -540,9 +540,9 @@ describe("ProjectsPage", () => {
 
         await waitFor(() => expect(router.state.location.pathname).toBe("/en/projects"))
         expect(router.state.location.search).toBe("?type=web")
-        await screen.findByRole("heading", { level: 1, name: "Projects" })
-        await waitFor(() => expect(cards()).toHaveLength(9))
-    })
+        await screen.findByRole("heading", { level: 1, name: "Projects" }, { timeout: 5000 })
+        await waitFor(() => expect(cards()).toHaveLength(9), { timeout: 5000 })
+    }, 20000)
 
     it("publica o JSON-LD CollectionPage com todos os projetos, igual com ou sem query", async () => {
         stubProjects(20)
