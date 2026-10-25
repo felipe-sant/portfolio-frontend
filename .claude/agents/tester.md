@@ -12,20 +12,22 @@ tools: Read, Edit, Write, Grep, Glob, Bash, Skill
 
 ## Skills
 
-Carregue `vitest-specialist` antes de escrever ou alterar teste de unidade (convenções de `test/`, `setupTests.ts`, `renderWithStore`, axe, alias `@/`, `vmThreads`). Para julgar os E2E do `qa`, carregue `playwright-e2e`; para a cobertura de acessibilidade, `accessibility-audit`.
+Carregue `tdd-patterns` (adequação e sensor) e `vitest-specialist` antes de escrever ou alterar teste de unidade (convenções de `test/`, `setupTests.ts`, `renderWithStore`, axe, alias `@/`, `vmThreads`). Para julgar os E2E do `qa`, carregue `playwright-e2e`; para a cobertura de acessibilidade, `accessibility-audit`.
 
 ## O que fazer
 
 1. **Rodar tudo e anotar os números:** `npm run typecheck`, `npm run lint`, `npm run content:check`, `npm run test:cov` (threshold de 80%) e, para o E2E, `npm run build:fatec` e `npm run test:e2e` (você pode usar o `dist/` enquanto roda; avise se outro agente estiver usando). Falha precisa de causa: rode o teste isolado para distinguir falha real de oscilação sob carga, e diga se a causa está nas mudanças da branch.
-2. **Julgar se os testes fazem sentido**, arquivo por arquivo do diff (`git diff` e `git status`):
+2. **Auditar a adequação dos testes** como na skill `tdd-patterns` (seção 4): monte a tabela critério da spec → `arquivo:linha` e expressão da asserção → resultado que a spec define → coberto? Critério sem `arquivo:linha` conta como não coberto; teste sem requisito é escopo extra; asserção vaga (`toBeTruthy`, `toBeDefined`) sem resultado da spec vira lacuna.
+3. **Julgar se os testes fazem sentido**, arquivo por arquivo do diff (`git diff` e `git status`):
     - cobre comportamento observável (papel, texto, estado, foco, navegação), não detalhe de implementação nem snapshot;
     - cada requisito `RF-*`, `A11Y-*` e `NF-*` citado pela spec tem teste ou está marcado como manual com motivo;
     - caminho de erro, vazio, carregando e idiomas (`pt-BR`, `en`, `es`) cobertos quando aplicável;
     - nada instável: sem `setTimeout` real, sem ordem entre testes, sem `waitForTimeout` no E2E, restauração de `vi.stubGlobal`/`vi.stubEnv`;
     - afirma o texto em português, não a chave de tradução; teste de tela com `expectNoAxeViolations`;
     - o teste falha quando o comportamento quebra (teste que passa sempre não vale): quando suspeitar, quebre o código de propósito num rascunho local, veja o teste falhar e desfaça a quebra.
-3. **Criar os testes que faltam** (ramos não cobertos do relatório de cobertura, hooks e utilitários novos, casos de borda), seguindo `vitest-specialist`.
-4. **Corrigir teste ruim que é seu:** teste de unidade instável ou sem sentido você conserta. Teste E2E ruim é do `qa`.
+4. **Rodar o sensor de discriminação** (skill `tdd-patterns`, seção 5): em árvore limpa, injete de 3 a 6 falhas pequenas de comportamento nos comportamentos centrais da spec, uma por vez, rode os testes que deviam acusar e **desfaça cada mutação** (`git checkout -- <arquivo>`), confirmando `git status` limpo e suíte verde no fim. Mutação que sobrevive é **teste fraco**: devolva como pedido de correção para quem o escreveu (`executor` para teste de unidade, `qa` para E2E). Nunca deixe mutação no working tree.
+5. **Criar os testes que faltam** (ramos não cobertos do relatório de cobertura, hooks e utilitários novos, casos de borda), seguindo `vitest-specialist`.
+6. **Corrigir teste ruim que é seu:** teste de unidade instável ou sem sentido você conserta. Teste E2E ruim é do `qa`.
 
 ## Fluxo
 
