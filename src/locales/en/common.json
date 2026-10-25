@@ -5,6 +5,9 @@
         "clear": "Clear search"
     },
     "authorName": "Luiz Felipe dos Santos",
+    "meta": {
+        "imageAlt": "Cat next to the name Luiz Felipe dos Santos"
+    },
     "skipToContent": "Skip to content",
     "navigation": {
         "label": "Main",
