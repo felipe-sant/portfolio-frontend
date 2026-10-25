@@ -49,6 +49,7 @@ export default defineConfig(({ command, mode, isSsrBuild }) => {
                     "src/types/**",
                     "vite.config.ts",
                     "scripts/buildFatec.ts",
+                    "scripts/generateOgImage.ts",
                     "scripts/prerender.ts",
                     "scripts/previewFatec.ts",
                     "src/setupTests.ts",
