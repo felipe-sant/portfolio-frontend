@@ -103,7 +103,7 @@ describe("ProjectsPage", () => {
             screen.getByText("Os projetos aparecem aqui assim que eu publicar o primeiro.")
         ).toBeVisible()
         expect(screen.queryByRole("searchbox")).not.toBeInTheDocument()
-        expect(screen.queryByRole("combobox")).not.toBeInTheDocument()
+        expect(screen.queryByRole("button", { name: /^Ordenar/ })).not.toBeInTheDocument()
         expect(screen.queryByRole("group")).not.toBeInTheDocument()
         expect(screen.queryByRole("status")).not.toBeInTheDocument()
     })
@@ -161,7 +161,7 @@ describe("ProjectsPage", () => {
             screen.getByRole("heading", { level: 1 }),
             screen.getByText(/Tudo o que construí/),
             screen.getByRole("searchbox"),
-            screen.getByRole("combobox", { name: "Ordenar" }),
+            screen.getByRole("button", { name: "Ordenar Mais recente" }),
             screen.getByRole("group", { name: "Tipo" }),
             screen.getByRole("group", { name: "Categoria" }),
             screen.getByRole("status"),
@@ -274,15 +274,15 @@ describe("ProjectsPage", () => {
         const user = userEvent.setup()
         renderPage()
         await listLoaded()
-        const select = screen.getByRole("combobox", { name: "Ordenar" })
+        await user.click(screen.getByRole("button", { name: "Ordenar Mais recente" }))
 
         expect(
-            within(select)
+            within(screen.getByRole("listbox", { name: "Ordenar" }))
                 .getAllByRole("option")
                 .map((option) => option.textContent)
         ).toEqual(["Mais recente", "Mais antigo", "A–Z"])
 
-        await user.selectOptions(select, "A–Z")
+        await user.click(screen.getByRole("option", { name: "A–Z" }))
 
         await waitFor(() => expect(currentLocation()).toBe("/pt-BR/projects?sort=title"))
         await waitFor(() => expect(cards()[0]).toHaveTextContent("Projeto 1"))
@@ -475,7 +475,7 @@ describe("ProjectsPage", () => {
             )
         ).toBeVisible()
         expect(alert).not.toHaveTextContent(/500|Error|fetch/i)
-        expect(screen.getByRole("combobox", { name: "Ordenar" })).toHaveValue("title")
+        expect(screen.getByRole("button", { name: "Ordenar A–Z" })).toHaveTextContent("A–Z")
         await waitFor(() => expect(screen.getByRole("status")).toBeEmptyDOMElement())
 
         recover()
@@ -624,7 +624,7 @@ describe("ProjectsPage", () => {
             await listLoaded()
 
             expect(screen.getByRole("searchbox", { name: search })).toBeVisible()
-            expect(screen.getByRole("combobox", { name: sort })).toBeVisible()
+            expect(screen.getByRole("button", { name: new RegExp(`^${sort}\\b`) })).toBeVisible()
             expect(screen.getByRole("group", { name: type })).toBeVisible()
             expect(screen.getByRole("button", { name: all })).toBeVisible()
             expect(screen.getByRole("group", { name: category })).toBeVisible()

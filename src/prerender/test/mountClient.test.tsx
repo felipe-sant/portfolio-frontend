@@ -240,7 +240,7 @@ describe("mountClient com caminho pré-renderizado", () => {
         await settle()
 
         expect(screen.getByRole("button", { name: "Web" })).toHaveAttribute("aria-pressed", "true")
-        expect(screen.getByRole("combobox", { name: "Ordenar" })).toHaveValue("title")
+        expect(screen.getByRole("button", { name: "Ordenar A–Z" })).toHaveTextContent("A–Z")
         expect(cardTitles()).toEqual([
             "Controle de Despesas",
             "Conversor de Unidades",
