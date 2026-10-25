@@ -4,6 +4,7 @@ import { render, screen } from "@testing-library/react"
 import listProjects from "@/services/content/listProjects"
 import projectsApi from "@/store/api/projects.api"
 import createStore from "@/store/createStore"
+import buildProfile from "@/testUtils/buildProfile"
 import buildProjectRecord from "@/testUtils/buildProjectRecord"
 import parseUntyped from "@/testUtils/parseUntyped"
 import renderWithStore from "@/testUtils/renderWithStore"
@@ -492,6 +493,89 @@ describe("projectsApi, páginas e índice", () => {
             projectsApi.endpoints.getProjectsIndex.initiate({ lang: "pt-BR" })
         )
 
+        expect(result.error).toMatchObject({ status: "FETCH_ERROR" })
+    })
+})
+
+function requestOptions(store: ReturnType<typeof createStore>, args: { lang: SupportedLanguage }) {
+    return store.dispatch(projectsApi.endpoints.getProjectFilterOptions.initiate(args))
+}
+
+function optionFiles(lang: string) {
+    return {
+        [`content/${lang}/projects.json`]: { items: [first, second] },
+        [`content/${lang}/profile.json`]: buildProfile({
+            stack: [
+                {
+                    category: "frontend",
+                    items: [{ name: "React" }, { name: "Docker" }]
+                }
+            ]
+        })
+    }
+}
+
+describe("projectsApi, getProjectFilterOptions", () => {
+    it("devolve a forma ProjectFilterOptions com a stack do perfil e os projetos", async () => {
+        stubContentFetch(optionFiles("pt-BR"))
+        const store = createStore()
+
+        const result = await requestOptions(store, { lang: "pt-BR" })
+
+        expect(result.data).toStrictEqual({
+            technologies: [
+                { value: "Docker", count: 0 },
+                { value: "React", count: 2 },
+                { value: "TypeScript", count: 2 }
+            ],
+            years: [
+                { value: "2026", count: 1 },
+                { value: "2025", count: 1 }
+            ]
+        })
+    })
+
+    it("trocar o idioma faz outro pedido e outra chave de cache", async () => {
+        const fetchMock = stubContentFetch({ ...optionFiles("pt-BR"), ...optionFiles("en") })
+        const store = createStore()
+
+        await requestOptions(store, { lang: "pt-BR" })
+        await requestOptions(store, { lang: "en" })
+
+        expect(fetchMock).toHaveBeenCalledWith("/content/en/profile.json")
+        expect(fetchMock).toHaveBeenCalledWith("/content/en/projects.json")
+        const keys = Object.keys(store.getState().api.queries)
+        expect(keys).toContain('getProjectFilterOptions({"lang":"pt-BR"})')
+        expect(keys).toContain('getProjectFilterOptions({"lang":"en"})')
+    })
+
+    it("responde UNSUPPORTED_LANGUAGE para um idioma inválido sem ler o conteúdo", async () => {
+        const fetchMock = stubContentFetch({})
+        const store = createStore()
+
+        const result = await store.dispatch(
+            projectsApi.endpoints.getProjectFilterOptions.initiate(parseUntyped('{"lang":"fr"}'))
+        )
+
+        expect(result.error).toMatchObject({
+            status: 400,
+            data: { error: { code: "UNSUPPORTED_LANGUAGE" } }
+        })
+        expect(fetchMock).not.toHaveBeenCalled()
+    })
+
+    it.each([
+        ["o perfil", "content/pt-BR/profile.json"],
+        ["os projetos", "content/pt-BR/projects.json"]
+    ])("vira erro no formato do contrato quando falha a leitura d%s", async (_name, path) => {
+        const available: Record<string, unknown> = optionFiles("pt-BR")
+        delete available[path]
+        stubContentFetch(available)
+        const store = createStore()
+
+        const result = await requestOptions(store, { lang: "pt-BR" })
+
+        expect(result.isError).toBe(true)
         expect(result.error).toMatchObject({ status: "FETCH_ERROR" })
     })
 })

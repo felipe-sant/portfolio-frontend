@@ -1,7 +1,9 @@
 import buildProjectDetail from "@/services/content/buildProjectDetail"
 import findProjectDocument from "@/services/content/findProjectDocument"
 import findProjectRecord from "@/services/content/findProjectRecord"
+import listProjectFilterOptions from "@/services/content/listProjectFilterOptions"
 import listProjects from "@/services/content/listProjects"
+import loadProfile from "@/services/content/loadProfile"
 import loadProjectDocument from "@/services/content/loadProjectDocument"
 import loadProjectRecords from "@/services/content/loadProjectRecords"
 import sortProjectDocuments from "@/services/content/sortProjectDocuments"
@@ -14,6 +16,7 @@ import type ListResponse from "@/types/api/ListResponse.types"
 import type SupportedLanguage from "@/types/language/SupportedLanguage.types"
 import type ProjectDetail from "@/types/project/ProjectDetail.types"
 import type ProjectDocument from "@/types/project/ProjectDocument.types"
+import type ProjectFilterOptions from "@/types/project/ProjectFilterOptions.types"
 import type ProjectListParams from "@/types/project/ProjectListParams.types"
 import type ProjectPage from "@/types/project/ProjectPage.types"
 import type ProjectSummary from "@/types/project/ProjectSummary.types"
@@ -95,6 +98,20 @@ const projectsApi = api.injectEndpoints({
                     } while (offset < total)
 
                     return { data: { items } }
+                } catch (error) {
+                    return { error: toQueryError(error) }
+                }
+            }
+        }),
+        getProjectFilterOptions: build.query<ProjectFilterOptions, GetProjectsIndexArgs>({
+            queryFn: async ({ lang }) => {
+                try {
+                    validateLang(lang)
+                    const [records, profile] = await Promise.all([
+                        loadProjectRecords(lang),
+                        loadProfile(lang)
+                    ])
+                    return { data: listProjectFilterOptions(records, profile.stack, lang) }
                 } catch (error) {
                     return { error: toQueryError(error) }
                 }
