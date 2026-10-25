@@ -184,7 +184,7 @@ contra `npm run preview:fatec` (`base` `/ra2581392423047/`), que serve o `dist/`
 `reducedMotion`) rodam cada teste. Seletor é `getByRole` com nome em português, rota abre sem barra
 inicial (relativa ao `baseURL`). Toda tela nova acrescenta o caminho em `e2e/support/routesUnderTest.ts`
 (o axe, com `color-contrast` ligada, roda em todas) e, se tiver teclado próprio, um roteiro em
-`e2e/<tema>.spec.ts`. Violação do axe se corrige na marcação ou no CSS, nunca desligando regra.
+`e2e/<tema>.spec.ts`. Violação do axe se corrige na marcação ou no CSS, nunca desligando regra. Os projetos rodam com `reducedMotion: "reduce"`: roteiro que precisa de movimento pleno (faixa de stack com pausa) usa `test.use({ reducedMotion: "no-preference" })`. Elemento com `useReveal` leva `suppressHydrationWarning` (o `data-reveal` do HTML do servidor difere do primeiro render no navegador).
 
 O CI (`.github/workflows/`) roda `npm run build`, `npm run lint`, a suíte de testes e o job `e2e`
 (`E2E`: instala o Chromium, `npm run build:fatec`, `npm run test:e2e`, relatório como artefato em
@@ -360,7 +360,7 @@ para editores compatíveis, coerente com o `.prettierrc`.
 
 - **`src/components/`** — componentes base reutilizáveis (`Button`, `Chip`, `TextField`, `SearchInput`,
   `Skeleton`, `Spinner`, `VisuallyHidden`, `Icon`, `IconButton`, `CatLogo`, `ThemeToggle`,
-  `MotionToggle`, `SettingsMenu`, `Flag`, `LanguageSelector`, `Header`, `SkipLink`, `Footer`, `CopyEmailButton`, `ButtonLink`). O desenho de cada ícone fica num mapa local de
+  `MotionToggle`, `SettingsMenu`, `Flag`, `LanguageSelector`, `Header`, `SkipLink`, `Footer`, `CopyEmailButton`, `ButtonLink`, `AvailabilityBadge`, `LoadError`, `StatusCard`, `StackMarquee`, `FeaturedProject`). O desenho de cada ícone fica num mapa local de
   `Icon.tsx`, com os nomes em `src/enum/iconNames.enum.ts`. Texto fixo de componente vive em `common`
   (`searchInput.clear`); o resto chega por prop. O `jsx-a11y/prefer-tag-over-role` acusa `role="status"`
   literal: passe `role={"status"}`. Controle de formulário tem borda `--border-control`, nunca
@@ -420,7 +420,7 @@ para editores compatíveis, coerente com o `.prettierrc`.
   prop `viewTransition` dos `Link` de navegação (o `LanguageSelector` fica sem); `startThemeTransition`
   (`src/utils/`, chamada por `useTheme.setTheme`) liga `data-theme-transition` no `<html>` durante a
   troca; `useReveal()` (`src/hooks/`, devolve `ref` e `revealProps`) e o componente `SkeletonSwap`
-  ficam prontos para as telas adotarem (Início e Projetos ainda não os usam); tokens `--dur-page`,
+  são usados pela Início (destaques e skeletons dos blocos); Projetos ainda não os usa; tokens `--dur-page`,
   `--stagger` e `--press-scale` são neutralizados nos dois blocos de movimento reduzido.
 - **Alias de import `@/`** — `@/*` resolve para `src/*`. Configurado em dois lugares que precisam
   continuar concordando: `paths` no `tsconfig.app.json` (para o `tsc` e o editor) e `resolve.alias` no
