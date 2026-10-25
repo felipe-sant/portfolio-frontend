@@ -1,23 +1,23 @@
 ## Context
 
-Projeto acadêmico para praticar operações CRUD completas (criar, listar, editar, excluir) com um banco NoSQL, construindo tanto o frontend quanto a API.
+Academic project to practice complete CRUD operations (create, list, edit, delete) with a NoSQL database, building both the frontend and the API.
 
 ## My role
 
-Desenvolvi sozinho o frontend e o backend.
+I developed the frontend and the backend on my own.
 
 ## Solution
 
-A aplicação permite cadastrar despesas (descrição, data e valor), listar todas as despesas cadastradas, editar e excluir cada uma. O frontend consome uma API REST própria, que persiste os dados no MongoDB via Mongoose.
+The application lets the user register expenses (description, date and amount), list all registered expenses, and edit and delete each one. The frontend consumes its own REST API, which persists the data in MongoDB through Mongoose.
 
 ## Technical decisions
 
-Separação clara entre frontend e backend em repositórios próprios, unidos por um repositório wrapper com git submodules. O backend expõe uma API REST simples em Express, e o frontend usa React puro (sem bibliotecas de estado), com chamadas diretas à API.
+Clear separation between frontend and backend in their own repositories, joined by a wrapper repository with git submodules. The backend exposes a simple REST API in Express, and the frontend uses plain React (no state libraries), with direct calls to the API.
 
 ## Outcome
 
-O CRUD funciona de ponta a ponta — testado criando, listando e confirmando a persistência de uma despesa. A interface, porém, ainda está em nível de protótipo (sem estilização real, com textos de placeholder como "Hello world"), por isso o projeto está marcado para retrabalho visual futuro.
+The CRUD works end to end, tested by creating, listing and confirming the persistence of an expense. The interface, however, is still at prototype level (no real styling, with placeholder texts such as "Hello world"), so the project is marked for future visual rework.
 
 ## Learnings
 
-A ideia e a base funcional do projeto são sólidas — a maior lacuna hoje é só de acabamento de interface, não de lógica ou arquitetura.
+The idea and the functional base of the project are solid. The biggest gap today is only interface polish, not logic or architecture.

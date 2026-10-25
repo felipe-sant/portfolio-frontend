@@ -30,15 +30,23 @@ function Card({ index }: { index?: number }) {
     return <div ref={ref} data-testid="card" {...revealProps} />
 }
 
+function stubElementTop(top: number) {
+    vi.spyOn(HTMLElement.prototype, "getBoundingClientRect").mockReturnValue({
+        top
+    } as DOMRect)
+}
+
 afterEach(() => {
+    vi.restoreAllMocks()
     vi.unstubAllGlobals()
     localStorage.removeItem(MOTION_STORAGE_KEY)
     document.documentElement.removeAttribute("data-motion")
 })
 
 describe("useReveal", () => {
-    it("começa escondido e fica visível ao cruzar a viewport", () => {
+    it("começa escondido abaixo da dobra e fica visível ao cruzar a viewport", () => {
         const { instances } = stubObserver()
+        stubElementTop(5000)
 
         render(<Card />)
 
@@ -51,6 +59,7 @@ describe("useReveal", () => {
 
     it("continua escondido enquanto não há interseção", () => {
         const { instances } = stubObserver()
+        stubElementTop(5000)
 
         render(<Card />)
 
@@ -61,6 +70,7 @@ describe("useReveal", () => {
 
     it("desconecta o observer depois de revelar", () => {
         const { instances, disconnect } = stubObserver()
+        stubElementTop(5000)
 
         render(<Card />)
         act(() => instances[0].callback([{ isIntersecting: true }]))
@@ -70,11 +80,22 @@ describe("useReveal", () => {
 
     it("desconecta o observer ao desmontar", () => {
         const { disconnect } = stubObserver()
+        stubElementTop(5000)
 
         const { unmount } = render(<Card />)
         unmount()
 
         expect(disconnect).toHaveBeenCalled()
+    })
+
+    it("mantém visível o que já está na primeira tela", () => {
+        const { instances } = stubObserver()
+        stubElementTop(100)
+
+        render(<Card />)
+
+        expect(screen.getByTestId("card")).toHaveAttribute("data-reveal", "visible")
+        expect(instances).toHaveLength(0)
     })
 
     it("nasce visível com movimento reduzido", () => {

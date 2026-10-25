@@ -18,3 +18,19 @@
     background-color: var(--bg-page);
     box-shadow: var(--shadow-modal);
 }
+
+.group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+}
+
+.title {
+    margin: 0;
+    padding: var(--space-1) var(--space-4) 0;
+    color: var(--text-label);
+    font-family: var(--font-mono);
+    font-size: var(--text-label-sm);
+    letter-spacing: var(--ls-label);
+    text-transform: uppercase;
+}

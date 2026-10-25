@@ -1,23 +1,23 @@
 ## Contexto
 
-Projeto de hobby, feito só por diversão num único dia: um site de "pedido de namoro impossível de recusar", onde o botão de recusa foge do cursor sempre que o usuário tenta se aproximar dele.
+Proyecto de hobby, hecho solo por diversión en un único día: un sitio de "pedido de noviazgo imposible de rechazar", donde el botón de rechazo huye del cursor cada vez que el usuario intenta acercarse.
 
 ## Mi rol
 
-Desenvolvi sozinho, do zero ao deploy.
+Lo desarrollé yo solo, desde cero hasta el despliegue.
 
 ## Solución
 
-Ao passar o mouse perto do botão "Não", a posição dele é recalculada aleatoriamente dentro da tela, tornando praticamente impossível clicar nele. O botão "Sim" aceita o convite e redireciona para uma música.
+Al pasar el mouse cerca del botón "Não" (No), su posición se recalcula aleatoriamente dentro de la pantalla, lo que vuelve prácticamente imposible hacer clic en él. El botón "Sim" (Sí) acepta la invitación y redirige a una canción.
 
 ## Decisiones técnicas
 
-A lógica de "fuga" é simples e direta: no evento de mouseover (e no clique, como segurança extra), o botão recebe uma nova posição absoluta gerada aleatoriamente dentro de uma faixa segura da tela, via uma função utilitária de geração de posição.
+La lógica de "huida" es simple y directa: en el evento de mouseover (y en el clic, como seguridad extra), el botón recibe una nueva posición absoluta generada aleatoriamente dentro de una franja segura de la pantalla, mediante una función utilitaria de generación de posición.
 
 ## Resultado
 
-Projeto pequeno e funcional, publicado e no ar.
+Proyecto pequeño y funcional, publicado y en línea.
 
 ## Aprendizajes
 
-Às vezes um projeto não precisa resolver um problema sério para ser um bom exercício de frontend — foi uma forma leve de praticar manipulação de DOM e posicionamento dinâmico de elementos.
+A veces un proyecto no necesita resolver un problema serio para ser un buen ejercicio de frontend. Fue una forma ligera de practicar la manipulación del DOM y el posicionamiento dinámico de elementos.

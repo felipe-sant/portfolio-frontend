@@ -1,0 +1,118 @@
+.band {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    padding: var(--space-4) 0;
+    border-block: var(--border-width) solid var(--border-subtle);
+    background-color: var(--bg-raised);
+}
+
+.srOnly {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+}
+
+.track {
+    display: flex;
+    width: max-content;
+    animation: marquee var(--dur-marquee) linear infinite;
+}
+
+.list {
+    display: flex;
+    flex: none;
+    gap: var(--space-8);
+    margin: 0;
+    padding: 0 var(--space-8) 0 0;
+    list-style: none;
+}
+
+.item,
+.primary {
+    font-family: var(--font-mono);
+    font-size: var(--text-body-md);
+    white-space: nowrap;
+}
+
+.item {
+    color: var(--text-weak);
+}
+
+.primary {
+    color: var(--text-link);
+}
+
+@keyframes marquee {
+    from {
+        transform: translateX(0);
+    }
+
+    to {
+        transform: translateX(-50%);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    :root:not([data-motion]) .band {
+        overflow-x: auto;
+        scrollbar-width: thin;
+        scrollbar-color: var(--border-strong) transparent;
+        cursor: grab;
+    }
+
+    :root:not([data-motion]) .track {
+        animation: none;
+    }
+
+    :root:not([data-motion]) .list {
+        padding: 0 var(--pad-page);
+    }
+}
+
+:root[data-motion="reduced"] .band {
+    overflow-x: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-strong) transparent;
+    cursor: grab;
+}
+
+:root[data-motion="reduced"] .track {
+    animation: none;
+}
+
+:root[data-motion="reduced"] .list {
+    padding: 0 var(--pad-page);
+}
+
+@media (pointer: coarse) {
+    .band {
+        overflow-x: auto;
+        scrollbar-width: thin;
+        scrollbar-color: var(--border-strong) transparent;
+        cursor: grab;
+    }
+
+    .track {
+        animation: none;
+    }
+
+    .list {
+        padding: 0 var(--pad-page);
+    }
+
+    .list[aria-hidden="true"] {
+        display: none;
+    }
+}
+
+.band[data-dragging="true"] {
+    cursor: grabbing;
+    user-select: none;
+}

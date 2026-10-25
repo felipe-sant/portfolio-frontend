@@ -1,19 +1,19 @@
-## Visão geral
+## Overview
 
-O projeto é dividido em três serviços independentes, cada um em seu próprio repositório:
+The project is split into three independent services, each in its own repository:
 
-- mnist-classifier-front — React. Canvas de desenho e exibição do resultado.
-- mnist-classifier-back — Node.js/Express. Recebe a imagem via upload (Multer) e repassa para o serviço de IA.
-- mnist-classifier-ai — Python/FastAPI. Carrega o modelo treinado (Keras/TensorFlow) e retorna a predição.
+- mnist-classifier-front — React. Drawing canvas and result display.
+- mnist-classifier-back — Node.js/Express. Receives the image through upload (Multer) and forwards it to the AI service.
+- mnist-classifier-ai — Python/FastAPI. Loads the trained model (Keras/TensorFlow) and returns the prediction.
 
-## Fluxo de dados
+## Data flow
 
-1. Usuário desenha no canvas (front).
-2. Front converte o canvas em imagem e envia via POST para o back (`/ia/predict`).
-3. Back repassa a imagem, via multipart/form-data, para o serviço de IA (`/predict`).
-4. IA pré-processa a imagem (grayscale, resize 28x28, normalização) e roda a inferência no modelo.
-5. Resultado (dígito previsto) volta pela mesma cadeia até o front.
+1. The user draws on the canvas (front).
+2. The front converts the canvas into an image and sends it via POST to the back (`/ia/predict`).
+3. The back forwards the image, as multipart/form-data, to the AI service (`/predict`).
+4. The AI preprocesses the image (grayscale, resize to 28x28, normalization) and runs inference on the model.
+5. The result (predicted digit) returns through the same chain to the front.
 
-## Por que três serviços separados
+## Why three separate services
 
-O back em Node não tem um runtime adequado para rodar modelos TensorFlow/Keras diretamente. Separar a IA num serviço Python permite usar as bibliotecas nativas do ecossistema, mantendo o back em Node como uma camada fina de integração (upload, validação, roteamento) entre o front e a IA.
+The Node back does not have a suitable runtime to run TensorFlow/Keras models directly. Separating the AI into a Python service makes it possible to use the ecosystem's native libraries, keeping the Node back as a thin integration layer (upload, validation, routing) between the front and the AI.

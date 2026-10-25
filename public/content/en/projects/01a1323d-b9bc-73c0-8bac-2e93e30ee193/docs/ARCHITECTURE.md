@@ -1,19 +1,19 @@
-## Visão geral
+## Overview
 
-O projeto é dividido em duas partes, em repositórios separados:
+The project is split into two parts, in separate repositories:
 
-- [player-profile-clustering-ai](https://github.com/felipe-sant/player-profile-clustering-ai) — Python. Notebook de treinamento do modelo K-Means, exportação para ONNX.
-- [player-profile-clustering-service](https://github.com/felipe-sant/player-profile-clustering-service) — Node.js/TypeScript. API que roda a inferência do modelo exportado e consulta métricas de atletas no PostgreSQL.
+- [player-profile-clustering-ai](https://github.com/felipe-sant/player-profile-clustering-ai) — Python. K-Means model training notebook, export to ONNX.
+- [player-profile-clustering-service](https://github.com/felipe-sant/player-profile-clustering-service) — Node.js/TypeScript. API that runs inference on the exported model and queries athlete metrics in PostgreSQL.
 
-## Fluxo de dados
+## Data flow
 
-1. Métricas de sessão são carregadas de uma planilha (`players.xlsx`) e filtradas (ex.: partidas com volume mínimo de distância).
-2. Uma métrica derivada ("Explosividade") é calculada a partir de sprint, distância e velocidade máxima.
-3. As métricas são normalizadas (StandardScaler) e usadas para treinar um K-Means com 4 clusters.
-4. Os clusters são nomeados automaticamente com base nas características dos centroides (ex.: alta intensidade e sprint curto = "explosivo").
-5. O pipeline treinado (normalização + K-Means) é exportado para ONNX, junto com os parâmetros do normalizador.
-6. O serviço Node.js carrega o modelo ONNX via `onnxruntime-node`, normaliza os dados de entrada com os mesmos parâmetros do treino, roda a inferência e interpreta o resultado (cluster + confiança).
+1. Session metrics are loaded from a spreadsheet (`players.xlsx`) and filtered (e.g., matches with a minimum distance volume).
+2. A derived metric ("Explosividade", explosiveness) is calculated from sprint, distance and top speed.
+3. The metrics are normalized (StandardScaler) and used to train a K-Means with 4 clusters.
+4. The clusters are named automatically based on the characteristics of the centroids (e.g., high intensity and short sprint = "explosivo", explosive).
+5. The trained pipeline (normalization + K-Means) is exported to ONNX, along with the normalizer parameters.
+6. The Node.js service loads the ONNX model through `onnxruntime-node`, normalizes the input data with the same parameters used in training, runs inference and interprets the result (cluster + confidence).
 
-## Por que ONNX em vez de manter um serviço Python
+## Why ONNX instead of keeping a Python service
 
-Rodar a inferência em Node.js evita manter dois runtimes (Python + Node) em produção — o modelo treinado em Python é exportado uma vez, e o serviço que o consome não precisa de nenhuma dependência de IA além do ONNX Runtime.
+Running inference in Node.js avoids keeping two runtimes (Python + Node) in production. The model trained in Python is exported once, and the service that consumes it does not need any AI dependency besides ONNX Runtime.

@@ -3,15 +3,15 @@
         {
             "id": "01a13188-a1da-7d4b-901c-e7bcc81d497b",
             "title": "Maps",
-            "summary": "Simulador de rota de voo entre dois pontos do Brasil, com a trajetória real pela curvatura da Terra e dados geográficos da API do IBGE.",
+            "summary": "Flight route simulator between two points in Brazil, with the real path following the Earth's curvature and geographic data from the IBGE API.",
             "date": "2025-12",
             "types": ["web", "api"],
             "category": "academic",
             "featured": true,
             "cardTechnologies": ["React", "Express", "Leaflet"],
             "role": "Full stack",
-            "duration": "13 meses",
-            "team": "Sozinho",
+            "duration": "13 months",
+            "team": "Solo",
             "status": "inDevelopment",
             "stack": [
                 {
@@ -69,8 +69,8 @@
                         "width": 640,
                         "height": 360
                     },
-                    "alt": "Mapa do Brasil com campos para inserir coordenadas inicial e final e botão para iniciar a simulação de voo",
-                    "caption": "Tela inicial"
+                    "alt": "Map of Brazil with fields for entering start and end coordinates and a button to start the flight simulation",
+                    "caption": "Home screen"
                 }
             ],
             "documents": [
@@ -95,15 +95,15 @@
         {
             "id": "01a131df-93ee-72f3-8c7a-f67501e47a7a",
             "title": "MNIST Classifier",
-            "summary": "Aplicação que reconhece dígitos manuscritos desenhados pelo usuário, usando uma rede neural treinada com o dataset MNIST (Keras/TensorFlow).",
+            "summary": "Application that recognizes handwritten digits drawn by the user, using a neural network trained on the MNIST dataset (Keras/TensorFlow).",
             "date": "2025-07",
             "types": ["web", "api", "data"],
             "category": "personal",
             "featured": true,
             "cardTechnologies": ["React", "TensorFlow", "FastAPI"],
-            "role": "Full stack + IA",
-            "duration": "2 semanas",
-            "team": "Sozinho",
+            "role": "Full stack + AI",
+            "duration": "2 weeks",
+            "team": "Solo",
             "status": "completed",
             "stack": [
                 {
@@ -165,8 +165,8 @@
                         "width": 640,
                         "height": 360
                     },
-                    "alt": "Resultado da previsão da IA mostrando corretamente o número sete após o desenho",
-                    "caption": "IA acertando a previsão"
+                    "alt": "AI prediction result correctly showing the number seven after the drawing",
+                    "caption": "AI getting the prediction right"
                 }
             ],
             "documents": [
@@ -194,16 +194,16 @@
         },
         {
             "id": "01a131fc-d24c-7c70-887b-0d055f57d251",
-            "title": "Pedido de Namoro Irrecusável",
-            "summary": "Site divertido de pedido de namoro onde o botão \"Não\" foge do cursor sempre que o usuário tenta clicar nele.",
+            "title": "Irresistible Dating Proposal",
+            "summary": "Fun dating proposal website where the \"No\" button runs away from the cursor whenever the user tries to click it.",
             "date": "2024-12",
             "types": ["web"],
             "category": "personal",
             "featured": false,
             "cardTechnologies": ["React", "TypeScript"],
             "role": "Frontend",
-            "duration": "1 dia",
-            "team": "Sozinho",
+            "duration": "1 day",
+            "team": "Solo",
             "status": "completed",
             "stack": [
                 {
@@ -233,8 +233,8 @@
                         "width": 640,
                         "height": 360
                     },
-                    "alt": "Tela de pedido de namoro com botão \"Não\" reposicionado após tentativa de clique",
-                    "caption": "O botão \"Não\" sempre foge"
+                    "alt": "Dating proposal screen with the \"No\" button repositioned after a click attempt",
+                    "caption": "The \"No\" button always runs away"
                 }
             ],
             "documents": [
@@ -250,16 +250,16 @@
         },
         {
             "id": "01a13216-9960-7a66-8288-462bf96ec9a5",
-            "title": "Expense Control (Controle de Despesas)",
-            "summary": "Aplicação de controle de despesas pessoais com CRUD completo — criar, listar, editar e excluir — usando MongoDB.",
+            "title": "Expense Control",
+            "summary": "Personal expense tracking application with full CRUD (create, list, edit and delete) using MongoDB.",
             "date": "2025-06",
             "types": ["web", "api"],
             "category": "academic",
             "featured": false,
             "cardTechnologies": ["React", "Express", "MongoDB"],
             "role": "Full stack",
-            "duration": "2 semanas",
-            "team": "Sozinho",
+            "duration": "2 weeks",
+            "team": "Solo",
             "status": "inDevelopment",
             "stack": [
                 {
@@ -309,8 +309,8 @@
                         "width": 640,
                         "height": 360
                     },
-                    "alt": "Lista de despesas com um item cadastrado, mostrando data, descrição, valor e botões de editar e excluir",
-                    "caption": "CRUD funcionando — despesa cadastrada e listada"
+                    "alt": "Expense list with one registered item, showing date, description, amount and edit and delete buttons",
+                    "caption": "Working CRUD: expense registered and listed"
                 }
             ],
             "documents": [
@@ -332,16 +332,16 @@
         },
         {
             "id": "01a13229-0594-7b2f-a012-ecf61257f6ad",
-            "title": "Unit Converter (Conversor de Unidades)",
-            "summary": "Conversor de unidades de comprimento, peso e temperatura, com interface simples e troca rápida entre unidade de origem e destino.",
+            "title": "Unit Converter",
+            "summary": "Unit converter for length, weight and temperature, with a simple interface and quick switching between source and target unit.",
             "date": "2024-09",
             "types": ["web"],
             "category": "academic",
             "featured": false,
             "cardTechnologies": ["React", "TypeScript"],
             "role": "Frontend",
-            "duration": "5 dias",
-            "team": "Sozinho",
+            "duration": "5 days",
+            "team": "Solo",
             "status": "completed",
             "stack": [
                 {
@@ -371,8 +371,8 @@
                         "width": 640,
                         "height": 360
                     },
-                    "alt": "Conversor de unidades mostrando 10 quilômetros convertidos para 10.000 metros",
-                    "caption": "Conversão de comprimento em ação"
+                    "alt": "Unit converter showing 10 kilometers converted to 10,000 meters",
+                    "caption": "Length conversion in action"
                 }
             ],
             "documents": [
@@ -389,15 +389,15 @@
         {
             "id": "01a1323d-b9bc-73c0-8bac-2e93e30ee193",
             "title": "Player Profile Clustering",
-            "summary": "Modelo de Machine Learning (K-Means) que classifica atletas de futebol em perfis de desempenho físico a partir de métricas de sessão, servido via API com ONNX.",
+            "summary": "Machine Learning model (K-Means) that classifies soccer athletes into physical performance profiles from session metrics, served via API with ONNX.",
             "date": "2026-04",
             "types": ["api", "data"],
             "category": "personal",
             "featured": true,
             "cardTechnologies": ["scikit-learn", "ONNX Runtime", "Node.js"],
-            "role": "IA (modelo e treinamento)",
-            "duration": "1 semana",
-            "team": "Sozinho",
+            "role": "AI (model and training)",
+            "duration": "1 week",
+            "team": "Solo",
             "status": "completed",
             "stack": [
                 {
@@ -450,8 +450,8 @@
                         "width": 640,
                         "height": 360
                     },
-                    "alt": "Gráfico de dispersão mostrando quatro clusters de desempenho de atletas separados visualmente com centroides marcados",
-                    "caption": "Visualização dos clusters por PCA"
+                    "alt": "Scatter plot showing four athlete performance clusters visually separated with marked centroids",
+                    "caption": "Cluster visualization using PCA"
                 }
             ],
             "documents": [

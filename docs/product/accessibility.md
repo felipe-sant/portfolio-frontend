@@ -14,7 +14,7 @@ Além do AA, **cinco critérios AAA são obrigatórios**, porque saem baratos ne
 | 2.4.13 Aparência do foco                    | Contorno de D27: sólido, de no mínimo 2px, afastado 2px do componente (área maior que um perímetro de 2px) e com 3:1 contra o fundo em toda superfície, inclusive as faixas escuras ([Teclado e foco](#teclado-e-foco))                                                                                                                                |
 | 1.4.8 Apresentação visual (no que é viável) | Linha de texto corrido com até 80 caracteres (`--measure`, 34rem, dá cerca de 70), entrelinha de pelo menos 1,5 em texto corrido (`--lh-body`, 1,65), nada de `text-align: justify`, cor escolhível pelos dois temas e texto a 200% sem rolagem horizontal ([Zoom, reflow, alvos e apresentação do texto](#zoom-reflow-alvos-e-apresentação-do-texto)) |
 | 2.5.5 Tamanho do alvo (44px)                | Já atendido pelo design com `--hit-min` (2,75rem); vale em todas as larguras para controles ([Zoom, reflow, alvos e apresentação do texto](#zoom-reflow-alvos-e-apresentação-do-texto))                                                                                                                                                                |
-| 2.3.3 Animação por interação                | `prefers-reduced-motion` desliga toda animação disparada por interação, e a faixa de stack tem pausa (D28) ([Movimento](#movimento))                                                                                                                                                                                                                   |
+| 2.3.3 Animação por interação                | `prefers-reduced-motion` desliga toda animação disparada por interação, e o botão de acessibilidade da engrenagem desliga o movimento da faixa de stack (D28) ([Movimento](#movimento))                                                                                                                                                                |
 
 **Fora da meta, com motivo:**
 
@@ -98,7 +98,7 @@ Fonte: [`decisions.md`](../design/decisions.md).
 - **PI1:** prender e devolver o foco no menu e nos modais.
 - **PI2 e PI3:** medições de contraste pendentes, feitas na #41.
 - **D27 — contorno de foco pelo token `--focus-ring`:** `--brand-deep` no tema claro (5,64:1 sobre `--bg-page`) e `--brand-variant` no escuro (7,36:1). Nas faixas escuras dos dois temas (`--neutral-900`: marquee, complementos) o token vale `--brand-variant` (6,82:1), porque `--brand-deep` daria 2,75:1 ali. Contorno sólido de no mínimo 2px, afastado 2px, nunca cortado pelo `overflow` do contêiner (contêiner rolável ganha folga interna), para cumprir 2.4.13. Substitui D23 na cor e acrescenta essas regras de aparência.
-- **D28 — pausa na faixa de stack:** botão de pausa com `aria-pressed` e rótulo por chave; os ícones de pausa e play entram no inventário de D15; com movimento reduzido a faixa é estática.
+- **D28 — pausa na faixa de stack:** sem botão de pausa na faixa; o botão "Reduzir movimento" do menu de acessibilidade (engrenagem do cabeçalho) desliga o movimento da faixa e de toda a interface; com movimento reduzido ou ponteiro de toque a faixa fica parada e rolável na horizontal.
 - **D29 — `--border-control` só em campo de texto:** `--neutral-500` (4,22:1) no tema claro e `--dark-500` (3,27:1) no escuro.
 
 ### Já no código
@@ -124,7 +124,7 @@ Com a issue dona (resumo no [roadmap](roadmap.md#issues-de-implementação)):
 | `aria-live` da busca e dos filtros, do "Copiar e-mail" e do formulário                   | #35; #60 e #38; #38     |
 | Teste automático com `axe-core`                                                          | #50                     |
 | Teste ponta a ponta no navegador                                                         | #55                     |
-| Pausa da faixa de stack (D28)                                                            | #34                     |
+| Movimento da faixa de stack desligado pela engrenagem (D28)                              | #34                     |
 | Texto alternativo das capturas e da foto                                                 | #42, com o campo da #10 |
 
 ### Achados
@@ -134,7 +134,7 @@ Pontos do protótipo e do design que viram falha se forem copiados como estão. 
 | Achado                                                                                                        | Critério WCAG  | Correção                                                                                                                                               | Issue     |
 | ------------------------------------------------------------------------------------------------------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ | --------- |
 | Contorno de foco `#F19100` sobre `--bg-page` claro `#FBF9F5`: 2,27:1 (no escuro, 7,36:1)                      | 1.4.11, 2.4.13 | D27: `--focus-ring` vale `--brand-deep` no claro (5,64:1) e `--brand-variant` no escuro e nas faixas escuras (6,82:1); 2px sólido, afastado 2px        | #31       |
-| A faixa de stack anima sem fim e sem pausa; com movimento reduzido, a regra global a congela no último quadro | 2.2.2 (A)      | D28: botão de pausa, e lista estática que quebra linha com movimento reduzido                                                                          | #34       |
+| A faixa de stack anima sem fim e sem pausa; com movimento reduzido, a regra global a congela no último quadro | 2.2.2 (A)      | D28: botão "Reduzir movimento" na engrenagem, e faixa parada e rolável na horizontal com movimento reduzido                                            | #34       |
 | Borda de campo em `--border-strong`: 1,76:1 no claro, 1,54:1 no escuro                                        | 1.4.11         | D29: `--border-control` em campo de texto, `--neutral-500` (4,22:1) no claro e `--dark-500` (3,27:1) no escuro                                         | #32, #38  |
 | `--text-label` no escuro (`#8E8981`) sobre `--bg-raised` (`#242422`): 4,48:1                                  | 1.4.3          | Medir onde o par ocorre; se ocorrer em texto, escurecer o fundo ou clarear o rótulo em decisão nova                                                    | #41       |
 | O alternador de tema troca o `aria-label` ("Usar tema claro"/"Usar tema escuro") e também o `aria-pressed`    | 4.1.2          | Nome fixo ("Tema escuro"), e só o `aria-pressed` muda                                                                                                  | #33       |
@@ -222,8 +222,8 @@ Exigência para a #10: cada imagem do modelo de dados tem `alt` (e legenda, se h
 ## Movimento
 
 - `prefers-reduced-motion: reduce` desliga transição, hover com deslocamento, shimmer e rolagem suave (já feito em `global.css`). A faixa de stack vira uma lista estática que quebra linha, em vez de ficar congelada e cortada.
-- **Faixa de stack (2.2.2, D28):** botão de pausa visível na própria faixa, com rótulo por chave nos três idiomas e `aria-pressed`.
-- **Animação por interação (2.3.3, AAA obrigatório):** hover com deslocamento, abertura de menu e de modal e troca de documento ficam sem movimento com `prefers-reduced-motion: reduce`. A faixa de stack, que não depende de interação, tem a pausa de D28.
+- **Faixa de stack (2.2.2, D28):** o botão "Reduzir movimento" do menu de acessibilidade, na engrenagem do cabeçalho (grupo "Acessibilidade"), com rótulo por chave nos três idiomas e `aria-pressed`, desliga o movimento da faixa e de toda a interface; a escolha vale mais que `prefers-reduced-motion` e fica salva.
+- **Animação por interação (2.3.3, AAA obrigatório):** hover com deslocamento, abertura de menu e de modal e troca de documento ficam sem movimento com `prefers-reduced-motion: reduce`. A faixa de stack, que não depende de interação, se desliga pelo botão de acessibilidade de D28.
 - **Movimentos da #84 (D57 a D60):** transição de página (View Transitions, `--dur-page`), crossfade de tema, escala de pressão em botões e links, entrada dos cards ao rolar e skeleton que se dissolve. Todos desligam com `prefers-reduced-motion: reduce` e com o botão "Reduzir movimento": os tokens `--dur-page`, `--stagger` e `--press-scale` viram `0ms`, `0ms` e `1`, a prop `viewTransition` só liga com movimento pleno (`usePageTransition`), `data-theme-transition` nunca é ligado e `useReveal` e `SkeletonSwap` mostram o conteúdo direto. Nenhum esconde conteúdo com `visibility` ou `display` (só opacidade e `translateY`), o skeleton que sai fica `aria-hidden` e `inert` sem anunciar de novo, e a transição de página não atrasa o foco no `h1` (RF-LAY-32).
 - Nada pisca mais de três vezes por segundo (2.3.1), e a galeria não troca de imagem sozinha.
 
@@ -303,7 +303,7 @@ Cada item tem um ID estável e a forma de verificação entre colchetes: `[teste
 - [ ] `A11Y-IN03` — Cards de destaque em lista, com um link por card, nome do link com o nome do projeto e imagem com `alt=""` [teste]
 - [ ] `A11Y-IN04` — "Ver todos" tem o nome "Ver todos os projetos" (2.4.9) [teste]
 - [ ] `A11Y-IN05` — Faixa de stack com a lista acessível uma vez e a cópia do laço com `aria-hidden` [teste]
-- [ ] `A11Y-IN06` — Botão de pausa da faixa com `aria-pressed` e rótulo nos três idiomas (D28) [teste]
+- [ ] `A11Y-IN06` — O botão "Reduzir movimento" da engrenagem desliga o movimento da faixa, com `aria-pressed` e rótulo nos três idiomas (D28) [teste] [e2e]
 - [ ] `A11Y-IN07` — Faixa estática, quebrando linha, com movimento reduzido [navegador]
 - [ ] `A11Y-IN08` — "Baixar CV (PDF)" no nome do link [teste]
 

@@ -9,6 +9,7 @@ import validateProfile from "@/services/content/validation/validateProfile"
 import validateProjects from "@/services/content/validation/validateProjects"
 import validateReferences from "@/services/content/validation/validateReferences"
 import validateTimeline from "@/services/content/validation/validateTimeline"
+import validateTranslation from "@/services/content/validation/validateTranslation"
 import type ContentIssue from "@/types/content/ContentIssue.types"
 import type ContentSnapshot from "@/types/content/ContentSnapshot.types"
 
@@ -16,6 +17,7 @@ function validateContent(snapshot: ContentSnapshot): ContentIssue[] {
     return [
         ...snapshot.issues,
         ...validateLanguageParity(snapshot),
+        ...validateTranslation(snapshot),
         ...validateEmptyValues(snapshot),
         ...validateIds(snapshot),
         ...validateReferences(snapshot),

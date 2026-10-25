@@ -1,8 +1,35 @@
 {
     "meta": {
-        "title": "Luiz Felipe dos Santos · Desenvolvedor full stack",
+        "title": "Portfolio · Luiz Felipe dos Santos",
         "description": "Portfólio de Luiz Felipe dos Santos, desenvolvedor full stack em TypeScript: projetos, trajetória e contato."
     },
     "heading": "Desenvolvedor full stack em TypeScript",
-    "intro": "Trabalho em produtos web de ponta a ponta, do banco à interface."
+    "hero": {
+        "viewProjects": "Ver projetos"
+    },
+    "status": {
+        "heading": "O que faço agora",
+        "working": "Trabalhando como",
+        "studying": "Cursando",
+        "error": "Não consegui carregar o que faço agora"
+    },
+    "stack": {
+        "heading": "Tecnologias que uso"
+    },
+    "featured": {
+        "heading": "Projetos em destaque",
+        "viewAll": "Ver todos",
+        "viewAllName": "Ver todos os projetos",
+        "viewProject": "Ver projeto",
+        "empty": "Nenhum projeto em destaque no momento",
+        "error": "Não consegui carregar os projetos"
+    },
+    "loadError": {
+        "description": "Verifique sua conexão e tente de novo.",
+        "retry": "Tentar novamente"
+    },
+    "exits": {
+        "allProjects": "Ver todos os projetos",
+        "about": "Ler sobre mim"
+    }
 }

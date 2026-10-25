@@ -298,7 +298,7 @@ que também revisa o texto sem mudar a chave:
 
 | Rota                        | Namespace             | `meta.title` (`pt-BR`)                                                         | `meta.description` (`pt-BR`)                                                                                          |
 | --------------------------- | --------------------- | ------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------- |
-| `/`                         | `home` (existe)       | Luiz Felipe dos Santos · Desenvolvedor full stack em TypeScript                | Portfólio de Luiz Felipe dos Santos, desenvolvedor full stack em TypeScript: projetos, trajetória e contato. (existe) |
+| `/`                         | `home` (existe)       | Portfolio · Luiz Felipe dos Santos                                             | Portfólio de Luiz Felipe dos Santos, desenvolvedor full stack em TypeScript: projetos, trajetória e contato. (existe) |
 | `/projects`                 | `projects` (previsto) | Projetos · Luiz Felipe dos Santos                                              | Projetos de Luiz Felipe dos Santos, com busca por tipo, categoria e tecnologia.                                       |
 | `/projects/:id`             | `project` (previsto)  | `{{project}}` · Luiz Felipe dos Santos                                         | Resumo do projeto, do conteúdo (#10, #58), sem chave                                                                  |
 | `/projects/:id/docs/<name>` | `project` (previsto)  | `{{document}}` · `{{project}}` · Luiz Felipe dos Santos (`meta.documentTitle`) | Resumo do projeto, do conteúdo                                                                                        |
@@ -307,8 +307,8 @@ que também revisa o texto sem mudar a chave:
 | Página não encontrada       | `notFound` (existe)   | Página não encontrada · Luiz Felipe dos Santos (existe)                        | O endereço acessado não existe neste portfólio. (existe)                                                              |
 | Página de erro              | `error` (existe)      | Erro inesperado · Luiz Felipe dos Santos (existe)                              | Algo deu errado ao carregar esta página. (existe)                                                                     |
 
-O `meta.title` atual de `home` ("Luiz Felipe dos Santos · Desenvolvedor full stack") ganha "em
-TypeScript" para bater com a chamada do Início (D24); a troca é da #3. `{{document}}` é o nome do
+O `meta.title` de `home` é "Portfolio · Luiz Felipe dos Santos" nos três idiomas, decisão do PO na
+#34 (a raiz é a exceção ao formato `<Tela> · Luiz Felipe dos Santos`). `{{document}}` é o nome do
 documento (`SETUP.md`, `LICENSE`, D55), igual nos três idiomas. Na página de
 projeto, o `<title>` só existe depois que o conteúdo do projeto chega; na pré-renderização (#49) ele
 já está no HTML.

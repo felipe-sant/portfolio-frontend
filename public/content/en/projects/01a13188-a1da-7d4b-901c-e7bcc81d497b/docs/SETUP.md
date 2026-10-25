@@ -1,6 +1,6 @@
-## Pré-requisitos
+## Prerequisites
 
-Node.js e npm instalados. O repositório [maps](https://github.com/felipe-sant/maps) reúne o backend e o frontend como submódulos; clone com `git clone --recurse-submodules https://github.com/felipe-sant/maps.git`.
+Node.js and npm installed. The [maps](https://github.com/felipe-sant/maps) repository brings the backend and the frontend together as submodules; clone it with `git clone --recurse-submodules https://github.com/felipe-sant/maps.git`.
 
 ## Backend
 
@@ -10,7 +10,7 @@ npm install
 npm run dev
 ```
 
-Sobe em `http://localhost:3001`, com as rotas prefixadas em `/api`.
+It starts at `http://localhost:3001`, with routes prefixed with `/api`.
 
 ## Frontend
 
@@ -20,8 +20,8 @@ npm install
 npm start
 ```
 
-Sobe em `http://localhost:3000`.
+It starts at `http://localhost:3000`.
 
-## Observação
+## Note
 
-O frontend em produção aponta para uma versão antiga do backend. Para testar localmente com o backend atual, é necessário atualizar a URL em `src/connection/BackendConnection.ts` (ver [issue #3](https://github.com/felipe-sant/maps-front/issues/3)).
+The production frontend points to an old version of the backend. To test locally with the current backend, you need to update the URL in `src/connection/BackendConnection.ts` (see [issue #3](https://github.com/felipe-sant/maps-front/issues/3)).
