@@ -196,8 +196,7 @@ function documentTexts(lang: SupportedLanguage): Record<string, string> {
 
     return {
         [`content/${lang}/projects/${FIRST_PROJECT}/docs/README.md`]: readme,
-        [`content/${lang}/projects/${FIRST_PROJECT}/docs/SETUP.md`]:
-            "## Instalação\n\nPasso a passo.\n",
+        [`content/${lang}/projects/${FIRST_PROJECT}/docs/SETUP.md`]: `## Instalação\n\nPasso a passo (${lang}).\n`,
         [`content/${lang}/projects/${SECOND_PROJECT}/docs/README.md`]: readme
     }
 }
