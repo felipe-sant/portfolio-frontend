@@ -1,4 +1,7 @@
 package-lock.json
 dist/
+dist-server/
 coverage/
 docs/design/prototype/
+test-results/
+playwright-report/

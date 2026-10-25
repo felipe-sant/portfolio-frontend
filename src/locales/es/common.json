@@ -1,4 +1,78 @@
 {
     "backHome": "Volver al inicio",
-    "loading": "Cargando..."
+    "loading": "Cargando...",
+    "searchInput": {
+        "clear": "Borrar búsqueda"
+    },
+    "authorName": "Luiz Felipe dos Santos",
+    "meta": {
+        "imageAlt": "Gato junto al nombre Luiz Felipe dos Santos"
+    },
+    "skipToContent": "Saltar al contenido",
+    "navigation": {
+        "label": "Principal",
+        "home": "Inicio",
+        "projects": "Proyectos",
+        "about": "Información",
+        "contact": "Contacto"
+    },
+    "menu": {
+        "toggle": "Menú",
+        "theme": "Tema",
+        "accessibility": "Accesibilidad"
+    },
+    "languageSelector": {
+        "label": "Idioma",
+        "ptBR": {
+            "name": "Português"
+        },
+        "en": {
+            "name": "English"
+        },
+        "es": {
+            "name": "Español"
+        },
+        "current": "Idioma: {{name}}"
+    },
+    "themeToggle": {
+        "label": "Tema oscuro"
+    },
+    "motionToggle": {
+        "label": "Reducir movimiento"
+    },
+    "settings": {
+        "label": "Configuración"
+    },
+    "footer": {
+        "contact": {
+            "label": "Contacto",
+            "cta": "Ponerse en contacto"
+        },
+        "copyEmail": {
+            "idle": "Copiar correo",
+            "copied": "Correo copiado",
+            "failed": "No se pudo copiar"
+        },
+        "social": {
+            "heading": "Redes",
+            "github": "GitHub",
+            "githubName": "GitHub de {{name}} (se abre en una pestaña nueva)",
+            "linkedin": "LinkedIn",
+            "linkedinName": "LinkedIn de {{name}} (se abre en una pestaña nueva)",
+            "emailName": "Enviar un correo a {{name}}"
+        },
+        "navigation": {
+            "label": "Pie de página",
+            "heading": "Navegación"
+        },
+        "resume": "Currículum en PDF",
+        "resumeName": "Currículum en PDF, no disponible por ahora",
+        "copyright": "© {{year}} · {{name}}",
+        "version": "v{{version}}"
+    },
+    "symbols": {
+        "external": "↗",
+        "download": "↓"
+    },
+    "noscript": "La búsqueda, los filtros y el cambio de idioma y de tema necesitan JavaScript. El contenido de esta página está disponible sin él."
 }

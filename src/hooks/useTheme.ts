@@ -4,6 +4,7 @@ import applyTheme from "@/utils/applyTheme"
 import getSystemTheme from "@/utils/getSystemTheme"
 import readStoredTheme from "@/utils/readStoredTheme"
 import saveTheme from "@/utils/saveTheme"
+import startThemeTransition from "@/utils/startThemeTransition"
 import THEME_STORAGE_KEY from "@/utils/themeStorageKey"
 
 const SYSTEM_THEME_QUERY = "(prefers-color-scheme: dark)"
@@ -51,6 +52,7 @@ function useTheme() {
     }, [theme])
 
     const setTheme = useCallback((next: Theme) => {
+        startThemeTransition()
         saveTheme(next)
         notifyListeners()
     }, [])

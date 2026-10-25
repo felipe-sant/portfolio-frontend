@@ -1,27 +1,52 @@
-import { Suspense } from "react"
+import { Suspense, useRef } from "react"
 import { useTranslation } from "react-i18next"
-import { Link, Outlet } from "react-router-dom"
-import useLocalizedPath from "@/hooks/useLocalizedPath"
-import ROUTES from "@/routers/paths"
+import { Outlet, ScrollRestoration, useLocation } from "react-router-dom"
+import Footer from "@/components/Footer"
+import Header from "@/components/Header"
+import SkipLink from "@/components/SkipLink"
+import VisuallyHidden from "@/components/VisuallyHidden"
+import useMobileMenu from "@/hooks/useMobileMenu"
+import useRouteFocus from "@/hooks/useRouteFocus"
+import getLanguageFromPath from "@/i18n/getLanguageFromPath"
+import stripLanguagePrefix from "@/i18n/stripLanguagePrefix"
 import css from "@/styles/layouts/main.module.css"
+import getActiveNavItem from "@/utils/getActiveNavItem"
+
+const MAIN_ID = "main-content"
 
 function MainLayout() {
-    const localizedPath = useLocalizedPath()
-    const { t } = useTranslation(["mainLayout", "common"])
+    const { t } = useTranslation()
+    const { pathname } = useLocation()
+    const menu = useMobileMenu()
+    const mainRef = useRef<HTMLElement>(null)
+    useRouteFocus(mainRef)
+
+    const activeItem = getLanguageFromPath(pathname)
+        ? getActiveNavItem(stripLanguagePrefix(pathname))
+        : undefined
 
     return (
         <div className={css.layout}>
-            <header className={css.header}>
-                <Link to={localizedPath(ROUTES.home)}>{t("brand")}</Link>
-            </header>
-            <div className={css.content}>
-                <Suspense fallback={<p>{t("common:loading")}</p>}>
+            <SkipLink targetId={MAIN_ID} inert={menu.isOpen} />
+            <Header menu={menu} activeItem={activeItem} />
+            <main
+                id={MAIN_ID}
+                ref={mainRef}
+                tabIndex={-1}
+                className={css.content}
+                inert={menu.isOpen}
+            >
+                <Suspense
+                    fallback={<VisuallyHidden role={"status"}>{t("loading")}</VisuallyHidden>}
+                >
                     <Outlet />
                 </Suspense>
-            </div>
-            <footer className={css.footer}>
-                <p>{t("copyright")}</p>
-            </footer>
+            </main>
+            <Footer
+                variant={activeItem === "contact" ? "navigation" : "default"}
+                inert={menu.isOpen}
+            />
+            <ScrollRestoration />
         </div>
     )
 }

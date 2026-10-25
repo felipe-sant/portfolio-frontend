@@ -2,6 +2,7 @@ node_modules/
 
 # Saida do build do Vite (npm run build)
 dist/
+dist-server/
 
 coverage/
 
@@ -27,3 +28,8 @@ Thumbs.db
 
 .specs/bugs/*/
 .specs/features/*/
+!.specs/bugs/_archive/
+!.specs/features/_archive/
+
+test-results/
+playwright-report/

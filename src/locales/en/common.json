@@ -1,4 +1,78 @@
 {
     "backHome": "Back to home",
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "searchInput": {
+        "clear": "Clear search"
+    },
+    "authorName": "Luiz Felipe dos Santos",
+    "meta": {
+        "imageAlt": "Cat next to the name Luiz Felipe dos Santos"
+    },
+    "skipToContent": "Skip to content",
+    "navigation": {
+        "label": "Main",
+        "home": "Home",
+        "projects": "Projects",
+        "about": "About",
+        "contact": "Contact"
+    },
+    "menu": {
+        "toggle": "Menu",
+        "theme": "Theme",
+        "accessibility": "Accessibility"
+    },
+    "languageSelector": {
+        "label": "Language",
+        "ptBR": {
+            "name": "Português"
+        },
+        "en": {
+            "name": "English"
+        },
+        "es": {
+            "name": "Español"
+        },
+        "current": "Language: {{name}}"
+    },
+    "themeToggle": {
+        "label": "Dark theme"
+    },
+    "motionToggle": {
+        "label": "Reduce motion"
+    },
+    "settings": {
+        "label": "Settings"
+    },
+    "footer": {
+        "contact": {
+            "label": "Contact",
+            "cta": "Get in touch"
+        },
+        "copyEmail": {
+            "idle": "Copy email",
+            "copied": "Email copied",
+            "failed": "Could not copy"
+        },
+        "social": {
+            "heading": "Social",
+            "github": "GitHub",
+            "githubName": "GitHub of {{name}} (opens in a new tab)",
+            "linkedin": "LinkedIn",
+            "linkedinName": "LinkedIn of {{name}} (opens in a new tab)",
+            "emailName": "Send an email to {{name}}"
+        },
+        "navigation": {
+            "label": "Footer",
+            "heading": "Navigation"
+        },
+        "resume": "Resume in PDF",
+        "resumeName": "Resume in PDF, currently unavailable",
+        "copyright": "© {{year}} · {{name}}",
+        "version": "v{{version}}"
+    },
+    "symbols": {
+        "external": "↗",
+        "download": "↓"
+    },
+    "noscript": "Search, filters, language and theme switching need JavaScript. The content of this page is available without it."
 }

@@ -3,5 +3,8 @@
         "title": "Page not found · Luiz Felipe dos Santos",
         "description": "The address you opened does not exist in this portfolio."
     },
-    "heading": "Page not found"
+    "heading": "Page not found",
+    "label": "Error 404",
+    "description": "The address may have changed or the project is no longer online. The full list is still in Projects.",
+    "viewProjects": "View projects"
 }

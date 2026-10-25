@@ -1,0 +1,5 @@
+.flag {
+    display: block;
+    flex-shrink: 0;
+    border-radius: 2px;
+}

@@ -1,0 +1,72 @@
+name: Fatec Pages
+
+on:
+    workflow_call:
+        inputs:
+            tag:
+                type: string
+                required: false
+                default: ""
+        outputs:
+            is-release:
+                description: "true quando a tag informada é v1.x.y"
+                value: ${{ jobs.build.outputs.is-release }}
+    workflow_dispatch:
+        inputs:
+            tag:
+                type: string
+                required: false
+                default: ""
+
+permissions:
+    contents: read
+
+jobs:
+    build:
+        name: Build Fatec
+        runs-on: ubuntu-latest
+        outputs:
+            is-release: ${{ steps.mode.outputs.is-release }}
+        steps:
+            - name: Classify tag
+              id: mode
+              env:
+                  TAG: ${{ inputs.tag }}
+                  RUN_REF: ${{ github.ref }}
+              run: |
+                  if [[ "$TAG" =~ ^v1\.[0-9]+\.[0-9]+$ ]]; then
+                      echo "is-release=true" >> "$GITHUB_OUTPUT"
+                      echo "ref=refs/tags/$TAG" >> "$GITHUB_OUTPUT"
+                  else
+                      echo "is-release=false" >> "$GITHUB_OUTPUT"
+                      echo "ref=$RUN_REF" >> "$GITHUB_OUTPUT"
+                  fi
+            - name: Checkout
+              uses: actions/checkout@v7
+              with:
+                  ref: ${{ steps.mode.outputs.ref }}
+            - name: Setup Node
+              uses: actions/setup-node@v7
+              with:
+                  node-version-file: ".nvmrc"
+                  cache: npm
+                  cache-dependency-path: package-lock.json
+            - name: Install dependencies
+              run: npm ci
+            - name: Build
+              env:
+                  VITE_SITE_URL: https://felipe-sant.vercel.app
+              run: npm run build
+            - name: Lint
+              run: npm run lint
+            - name: Test
+              run: npm run test:cov
+            - name: Build Fatec
+              run: npm run build:fatec
+            - name: Upload artifact
+              uses: actions/upload-artifact@v7
+              with:
+                  name: fatec-pages
+                  path: dist/
+                  include-hidden-files: true
+                  if-no-files-found: error

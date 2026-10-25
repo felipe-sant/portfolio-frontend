@@ -8,17 +8,22 @@ import removeBasePath from "@/utils/removeBasePath"
 
 const i18n = createInstance().use(initReactI18next)
 
-i18n.on("languageChanged", (language) => {
-    document.documentElement.lang = language
-})
+if (typeof document !== "undefined") {
+    i18n.on("languageChanged", (language) => {
+        document.documentElement.lang = language
+    })
+}
 
 void i18n.init({
     resources,
-    lng: getLanguageFromPath(removeBasePath(window.location.pathname)),
+    lng:
+        typeof window === "undefined"
+            ? undefined
+            : getLanguageFromPath(removeBasePath(window.location.pathname)),
     supportedLngs: SUPPORTED_LANGUAGES,
     fallbackLng: FALLBACK_LANGUAGE,
     defaultNS: "common",
-    ns: ["common", "home", "notFound", "error", "mainLayout"],
+    ns: ["common", "home", "notFound", "error"],
     initAsync: false,
     interpolation: {
         escapeValue: false

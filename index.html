@@ -69,6 +69,27 @@
                 } catch (error) {}
             })();
         </script>
+        <script>
+            (function () {
+                try {
+                    var motion = "full";
+                    var saved = null;
+                    try {
+                        saved = localStorage.getItem("portfolio-frontend:motion");
+                    } catch (error) {}
+                    if (saved === "full" || saved === "reduced") {
+                        motion = saved;
+                    } else {
+                        try {
+                            if (matchMedia("(prefers-reduced-motion: reduce)").matches) {
+                                motion = "reduced";
+                            }
+                        } catch (error) {}
+                    }
+                    document.documentElement.setAttribute("data-motion", motion);
+                } catch (error) {}
+            })();
+        </script>
         <meta
             name="description"
             content="Portfólio de Luiz Felipe dos Santos, desenvolvedor full stack em TypeScript: projetos, trajetória e contato."
@@ -91,8 +112,11 @@
         />
     </head>
     <body>
-        <noscript>Você precisa habilitar o JavaScript para executar esta aplicação.</noscript>
+        <noscript
+            >Busca, filtros, troca de idioma e de tema precisam de JavaScript. O conteúdo desta
+            página está disponível sem ele.</noscript
+        >
         <div id="root"></div>
-        <script type="module" src="/src/index.tsx"></script>
+        <script type="module" src="/src/entry-client.tsx"></script>
     </body>
 </html>

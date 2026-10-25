@@ -1,0 +1,13 @@
+.catLogo {
+    display: block;
+    flex-shrink: 0;
+    width: auto;
+}
+
+.body {
+    fill: var(--neutral-500);
+}
+
+.detail {
+    fill: var(--text-strong);
+}

@@ -125,6 +125,8 @@ Cada subseção lista os requisitos na ordem dos IDs.
 
 ### Carregamento e erro
 
+Os cards de projetos em destaque devem usar `useReveal` (fade e deslocamento ao rolar, atraso crescente entre irmãos por `--stagger`) e os skeletons dos blocos devem sair por `SkeletonSwap`, ambos desligados com movimento reduzido (D57, NF-MO-07).
+
 | ID           | Regra                                                                                                                                                                                                                                                                                                                                                                  | Fonte                                                |
 | ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
 | `RF-HOME-23` | Cada bloco de dados (perfil, status, stack, destaques) carrega e falha de forma independente; skeleton na forma do conteúdo, `aria-hidden`, e um só `role="status"` visualmente oculto com "Carregando..." enquanto algum bloco carrega (A11Y-G13). Skeleton e spinner nunca no mesmo bloco                                                                            | Protótipo, `design-system.md` (Estados), A11Y-G13    |

@@ -16,6 +16,8 @@ Toda página deste projeto é composta por **quatro peças que precisam existir 
 
 Os trechos abaixo, com uma página `About` hipotética, mostram o formato esperado das quatro peças.
 
+A página também precisa ser pré-renderizada (ADR 0004): acrescente a entrada dela (padrão da rota e consultas RTK Query) em `src/prerender/prerenderRoutes.ts` e um teste de `<h1>` e conteúdo principal nos três idiomas. Sem a entrada, a URL responde 404 com o `404.html` e a página só renderiza no cliente (`createRoot`).
+
 Há uma quinta peça, mas **condicional**: se a página tiver lógica de estado/efeito (fetch, `useState`, `useEffect`), essa lógica vai para um hook dedicado em `src/pages/hooks/use<Nome>.ts` — ver passo 2. Página só apresentacional, sem estado nem efeito, não tem essa peça.
 
 Nenhum texto que o usuário lê fica literal no JSX: tudo vem de chave, via `t()` ou `<Trans>`, com o valor em `src/locales/`. `npm run lint` acusa texto literal como filho de elemento e em atributos como `title`, `alt`, `placeholder`, `aria-label` e `content` (regra `react/jsx-no-literals`, desligada só em `*.test.ts(x)`).

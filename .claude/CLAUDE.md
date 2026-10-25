@@ -37,7 +37,7 @@ Module em vez de classe global `.ds-*` e código sem comentários. `docs/design/
 referência visual validada pelo PO (abre por `npm run dev` em
 `/docs/design/prototype/prototipo-indice.dc.html`).
 
-**Rotas:** cinco telas, das quais hoje só a Início existe no código (as demais vêm nas specs de tela),
+**Rotas:** cinco telas, das quais hoje só a Início existe no código (os links de Projetos, Informações e Contato do cabeçalho levam à não encontrada até lá; as demais vêm nas specs de tela),
 com caminhos em inglês (D32), como os identificadores, sempre sob o prefixo do idioma
 (`/<idioma>`, onde `<idioma>` é `pt-BR`, `en` ou `es`, sem barra final); a raiz `/` só
 redireciona e `/projects` sem prefixo cai em não encontrada. O `:id` é um UUID v7, não slug. Os
@@ -76,7 +76,7 @@ são de uso pessoal (Vercel, depois AWS com backend). Ordem, dependências e cri
 `docs/product/roadmap.md`.
 
 **Decisões de design:** as pendências e contradições do handoff estão decididas em
-`docs/design/decisions.md`, com IDs (`D01`–`D55`, `PI1`–`PI5`) que specs e issues citam.
+`docs/design/decisions.md`, com IDs (`D01`–`D56`, `PI1`–`PI5`) que specs e issues citam.
 
 **Onde ler mais:** `docs/product/overview.md` (visão, público, jornadas, objetivos, escopo,
 requisitos e decisões), `docs/product/glossary.md` (glossário), `docs/product/roadmap.md` (versões,
@@ -93,16 +93,22 @@ que o simula).
 
 ```bash
 npm run dev      # dev server do Vite (porta padrão 5173)
-npm run build    # typecheck + build de produção em dist/
+npm run build    # typecheck + vite build (cliente) + build:server + prerender: HTML por rota e idioma + 404.html em dist/
+npm run build:server # build SSR (dist-server/, intermediário e gitignored) das entradas de servidor
+npm run prerender    # scripts/prerender.ts: lê dist-server/ e escreve os HTML pré-renderizados em dist/
 npm run preview  # serve o conteúdo de dist/ já gerado — depende de um npm run build anterior
 npm test         # Vitest em watch mode (o script é `vitest`, sem `run`)
 npm test -- --run                            # execução one-shot (CI, agente, terminal não-interativo)
 npm test -- --run src/pages/test/Home.page.test.tsx   # um arquivo específico
 npm run typecheck # checagem de tipos (tsc -b) de src/ e vite.config.ts
 npm run lint      # oxlint sobre o projeto (configuração em .oxlintrc.json)
+npm run build:fatec   # build com BASE_PATH=/ra2581392423047/ + .nojekyll em dist/; falha sem o 404.html pré-renderizado (GitHub Pages da Fatec)
+npm run preview:fatec # servidor Node que imita o Pages (arquivo, <caminho>.html, pasta com 301, 404.html) em http://localhost:4173/ra2581392423047/
+npm run og:image  # regera public/images/og-site.png (Chromium do Playwright, versionado)
 npm run lint:fix  # mesma coisa, aplicando as correções automáticas possíveis (oxlint --fix)
 npm run format    # prettier --write em **/*.{ts,tsx,css,json,md,yml,html}, conforme .prettierrc e .prettierignore
 npm run test:cov  # vitest run --coverage — suíte inteira + relatório de cobertura
+npm run test:e2e  # Playwright (Chromium) + axe em e2e/ contra o build do Pages; exige npm run build:fatec antes
 ```
 
 O teste fica em **`test/` dentro do diretório do arquivo testado**:
@@ -140,21 +146,29 @@ devolvido pelo `render` (ou por `renderWithStore`): roda o `axe-core` no contêi
 `id` e alvo de cada violação. É função comum, sem `expect.extend` (`vitest-axe` e `jest-axe` não
 entram). A regra `color-contrast` fica desligada porque o `jsdom` não calcula cor; o contraste é
 verificado no navegador real (#55). O `axe.run` é lento no `jsdom` e estoura o timeout padrão de 5s com a suíte em paralelo: o `it`
-que chama o helper recebe `15000` como terceiro argumento. Teste de rota (`App.test.tsx`, `Router.test.tsx`) não chama.
+que chama o helper recebe `15000` como terceiro argumento. Teste de rota (`App.test.tsx`, `routes.test.tsx`) não chama.
 Cada formato de teste tem seu jeito: página renderizada direto, árvore de rotas em
 `createMemoryRouter` (para verificar a rota `*`, por exemplo), layout com `<Outlet />` preenchido
 por rota-filha, módulo com `fetch` stubado via `vi.stubGlobal`, componente com interação
 (`user-event`), hook com `renderHook` e função pura. A skill `vitest-specialist` traz um trecho de
 cada formato.
 
-Ficam sem teste `src/index.tsx`, que só chama `createRoot` num `#root` que não existe fora do
-`index.html`, e a pasta `src/types/`, que só declara tipo e não tem runtime.
+Ficam sem teste `src/entry-client.tsx`, que só procura o `#root` do `index.html` e chama
+`mountClient` (testado), e a pasta `src/types/`, que só declara tipo e não tem runtime.
+
+O `render` de `src/entry-server.tsx` usa `react-dom/static`, que precisa de `ReadableStream`: no
+`jsdom` o teste faz `vi.stubGlobal("ReadableStream", ReadableStream)` com o de `node:stream/web`. Como o
+`react-dom/server` deixa os contextos do React sujos no processo em que roda, teste que hidrata o HTML
+gerado não chama `render` no mesmo arquivo: pega o resultado em `inject("prerenderFixtures")`, produzido
+por `src/testUtils/prerenderGlobalSetup.ts` (`test.globalSetup`, processo principal do Vitest). Teste que
+precisa de `window` e `document` indefinidos usa `// @vitest-environment node` (o `setupTests` tolera).
 
 `npm run test:cov` roda a suíte inteira com `@vitest/coverage-v8` (bloco `test.coverage` em
 `vite.config.ts`), gerando relatório nos formatos `text`, `json`, `json-summary` e `html` em
 `coverage/` (gitignored) e aplicando um threshold mínimo de 80% em statements, branches, functions
 e lines — abaixo disso o comando termina com erro. `exclude` cobre os arquivos sem runtime
-relevante já citados acima, mais `vite.config.ts`, `src/setupTests.ts` e o glob `src/types/**`.
+relevante já citados acima, mais `vite.config.ts`, `src/setupTests.ts`, `src/testUtils/prerenderGlobalSetup.ts`,
+`scripts/prerender.ts` e o glob `src/types/**`.
 
 O bloco `test` usa `pool: "vmThreads"`: o `jsdom` é criado uma vez por worker e cada arquivo roda
 num contexto de VM isolado. Não troque por `isolate: false`, que compartilha o estado entre
@@ -162,8 +176,19 @@ arquivos e faz o resultado depender da ordem de execução. Como o worker é rea
 stuba com `vi.stubGlobal`/`vi.stubEnv` restaura no `afterEach` com
 `vi.unstubAllGlobals()`/`vi.unstubAllEnvs()`.
 
-O CI (`.github/workflows/`) roda `npm run build`, `npm run lint` e a suíte de testes, os mesmos
-comandos da verificação local, em PR e em push na `main` e na `staging`. O `deploy.yml` publica na
+A suíte ponta a ponta fica em `e2e/` (`playwright.config.ts` na raiz, `tsconfig.e2e.json`), com
+sufixo `.spec.ts`, fora do Vitest (`e2e/**` em `test.exclude`) e da cobertura. Roda só em Chromium
+contra `npm run preview:fatec` (`base` `/ra2581392423047/`), que serve o `dist/` já pronto: rode
+`npm run build:fatec` antes, porque `test:e2e` não builda. Os quatro projetos (`mobile-light`,
+`mobile-dark`, `desktop-light`, `desktop-dark`: 390 e 1280px, `colorScheme` claro e escuro,
+`reducedMotion`) rodam cada teste. Seletor é `getByRole` com nome em português, rota abre sem barra
+inicial (relativa ao `baseURL`). Toda tela nova acrescenta o caminho em `e2e/support/routesUnderTest.ts`
+(o axe, com `color-contrast` ligada, roda em todas) e, se tiver teclado próprio, um roteiro em
+`e2e/<tema>.spec.ts`. Violação do axe se corrige na marcação ou no CSS, nunca desligando regra.
+
+O CI (`.github/workflows/`) roda `npm run build`, `npm run lint`, a suíte de testes e o job `e2e`
+(`E2E`: instala o Chromium, `npm run build:fatec`, `npm run test:e2e`, relatório como artefato em
+falha), os mesmos comandos da verificação local, em PR e em push na `main` e na `staging`. O `deploy.yml` publica na
 Vercel (`staging` = beta, `main` = produção) só depois do CI de push verde; detalhe em
 `docs/setup/environments.md`.
 
@@ -183,7 +208,7 @@ para editores compatíveis, coerente com o `.prettierrc`.
 
 ## Onde fica cada coisa
 
-- **`App.tsx`** renderiza o `Router` dentro do `<Provider store={store}>` do react-redux e importa, por efeito colateral, `@/i18n/i18n` (que
+- **`App.tsx`** recebe `store` e `router` por props, renderiza o `RouterProvider` dentro do `<Provider store={store}>` do react-redux e importa, por efeito colateral, `@/i18n/i18n` (que
   inicializa a instância do i18next) e o `global.css`; `@/i18n/i18n` está no `allow` de
   `import/no-unassigned-import` no `.oxlintrc.json`. Metadados (`<title>`, `<meta>`) são
   declarados por cada página com as tags nativas do React 19, escritas dentro do JSX da própria
@@ -225,8 +250,8 @@ para editores compatíveis, coerente com o `.prettierrc`.
 - **`src/locales/`** — tradução é dado, separado da configuração em `src/i18n/`:
   `src/locales/<idioma>/<namespace>.json`, JSON com 4 espaços, os mesmos namespaces e chaves nos
   três idiomas. Um namespace por dono do texto, com o nome do CSS Module correspondente (ex.:
-  `home`, `notFound`, `mainLayout`); `common` guarda texto compartilhado (`backHome`, `loading`)
-  e texto fixo de componente de `src/components/`. Chave em inglês, lowerCamelCase, hierárquica por
+  `home`, `notFound`, `error`); `common` guarda texto compartilhado (`backHome`, `loading`)
+  e texto fixo de componente de `src/components/` (inclusive o do rodapé, `footer.*`). Chave em inglês, lowerCamelCase, hierárquica por
   papel (`meta.title`, `meta.description`, `heading`, `filters.category.academic`). Página com
   namespace próprio chama `useTranslation("home")`; quem também usa chave de `common` carrega os
   dois, `useTranslation(["notFound", "common"])`, e chama `t("common:backHome")`, senão a chave não
@@ -242,8 +267,9 @@ para editores compatíveis, coerente com o `.prettierrc`.
   mesmas `pageRoutes`. Depois delas, a rota `/` (`redirectRootLoader`: escolha salva → navegador →
   `en`, preservando query e hash) e a rota `*` sem prefixo, que renderiza a não encontrada em
   inglês. Os paths vêm de `ROUTES` em `paths.ts` (`root` é a raiz que redireciona, `home` a
-  Início do idioma). `Router.tsx` tem o `Router` (export default), que cria o data router com
-  `createBrowserRouter(routes, { basename: publicUrl("/") })` e renderiza um `RouterProvider`.
+  Início do idioma). O data router é criado em `src/prerender/mountClient.tsx` com
+  `createBrowserRouter(routes, { basename: publicUrl("/"), hydrationData })`, chamado por
+  `src/entry-client.tsx` (a entrada do `index.html`).
   Toda página nova entra em `pageRoutes`. O teste renderiza `routes` com
   `createMemoryRouter(routes, { initialEntries })` e `RouterProvider`.
   As rotas-filhas de `MainLayout` são `lazy` e o único `<Suspense>` fica em volta do `<Outlet />`
@@ -255,6 +281,23 @@ para editores compatíveis, coerente com o `.prettierrc`.
   `ROUTES.home` cru em `<Link>`. O `index.html` tem um script inline que faz na raiz o mesmo
   redirecionamento (a chave e o mapa de idiomas estão duplicados nele; `rootRedirect.test.ts`
   compara com `getPreferredLanguage`).
+- **Pré-renderização** (ADR 0004, `docs/architecture/frontend.md#pré-renderização`) — `npm run build`
+  gera em `dist/` um HTML por rota pública e idioma, mais o `404.html`. `src/entry-server.tsx`
+  (`render(target)`, só `react-dom/static` com `progressiveChunkSize: Infinity`, uma URL por vez),
+  `src/prerender/` (`prerenderRoutes.ts`, o registro das rotas pré-renderizáveis com padrão, escopo dos
+  parâmetros e consultas RTK Query; `loadPrerenderData.ts`; `mountClient.tsx`) e `scripts/prerender.ts`
+  com `scripts/prerender/` (`listTargets`, `getTargetFile`, `composePage`, `installPublicFetch`, que lê
+  `public/` no Node sem tocar em `src/services/`). O servidor nunca importa `App.tsx`. Arquivos: `<idioma>.html`
+  para a Início, `<idioma>/<rota>.html` para as demais e `<nome>.md.html` para documento (nunca pasta com
+  `index.html`, que o Pages redireciona); `/` continua o `index.html`. O `404.html` é a não encontrada em
+  inglês: o cliente só chama `hydrateRoot` quando o caminho é o `prerenderedPath`, senão remove o
+  `title` e a `meta description` do HTML e usa `createRoot` (`shouldHydrate`, `removePrerenderedHead`).
+  **Toda tela nova entrega a própria pré-renderização**: acrescenta a entrada ao registro (rota e
+  consultas) e um teste de `<h1>` e conteúdo principal nos três idiomas (`src/test/entry-server.test.tsx`
+  já percorre o registro existente); rota no registro sem tela em `routes` é ignorada no build. Em
+  `src/i18n/i18n.ts`, `typeof window` e `typeof document` guardam o import no Node. O `vercel.json` usa
+  `cleanUrls` e `trailingSlash: false`, sem reescrita genérica para o `index.html` (URL desconhecida
+  responde 404 com o `404.html`); o `noindex` da `staging` é acrescentado pelo `deploy.yml`.
 - **`src/store/`** — estado global: **Redux Toolkit + react-redux** para estado de cliente e
   **RTK Query** (`@reduxjs/toolkit/query/react`, sem dependência extra) para estado de servidor.
   Um símbolo público por arquivo, `export default` no final:
@@ -270,7 +313,7 @@ para editores compatíveis, coerente com o `.prettierrc`.
       projeto precisar de invalidação.
     - `rootReducer.ts` (`combineReducers` com `[api.reducerPath]: api.reducer`, onde slices entram),
       `createStore.ts` (`createStore(preloadedState?)`, `configureStore` com `api.middleware`
-      concatenado, store nova a cada chamada) e `store.ts` (a instância da aplicação).
+      concatenado, store nova a cada chamada) (a store da aplicação é criada em `mountClient`, com o `preloadedState` do HTML quando há).
     - `useAppDispatch.ts` e `useAppSelector.ts`: `useDispatch.withTypes<AppDispatch>()` e
       `useSelector.withTypes<RootState>()`; código de aplicação usa só esses, com seletor estreito
       (`useAppSelector((state) => state.x.y)`), nunca o estado inteiro.
@@ -278,7 +321,7 @@ para editores compatíveis, coerente com o `.prettierrc`.
     - Tipos em `src/types/store/RootState.types.ts` (`ReturnType<typeof rootReducer>`),
       `AppStore.types.ts` (`ReturnType<typeof createStore>`) e `AppDispatch.types.ts`
       (`AppStore["dispatch"]`), um por arquivo, importados com `import type`.
-    - O `<Provider store={store}>` fica em `App.tsx`, em volta do `<Router />`. Estado que só uma
+    - O `<Provider store={store}>` fica em `App.tsx`, em volta do `RouterProvider`. Estado que só uma
       página usa continua `useState` no hook da página; estado compartilhado vai para um slice;
       dado do servidor vai para um endpoint do RTK Query. Idioma continua em `src/i18n/`.
     - Refetch on focus/reconnect (`setupListeners`) segue desligado, o padrão do RTK Query.
@@ -315,6 +358,36 @@ para editores compatíveis, coerente com o `.prettierrc`.
     componentes, não específicos de uma única página (por exemplo, um `useDebounce` ou `useMediaQuery`).
     Se `src/pages/hooks/` ou `src/hooks/` não existir, crie a pasta no primeiro uso.
 
+- **`src/components/`** — componentes base reutilizáveis (`Button`, `Chip`, `TextField`, `SearchInput`,
+  `Skeleton`, `Spinner`, `VisuallyHidden`, `Icon`, `IconButton`, `CatLogo`, `ThemeToggle`,
+  `MotionToggle`, `SettingsMenu`, `Flag`, `LanguageSelector`, `Header`, `SkipLink`, `Footer`, `CopyEmailButton`, `ButtonLink`). O desenho de cada ícone fica num mapa local de
+  `Icon.tsx`, com os nomes em `src/enum/iconNames.enum.ts`. Texto fixo de componente vive em `common`
+  (`searchInput.clear`); o resto chega por prop. O `jsx-a11y/prefer-tag-over-role` acusa `role="status"`
+  literal: passe `role={"status"}`. Controle de formulário tem borda `--border-control`, nunca
+  `--border-subtle`. `TextField` aceita `reserveMessageSpace` (campo com aviso possível) e
+  `focusOnError` (hook `useFocusOnError` de `src/hooks/`, só no primeiro campo inválido do envio).
+- **SEO por tela** — toda tela pública nova declara `<PageMeta title description path />`
+  (`src/components/`: canônica autorreferente, quatro `hreflang` com `x-default` em `en`, Open
+  Graph e `twitter:card`; `params` e `image` opcionais) e `<JsonLd data={...} />` com o objeto de
+  um construtor em `src/utils/` (`buildHomeJsonLd`, `buildProjectsJsonLd`; o `@id` da `Person` é
+  `<URL canônica de />#person`), além do `<title>` e da `description` próprios. A URL absoluta vem
+  de `buildAbsoluteUrl(path, language, params?)` (`getSiteUrl()` + `publicUrl` + `buildPath`);
+  `getSiteUrl` é a única leitura de `VITE_SITE_URL` (só a origem, obrigatória no `npm run build`,
+  validada por `scripts/resolveSiteUrl.ts`; localhost no dev e nos testes). `serializeJsonLd`
+  escapa `<`. A imagem padrão `public/images/og-site.png` vem de `npm run og:image` e é
+  versionada. Não encontrada e erro não usam o mecanismo.
+- **Layout compartilhado** — `src/layouts/Main.layout.tsx` monta `SkipLink`, `Header`, o único
+  `<main id="main-content">` (as páginas não renderizam `main`; a de erro, fora do layout, monta a
+  própria moldura com `SkipLink`, `Header`, `main` e `Footer`, sem ler o erro lançado), o `Footer` e
+  `<ScrollRestoration />`. O estado do menu mobile vem de `useMobileMenu`
+  (`src/hooks/`), que o layout repassa ao `Header` e usa para aplicar `inert` em skip link, `main` e
+  rodapé; `useRouteFocus` foca o `h1` na troca de rota (não na primeira carga nem na troca só de
+  idioma). O item ativo vem de `getActiveNavItem` (`src/utils/`) sobre o caminho sem prefixo. Texto
+  do cabeçalho e do rodapé vive em `common`. `Footer` (`variant` `default` ou `navigation`, esta só em
+  `/contact`) lê o perfil por `profileApi`, nunca mostra skeleton nem erro e usa `CopyEmailButton`
+  (hook `useCopyToClipboard`) e `ButtonLink` (`Link` com a aparência do `Button`); o ano do rodapé vem
+  de `getBuildYear` (`src/utils/`), única leitura da constante `__BUILD_YEAR__` do `define` do
+  `vite.config.ts`. A versão do rodapé (`v<versão>`) vem de `getAppVersion` (`src/utils/`), única leitura de `__APP_VERSION__`, que o `define` preenche com o `version` do `package.json`: quem sobe a versão no release atualiza o rodapé sozinho. Página não encontrada e de erro declaram `<meta name="robots" content={"noindex"} />`. `useDropdown` (`src/hooks/`) é o disclosure de `LanguageSelector` e `SettingsMenu` (abrir, fechar com Esc, clique ou foco fora, saída animada antes de desmontar, painel `inert` fechado), com a animação em `dropdownPanel.module.css`; `useNavIndicator` posiciona o indicador da navegação desktop. Teste de layout usa `createMemoryRouter` com os loaders de idioma.
 - **`src/styles/`** — `global.css` guarda as CSS custom properties (cor, tipografia, espaçamento e
   afins) e o reset. CSS Module usa essas custom properties em vez de valor hardcoded; confira os
   nomes em `src/styles/global.css` antes de usar, e token global novo entra lá. Os nomes dos
@@ -334,6 +407,21 @@ para editores compatíveis, coerente com o `.prettierrc`.
   `themeScript.test.ts` compara com os utilitários). `?tema=` não existe. Foco é global
   (`:focus-visible` com `--focus-ring`; faixa escura usa `data-surface="band"`), e `a` em
   `global.css` é sublinhado: componente que se apresenta como botão zera no próprio módulo.
+- **Movimento** — `useMotion()` de `src/hooks/useMotion.ts` (`{ motion, setMotion, toggleMotion }`,
+  `full` ou `reduced`) espelha o tema: chamado em `App.tsx`, única via de escrita da escolha
+  (`saveMotion`, chave `portfolio-frontend:motion` em `motionStorageKey.ts`), leitura, sistema e
+  aplicação em `src/utils/` (`readStoredMotion`, `getSystemMotion`, `applyMotion`). A escolha vale
+  mais que `prefers-reduced-motion`; sem ela, o sistema decide. `global.css` zera os `--dur-*`,
+  animações e transições com `[data-motion="reduced"]` (e pela media query só enquanto não há
+  `data-motion`); um terceiro script inline do `index.html` aplica `data-motion` antes da pintura
+  (chave duplicada; `motionScript.test.ts` compara com os utilitários). Animação nova usa
+  `--dur-*` e `--ease`, nunca duração fixa, para o botão e o sistema a desligarem. Movimentos
+  extras (D57 a D60): `usePageTransition()` (`src/hooks/`, `true` só com movimento pleno) alimenta a
+  prop `viewTransition` dos `Link` de navegação (o `LanguageSelector` fica sem); `startThemeTransition`
+  (`src/utils/`, chamada por `useTheme.setTheme`) liga `data-theme-transition` no `<html>` durante a
+  troca; `useReveal()` (`src/hooks/`, devolve `ref` e `revealProps`) e o componente `SkeletonSwap`
+  ficam prontos para as telas adotarem (Início e Projetos ainda não os usam); tokens `--dur-page`,
+  `--stagger` e `--press-scale` são neutralizados nos dois blocos de movimento reduzido.
 - **Alias de import `@/`** — `@/*` resolve para `src/*`. Configurado em dois lugares que precisam
   continuar concordando: `paths` no `tsconfig.app.json` (para o `tsc` e o editor) e `resolve.alias` no
   `vite.config.ts` (para o dev server e o build). Mexer em um sem o outro deixa o `tsc -b`
@@ -374,8 +462,12 @@ são expostas ao código do cliente, e a leitura é `import.meta.env.VITE_ALGO`,
 materializada em `.env.example` (na raiz, com `VITE_API_URL` como exemplo) e na augmentação de
 `ImportMetaEnv`/`ImportMeta` em `src/vite-env.d.ts`.
 
+`BASE_PATH` (sem prefixo `VITE_`) é lida só em `vite.config.ts`, por `scripts/resolveBase.ts`, e define o `base`
+do Vite (`/` por padrão); o código do cliente só vê `import.meta.env.BASE_URL`. `scripts/` tem o alias
+`@scripts/*` (em `tsconfig.node.json` e `resolve.alias`) para os testes de `scripts/test/`.
+
 A configuração de build fica em `vite.config.ts` na raiz (plugin React + bloco `test` do Vitest),
-e a entrada da aplicação é o `index.html` da raiz, que carrega `/src/index.tsx` como módulo.
+e a entrada da aplicação é o `index.html` da raiz, que carrega `/src/entry-client.tsx` como módulo.
 
 ## Estilo de código
 
@@ -392,7 +484,7 @@ linguagem do produto — `<SaveButton label={t("profile.saveChanges")} />` está
 JSON correspondente.
 
 Duas exceções ao "texto vem de chave". Mensagem de `Error` lançada no código do cliente
-(`src/services/http/parseResponse.ts`, `src/index.tsx`) é literal em português, como diagnóstico.
+(`src/services/http/parseResponse.ts`, `src/entry-client.tsx`) é literal em português, como diagnóstico.
 Mensagem de erro de API vem traduzida pelo backend: `get`/`post` de `src/services/http/` e o
 `prepareHeaders` do RTK Query enviam o idioma ativo (`getLanguage()`) no header `Accept-Language`
 de toda requisição. A descrição de `describe`/`it` nos testes é escrita em português.
@@ -501,7 +593,7 @@ importa.
 **Import interno usa o alias `@/`, nunca `../`.** Um import que sobe de pasta (`../`,
 `../../`) é frágil: quebra ao mover o arquivo de lugar. Use `@/styles/pages/home.module.css` em
 vez de `../styles/pages/home.module.css`. Import para a mesma pasta ou descendo a partir da
-própria localização (`./routers/Router` em `src/App.tsx`) continua válido — o problema é subir,
+própria localização (`./styles/global.css` em `src/App.tsx`) continua válido — o problema é subir,
 não descer. Imports de pacote (`react`, `react-router-dom`) não são afetados.
 
 **Import nomeado, nunca import de namespace.** Importe só o que for usado — prefira
@@ -637,7 +729,8 @@ novo, então repetir via hook no momento do push seria redundante.
   `redux-store-scaffold` (slice em `src/store/slices/` + registro no `rootReducer` + hooks tipados)
   e `rtk-query-endpoint-scaffold` (endpoints em `src/store/api/` via `api.injectEndpoints`).
 - `.specs/` — specs por feature/bug (`.specs/features/<slug>/`, `.specs/bugs/<slug>/`), a partir de
-  `.specs/_template/`. As pastas de spec são gitignored: planejamento local, fora do histórico.
+  `.specs/_template/`. As pastas de trabalho de cada spec são gitignored (planejamento local); só o resumo
+  `_archive/<slug>.md` de cada spec fechada, escrito pelo `executor`, é versionado.
   O estado vive no campo `**Status:**` do `spec.md` (`rascunho` → `em-revisao` → `aprovada` →
   `em-andamento` → `implementada`); só humano promove para `aprovada`.
 - `docs/` — documentação versionada **só deste frontend**: visão do produto e glossário

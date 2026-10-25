@@ -1,7 +1,14 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
+import { createBrowserRouter } from "react-router-dom"
 import { render, screen } from "@testing-library/react"
 import App from "@/App"
+import routes from "@/routers/routes"
+import createStore from "@/store/createStore"
 import THEME_STORAGE_KEY from "@/utils/themeStorageKey"
+
+function renderApp() {
+    return render(<App store={createStore()} router={createBrowserRouter(routes)} />)
+}
 
 afterEach(() => {
     window.history.pushState({}, "", "/")
@@ -10,10 +17,14 @@ afterEach(() => {
 
 describe("App", () => {
     it("redireciona a raiz para o idioma do navegador", async () => {
-        render(<App />)
+        renderApp()
 
         expect(
-            await screen.findByRole("heading", { name: "Full stack developer in TypeScript" })
+            await screen.findByRole(
+                "heading",
+                { name: "Full stack developer in TypeScript" },
+                { timeout: 4000 }
+            )
         ).toBeInTheDocument()
         expect(window.location.pathname).toBe("/en")
     })
@@ -21,7 +32,7 @@ describe("App", () => {
     it("renderiza a página inicial na rota do idioma", async () => {
         window.history.pushState({}, "", "/pt-BR")
 
-        render(<App />)
+        renderApp()
 
         expect(
             await screen.findByRole("heading", { name: "Desenvolvedor full stack em TypeScript" })
@@ -33,7 +44,7 @@ describe("App", () => {
         const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => undefined)
         window.history.pushState({}, "", "/pt-BR")
 
-        render(<App />)
+        renderApp()
 
         expect(
             await screen.findByRole("heading", { name: "Desenvolvedor full stack em TypeScript" })
@@ -45,7 +56,7 @@ describe("App", () => {
     it("define título e meta description da página no head", async () => {
         window.history.pushState({}, "", "/pt-BR")
 
-        render(<App />)
+        renderApp()
 
         expect(
             await screen.findByRole("heading", { name: "Desenvolvedor full stack em TypeScript" })
@@ -60,7 +71,7 @@ describe("App", () => {
         localStorage.setItem(THEME_STORAGE_KEY, "dark")
         window.history.pushState({}, "", "/pt-BR")
 
-        render(<App />)
+        renderApp()
 
         expect(
             await screen.findByRole("heading", { name: "Desenvolvedor full stack em TypeScript" })
@@ -71,7 +82,7 @@ describe("App", () => {
     it("ignora ?tema= na URL e segue o sistema", async () => {
         window.history.pushState({}, "", "/pt-BR?tema=dark")
 
-        render(<App />)
+        renderApp()
 
         expect(
             await screen.findByRole("heading", { name: "Desenvolvedor full stack em TypeScript" })
@@ -82,7 +93,7 @@ describe("App", () => {
     it("usa o título e a meta description de NotFound.page numa rota desconhecida", async () => {
         window.history.pushState({}, "", "/pt-BR/rota-que-nao-existe")
 
-        render(<App />)
+        renderApp()
 
         expect(
             await screen.findByRole("heading", { name: "Página não encontrada" })

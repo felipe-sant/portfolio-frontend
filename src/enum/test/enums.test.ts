@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest"
 import DOCUMENT_FORMATS from "@/enum/documentFormats.enum"
+import ICON_NAMES from "@/enum/iconNames.enum"
 import PROJECT_CATEGORIES from "@/enum/projectCategories.enum"
 import PROJECT_SORTS from "@/enum/projectSorts.enum"
 import PROJECT_STATUSES from "@/enum/projectStatuses.enum"
@@ -32,5 +33,10 @@ describe("enums do contrato", () => {
         expect(TIMELINE_KINDS).toEqual(["experience", "education", "course"])
         expect(DOCUMENT_FORMATS).toEqual(["markdown", "text"])
         expect(PROJECT_SORTS).toEqual(["recent", "oldest", "title"])
+    })
+
+    it("lista o inventário fechado de ícones", () => {
+        expect(ICON_NAMES).toHaveLength(22)
+        expect(new Set(ICON_NAMES).size).toBe(ICON_NAMES.length)
     })
 })

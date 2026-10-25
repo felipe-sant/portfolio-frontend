@@ -1,0 +1,55 @@
+.wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input {
+    width: 100%;
+    min-height: var(--hit-min);
+    padding: var(--space-3) var(--hit-min) var(--space-3) var(--space-4);
+    border: var(--border-width) solid var(--border-control);
+    border-radius: var(--radius);
+    background-color: var(--bg-page);
+    color: var(--text-strong);
+    font-family: var(--font-body);
+    font-size: var(--text-body-md);
+    appearance: none;
+}
+
+.input::placeholder {
+    color: var(--text-weak);
+}
+
+.input::-webkit-search-cancel-button {
+    appearance: none;
+}
+
+.icon,
+.clear {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--hit-min);
+    height: 100%;
+    color: var(--text-label);
+}
+
+.icon {
+    pointer-events: none;
+}
+
+.clear {
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius);
+    background-color: transparent;
+    cursor: pointer;
+}
+
+.clear:hover {
+    color: var(--text-strong);
+}

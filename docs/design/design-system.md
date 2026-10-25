@@ -57,7 +57,7 @@ assinatura visual.
   deixa a ação sem para onde ir.
 - O único uso horizontal é a borda superior de 2px do rodapé, uma linha
   (`border-image: linear-gradient(90deg, ...) 1`), não um preenchimento.
-- No hover o degradê não muda; `--brand-variant` cobre o caso de fundo sólido.
+- No hover o botão primário escurece o degradê com `filter: brightness(var(--brand-hover-brightness))`, 0.94 no claro e 0.82 no escuro (`D56`), sem trocar as cores; `--brand-variant` cobre o caso de fundo sólido.
 
 ### Papéis semânticos
 
@@ -88,6 +88,13 @@ e `Banner` de `components/feedback/`.
 A paleta semântica fica, e erro de campo usa `--danger-ink` na borda e na mensagem, com
 `aria-invalid` e `aria-describedby`, não o `--brand-variant`/`--brand-deep` do `TextField` do
 handoff (D07).
+
+O `TextField` marca o campo obrigatório com um `*` em `--danger-ink` depois do rótulo, desenhado por
+CSS e fora do nome acessível (o leitor de tela ouve `aria-required`). Campo que pode mostrar aviso
+usa `reserveMessageSpace`: a linha do aviso existe sempre, vazia até ele aparecer, para o campo não
+crescer e deslocar a página. O erro é um `role="alert"` ligado por `aria-describedby`, e
+`focusOnError` leva o foco ao campo quando o erro aparece; só se liga no primeiro campo inválido do
+envio, nunca na validação por `blur`, que prenderia o foco.
 
 O repositório usa o prefixo `--danger-*`, igual ao handoff (o nome antigo `--error-*` saiu).
 
@@ -168,6 +175,15 @@ contínuas: `--dur-shimmer` (1.4s, skeleton), `--dur-spin` (700ms, spinner) e `-
 (22s, faixa de stack). Nada de bounce, entrada em escala ou parallax. A faixa de stack tem botão de
 pausa (D28).
 
+Tokens da #84 (D59): `--dur-page` (150ms, transição de página), `--stagger` (60ms, atraso entre
+irmãos na entrada, no máximo 5 degraus por `data-reveal-step`) e `--press-scale` (0.97, escala de
+`:active` em `Button`, `IconButton` e links do cabeçalho). Regras de uso: o crossfade de tema só
+existe durante a troca, por `data-theme-transition` no `<html>` (D60); a entrada ao rolar usa só
+opacidade e `translateY`, por `animation` (`useReveal`, `[data-reveal]` em `global.css`), para não
+entrar em conflito com a `transition` de hover do card e sem atraso residual, nunca `visibility` nem
+`display`; o skeleton sai por fade (`SkeletonSwap`) e a tela que o usa aplica `useReveal` nos
+cards e `SkeletonSwap` na troca (D57). Movimento novo usa `--dur-*` e `--ease`, nunca duração fixa.
+
 `prefers-reduced-motion: reduce` desliga tudo. No `global.css` isso zera os tokens de duração e
 encurta animação e transição em `*`, `*::before` e `*::after`; a faixa de stack vira lista estática
 (D28). Os keyframes do handoff (`ds-shimmer`, `ds-spin`, `ds-marquee`) ainda não existem no código:
@@ -224,8 +240,9 @@ check, alerta, GitHub, LinkedIn, envelope, arquivo, lupa com mais, pausa e play 
 são caracteres unicode (`→ ← ↗ ↓ ▾`), não ícones.
 
 A recomendação do handoff é trocar por `lucide-react` e usar um pacote de marcas (ou os SVGs
-oficiais) para GitHub e LinkedIn. Nada disso está instalado ainda: entra com o primeiro componente
-que precisar de ícone.
+oficiais) para GitHub e LinkedIn. A #32 não instalou nada: os ícones são SVG inline no componente
+`Icon` (`src/components/Icon.tsx`), com o nome em `src/enum/iconNames.enum.ts`. Pausa e play de D28
+entram com a #34 e o botão só de ícone com a #33.
 
 ## Acessibilidade
 
@@ -286,13 +303,13 @@ favicon em `decisions.md` (D34).
 
 As convenções do repositório prevalecem onde divergem do handoff (R3):
 
-| Handoff                                                    | Repositório                                                                                                                             |
-| ---------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| Fontes do Google Fonts por `@import` em `tokens/fonts.css` | Fontes self-hospedadas: `woff2` e licença em `public/fonts/`, `@font-face` em `src/styles/global.css` e `preload` no `index.html` (D09) |
-| Classes globais `.ds-*` e regras de `tokens/layout.css`    | CSS Module por página (`src/styles/pages/`) e componente (`src/styles/components/`), com as media queries no próprio módulo             |
+| Handoff                                                    | Repositório                                                                                                                                       |
+| ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Fontes do Google Fonts por `@import` em `tokens/fonts.css` | Fontes self-hospedadas: `woff2` e licença em `public/fonts/`, `@font-face` em `src/styles/global.css` e `preload` no `index.html` (D09)           |
+| Classes globais `.ds-*` e regras de `tokens/layout.css`    | CSS Module por página (`src/styles/pages/`) e componente (`src/styles/components/`), com as media queries no próprio módulo                       |
 | Tema por `data-theme="dark"` na raiz, com persistência     | Tema por `[data-theme="dark"]` em `global.css`, aplicado por `useTheme` e por script inline, com persistência em `portfolio-frontend:theme` (D22) |
-| `tokens/*.css` e `components/*.jsx` com comentários        | Código sem comentários                                                                                                                  |
-| Componentes React em JSX                                   | Recriados em TypeScript, com texto de UI por chave de tradução nos três idiomas                                                         |
+| `tokens/*.css` e `components/*.jsx` com comentários        | Código sem comentários                                                                                                                            |
+| Componentes React em JSX                                   | Recriados em TypeScript, com texto de UI por chave de tradução nos três idiomas                                                                   |
 
 ## Decisões de design
 

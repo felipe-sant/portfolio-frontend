@@ -1,12 +1,32 @@
-import { describe, expect, it } from "vitest"
-import { act, render, screen } from "@testing-library/react"
+import { beforeEach, describe, expect, it } from "vitest"
+import { act, screen } from "@testing-library/react"
 import setLanguage from "@/i18n/setLanguage"
 import HomePage from "@/pages/Home.page"
+import buildProfile from "@/testUtils/buildProfile"
 import expectNoAxeViolations from "@/testUtils/expectNoAxeViolations"
+import renderWithStore from "@/testUtils/renderWithStore"
+import stubContentFetch from "@/testUtils/stubContentFetch"
+
+const SITE_URL = "http://localhost:5173"
 
 function renderHomePage() {
-    return render(<HomePage />)
+    return renderWithStore(<HomePage />)
 }
+
+function readJsonLd() {
+    const script = document.querySelector('script[type="application/ld+json"]')
+    return JSON.parse(script?.textContent ?? "null")
+}
+
+beforeEach(() => {
+    stubContentFetch({
+        "content/pt-BR/profile.json": buildProfile({
+            links: { github: "https://github.com/example" }
+        }),
+        "content/en/profile.json": buildProfile(),
+        "content/es/profile.json": buildProfile()
+    })
+})
 
 describe("HomePage", () => {
     it("não tem violações de acessibilidade", async () => {
@@ -40,6 +60,17 @@ describe("HomePage", () => {
         )
     })
 
+    it("traduz título e meta description quando o idioma é en", async () => {
+        await setLanguage("en")
+
+        renderHomePage()
+
+        expect(document.title).toBe("Luiz Felipe dos Santos · Full stack developer")
+        expect(document.querySelector('meta[name="description"]')?.getAttribute("content")).toBe(
+            "Portfolio of Luiz Felipe dos Santos, full stack developer in TypeScript: projects, background and contact."
+        )
+    })
+
     it("traduz os metadados quando o idioma é es", async () => {
         await setLanguage("es")
 
@@ -64,5 +95,38 @@ describe("HomePage", () => {
             "Portafolio de Luiz Felipe dos Santos, desarrollador full stack en TypeScript: proyectos, trayectoria y contacto."
         )
         expect(document.documentElement.lang).toBe("es")
+    })
+
+    it.each(["pt-BR", "en", "es"] as const)(
+        "declara canônica, quatro hreflang e JSON-LD em %s",
+        async (language) => {
+            await setLanguage(language)
+
+            renderHomePage()
+
+            expect(document.head.querySelector('link[rel="canonical"]')?.getAttribute("href")).toBe(
+                `${SITE_URL}/${language}`
+            )
+            expect(document.head.querySelectorAll("link[rel='alternate'][hreflang]")).toHaveLength(
+                4
+            )
+            const [website, person] = readJsonLd()["@graph"]
+            expect(website["@type"]).toBe("WebSite")
+            expect(website.inLanguage).toBe(language)
+            expect(person["@id"]).toBe(`${SITE_URL}/${language}#person`)
+            expect(website.publisher["@id"]).toBe(person["@id"])
+        }
+    )
+
+    it("completa sameAs e knowsAbout com o perfil carregado", async () => {
+        renderHomePage()
+
+        await act(async () => {
+            await Promise.resolve()
+        })
+
+        await screen.findByRole("heading", { name: "Desenvolvedor full stack em TypeScript" })
+        await expect.poll(() => readJsonLd()["@graph"][1].knowsAbout).toEqual(["TypeScript"])
+        expect(readJsonLd()["@graph"][1].sameAs).toEqual(["https://github.com/example"])
     })
 })

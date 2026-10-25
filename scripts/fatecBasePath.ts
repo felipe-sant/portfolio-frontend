@@ -1,0 +1,3 @@
+const FATEC_BASE_PATH = "/ra2581392423047/"
+
+export default FATEC_BASE_PATH

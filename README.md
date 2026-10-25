@@ -78,43 +78,49 @@ variáveis com prefixo `VITE_` chegam ao código do cliente; ver
 
 ## Comandos
 
-| Comando             | O que faz                                                                          |
-| ------------------- | ---------------------------------------------------------------------------------- |
-| `npm run dev`       | Dev server do Vite (porta padrão 5173)                                             |
-| `npm run build`     | `npm run typecheck` e build de produção em `dist/`                                 |
-| `npm run preview`   | Serve o `dist/` já gerado; depende de um `npm run build` anterior                  |
-| `npm run typecheck` | Checagem de tipos com `tsc -b` (`src/` e `vite.config.ts`)                         |
-| `npm test`          | Vitest em watch mode                                                               |
-| `npm test -- --run` | Execução única da suíte (CI, terminal não interativo)                              |
-| `npm run test:cov`  | Suíte inteira com relatório de cobertura em `coverage/` e threshold de 80%         |
-| `npm run lint`      | oxlint sobre o projeto, com a configuração de `.oxlintrc.json`                     |
-| `npm run lint:fix`  | O mesmo lint, aplicando as correções automáticas possíveis                         |
-| `npm run format`    | `prettier --write` em `**/*.{ts,tsx,css,json,md,yml,html}`, conforme `.prettierrc` |
+| Comando                 | O que faz                                                                                                        |
+| ----------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `npm run dev`           | Dev server do Vite (porta padrão 5173)                                                                           |
+| `npm run build`         | `npm run typecheck`, build de produção e pré-renderização: HTML por rota e idioma e `404.html` em `dist/`        |
+| `npm run build:server`  | Build SSR das entradas de servidor em `dist-server/` (intermediário, não publicado)                              |
+| `npm run prerender`     | Escreve em `dist/` os HTML pré-renderizados a partir do `dist-server/`                                           |
+| `npm run preview`       | Serve o `dist/` já gerado; depende de um `npm run build` anterior                                                |
+| `npm run build:fatec`   | `npm run build` com o base da Fatec (`/ra2581392423047/`), mais `.nojekyll` em `dist/`                           |
+| `npm run preview:fatec` | Serve esse `dist/` como o Pages (HTML por rota, 404 pelo `404.html`) em `http://localhost:4173/ra2581392423047/` |
+| `npm run typecheck`     | Checagem de tipos com `tsc -b` (`src/` e `vite.config.ts`)                                                       |
+| `npm test`              | Vitest em watch mode                                                                                             |
+| `npm test -- --run`     | Execução única da suíte (CI, terminal não interativo)                                                            |
+| `npm run test:cov`      | Suíte inteira com relatório de cobertura em `coverage/` e threshold de 80%                                       |
+| `npm run lint`          | oxlint sobre o projeto, com a configuração de `.oxlintrc.json`                                                   |
+| `npm run lint:fix`      | O mesmo lint, aplicando as correções automáticas possíveis                                                       |
+| `npm run format`        | `prettier --write` em `**/*.{ts,tsx,css,json,md,yml,html}`, conforme `.prettierrc`                               |
 
 Comandos do conteúdo (detalhes em [Dados do conteúdo](#dados-do-conteúdo)):
 
-| Comando                                            | O que faz                                                                                     |
-| -------------------------------------------------- | --------------------------------------------------------------------------------------------- |
-| `npm run content:id`                               | Imprime um UUID v7 novo; `npm run content:id -- 5` imprime cinco                              |
-| `npm run content:check`                            | Valida `public/content/` e `public/images/` contra o contrato e aponta arquivo, campo e regra |
-| `npm run content:template`                         | Regera `content/template/pt-BR/` a partir dos tipos (só quem muda o contrato precisa)         |
-| `npm run content:placeholders -- profile`          | Gera a foto placeholder do perfil, sem sobrescrever arquivo existente (`--force` sobrescreve) |
-| `npm run content:placeholders -- project <id> [n]` | Gera de 1 a 5 imagens placeholder do projeto, nos caminhos finais                             |
+| Comando                                            | O que faz                                                                                                                                             |
+| -------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm run content:id`                               | Imprime um UUID v7 novo; `npm run content:id -- 5` imprime cinco                                                                                      |
+| `npm run content:check`                            | Valida `public/content/` e `public/images/` contra o contrato e aponta arquivo, campo e regra                                                         |
+| `npm run content:template`                         | Regera `content/template/pt-BR/` a partir dos tipos (só quem muda o contrato precisa)                                                                 |
+| `npm run content:placeholders -- profile`          | Gera a foto placeholder do perfil, sem sobrescrever arquivo existente (`--force` sobrescreve)                                                         |
+| `npm run content:placeholders -- project <id> [n]` | Gera de 1 a 5 imagens placeholder do projeto, nos caminhos finais                                                                                     |
+| `npm run og:image`                                 | Regera `public/images/og-site.png` (1200×630, gato e nome) com o Chromium do Playwright; exige `npx playwright install chromium` e o PNG é versionado |
 
 ## Estrutura de `src/` e convenções
 
-| Pasta        | O que guarda                                                                          |
-| ------------ | ------------------------------------------------------------------------------------- |
-| `pages/`     | Telas ligadas a uma rota (`<Nome>.page.tsx`); lógica de página em `pages/hooks/`      |
-| `layouts/`   | `MainLayout`, com header, footer e o único `<Suspense>` em volta do `<Outlet />`      |
-| `routers/`   | `paths.ts` (`ROUTES`), `routes.tsx` e `Router.tsx` (data router)                      |
-| `store/`     | Store do Redux Toolkit, `api.ts` do RTK Query e os endpoints em `store/api/`          |
-| `services/`  | Cliente HTTP (`http/`) e a camada de dados local da v1 (`content/`)                   |
-| `i18n/`      | Configuração do i18next e a API de idioma (`getLanguage`, `setLanguage`)              |
-| `locales/`   | Traduções: `<idioma>/<namespace>.json`                                                |
-| `styles/`    | `global.css` (tokens e reset) e CSS Modules em `styles/pages/` e `styles/components/` |
-| `types/`     | Tipos compartilhados, um por arquivo (`<dominio>/<NomeDoTipo>.types.ts`), e `*.d.ts`  |
-| `testUtils/` | Utilitários de teste, como `renderWithStore`, `stubContentFetch` e fixtures           |
+| Pasta        | O que guarda                                                                                  |
+| ------------ | --------------------------------------------------------------------------------------------- |
+| `pages/`     | Telas ligadas a uma rota (`<Nome>.page.tsx`); lógica de página em `pages/hooks/`              |
+| `layouts/`   | `MainLayout`, com header, footer e o único `<Suspense>` em volta do `<Outlet />`              |
+| `routers/`   | `paths.ts` (`ROUTES`), `routes.tsx` (o data router é criado em `prerender/mountClient.tsx`)   |
+| `prerender/` | Registro das rotas pré-renderizáveis, carregamento de dados do servidor e montagem do cliente |
+| `store/`     | Store do Redux Toolkit, `api.ts` do RTK Query e os endpoints em `store/api/`                  |
+| `services/`  | Cliente HTTP (`http/`) e a camada de dados local da v1 (`content/`)                           |
+| `i18n/`      | Configuração do i18next e a API de idioma (`getLanguage`, `setLanguage`)                      |
+| `locales/`   | Traduções: `<idioma>/<namespace>.json`                                                        |
+| `styles/`    | `global.css` (tokens e reset) e CSS Modules em `styles/pages/` e `styles/components/`         |
+| `types/`     | Tipos compartilhados, um por arquivo (`<dominio>/<NomeDoTipo>.types.ts`), e `*.d.ts`          |
+| `testUtils/` | Utilitários de teste, como `renderWithStore`, `stubContentFetch` e fixtures                   |
 
 Pastas como `components/` e `hooks/` nascem no primeiro uso. Em resumo: identificadores em inglês,
 import interno pelo alias `@/` (nunca `../`), import nomeado, export no final do arquivo com um
@@ -228,6 +234,12 @@ afetados pelo diff. O `.github/dependabot.yml` atualiza as dependências de `npm
 vindo de PR não publica. O fluxo `PR -> staging -> main`, os domínios, as variáveis e os segredos
 estão em [`docs/setup/environments.md`](docs/setup/environments.md).
 
+`.github/workflows/fatec-pages.yml` é o ensaio da publicação da v1 no GitHub Pages da Fatec: roda
+build, lint, `test:cov` e `npm run build:fatec` e publica o `dist/` como artefato `fatec-pages`, sem
+publicar nada. Com a entrada `tag` no formato `v1.x.y`, usa o código dessa tag e expõe
+`is-release`; qualquer outro valor é ensaio. O base vem de `BASE_PATH`; detalhes em
+[`docs/setup/environments.md`](docs/setup/environments.md#fatec-github-pages).
+
 `npm install` configura o Husky pelo script `prepare`. O hook de `pre-commit` (`.husky/pre-commit`)
 roda `npx lint-staged`, que, conforme `.lintstagedrc.json`, aplica `oxlint --fix` e
 `prettier --write` nos `.ts`/`.tsx` staged e só `prettier --write` nos
@@ -238,7 +250,7 @@ roda `npx lint-staged`, que, conforme `.lintstagedrc.json`, aplica `oxlint --fix
 | Onde                                 | O que é                                                                                                                                                    |
 | ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [`docs/`](docs/README.md)            | Documentação versionada do frontend: produto, glossário, design system, arquitetura, ADRs, diagramas, ambientes e o molde de tela (`screens/_template.md`) |
-| `.specs/`                            | Planejamento local por feature ou bug (`spec.md` e `tasks.md`), gitignored                                                                                 |
+| `.specs/`                            | Planejamento local por feature ou bug (`spec.md` e `tasks.md`), gitignored; só o resumo de `_archive/` é versionado                                        |
 | [`CONTRIBUTING.md`](CONTRIBUTING.md) | Padrão de branches, commits e Pull Requests                                                                                                                |
 
 O índice completo de `docs/` está em [`docs/README.md`](docs/README.md). Pull Requests seguem
