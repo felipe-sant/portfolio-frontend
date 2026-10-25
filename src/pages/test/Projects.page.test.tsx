@@ -85,6 +85,22 @@ afterEach(() => {
     vi.unstubAllGlobals()
 })
 
+function getFiltersRow(type: HTMLElement) {
+    const row = type.parentElement
+
+    if (!row) {
+        throw new Error("Linha de filtros não encontrada")
+    }
+
+    row.style.overflowX = "auto"
+    row.setPointerCapture = vi.fn()
+    row.releasePointerCapture = vi.fn()
+    row.hasPointerCapture = vi.fn(() => true)
+    row.scrollLeft = 50
+
+    return row
+}
+
 describe("ProjectsPage", () => {
     it("mostra só o título, a introdução e o aviso de nenhum projeto publicado quando o conteúdo é vazio", async () => {
         stubProjects(0)
@@ -270,30 +286,37 @@ describe("ProjectsPage", () => {
         )
     })
 
-    it("rola a linha de filtros ao arrastar com o mouse e ainda aceita o clique simples no filtro", async () => {
+    const mousePointer = { pointerType: "mouse", button: 0, buttons: 1, pointerId: 1 }
+
+    it("rola a linha de filtros ao arrastar com o mouse", async () => {
+        stubProjects(10)
+
+        renderPage()
+        await listLoaded()
+        const type = screen.getByRole("group", { name: "Tipo" })
+        const row = getFiltersRow(type)
+
+        fireEvent.pointerDown(within(type).getByRole("button", { name: "Todos" }), {
+            ...mousePointer,
+            clientX: 200
+        })
+        fireEvent.pointerMove(row, { ...mousePointer, clientX: 150 })
+
+        expect(row).toHaveAttribute("data-dragging", "true")
+        expect(row.scrollLeft).toBe(100)
+
+        fireEvent.pointerUp(row, { ...mousePointer, clientX: 150 })
+        expect(row).not.toHaveAttribute("data-dragging")
+    })
+
+    it("aceita o clique simples no filtro sem capturar o ponteiro", async () => {
         stubProjects(10)
         const user = userEvent.setup()
 
         renderPage()
         await listLoaded()
         const type = screen.getByRole("group", { name: "Tipo" })
-        const row = type.parentElement as HTMLElement
-        row.style.overflowX = "auto"
-        row.setPointerCapture = vi.fn()
-        row.releasePointerCapture = vi.fn()
-        row.hasPointerCapture = vi.fn(() => true)
-        row.scrollLeft = 50
-        const pointer = { pointerType: "mouse", button: 0, pointerId: 1 }
-        const all = within(type).getByRole("button", { name: "Todos" })
-
-        fireEvent.pointerDown(all, { ...pointer, clientX: 200 })
-        fireEvent.pointerMove(row, { ...pointer, clientX: 150 })
-
-        expect(row).toHaveAttribute("data-dragging", "true")
-        expect(row.scrollLeft).toBe(100)
-
-        fireEvent.pointerUp(row, { ...pointer, clientX: 150 })
-        expect(row).not.toHaveAttribute("data-dragging")
+        const row = getFiltersRow(type)
 
         await user.click(within(type).getByRole("button", { name: "Web" }))
 
@@ -303,7 +326,7 @@ describe("ProjectsPage", () => {
                 "true"
             )
         )
-        expect(row.setPointerCapture).toHaveBeenCalledTimes(1)
+        expect(row.setPointerCapture).not.toHaveBeenCalled()
     })
 
     it("não tem controle de ordenação fora do modal", async () => {
