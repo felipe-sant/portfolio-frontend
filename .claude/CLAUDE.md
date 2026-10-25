@@ -125,7 +125,7 @@ O mesmo setup roda um `beforeEach` que remove `LANGUAGE_STORAGE_KEY` do `localSt
 língua de referência, independente do navegador do `jsdom` (que reporta `en-US`). O literal é
 `"pt-BR"`, não `FALLBACK_LANGUAGE`, e o reset não grava nada. Teste de rota abre o caminho com
 prefixo (`createMemoryRouter(routes, { initialEntries: ["/pt-BR"] })`), porque `/` só redireciona e o
-`jsdom` reporta `en-US`. O `beforeEach` também chama `clearContentCache()` (cache de leitura de `src/services/content/`), e `failFetchAfter`/`holdFetchAfter` o limpam ao criar o stub: stub novo significa memória vazia. Teste de
+`jsdom` reporta `en-US`. O `beforeEach` também stuba `Element.prototype.scrollIntoView` (o `jsdom` não o implementa) e chama `clearContentCache()` (cache de leitura de `src/services/content/`), e `failFetchAfter`/`holdFetchAfter` o limpam ao criar o stub: stub novo significa memória vazia. Teste de
 tela afirma o texto em português, nunca a chave (o i18next devolve a própria chave quando falta
 tradução), não mocka `react-i18next` e troca de idioma com `setLanguage` dentro do `it`. Para
 simular uma nova carga de página (idioma inicial lido do caminho), prepare a URL, rode
@@ -424,7 +424,7 @@ para editores compatíveis, coerente com o `.prettierrc`.
   (`src/utils/`, chamada por `useTheme.setTheme`) liga `data-theme-transition` no `<html>` durante a
   troca; `useReveal()` (`src/hooks/`, devolve `ref` e `revealProps`) e o componente `SkeletonSwap`
   são usados pela Início (destaques, cabeçalho da seção e botões finais pelo componente `Reveal`, e skeletons dos blocos), com `useReveal` escondendo só o que está abaixo da primeira tela depois da hidratação (o HTML pré-renderizado sai visível); Projetos usa `useReveal` nos cards (`ProjectCard`, por `revealIndex`) e `SkeletonSwap` na grade; `useDragScroll` (arrastar com o mouse região rolável), `useMediaQuery` (consulta de mídia por `useSyncExternalStore`), `useDebounce` e `useHasHydrated` (`false` só durante a hidratação, por `useSyncExternalStore`) completam `src/hooks/`; tokens `--dur-page`,
-  `--stagger` e `--press-scale` são neutralizados nos dois blocos de movimento reduzido. O hover de `projectCard.module.css` e `featuredProject.module.css` zera o deslocamento com movimento reduzido por `:global(:root[data-motion="reduced"])` e `:global(:root:not([data-motion]))` dentro de `@media (prefers-reduced-motion: reduce)`, espelhando a lógica do `global.css`; é o único uso de `:global` em CSS Module do projeto, e não usa token como `--hover-lift` porque o `transform` computado precisa ser `none`.
+  `--stagger` e `--press-scale` são neutralizados nos dois blocos de movimento reduzido. O hover de `projectCard.module.css` e `featuredProject.module.css` zera o deslocamento com movimento reduzido por `:global(:root[data-motion="reduced"])` (dentro de `@media (hover: hover)`, sem depender do media de movimento reduzido) e por `:global(:root:not([data-motion]))` (dentro de `@media (hover: hover) and (prefers-reduced-motion: reduce)`), espelhando a lógica do `global.css`; é o único uso de `:global` em CSS Module do projeto, e não usa token como `--hover-lift` porque o `transform` computado precisa ser `none`.
 - **Alias de import `@/`** — `@/*` resolve para `src/*`. Configurado em dois lugares que precisam
   continuar concordando: `paths` no `tsconfig.app.json` (para o `tsc` e o editor) e `resolve.alias` no
   `vite.config.ts` (para o dev server e o build). Mexer em um sem o outro deixa o `tsc -b`
