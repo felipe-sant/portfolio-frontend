@@ -86,6 +86,7 @@ válido e não pedem id fora do formato, um `400` em leitura indica defeito no c
 | `GET /timeline?lang=`                                                               | `Timeline`                                  | Informações                                                    |
 | `GET /timeline?lang=&current=true`                                                  | `CurrentTimeline`                           | Início (status atual)                                          |
 | `GET /projects?lang=&q=&type=&category=&tech=&year=&featured=&sort=&offset=&limit=` | `ProjectPage`                               | Projetos, Início (destaques)                                   |
+| `GET /projects/filter-options?lang=`                                                | `ProjectFilterOptions`                      | Projetos (opções do modal de filtros)                          |
 | `GET /projects/{id}?lang=`                                                          | `ProjectDetail`, com `related` expandido    | Projeto e metadados das rotas do projeto                       |
 | `GET /projects/{id}/documents?lang=`                                                | `{ items: ProjectDocument[] }`              | Pré-renderização (#49), `sitemap.xml` e `llms-full*.txt` (#51) |
 | `GET /projects/{id}/documents/{documentId}?lang=`                                   | Conteúdo em `text/markdown` ou `text/plain` | Documentos do projeto (D55)                                    |
@@ -436,13 +437,6 @@ mês é o de `sort=recent` (título A–Z, depois `id`), que substitui a "ordem 
 - Sem resultado: `200` com `items: []` e `total: 0`. `offset` além do fim: `200` com `items: []` e
   o `total` real.
 
-- `availableTechnologies`: os nomes de tecnologia (`technologies`) presentes em pelo menos um
-  projeto publicado do `lang`, sem repetição pelo texto normalizado (vale a grafia do primeiro
-  projeto na ordem do conteúdo), em ordem alfabética pela colação do `lang`, **sem** aplicar busca,
-  filtros nem `featured` (as opções do modal de filtros não podem depender da página).
-- `availableYears`: os anos (`AAAA`) de `date` presentes em pelo menos um projeto publicado do
-  `lang`, do mais recente para o mais antigo, sem repetição e também sem aplicar busca nem filtros.
-
 **Paginação:** por `offset` e `limit`, não por cursor. O "Carregar mais" de Projetos pede
 `offset` igual à quantidade já mostrada; voltar pelo histórico refaz as mesmas páginas, com cache
 do RTK Query (RF-PROJECTS-25); a coleção é pequena (dezenas de projetos). Consumidores de build que
@@ -598,6 +592,59 @@ Destaques do Início: `GET /projects?lang=pt-BR&featured=true&sort=recent&limit=
 
 **Quem usa:** Projetos (RF-PROJECTS-03 a RF-PROJECTS-13, RF-PROJECTS-26) e Início (destaques,
 RF-HOME-17 a RF-HOME-21).
+
+### `GET /projects/filter-options`
+
+Opções do modal de filtros de Projetos (D64, RF-PROJECTS-31): cada tecnologia e cada ano com a
+quantidade de projetos que os usam, para a tela desabilitar o que ninguém usa. `filter-options` não
+é um UUID v7, então não colide com `GET /projects/{id}`.
+
+**Parâmetros**
+
+| Nome   | Onde  | Tipo                | Obrigatório | Regra                                   |
+| ------ | ----- | ------------------- | ----------- | --------------------------------------- |
+| `lang` | query | `SupportedLanguage` | Sim         | Idioma do catálogo e da colação do nome |
+
+**Regras** (sempre sem busca, filtros nem `featured`: o resultado só muda com o conteúdo e o `lang`):
+
+- `technologies`: a união dos `name` de `Profile.stack` (todos os grupos) com as `technologies` de
+  todos os projetos publicados do `lang`, sem repetição pelo texto normalizado da busca (NFD, sem
+  marcas diacríticas, minúsculas pelas regras do `lang`); vale a grafia do perfil quando a
+  tecnologia está nos dois, senão a do primeiro projeto na ordem do conteúdo. `count` é quantos
+  projetos publicados têm a tecnologia (a mesma comparação do filtro `tech`), 0 para a que só está
+  na stack do perfil. Ordem alfabética pela colação do `lang` com `sensitivity: "base"`.
+- `years`: cada ano (`AAAA`) do menor ao maior ano de `date` entre os projetos publicados, inclusive
+  os anos do intervalo sem projeto (`count` 0), do mais recente para o mais antigo. `count` é
+  quantos projetos têm aquele ano em `date`. Sem projeto publicado, `[]`.
+- Toda tecnologia e todo ano de projeto aparecem no resultado; por isso `count` 0 nunca contradiz
+  o filtro `tech` ou `year` de `GET /projects`.
+
+**Sucesso:** `200`, `application/json`, `Content-Language` igual a `lang`, corpo `ProjectFilterOptions`.
+
+```json
+{
+    "technologies": [
+        { "value": "Docker", "count": 0 },
+        { "value": "Node.js", "count": 3 },
+        { "value": "React", "count": 4 }
+    ],
+    "years": [
+        { "value": "2026", "count": 1 },
+        { "value": "2025", "count": 0 },
+        { "value": "2024", "count": 2 }
+    ]
+}
+```
+
+**Erros**
+
+| Status | `code`                 | Quando                     |
+| ------ | ---------------------- | -------------------------- |
+| 400    | `UNSUPPORTED_LANGUAGE` | `lang` ausente ou inválido |
+| 500    | `INTERNAL_ERROR`       | Falha do servidor          |
+
+**Quem usa:** Projetos (RF-PROJECTS-29 e RF-PROJECTS-31), por `getProjectFilterOptions`, com o
+argumento `{ lang }` (cache por idioma) e entrada no registro de pré-renderização.
 
 ### `GET /projects/{id}`
 
@@ -978,7 +1025,7 @@ origem, sem mudar telas.
   projeto na forma `ProjectDetail` com `related` como `{ id, reason }`), como o backend guardaria.
 - **Respostas montadas como o backend montaria:** a camada local monta, a partir dos registros e
   com as mesmas regras deste documento, tudo o que a API calcula: o envelope `ProjectPage` com
-  `total` e `availableTypes`, `technologies` e `cover` de cada projeto, `related` expandido, o
+  `total` e `availableTypes`, as opções de filtro (`ProjectFilterOptions`), `technologies` e `cover` de cada projeto, `related` expandido, o
   `projects` com título em cada item de trajetória, os grupos e a ordem da trajetória,
   `certificates` sem repetição e os itens de `current=true`. A resposta que o `queryFn` devolve é
   idêntica, campo a campo, à que a API vai devolver para os mesmos parâmetros.

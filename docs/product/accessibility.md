@@ -311,14 +311,15 @@ Cada item tem um ID estável e a forma de verificação entre colchetes: `[teste
 
 - [ ] `A11Y-PS01` — Busca com rótulo [teste]
 - [ ] `A11Y-PS02` — Filtros em grupo nomeado, com `aria-pressed` [teste]
-- [ ] `A11Y-PS03` — Ordenação em dropdown personalizado (`button` com `aria-haspopup="listbox"` e `aria-expanded`, `listbox` com `option` e `aria-selected`), com nome acessível "Ordenar" e valor atual anunciado (D61) [teste]
-- [ ] `A11Y-PS08` — Teclado do dropdown de ordenação: Enter, Espaço, setas, Home, End e Esc com devolução do foco ao gatilho; anel de foco só no teclado, nunca no clique de mouse [teste] [e2e]
+- [ ] `A11Y-PS03` — Ordenação no modal de filtros: grupo de opções exclusivas em `fieldset` com `legend` "Ordenar", cada opção um `input type="radio"` com `label` e o mesmo `name`, a atual marcada (D63) [teste]
+- [ ] `A11Y-PS08` — Teclado do grupo de ordenação no modal: Tab entra na opção marcada, setas movem e marcam no rascunho, Espaço marca, Tab sai; foco visível só no teclado nos controles do modal, nunca no clique de mouse [teste] [e2e]
 - [ ] `A11Y-PS04` — Contagem de resultados e lista vazia anunciadas em `aria-live` [teste] [leitor]
 - [ ] `A11Y-PS05` — "Carregar mais" leva o foco ao primeiro card novo [teste]
 - [ ] `A11Y-PS06` — Título do card é heading, e o link do card tem o nome do projeto (2.4.9) [teste]
 - [ ] `A11Y-PS07` — Linha de filtros alcançável por Tab no mobile [teclado]
 - [ ] `A11Y-PS09` — Modal de filtros de Projetos (D62): `role="dialog"`, `aria-modal`, nome pelo `h2`, foco no `h2` ao abrir, foco preso, Esc, "Fechar" de 44px, clique no fundo, foco de volta ao botão de origem e resto da página `inert` (PI1) [teste] [e2e]
-- [x] `A11Y-PS10` — Seções do modal de filtros em `fieldset` com `legend`, cada opção uma caixa de seleção com `label`; botão "Filtros" com o contador no nome acessível [teste]
+- [ ] `A11Y-PS10` — Seções Ordenar, Tecnologia e Ano do modal de filtros em `fieldset` com `legend`, cada opção um `radio` ou uma caixa de seleção com `label`; botão "Filtros" com o contador no nome acessível [teste]
+- [ ] `A11Y-PS11` — Opção de tecnologia ou ano sem projeto com `disabled` nativo (fora do Tab, sem marcar), nome acessível "`<nome>` (nenhum projeto)" e aparência legível; a opção vinda da URL fica habilitada e desmarcável (D64) [teste] [e2e]
 
 ### Projeto
 

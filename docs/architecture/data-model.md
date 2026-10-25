@@ -425,15 +425,26 @@ três idiomas.
 
 Montado na resposta de `GET /projects`; não existe no conteúdo.
 
-| Campo                   | Tipo               | Obrigatório | Por idioma | Regra                                                                                                                                                                        | Fonte               |
-| ----------------------- | ------------------ | ----------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------- |
-| `items`                 | `ProjectSummary[]` | Sim         | Em parte   | A página pedida, depois de busca, filtros e ordenação; `[]` sem resultado ou com `offset` além do fim                                                                        | D51                 |
-| `total`                 | `number`           | Sim         | Não        | Quantos projetos casam busca e filtros, sem contar a paginação                                                                                                               | RF-PROJECTS-10      |
-| `offset`                | `number`           | Sim         | Não        | O `offset` aplicado                                                                                                                                                          | D51                 |
-| `limit`                 | `number`           | Sim         | Não        | O `limit` aplicado                                                                                                                                                           | D51                 |
-| `availableTypes`        | `ProjectType[]`    | Sim         | Não        | Tipos presentes em pelo menos um projeto publicado do idioma, na ordem do enum, **sem** aplicar busca, filtros nem `featured`                                                | RF-PROJECTS-05, D51 |
-| `availableTechnologies` | `string[]`         | Sim         | Não        | Nomes de tecnologia presentes em algum projeto do idioma, sem repetição pelo texto normalizado, em ordem alfabética do idioma, **sem** aplicar busca, filtros nem `featured` | RF-PROJECTS-29, D62 |
-| `availableYears`        | `string[]`         | Sim         | Não        | Anos (`AAAA`) de `date` presentes em algum projeto do idioma, do mais recente ao mais antigo, **sem** aplicar busca, filtros nem `featured`                                  | RF-PROJECTS-29, D62 |
+| Campo            | Tipo               | Obrigatório | Por idioma | Regra                                                                                                                         | Fonte               |
+| ---------------- | ------------------ | ----------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------- | ------------------- |
+| `items`          | `ProjectSummary[]` | Sim         | Em parte   | A página pedida, depois de busca, filtros e ordenação; `[]` sem resultado ou com `offset` além do fim                         | D51                 |
+| `total`          | `number`           | Sim         | Não        | Quantos projetos casam busca e filtros, sem contar a paginação                                                                | RF-PROJECTS-10      |
+| `offset`         | `number`           | Sim         | Não        | O `offset` aplicado                                                                                                           | D51                 |
+| `limit`          | `number`           | Sim         | Não        | O `limit` aplicado                                                                                                            | D51                 |
+| `availableTypes` | `ProjectType[]`    | Sim         | Não        | Tipos presentes em pelo menos um projeto publicado do idioma, na ordem do enum, **sem** aplicar busca, filtros nem `featured` | RF-PROJECTS-05, D51 |
+
+### `ProjectFilterOptions`
+
+Montado na resposta de `GET /projects/filter-options` (D64); não existe no conteúdo. Cada item é um
+`ProjectFilterOption`.
+
+| Campo          | Tipo                    | Obrigatório | Por idioma | Regra                                                                                                                                     | Fonte               |
+| -------------- | ----------------------- | ----------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------- | ------------------- |
+| `technologies` | `ProjectFilterOption[]` | Sim         | Em parte   | União dos nomes de `Profile.stack` e das `technologies` dos projetos, sem repetição pelo texto normalizado, em ordem alfabética do idioma | RF-PROJECTS-29, D64 |
+| `years`        | `ProjectFilterOption[]` | Sim         | Não        | Do menor ao maior ano de `date` dos projetos, com os anos sem projeto do intervalo, do mais recente ao mais antigo; `[]` sem projeto      | RF-PROJECTS-29, D64 |
+
+`ProjectFilterOption`: `value` (`string`, o nome da tecnologia ou o ano `AAAA`) e `count`
+(`number`, projetos publicados que o usam, `0` desabilita a opção no modal).
 
 ### `TimelineGroup`
 
@@ -577,7 +588,7 @@ Os idiomas de `src/i18n/supportedLanguages.ts`, valores de `lang` e de `ContactM
 **API** (e a camada local na v1, com a mesma regra, D51, D53, D54):
 
 - busca, filtros de tipo e categoria, ordenação e paginação de projetos (`GET /projects`);
-- `total`, `availableTypes`, `availableTechnologies` e `availableYears` da página de projetos;
+- `total` e `availableTypes` da página de projetos e as opções de filtro com contagem (`ProjectFilterOptions`, `GET /projects/filter-options`, D64);
 - destaques do Início (`featured=true`), com o desempate por título e `id` (D53);
 - `technologies` e `cover` de cada projeto, montados de `stack` e de `images`;
 - relacionados expandidos (`related[].project`) no detalhe;
@@ -608,13 +619,13 @@ constante com a lista na ordem deste documento, em `src/services/content/` (`PRO
 `PROJECT_CATEGORIES`, `PROJECT_STATUSES`, `STACK_CATEGORIES`, `TIMELINE_KINDS`, `DOCUMENT_FORMATS` e
 `PROJECT_SORTS`), e o tipo é derivado da constante.
 
-| Domínio    | Tipos                                                                                                                                                                                                                                                                                                   |
-| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `profile`  | `Profile`, `Availability`, `Location`, `ContactChannels`, `SocialLinks`, `ResponseTime`                                                                                                                                                                                                                 |
-| `content`  | `ImageAsset`, `ResponsiveImage`, `StackGroup`, `StackItem`, `StackCategory`, mais `ContentIssue`, `ContentSnapshot`, `LanguageContent` e `ContentTemplate` (validação e modelo em branco)                                                                                                               |
-| `timeline` | `TimelineItem`, `TimelineItemRecord` (forma guardada, com `projectIds`), `TimelineKind`, `TimelineGroup`, `Timeline`, `CurrentTimeline`, `Certificate`, `TimelineProjectRef`                                                                                                                            |
-| `project`  | `ProjectSummary`, `ProjectDetail`, `ProjectRecord` (forma guardada), `RelatedProjectRecord`, `ProjectImage`, `RelatedProject`, `ProjectPage`, `ProjectListParams`, `NormalizedProjectListParams`, `ProjectType`, `ProjectCategory`, `ProjectStatus`, `ProjectDocument`, `DocumentFormat`, `ProjectSort` |
-| `api`      | `ApiError` (o corpo de [Formato de erro](api-contract.md#formato-de-erro)), `ContentError` (`status` e `ApiError`, o erro que o `queryFn` devolve) e `ListResponse` (o envelope `{ items }`)                                                                                                            |
+| Domínio    | Tipos                                                                                                                                                                                                                                                                                                                                                  |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `profile`  | `Profile`, `Availability`, `Location`, `ContactChannels`, `SocialLinks`, `ResponseTime`                                                                                                                                                                                                                                                                |
+| `content`  | `ImageAsset`, `ResponsiveImage`, `StackGroup`, `StackItem`, `StackCategory`, mais `ContentIssue`, `ContentSnapshot`, `LanguageContent` e `ContentTemplate` (validação e modelo em branco)                                                                                                                                                              |
+| `timeline` | `TimelineItem`, `TimelineItemRecord` (forma guardada, com `projectIds`), `TimelineKind`, `TimelineGroup`, `Timeline`, `CurrentTimeline`, `Certificate`, `TimelineProjectRef`                                                                                                                                                                           |
+| `project`  | `ProjectSummary`, `ProjectDetail`, `ProjectRecord` (forma guardada), `RelatedProjectRecord`, `ProjectImage`, `RelatedProject`, `ProjectPage`, `ProjectFilterOptions`, `ProjectFilterOption`, `ProjectListParams`, `NormalizedProjectListParams`, `ProjectType`, `ProjectCategory`, `ProjectStatus`, `ProjectDocument`, `DocumentFormat`, `ProjectSort` |
+| `api`      | `ApiError` (o corpo de [Formato de erro](api-contract.md#formato-de-erro)), `ContentError` (`status` e `ApiError`, o erro que o `queryFn` devolve) e `ListResponse` (o envelope `{ items }`)                                                                                                                                                           |
 
 `ProjectListParams` são os parâmetros de `GET /projects` (`lang`, `q`, `type`, `category`,
 `featured`, `sort`, `offset`, `limit`, [`api-contract.md`](api-contract.md#get-projects)).
@@ -751,22 +762,23 @@ levam sempre `lang` com o idioma ativo, omitido abaixo quando é o único parâm
 
 [`projects.md`](../screens/projects.md).
 
-| Dado exibido                                              | Origem                                                                                                                              | Endpoint                                                             |
-| --------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
-| Cards da grade                                            | Resposta de `GET /projects` (`ProjectPage.items`), páginas acumuladas                                                               | `GET /projects?q=&type=&category=&tech=&year=&sort=&offset=&limit=9` |
-| Imagem do card                                            | `ProjectSummary.cover`; ausente, placeholder                                                                                        | Idem                                                                 |
-| Título e link do card                                     | `ProjectSummary.title` e `id`                                                                                                       | Idem                                                                 |
-| Ano do card                                               | Derivado de `ProjectSummary.date`                                                                                                   | Idem                                                                 |
-| Linha de tipos e categoria                                | `ProjectSummary.types` e `category`, por chave                                                                                      | Idem                                                                 |
-| Resumo e chips                                            | `ProjectSummary.summary` e `cardTechnologies`                                                                                       | Idem                                                                 |
-| Estrela de destaque                                       | `ProjectSummary.featured`                                                                                                           | Idem                                                                 |
-| Contagem "`<mostrados>` de `<total>` projetos"            | Derivado da quantidade de itens acumulados e `ProjectPage.total`                                                                    | Idem                                                                 |
-| "Carregar mais" visível                                   | Derivado: itens acumulados menores que `ProjectPage.total`; o próximo pedido usa `offset` = mostrados                               | Idem                                                                 |
-| Botões do filtro de tipo                                  | `ProjectPage.availableTypes`                                                                                                        | Idem                                                                 |
-| Busca, filtros e ordenação aplicados                      | Parâmetros `q`, `type`, `category` e `sort`, a partir da query da URL (D45); a API busca em `ProjectSummary.title` e `technologies` | Idem                                                                 |
-| Sem resultado, vazio                                      | Derivado de `ProjectPage.total` 0 (com ou sem filtro ativo); textos pelas chaves `projects:noResults.*` e `projects:empty.*`        | Idem                                                                 |
-| JSON-LD `ItemList` (todos os projetos, ordem padrão)      | `ProjectSummary.id` e `title` de todas as páginas, na pré-renderização                                                              | `GET /projects?sort=recent&offset=&limit=50`, até `total`            |
-| Textos fixos (busca, filtros, ordenação, contagem, erros) | Chaves `projects:*`, `common:projectType.*`, `common:projectCategory.*`, `common:projectCard.featured`                              | —                                                                    |
+| Dado exibido                                                                    | Origem                                                                                                                              | Endpoint                                                             |
+| ------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| Cards da grade                                                                  | Resposta de `GET /projects` (`ProjectPage.items`), páginas acumuladas                                                               | `GET /projects?q=&type=&category=&tech=&year=&sort=&offset=&limit=9` |
+| Imagem do card                                                                  | `ProjectSummary.cover`; ausente, placeholder                                                                                        | Idem                                                                 |
+| Título e link do card                                                           | `ProjectSummary.title` e `id`                                                                                                       | Idem                                                                 |
+| Ano do card                                                                     | Derivado de `ProjectSummary.date`                                                                                                   | Idem                                                                 |
+| Linha de tipos e categoria                                                      | `ProjectSummary.types` e `category`, por chave                                                                                      | Idem                                                                 |
+| Resumo e chips                                                                  | `ProjectSummary.summary` e `cardTechnologies`                                                                                       | Idem                                                                 |
+| Estrela de destaque                                                             | `ProjectSummary.featured`                                                                                                           | Idem                                                                 |
+| Contagem "`<mostrados>` de `<total>` projetos"                                  | Derivado da quantidade de itens acumulados e `ProjectPage.total`                                                                    | Idem                                                                 |
+| "Carregar mais" visível                                                         | Derivado: itens acumulados menores que `ProjectPage.total`; o próximo pedido usa `offset` = mostrados                               | Idem                                                                 |
+| Botões do filtro de tipo                                                        | `ProjectPage.availableTypes`                                                                                                        | Idem                                                                 |
+| Opções do modal de filtros (tecnologia e ano), com as sem projeto desabilitadas | `ProjectFilterOptions.technologies[]` e `years[]` (`value`, `count`); `count` 0 desabilita                                          | `GET /projects/filter-options?lang=`                                 |
+| Busca, filtros e ordenação aplicados                                            | Parâmetros `q`, `type`, `category` e `sort`, a partir da query da URL (D45); a API busca em `ProjectSummary.title` e `technologies` | Idem                                                                 |
+| Sem resultado, vazio                                                            | Derivado de `ProjectPage.total` 0 (com ou sem filtro ativo); textos pelas chaves `projects:noResults.*` e `projects:empty.*`        | Idem                                                                 |
+| JSON-LD `ItemList` (todos os projetos, ordem padrão)                            | `ProjectSummary.id` e `title` de todas as páginas, na pré-renderização                                                              | `GET /projects?sort=recent&offset=&limit=50`, até `total`            |
+| Textos fixos (busca, filtros, ordenação, contagem, erros)                       | Chaves `projects:*`, `common:projectType.*`, `common:projectCategory.*`, `common:projectCard.featured`                              | —                                                                    |
 
 ### Projeto
 
