@@ -13,8 +13,8 @@ function buildElement(overflowX: string) {
     return element
 }
 
-function buildEvent(clientX: number, pointerType = "mouse", button = 0) {
-    return { clientX, pointerType, button, pointerId: 1 } as PointerEvent<HTMLElement>
+function buildEvent(clientX: number, pointerType = "mouse", button = 0, buttons = 1) {
+    return { clientX, pointerType, button, buttons, pointerId: 1 } as PointerEvent<HTMLElement>
 }
 
 describe("useDragScroll", () => {
@@ -53,6 +53,22 @@ describe("useDragScroll", () => {
 
         expect(element.dataset.dragging).toBeUndefined()
         expect(element.setPointerCapture).not.toHaveBeenCalled()
+        expect(element.scrollLeft).toBe(100)
+    })
+
+    it("não inicia arrasto fantasma quando o botão foi solto fora do elemento antes do limiar", () => {
+        const { result } = renderHook(() => useDragScroll<HTMLElement>())
+        const element = buildElement("auto")
+        element.scrollLeft = 100
+        result.current.ref.current = element
+
+        act(() => result.current.dragProps.onPointerDown(buildEvent(300)))
+        act(() => result.current.dragProps.onPointerMove(buildEvent(298)))
+        act(() => result.current.dragProps.onPointerMove(buildEvent(250, "mouse", 0, 0)))
+        act(() => result.current.dragProps.onPointerMove(buildEvent(200)))
+
+        expect(element.setPointerCapture).not.toHaveBeenCalled()
+        expect(element.dataset.dragging).toBeUndefined()
         expect(element.scrollLeft).toBe(100)
     })
 

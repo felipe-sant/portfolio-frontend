@@ -61,6 +61,12 @@ function useDragScroll<T extends HTMLElement>() {
             return
         }
 
+        if (event.buttons === 0) {
+            stopDragging(event)
+            dragStart.current = null
+            return
+        }
+
         const distance = event.clientX - dragStart.current.pointerX
 
         if (!dragStart.current.isDragging) {
