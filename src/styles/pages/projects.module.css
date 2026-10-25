@@ -110,6 +110,7 @@
 .emptyText {
     max-width: 26rem;
     margin: 0 auto var(--space-5);
+    text-align: center;
     font-size: var(--text-body-sm);
     line-height: var(--lh-tight);
     text-wrap: pretty;
