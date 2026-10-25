@@ -27,6 +27,7 @@ Código de produto mudou, rode `build:fatec` de novo: o E2E testa o `dist/`, nã
 
 - Teste que precisa de movimento pleno usa `test.use({ reducedMotion: "no-preference" })` no `describe`.
 - Teste que só vale num tamanho se pula com `test.skip(condição, "motivo")` (ex.: menu existe só no mobile, largura <= 480).
+- Bug de produto conhecido se marca com `test.fail(condição, "motivo e número da issue")` só no teste que prova o comportamento quebrado: ele continua rodando e fica vermelho sozinho quando o bug for corrigido, forçando a remover a marca. Como `test.fail` passa com qualquer falha, as outras verificações (idioma, foco, navegação) ficam em teste separado, sem a marca. `test.skip` para esconder bug é proibido.
 - Teste que depende do tema lê `colorScheme` do projeto, não clica no botão de tema, salvo se o assunto for o botão.
 
 ## 3. Convenções
