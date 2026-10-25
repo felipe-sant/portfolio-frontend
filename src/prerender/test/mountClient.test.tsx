@@ -1,11 +1,13 @@
+import { readFileSync } from "node:fs"
 import type { Root } from "react-dom/client"
 import type { MockInstance } from "vitest"
 import { afterEach, beforeEach, describe, expect, inject, it, vi } from "vitest"
-import { act, screen } from "@testing-library/react"
+import { act, screen, within } from "@testing-library/react"
 import composePage from "@scripts/prerender/composePage"
 import i18n from "@/i18n/i18n"
 import mountClient from "@/prerender/mountClient"
 import buildProfile from "@/testUtils/buildProfile"
+import parseUntyped from "@/testUtils/parseUntyped"
 import stubContentFetch from "@/testUtils/stubContentFetch"
 import MOTION_STORAGE_KEY from "@/utils/motionStorageKey"
 import THEME_STORAGE_KEY from "@/utils/themeStorageKey"
@@ -29,6 +31,25 @@ function injectPrerendered(file: string, rootElement: HTMLElement) {
     window.prerenderedPath = `/${target.path}`
     window.preloadedState = JSON.parse(result.state)
     window.routerData = JSON.parse(result.routerData)
+}
+
+const REAL_PROJECTS = parseUntyped(readFileSync("public/content/pt-BR/projects.json", "utf-8"))
+
+function stubProjectsContent() {
+    return stubContentFetch({
+        "content/pt-BR/profile.json": buildProfile(),
+        "content/pt-BR/projects.json": REAL_PROJECTS
+    })
+}
+
+function countRegion() {
+    return within(screen.getByRole("main")).getByRole("status")
+}
+
+function cardTitles() {
+    return screen
+        .getAllByRole("heading", { level: 2 })
+        .map((heading) => heading.querySelector("a")?.textContent)
 }
 
 async function settle() {
@@ -190,5 +211,77 @@ describe("mountClient com caminho pré-renderizado", () => {
         expect(document.head.querySelectorAll("meta[name='robots']")).toHaveLength(1)
         expect(consoleSpies.error).not.toHaveBeenCalled()
         expect(document.documentElement.lang).toBe("pt-BR")
+    })
+
+    it("hidrata pt-BR/projects.html sem erro nem aviso e mantém os cards do HTML", async () => {
+        injectPrerendered("pt-BR/projects.html", rootElement)
+        await i18n.changeLanguage("pt-BR")
+        window.history.pushState({}, "", "/pt-BR/projects")
+        const link = screen.getByRole("link", { name: "Maps" })
+        const consoleSpies = spyOnConsole()
+
+        await mount()
+        await settle()
+
+        expect(screen.getByRole("link", { name: "Maps" })).toBe(link)
+        expect(cardTitles()).toHaveLength(6)
+        expect(consoleSpies.error).not.toHaveBeenCalled()
+        expect(hydrationWarnings(consoleSpies.warn)).toEqual([])
+    })
+
+    it("hidrata com a query na URL: primeira renderização igual ao HTML e filtro aplicado depois", async () => {
+        stubProjectsContent()
+        injectPrerendered("pt-BR/projects.html", rootElement)
+        await i18n.changeLanguage("pt-BR")
+        window.history.pushState({}, "", "/pt-BR/projects?type=web&sort=title")
+        const consoleSpies = spyOnConsole()
+
+        await mount()
+        await settle()
+
+        expect(screen.getByRole("button", { name: "Web" })).toHaveAttribute("aria-pressed", "true")
+        expect(screen.getByRole("combobox", { name: "Ordenar" })).toHaveValue("title")
+        expect(cardTitles()).toEqual([
+            "Controle de Despesas",
+            "Conversor de Unidades",
+            "Maps",
+            "MNIST Classifier",
+            "Pedido de Namoro Irrecusável"
+        ])
+        expect(consoleSpies.error).not.toHaveBeenCalled()
+        expect(hydrationWarnings(consoleSpies.warn)).toEqual([])
+    })
+
+    it("não deixa a tela em Carregando projetos ao hidratar", async () => {
+        injectPrerendered("pt-BR/projects.html", rootElement)
+        await i18n.changeLanguage("pt-BR")
+        window.history.pushState({}, "", "/pt-BR/projects")
+        const observed: string[] = []
+        const observer = new MutationObserver(() => observed.push(countRegion().textContent ?? ""))
+        observer.observe(rootElement, { childList: true, subtree: true, characterData: true })
+
+        await mount()
+        await settle()
+        observer.disconnect()
+
+        expect(countRegion()).toHaveTextContent("6 de 6 projetos")
+        expect(observed.join(" ")).not.toContain("Carregando")
+    })
+})
+
+describe("mountClient de Projetos sem HTML pré-renderizado", () => {
+    it("aplica a query já na primeira renderização", async () => {
+        const fetchMock = stubProjectsContent()
+        await i18n.changeLanguage("pt-BR")
+        window.history.pushState({}, "", "/pt-BR/projects?type=web&sort=title")
+
+        await mount()
+
+        expect(await screen.findByRole("heading", { name: "Conversor de Unidades" })).toBeVisible()
+        expect(screen.getByRole("button", { name: "Web" })).toHaveAttribute("aria-pressed", "true")
+        const requests = fetchMock.mock.calls.filter(([url]) =>
+            String(url).includes("projects.json")
+        )
+        expect(requests).toHaveLength(2)
     })
 })

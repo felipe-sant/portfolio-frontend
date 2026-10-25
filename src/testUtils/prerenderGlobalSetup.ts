@@ -8,6 +8,7 @@ import type PrerenderTarget from "@/types/prerender/PrerenderTarget.types"
 const FIXTURE_TARGETS: PrerenderTarget[] = [
     { path: "pt-BR", file: "pt-BR.html", lang: "pt-BR", pattern: "" },
     { path: "en", file: "en.html", lang: "en", pattern: "" },
+    { path: "pt-BR/projects", file: "pt-BR/projects.html", lang: "pt-BR", pattern: "projects" },
     { path: "not-found", file: "404.html", lang: "en" }
 ]
 
