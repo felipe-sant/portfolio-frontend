@@ -72,7 +72,35 @@
     },
     "symbols": {
         "external": "↗",
-        "download": "↓"
+        "download": "↓",
+        "forward": "→",
+        "separator": "·"
     },
-    "noscript": "Busca, filtros, troca de idioma e de tema precisam de JavaScript. O conteúdo desta página está disponível sem ele."
+    "noscript": "Busca, filtros, troca de idioma e de tema precisam de JavaScript. O conteúdo desta página está disponível sem ele.",
+    "resume": {
+        "download": "Baixar CV",
+        "downloadPdf": "Baixar CV (PDF), abre a pré-visualização"
+    },
+    "projectType": {
+        "web": "Web",
+        "mobile": "Mobile",
+        "api": "API",
+        "desktop": "Desktop",
+        "cli": "CLI",
+        "library": "Biblioteca",
+        "extension": "Extensão",
+        "bot": "Bot / automação",
+        "data": "Dados / IA",
+        "game": "Jogo",
+        "iot": "IoT / embarcado",
+        "infra": "Infraestrutura"
+    },
+    "projectCategory": {
+        "academic": "Acadêmico",
+        "personal": "Pessoal",
+        "professional": "Profissional"
+    },
+    "period": {
+        "since": "desde {{date}}"
+    }
 }

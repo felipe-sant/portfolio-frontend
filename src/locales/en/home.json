@@ -1,8 +1,37 @@
 {
     "meta": {
-        "title": "Luiz Felipe dos Santos · Full stack developer",
+        "title": "Portfolio · Luiz Felipe dos Santos",
         "description": "Portfolio of Luiz Felipe dos Santos, full stack developer in TypeScript: projects, background and contact."
     },
     "heading": "Full stack developer in TypeScript",
-    "intro": "I build web products end to end, from the database to the interface."
+    "intro": "I build web products end to end, from the database to the interface.",
+    "hero": {
+        "viewProjects": "View projects"
+    },
+    "status": {
+        "heading": "What I do now",
+        "working": "Working as",
+        "studying": "Studying",
+        "error": "I couldn't load what I do now"
+    },
+    "stack": {
+        "heading": "Technologies I use",
+        "pause": "Pause technologies strip"
+    },
+    "featured": {
+        "heading": "Featured projects",
+        "viewAll": "View all",
+        "viewAllName": "View all projects",
+        "viewProject": "View project",
+        "empty": "No featured projects at the moment",
+        "error": "I couldn't load the projects"
+    },
+    "loadError": {
+        "description": "Check your connection and try again.",
+        "retry": "Try again"
+    },
+    "exits": {
+        "allProjects": "View all projects",
+        "about": "Read about me"
+    }
 }

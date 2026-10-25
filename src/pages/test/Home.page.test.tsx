@@ -54,7 +54,7 @@ describe("HomePage", () => {
     it("define título e meta description da página no head", () => {
         renderHomePage()
 
-        expect(document.title).toBe("Luiz Felipe dos Santos · Desenvolvedor full stack")
+        expect(document.title).toBe("Portfolio · Luiz Felipe dos Santos")
         expect(document.querySelector('meta[name="description"]')?.getAttribute("content")).toBe(
             "Portfólio de Luiz Felipe dos Santos, desenvolvedor full stack em TypeScript: projetos, trajetória e contato."
         )
@@ -65,7 +65,7 @@ describe("HomePage", () => {
 
         renderHomePage()
 
-        expect(document.title).toBe("Luiz Felipe dos Santos · Full stack developer")
+        expect(document.title).toBe("Portfolio · Luiz Felipe dos Santos")
         expect(document.querySelector('meta[name="description"]')?.getAttribute("content")).toBe(
             "Portfolio of Luiz Felipe dos Santos, full stack developer in TypeScript: projects, background and contact."
         )
@@ -76,7 +76,7 @@ describe("HomePage", () => {
 
         renderHomePage()
 
-        expect(document.title).toBe("Luiz Felipe dos Santos · Desarrollador full stack")
+        expect(document.title).toBe("Portfolio · Luiz Felipe dos Santos")
     })
 
     it("atualiza texto, metadados e lang do html ao trocar o idioma com a página aberta", async () => {
@@ -90,7 +90,7 @@ describe("HomePage", () => {
         expect(
             screen.getByRole("heading", { name: "Desarrollador full stack en TypeScript" })
         ).toBeInTheDocument()
-        expect(document.title).toBe("Luiz Felipe dos Santos · Desarrollador full stack")
+        expect(document.title).toBe("Portfolio · Luiz Felipe dos Santos")
         expect(document.querySelector('meta[name="description"]')?.getAttribute("content")).toBe(
             "Portafolio de Luiz Felipe dos Santos, desarrollador full stack en TypeScript: proyectos, trayectoria y contacto."
         )
