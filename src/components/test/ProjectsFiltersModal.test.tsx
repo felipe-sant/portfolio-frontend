@@ -4,6 +4,7 @@ import userEvent from "@testing-library/user-event"
 import ProjectsFiltersModal from "@/components/ProjectsFiltersModal"
 import setLanguage from "@/i18n/setLanguage"
 import expectNoAxeViolations from "@/testUtils/expectNoAxeViolations"
+import type ProjectFilterOption from "@/types/project/ProjectFilterOption.types"
 import type ProjectsAppliedFilters from "@/types/project/ProjectsAppliedFilters.types"
 
 let appRoot: HTMLDivElement
@@ -12,8 +13,8 @@ type Applied = ProjectsAppliedFilters
 
 type ModalHarnessProps = {
     isOpen?: boolean
-    technologies?: string[]
-    years?: string[]
+    technologies?: ProjectFilterOption[]
+    years?: ProjectFilterOption[]
     applied?: Applied
     onApply?: (next: Applied) => void
     onClose?: () => void
@@ -25,6 +26,18 @@ const SORTS = [
     { value: "title", label: "A–Z" }
 ] as const
 
+const TECHNOLOGIES: ProjectFilterOption[] = [
+    { value: "Node.js", count: 3 },
+    { value: "React", count: 5 },
+    { value: "TypeScript", count: 4 }
+]
+
+const YEARS: ProjectFilterOption[] = [
+    { value: "2026", count: 2 },
+    { value: "2025", count: 3 },
+    { value: "2024", count: 1 }
+]
+
 const NO_FILTERS: Applied = { tech: [], year: [], sort: "recent" }
 
 function withSort(applied: { tech: string[]; year: string[] }, sort: Applied["sort"] = "recent") {
@@ -33,8 +46,8 @@ function withSort(applied: { tech: string[]; year: string[] }, sort: Applied["so
 
 function ModalHarness({
     isOpen = true,
-    technologies = ["Node.js", "React", "TypeScript"],
-    years = ["2026", "2025", "2024"],
+    technologies = TECHNOLOGIES,
+    years = YEARS,
     applied = NO_FILTERS,
     onApply = vi.fn(),
     onClose = vi.fn()
@@ -472,4 +485,138 @@ describe("ProjectsFiltersModal", () => {
 
         await expectNoAxeViolations(document.body)
     }, 15000)
+
+    describe("opções sem projeto", () => {
+        const withEmpty = [
+            { value: "Docker", count: 0 },
+            { value: "React", count: 5 }
+        ]
+
+        it("desabilita a tecnologia com count 0, nomeia com (nenhum projeto) e não deixa marcar", async () => {
+            const user = userEvent.setup()
+            renderModal({ technologies: withEmpty })
+
+            const docker = screen.getByRole("checkbox", { name: "Docker (nenhum projeto)" })
+
+            expect(docker).toBeDisabled()
+            await user.click(docker)
+            expect(docker).not.toBeChecked()
+            expect(screen.getByText("Nenhum filtro selecionado")).toBeVisible()
+        })
+
+        it("Tab pula a opção desabilitada", async () => {
+            const user = userEvent.setup()
+            renderModal({ technologies: withEmpty })
+
+            screen.getByRole("radio", { name: "Mais recente" }).focus()
+            await user.tab()
+
+            expect(screen.getByRole("checkbox", { name: "React" })).toHaveFocus()
+        })
+
+        it("mantém a tecnologia com projeto habilitada e com o nome só do texto", () => {
+            renderModal({ technologies: withEmpty })
+
+            expect(screen.getByRole("checkbox", { name: "React" })).toBeEnabled()
+            expect(screen.queryByRole("checkbox", { name: "React (nenhum projeto)" })).toBeNull()
+        })
+
+        it("desabilita o ano com count 0 e mantém os com projeto habilitados", () => {
+            renderModal({
+                years: [
+                    { value: "2026", count: 1 },
+                    { value: "2025", count: 0 },
+                    { value: "2024", count: 2 }
+                ]
+            })
+
+            expect(screen.getByRole("checkbox", { name: "2025 (nenhum projeto)" })).toBeDisabled()
+            expect(screen.getByRole("checkbox", { name: "2026" })).toBeEnabled()
+            expect(screen.getByRole("checkbox", { name: "2024" })).toBeEnabled()
+        })
+
+        it("mantém marcada e habilitada a opção com count 0 aplicada, que depois de desmarcada fica desabilitada", async () => {
+            const user = userEvent.setup()
+            renderModal({
+                technologies: withEmpty,
+                applied: withSort({ tech: ["Docker"], year: [] })
+            })
+
+            const docker = screen.getByRole("checkbox", { name: "Docker" })
+            expect(docker).toBeChecked()
+            expect(docker).toBeEnabled()
+
+            await user.click(docker)
+
+            const disabled = screen.getByRole("checkbox", { name: "Docker (nenhum projeto)" })
+            expect(disabled).not.toBeChecked()
+            expect(disabled).toBeDisabled()
+            await user.click(disabled)
+            expect(disabled).not.toBeChecked()
+        })
+
+        it("Limpar desmarca a opção com count 0 aplicada e a deixa desabilitada", async () => {
+            const user = userEvent.setup()
+            renderModal({
+                technologies: withEmpty,
+                applied: withSort({ tech: ["Docker"], year: [] })
+            })
+
+            await user.click(screen.getByRole("button", { name: "Limpar" }))
+
+            expect(screen.getByRole("checkbox", { name: "Docker (nenhum projeto)" })).toBeDisabled()
+        })
+
+        it("mantém o valor aplicado fora do catálogo, conta no resumo e o envia junto com o marcado", async () => {
+            const user = userEvent.setup()
+            const onApply = vi.fn()
+            renderModal({
+                technologies: withEmpty,
+                onApply,
+                applied: withSort({ tech: ["Cobol"], year: [] })
+            })
+
+            expect(
+                screen
+                    .getAllByRole("checkbox")
+                    .filter((box) => box instanceof HTMLInputElement && box.checked)
+            ).toHaveLength(0)
+            expect(screen.getByText("1 filtro selecionado")).toBeVisible()
+
+            await user.click(screen.getByRole("checkbox", { name: "React" }))
+            await user.click(screen.getByRole("button", { name: "Aplicar" }))
+
+            expect(onApply).toHaveBeenCalledWith({
+                tech: ["Cobol", "React"],
+                year: [],
+                sort: "recent"
+            })
+        })
+
+        it.each([
+            ["pt-BR", "Docker (nenhum projeto)"],
+            ["en", "Docker (no projects)"],
+            ["es", "Docker (ningún proyecto)"]
+        ] as const)("nomeia a opção desabilitada em %s", async (language, name) => {
+            await setLanguage(language)
+
+            renderModal({ technologies: withEmpty })
+
+            expect(screen.getByRole("checkbox", { name })).toBeDisabled()
+            expect(document.body.textContent).not.toMatch(/\bfilters\.modal\.[a-zA-Z]+/)
+        })
+
+        it("não tem violações de acessibilidade com opções desabilitadas e marcadas", async () => {
+            renderModal({
+                technologies: withEmpty,
+                years: [
+                    { value: "2025", count: 0 },
+                    { value: "2024", count: 2 }
+                ],
+                applied: withSort({ tech: ["React"], year: ["2024"] })
+            })
+
+            await expectNoAxeViolations(document.body)
+        }, 15000)
+    })
 })

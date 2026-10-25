@@ -417,7 +417,7 @@ describe("projectsApi, páginas e índice", () => {
         expect(result.data?.pages[0]?.availableTypes).toEqual(["web", "api"])
     })
 
-    it("repassa tech e year e devolve a primeira página filtrada com as opções", async () => {
+    it("repassa tech e year e devolve a primeira página filtrada sem as opções do modal", async () => {
         stubProjects(20)
         const store = createStore()
 
@@ -429,11 +429,14 @@ describe("projectsApi, páginas e índice", () => {
             })
         )
 
-        expect(result.data?.pages[0]).toMatchObject({
-            total: 8,
-            availableTechnologies: ["React", "TypeScript"],
-            availableYears: ["2001", "2000"]
-        })
+        expect(result.data?.pages[0]).toMatchObject({ total: 8 })
+        expect(Object.keys(result.data?.pages[0] ?? {}).toSorted()).toEqual([
+            "availableTypes",
+            "items",
+            "limit",
+            "offset",
+            "total"
+        ])
     })
 
     it("mantém a primeira página quando a segunda falha e refaz só a que faltou", async () => {

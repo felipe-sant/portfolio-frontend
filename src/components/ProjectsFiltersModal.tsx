@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next"
 import Button from "@/components/Button"
 import Modal from "@/components/Modal"
 import css from "@/styles/components/projectsFiltersModal.module.css"
+import type ProjectFilterOption from "@/types/project/ProjectFilterOption.types"
 import type ProjectSort from "@/types/project/ProjectSort.types"
 import type ProjectsAppliedFilters from "@/types/project/ProjectsAppliedFilters.types"
 import defaultProjectSort from "@/utils/defaultProjectSort"
@@ -16,8 +17,8 @@ type SortOption = {
 interface ProjectsFiltersModalProps {
     isOpen: boolean
     sorts: readonly SortOption[]
-    technologies: string[]
-    years: string[]
+    technologies: ProjectFilterOption[]
+    years: ProjectFilterOption[]
     applied: ProjectsAppliedFilters
     onApply: (next: ProjectsAppliedFilters) => void
     onClose: () => void
@@ -25,9 +26,36 @@ interface ProjectsFiltersModalProps {
 
 interface FilterSectionProps {
     legend: string
-    options: string[]
+    options: ProjectFilterOption[]
     isChecked: (option: string) => boolean
     onToggle: (option: string) => void
+}
+
+interface FilterOptionProps {
+    option: ProjectFilterOption
+    isChecked: boolean
+    onToggle: (option: string) => void
+}
+
+function FilterOption({ option, isChecked, onToggle }: FilterOptionProps) {
+    const { t } = useTranslation("projects")
+    const isDisabled = option.count === 0 && !isChecked
+
+    return (
+        <label className={css.chip}>
+            <input
+                type="checkbox"
+                className={css.input}
+                checked={isChecked}
+                disabled={isDisabled}
+                aria-label={
+                    isDisabled ? `${option.value} ${t("filters.modal.noProjects")}` : undefined
+                }
+                onChange={() => onToggle(option.value)}
+            />
+            <span className={css.text}>{option.value}</span>
+        </label>
+    )
 }
 
 function FilterSection({ legend, options, isChecked, onToggle }: FilterSectionProps) {
@@ -40,15 +68,12 @@ function FilterSection({ legend, options, isChecked, onToggle }: FilterSectionPr
             <legend className={css.legend}>{legend}</legend>
             <div className={css.options}>
                 {options.map((option) => (
-                    <label key={option} className={css.chip}>
-                        <input
-                            type="checkbox"
-                            className={css.input}
-                            checked={isChecked(option)}
-                            onChange={() => onToggle(option)}
-                        />
-                        <span className={css.text}>{option}</span>
-                    </label>
+                    <FilterOption
+                        key={option.value}
+                        option={option}
+                        isChecked={isChecked(option.value)}
+                        onToggle={onToggle}
+                    />
                 ))}
             </div>
         </fieldset>

@@ -320,6 +320,6 @@ describe("mountClient de Projetos sem HTML pré-renderizado", () => {
         const requests = fetchMock.mock.calls.filter(([url]) =>
             String(url).includes("projects.json")
         )
-        expect(requests).toHaveLength(2)
+        expect(requests).toHaveLength(3)
     })
 })

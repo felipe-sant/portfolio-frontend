@@ -7,6 +7,7 @@ import listProjects from "@/services/content/listProjects"
 import useProjects from "@/pages/hooks/useProjects"
 import projectsApi from "@/store/api/projects.api"
 import createStore from "@/store/createStore"
+import buildProfile from "@/testUtils/buildProfile"
 import buildProjectRecord from "@/testUtils/buildProjectRecord"
 import buildProjectRecords from "@/testUtils/buildProjectRecords"
 import failFetchAfter from "@/testUtils/failFetchAfter"
@@ -30,6 +31,7 @@ type RenderSnapshot = { text: string; isLoading: boolean; shown: number }
 
 const PATH = "/pt-BR/projects"
 const PROJECTS_FILE = "content/pt-BR/projects.json"
+const PROFILE_FILE = "content/pt-BR/profile.json"
 
 let latest: ProjectsHook
 const snapshots: RenderSnapshot[] = []
@@ -81,8 +83,15 @@ function mount(
     return { router, store, ...view }
 }
 
-function stubProjects(records: ProjectRecord[]) {
-    return stubContentFetch({ [PROJECTS_FILE]: { items: records } })
+function stubProjects(records: ProjectRecord[], withProfile = true) {
+    return stubContentFetch({
+        [PROJECTS_FILE]: { items: records },
+        ...(withProfile && {
+            [PROFILE_FILE]: buildProfile({
+                stack: [{ category: "frontend", items: [{ name: "React" }, { name: "Docker" }] }]
+            })
+        })
+    })
 }
 
 function projectRequests(fetchMock: ReturnType<typeof stubContentFetch>) {
@@ -640,15 +649,63 @@ describe("useProjects", () => {
             )
         }
 
-        it("expõe as opções da primeira página e o contador", async () => {
+        it("expõe as opções do endpoint próprio e o contador", async () => {
             stubFilterProjects()
 
             mount(`${PATH}?tech=React&year=2025&year=2024&type=web`)
+            await waitFor(() => expect(latest.technologyOptions.length).toBeGreaterThan(0))
+
+            expect(latest.technologyOptions).toEqual([
+                { value: "Docker", count: 0 },
+                { value: "Node.js", count: 2 },
+                { value: "Prisma", count: 1 },
+                { value: "React", count: 2 }
+            ])
+            expect(latest.yearOptions).toEqual([
+                { value: "2026", count: 1 },
+                { value: "2025", count: 2 },
+                { value: "2024", count: 1 }
+            ])
+            expect(latest.filtersCount).toBe(3)
+        })
+
+        it("pede as opções uma vez por idioma, sem esperar a lista", async () => {
+            const fetchMock = stubFilterProjects()
+            const { store } = mount()
+            await waitFor(() => expect(latest.technologyOptions.length).toBeGreaterThan(0))
+
+            const queries = Object.values(store.getState().api.queries).filter(
+                (entry) =>
+                    entry?.endpointName === projectsApi.endpoints.getProjectFilterOptions.name
+            )
+            expect(queries).toHaveLength(1)
+            expect(
+                fetchMock.mock.calls.filter(([url]) => String(url).includes("profile.json"))
+            ).toHaveLength(1)
+        })
+
+        it("devolve opções vazias enquanto a consulta carrega", async () => {
+            const fetchMock = stubFilterProjects()
+            const release = holdFetchAfter(fetchMock, 0)
+            mount()
+
+            expect(latest.technologyOptions).toEqual([])
+            expect(latest.yearOptions).toEqual([])
+            await act(async () => {
+                release()
+            })
+            await waitFor(() => expect(latest.technologyOptions.length).toBeGreaterThan(0))
+        })
+
+        it("com o perfil falhando mantém a lista e as opções vazias", async () => {
+            stubProjects(buildProjectRecords(2), false)
+            mount()
             await settled()
 
-            expect(latest.availableTechnologies).toEqual(["Node.js", "Prisma", "React"])
-            expect(latest.availableYears).toEqual(["2026", "2025", "2024"])
-            expect(latest.filtersCount).toBe(3)
+            expect(latest.items.length).toBe(2)
+            expect(latest.isError).toBe(false)
+            expect(latest.technologyOptions).toEqual([])
+            expect(latest.yearOptions).toEqual([])
         })
 
         it("abre o modal mesmo sem opções, sem expor canOpenFilters, e não conta filtros que não são de tecnologia e ano", async () => {

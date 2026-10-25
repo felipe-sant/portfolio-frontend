@@ -12,6 +12,7 @@ import failFetchAfter from "@/testUtils/failFetchAfter"
 import holdFetchAfter from "@/testUtils/holdFetchAfter"
 import renderWithStore from "@/testUtils/renderWithStore"
 import stubContentFetch from "@/testUtils/stubContentFetch"
+import type Profile from "@/types/profile/Profile.types"
 import type ProjectRecord from "@/types/project/ProjectRecord.types"
 
 const SITE_URL = "http://localhost:5173"
@@ -23,12 +24,12 @@ function LocationDisplay() {
     return <span data-testid="location">{`${location.pathname}${location.search}`}</span>
 }
 
-function filesFor(records: ProjectRecord[]) {
+function filesFor(records: ProjectRecord[], profile: Profile = buildProfile()) {
     const files: Record<string, unknown> = {}
 
     for (const language of LANGUAGES) {
         files[`content/${language}/projects.json`] = { items: records }
-        files[`content/${language}/profile.json`] = buildProfile()
+        files[`content/${language}/profile.json`] = profile
     }
 
     return files
@@ -771,8 +772,14 @@ function filterRecords() {
     }))
 }
 
-function stubFilterProjects() {
-    return stubContentFetch(filesFor(filterRecords()))
+function profileWithStack(...names: string[]) {
+    return buildProfile({
+        stack: [{ category: "frontend", items: names.map((name) => ({ name })) }]
+    })
+}
+
+function stubFilterProjects(profile: Profile = profileWithStack("React", "Node.js", "Prisma")) {
+    return stubContentFetch(filesFor(filterRecords(), profile))
 }
 
 function renderPageWithRouter(entry: string) {
@@ -868,7 +875,7 @@ describe("ProjectsPage, filtros por tecnologia e ano", () => {
         await user.click(screen.getByRole("button", { name: "Aplicar" }))
 
         await waitFor(() => expect(router.state.location.search).toBe("?sort=title"))
-        expect(screen.getByRole("alert")).toBeVisible()
+        expect(await screen.findByRole("alert")).toBeVisible()
         expect(screen.getByRole("searchbox")).toBeVisible()
     })
 
@@ -1151,4 +1158,126 @@ describe("ProjectsPage, ordenação dentro do modal", () => {
 
         await expectNoAxeViolations(screen.getByRole("dialog").parentElement as HTMLElement)
     }, 15000)
+})
+
+function docker() {
+    return profileWithStack("React", "Node.js", "Prisma", "Docker")
+}
+
+function noop() {}
+
+describe("ProjectsPage, opções do modal por requisição própria", () => {
+    it("mostra desabilitada a tecnologia só da stack do perfil, em ordem alfabética, e habilita as dos projetos", async () => {
+        stubFilterProjects(docker())
+        const user = userEvent.setup()
+        renderPage()
+        await listLoaded()
+
+        await user.click(filtersButton("Filtros"))
+
+        const group = await screen.findByRole("group", { name: "Tecnologia" })
+        expect(
+            within(group)
+                .getAllByRole("checkbox")
+                .map((box) => box.getAttribute("aria-label") ?? box.closest("label")?.textContent)
+        ).toEqual(["Docker (nenhum projeto)", "Node.js", "Prisma", "React"])
+        expect(
+            within(group).getByRole("checkbox", { name: "Docker (nenhum projeto)" })
+        ).toBeDisabled()
+        expect(within(group).getByRole("checkbox", { name: "React" })).toBeEnabled()
+        expect(
+            within(screen.getByRole("group", { name: "Ano" }))
+                .getAllByRole("checkbox")
+                .map((box) => box.closest("label")?.textContent)
+        ).toEqual(["2026", "2025", "2024"])
+    })
+
+    it("com ?tech=Docker mostra Filtros (1), sem resultado e a opção marcada e habilitada, que se desmarca e sai da URL", async () => {
+        stubFilterProjects(docker())
+        const user = userEvent.setup()
+        const { router } = renderPageWithRouter("/pt-BR/projects?tech=Docker")
+
+        expect(await screen.findByText("Nenhum projeto encontrado")).toBeVisible()
+        await user.click(filtersButton("Filtros (1)"))
+
+        const box = await screen.findByRole("checkbox", { name: "Docker" })
+        expect(box).toBeChecked()
+        expect(box).toBeEnabled()
+
+        await user.click(box)
+        await user.click(screen.getByRole("button", { name: "Aplicar" }))
+
+        await waitFor(() => expect(router.state.location.search).toBe(""))
+        expect(router.state.historyAction).toBe("REPLACE")
+    })
+
+    it("pede as opções uma vez por idioma e de novo ao trocar o idioma", async () => {
+        stubFilterProjects(docker())
+        const user = userEvent.setup()
+        const { store } = renderRoutes("/pt-BR/projects")
+        await waitFor(() => expect(cards().length).toBeGreaterThan(0), { timeout: 5000 })
+
+        function optionKeys() {
+            return Object.keys(store.getState().api.queries).filter((key) =>
+                key.startsWith("getProjectFilterOptions")
+            )
+        }
+
+        await waitFor(() =>
+            expect(optionKeys()).toEqual(['getProjectFilterOptions({"lang":"pt-BR"})'])
+        )
+
+        await user.click(screen.getAllByRole("button", { name: "Idioma: Português" })[0])
+        await user.click(screen.getByRole("link", { name: "English" }))
+
+        await waitFor(() => expect(optionKeys()).toHaveLength(2), { timeout: 5000 })
+        expect(optionKeys()).toContain('getProjectFilterOptions({"lang":"en"})')
+    }, 20000)
+
+    it("com a resposta das opções retida o modal abre só com Ordenar, as seções entram depois e a lista não espera", async () => {
+        const fetchMock = stubFilterProjects(docker())
+        let release = noop
+        const gate = new Promise<void>((resolve) => {
+            release = resolve
+        })
+        vi.stubGlobal(
+            "fetch",
+            vi.fn(async (input: string | URL | Request) => {
+                if (String(input).includes("profile.json")) {
+                    await gate
+                }
+
+                return fetchMock(input)
+            })
+        )
+        const user = userEvent.setup()
+        renderPage()
+        await listLoaded()
+
+        await user.click(filtersButton("Filtros"))
+        await user.click(screen.getByRole("radio", { name: "A–Z" }))
+        expect(screen.queryByRole("group", { name: "Tecnologia" })).not.toBeInTheDocument()
+        await act(async () => {
+            release()
+        })
+
+        expect(await screen.findByRole("group", { name: "Tecnologia" })).toBeVisible()
+        expect(screen.getByRole("radio", { name: "A–Z" })).toBeChecked()
+    })
+
+    it("com as opções falhando não mostra alerta novo, a lista segue e o modal mostra só Ordenar", async () => {
+        const files = filesFor(filterRecords())
+        delete files["content/pt-BR/profile.json"]
+        stubContentFetch(files)
+        const user = userEvent.setup()
+        renderPage()
+        await listLoaded()
+
+        await user.click(filtersButton("Filtros"))
+
+        expect(screen.queryByRole("alert")).not.toBeInTheDocument()
+        expect(cards().length).toBeGreaterThan(0)
+        expect(screen.getByRole("group", { name: "Ordenar" })).toBeVisible()
+        expect(screen.queryByRole("group", { name: "Tecnologia" })).not.toBeInTheDocument()
+    })
 })

@@ -28,6 +28,7 @@ function useProjects() {
     } = useProjectsFilters()
     const pages = useProjectsPages(buildProjectsQueryArgs(language, filters))
     const indexQuery = projectsApi.useGetProjectsIndexQuery({ lang: language })
+    const filterOptionsQuery = projectsApi.useGetProjectFilterOptionsQuery({ lang: language })
 
     const [isFiltersOpen, setIsFiltersOpen] = useState(false)
     const appliedFilters = {
@@ -110,6 +111,8 @@ function useProjects() {
             value: category,
             label: t(`filters.category.${category}`)
         })),
+        technologyOptions: filterOptionsQuery.currentData?.technologies ?? [],
+        yearOptions: filterOptionsQuery.currentData?.years ?? [],
         sortOptions: PROJECT_SORTS.map((sort) => ({ value: sort, label: t(`sort.${sort}`) })),
         resultsText,
         isEmptyContent,

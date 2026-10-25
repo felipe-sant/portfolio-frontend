@@ -227,39 +227,15 @@ describe("listProjects com os dados do protótipo", () => {
         expect(page).toMatchObject({ total: 2, offset: 1, limit: 1 })
     })
 
-    it("lista tecnologias sem repetição e anos do mais recente ao mais antigo, com ou sem filtros", () => {
-        const dated = [
-            build(1, {
-                date: "2024-01",
-                stack: [{ category: "frontend", items: [{ name: "React" }, { name: "Zod" }] }]
-            }),
-            build(2, {
-                date: "2026-06",
-                stack: [{ category: "frontend", items: [{ name: "react" }, { name: "Árvore" }] }]
-            }),
-            build(3, {
-                date: "2024-12",
-                stack: [{ category: "frontend", items: [{ name: "Node.js" }] }]
-            })
-        ]
-        const expected = {
-            availableTechnologies: ["Árvore", "Node.js", "React", "Zod"],
-            availableYears: ["2026", "2024"]
-        }
+    it("só expõe os campos do contrato de ProjectPage", () => {
+        const page = listPrototype({})
 
-        expect(listProjects(dated, validateProjectListParams({ lang: "pt-BR" }))).toMatchObject(
-            expected
-        )
-        expect(
-            listProjects(
-                dated,
-                validateProjectListParams({
-                    lang: "pt-BR",
-                    q: "projeto",
-                    tech: ["Zod"],
-                    year: ["2024"]
-                })
-            )
-        ).toMatchObject(expected)
+        expect(Object.keys(page).toSorted()).toEqual([
+            "availableTypes",
+            "items",
+            "limit",
+            "offset",
+            "total"
+        ])
     })
 })

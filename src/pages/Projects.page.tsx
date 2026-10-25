@@ -46,8 +46,8 @@ function ProjectsPage() {
         isFiltersOpen,
         openFilters,
         closeFilters,
-        availableTechnologies,
-        availableYears,
+        technologyOptions,
+        yearOptions,
         typeValue,
         typeOptions,
         categoryOptions,
@@ -207,8 +207,8 @@ function ProjectsPage() {
                         )}
                         <ProjectsFiltersModal
                             isOpen={isFiltersOpen}
-                            technologies={availableTechnologies}
-                            years={availableYears}
+                            technologies={technologyOptions}
+                            years={yearOptions}
                             applied={appliedFilters}
                             sorts={sortOptions}
                             onApply={applyModalFilters}
