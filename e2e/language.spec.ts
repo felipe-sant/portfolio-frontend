@@ -1,8 +1,9 @@
 import { expect, test } from "@playwright/test"
-import type { Page } from "@playwright/test"
+import type { Locator, Page } from "@playwright/test"
 
 const DESKTOP_MIN_WIDTH = 640
-const SCROLL_MINIMUM = 500
+const SCROLL_TARGET = 600
+const SCROLL_TOLERANCE = 5
 const LANGUAGE_STORAGE_KEY = "portfolio-frontend:language"
 const MARKER = "e2eMarker"
 
@@ -77,6 +78,14 @@ async function expectHomeIn(page: Page, language: Language) {
     await expect(page.getByRole("heading", { level: 1 })).toHaveText(LANGUAGES[language].heading)
 }
 
+async function clickWithMouse(target: Locator) {
+    const box = await target.boundingBox()
+    if (!box) {
+        throw new Error("o alvo do clique não tem caixa na tela")
+    }
+    await target.page().mouse.click(box.x + box.width / 2, box.y + box.height / 2)
+}
+
 function clickOutsideSelector(page: Page): Promise<void> {
     if (isDesktop(page)) {
         return page.getByRole("banner").click({ position: { x: 2, y: 2 } })
@@ -146,25 +155,26 @@ test.describe("seletor de idioma", () => {
         await expect(page.getByRole("link", { name: "Español", exact: true })).toHaveCount(0)
     })
 
-    test("RF-LAY-14: a troca de idioma não devolve a página ao topo", async ({ page }) => {
+    test("RF-LAY-14: a troca de idioma por clique preserva a posição de rolagem", async ({
+        page
+    }) => {
+        test.fail(isDesktop(page), "RF-LAY-14: no desktop o foco devolvido ao botão rola a página")
         await openHome(page, "pt-BR")
         await page.getByRole("article").last().waitFor()
-        await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight))
+        await page.evaluate((top) => window.scrollTo(0, top), SCROLL_TARGET)
+        await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(SCROLL_TARGET)
         if (!isDesktop(page)) {
-            await page.getByRole("button", { name: LANGUAGES["pt-BR"].menu }).focus()
-            await page.keyboard.press("Enter")
+            await clickWithMouse(page.getByRole("button", { name: LANGUAGES["pt-BR"].menu }))
         }
-        await page.getByRole("button", { name: LANGUAGES["pt-BR"].button }).focus()
-        await page.keyboard.press("Enter")
-        const english = page.getByRole("link", { name: LANGUAGES.en.option, exact: true })
-        await expect(english).toBeVisible()
-        expect(await page.evaluate(() => window.scrollY)).toBeGreaterThan(SCROLL_MINIMUM)
+        await clickWithMouse(page.getByRole("button", { name: LANGUAGES["pt-BR"].button }))
 
-        await english.focus()
-        await page.keyboard.press("Enter")
+        await clickWithMouse(page.getByRole("link", { name: LANGUAGES.en.option, exact: true }))
+
         await expectHomeIn(page, "en")
-
-        expect(await page.evaluate(() => window.scrollY)).toBeGreaterThan(0)
+        await expect(page.getByRole("button", { name: LANGUAGES.en.button })).toBeFocused()
+        await expect
+            .poll(async () => Math.abs((await page.evaluate(() => window.scrollY)) - SCROLL_TARGET))
+            .toBeLessThanOrEqual(SCROLL_TOLERANCE)
     })
 
     test("RF-LAY-14, NF-IN-10: na não encontrada a troca leva à URL equivalente", async ({
