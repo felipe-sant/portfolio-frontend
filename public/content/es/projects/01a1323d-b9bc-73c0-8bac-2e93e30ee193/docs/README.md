@@ -1,23 +1,23 @@
 ## Contexto
 
-Projeto pessoal para aplicar aprendizado não supervisionado (K-Means) a um problema real de ciência do esporte: agrupar atletas de futebol em perfis de desempenho físico a partir de métricas de sessão (distância percorrida, sprints, velocidade máxima, intensidade), para apoiar decisões táticas e ajustes de treino.
+Proyecto personal para aplicar aprendizaje no supervisado (K-Means) a un problema real de ciencias del deporte: agrupar atletas de fútbol en perfiles de rendimiento físico a partir de métricas de sesión (distancia recorrida, sprints, velocidad máxima, intensidad), para apoyar decisiones tácticas y ajustes de entrenamiento.
 
 ## Mi rol
 
-Desenvolvi sozinho todo o pipeline: desde o treinamento do modelo em Python até a API de inferência em produção. A API fica em um repositório próprio, o [player-profile-clustering-service](https://github.com/felipe-sant/player-profile-clustering-service), e consome o modelo exportado por este.
+Desarrollé yo solo todo el pipeline: desde el entrenamiento del modelo en Python hasta la API de inferencia en producción. La API está en un repositorio propio, [player-profile-clustering-service](https://github.com/felipe-sant/player-profile-clustering-service), y consume el modelo exportado por este.
 
 ## Solución
 
-O modelo foi treinado em Python com scikit-learn (pipeline de normalização + K-Means com 4 clusters), incluindo uma métrica derivada de "explosividade" calculada a partir da distância de sprint e velocidade máxima. Os clusters resultantes são nomeados automaticamente com base nas características dos centroides (ex.: alta intensidade e sprint curto = "explosivo"). O modelo treinado é exportado para o formato ONNX e servido por uma API em Node.js/TypeScript, que roda a inferência via ONNX Runtime sem depender de Python em produção — e também calcula o perfil predominante de um atleta ao longo de várias partidas, consultando um banco PostgreSQL.
+El modelo se entrenó en Python con scikit-learn (pipeline de normalización + K-Means con 4 clusters), incluyendo una métrica derivada de "explosividad" calculada a partir de la distancia de sprint y la velocidad máxima. Los clusters resultantes se nombran automáticamente según las características de los centroides (por ejemplo, alta intensidad y sprint corto = "explosivo"). El modelo entrenado se exporta al formato ONNX y se sirve mediante una API en Node.js/TypeScript, que ejecuta la inferencia con ONNX Runtime sin depender de Python en producción. También calcula el perfil predominante de un atleta a lo largo de varios partidos, consultando una base de datos PostgreSQL.
 
 ## Decisiones técnicas
 
-Exportar o modelo para ONNX e rodar a inferência em Node.js (em vez de manter um serviço Python em produção) simplifica o deploy e evita manter dois runtimes diferentes rodando. Os parâmetros do normalizador (média e desvio padrão) são exportados junto do modelo, para garantir que o pré-processamento em produção seja idêntico ao do treinamento.
+Exportar el modelo a ONNX y ejecutar la inferencia en Node.js (en lugar de mantener un servicio Python en producción) simplifica el despliegue y evita mantener dos runtimes distintos en ejecución. Los parámetros del normalizador (media y desviación estándar) se exportan junto con el modelo, para garantizar que el preprocesamiento en producción sea idéntico al del entrenamiento.
 
 ## Resultado
 
-Testado com múltiplos perfis de entrada sintéticos: métricas de alta intensidade e sprint curto foram corretamente classificadas como "explosivo", enquanto métricas de longa distância e baixa intensidade foram classificadas como "resistente" — confirmando que o modelo distingue os perfis de forma coerente.
+Probado con múltiples perfiles de entrada sintéticos: las métricas de alta intensidad y sprint corto se clasificaron correctamente como "explosivo", mientras que las métricas de larga distancia y baja intensidad se clasificaron como "resistente", lo que confirma que el modelo distingue los perfiles de forma coherente.
 
 ## Aprendizajes
 
-Nomear clusters automaticamente com base nas características dos centroides (em vez de rotular manualmente após cada treino) torna o pipeline mais robusto a retreinos com dados diferentes.
+Nombrar los clusters automáticamente según las características de los centroides (en lugar de etiquetarlos manualmente después de cada entrenamiento) vuelve el pipeline más robusto frente a reentrenamientos con datos distintos.

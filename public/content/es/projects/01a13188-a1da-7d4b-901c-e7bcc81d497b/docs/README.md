@@ -1,23 +1,23 @@
 ## Contexto
 
-Projeto acadêmico para praticar cálculo geográfico e integração entre frontend e backend: simular uma rota de voo real entre dois pontos aleatórios do Brasil, levando em conta a curvatura da Terra em vez de uma linha reta num plano cartesiano.
+Proyecto académico para practicar cálculo geográfico e integración entre frontend y backend: simular una ruta de vuelo real entre dos puntos aleatorios de Brasil, teniendo en cuenta la curvatura de la Tierra en lugar de una línea recta en un plano cartesiano.
 
 ## Mi rol
 
-Desenvolvi sozinho tanto o frontend quanto o backend.
+Desarrollé yo solo tanto el frontend como el backend.
 
 ## Solución
 
-O frontend renderiza o mapa com Leaflet, permite inserir coordenadas manualmente ou clicar diretamente no mapa, e simula o trajeto da aeronave em tempo real. O backend fornece coordenadas válidas dentro do território brasileiro e, a cada atualização de posição, retorna informações geográficas (país, estado, município, microrregião e mesorregião) a partir da API do IBGE.
+El frontend renderiza el mapa con Leaflet, permite ingresar coordenadas manualmente o hacer clic directamente en el mapa, y simula la trayectoria de la aeronave en tiempo real. El backend entrega coordenadas válidas dentro del territorio brasileño y, en cada actualización de posición, devuelve información geográfica (país, estado, municipio, microrregión y mesorregión) a partir de la API del IBGE.
 
 ## Decisiones técnicas
 
-O cálculo de posição ao longo da rota usa interpolação esférica (Slerp) sobre o arco de círculo máximo entre as duas coordenadas, em vez de interpolação linear — isso garante que o trajeto represente a curvatura real da Terra, não uma linha reta em um plano cartesiano. O backend foi reescrito em dezembro de 2025, estruturado em camadas de rotas, controllers e services, com testes unitários usando Jest.
+El cálculo de la posición a lo largo de la ruta usa interpolación esférica (Slerp) sobre el arco de círculo máximo entre las dos coordenadas, en lugar de interpolación lineal. Esto garantiza que la trayectoria represente la curvatura real de la Tierra y no una línea recta en un plano cartesiano. El backend fue reescrito en diciembre de 2025, estructurado en capas de rutas, controllers y services, con pruebas unitarias usando Jest.
 
 ## Resultado
 
-O frontend está no ar e funcional isoladamente, mas aponta para uma versão anterior do backend (rotas antigas), já que o backend foi reescrito depois do último ajuste do frontend. Por isso o painel de localidade durante o voo sempre retorna "Desconhecido" — bug documentado em [issue #3](https://github.com/felipe-sant/maps-front/issues/3).
+El frontend está en línea y funciona de forma aislada, pero apunta a una versión anterior del backend (rutas antiguas), ya que el backend fue reescrito después del último ajuste del frontend. Por eso el panel de localidad durante el vuelo siempre devuelve "Desconhecido" (Desconocido), un bug documentado en la [issue #3](https://github.com/felipe-sant/maps-front/issues/3).
 
 ## Aprendizajes
 
-Entender a diferença entre interpolação linear e esférica para cálculos geográficos, e a importância de manter frontend e backend sincronizados quando são repositórios separados — a quebra de compatibilidade só foi percebida numa revisão posterior dos projetos.
+Entender la diferencia entre interpolación lineal y esférica para cálculos geográficos, y la importancia de mantener sincronizados el frontend y el backend cuando son repositorios separados. La ruptura de compatibilidad solo se notó en una revisión posterior de los proyectos.

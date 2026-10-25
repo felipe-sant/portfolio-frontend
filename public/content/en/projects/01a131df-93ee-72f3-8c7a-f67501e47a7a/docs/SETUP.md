@@ -1,9 +1,9 @@
-## Pré-requisitos
+## Prerequisites
 
-- Node.js e npm
-- Python 3.11 (TensorFlow não é compatível com versões muito recentes do Python, como 3.13/3.14)
+- Node.js and npm
+- Python 3.11 (TensorFlow is not compatible with very recent Python versions, such as 3.13/3.14)
 
-## IA (Python)
+## AI (Python)
 
 ```bash
 cd mnist-classifier-ai
@@ -13,7 +13,7 @@ pip install -r requirements.txt
 uvicorn index:app --host 0.0.0.0 --port 8000
 ```
 
-Sobe em `http://localhost:8000`.
+It starts at `http://localhost:8000`.
 
 ## Backend (Node)
 
@@ -23,7 +23,7 @@ npm install
 npx tsc && node dist/index.js
 ```
 
-Sobe em `http://localhost:3001`. Observação: `npm run dev` (ts-node) está quebrado por uma incompatibilidade de tipos do multer — ver [issue #1](https://github.com/felipe-sant/mnist-classifier-back/issues/1). Use o build manual acima como alternativa enquanto isso não é corrigido.
+It starts at `http://localhost:3001`. Note: `npm run dev` (ts-node) is broken by a multer type incompatibility, see [issue #1](https://github.com/felipe-sant/mnist-classifier-back/issues/1). Use the manual build above as an alternative until this is fixed.
 
 ## Frontend (React)
 
@@ -33,8 +33,8 @@ npm install
 npm start
 ```
 
-Sobe em `http://localhost:3000`.
+It starts at `http://localhost:3000`.
 
-## Observação
+## Note
 
-Os três serviços, em produção, apontam para URLs fixas (Vercel/Railway). Para testar localmente com os serviços locais, é necessário atualizar temporariamente as URLs em `IA.service.ts` (back) e `UploadImage.ts` (front).
+In production, the three services point to fixed URLs (Vercel/Railway). To test locally with the local services, you need to temporarily update the URLs in `IA.service.ts` (back) and `UploadImage.ts` (front).

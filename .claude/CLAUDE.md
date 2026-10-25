@@ -450,6 +450,9 @@ em `public/content/<idioma>/` e `public/images/`, o modelo em branco em `content
 validação do conteúdo em `src/services/content/validation/`, executada por
 `src/services/content/test/content.test.ts` (`npm run content:check`). `scripts/` guarda os
 comandos `content:*` (rodam com `tsx` e `tsconfig.node.json`); ID novo vem de `npm run content:id`.
+`validateTranslation` reprova campo traduzível (`TRANSLATABLE_PATHS`) de `en`/`es` igual ao `pt-BR`
+e documento `.md` traduzido igual: valor igual por natureza (nome próprio, sigla, termo
+idêntico nos idiomas) entra por caminho em `translationExceptions.ts`, nunca frase.
 
 **`src/enum/`** guarda as listas fixas de valores (`PROJECT_TYPES`, `PROJECT_CATEGORIES` etc.), um
 símbolo por arquivo com `export default`, nomeado `<nome>.enum.ts`; os tipos de `src/types/` derivam

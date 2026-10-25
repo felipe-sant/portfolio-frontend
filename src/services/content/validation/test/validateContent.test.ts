@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest"
 import validateContent from "@/services/content/validation/validateContent"
 import buildContentSnapshot from "@/testUtils/buildContentSnapshot"
+import profileOf from "@/testUtils/profileOf"
 import projectsOf from "@/testUtils/projectsOf"
 
 describe("validateContent", () => {
@@ -27,5 +28,17 @@ describe("validateContent", () => {
 
         expect(paths).toContain("content/pt-BR/projects.json#items[0].date")
         expect(paths).toContain("content/pt-BR/projects.json#items[0].id")
+    })
+
+    it("reprova campo de es igual ao pt-BR", () => {
+        const snapshot = buildContentSnapshot()
+        profileOf(snapshot, "es").role = profileOf(snapshot, "pt-BR").role
+
+        expect(validateContent(snapshot)).toEqual([
+            {
+                path: "content/es/profile.json#role",
+                message: 'Texto igual ao de pt-BR, sem tradução: "Desenvolvedor full stack (pt-BR)"'
+            }
+        ])
     })
 })

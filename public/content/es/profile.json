@@ -1,7 +1,7 @@
 {
-    "role": "Estagiário de Desenvolvimento Frontend",
-    "homeIntro": "Estudante de Desenvolvimento de Software Multiplataforma e estagiário de desenvolvimento frontend, construindo produtos reais com React, TypeScript e Node.js.",
-    "summary": "Sou Luiz Felipe dos Santos, desenvolvedor full stack, com atuação principal em frontend, e estudante de Desenvolvimento de Software Multiplataforma na Fatec. Trabalho com React, TypeScript e Node.js no desenvolvimento de aplicações web, com experiência em integração de APIs REST, bancos de dados SQL/NoSQL e metodologias ágeis. Aqui você encontra minha trajetória, projetos e habilidades técnicas.",
+    "role": "Pasante de Desarrollo Frontend",
+    "homeIntro": "Estudiante de Desarrollo de Software Multiplataforma y pasante de desarrollo frontend, construyendo productos reales con React, TypeScript y Node.js.",
+    "summary": "Soy Luiz Felipe dos Santos, desarrollador full stack, con actuación principal en frontend, y estudiante de Desarrollo de Software Multiplataforma en la Fatec. Trabajo con React, TypeScript y Node.js en el desarrollo de aplicaciones web, con experiencia en integración de APIs REST, bases de datos SQL/NoSQL y metodologías ágiles. Aquí encontrarás mi trayectoria, proyectos y habilidades técnicas.",
     "location": {
         "city": "São José dos Campos",
         "region": "SP",
@@ -10,7 +10,7 @@
     },
     "availability": {
         "isAvailable": true,
-        "label": "Procurando novos projetos e trabalhos"
+        "label": "Buscando nuevos proyectos y trabajos"
     },
     "photo": {
         "large": {
@@ -25,16 +25,16 @@
         }
     },
     "aboutParagraphs": [
-        "Fiz um curso de informática na Microcamp, mas foi no ensino médio, na Etec, que peguei gosto por tecnologia e tive meu primeiro contato com programação, banco de dados e metodologias ágeis. Hoje curso Desenvolvimento de Software Multiplataforma na Fatec, já no 6º semestre, e é de lá que vem boa parte dos fundamentos que uso no dia a dia.",
-        "Atualmente sou estagiário de desenvolvimento na InCicle, onde atuo em diferentes módulos de produto dentro de uma arquitetura de micro frontends — passando por várias frentes de entrega, da implementação de novas features à evolução de versões de módulos já existentes. Trabalho com React, TypeScript e Node.js no ciclo completo de desenvolvimento, do levantamento de regras com o time de produto até o deploy em produção.",
-        "No dia a dia, gosto de entender bem o contexto de cada entrega antes de implementar, discutindo regras de negócio diretamente com quem define o produto para garantir que a solução técnica realmente atenda à necessidade do usuário. Também uso ferramentas de Inteligência Artificial no fluxo de desenvolvimento, não só para escrever código mais rápido, mas para manter a qualidade e a organização do que entrego.",
-        "Estou em um momento de bastante crescimento técnico, buscando evoluir de estagiário para uma posição júnior e, no médio prazo, pleno. Gosto de aprender fazendo, então boa parte do que sei veio de colocar a mão na massa em projetos reais, dentro e fora do trabalho."
+        "Hice un curso de informática en Microcamp, pero fue en la secundaria, en la Etec, donde le tomé gusto a la tecnología y tuve mi primer contacto con la programación, las bases de datos y las metodologías ágiles. Hoy estudio Desarrollo de Software Multiplataforma en la Fatec, ya en el 6.º semestre, y de allí viene buena parte de los fundamentos que uso en el día a día.",
+        "Actualmente soy pasante de desarrollo en InCicle, donde trabajo en distintos módulos de producto dentro de una arquitectura de micro frontends, pasando por varios frentes de entrega, desde la implementación de nuevas features hasta la evolución de versiones de módulos ya existentes. Trabajo con React, TypeScript y Node.js en el ciclo completo de desarrollo, desde el relevamiento de reglas con el equipo de producto hasta el despliegue en producción.",
+        "En el día a día, me gusta entender bien el contexto de cada entrega antes de implementar, discutiendo las reglas de negocio directamente con quien define el producto para garantizar que la solución técnica realmente atienda la necesidad del usuario. También uso herramientas de Inteligencia Artificial en el flujo de desarrollo, no solo para escribir código más rápido, sino para mantener la calidad y la organización de lo que entrego.",
+        "Estoy en un momento de mucho crecimiento técnico, buscando evolucionar de pasante a una posición junior y, a mediano plazo, semisenior. Me gusta aprender haciendo, así que buena parte de lo que sé vino de poner manos a la obra en proyectos reales, dentro y fuera del trabajo."
     ],
     "workPrinciples": [
-        "Discuto as regras com o PO antes de implementar, não só sigo o que está escrito na tarefa",
-        "Quebro features grandes em partes menores antes de começar",
-        "Testo minha própria entrega antes de mandar para QA",
-        "Uso IA no fluxo de desenvolvimento, com agentes e skills para planejar, implementar e revisar o que entrego, não só para escrever código mais rápido"
+        "Discuto las reglas con el PO antes de implementar, no solo sigo lo que está escrito en la tarea",
+        "Divido las features grandes en partes más pequeñas antes de empezar",
+        "Pruebo mi propia entrega antes de enviarla a QA",
+        "Uso IA en el flujo de desarrollo, con agentes y skills para planificar, implementar y revisar lo que entrego, no solo para escribir código más rápido"
     ],
     "stack": [
         {
@@ -120,8 +120,8 @@
     "contact": {
         "email": "contact.felipesant@gmail.com",
         "responseTime": {
-            "label": "Em até 3 dias",
-            "detail": "Fuso UTC-3"
+            "label": "En hasta 3 días",
+            "detail": "Huso horario UTC-3"
         }
     },
     "links": {
