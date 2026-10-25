@@ -110,7 +110,7 @@ Erro e carregando forçados: a primeira carga vem hidratada do HTML e não faz `
 - O Pages serve sob `/ra2581392423047/`: nunca escreva caminho absoluto (`/pt-BR`), ele sai do `base`.
 - Elementos com `inert` ou fora da viewport não recebem clique: role até eles ou espere o estado.
 - `getByRole("link", { name })` casa por substring sem `exact: true`; nomes curtos ("Ver") casam vários links. Use nome completo ou `exact`.
-- Teste que depende de dado (projetos em destaque) usa o conteúdo real de `public/content/`; se o conteúdo mudar, use contagem mínima ou `test.skip` com motivo, não valor fixo frágil.
+- Teste que depende de dado (projetos em destaque) usa o conteúdo real de `public/content/`; o dado vem dos helpers de `e2e/support/`, nunca digitado, e conteúdo vazio faz o teste falhar de propósito, não pular.
 - Nome acessível muda por idioma (o botão "Menu" é "Menú" em `es`, a nav é "Main" em `en`): leia de `uiTexts`.
 - `<noscript>` com JavaScript desligado: `toHaveText` e `getByText` não o enxergam; leia `locator("noscript").innerHTML()`.
 - Clique que o Playwright faz pode rolar a página; para afirmar posição de rolagem, ative por teclado (`focus()` e `Enter`).
