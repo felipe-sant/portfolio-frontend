@@ -97,7 +97,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: 100svh;
+    min-height: calc(100svh - 24rem);
     padding: clamp(2rem, 6vw, 3.5rem) var(--space-5);
     border: var(--border-width) dashed var(--border-strong);
     border-radius: var(--radius);
