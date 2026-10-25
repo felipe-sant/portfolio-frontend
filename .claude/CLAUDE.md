@@ -104,6 +104,7 @@ npm run typecheck # checagem de tipos (tsc -b) de src/ e vite.config.ts
 npm run lint      # oxlint sobre o projeto (configuração em .oxlintrc.json)
 npm run build:fatec   # build com BASE_PATH=/ra2581392423047/ + .nojekyll em dist/; falha sem o 404.html pré-renderizado (GitHub Pages da Fatec)
 npm run preview:fatec # servidor Node que imita o Pages (arquivo, <caminho>.html, pasta com 301, 404.html) em http://localhost:4173/ra2581392423047/
+npm run og:image  # regera public/images/og-site.png (Chromium do Playwright, versionado)
 npm run lint:fix  # mesma coisa, aplicando as correções automáticas possíveis (oxlint --fix)
 npm run format    # prettier --write em **/*.{ts,tsx,css,json,md,yml,html}, conforme .prettierrc e .prettierignore
 npm run test:cov  # vitest run --coverage — suíte inteira + relatório de cobertura
@@ -365,6 +366,16 @@ para editores compatíveis, coerente com o `.prettierrc`.
   literal: passe `role={"status"}`. Controle de formulário tem borda `--border-control`, nunca
   `--border-subtle`. `TextField` aceita `reserveMessageSpace` (campo com aviso possível) e
   `focusOnError` (hook `useFocusOnError` de `src/hooks/`, só no primeiro campo inválido do envio).
+- **SEO por tela** — toda tela pública nova declara `<PageMeta title description path />`
+  (`src/components/`: canônica autorreferente, quatro `hreflang` com `x-default` em `en`, Open
+  Graph e `twitter:card`; `params` e `image` opcionais) e `<JsonLd data={...} />` com o objeto de
+  um construtor em `src/utils/` (`buildHomeJsonLd`, `buildProjectsJsonLd`; o `@id` da `Person` é
+  `<URL canônica de />#person`), além do `<title>` e da `description` próprios. A URL absoluta vem
+  de `buildAbsoluteUrl(path, language, params?)` (`getSiteUrl()` + `publicUrl` + `buildPath`);
+  `getSiteUrl` é a única leitura de `VITE_SITE_URL` (só a origem, obrigatória no `npm run build`,
+  validada por `scripts/resolveSiteUrl.ts`; localhost no dev e nos testes). `serializeJsonLd`
+  escapa `<`. A imagem padrão `public/images/og-site.png` vem de `npm run og:image` e é
+  versionada. Não encontrada e erro não usam o mecanismo.
 - **Layout compartilhado** — `src/layouts/Main.layout.tsx` monta `SkipLink`, `Header`, o único
   `<main id="main-content">` (as páginas não renderizam `main`; a de erro, fora do layout, monta a
   própria moldura com `SkipLink`, `Header`, `main` e `Footer`, sem ler o erro lançado), o `Footer` e
