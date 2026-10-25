@@ -1,7 +1,10 @@
 import { useRef } from "react"
 import type { PointerEvent } from "react"
 
+const DRAG_THRESHOLD = 4
+
 interface DragStart {
+    isDragging: boolean
     pointerX: number
     scrollLeft: number
 }
@@ -17,7 +20,14 @@ function useDragScroll<T extends HTMLElement>() {
             return
         }
 
+        const wasDragging = dragStart.current.isDragging
+
         dragStart.current = null
+
+        if (!wasDragging) {
+            return
+        }
+
         delete element.dataset.dragging
 
         if (element.hasPointerCapture(event.pointerId)) {
@@ -37,9 +47,11 @@ function useDragScroll<T extends HTMLElement>() {
             return
         }
 
-        dragStart.current = { pointerX: event.clientX, scrollLeft: element.scrollLeft }
-        element.setPointerCapture(event.pointerId)
-        element.dataset.dragging = "true"
+        dragStart.current = {
+            isDragging: false,
+            pointerX: event.clientX,
+            scrollLeft: element.scrollLeft
+        }
     }
 
     function handlePointerMove(event: PointerEvent<T>) {
@@ -49,8 +61,19 @@ function useDragScroll<T extends HTMLElement>() {
             return
         }
 
-        element.scrollLeft =
-            dragStart.current.scrollLeft - (event.clientX - dragStart.current.pointerX)
+        const distance = event.clientX - dragStart.current.pointerX
+
+        if (!dragStart.current.isDragging) {
+            if (Math.abs(distance) < DRAG_THRESHOLD) {
+                return
+            }
+
+            dragStart.current.isDragging = true
+            element.setPointerCapture(event.pointerId)
+            element.dataset.dragging = "true"
+        }
+
+        element.scrollLeft = dragStart.current.scrollLeft - distance
     }
 
     const dragProps = {
