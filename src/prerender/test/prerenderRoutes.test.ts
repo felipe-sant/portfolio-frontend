@@ -42,7 +42,7 @@ describe("prerenderRoutes", () => {
         expect(prerenderRoutes.map((route) => route.pattern)).not.toContain("*")
     })
 
-    it("pede na rota de projetos a página e o índice com os argumentos da tela", async () => {
+    it("pede na rota de projetos só a página e as opções, com os argumentos da tela", async () => {
         const record = buildProjectRecord()
         stubContentFetch({
             "content/pt-BR/profile.json": buildProfile(),
@@ -55,11 +55,15 @@ describe("prerenderRoutes", () => {
         const args = buildProjectsQueryArgs("pt-BR", { q: "", sort: "recent" })
         expect(args).toStrictEqual({ lang: "pt-BR" })
         const pages = projectsApi.endpoints.getProjectsPages.select(args)(store.getState())
-        const index = projectsApi.endpoints.getProjectsIndex.select({ lang: "pt-BR" })(
+        const options = projectsApi.endpoints.getProjectFilterOptions.select({ lang: "pt-BR" })(
             store.getState()
         )
+        expect(findRoute("projects").queries("pt-BR", {})).toHaveLength(2)
         expect(pages.data?.pages[0]?.items.map((item) => item.id)).toEqual([record.id])
-        expect(index.data?.items).toEqual([{ id: record.id, title: record.title }])
+        expect(options.data?.technologies.length).toBeGreaterThan(0)
+        expect(
+            Object.values(store.getState().api.queries).map((entry) => entry?.endpointName)
+        ).not.toContain("getProjectsIndex")
     })
 
     it("pede na rota de projetos as opções do modal com { lang } e deixa o resultado no cache", async () => {

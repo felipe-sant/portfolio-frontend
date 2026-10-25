@@ -43,6 +43,10 @@ function stubProjectsContent() {
     })
 }
 
+function readJsonLdText() {
+    return document.querySelector('script[type="application/ld+json"]')?.textContent ?? null
+}
+
 function countRegion() {
     return within(screen.getByRole("main")).getByRole("status")
 }
@@ -219,12 +223,14 @@ describe("mountClient com caminho pré-renderizado", () => {
         await i18n.changeLanguage("pt-BR")
         window.history.pushState({}, "", "/pt-BR/projects")
         const link = screen.getByRole("link", { name: "Maps" })
+        const htmlJsonLd = readJsonLdText()
         const consoleSpies = spyOnConsole()
 
         await mount()
         await settle()
 
         expect(screen.getByRole("link", { name: "Maps" })).toBe(link)
+        expect(readJsonLdText()).toBe(htmlJsonLd)
         expect(cardTitles()).toHaveLength(6)
         expect(consoleSpies.error).not.toHaveBeenCalled()
         expect(hydrationWarnings(consoleSpies.warn)).toEqual([])
@@ -249,6 +255,8 @@ describe("mountClient com caminho pré-renderizado", () => {
             "MNIST Classifier",
             "Pedido de Namoro Irrecusável"
         ])
+        const items = JSON.parse(readJsonLdText() ?? "null").mainEntity.itemListElement
+        expect(items.map((item: { name: string }) => item.name)).toEqual(cardTitles())
         await userEvent.click(await screen.findByRole("button", { name: "Filtros" }))
         expect(screen.getByRole("radio", { name: "A–Z" })).toBeChecked()
         expect(consoleSpies.error).not.toHaveBeenCalled()
@@ -345,7 +353,7 @@ describe("mountClient com caminho pré-renderizado", () => {
 })
 
 describe("mountClient de Projetos sem HTML pré-renderizado", () => {
-    it("aplica a query já na primeira renderização com um só pedido de projects.json para lista, índice e opções", async () => {
+    it("aplica a query já na primeira renderização com um pedido de projects.json e um de profile.json para lista e opções", async () => {
         const fetchMock = stubProjectsContent()
         await i18n.changeLanguage("pt-BR")
         window.history.pushState({}, "", "/pt-BR/projects?type=web&sort=title")
@@ -358,5 +366,9 @@ describe("mountClient de Projetos sem HTML pré-renderizado", () => {
             String(url).includes("projects.json")
         )
         expect(requests).toHaveLength(1)
+        const profileRequests = fetchMock.mock.calls.filter(([url]) =>
+            String(url).includes("profile.json")
+        )
+        expect(profileRequests).toHaveLength(1)
     })
 })

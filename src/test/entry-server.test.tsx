@@ -255,14 +255,36 @@ describe("render", () => {
             }
         )
 
-        it("serializa a página consultada com a chave só do idioma e a consulta de índice", async () => {
+        it("serializa a página consultada com a chave só do idioma, sem consulta de índice", async () => {
             stubTenProjects()
 
             const { state } = await renderProjects("pt-BR/projects.html")
 
             const keys = Object.keys(JSON.parse(state).api.queries)
             expect(keys).toContain('getProjectsPages({"lang":"pt-BR"})')
-            expect(keys).toContain('getProjectsIndex({"lang":"pt-BR"})')
+            expect(keys).not.toContain('getProjectsIndex({"lang":"pt-BR"})')
+        })
+
+        it.each([
+            ["pt-BR/projects.html", "pt-BR"],
+            ["en/projects.html", "en"],
+            ["es/projects.html", "es"]
+        ])("lista no ItemList os mesmos projetos dos cards em %s", async (file, language) => {
+            stubTenProjects()
+
+            const { html } = await renderProjects(file)
+
+            const jsonLd = html.match(/<script type="application\/ld\+json">([^<]*)<\/script>/)?.[1]
+            const data = JSON.parse(jsonLd ?? "null")
+            const itemUrls: string[] = data.mainEntity.itemListElement.map(
+                (element: { url: string }) => element.url.replace("http://localhost:5173", "")
+            )
+            const cardUrls = [...html.matchAll(/<h2[^>]*><a[^>]*href="([^"]+)"/g)].map(
+                (match) => match[1]
+            )
+            expect(cardUrls).toHaveLength(9)
+            expect(itemUrls).toEqual(cardUrls)
+            expect(itemUrls[0].startsWith(`/${language}/projects/`)).toBe(true)
         })
 
         it.each([
@@ -279,7 +301,7 @@ describe("render", () => {
                 const keys = Object.keys(JSON.parse(state).api.queries)
                 expect(keys).toContain(`getProjectFilterOptions({"lang":"${language}"})`)
                 expect(keys).toContain(`getProjectsPages({"lang":"${language}"})`)
-                expect(keys).toContain(`getProjectsIndex({"lang":"${language}"})`)
+                expect(keys).not.toContain(`getProjectsIndex({"lang":"${language}"})`)
                 expect(html).not.toContain('role="dialog"')
                 expect(html).not.toContain('type="checkbox"')
             }

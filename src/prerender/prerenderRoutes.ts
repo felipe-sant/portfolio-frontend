@@ -28,7 +28,6 @@ const prerenderRoutes: PrerenderRoute[] = [
                         buildProjectsQueryArgs(lang, { q: "", sort: "recent" })
                     )
                 ),
-            (dispatch) => dispatch(projectsApi.endpoints.getProjectsIndex.initiate({ lang })),
             (dispatch) => dispatch(projectsApi.endpoints.getProjectFilterOptions.initiate({ lang }))
         ]
     },
