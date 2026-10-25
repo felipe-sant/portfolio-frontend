@@ -174,7 +174,7 @@ describe("ProjectsPage", () => {
             const previous = ordered[index]
             expect(
                 previous.compareDocumentPosition(element) & Node.DOCUMENT_POSITION_FOLLOWING
-            ).toBeTruthy()
+            ).toBe(Node.DOCUMENT_POSITION_FOLLOWING)
         })
         const headings = screen.getAllByRole("heading")
         expect(headings.map((heading) => heading.tagName)).toEqual([
@@ -857,7 +857,7 @@ describe("ProjectsPage, filtros por tecnologia e ano", () => {
         expect(
             screen.getByRole("searchbox").compareDocumentPosition(button) &
                 Node.DOCUMENT_POSITION_FOLLOWING
-        ).toBeTruthy()
+        ).toBe(Node.DOCUMENT_POSITION_FOLLOWING)
         unmount()
 
         const withCount = renderPage("/pt-BR/projects?tech=React&year=2025&year=2024")

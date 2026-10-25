@@ -66,7 +66,7 @@ describe("Modal", () => {
         expect(screen.getByRole("heading", { level: 2, name: "Filtros" })).toBeVisible()
         expect(
             closeButton.compareDocumentPosition(content) & Node.DOCUMENT_POSITION_FOLLOWING
-        ).toBeTruthy()
+        ).toBe(Node.DOCUMENT_POSITION_FOLLOWING)
         expect(dialog.parentElement?.parentElement).toBe(document.body)
     })
 
