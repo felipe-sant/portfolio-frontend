@@ -14,11 +14,14 @@ describe("Skeleton", () => {
         await expectNoAxeViolations(container)
     }, 15000)
 
-    it.each(["line", "title", "media", "photo"] as const)("renderiza a forma %s", (shape) => {
-        const { container } = render(<Skeleton shape={shape} width="short" />)
+    it.each(["line", "title", "media", "photo", "card"] as const)(
+        "renderiza a forma %s",
+        (shape) => {
+            const { container } = render(<Skeleton shape={shape} width="short" />)
 
-        expect(container.firstElementChild).toHaveAttribute("aria-hidden", "true")
-    })
+            expect(container.firstElementChild).toHaveAttribute("aria-hidden", "true")
+        }
+    )
 
     it("anuncia o carregamento uma vez com announce", async () => {
         const { container } = render(<Skeleton announce />)
