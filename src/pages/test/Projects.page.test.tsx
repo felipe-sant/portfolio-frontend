@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { createMemoryRouter, MemoryRouter, RouterProvider, useLocation } from "react-router-dom"
 import userEvent from "@testing-library/user-event"
-import { act, screen, waitFor, within } from "@testing-library/react"
+import { act, fireEvent, screen, waitFor, within } from "@testing-library/react"
 import setLanguage from "@/i18n/setLanguage"
 import ProjectsPage from "@/pages/Projects.page"
 import routes from "@/routers/routes"
@@ -268,6 +268,42 @@ describe("ProjectsPage", () => {
             "aria-pressed",
             "false"
         )
+    })
+
+    it("rola a linha de filtros ao arrastar com o mouse e ainda aceita o clique simples no filtro", async () => {
+        stubProjects(10)
+        const user = userEvent.setup()
+
+        renderPage()
+        await listLoaded()
+        const type = screen.getByRole("group", { name: "Tipo" })
+        const row = type.parentElement as HTMLElement
+        row.style.overflowX = "auto"
+        row.setPointerCapture = vi.fn()
+        row.releasePointerCapture = vi.fn()
+        row.hasPointerCapture = vi.fn(() => true)
+        row.scrollLeft = 50
+        const pointer = { pointerType: "mouse", button: 0, pointerId: 1 }
+        const all = within(type).getByRole("button", { name: "Todos" })
+
+        fireEvent.pointerDown(all, { ...pointer, clientX: 200 })
+        fireEvent.pointerMove(row, { ...pointer, clientX: 150 })
+
+        expect(row).toHaveAttribute("data-dragging", "true")
+        expect(row.scrollLeft).toBe(100)
+
+        fireEvent.pointerUp(row, { ...pointer, clientX: 150 })
+        expect(row).not.toHaveAttribute("data-dragging")
+
+        await user.click(within(type).getByRole("button", { name: "Web" }))
+
+        await waitFor(() =>
+            expect(within(type).getByRole("button", { name: "Web" })).toHaveAttribute(
+                "aria-pressed",
+                "true"
+            )
+        )
+        expect(row.setPointerCapture).toHaveBeenCalledTimes(1)
     })
 
     it("não tem controle de ordenação fora do modal", async () => {

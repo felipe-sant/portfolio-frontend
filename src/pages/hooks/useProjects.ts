@@ -5,6 +5,7 @@ import PROJECT_SORTS from "@/enum/projectSorts.enum"
 import PROJECT_TYPES from "@/enum/projectTypes.enum"
 import FALLBACK_LANGUAGE from "@/i18n/fallbackLanguage"
 import resolveSupportedLanguage from "@/i18n/resolveSupportedLanguage"
+import useDragScroll from "@/hooks/useDragScroll"
 import useProjectsFilters from "@/pages/hooks/useProjectsFilters"
 import useProjectsPages from "@/pages/hooks/useProjectsPages"
 import projectsApi from "@/store/api/projects.api"
@@ -26,6 +27,7 @@ function useProjects() {
         applyModalFilters,
         hasFilters
     } = useProjectsFilters()
+    const { ref: filtersRef, dragProps: filtersDragProps } = useDragScroll<HTMLDivElement>()
     const pages = useProjectsPages(buildProjectsQueryArgs(language, filters))
     const filterOptionsQuery = projectsApi.useGetProjectFilterOptionsQuery({ lang: language })
 
@@ -84,6 +86,8 @@ function useProjects() {
               )
             : undefined,
         filters,
+        filtersRef,
+        filtersDragProps,
         draft,
         setDraft,
         clearSearch,

@@ -55,6 +55,14 @@
     display: none;
 }
 
+.filters[data-dragging="true"] {
+    user-select: none;
+}
+
+.filters[data-dragging="true"] button {
+    cursor: grabbing;
+}
+
 .separator {
     flex: none;
     width: 1px;

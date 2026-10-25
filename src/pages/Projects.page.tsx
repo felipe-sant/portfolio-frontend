@@ -47,6 +47,8 @@ function ProjectsPage() {
         ids,
         jsonLd,
         filters,
+        filtersRef,
+        filtersDragProps,
         draft,
         setDraft,
         clearSearch,
@@ -129,7 +131,7 @@ function ProjectsPage() {
                                     : t("filters.open")}
                             </Button>
                         </div>
-                        <div className={css.filters}>
+                        <div ref={filtersRef} className={css.filters} {...filtersDragProps}>
                             <FilterGroup
                                 label={t("filters.type.label")}
                                 options={typeOptions}
