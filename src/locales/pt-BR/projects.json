@@ -37,7 +37,8 @@
             "year": "Ano",
             "close": "Fechar",
             "clear": "Limpar",
-            "apply": "Aplicar"
+            "apply": "Aplicar",
+            "noProjects": "(nenhum projeto)"
         }
     },
     "results": {

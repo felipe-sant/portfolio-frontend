@@ -104,4 +104,14 @@ describe("i18n", () => {
             expect(i18n.t("common:projectCard.featured")).toBe(featured)
         }
     )
+
+    it.each([
+        ["pt-BR", "(nenhum projeto)"],
+        ["en", "(no projects)"],
+        ["es", "(ningún proyecto)"]
+    ])("resolve o texto da opção sem projeto em %s", async (language, text) => {
+        const i18n = await loadPage({ path: `/${language}` })
+
+        expect(i18n.t("projects:filters.modal.noProjects")).toBe(text)
+    })
 })
