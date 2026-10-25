@@ -44,7 +44,6 @@ function ProjectsPage() {
         filtersCount,
         appliedFilters,
         isFiltersOpen,
-        canOpenFilters,
         openFilters,
         closeFilters,
         availableTechnologies,
@@ -109,7 +108,6 @@ function ProjectsPage() {
                                 icon="filter"
                                 aria-haspopup="dialog"
                                 aria-expanded={isFiltersOpen}
-                                aria-disabled={!canOpenFilters}
                                 onClick={openFilters}
                             >
                                 {filtersCount > 0

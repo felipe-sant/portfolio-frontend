@@ -30,7 +30,6 @@ function useProjects() {
     const indexQuery = projectsApi.useGetProjectsIndexQuery({ lang: language })
 
     const [isFiltersOpen, setIsFiltersOpen] = useState(false)
-    const canOpenFilters = pages.availableTechnologies.length > 0 || pages.availableYears.length > 0
     const appliedFilters = {
         tech: filters.tech ?? [],
         year: filters.year ?? [],
@@ -38,9 +37,7 @@ function useProjects() {
     }
 
     function openFilters() {
-        if (canOpenFilters) {
-            setIsFiltersOpen(true)
-        }
+        setIsFiltersOpen(true)
     }
 
     const isEmptyContent =
@@ -99,7 +96,6 @@ function useProjects() {
         filtersCount: appliedFilters.tech.length + appliedFilters.year.length,
         appliedFilters,
         isFiltersOpen,
-        canOpenFilters,
         openFilters,
         closeFilters: () => setIsFiltersOpen(false),
         typeValue: filters.type ?? "",

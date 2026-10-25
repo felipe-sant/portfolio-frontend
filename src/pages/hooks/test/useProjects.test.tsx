@@ -640,7 +640,7 @@ describe("useProjects", () => {
             )
         }
 
-        it("expõe as opções da primeira página, o contador e se o modal pode abrir", async () => {
+        it("expõe as opções da primeira página e o contador", async () => {
             stubFilterProjects()
 
             mount(`${PATH}?tech=React&year=2025&year=2024&type=web`)
@@ -649,19 +649,18 @@ describe("useProjects", () => {
             expect(latest.availableTechnologies).toEqual(["Node.js", "Prisma", "React"])
             expect(latest.availableYears).toEqual(["2026", "2025", "2024"])
             expect(latest.filtersCount).toBe(3)
-            expect(latest.canOpenFilters).toBe(true)
         })
 
-        it("não deixa abrir o modal sem opções nem conta filtros que não são de tecnologia e ano", async () => {
+        it("abre o modal mesmo sem opções, sem expor canOpenFilters, e não conta filtros que não são de tecnologia e ano", async () => {
             stubProjects([])
 
             mount(`${PATH}?type=web&category=academic&q=a`)
             await settled()
 
             expect(latest.filtersCount).toBe(0)
-            expect(latest.canOpenFilters).toBe(false)
+            expect(latest).not.toHaveProperty("canOpenFilters")
             act(() => latest.openFilters())
-            expect(latest.isFiltersOpen).toBe(false)
+            expect(latest.isFiltersOpen).toBe(true)
         })
 
         it("abre e fecha o modal", async () => {

@@ -834,34 +834,60 @@ describe("ProjectsPage, filtros por tecnologia e ano", () => {
         expect(filtersButton("Filtros")).toBeVisible()
     })
 
-    it("fica com aria-disabled e não abre o modal enquanto carrega pela primeira vez, mostrando o contador da URL", async () => {
+    it("não tem aria-disabled enquanto carrega pela primeira vez e abre o modal só com Ordenar", async () => {
         const fetchMock = stubFilterProjects()
         const release = holdFetchAfter(fetchMock, 0)
         const user = userEvent.setup()
         renderPage("/pt-BR/projects?tech=React")
 
         const button = filtersButton("Filtros (1)")
-        expect(button).toHaveAttribute("aria-disabled", "true")
+        expect(button).not.toHaveAttribute("aria-disabled")
         await user.click(button)
 
-        expect(screen.queryByRole("dialog")).not.toBeInTheDocument()
-        release()
-        await listLoaded()
-        expect(filtersButton("Filtros (1)")).not.toHaveAttribute("aria-disabled")
+        expect(screen.getByRole("dialog", { name: "Filtros" })).toBeVisible()
+        expect(filtersButton("Filtros (1)")).toHaveAttribute("aria-expanded", "true")
+        expect(screen.getByRole("group", { name: "Ordenar" })).toBeVisible()
+        expect(screen.queryByRole("group", { name: "Tecnologia" })).not.toBeInTheDocument()
+        expect(screen.queryByRole("group", { name: "Ano" })).not.toBeInTheDocument()
+        await act(async () => {
+            release()
+        })
     })
 
-    it("fica com aria-disabled e não abre o modal no erro", async () => {
+    it("no erro de carga o botão abre o modal e a ordenação escolhida vai para a URL", async () => {
         const fetchMock = stubFilterProjects()
         failFetchAfter(fetchMock, 0)
         const user = userEvent.setup()
-        renderPage()
+        const { router } = renderPageWithRouter("/pt-BR/projects")
 
         await screen.findByRole("alert")
         const button = filtersButton("Filtros")
+        expect(button).not.toHaveAttribute("aria-disabled")
         await user.click(button)
+        await user.click(screen.getByRole("radio", { name: "A–Z" }))
+        await user.click(screen.getByRole("button", { name: "Aplicar" }))
 
-        expect(button).toHaveAttribute("aria-disabled", "true")
-        expect(screen.queryByRole("dialog")).not.toBeInTheDocument()
+        await waitFor(() => expect(router.state.location.search).toBe("?sort=title"))
+        expect(screen.getByRole("alert")).toBeVisible()
+        expect(screen.getByRole("searchbox")).toBeVisible()
+    })
+
+    it("as seções Tecnologia e Ano entram quando os dados chegam e a ordenação do rascunho não se perde", async () => {
+        const fetchMock = stubFilterProjects()
+        const release = holdFetchAfter(fetchMock, 0)
+        const user = userEvent.setup()
+        renderPage()
+
+        await user.click(filtersButton("Filtros"))
+        await user.click(screen.getByRole("radio", { name: "Mais antigo" }))
+        expect(screen.queryByRole("group", { name: "Tecnologia" })).not.toBeInTheDocument()
+        await act(async () => {
+            release()
+        })
+
+        expect(await screen.findByRole("group", { name: "Tecnologia" })).toBeVisible()
+        expect(screen.getByRole("group", { name: "Ano" })).toBeVisible()
+        expect(screen.getByRole("radio", { name: "Mais antigo" })).toBeChecked()
     })
 
     it("abre o modal com as tecnologias e os anos dos dados, iguais com e sem filtros aplicados", async () => {
