@@ -1,4 +1,3 @@
-import { Fragment } from "react"
 import { useTranslation } from "react-i18next"
 import { Link } from "react-router-dom"
 import Chip from "@/components/Chip"
@@ -14,6 +13,22 @@ interface FeaturedProjectProps {
     project: ProjectSummary
     index: number
     viewProjectLabel: string
+}
+
+interface MetaItemProps {
+    text: string
+    hasSeparator: boolean
+}
+
+function MetaItem({ text, hasSeparator }: MetaItemProps) {
+    const { t } = useTranslation("common")
+
+    return (
+        <>
+            {hasSeparator && <span aria-hidden="true"> {t("symbols.separator")} </span>}
+            {text}
+        </>
+    )
 }
 
 function FeaturedProject({ project, index, viewProjectLabel }: FeaturedProjectProps) {
@@ -57,12 +72,11 @@ function FeaturedProject({ project, index, viewProjectLabel }: FeaturedProjectPr
             <div className={css.body}>
                 <p className={css.meta}>
                     {metaItems.map((item, position) => (
-                        <Fragment key={`${item}-${position}`}>
-                            {position > 0 && (
-                                <span aria-hidden="true"> {t("symbols.separator")} </span>
-                            )}
-                            {item}
-                        </Fragment>
+                        <MetaItem
+                            key={`${item}-${position}`}
+                            text={item}
+                            hasSeparator={position > 0}
+                        />
                     ))}
                 </p>
                 <h3 className={css.title}>
