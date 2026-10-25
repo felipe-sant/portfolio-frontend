@@ -30,3 +30,6 @@ Thumbs.db
 .specs/features/*/
 !.specs/bugs/_archive/
 !.specs/features/_archive/
+
+test-results/
+playwright-report/

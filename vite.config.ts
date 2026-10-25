@@ -32,7 +32,7 @@ export default defineConfig(({ isSsrBuild }) => ({
         pool: "vmThreads",
         setupFiles: ["./src/setupTests.ts"],
         globalSetup: ["./src/testUtils/prerenderGlobalSetup.ts"],
-        exclude: [...configDefaults.exclude, ".claude/**"],
+        exclude: [...configDefaults.exclude, ".claude/**", "e2e/**"],
         coverage: {
             provider: "v8",
             reporter: ["text", "json", "json-summary", "html"],
