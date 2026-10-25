@@ -195,7 +195,7 @@ disponibilidade e o parágrafo do hero não têm chave: vêm do perfil (D44).
 
 | Namespace | Chave                          | Valor em `pt-BR`                                                                                                      | Onde                                                                     |
 | --------- | ------------------------------ | --------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
-| `home`    | `meta.title`                   | Luiz Felipe dos Santos · Desenvolvedor full stack em TypeScript (existe, valor muda, como em `layout.md`)             | `<title>`, `og:title`                                                    |
+| `home`    | `meta.title`                   | Portfolio · Luiz Felipe dos Santos (existe, valor muda, como em `layout.md`)                                          | `<title>`, `og:title`                                                    |
 | `home`    | `meta.description`             | Portfólio de Luiz Felipe dos Santos, desenvolvedor full stack em TypeScript: projetos, trajetória e contato. (existe) | Descrição, `og:description`                                              |
 | `home`    | `heading`                      | Desenvolvedor full stack em TypeScript (existe, perde o ponto, D24)                                                   | `h1`; `jobTitle` do JSON-LD                                              |
 | `home`    | `hero.viewProjects`            | Ver projetos                                                                                                          | Link primário do hero                                                    |
@@ -299,7 +299,7 @@ Lista de necessidades; os nomes de campo, os arquivos e os endpoints estão deci
 
 ## Metadados e dados estruturados
 
-- `<title>` "Luiz Felipe dos Santos · Desenvolvedor full stack em TypeScript" e
+- `<title>` "Portfolio · Luiz Felipe dos Santos" (o mesmo nos três idiomas) e
   `<meta name="description">`, das chaves de `home`, com as tags nativas do React 19; o título da
   raiz é a exceção ao formato `<Tela> · Luiz Felipe dos Santos` ([`layout.md`](layout.md)).
 - Canônica, `hreflang`, Open Graph (`og:type` `website`, `og:image` a do site, 1200×630) e
