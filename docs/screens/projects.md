@@ -285,6 +285,7 @@ do que a tela usa:
   ordenação (`sort`) e paginação (`offset`, `limit`) aplicados pela API (D51). Devolve uma página
   (`ProjectPage`: `items`, `total`, `offset`, `limit`, `availableTypes`), só com os campos do card
   (o detalhe, a galeria e os documentos ficam no endpoint do projeto, da #5).
+- **`total`** é a contagem da consulta feita (busca e filtros aplicados), sem a paginação: com `?type=academic` é o número de projetos acadêmicos, e `offset` e `limit` não o mudam.
 - **Endpoint das opções do modal:** `GET /projects/filter-options`, por idioma, devolve
   `ProjectFilterOptions` (`technologies` e `years`, cada item com `value` e `count`), sem busca nem
   filtros, e é a fonte das opções do modal de filtros (D64, `RF-PROJECTS-31`).

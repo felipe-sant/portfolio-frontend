@@ -428,7 +428,7 @@ mês é o de `sort=recent` (título A–Z, depois `id`), que substitui a "ordem 
 
 - `items`: a página pedida, depois de busca, filtros e ordenação, com cada projeto na forma
   `ProjectSummary`.
-- `total`: quantos projetos casam busca e filtros, sem contar a paginação (a contagem
+- `total`: quantos projetos casam busca e filtros da consulta, sem contar a paginação (`offset` e `limit` não o mudam) (a contagem
   "`<mostrados>` de `<total>`" de RF-PROJECTS-10).
 - `offset` e `limit`: os valores aplicados.
 - `availableTypes`: os tipos presentes em pelo menos um projeto publicado do `lang`, na ordem do
