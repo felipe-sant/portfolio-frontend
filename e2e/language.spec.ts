@@ -94,6 +94,18 @@ function clickOutsideSelector(page: Page): Promise<void> {
     return page.getByText("Tema", { exact: true }).click()
 }
 
+async function switchToEnglishByClickAfterScrolling(page: Page) {
+    await openHome(page, "pt-BR")
+    await page.getByRole("article").last().waitFor()
+    await page.evaluate((top) => window.scrollTo(0, top), SCROLL_TARGET)
+    await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(SCROLL_TARGET)
+    if (!isDesktop(page)) {
+        await clickWithMouse(page.getByRole("button", { name: LANGUAGES["pt-BR"].menu }))
+    }
+    await clickWithMouse(page.getByRole("button", { name: LANGUAGES["pt-BR"].button }))
+    await clickWithMouse(page.getByRole("link", { name: LANGUAGES.en.option, exact: true }))
+}
+
 test.describe("seletor de idioma", () => {
     test("RF-LAY-13, A11Y-L05: o botão se chama Idioma: Português e a lista traz os três idiomas com hreflang, lang e aria-current só no ativo", async ({
         page
@@ -155,23 +167,25 @@ test.describe("seletor de idioma", () => {
         await expect(page.getByRole("link", { name: "Español", exact: true })).toHaveCount(0)
     })
 
-    test("RF-LAY-14: a troca de idioma por clique preserva a posição de rolagem", async ({
+    test("RF-LAY-14, A11Y-L06: a troca por clique com a página rolada mostra o idioma novo e devolve o foco ao botão", async ({
         page
     }) => {
-        test.fail(isDesktop(page), "RF-LAY-14: no desktop o foco devolvido ao botão rola a página")
-        await openHome(page, "pt-BR")
-        await page.getByRole("article").last().waitFor()
-        await page.evaluate((top) => window.scrollTo(0, top), SCROLL_TARGET)
-        await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(SCROLL_TARGET)
-        if (!isDesktop(page)) {
-            await clickWithMouse(page.getByRole("button", { name: LANGUAGES["pt-BR"].menu }))
-        }
-        await clickWithMouse(page.getByRole("button", { name: LANGUAGES["pt-BR"].button }))
-
-        await clickWithMouse(page.getByRole("link", { name: LANGUAGES.en.option, exact: true }))
+        await switchToEnglishByClickAfterScrolling(page)
 
         await expectHomeIn(page, "en")
         await expect(page.getByRole("button", { name: LANGUAGES.en.button })).toBeFocused()
+    })
+
+    test("RF-LAY-14: a troca de idioma por clique preserva a posição de rolagem", async ({
+        page
+    }) => {
+        test.fail(
+            isDesktop(page),
+            "bug de produto conhecido: o focus() sem preventScroll em LanguageSelector e useDropdown rola a página no desktop; a issue BUG ainda será aberta pelo PO"
+        )
+        await switchToEnglishByClickAfterScrolling(page)
+
+        await expectHomeIn(page, "en")
         await expect
             .poll(async () => Math.abs((await page.evaluate(() => window.scrollY)) - SCROLL_TARGET))
             .toBeLessThanOrEqual(SCROLL_TOLERANCE)
