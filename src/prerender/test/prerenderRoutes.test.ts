@@ -62,6 +62,29 @@ describe("prerenderRoutes", () => {
         expect(index.data?.items).toEqual([{ id: record.id, title: record.title }])
     })
 
+    it("pede na rota de projetos as opções do modal com { lang } e deixa o resultado no cache", async () => {
+        const record = buildProjectRecord()
+        stubContentFetch({
+            "content/pt-BR/profile.json": buildProfile({
+                stack: [{ category: "frontend", items: [{ name: "Docker" }] }]
+            }),
+            "content/pt-BR/projects.json": { items: [record] }
+        })
+        const store = createStore()
+
+        await loadPrerenderData(store, findRoute("projects"), {}, "pt-BR")
+
+        const options = projectsApi.endpoints.getProjectFilterOptions.select({ lang: "pt-BR" })(
+            store.getState()
+        )
+        expect(options.data?.technologies).toEqual([
+            { value: "Docker", count: 0 },
+            { value: "React", count: 1 },
+            { value: "TypeScript", count: 1 }
+        ])
+        expect(options.data?.years).toEqual([{ value: "2026", count: 1 }])
+    })
+
     it("pede o conteúdo do documento na rota de documento", async () => {
         const record = buildProjectRecord({
             documents: [{ id: DOCUMENT_ID, name: "SETUP.md", format: "markdown", translated: true }]

@@ -290,6 +290,43 @@ describe("mountClient com caminho pré-renderizado", () => {
         expect(hydrationWarnings(consoleSpies.warn)).toEqual([])
     })
 
+    it("hidrata e abre o modal logo depois com as opções da store, com a tecnologia só da stack desabilitada", async () => {
+        stubProjectsContent()
+        injectPrerendered("pt-BR/projects.html", rootElement)
+        await i18n.changeLanguage("pt-BR")
+        window.history.pushState({}, "", "/pt-BR/projects")
+        const consoleSpies = spyOnConsole()
+
+        await mount()
+        await settle()
+
+        await userEvent.click(screen.getByRole("button", { name: "Filtros" }))
+        expect(screen.getByRole("group", { name: "Tecnologia" })).toBeVisible()
+        expect(screen.getByRole("group", { name: "Ano" })).toBeVisible()
+        expect(screen.getByRole("checkbox", { name: "Docker (nenhum projeto)" })).toBeDisabled()
+        expect(screen.getByRole("checkbox", { name: "Leaflet" })).toBeEnabled()
+        expect(consoleSpies.error).not.toHaveBeenCalled()
+        expect(hydrationWarnings(consoleSpies.warn)).toEqual([])
+    })
+
+    it("hidrata com ?tech= de uma tecnologia só da stack e mostra a opção marcada e habilitada", async () => {
+        stubProjectsContent()
+        injectPrerendered("pt-BR/projects.html", rootElement)
+        await i18n.changeLanguage("pt-BR")
+        window.history.pushState({}, "", "/pt-BR/projects?tech=Docker")
+        const consoleSpies = spyOnConsole()
+
+        await mount()
+        await settle()
+
+        await userEvent.click(await screen.findByRole("button", { name: "Filtros (1)" }))
+        const box = screen.getByRole("checkbox", { name: "Docker" })
+        expect(box).toBeChecked()
+        expect(box).toBeEnabled()
+        expect(consoleSpies.error).not.toHaveBeenCalled()
+        expect(hydrationWarnings(consoleSpies.warn)).toEqual([])
+    })
+
     it("não deixa a tela em Carregando projetos ao hidratar", async () => {
         injectPrerendered("pt-BR/projects.html", rootElement)
         await i18n.changeLanguage("pt-BR")

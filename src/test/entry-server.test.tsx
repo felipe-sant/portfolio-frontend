@@ -263,6 +263,26 @@ describe("render", () => {
             expect(keys).toContain('getProjectsPages({"lang":"pt-BR"})')
             expect(keys).toContain('getProjectsIndex({"lang":"pt-BR"})')
         })
+
+        it.each([
+            ["pt-BR/projects.html", "pt-BR"],
+            ["en/projects.html", "en"],
+            ["es/projects.html", "es"]
+        ])(
+            "serializa a consulta das opções do modal em %s, sem diálogo nem opção no HTML",
+            async (file, language) => {
+                stubTenProjects()
+
+                const { state, html } = await renderProjects(file)
+
+                const keys = Object.keys(JSON.parse(state).api.queries)
+                expect(keys).toContain(`getProjectFilterOptions({"lang":"${language}"})`)
+                expect(keys).toContain(`getProjectsPages({"lang":"${language}"})`)
+                expect(keys).toContain(`getProjectsIndex({"lang":"${language}"})`)
+                expect(html).not.toContain('role="dialog"')
+                expect(html).not.toContain('type="checkbox"')
+            }
+        )
     })
 
     it("não declara canônica, hreflang, Open Graph nem JSON-LD no 404.html", async () => {
