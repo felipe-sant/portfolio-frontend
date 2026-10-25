@@ -184,7 +184,7 @@ contra `npm run preview:fatec` (`base` `/ra2581392423047/`), que serve o `dist/`
 `reducedMotion`) rodam cada teste. Seletor é `getByRole` com nome em português, rota abre sem barra
 inicial (relativa ao `baseURL`). Toda tela nova acrescenta o caminho em `e2e/support/routesUnderTest.ts`
 (o axe, com `color-contrast` ligada, roda em todas) e, se tiver teclado próprio, um roteiro em
-`e2e/<tema>.spec.ts`. Violação do axe se corrige na marcação ou no CSS, nunca desligando regra. Os projetos rodam com `reducedMotion: "reduce"`: roteiro que precisa de movimento pleno (faixa de stack com pausa) usa `test.use({ reducedMotion: "no-preference" })`. Elemento com `useReveal` leva `suppressHydrationWarning` (o `data-reveal` do HTML do servidor difere do primeiro render no navegador).
+`e2e/<tema>.spec.ts`. Violação do axe se corrige na marcação ou no CSS, nunca desligando regra. Os projetos rodam com `reducedMotion: "reduce"`: roteiro que precisa de movimento pleno usa `test.use({ reducedMotion: "no-preference" })`. Elemento com `useReveal` leva `suppressHydrationWarning` (o `data-reveal` do HTML do servidor difere do primeiro render no navegador).
 
 O CI (`.github/workflows/`) roda `npm run build`, `npm run lint`, a suíte de testes e o job `e2e`
 (`E2E`: instala o Chromium, `npm run build:fatec`, `npm run test:e2e`, relatório como artefato em
@@ -360,7 +360,7 @@ para editores compatíveis, coerente com o `.prettierrc`.
 
 - **`src/components/`** — componentes base reutilizáveis (`Button`, `Chip`, `TextField`, `SearchInput`,
   `Skeleton`, `Spinner`, `VisuallyHidden`, `Icon`, `IconButton`, `CatLogo`, `ThemeToggle`,
-  `MotionToggle`, `SettingsMenu`, `Flag`, `LanguageSelector`, `Header`, `SkipLink`, `Footer`, `CopyEmailButton`, `ButtonLink`, `AvailabilityBadge`, `LoadError`, `StatusCard`, `StackMarquee`, `FeaturedProject`). O desenho de cada ícone fica num mapa local de
+  `MotionToggle`, `SettingsMenu`, `Flag`, `LanguageSelector`, `Header`, `SkipLink`, `Footer`, `CopyEmailButton`, `ButtonLink`, `AvailabilityBadge`, `LoadError`, `StatusCard`, `StackMarquee`, `FeaturedProject`, `Reveal`). O desenho de cada ícone fica num mapa local de
   `Icon.tsx`, com os nomes em `src/enum/iconNames.enum.ts`. Texto fixo de componente vive em `common`
   (`searchInput.clear`); o resto chega por prop. O `jsx-a11y/prefer-tag-over-role` acusa `role="status"`
   literal: passe `role={"status"}`. Controle de formulário tem borda `--border-control`, nunca
@@ -420,7 +420,7 @@ para editores compatíveis, coerente com o `.prettierrc`.
   prop `viewTransition` dos `Link` de navegação (o `LanguageSelector` fica sem); `startThemeTransition`
   (`src/utils/`, chamada por `useTheme.setTheme`) liga `data-theme-transition` no `<html>` durante a
   troca; `useReveal()` (`src/hooks/`, devolve `ref` e `revealProps`) e o componente `SkeletonSwap`
-  são usados pela Início (destaques e skeletons dos blocos); Projetos ainda não os usa; tokens `--dur-page`,
+  são usados pela Início (destaques, cabeçalho da seção e botões finais pelo componente `Reveal`, e skeletons dos blocos), com `useReveal` escondendo só o que está abaixo da primeira tela depois da hidratação (o HTML pré-renderizado sai visível); Projetos ainda não os usa; `useDragScroll` (arrastar com o mouse região rolável) e `useMediaQuery` (consulta de mídia por `useSyncExternalStore`) completam `src/hooks/`; tokens `--dur-page`,
   `--stagger` e `--press-scale` são neutralizados nos dois blocos de movimento reduzido.
 - **Alias de import `@/`** — `@/*` resolve para `src/*`. Configurado em dois lugares que precisam
   continuar concordando: `paths` no `tsconfig.app.json` (para o `tsc` e o editor) e `resolve.alias` no
@@ -719,18 +719,28 @@ novo, então repetir via hook no momento do push seria redundante.
 
 ## Tooling de IA (agents, skills e spec-driven)
 
-- `.claude/agents/` — três papéis que formam o fluxo planejar → aprovar → executar → revisar:
-  `sdd` (só planeja, escreve `spec.md`/`tasks.md` em `.specs/`, nunca toca em `src/`), `executor`
-  (implementa um `tasks.md` já aprovado, em branch dedicada, com commits atômicos, e sempre chama
-  o `reviewer` ao terminar) e `reviewer`
-  (audita o resultado contra este arquivo, somente leitura).
-- `.claude/skills/` — conhecimento carregável sob demanda. São cinco, separadas pela pasta do
+- `.claude/agents/` — cinco papéis num fluxo de sete estágios, `sdd` → `executor` → `reviewer` → `qa` →
+  `reviewer` → `tester` → `reviewer`: `sdd` (só planeja, escreve `spec.md`/`tasks.md` em `.specs/`,
+  nunca toca em `src/`), `executor` (implementa a feature inteira de um `tasks.md` já aprovado, em
+  branch dedicada, com commits atômicos), `reviewer` (audita contra este arquivo, somente leitura, e
+  revisa o trabalho do estágio anterior, nunca o próprio), `qa` (testa a tela no navegador com
+  Playwright contra `docs/`, escreve os testes de `e2e/` e reporta bugs; só escreve em `e2e/`; só
+  entra se a feature tem tela) e `tester` (valida toda a suíte, julga se os testes fazem sentido e
+  cria testes de unidade que faltam; só escreve em `src/**/test/` e `src/testUtils/`). Quem encontra
+  problema devolve "Pedidos de correção" por responsável (`executor` para código, `qa` para E2E,
+  `tester` para teste de unidade, `sdd` para spec); a sessão principal orquestra: despacha o
+  responsável, chama o `reviewer` para revisar só a correção e repete até não restar bloqueante. O
+  `executor` não faz push nem abre PR nesse fluxo: o PR abre depois do último `reviewer`.
+- `.claude/skills/` — conhecimento carregável sob demanda. São nove, separadas pela pasta do
   artefato: `react-page-scaffold` (página em `src/pages/` + CSS Module + registro de rota),
   `react-component-scaffold` (componente reutilizável em `src/components/` + CSS Module em
   `src/styles/components/`), `vitest-specialist` (teste em `test/` por diretório com Vitest +
   Testing Library, `src/setupTests.ts` e o bloco `test` do `vite.config.ts`),
   `redux-store-scaffold` (slice em `src/store/slices/` + registro no `rootReducer` + hooks tipados)
-  e `rtk-query-endpoint-scaffold` (endpoints em `src/store/api/` via `api.injectEndpoints`).
+  `rtk-query-endpoint-scaffold` (endpoints em `src/store/api/` via `api.injectEndpoints`) e, do
+  agente `qa`, `playwright-e2e` (teste de `e2e/`), `accessibility-audit` (auditoria de acessibilidade
+  contra `docs/product/accessibility.md`), `screen-qa` (roteiro de QA exploratório de uma tela) e
+  `nfr-verification` (requisitos não funcionais de `docs/product/non-functional-requirements.md`).
 - `.specs/` — specs por feature/bug (`.specs/features/<slug>/`, `.specs/bugs/<slug>/`), a partir de
   `.specs/_template/`. As pastas de trabalho de cada spec são gitignored (planejamento local); só o resumo
   `_archive/<slug>.md` de cada spec fechada, escrito pelo `executor`, é versionado.

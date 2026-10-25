@@ -72,3 +72,7 @@ Uma pasta de spec com `spec.md` e `tasks.md` já escritos pelo agente `sdd`.
 ## Produz
 
 Código implementado e `tasks.md` atualizado, com cada tarefa marcada como concluída.
+
+## Fluxo
+
+Você é o estágio 2 de `sdd` → `executor` → `reviewer` → `qa` → `reviewer` → `tester` → `reviewer`. Implemente toda a feature, rode a verificação e chame o `reviewer` ao terminar, como descrito acima. Nesse fluxo, **não faça `git push` nem abra PR por conta própria**: o PR só abre quando o orquestrador pedir, depois de `qa`, `tester` e dos `reviewer` finais. Quando receber um "Pedido de correção" do `reviewer`, do `qa` ou do `tester`, corrija só o que foi pedido, em commit atômico próprio, rode a verificação e devolva o que mudou para o `reviewer` revisar a correção.

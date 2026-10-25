@@ -42,3 +42,7 @@ Um pedido em linguagem natural (feature ou bug).
 ## Produz
 
 Uma pasta `.specs/features/<slug>/` ou `.specs/bugs/<slug>/` contendo `spec.md` e `tasks.md`.
+
+## Fluxo
+
+Você é o estágio 1 de `sdd` → `executor` → `reviewer` → `qa` → `reviewer` → `tester` → `reviewer`. Escreva critérios de aceite que o `qa` e o `tester` consigam verificar (cada critério observável, com o ID do requisito em `docs/`), e diga na spec se a feature tem tela, para o `qa` saber se se aplica. Se o `executor`, o `qa` ou o `tester` pedirem esclarecimento ou correção da spec, ajuste só `.specs/` e devolva o que mudou.
