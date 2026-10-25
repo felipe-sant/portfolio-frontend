@@ -3,7 +3,8 @@
     width: 100%;
     overflow: hidden;
     padding: var(--space-4) 0;
-    background-color: var(--neutral-900);
+    border-block: var(--border-width) solid var(--border-subtle);
+    background-color: var(--bg-raised);
 }
 
 .srOnly {
@@ -18,36 +19,10 @@
     border: 0;
 }
 
-.controls {
-    display: flex;
-    justify-content: flex-end;
-    padding: 0 var(--pad-page) var(--space-2);
-}
-
-.pauseButton {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: var(--hit-min);
-    min-height: var(--hit-min);
-    padding: 0;
-    border: var(--border-width) solid var(--dark-500);
-    border-radius: var(--radius);
-    background-color: transparent;
-    color: var(--dark-200);
-    cursor: pointer;
-}
-
 .track {
     display: flex;
     width: max-content;
     animation: marquee var(--dur-marquee) linear infinite;
-}
-
-.paused,
-.band:hover .track,
-.band:focus-within .track {
-    animation-play-state: paused;
 }
 
 .list {
@@ -67,11 +42,11 @@
 }
 
 .item {
-    color: var(--dark-300);
+    color: var(--text-weak);
 }
 
 .primary {
-    color: var(--brand-primary);
+    color: var(--text-link);
 }
 
 @keyframes marquee {
@@ -85,25 +60,59 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .track {
-        width: auto;
-        flex-wrap: wrap;
+    :root:not([data-motion]) .band {
+        overflow-x: auto;
+        scrollbar-width: thin;
+        scrollbar-color: var(--border-strong) transparent;
+        cursor: grab;
+    }
+
+    :root:not([data-motion]) .track {
         animation: none;
     }
 
-    .list {
-        flex-wrap: wrap;
+    :root:not([data-motion]) .list {
         padding: 0 var(--pad-page);
     }
 }
 
+:root[data-motion="reduced"] .band {
+    overflow-x: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-strong) transparent;
+    cursor: grab;
+}
+
 :root[data-motion="reduced"] .track {
-    width: auto;
-    flex-wrap: wrap;
     animation: none;
 }
 
 :root[data-motion="reduced"] .list {
-    flex-wrap: wrap;
     padding: 0 var(--pad-page);
+}
+
+@media (pointer: coarse) {
+    .band {
+        overflow-x: auto;
+        scrollbar-width: thin;
+        scrollbar-color: var(--border-strong) transparent;
+        cursor: grab;
+    }
+
+    .track {
+        animation: none;
+    }
+
+    .list {
+        padding: 0 var(--pad-page);
+    }
+
+    .list[aria-hidden="true"] {
+        display: none;
+    }
+}
+
+.band[data-dragging="true"] {
+    cursor: grabbing;
+    user-select: none;
 }
