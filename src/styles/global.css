@@ -364,6 +364,10 @@ body {
     line-height: var(--lh-body);
 }
 
+body[data-scroll-locked] {
+    overflow: hidden;
+}
+
 @media (scripting: none) {
     body > noscript {
         display: block;

@@ -118,6 +118,13 @@ const DRAWINGS: Record<IconName, ReactNode> = {
             <path d="m12 5 7 7-7 7" />
         </>
     ),
+    filter: (
+        <>
+            <path d="M3 6h18" />
+            <path d="M6 12h12" />
+            <path d="M10 18h4" />
+        </>
+    ),
     motion: <path d="M22 12h-4l-3 9L9 3l-3 9H2" />,
     star: (
         <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
