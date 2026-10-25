@@ -252,6 +252,22 @@ describe("mountClient com caminho pré-renderizado", () => {
         expect(hydrationWarnings(consoleSpies.warn)).toEqual([])
     })
 
+    it("hidrata com tech e year na URL, aplica o filtro depois e mostra Filtros (2)", async () => {
+        stubProjectsContent()
+        injectPrerendered("pt-BR/projects.html", rootElement)
+        await i18n.changeLanguage("pt-BR")
+        window.history.pushState({}, "", "/pt-BR/projects?tech=Leaflet&year=2025")
+        const consoleSpies = spyOnConsole()
+
+        await mount()
+        await settle()
+
+        expect(await screen.findByRole("button", { name: "Filtros (2)" })).toBeVisible()
+        expect(cardTitles()).toEqual(["Maps"])
+        expect(consoleSpies.error).not.toHaveBeenCalled()
+        expect(hydrationWarnings(consoleSpies.warn)).toEqual([])
+    })
+
     it("não deixa a tela em Carregando projetos ao hidratar", async () => {
         injectPrerendered("pt-BR/projects.html", rootElement)
         await i18n.changeLanguage("pt-BR")

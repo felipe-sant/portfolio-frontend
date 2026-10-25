@@ -53,6 +53,7 @@ describe("prerenderRoutes", () => {
         await loadPrerenderData(store, findRoute("projects"), {}, "pt-BR")
 
         const args = buildProjectsQueryArgs("pt-BR", { q: "", sort: "recent" })
+        expect(args).toStrictEqual({ lang: "pt-BR" })
         const pages = projectsApi.endpoints.getProjectsPages.select(args)(store.getState())
         const index = projectsApi.endpoints.getProjectsIndex.select({ lang: "pt-BR" })(
             store.getState()

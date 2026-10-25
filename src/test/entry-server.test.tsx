@@ -192,6 +192,23 @@ describe("render", () => {
         })
 
         it.each([
+            ["pt-BR/projects.html", "Filtros"],
+            ["en/projects.html", "Filters"],
+            ["es/projects.html", "Filtros"]
+        ])("traz o botão de filtros sem contador e sem diálogo em %s", async (file, label) => {
+            stubTenProjects()
+
+            const { html } = await renderProjects(file)
+
+            expect(html).toMatch(
+                new RegExp(`<button[^>]*aria-haspopup="dialog"[^>]*aria-expanded="false"[^>]*>`)
+            )
+            expect(html).toMatch(new RegExp(`${label}</button>`))
+            expect(html).not.toMatch(new RegExp(`${label} \\(\\d+\\)`))
+            expect(html).not.toContain('role="dialog"')
+        })
+
+        it.each([
             ["pt-BR/projects.html", "pt-BR", "Projetos · Luiz Felipe dos Santos"],
             ["en/projects.html", "en", "Projects · Luiz Felipe dos Santos"],
             ["es/projects.html", "es", "Proyectos · Luiz Felipe dos Santos"]
