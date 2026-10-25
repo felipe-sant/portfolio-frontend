@@ -34,6 +34,7 @@ function FeaturedProject({ project, index, viewProjectLabel }: FeaturedProjectPr
             ref={ref}
             {...revealProps}
             className={css.item}
+            suppressHydrationWarning
             data-mirrored={index % 2 === 1 ? "true" : undefined}
         >
             <div className={css.media}>

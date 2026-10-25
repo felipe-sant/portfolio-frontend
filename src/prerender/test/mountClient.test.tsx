@@ -135,6 +135,26 @@ describe("mountClient com caminho pré-renderizado", () => {
         expect(document.head.querySelectorAll("title")).toHaveLength(1)
     })
 
+    it("hidrata sem erro nem aviso com IntersectionObserver disponível", async () => {
+        class StubObserver {
+            observe = vi.fn()
+            disconnect = vi.fn()
+            unobserve = vi.fn()
+            takeRecords = vi.fn(() => [])
+        }
+        vi.stubGlobal("IntersectionObserver", StubObserver)
+        injectPrerendered("en.html", rootElement)
+        await i18n.changeLanguage("en")
+        window.history.pushState({}, "", "/en")
+        const consoleSpies = spyOnConsole()
+
+        await mount()
+        await settle()
+
+        expect(consoleSpies.error).not.toHaveBeenCalled()
+        expect(hydrationWarnings(consoleSpies.warn)).toEqual([])
+    })
+
     it("hidrata sem erro com tema escuro salvo e movimento reduzido", async () => {
         localStorage.setItem(THEME_STORAGE_KEY, "dark")
         localStorage.setItem(MOTION_STORAGE_KEY, "reduced")
