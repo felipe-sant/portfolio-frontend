@@ -440,8 +440,9 @@ mês é o de `sort=recent` (título A–Z, depois `id`), que substitui a "ordem 
 **Paginação:** por `offset` e `limit`, não por cursor. O "Carregar mais" de Projetos pede
 `offset` igual à quantidade já mostrada; voltar pelo histórico refaz as mesmas páginas, com cache
 do RTK Query (RF-PROJECTS-25); a coleção é pequena (dezenas de projetos). Consumidores de build que
-precisam de todos os projetos (pré-renderização #49, `sitemap.xml` e `llms.txt` #51, `ItemList` do
-JSON-LD de `/projects` #52) pedem páginas com `limit=50` até `total`.
+precisam de todos os projetos (pré-renderização de `/projects/:id` #49, `sitemap.xml` e `llms.txt` #51)
+pedem páginas com `limit=50` até `total`. O `ItemList` do JSON-LD de `/projects` não é um desses
+consumidores: usa os itens da primeira página que a tela já tem (D65).
 
 **Sucesso:** `200`, `application/json`, `Content-Language` igual a `lang`, corpo `ProjectPage`.
 
@@ -645,6 +646,11 @@ quantidade de projetos que os usam, para a tela desabilitar o que ninguém usa. 
 
 **Quem usa:** Projetos (RF-PROJECTS-29 e RF-PROJECTS-31), por `getProjectFilterOptions`, com o
 argumento `{ lang }` (cache por idioma) e entrada no registro de pré-renderização.
+
+**Por que é uma chamada própria (D65):** o resultado não depende de busca, filtro nem página, só do
+conteúdo e do `lang`, então o servidor pode guardá-lo em cache por idioma e a lista não precisa
+reenviá-lo a cada página e a cada filtro. A tela de Projetos faz duas chamadas: `GET /projects`
+(primeira página e "Carregar mais") e esta.
 
 ### `GET /projects/{id}`
 
@@ -1043,6 +1049,19 @@ origem, sem mudar telas.
   `.claude/CLAUDE.md`), chamada pelo `queryFn` de cada endpoint, que recebe `lang` no argumento. A
   #43 troca cada `queryFn` por `query` só em `src/store/api/` e remove o service, sem mexer nas
   páginas.
+- **Cache de leitura (D65):** `readText` guarda a promessa do texto por caminho (o caminho inclui o
+  idioma), então `projects.json` e `profile.json` são lidos uma vez por carga da página, qualquer que
+  seja o número de consultas; `readJson` converte o texto a cada chamada, para ninguém compartilhar
+  objeto. A leitura que falha apaga a entrada, e um novo pedido tenta de novo. É só da camada local:
+  sai com ela na #43 (o cache de requisição passa a ser do RTK Query, por argumento, e do HTTP).
+- **Migração (#43): a filtragem sai do frontend.** Busca (`q`), filtros por tipo, categoria,
+  tecnologia e ano, ordenação, paginação, `availableTypes` e as opções do modal com contagem
+  (`ProjectFilterOptions`) são simulados em `src/services/content/` só porque a v1 não tem
+  servidor. Quando a #43 trocar cada `queryFn` por `query`, essas regras são removidas do frontend
+  e passam ao backend, que recebe `q`, `type`, `category`, `tech`, `year`, `sort`, `offset` e
+  `limit` (e `lang`) e responde `ProjectPage` e `ProjectFilterOptions` como descrito acima; a tela
+  continua só montando parâmetros e acumulando páginas (RF-PROJECTS-26). Conferir no fim da #43 que
+  nenhuma função de busca, filtro, ordenação, paginação ou contagem restou em `src/`.
 - **Envio de contato:** `POST /contact-messages` continua com a `queryFn` simulada de
   RF-CONTACT-22, que não lê arquivo nem faz requisição.
 

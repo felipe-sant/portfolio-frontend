@@ -101,7 +101,7 @@ flowchart LR
 | `timelineApi.useGetCurrentTimelineQuery({ lang })`                        | `GET /timeline?current=true`                |
 | `projectsApi.useGetProjectsQuery(ProjectListParams)`                      | `GET /projects`                             |
 | `projectsApi.useGetProjectsPagesInfiniteQuery(args)`                      | `GET /projects` por páginas de 9            |
-| `projectsApi.useGetProjectsIndexQuery({ lang })`                          | `GET /projects` até `total` (id e título)   |
+| `projectsApi.useGetProjectFilterOptionsQuery({ lang })`                   | `GET /projects/filter-options`              |
 | `projectsApi.useGetProjectQuery({ id, lang })`                            | `GET /projects/{id}`                        |
 | `projectsApi.useGetProjectDocumentsQuery({ id, lang })`                   | `GET /projects/{id}/documents`              |
 | `projectsApi.useGetProjectDocumentContentQuery({ id, documentId, lang })` | `GET /projects/{id}/documents/{documentId}` |
@@ -111,6 +111,9 @@ flowchart LR
 - **Regras só na camada:** busca, filtros, ordenação, paginação, `availableTypes`, as opções de filtro com contagem (`ProjectFilterOptions`), destaques, agrupamento e ordem da trajetória, certificados sem repetição e itens em curso vivem em `src/services/content/`; a tela não filtra nem ordena.
 - **Caminhos:** todo arquivo de `public/` é pedido com `import.meta.env.BASE_URL`, lido só em `src/utils/publicUrl.ts`. O `src` de imagem do JSON continua relativo, como o contrato, e quem exibe a imagem o resolve com a mesma base.
 - **Validação do conteúdo:** `src/services/content/validation/` implementa a seção "Validação do conteúdo" de [`data-model.md`](data-model.md); `npm run content:check` e o teste de `src/services/content/test/content.test.ts` falham com o arquivo, o campo e a regra.
+
+- **Cache de leitura (D65):** `readText` (`src/services/content/`) guarda a promessa por caminho, de modo que `projects.json` e `profile.json` são lidos uma vez por carga, e não uma vez por consulta; leitura que falha apaga a entrada. A tela de Projetos abre duas consultas (lista e opções do modal), e o `ItemList` do JSON-LD sai da primeira página da lista, sem consulta própria. Tudo isso é da camada local e sai com ela na #43.
+- **Migração (#43): a filtragem sai do frontend.** Busca, filtros por tipo, categoria, tecnologia e ano, ordenação, paginação, `availableTypes` e as opções do modal com contagem são simulados em `src/services/content/` só para a v1. Quando a #43 trocar cada `queryFn` por `query`, essas regras saem do frontend e o servidor passa a receber `q`, `type`, `category`, `tech`, `year`, `sort`, `offset` e `limit`; a tela só monta parâmetros e acumula páginas. Detalhe em [`api-contract.md`](api-contract.md#camada-local-na-v1).
 
 **Trocar pela API (#43):** em `src/store/api/*.api.ts`, cada `queryFn` vira `query` com o mesmo argumento e o mesmo tipo de resposta (`lang` vira parâmetro da URL); remover `src/services/content/` e os dados de `public/content/`; definir `VITE_API_URL`. Nenhuma página, hook de página ou componente muda, porque nenhum deles importa a camada local.
 
