@@ -732,3 +732,301 @@ describe("ProjectsPage", () => {
         await expectNoAxeViolations(container)
     }, 15000)
 })
+
+const FILTER_STACKS = [
+    ["React", "Node.js"],
+    ["React"],
+    ["Node.js"],
+    ["React", "Node.js", "Prisma"],
+    ["Prisma"],
+    ["React"]
+]
+const FILTER_DATES = ["2024-01", "2024-06", "2025-01", "2025-06", "2026-01", "2026-06"]
+
+function filterRecords() {
+    return buildProjectRecords(6, (index) => ({
+        date: FILTER_DATES[index],
+        stack: [
+            {
+                category: "frontend",
+                items: FILTER_STACKS[index].map((name) => ({ name }))
+            }
+        ]
+    }))
+}
+
+function stubFilterProjects() {
+    return stubContentFetch(filesFor(filterRecords()))
+}
+
+function renderPageWithRouter(entry: string) {
+    const router = createMemoryRouter([{ path: "/:lang/projects", element: <ProjectsPage /> }], {
+        initialEntries: [entry]
+    })
+
+    return { router, ...renderWithStore(<RouterProvider router={router} />) }
+}
+
+function filtersButton(name: string | RegExp = /^Filtros/) {
+    return screen.getByRole("button", { name })
+}
+
+function projectTitles() {
+    return cards().map((card) => card.textContent)
+}
+
+async function checkOptions(user: ReturnType<typeof userEvent.setup>, names: string[]) {
+    for (const name of names) {
+        await user.click(screen.getByRole("checkbox", { name }))
+    }
+}
+
+describe("ProjectsPage, filtros por tecnologia e ano", () => {
+    it("não mostra o botão Filtros nem o modal quando o conteúdo é vazio", async () => {
+        stubProjects(0)
+
+        renderPage()
+
+        await screen.findByText("Os projetos aparecem aqui assim que eu publicar o primeiro.")
+        expect(screen.queryByRole("button", { name: /^Filtros/ })).not.toBeInTheDocument()
+        expect(screen.queryByRole("dialog")).not.toBeInTheDocument()
+    })
+
+    it("mostra o botão depois da ordenação, com popup de diálogo e o contador só de tecnologia e ano", async () => {
+        stubFilterProjects()
+
+        const { unmount } = renderPage()
+        await listLoaded()
+        const button = filtersButton("Filtros")
+
+        expect(button).toHaveAttribute("aria-haspopup", "dialog")
+        expect(button).toHaveAttribute("aria-expanded", "false")
+        expect(button).not.toHaveAttribute("aria-disabled")
+        expect(
+            screen
+                .getByRole("button", { name: "Ordenar Mais recente" })
+                .compareDocumentPosition(button) & Node.DOCUMENT_POSITION_FOLLOWING
+        ).toBeTruthy()
+        unmount()
+
+        const withCount = renderPage("/pt-BR/projects?tech=React&year=2025&year=2024")
+        await listLoaded()
+        expect(filtersButton("Filtros (3)")).toBeVisible()
+        withCount.unmount()
+
+        renderPage("/pt-BR/projects?type=web&category=academic&q=projeto")
+        await listLoaded()
+        expect(filtersButton("Filtros")).toBeVisible()
+    })
+
+    it("fica com aria-disabled e não abre o modal enquanto carrega pela primeira vez, mostrando o contador da URL", async () => {
+        const fetchMock = stubFilterProjects()
+        const release = holdFetchAfter(fetchMock, 0)
+        const user = userEvent.setup()
+        renderPage("/pt-BR/projects?tech=React")
+
+        const button = filtersButton("Filtros (1)")
+        expect(button).toHaveAttribute("aria-disabled", "true")
+        await user.click(button)
+
+        expect(screen.queryByRole("dialog")).not.toBeInTheDocument()
+        release()
+        await listLoaded()
+        expect(filtersButton("Filtros (1)")).not.toHaveAttribute("aria-disabled")
+    })
+
+    it("fica com aria-disabled e não abre o modal no erro", async () => {
+        const fetchMock = stubFilterProjects()
+        failFetchAfter(fetchMock, 0)
+        const user = userEvent.setup()
+        renderPage()
+
+        await screen.findByRole("alert")
+        const button = filtersButton("Filtros")
+        await user.click(button)
+
+        expect(button).toHaveAttribute("aria-disabled", "true")
+        expect(screen.queryByRole("dialog")).not.toBeInTheDocument()
+    })
+
+    it("abre o modal com as tecnologias e os anos dos dados, iguais com e sem filtros aplicados", async () => {
+        stubFilterProjects()
+        const user = userEvent.setup()
+        renderPage("/pt-BR/projects?tech=Prisma&year=2026")
+        await listLoaded()
+
+        await user.click(filtersButton("Filtros (2)"))
+
+        const dialog = screen.getByRole("dialog", { name: "Filtros" })
+        expect(filtersButton("Filtros (2)")).toHaveAttribute("aria-expanded", "true")
+        expect(
+            within(within(dialog).getByRole("group", { name: "Tecnologia" }))
+                .getAllByRole("checkbox")
+                .map((box) => box.closest("label")?.textContent)
+        ).toEqual(["Node.js", "Prisma", "React"])
+        expect(
+            within(within(dialog).getByRole("group", { name: "Ano" }))
+                .getAllByRole("checkbox")
+                .map((box) => box.closest("label")?.textContent)
+        ).toEqual(["2026", "2025", "2024"])
+        expect(screen.getByRole("checkbox", { name: "Prisma" })).toBeChecked()
+        expect(screen.getByRole("checkbox", { name: "2026" })).toBeChecked()
+    })
+
+    it("Aplicar escreve tech por replace, mostra só os projetos com todas, anuncia o total e devolve o foco ao botão", async () => {
+        stubFilterProjects()
+        const user = userEvent.setup()
+        const { router } = renderPageWithRouter("/pt-BR/projects")
+        await listLoaded()
+
+        await user.click(filtersButton("Filtros"))
+        await checkOptions(user, ["React", "Node.js"])
+        await user.click(screen.getByRole("button", { name: "Aplicar" }))
+
+        await waitFor(() => expect(router.state.location.search).toBe("?tech=Node.js&tech=React"))
+        expect(router.state.historyAction).toBe("REPLACE")
+        await waitFor(() => expect(projectTitles()).toEqual(["Projeto 4", "Projeto 1"]))
+        await waitFor(() => expect(screen.getByRole("status")).toHaveTextContent("2 de 2 projetos"))
+        expect(screen.queryByRole("dialog")).not.toBeInTheDocument()
+        expect(filtersButton("Filtros (2)")).toHaveFocus()
+    })
+
+    it("fechar por Esc aplica dois anos por ou", async () => {
+        stubFilterProjects()
+        const user = userEvent.setup()
+        const { router } = renderPageWithRouter("/pt-BR/projects")
+        await listLoaded()
+
+        await user.click(filtersButton("Filtros"))
+        await checkOptions(user, ["2025", "2024"])
+        await user.keyboard("{Escape}")
+
+        await waitFor(() => expect(router.state.location.search).toBe("?year=2024&year=2025"))
+        await waitFor(() =>
+            expect(projectTitles()).toEqual(["Projeto 4", "Projeto 3", "Projeto 2", "Projeto 1"])
+        )
+    })
+
+    it("abrir e fechar sem mexer não escreve a URL", async () => {
+        stubFilterProjects()
+        const user = userEvent.setup()
+        const { router } = renderPageWithRouter("/pt-BR/projects?tech=React")
+        await listLoaded()
+
+        await user.click(filtersButton("Filtros (1)"))
+        await user.click(screen.getByRole("button", { name: "Fechar" }))
+
+        expect(screen.queryByRole("dialog")).not.toBeInTheDocument()
+        expect(router.state.historyAction).toBe("POP")
+        expect(router.state.location.search).toBe("?tech=React")
+    })
+
+    it("mantém q, type e sort e escreve tech e year na ordem da URL", async () => {
+        stubFilterProjects()
+        const user = userEvent.setup()
+        const { router } = renderPageWithRouter("/pt-BR/projects?q=react&type=web&sort=title")
+        await listLoaded()
+
+        await user.click(filtersButton("Filtros"))
+        await checkOptions(user, ["Node.js", "2024"])
+        await user.click(screen.getByRole("button", { name: "Aplicar" }))
+
+        await waitFor(() =>
+            expect(router.state.location.search).toBe(
+                "?q=react&type=web&tech=Node.js&year=2024&sort=title"
+            )
+        )
+    })
+
+    it("Limpar filtros da tela zera tecnologia e ano, mantém a ordenação e foca a busca", async () => {
+        stubFilterProjects()
+        const user = userEvent.setup()
+        const { router } = renderPageWithRouter("/pt-BR/projects?tech=React&sort=oldest")
+        await listLoaded()
+
+        await user.click(screen.getByRole("button", { name: "Limpar filtros" }))
+
+        await waitFor(() => expect(router.state.location.search).toBe("?sort=oldest"))
+        expect(screen.getByRole("searchbox")).toHaveFocus()
+        expect(filtersButton("Filtros")).toBeVisible()
+    })
+
+    it("com tecnologia inexistente na URL mostra sem resultado, conta o valor, não marca nada e o Limpar filtros remove", async () => {
+        stubFilterProjects()
+        const user = userEvent.setup()
+        const { router } = renderPageWithRouter("/pt-BR/projects?tech=Inexistente")
+
+        expect(await screen.findByText("Nenhum projeto encontrado")).toBeVisible()
+        expect(screen.getByText("Nenhum projeto com essa combinação de filtros.")).toBeVisible()
+
+        await user.click(filtersButton("Filtros (1)"))
+        expect(
+            screen
+                .getAllByRole("checkbox")
+                .filter((box) => box instanceof HTMLInputElement && box.checked)
+        ).toHaveLength(0)
+        await user.click(screen.getByRole("button", { name: "Fechar" }))
+
+        await user.click(screen.getByRole("button", { name: "Limpar filtros" }))
+
+        await waitFor(() => expect(router.state.location.search).toBe(""))
+        await waitFor(() => expect(cards()).toHaveLength(6))
+    })
+
+    it("mantém tech e year ao trocar de idioma e abre no primeiro lote", async () => {
+        stubFilterProjects()
+        const user = userEvent.setup()
+        const { router } = renderRoutes("/pt-BR/projects?tech=React&year=2025")
+        await waitFor(() => expect(cards().length).toBeGreaterThan(0), { timeout: 5000 })
+
+        await user.click(screen.getAllByRole("button", { name: "Idioma: Português" })[0])
+        const link = screen.getByRole("link", { name: "English" })
+        expect(link).toHaveAttribute("href", "/en/projects?tech=React&year=2025")
+        await user.click(link)
+
+        await waitFor(() => expect(router.state.location.pathname).toBe("/en/projects"))
+        expect(router.state.location.search).toBe("?tech=React&year=2025")
+        await screen.findByRole("button", { name: "Filters (2)" }, { timeout: 5000 })
+    }, 20000)
+
+    it.each([
+        ["pt-BR", "Filtros", "Tecnologia", "Ano", "Aplicar"],
+        ["en", "Filters", "Technology", "Year", "Apply"],
+        ["es", "Filtros", "Tecnología", "Año", "Aplicar"]
+    ] as const)(
+        "mostra o botão e o modal em %s sem chave no lugar do texto",
+        async (language, open, technology, year, apply) => {
+            stubFilterProjects()
+            await setLanguage(language)
+            const user = userEvent.setup()
+            renderPage(`/${language}/projects`)
+            await listLoaded()
+
+            await user.click(filtersButton(open))
+
+            expect(screen.getByRole("dialog", { name: open })).toBeVisible()
+            expect(screen.getByRole("group", { name: technology })).toBeVisible()
+            expect(screen.getByRole("group", { name: year })).toBeVisible()
+            expect(screen.getByRole("button", { name: apply })).toBeVisible()
+            expect(document.body.textContent).not.toMatch(/\bfilters\.[a-zA-Z.]+/)
+        }
+    )
+
+    it("não tem violações de acessibilidade com o modal fechado", async () => {
+        stubFilterProjects()
+        const { container } = renderPage()
+        await listLoaded()
+
+        await expectNoAxeViolations(container)
+    }, 15000)
+
+    it("não tem violações de acessibilidade com o modal aberto", async () => {
+        stubFilterProjects()
+        const user = userEvent.setup()
+        renderPage()
+        await listLoaded()
+        await user.click(filtersButton("Filtros"))
+
+        await expectNoAxeViolations(screen.getByRole("dialog").parentElement as HTMLElement)
+    }, 15000)
+})

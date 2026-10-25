@@ -1,4 +1,4 @@
-import { useDeferredValue } from "react"
+import { useDeferredValue, useState } from "react"
 import { useTranslation } from "react-i18next"
 import PROJECT_CATEGORIES from "@/enum/projectCategories.enum"
 import PROJECT_SORTS from "@/enum/projectSorts.enum"
@@ -24,10 +24,21 @@ function useProjects() {
         setType,
         setCategory,
         setSort,
+        setTechAndYear,
         hasFilters
     } = useProjectsFilters()
     const pages = useProjectsPages(buildProjectsQueryArgs(language, filters))
     const indexQuery = projectsApi.useGetProjectsIndexQuery({ lang: language })
+
+    const [isFiltersOpen, setIsFiltersOpen] = useState(false)
+    const canOpenFilters = pages.availableTechnologies.length > 0 || pages.availableYears.length > 0
+    const appliedFilters = { tech: filters.tech ?? [], year: filters.year ?? [] }
+
+    function openFilters() {
+        if (canOpenFilters) {
+            setIsFiltersOpen(true)
+        }
+    }
 
     const isEmptyContent =
         pages.hasData && pages.total === 0 && !hasFilters && pages.availableTypes.length === 0
@@ -81,7 +92,14 @@ function useProjects() {
         setType,
         setCategory,
         setSort,
+        setTechAndYear,
         hasFilters,
+        filtersCount: appliedFilters.tech.length + appliedFilters.year.length,
+        appliedFilters,
+        isFiltersOpen,
+        canOpenFilters,
+        openFilters,
+        closeFilters: () => setIsFiltersOpen(false),
         typeValue: filters.type ?? "",
         typeOptions: [
             { value: "", label: t("filters.type.all") },

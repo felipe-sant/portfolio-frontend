@@ -624,4 +624,85 @@ describe("useProjects", () => {
         ).toBe(true)
         expect(JSON.stringify(latest.jsonLd).match(/"@type":"ListItem"/g)).toHaveLength(20)
     })
+
+    describe("filtros por tecnologia e ano", () => {
+        const stacks = [["React", "Node.js"], ["React"], ["Node.js"], ["Prisma"]]
+        const years = ["2024-03", "2025-03", "2025-09", "2026-03"]
+
+        function stubFilterProjects() {
+            return stubProjects(
+                buildProjectRecords(4, (index) => ({
+                    date: years[index],
+                    stack: [
+                        { category: "frontend", items: stacks[index].map((name) => ({ name })) }
+                    ]
+                }))
+            )
+        }
+
+        it("expõe as opções da primeira página, o contador e se o modal pode abrir", async () => {
+            stubFilterProjects()
+
+            mount(`${PATH}?tech=React&year=2025&year=2024&type=web`)
+            await settled()
+
+            expect(latest.availableTechnologies).toEqual(["Node.js", "Prisma", "React"])
+            expect(latest.availableYears).toEqual(["2026", "2025", "2024"])
+            expect(latest.filtersCount).toBe(3)
+            expect(latest.canOpenFilters).toBe(true)
+        })
+
+        it("não deixa abrir o modal sem opções nem conta filtros que não são de tecnologia e ano", async () => {
+            stubProjects([])
+
+            mount(`${PATH}?type=web&category=academic&q=a`)
+            await settled()
+
+            expect(latest.filtersCount).toBe(0)
+            expect(latest.canOpenFilters).toBe(false)
+            act(() => latest.openFilters())
+            expect(latest.isFiltersOpen).toBe(false)
+        })
+
+        it("abre e fecha o modal", async () => {
+            stubFilterProjects()
+            mount()
+            await settled()
+
+            act(() => latest.openFilters())
+            expect(latest.isFiltersOpen).toBe(true)
+
+            act(() => latest.closeFilters())
+            expect(latest.isFiltersOpen).toBe(false)
+        })
+
+        it("setTechAndYear escreve a URL uma vez por replace, mantém o resto e volta ao primeiro lote", async () => {
+            stubFilterProjects()
+            const { router } = mount(`${PATH}?q=projeto&type=web&category=academic&sort=title`)
+            await settled()
+
+            act(() => latest.setTechAndYear({ tech: ["React", "Node.js"], year: ["2024"] }))
+
+            await waitFor(() =>
+                expect(router.state.location.search).toBe(
+                    "?q=projeto&type=web&category=academic&tech=Node.js&tech=React&year=2024&sort=title"
+                )
+            )
+            expect(router.state.historyAction).toBe("REPLACE")
+            expect(router.state.location.state).toBeNull()
+        })
+
+        it("clearFilters zera tecnologia e ano e mantém a ordenação", async () => {
+            stubFilterProjects()
+            const { router } = mount(`${PATH}?tech=React&year=2025&sort=oldest`)
+            await settled()
+            expect(latest.hasFilters).toBe(true)
+
+            act(() => latest.clearFilters())
+
+            await waitFor(() => expect(router.state.location.search).toBe("?sort=oldest"))
+            expect(latest.hasFilters).toBe(false)
+            expect(latest.filtersCount).toBe(0)
+        })
+    })
 })

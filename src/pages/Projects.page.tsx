@@ -5,6 +5,7 @@ import LoadError from "@/components/LoadError"
 import PageMeta from "@/components/PageMeta"
 import ProjectCard from "@/components/ProjectCard"
 import ProjectCardSkeleton from "@/components/ProjectCardSkeleton"
+import ProjectsFiltersModal from "@/components/ProjectsFiltersModal"
 import SearchInput from "@/components/SearchInput"
 import SelectField from "@/components/SelectField"
 import SkeletonSwap from "@/components/SkeletonSwap"
@@ -40,7 +41,16 @@ function ProjectsPage() {
         setType,
         setCategory,
         setSort,
+        setTechAndYear,
         hasFilters,
+        filtersCount,
+        appliedFilters,
+        isFiltersOpen,
+        canOpenFilters,
+        openFilters,
+        closeFilters,
+        availableTechnologies,
+        availableYears,
         typeValue,
         typeOptions,
         categoryOptions,
@@ -102,6 +112,18 @@ function ProjectsPage() {
                                 value={filters.sort}
                                 onChange={setSort}
                             />
+                            <Button
+                                variant="secondary"
+                                icon="filter"
+                                aria-haspopup="dialog"
+                                aria-expanded={isFiltersOpen}
+                                aria-disabled={!canOpenFilters}
+                                onClick={openFilters}
+                            >
+                                {filtersCount > 0
+                                    ? t("filters.openWithCount", { count: filtersCount })
+                                    : t("filters.open")}
+                            </Button>
                         </div>
                         <div className={css.filters}>
                             <FilterGroup
@@ -193,6 +215,14 @@ function ProjectsPage() {
                                 </Button>
                             </div>
                         )}
+                        <ProjectsFiltersModal
+                            isOpen={isFiltersOpen}
+                            technologies={availableTechnologies}
+                            years={availableYears}
+                            applied={appliedFilters}
+                            onApply={setTechAndYear}
+                            onClose={closeFilters}
+                        />
                     </>
                 )}
             </div>

@@ -5,6 +5,7 @@ import PROJECT_SORTS from "@/enum/projectSorts.enum"
 import PROJECT_TYPES from "@/enum/projectTypes.enum"
 import useDebounce from "@/hooks/useDebounce"
 import useHasHydrated from "@/hooks/useHasHydrated"
+import type ProjectsAppliedFilters from "@/types/project/ProjectsAppliedFilters.types"
 import type ProjectsFilters from "@/types/project/ProjectsFilters.types"
 import buildProjectsSearch from "@/utils/buildProjectsSearch"
 import hasProjectsFilters from "@/utils/hasProjectsFilters"
@@ -82,6 +83,10 @@ function useProjectsFilters() {
         apply({ ...filters, category: category === filters.category ? undefined : category })
     }
 
+    function setTechAndYear({ tech, year }: ProjectsAppliedFilters) {
+        apply({ ...filters, tech, year })
+    }
+
     function setSort(value: string) {
         const sort = PROJECT_SORTS.find((option) => option === value) ?? "recent"
 
@@ -99,6 +104,7 @@ function useProjectsFilters() {
         setType,
         setCategory,
         setSort,
+        setTechAndYear,
         hasFilters: hasProjectsFilters(filters)
     }
 }

@@ -24,6 +24,7 @@ function Button({
     className,
     onClick,
     children,
+    "aria-disabled": ariaDisabled,
     ...rest
 }: ButtonProps) {
     const classes = [css.button, css[variant], css[size], fullWidth && css.fullWidth, className]
@@ -48,7 +49,7 @@ function Button({
             type={type}
             className={classes}
             aria-busy={loading || undefined}
-            aria-disabled={loading || undefined}
+            aria-disabled={loading || ariaDisabled || undefined}
             onClick={handleClick}
         >
             {showStart}
