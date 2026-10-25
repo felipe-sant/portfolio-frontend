@@ -11,10 +11,16 @@ import SkeletonSwap from "@/components/SkeletonSwap"
 import useProjects from "@/pages/hooks/useProjects"
 import ROUTES from "@/routers/paths"
 import css from "@/styles/pages/projects.module.css"
+import type ProjectSummary from "@/types/project/ProjectSummary.types"
 import projectsPageSize from "@/utils/projectsPageSize"
 
 interface SkeletonItemsProps {
     count: number
+}
+
+interface ProjectListItemProps {
+    project: ProjectSummary
+    index: number
 }
 
 const SEARCH_MAX_LENGTH = 100
@@ -25,6 +31,14 @@ function SkeletonItems({ count }: SkeletonItemsProps) {
             <ProjectCardSkeleton />
         </li>
     ))
+}
+
+function ProjectListItem({ project, index }: ProjectListItemProps) {
+    return (
+        <li className={css.item}>
+            <ProjectCard project={project} index={index} revealIndex={index % projectsPageSize} />
+        </li>
+    )
 }
 
 function ProjectsPage() {
@@ -172,13 +186,11 @@ function ProjectsPage() {
                             {!isError && !isNoResults && (
                                 <ul ref={gridRef} className={css.grid}>
                                     {items.map((project, index) => (
-                                        <li key={project.id} className={css.item}>
-                                            <ProjectCard
-                                                project={project}
-                                                index={index}
-                                                revealIndex={index % projectsPageSize}
-                                            />
-                                        </li>
+                                        <ProjectListItem
+                                            key={project.id}
+                                            project={project}
+                                            index={index}
+                                        />
                                     ))}
                                     <SkeletonItems count={skeletonCount} />
                                 </ul>

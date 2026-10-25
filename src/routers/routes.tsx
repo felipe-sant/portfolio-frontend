@@ -19,7 +19,7 @@ const pageRoutes: RouteObject[] = [
         element: <Home />
     },
     {
-        path: "projects",
+        path: ROUTES.projects.slice(1),
         element: <Projects />
     },
     {

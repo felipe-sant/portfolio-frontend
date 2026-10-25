@@ -75,7 +75,6 @@ function useProjects() {
 
     return {
         t,
-        language,
         ids: projectsElementIds,
         jsonLd: pages.firstPageItems
             ? buildProjectsJsonLd(
