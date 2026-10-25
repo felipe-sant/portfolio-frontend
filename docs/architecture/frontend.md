@@ -36,7 +36,7 @@ Link interno é montado por `buildPath(path, language, params?)` ou, em componen
 | `/`                                  | Redireciona           | Existe                     |
 | `/<idioma>`                          | Início                | Existe, com o hero mínimo  |
 | `/<idioma>/*`, `*`                   | Página não encontrada | Existe                     |
-| `/<idioma>/projects`                 | Projetos              | Prevista (D32), sem página |
+| `/<idioma>/projects`                 | Projetos              | Existe                     |
 | `/<idioma>/projects/:id`             | Projeto               | Prevista (D32), sem página |
 | `/<idioma>/projects/:id/docs/<name>` | Documentos do projeto | Prevista (D55), sem página |
 | `/<idioma>/about`                    | Informações           | Prevista (D32), sem página |
@@ -100,6 +100,8 @@ flowchart LR
 | `timelineApi.useGetTimelineQuery({ lang })`                               | `GET /timeline`                             |
 | `timelineApi.useGetCurrentTimelineQuery({ lang })`                        | `GET /timeline?current=true`                |
 | `projectsApi.useGetProjectsQuery(ProjectListParams)`                      | `GET /projects`                             |
+| `projectsApi.useGetProjectsPagesInfiniteQuery(args)`                      | `GET /projects` por páginas de 9            |
+| `projectsApi.useGetProjectsIndexQuery({ lang })`                          | `GET /projects` até `total` (id e título)   |
 | `projectsApi.useGetProjectQuery({ id, lang })`                            | `GET /projects/{id}`                        |
 | `projectsApi.useGetProjectDocumentsQuery({ id, lang })`                   | `GET /projects/{id}/documents`              |
 | `projectsApi.useGetProjectDocumentContentQuery({ id, documentId, lang })` | `GET /projects/{id}/documents/{documentId}` |

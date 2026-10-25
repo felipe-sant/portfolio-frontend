@@ -37,7 +37,7 @@ Module em vez de classe global `.ds-*` e código sem comentários. `docs/design/
 referência visual validada pelo PO (abre por `npm run dev` em
 `/docs/design/prototype/prototipo-indice.dc.html`).
 
-**Rotas:** cinco telas, das quais hoje só a Início existe no código (os links de Projetos, Informações e Contato do cabeçalho levam à não encontrada até lá; as demais vêm nas specs de tela),
+**Rotas:** cinco telas, das quais hoje existem no código a Início e Projetos (`/projects`, sem o `/projects/:id`; os links de Informações e Contato do cabeçalho levam à não encontrada até lá; as demais vêm nas specs de tela),
 com caminhos em inglês (D32), como os identificadores, sempre sob o prefixo do idioma
 (`/<idioma>`, onde `<idioma>` é `pt-BR`, `en` ou `es`, sem barra final); a raiz `/` só
 redireciona e `/projects` sem prefixo cai em não encontrada. O `:id` é um UUID v7, não slug. Os
@@ -327,6 +327,7 @@ para editores compatíveis, coerente com o `.prettierrc`.
       página usa continua `useState` no hook da página; estado compartilhado vai para um slice;
       dado do servidor vai para um endpoint do RTK Query. Idioma continua em `src/i18n/`.
     - Refetch on focus/reconnect (`setupListeners`) segue desligado, o padrão do RTK Query.
+    - **Projetos** usa `getProjectsPages` (`build.infiniteQuery`, `queryFn` sobre `listProjects`, `limit` 9, argumento `ProjectsQueryArgs` sem `offset` nem `limit` como chave de cache) e `getProjectsIndex` (id e título de todos os projetos em lotes de 50, para o JSON-LD). `buildProjectsQueryArgs(language, filters)` (`src/utils/`) omite todo valor padrão, de modo que o estado padrão é `{ lang }`; o hook da tela e a entrada `projects` do registro de pré-renderização o usam, e é isso que faz a hidratação achar o cache. A query da tela (`q`, `type`, `category`, `sort`) vive na URL (`parseProjectsSearchParams`/`buildProjectsSearch`, sempre `replace` com `preventScrollReset`), e a quantidade de páginas mostradas vive em `location.state.pages` (`useProjectsPages`), que também restaura a volta do detalhe.
     - Endpoints de conteúdo (`profile.api.ts`, `timeline.api.ts`, `projects.api.ts`) usam `queryFn`
       que chama `src/services/content/`, com `lang` no argumento (cache por idioma) e erro no
       formato do contrato (`toQueryError`); a #43 troca cada `queryFn` por `query`.
@@ -362,11 +363,11 @@ para editores compatíveis, coerente com o `.prettierrc`.
 
 - **`src/components/`** — componentes base reutilizáveis (`Button`, `Chip`, `TextField`, `SearchInput`,
   `Skeleton`, `Spinner`, `VisuallyHidden`, `Icon`, `IconButton`, `CatLogo`, `ThemeToggle`,
-  `MotionToggle`, `SettingsMenu`, `Flag`, `LanguageSelector`, `Header`, `SkipLink`, `Footer`, `CopyEmailButton`, `ButtonLink`, `AvailabilityBadge`, `LoadError`, `StatusCard`, `StackMarquee`, `FeaturedProject`, `Reveal`). O desenho de cada ícone fica num mapa local de
+  `MotionToggle`, `SettingsMenu`, `Flag`, `LanguageSelector`, `Header`, `SkipLink`, `Footer`, `CopyEmailButton`, `ButtonLink`, `AvailabilityBadge`, `LoadError`, `StatusCard`, `StackMarquee`, `FeaturedProject`, `Reveal`, `ProjectCard`, `ProjectCardSkeleton`, `FilterGroup`, `SelectField`). O desenho de cada ícone fica num mapa local de
   `Icon.tsx`, com os nomes em `src/enum/iconNames.enum.ts`. Texto fixo de componente vive em `common`
   (`searchInput.clear`); o resto chega por prop. O `jsx-a11y/prefer-tag-over-role` acusa `role="status"`
   literal: passe `role={"status"}`. Controle de formulário tem borda `--border-control`, nunca
-  `--border-subtle`. `TextField` aceita `reserveMessageSpace` (campo com aviso possível) e
+  `--border-subtle`. `LoadError` aceita `description` opcional e `SearchInput` aceita `id` (o hook de Projetos foca o campo por ele). `ProjectCard` recebe `index` (carga e prioridade da imagem) e `revealIndex` (atraso do `useReveal`, recomeça a cada lote de 9) e fica dentro de um `<li>` da página. `FilterGroup` (`role="group"`, `aria-pressed`) e `SelectField` são sem estado, o hook decide a regra do clique. `TextField` aceita `reserveMessageSpace` (campo com aviso possível) e
   `focusOnError` (hook `useFocusOnError` de `src/hooks/`, só no primeiro campo inválido do envio).
 - **SEO por tela** — toda tela pública nova declara `<PageMeta title description path />`
   (`src/components/`: canônica autorreferente, quatro `hreflang` com `x-default` em `en`, Open
@@ -422,7 +423,7 @@ para editores compatíveis, coerente com o `.prettierrc`.
   prop `viewTransition` dos `Link` de navegação (o `LanguageSelector` fica sem); `startThemeTransition`
   (`src/utils/`, chamada por `useTheme.setTheme`) liga `data-theme-transition` no `<html>` durante a
   troca; `useReveal()` (`src/hooks/`, devolve `ref` e `revealProps`) e o componente `SkeletonSwap`
-  são usados pela Início (destaques, cabeçalho da seção e botões finais pelo componente `Reveal`, e skeletons dos blocos), com `useReveal` escondendo só o que está abaixo da primeira tela depois da hidratação (o HTML pré-renderizado sai visível); Projetos ainda não os usa; `useDragScroll` (arrastar com o mouse região rolável) e `useMediaQuery` (consulta de mídia por `useSyncExternalStore`) completam `src/hooks/`; tokens `--dur-page`,
+  são usados pela Início (destaques, cabeçalho da seção e botões finais pelo componente `Reveal`, e skeletons dos blocos), com `useReveal` escondendo só o que está abaixo da primeira tela depois da hidratação (o HTML pré-renderizado sai visível); Projetos ainda não os usa; `useDragScroll` (arrastar com o mouse região rolável), `useMediaQuery` (consulta de mídia por `useSyncExternalStore`), `useDebounce` e `useHasHydrated` (`false` só durante a hidratação, por `useSyncExternalStore`) completam `src/hooks/`; tokens `--dur-page`,
   `--stagger` e `--press-scale` são neutralizados nos dois blocos de movimento reduzido.
 - **Alias de import `@/`** — `@/*` resolve para `src/*`. Configurado em dois lugares que precisam
   continuar concordando: `paths` no `tsconfig.app.json` (para o `tsc` e o editor) e `resolve.alias` no
