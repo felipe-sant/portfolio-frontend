@@ -60,6 +60,30 @@ describe("routes", () => {
         expect(document.documentElement.lang).toBe(language)
     })
 
+    it.each([
+        ["/pt-BR/projects", "Projetos", "pt-BR"],
+        ["/en/projects", "Projects", "en"],
+        ["/es/projects", "Proyectos", "es"]
+    ])(
+        "renderiza a tela Projetos em %s com o idioma do prefixo",
+        async (path, heading, language) => {
+            renderRoutes([path])
+
+            expect(
+                await screen.findByRole("heading", { level: 1, name: heading })
+            ).toBeInTheDocument()
+            expect(document.documentElement.lang).toBe(language)
+        }
+    )
+
+    it("mantém a não encontrada em /pt-BR/projects/abc, sem rota de projeto", async () => {
+        renderRoutes(["/pt-BR/projects/abc"])
+
+        expect(
+            await screen.findByRole("heading", { name: "Página não encontrada" })
+        ).toBeInTheDocument()
+    })
+
     it.each([["/fr/projects"], ["/pt/projects"], ["/projects"]])(
         "renderiza a não encontrada em inglês em %s",
         async (path) => {

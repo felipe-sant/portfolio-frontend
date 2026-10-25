@@ -25,6 +25,21 @@ const EXPECTED_BY_FILE: Record<string, { heading: string; content: string; langu
         content: "Trabalho em produtos web de ponta a ponta.",
         language: "es"
     },
+    "pt-BR/projects.html": {
+        heading: "Projetos",
+        content: "Tudo o que construí e posso mostrar",
+        language: "pt-BR"
+    },
+    "en/projects.html": {
+        heading: "Projects",
+        content: "Everything I built and can show",
+        language: "en"
+    },
+    "es/projects.html": {
+        heading: "Proyectos",
+        content: "Todo lo que construí y puedo mostrar",
+        language: "es"
+    },
     "404.html": {
         heading: "Page not found",
         content: "The address may have changed or the project is no longer online.",
