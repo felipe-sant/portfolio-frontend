@@ -6,8 +6,11 @@ import prerenderRoutes from "@/prerender/prerenderRoutes"
 import routes from "@/routers/routes"
 import buildProfile from "@/testUtils/buildProfile"
 import buildProjectRecord from "@/testUtils/buildProjectRecord"
+import buildProjectRecords from "@/testUtils/buildProjectRecords"
 import buildTimelineItemRecord from "@/testUtils/buildTimelineItemRecord"
 import stubContentFetch from "@/testUtils/stubContentFetch"
+
+const FEATURED_TITLE = "Projeto Destaque Pré-renderizado"
 
 const EXPECTED_BY_FILE: Record<string, { heading: string; content: string; language: string }> = {
     "pt-BR.html": {
@@ -27,17 +30,17 @@ const EXPECTED_BY_FILE: Record<string, { heading: string; content: string; langu
     },
     "pt-BR/projects.html": {
         heading: "Projetos",
-        content: "Tudo o que construí e posso mostrar",
+        content: FEATURED_TITLE,
         language: "pt-BR"
     },
     "en/projects.html": {
         heading: "Projects",
-        content: "Everything I built and can show",
+        content: FEATURED_TITLE,
         language: "en"
     },
     "es/projects.html": {
         heading: "Proyectos",
-        content: "Todo lo que construí y puedo mostrar",
+        content: FEATURED_TITLE,
         language: "es"
     },
     "404.html": {
@@ -48,8 +51,6 @@ const EXPECTED_BY_FILE: Record<string, { heading: string; content: string; langu
 }
 
 const { targets } = listTargets(routes, prerenderRoutes, { "pt-BR": [], en: [], es: [] })
-
-const FEATURED_TITLE = "Projeto Destaque Pré-renderizado"
 
 function buildHomeFiles() {
     const files: Record<string, unknown> = {}
@@ -70,6 +71,25 @@ function buildHomeFiles() {
     }
 
     return files
+}
+
+function stubTenProjects() {
+    const files = buildHomeFiles()
+
+    for (const language of ["pt-BR", "en", "es"]) {
+        files[`content/${language}/projects.json`] = { items: buildProjectRecords(10) }
+    }
+
+    stubContentFetch(files)
+}
+
+async function renderProjects(file: string) {
+    const target = targets.find((item) => item.file === file)
+    if (!target) {
+        throw new Error(`Alvo ${file} não encontrado`)
+    }
+
+    return render(target)
 }
 
 beforeEach(() => {
@@ -135,6 +155,80 @@ describe("render", () => {
         expect(html).toContain('<script type="application/ld+json">')
         expect(html).toContain(`http://localhost:5173/${language}#person`)
         expect(html).toContain("https://github.com/example")
+    })
+
+    describe("Projetos com dez projetos", () => {
+        const PROJECT_FILES = ["pt-BR/projects.html", "en/projects.html", "es/projects.html"]
+
+        it.each(PROJECT_FILES)(
+            "traz o primeiro lote de nove cards, os links e Carregar mais em %s",
+            async (file) => {
+                stubTenProjects()
+                const language = file.split("/")[0]
+
+                const { html } = await renderProjects(file)
+
+                expect(
+                    html.match(new RegExp(`href="/${language}/projects/0192f1a0-`, "g"))
+                ).toHaveLength(9)
+                expect(html.indexOf("Projeto 10")).toBeGreaterThan(-1)
+                expect(html.indexOf("Projeto 10")).toBeLessThan(html.indexOf("Projeto 9"))
+                expect(html).not.toContain(">Projeto 1<")
+                expect(html).toMatch(/Carregar mais|Load more|Cargar más/)
+            }
+        )
+
+        it.each([
+            ["pt-BR/projects.html", "9 de 10 projetos"],
+            ["en/projects.html", "9 of 10 projects"],
+            ["es/projects.html", "9 de 10 proyectos"]
+        ])("mostra a contagem pronta no status em %s", async (file, count) => {
+            stubTenProjects()
+
+            const { html } = await renderProjects(file)
+
+            expect(html).toMatch(new RegExp(`<p role="status"[^>]*>${count}</p>`))
+            expect(html).not.toContain("Carregando projetos")
+        })
+
+        it.each([
+            ["pt-BR/projects.html", "pt-BR", "Projetos · Luiz Felipe dos Santos"],
+            ["en/projects.html", "en", "Projects · Luiz Felipe dos Santos"],
+            ["es/projects.html", "es", "Proyectos · Luiz Felipe dos Santos"]
+        ])(
+            "declara título, canônica, hreflang e JSON-LD com os dez projetos em %s",
+            async (file, language, title) => {
+                stubTenProjects()
+
+                const { html } = await renderProjects(file)
+
+                expect(html).toContain(`<title>${title}</title>`)
+                expect(html).toContain(
+                    `<link rel="canonical" href="http://localhost:5173/${language}/projects"/>`
+                )
+                expect(html.match(/<link rel="alternate" hrefLang="[^"]+"/g)).toHaveLength(4)
+                expect(html).toContain(
+                    'hrefLang="x-default" href="http://localhost:5173/en/projects"'
+                )
+                const jsonLd = html.match(
+                    /<script type="application\/ld\+json">([^<]*)<\/script>/
+                )?.[1]
+                const data = JSON.parse(jsonLd ?? "null")
+                expect(data["@type"]).toBe("CollectionPage")
+                expect(data.mainEntity.itemListElement).toHaveLength(10)
+                expect(data.mainEntity.itemListElement[9].name).toBe("Projeto 1")
+            }
+        )
+
+        it("serializa a página consultada com a chave só do idioma e a consulta de índice", async () => {
+            stubTenProjects()
+
+            const { state } = await renderProjects("pt-BR/projects.html")
+
+            const keys = Object.keys(JSON.parse(state).api.queries)
+            expect(keys).toContain('getProjectsPages({"lang":"pt-BR"})')
+            expect(keys).toContain('getProjectsIndex({"lang":"pt-BR"})')
+        })
     })
 
     it("não declara canônica, hreflang, Open Graph nem JSON-LD no 404.html", async () => {
