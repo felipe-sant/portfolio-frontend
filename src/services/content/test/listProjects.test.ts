@@ -89,3 +89,63 @@ describe("listProjects", () => {
         expect(list({ sort: "title" }).items[0].title).toBe("Catálogo")
     })
 })
+
+function protoRecord(
+    index: number,
+    title: string,
+    types: ProjectRecord["types"],
+    category: ProjectRecord["category"],
+    technology: string
+) {
+    return buildProjectRecord({
+        id: `0192f1a0-0000-7000-8000-0000000002${String(index).padStart(2, "0")}`,
+        title,
+        types,
+        category,
+        stack: [{ category: "frontend", items: [{ name: technology }] }]
+    })
+}
+
+const prototype = [
+    protoRecord(1, "Maps", ["web"], "personal", "React"),
+    protoRecord(2, "Plataforma de cursos", ["web"], "academic", "React"),
+    protoRecord(3, "Controle de estoque", ["web"], "academic", "Prisma"),
+    protoRecord(4, "Catálogo de componentes", ["web"], "personal", "Storybook"),
+    protoRecord(5, "Painel de métricas", ["web"], "professional", "D3"),
+    protoRecord(6, "Check-in de eventos", ["mobile"], "personal", "React Native"),
+    protoRecord(7, "Rastreio de entregas", ["mobile"], "academic", "React Native"),
+    protoRecord(8, "Gateway de pagamentos", ["api"], "professional", "Node.js")
+]
+
+function listPrototype(params: Omit<ProjectListParams, "lang">) {
+    return listProjects(prototype, validateProjectListParams({ lang: "pt-BR", ...params }))
+}
+
+describe("listProjects com os dados do protótipo", () => {
+    it("filtra por tipo Web e devolve cinco", () => {
+        expect(listPrototype({ type: "web" }).total).toBe(5)
+    })
+
+    it("combina Web e Acadêmicos e devolve dois", () => {
+        expect(
+            listPrototype({ type: "web", category: "academic", sort: "title" }).items.map(
+                (item) => item.title
+            )
+        ).toEqual(["Controle de estoque", "Plataforma de cursos"])
+    })
+
+    it("combina Web, Acadêmicos e prisma e devolve Controle de estoque", () => {
+        expect(
+            listPrototype({ type: "web", category: "academic", q: "prisma" }).items.map(
+                (item) => item.title
+            )
+        ).toEqual(["Controle de estoque"])
+    })
+
+    it("devolve vazio para Mobile e Profissionais", () => {
+        const page = listPrototype({ type: "mobile", category: "professional" })
+
+        expect(page.items).toEqual([])
+        expect(page.total).toBe(0)
+    })
+})

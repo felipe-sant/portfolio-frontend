@@ -16,11 +16,22 @@ import type ProjectDetail from "@/types/project/ProjectDetail.types"
 import type ProjectDocument from "@/types/project/ProjectDocument.types"
 import type ProjectListParams from "@/types/project/ProjectListParams.types"
 import type ProjectPage from "@/types/project/ProjectPage.types"
+import type ProjectSummary from "@/types/project/ProjectSummary.types"
+import type ProjectsQueryArgs from "@/types/project/ProjectsQueryArgs.types"
+import projectsPageSize from "@/utils/projectsPageSize"
 
 type GetProjectArgs = {
     id: string
     lang: SupportedLanguage
 }
+
+type GetProjectsIndexArgs = {
+    lang: SupportedLanguage
+}
+
+type ProjectIndexItem = Pick<ProjectSummary, "id" | "title">
+
+const INDEX_PAGE_SIZE = 50
 
 type GetProjectDocumentContentArgs = GetProjectArgs & {
     documentId: string
@@ -34,6 +45,56 @@ const projectsApi = api.injectEndpoints({
                     const normalized = validateProjectListParams(params)
                     const records = await loadProjectRecords(normalized.lang)
                     return { data: listProjects(records, normalized) }
+                } catch (error) {
+                    return { error: toQueryError(error) }
+                }
+            }
+        }),
+        getProjectsPages: build.infiniteQuery<ProjectPage, ProjectsQueryArgs, number>({
+            infiniteQueryOptions: {
+                initialPageParam: 0,
+                getNextPageParam: (lastPage) => {
+                    const next = lastPage.offset + lastPage.items.length
+
+                    return next < lastPage.total ? next : undefined
+                }
+            },
+            queryFn: async ({ queryArg, pageParam }) => {
+                try {
+                    const normalized = validateProjectListParams({
+                        ...queryArg,
+                        offset: pageParam,
+                        limit: projectsPageSize
+                    })
+                    const records = await loadProjectRecords(normalized.lang)
+                    return { data: listProjects(records, normalized) }
+                } catch (error) {
+                    return { error: toQueryError(error) }
+                }
+            }
+        }),
+        getProjectsIndex: build.query<ListResponse<ProjectIndexItem>, GetProjectsIndexArgs>({
+            queryFn: async ({ lang }) => {
+                try {
+                    const items: ProjectIndexItem[] = []
+                    let offset = 0
+                    let total = 0
+
+                    do {
+                        const normalized = validateProjectListParams({
+                            lang,
+                            sort: "recent",
+                            offset,
+                            limit: INDEX_PAGE_SIZE
+                        })
+                        const records = await loadProjectRecords(normalized.lang)
+                        const page = listProjects(records, normalized)
+                        items.push(...page.items.map(({ id, title }) => ({ id, title })))
+                        total = page.total
+                        offset += INDEX_PAGE_SIZE
+                    } while (offset < total)
+
+                    return { data: { items } }
                 } catch (error) {
                     return { error: toQueryError(error) }
                 }
