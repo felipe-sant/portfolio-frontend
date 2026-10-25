@@ -175,7 +175,7 @@ Esta seção é a base comum para pessoas e para IAs que leem o site: a #8 a cit
 - **Troca de rota:** na navegação interna o foco vai para o `h1` da nova tela (`tabIndex={-1}`) e o `<title>` muda; na primeira carga o foco não se move. A troca de idioma é exceção ([Anúncios dinâmicos](#anúncios-dinâmicos-aria-live)).
 - **Menu e modais (PI1):** ao abrir, o foco vai para o primeiro controle (ou para o título do modal); Tab e Shift+Tab circulam só dentro; o resto da página fica `inert`; Esc, o botão de fechar e o clique no fundo fecham; ao fechar, o foco volta ao elemento que abriu. A rolagem fica travada (D01). O menu é disclosure, não diálogo (ver [Achados](#achados)).
 - **Documentos do projeto:** cada documento tem endereço próprio (D33), então as abas são links dentro de um `nav` com nome acessível ("Documentação do projeto"), com `aria-current="page"` no documento aberto. Navegação por Tab, sem setas nem tabindex móvel. Trocar de documento é troca de rota sem recarregar: o foco vai para o título do documento, e não para o `h1` da tela.
-- **Linhas roláveis** (filtros, D16, e miniaturas, D18) e bloco de código: alcançáveis por Tab. Bloco de código rolável tem `tabIndex={0}` e nome.
+- **Linhas roláveis** (filtros de tipo e categoria, D16, e miniaturas, D18) e bloco de código: alcançáveis por Tab. Bloco de código rolável tem `tabIndex={0}` e nome.
 - Nenhuma armadilha de foco fora de um modal aberto (2.1.2).
 
 ## Anúncios dinâmicos (`aria-live`)
@@ -311,11 +311,14 @@ Cada item tem um ID estável e a forma de verificação entre colchetes: `[teste
 
 - [ ] `A11Y-PS01` — Busca com rótulo [teste]
 - [ ] `A11Y-PS02` — Filtros em grupo nomeado, com `aria-pressed` [teste]
-- [ ] `A11Y-PS03` — Ordenação em `select` nativo com rótulo [teste]
+- [ ] `A11Y-PS03` — Ordenação em dropdown personalizado (`button` com `aria-haspopup="listbox"` e `aria-expanded`, `listbox` com `option` e `aria-selected`), com nome acessível "Ordenar" e valor atual anunciado (D61) [teste]
+- [ ] `A11Y-PS08` — Teclado do dropdown de ordenação: Enter, Espaço, setas, Home, End e Esc com devolução do foco ao gatilho; anel de foco só no teclado, nunca no clique de mouse [teste] [e2e]
 - [ ] `A11Y-PS04` — Contagem de resultados e lista vazia anunciadas em `aria-live` [teste] [leitor]
 - [ ] `A11Y-PS05` — "Carregar mais" leva o foco ao primeiro card novo [teste]
 - [ ] `A11Y-PS06` — Título do card é heading, e o link do card tem o nome do projeto (2.4.9) [teste]
 - [ ] `A11Y-PS07` — Linha de filtros alcançável por Tab no mobile [teclado]
+- [ ] `A11Y-PS09` — Modal de filtros de Projetos (D62): `role="dialog"`, `aria-modal`, nome pelo `h2`, foco no `h2` ao abrir, foco preso, Esc, "Fechar" de 44px, clique no fundo, foco de volta ao botão de origem e resto da página `inert` (PI1) [teste] [e2e]
+- [x] `A11Y-PS10` — Seções do modal de filtros em `fieldset` com `legend`, cada opção uma caixa de seleção com `label`; botão "Filtros" com o contador no nome acessível [teste]
 
 ### Projeto
 

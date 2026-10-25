@@ -80,16 +80,16 @@ válido e não pedem id fora do formato, um `400` em leitura indica defeito no c
 
 ## Endpoints
 
-| Endpoint                                                                | Devolve                                     | Quem usa                                                       |
-| ----------------------------------------------------------------------- | ------------------------------------------- | -------------------------------------------------------------- |
-| `GET /profile?lang=`                                                    | `Profile`                                   | Rodapé, Início, Informações, Contato                           |
-| `GET /timeline?lang=`                                                   | `Timeline`                                  | Informações                                                    |
-| `GET /timeline?lang=&current=true`                                      | `CurrentTimeline`                           | Início (status atual)                                          |
-| `GET /projects?lang=&q=&type=&category=&featured=&sort=&offset=&limit=` | `ProjectPage`                               | Projetos, Início (destaques)                                   |
-| `GET /projects/{id}?lang=`                                              | `ProjectDetail`, com `related` expandido    | Projeto e metadados das rotas do projeto                       |
-| `GET /projects/{id}/documents?lang=`                                    | `{ items: ProjectDocument[] }`              | Pré-renderização (#49), `sitemap.xml` e `llms-full*.txt` (#51) |
-| `GET /projects/{id}/documents/{documentId}?lang=`                       | Conteúdo em `text/markdown` ou `text/plain` | Documentos do projeto (D55)                                    |
-| `POST /contact-messages`                                                | `202` sem corpo                             | Formulário de Contato (#44; simulado e desligado na v1)        |
+| Endpoint                                                                            | Devolve                                     | Quem usa                                                       |
+| ----------------------------------------------------------------------------------- | ------------------------------------------- | -------------------------------------------------------------- |
+| `GET /profile?lang=`                                                                | `Profile`                                   | Rodapé, Início, Informações, Contato                           |
+| `GET /timeline?lang=`                                                               | `Timeline`                                  | Informações                                                    |
+| `GET /timeline?lang=&current=true`                                                  | `CurrentTimeline`                           | Início (status atual)                                          |
+| `GET /projects?lang=&q=&type=&category=&tech=&year=&featured=&sort=&offset=&limit=` | `ProjectPage`                               | Projetos, Início (destaques)                                   |
+| `GET /projects/{id}?lang=`                                                          | `ProjectDetail`, com `related` expandido    | Projeto e metadados das rotas do projeto                       |
+| `GET /projects/{id}/documents?lang=`                                                | `{ items: ProjectDocument[] }`              | Pré-renderização (#49), `sitemap.xml` e `llms-full*.txt` (#51) |
+| `GET /projects/{id}/documents/{documentId}?lang=`                                   | Conteúdo em `text/markdown` ou `text/plain` | Documentos do projeto (D55)                                    |
+| `POST /contact-messages`                                                            | `202` sem corpo                             | Formulário de Contato (#44; simulado e desligado na v1)        |
 
 Perfil e trajetória são endpoints separados porque Informações trata erro por fonte (RF-ABOUT-26) e
 o Início trata perfil e status atual de forma diferente (RF-HOME-24). A stack do site fica dentro do
@@ -364,19 +364,21 @@ Lista paginada de projetos no idioma pedido, com busca, filtros e ordenação ap
 
 **Parâmetros**
 
-| Nome       | Onde  | Tipo                | Obrigatório | Padrão   | Regra                                                                            |
-| ---------- | ----- | ------------------- | ----------- | -------- | -------------------------------------------------------------------------------- |
-| `lang`     | query | `SupportedLanguage` | Sim         | —        | Idioma do conteúdo, da busca e da ordenação                                      |
-| `q`        | query | `string`            | Não         | ausente  | Texto de busca, até 100 caracteres; ver "Busca"                                  |
-| `type`     | query | `ProjectType`       | Não         | ausente  | Um código; casa se algum dos `types` do projeto for ele (RF-PROJECTS-05)         |
-| `category` | query | `ProjectCategory`   | Não         | ausente  | Um código (RF-PROJECTS-06)                                                       |
-| `featured` | query | `true`              | Não         | ausente  | Só `true` é aceito; com `true`, só projetos com `featured` (destaques do Início) |
-| `sort`     | query | `ProjectSort`       | Não         | `recent` | Ver "Ordenação"                                                                  |
-| `offset`   | query | inteiro ≥ 0         | Não         | `0`      | Quantos itens pular                                                              |
-| `limit`    | query | inteiro de 1 a 50   | Não         | `9`      | Tamanho da página; o lote de 9 de RF-PROJECTS-12 é o padrão                      |
+| Nome       | Onde  | Tipo                | Obrigatório | Padrão   | Regra                                                                                                                              |
+| ---------- | ----- | ------------------- | ----------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| `lang`     | query | `SupportedLanguage` | Sim         | —        | Idioma do conteúdo, da busca e da ordenação                                                                                        |
+| `q`        | query | `string`            | Não         | ausente  | Texto de busca, até 100 caracteres; ver "Busca"                                                                                    |
+| `type`     | query | `ProjectType`       | Não         | ausente  | Um código; casa se algum dos `types` do projeto for ele (RF-PROJECTS-05)                                                           |
+| `category` | query | `ProjectCategory`   | Não         | ausente  | Um código (RF-PROJECTS-06)                                                                                                         |
+| `tech`     | query | `string`            | Não         | ausente  | Nome de tecnologia, até 100 caracteres, repetível (até 10); o projeto precisa ter **todas** (E); ver "Filtros de tecnologia e ano" |
+| `year`     | query | `string` (`AAAA`)   | Não         | ausente  | Ano de quatro dígitos, repetível (até 10); o projeto casa com **qualquer** um (OU)                                                 |
+| `featured` | query | `true`              | Não         | ausente  | Só `true` é aceito; com `true`, só projetos com `featured` (destaques do Início)                                                   |
+| `sort`     | query | `ProjectSort`       | Não         | `recent` | Ver "Ordenação"                                                                                                                    |
+| `offset`   | query | inteiro ≥ 0         | Não         | `0`      | Quantos itens pular                                                                                                                |
+| `limit`    | query | inteiro de 1 a 50   | Não         | `9`      | Tamanho da página; o lote de 9 de RF-PROJECTS-12 é o padrão                                                                        |
 
 Parâmetro ausente não restringe; os filtros presentes combinam por **e** (RF-PROJECTS-07).
-Parâmetro desconhecido é ignorado. Valor inválido ou parâmetro repetido responde
+Parâmetro desconhecido é ignorado. Valor inválido ou parâmetro repetido (exceto `tech` e `year`, que aceitam repetição) responde
 `400 INVALID_PARAMETER` com `fields`; a tela de Projetos ignora valor inválido da URL antes de
 pedir (Validações de [`projects.md`](../screens/projects.md)), então nunca o envia.
 
@@ -392,6 +394,19 @@ pedir (Validações de [`projects.md`](../screens/projects.md)), então nunca o 
 - Texto literal: `.`, `+`, `#` e `(` não são padrão (`c#` e `node.js` casam o texto como escrito).
 - Exemplos: `react postgis` casa um projeto com React e PostGIS na stack; `catalogo` casa
   "Catálogo de componentes"; `blockchain` sem projeto que o tenha dá resultado vazio.
+
+**Filtros de tecnologia e ano** (`tech` e `year`, RF-PROJECTS-29, D62):
+
+- `tech`: cada valor é comparado, depois da normalização da busca (NFD, sem marcas diacríticas,
+  minúsculas pelas regras do `lang`), por **igualdade** com o nome de uma tecnologia do projeto
+  (`technologies`); o projeto precisa ter todas as tecnologias pedidas (E). Valor repetido depois
+  de normalizado conta uma vez. Texto literal, sem padrão.
+- `year`: os quatro primeiros caracteres do `date` do projeto (`AAAA-MM`) iguais a algum dos anos
+  pedidos (OU).
+- Valor de `tech` vazio ou com mais de 100 caracteres, `year` que não seja quatro dígitos, ou mais
+  de 10 valores de um mesmo parâmetro: `400 INVALID_PARAMETER` (a tela os descarta antes de pedir).
+  Tecnologia ou ano que nenhum projeto tem é válido e dá `total: 0`.
+- Os dois combinam por **e** com `q`, `type`, `category` e `featured`.
 
 **Ordenação** (`sort`, RF-PROJECTS-09):
 
@@ -420,6 +435,13 @@ mês é o de `sort=recent` (título A–Z, depois `id`), que substitui a "ordem 
   depender da página, RF-PROJECTS-05).
 - Sem resultado: `200` com `items: []` e `total: 0`. `offset` além do fim: `200` com `items: []` e
   o `total` real.
+
+- `availableTechnologies`: os nomes de tecnologia (`technologies`) presentes em pelo menos um
+  projeto publicado do `lang`, sem repetição pelo texto normalizado (vale a grafia do primeiro
+  projeto na ordem do conteúdo), em ordem alfabética pela colação do `lang`, **sem** aplicar busca,
+  filtros nem `featured` (as opções do modal de filtros não podem depender da página).
+- `availableYears`: os anos (`AAAA`) de `date` presentes em pelo menos um projeto publicado do
+  `lang`, do mais recente para o mais antigo, sem repetição e também sem aplicar busca nem filtros.
 
 **Paginação:** por `offset` e `limit`, não por cursor. O "Carregar mais" de Projetos pede
 `offset` igual à quantidade já mostrada; voltar pelo histórico refaz as mesmas páginas, com cache
@@ -480,6 +502,8 @@ O segundo projeto não tem `cover` porque não tem captura (`images: []`): o car
 placeholder. O exemplo mostra só dois dos nove itens da página.
 
 Busca com filtro: `GET /projects?lang=pt-BR&q=react&type=web&sort=title`
+
+Filtro por tecnologia e ano: `GET /projects?lang=pt-BR&tech=React&tech=TypeScript&year=2025&year=2026`
 
 ```json
 {

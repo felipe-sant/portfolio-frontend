@@ -235,7 +235,7 @@ seguem as mesmas regras (requisito R2).
 SVG inline traçado, no vocabulário do Lucide: `viewBox="0 0 24 24"`, `fill="none"`,
 `stroke="currentColor"`, `stroke-linecap="round"`, traço de 2 a 2.4 e tamanho de 12 a 20px (D15). O
 inventário é fechado (lupa, ×, chevrons, download, hambúrguer, lua, sol, arco de spinner, pin,
-check, alerta, GitHub, LinkedIn, envelope, arquivo, lupa com mais, seta para a direita (D15) e a estrela preenchida, único ícone com `fill`, que marca projeto em destaque). Setas no texto
+check, alerta, GitHub, LinkedIn, envelope, arquivo, lupa com mais, seta para a direita (D15), filtro (três traços decrescentes, D62) e a estrela preenchida, único ícone com `fill`, que marca projeto em destaque). Setas no texto
 são caracteres unicode (`→ ← ↗ ↓ ▾`), não ícones.
 
 A recomendação do handoff é trocar por `lucide-react` e usar um pacote de marcas (ou os SVGs
@@ -281,8 +281,7 @@ Por tela, além das quebras:
 - **Menu mobile (D01):** abaixo de 640px, botão de 44px que abre painel em largura total abaixo do
   cabeçalho, com links em coluna de 52px, seletor de idioma e alternador de tema; fecha por Esc,
   link, botão ou ao alargar, e trava a rolagem da página.
-- **Filtros (D16):** no mobile, linha com rolagem horizontal encostando na borda, sem modal de
-  filtros.
+- **Filtros (D16, D62):** no mobile, linha de tipo e categoria com rolagem horizontal encostando na borda; tecnologia e ano ficam num modal de filtros (D62), em tela cheia abaixo de 640px (D20).
 - **Galeria (D18):** no mobile, miniaturas em linha rolável de 6.5rem; no desktop, cinco colunas.
 - **Ficha técnica (D19):** abaixo de 980px, entre a galeria e a documentação, em grade de pares e
   sem sticky.
