@@ -8,6 +8,7 @@ const UI_TEXTS = {
             about: "Informações",
             contact: "Contato"
         },
+        contactCta: "Entrar em contato",
         homeHeading: "Desenvolvedor full stack em TypeScript",
         notFoundHeading: "Página não encontrada",
         notFoundTitle: "Página não encontrada · Luiz Felipe dos Santos"
@@ -21,6 +22,7 @@ const UI_TEXTS = {
             about: "About",
             contact: "Contact"
         },
+        contactCta: "Get in touch",
         homeHeading: "Full stack developer in TypeScript",
         notFoundHeading: "Page not found",
         notFoundTitle: "Page not found · Luiz Felipe dos Santos"
@@ -34,6 +36,7 @@ const UI_TEXTS = {
             about: "Información",
             contact: "Contacto"
         },
+        contactCta: "Ponerse en contacto",
         homeHeading: "Desarrollador full stack en TypeScript",
         notFoundHeading: "Página no encontrada",
         notFoundTitle: "Página no encontrada · Luiz Felipe dos Santos"
