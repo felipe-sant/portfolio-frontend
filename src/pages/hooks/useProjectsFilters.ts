@@ -1,18 +1,18 @@
 import { useEffect, useEffectEvent, useMemo, useRef, useState } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
 import PROJECT_CATEGORIES from "@/enum/projectCategories.enum"
-import PROJECT_SORTS from "@/enum/projectSorts.enum"
 import PROJECT_TYPES from "@/enum/projectTypes.enum"
 import useDebounce from "@/hooks/useDebounce"
 import useHasHydrated from "@/hooks/useHasHydrated"
 import type ProjectsAppliedFilters from "@/types/project/ProjectsAppliedFilters.types"
 import type ProjectsFilters from "@/types/project/ProjectsFilters.types"
 import buildProjectsSearch from "@/utils/buildProjectsSearch"
+import defaultProjectSort from "@/utils/defaultProjectSort"
 import hasProjectsFilters from "@/utils/hasProjectsFilters"
 import parseProjectsSearchParams from "@/utils/parseProjectsSearchParams"
 import projectsElementIds from "@/utils/projectsElementIds"
 
-const DEFAULT_FILTERS: ProjectsFilters = { q: "", sort: "recent" }
+const DEFAULT_FILTERS: ProjectsFilters = { q: "", sort: defaultProjectSort }
 const SEARCH_DELAY = 300
 
 function useProjectsFilters() {
@@ -83,16 +83,8 @@ function useProjectsFilters() {
         apply({ ...filters, category: category === filters.category ? undefined : category })
     }
 
-    function setTechAndYear({ tech, year }: ProjectsAppliedFilters) {
-        apply({ ...filters, tech, year })
-    }
-
-    function setSort(value: string) {
-        const sort = PROJECT_SORTS.find((option) => option === value) ?? "recent"
-
-        if (sort !== filters.sort) {
-            apply({ ...filters, sort })
-        }
+    function applyModalFilters({ tech, year, sort }: ProjectsAppliedFilters) {
+        apply({ ...filters, tech, year, sort })
     }
 
     return {
@@ -103,8 +95,7 @@ function useProjectsFilters() {
         clearFilters,
         setType,
         setCategory,
-        setSort,
-        setTechAndYear,
+        applyModalFilters,
         hasFilters: hasProjectsFilters(filters)
     }
 }

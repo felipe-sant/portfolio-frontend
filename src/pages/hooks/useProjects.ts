@@ -23,8 +23,7 @@ function useProjects() {
         clearFilters,
         setType,
         setCategory,
-        setSort,
-        setTechAndYear,
+        applyModalFilters,
         hasFilters
     } = useProjectsFilters()
     const pages = useProjectsPages(buildProjectsQueryArgs(language, filters))
@@ -32,7 +31,11 @@ function useProjects() {
 
     const [isFiltersOpen, setIsFiltersOpen] = useState(false)
     const canOpenFilters = pages.availableTechnologies.length > 0 || pages.availableYears.length > 0
-    const appliedFilters = { tech: filters.tech ?? [], year: filters.year ?? [] }
+    const appliedFilters = {
+        tech: filters.tech ?? [],
+        year: filters.year ?? [],
+        sort: filters.sort
+    }
 
     function openFilters() {
         if (canOpenFilters) {
@@ -91,8 +94,7 @@ function useProjects() {
         clearFilters,
         setType,
         setCategory,
-        setSort,
-        setTechAndYear,
+        applyModalFilters,
         hasFilters,
         filtersCount: appliedFilters.tech.length + appliedFilters.year.length,
         appliedFilters,

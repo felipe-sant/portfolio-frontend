@@ -3,6 +3,7 @@ import type { Root } from "react-dom/client"
 import type { MockInstance } from "vitest"
 import { afterEach, beforeEach, describe, expect, inject, it, vi } from "vitest"
 import { act, screen, within } from "@testing-library/react"
+import userEvent from "@testing-library/user-event"
 import composePage from "@scripts/prerender/composePage"
 import i18n from "@/i18n/i18n"
 import mountClient from "@/prerender/mountClient"
@@ -240,7 +241,7 @@ describe("mountClient com caminho pré-renderizado", () => {
         await settle()
 
         expect(screen.getByRole("button", { name: "Web" })).toHaveAttribute("aria-pressed", "true")
-        expect(screen.getByRole("button", { name: "Ordenar A–Z" })).toHaveTextContent("A–Z")
+        expect(screen.queryByRole("button", { name: /^Ordenar/ })).not.toBeInTheDocument()
         expect(cardTitles()).toEqual([
             "Controle de Despesas",
             "Conversor de Unidades",
@@ -248,6 +249,8 @@ describe("mountClient com caminho pré-renderizado", () => {
             "MNIST Classifier",
             "Pedido de Namoro Irrecusável"
         ])
+        await userEvent.click(await screen.findByRole("button", { name: "Filtros" }))
+        expect(screen.getByRole("radio", { name: "A–Z" })).toBeChecked()
         expect(consoleSpies.error).not.toHaveBeenCalled()
         expect(hydrationWarnings(consoleSpies.warn)).toEqual([])
     })

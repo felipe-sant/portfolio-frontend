@@ -151,7 +151,7 @@ describe("ProjectsPage", () => {
         }
     )
 
-    it("ordena no DOM título, introdução, busca e ordenação, filtros, contagem, grade e carregar mais", async () => {
+    it("ordena no DOM título, introdução, busca, botão Filtros, filtros, contagem, grade e carregar mais", async () => {
         stubProjects(10)
 
         renderPage()
@@ -161,7 +161,7 @@ describe("ProjectsPage", () => {
             screen.getByRole("heading", { level: 1 }),
             screen.getByText(/Tudo o que construí/),
             screen.getByRole("searchbox"),
-            screen.getByRole("button", { name: "Ordenar Mais recente" }),
+            screen.getByRole("button", { name: "Filtros" }),
             screen.getByRole("group", { name: "Tipo" }),
             screen.getByRole("group", { name: "Categoria" }),
             screen.getByRole("status"),
@@ -269,24 +269,36 @@ describe("ProjectsPage", () => {
         )
     })
 
-    it("ordena por A–Z sem ligar Limpar filtros", async () => {
+    it("não tem controle de ordenação fora do modal", async () => {
+        stubProjects(10)
+        renderPage()
+        await listLoaded()
+
+        expect(screen.queryByRole("combobox")).not.toBeInTheDocument()
+        expect(screen.queryByRole("button", { name: /^Ordenar/ })).not.toBeInTheDocument()
+        expect(screen.queryByRole("radio")).not.toBeInTheDocument()
+    })
+
+    it("ordena por A–Z pelo modal sem ligar Limpar filtros nem o contador e devolve o foco ao botão", async () => {
         stubProjects(10)
         const user = userEvent.setup()
         renderPage()
         await listLoaded()
-        await user.click(screen.getByRole("button", { name: "Ordenar Mais recente" }))
+        await user.click(screen.getByRole("button", { name: "Filtros" }))
 
         expect(
-            within(screen.getByRole("listbox", { name: "Ordenar" }))
-                .getAllByRole("option")
-                .map((option) => option.textContent)
+            within(screen.getByRole("group", { name: "Ordenar" }))
+                .getAllByRole("radio")
+                .map((radio) => radio.closest("label")?.textContent)
         ).toEqual(["Mais recente", "Mais antigo", "A–Z"])
 
-        await user.click(screen.getByRole("option", { name: "A–Z" }))
+        await user.click(screen.getByRole("radio", { name: "A–Z" }))
+        await user.click(screen.getByRole("button", { name: "Aplicar" }))
 
         await waitFor(() => expect(currentLocation()).toBe("/pt-BR/projects?sort=title"))
         await waitFor(() => expect(cards()[0]).toHaveTextContent("Projeto 1"))
         expect(screen.queryByRole("button", { name: "Limpar filtros" })).not.toBeInTheDocument()
+        expect(screen.getByRole("button", { name: "Filtros" })).toHaveFocus()
     })
 
     it("anuncia a contagem numa região de status que existe desde o início", async () => {
@@ -475,7 +487,7 @@ describe("ProjectsPage", () => {
             )
         ).toBeVisible()
         expect(alert).not.toHaveTextContent(/500|Error|fetch/i)
-        expect(screen.getByRole("button", { name: "Ordenar A–Z" })).toHaveTextContent("A–Z")
+        expect(currentLocation()).toBe("/pt-BR/projects?type=web&sort=title")
         await waitFor(() => expect(screen.getByRole("status")).toBeEmptyDOMElement())
 
         recover()
@@ -587,36 +599,17 @@ describe("ProjectsPage", () => {
         [
             "pt-BR",
             "Buscar projeto",
-            "Ordenar",
             "Tipo",
             "Todos",
             "Categoria",
             "Carregar mais",
             "9 de 10 projetos"
         ],
-        [
-            "en",
-            "Search projects",
-            "Sort",
-            "Type",
-            "All",
-            "Category",
-            "Load more",
-            "9 of 10 projects"
-        ],
-        [
-            "es",
-            "Buscar proyecto",
-            "Ordenar",
-            "Tipo",
-            "Todos",
-            "Categoría",
-            "Cargar más",
-            "9 de 10 proyectos"
-        ]
+        ["en", "Search projects", "Type", "All", "Category", "Load more", "9 of 10 projects"],
+        ["es", "Buscar proyecto", "Tipo", "Todos", "Categoría", "Cargar más", "9 de 10 proyectos"]
     ] as const)(
         "mostra os textos em %s sem chave no lugar do texto",
-        async (language, search, sort, type, all, category, more, count) => {
+        async (language, search, type, all, category, more, count) => {
             stubProjects(10)
             await setLanguage(language)
 
@@ -624,7 +617,6 @@ describe("ProjectsPage", () => {
             await listLoaded()
 
             expect(screen.getByRole("searchbox", { name: search })).toBeVisible()
-            expect(screen.getByRole("button", { name: new RegExp(`^${sort}\\b`) })).toBeVisible()
             expect(screen.getByRole("group", { name: type })).toBeVisible()
             expect(screen.getByRole("button", { name: all })).toBeVisible()
             expect(screen.getByRole("group", { name: category })).toBeVisible()
@@ -633,6 +625,30 @@ describe("ProjectsPage", () => {
             expect(document.body.textContent).not.toMatch(
                 /\b(results|filters|noResults|loadMore|search|sort|empty)\.[a-zA-Z]+/
             )
+        }
+    )
+
+    it.each([
+        ["pt-BR", "Filtros", "Ordenar", ["Mais recente", "Mais antigo", "A–Z"]],
+        ["en", "Filters", "Sort", ["Most recent", "Oldest", "A–Z"]],
+        ["es", "Filtros", "Ordenar", ["Más reciente", "Más antiguo", "A–Z"]]
+    ] as const)(
+        "mostra a seção de ordenação do modal em %s sem chave no lugar do texto",
+        async (language, open, legend, labels) => {
+            stubProjects(10)
+            await setLanguage(language)
+            const user = userEvent.setup()
+            renderPage(`/${language}/projects`)
+            await listLoaded()
+
+            await user.click(screen.getByRole("button", { name: open }))
+
+            expect(
+                within(screen.getByRole("group", { name: legend }))
+                    .getAllByRole("radio")
+                    .map((radio) => radio.closest("label")?.textContent)
+            ).toEqual(labels)
+            expect(document.body.textContent).not.toMatch(/\bsort\.[a-zA-Z]+/)
         }
     )
 
@@ -792,7 +808,7 @@ describe("ProjectsPage, filtros por tecnologia e ano", () => {
         expect(screen.queryByRole("dialog")).not.toBeInTheDocument()
     })
 
-    it("mostra o botão depois da ordenação, com popup de diálogo e o contador só de tecnologia e ano", async () => {
+    it("mostra o botão depois da busca, com popup de diálogo e o contador só de tecnologia e ano", async () => {
         stubFilterProjects()
 
         const { unmount } = renderPage()
@@ -803,9 +819,8 @@ describe("ProjectsPage, filtros por tecnologia e ano", () => {
         expect(button).toHaveAttribute("aria-expanded", "false")
         expect(button).not.toHaveAttribute("aria-disabled")
         expect(
-            screen
-                .getByRole("button", { name: "Ordenar Mais recente" })
-                .compareDocumentPosition(button) & Node.DOCUMENT_POSITION_FOLLOWING
+            screen.getByRole("searchbox").compareDocumentPosition(button) &
+                Node.DOCUMENT_POSITION_FOLLOWING
         ).toBeTruthy()
         unmount()
 
@@ -1024,6 +1039,87 @@ describe("ProjectsPage, filtros por tecnologia e ano", () => {
         stubFilterProjects()
         const user = userEvent.setup()
         renderPage()
+        await listLoaded()
+        await user.click(filtersButton("Filtros"))
+
+        await expectNoAxeViolations(screen.getByRole("dialog").parentElement as HTMLElement)
+    }, 15000)
+})
+
+describe("ProjectsPage, ordenação dentro do modal", () => {
+    it("fechar por Esc aplica a ordenação escolhida", async () => {
+        stubFilterProjects()
+        const user = userEvent.setup()
+        const { router } = renderPageWithRouter("/pt-BR/projects")
+        await listLoaded()
+
+        await user.click(filtersButton("Filtros"))
+        await user.click(screen.getByRole("radio", { name: "Mais antigo" }))
+        await user.keyboard("{Escape}")
+
+        await waitFor(() => expect(router.state.location.search).toBe("?sort=oldest"))
+        expect(router.state.historyAction).toBe("REPLACE")
+        expect(filtersButton("Filtros")).toBeVisible()
+    })
+
+    it("abrir e fechar sem mexer na ordenação não escreve a URL", async () => {
+        stubFilterProjects()
+        const user = userEvent.setup()
+        const { router } = renderPageWithRouter("/pt-BR/projects?sort=title")
+        await listLoaded()
+
+        await user.click(filtersButton("Filtros"))
+        await user.click(screen.getByRole("button", { name: "Fechar" }))
+
+        expect(router.state.historyAction).toBe("POP")
+        expect(router.state.location.search).toBe("?sort=title")
+    })
+
+    it("Limpar e Aplicar tiram sort, tech e year da URL", async () => {
+        stubFilterProjects()
+        const user = userEvent.setup()
+        const { router } = renderPageWithRouter("/pt-BR/projects?tech=React&year=2025&sort=title")
+        await listLoaded()
+
+        await user.click(filtersButton("Filtros (2)"))
+        await user.click(screen.getByRole("button", { name: "Limpar" }))
+        await user.click(screen.getByRole("button", { name: "Aplicar" }))
+
+        await waitFor(() => expect(router.state.location.search).toBe(""))
+        expect(filtersButton("Filtros")).toBeVisible()
+    })
+
+    it("abre direto com sort=title em A–Z, sem contador e com A–Z marcado no modal", async () => {
+        stubFilterProjects()
+        const user = userEvent.setup()
+        renderPage("/pt-BR/projects?sort=title")
+        await listLoaded()
+
+        expect(projectTitles()).toEqual([...projectTitles()].toSorted())
+        expect(filtersButton("Filtros")).toBeVisible()
+
+        await user.click(filtersButton("Filtros"))
+
+        expect(screen.getByRole("radio", { name: "A–Z" })).toBeChecked()
+    })
+
+    it("mantém sort ao trocar de idioma", async () => {
+        stubFilterProjects()
+        const user = userEvent.setup()
+        const { router } = renderRoutes("/pt-BR/projects?sort=title")
+        await waitFor(() => expect(cards().length).toBeGreaterThan(0), { timeout: 5000 })
+
+        await user.click(screen.getAllByRole("button", { name: "Idioma: Português" })[0])
+        await user.click(screen.getByRole("link", { name: "English" }))
+
+        await waitFor(() => expect(router.state.location.pathname).toBe("/en/projects"))
+        expect(router.state.location.search).toBe("?sort=title")
+    }, 20000)
+
+    it("não tem violações de acessibilidade com o modal aberto e a ordenação marcada", async () => {
+        stubFilterProjects()
+        const user = userEvent.setup()
+        renderPage("/pt-BR/projects?sort=oldest")
         await listLoaded()
         await user.click(filtersButton("Filtros"))
 

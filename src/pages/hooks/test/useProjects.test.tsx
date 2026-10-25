@@ -676,12 +676,18 @@ describe("useProjects", () => {
             expect(latest.isFiltersOpen).toBe(false)
         })
 
-        it("setTechAndYear escreve a URL uma vez por replace, mantém o resto e volta ao primeiro lote", async () => {
+        it("applyModalFilters escreve a URL uma vez por replace, mantém o resto e volta ao primeiro lote", async () => {
             stubFilterProjects()
             const { router } = mount(`${PATH}?q=projeto&type=web&category=academic&sort=title`)
             await settled()
 
-            act(() => latest.setTechAndYear({ tech: ["React", "Node.js"], year: ["2024"] }))
+            act(() =>
+                latest.applyModalFilters({
+                    tech: ["React", "Node.js"],
+                    year: ["2024"],
+                    sort: "title"
+                })
+            )
 
             await waitFor(() =>
                 expect(router.state.location.search).toBe(
@@ -703,6 +709,41 @@ describe("useProjects", () => {
             await waitFor(() => expect(router.state.location.search).toBe("?sort=oldest"))
             expect(latest.hasFilters).toBe(false)
             expect(latest.filtersCount).toBe(0)
+        })
+
+        it("applyModalFilters omite o sort padrão da URL", async () => {
+            stubFilterProjects()
+            const { router } = mount(`${PATH}?type=web&sort=title`)
+            await settled()
+
+            act(() => latest.applyModalFilters({ tech: ["React"], year: [], sort: "recent" }))
+
+            await waitFor(() => expect(router.state.location.search).toBe("?type=web&tech=React"))
+        })
+
+        it("a ordenação diferente do padrão não muda o contador nem hasFilters e aparece em appliedFilters", async () => {
+            stubFilterProjects()
+
+            mount(`${PATH}?sort=oldest`)
+            await settled()
+
+            expect(latest.filtersCount).toBe(0)
+            expect(latest.hasFilters).toBe(false)
+            expect(latest.appliedFilters).toEqual({ tech: [], year: [], sort: "oldest" })
+            expect(latest.sortOptions.map((option) => option.value)).toEqual([
+                "recent",
+                "oldest",
+                "title"
+            ])
+        })
+
+        it("não expõe setSort nem setTechAndYear", async () => {
+            stubFilterProjects()
+            mount()
+            await settled()
+
+            expect(latest).not.toHaveProperty("setSort")
+            expect(latest).not.toHaveProperty("setTechAndYear")
         })
     })
 })

@@ -1,3 +1,4 @@
+import defaultProjectSort from "@/utils/defaultProjectSort"
 import normalizeTechnologyFilter from "@/utils/normalizeTechnologyFilter"
 import normalizeYearFilter from "@/utils/normalizeYearFilter"
 import type ProjectsFilters from "@/types/project/ProjectsFilters.types"
@@ -20,7 +21,7 @@ function buildProjectsSearch({ q, type, category, tech, year, sort }: ProjectsFi
     normalizeTechnologyFilter(tech ?? []).forEach((value) => params.append("tech", value))
     normalizeYearFilter(year ?? []).forEach((value) => params.append("year", value))
 
-    if (sort !== "recent") {
+    if (sort !== defaultProjectSort) {
         params.set("sort", sort)
     }
 

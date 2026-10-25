@@ -1,3 +1,4 @@
+import defaultProjectSort from "@/utils/defaultProjectSort"
 import normalizeTechnologyFilter from "@/utils/normalizeTechnologyFilter"
 import normalizeYearFilter from "@/utils/normalizeYearFilter"
 import type SupportedLanguage from "@/types/language/SupportedLanguage.types"
@@ -19,7 +20,7 @@ function buildProjectsQueryArgs(
         ...(category && { category }),
         ...(technologies.length > 0 && { tech: technologies }),
         ...(years.length > 0 && { year: years }),
-        ...(sort !== "recent" && { sort })
+        ...(sort !== defaultProjectSort && { sort })
     }
 }
 

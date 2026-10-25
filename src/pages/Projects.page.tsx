@@ -7,7 +7,6 @@ import ProjectCard from "@/components/ProjectCard"
 import ProjectCardSkeleton from "@/components/ProjectCardSkeleton"
 import ProjectsFiltersModal from "@/components/ProjectsFiltersModal"
 import SearchInput from "@/components/SearchInput"
-import SelectField from "@/components/SelectField"
 import SkeletonSwap from "@/components/SkeletonSwap"
 import useProjects from "@/pages/hooks/useProjects"
 import ROUTES from "@/routers/paths"
@@ -40,8 +39,7 @@ function ProjectsPage() {
         clearFilters,
         setType,
         setCategory,
-        setSort,
-        setTechAndYear,
+        applyModalFilters,
         hasFilters,
         filtersCount,
         appliedFilters,
@@ -106,12 +104,6 @@ function ProjectsPage() {
                                     maxLength={SEARCH_MAX_LENGTH}
                                 />
                             </div>
-                            <SelectField
-                                label={t("sort.label")}
-                                options={sortOptions}
-                                value={filters.sort}
-                                onChange={setSort}
-                            />
                             <Button
                                 variant="secondary"
                                 icon="filter"
@@ -220,7 +212,8 @@ function ProjectsPage() {
                             technologies={availableTechnologies}
                             years={availableYears}
                             applied={appliedFilters}
-                            onApply={setTechAndYear}
+                            sorts={sortOptions}
+                            onApply={applyModalFilters}
                             onClose={closeFilters}
                         />
                     </>
