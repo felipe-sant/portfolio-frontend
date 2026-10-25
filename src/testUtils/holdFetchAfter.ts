@@ -1,4 +1,5 @@
 import { vi } from "vitest"
+import clearContentCache from "@/services/content/clearContentCache"
 import type stubContentFetch from "@/testUtils/stubContentFetch"
 
 function ignore() {}
@@ -10,6 +11,7 @@ function holdFetchAfter(fetchMock: ReturnType<typeof stubContentFetch>, allowed:
     })
     let calls = 0
 
+    clearContentCache()
     vi.stubGlobal(
         "fetch",
         vi.fn(async (input: string | URL | Request) => {

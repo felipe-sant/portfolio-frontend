@@ -670,7 +670,7 @@ describe("ProjectsPage", () => {
     ] as const)(
         "mostra os textos de sem resultado e de erro em %s",
         async (language, noResults, error, clear) => {
-            stubProjects(10)
+            const fetchMock = stubProjects(10)
             await setLanguage(language)
             const first = renderPage(`/${language}/projects?type=iot`)
 
@@ -678,12 +678,24 @@ describe("ProjectsPage", () => {
             expect(screen.getByRole("button", { name: clear })).toBeVisible()
             first.unmount()
 
-            stubContentFetch({})
+            failFetchAfter(fetchMock, 0)
             renderPage(`/${language}/projects`)
 
             expect(await screen.findByText(error)).toBeVisible()
         }
     )
+
+    it("abre sem filtro com um pedido de projects.json e um de profile.json", async () => {
+        const fetchMock = stubProjects(10)
+        renderRoutes("/pt-BR/projects")
+
+        const requested = (file: string) =>
+            fetchMock.mock.calls.filter(([url]) => String(url).includes(file))
+        await waitFor(() => expect(requested("profile.json")).toHaveLength(1))
+        await screen.findByRole("button", { name: "Carregar mais" })
+        expect(requested("projects.json")).toHaveLength(1)
+        expect(requested("profile.json")).toHaveLength(1)
+    })
 
     it("não tem violações de acessibilidade carregando", async () => {
         const fetchMock = stubProjects(10)

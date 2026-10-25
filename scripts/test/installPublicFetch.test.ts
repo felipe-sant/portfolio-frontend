@@ -1,5 +1,8 @@
-import { readFileSync } from "node:fs"
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs"
+import { tmpdir } from "node:os"
+import { join } from "node:path"
 import { afterEach, describe, expect, it, vi } from "vitest"
+import readText from "@/services/content/readText"
 import installPublicFetch from "@scripts/prerender/installPublicFetch"
 
 const originalFetch = globalThis.fetch
@@ -59,5 +62,31 @@ describe("installPublicFetch", () => {
 
         expect(response.status).toBe(200)
         restore()
+    })
+
+    it("não guarda a leitura de arquivo ausente: depois de criado, a leitura funciona", async () => {
+        const directory = mkdtempSync(join(tmpdir(), "public-fetch-"))
+        const restore = installPublicFetch("/", directory)
+
+        await expect(readText("late.json")).rejects.toThrow("status 404")
+        writeFileSync(join(directory, "late.json"), "tarde")
+
+        await expect(readText("late.json")).resolves.toBe("tarde")
+        restore()
+        rmSync(directory, { recursive: true })
+    })
+
+    it("lê o mesmo arquivo do disco uma vez só", async () => {
+        const directory = mkdtempSync(join(tmpdir(), "public-fetch-"))
+        const file = join(directory, "once.json")
+        writeFileSync(file, "antigo")
+        const restore = installPublicFetch("/", directory)
+
+        await expect(readText("once.json")).resolves.toBe("antigo")
+        writeFileSync(file, "novo")
+
+        await expect(readText("once.json")).resolves.toBe("antigo")
+        restore()
+        rmSync(directory, { recursive: true })
     })
 })

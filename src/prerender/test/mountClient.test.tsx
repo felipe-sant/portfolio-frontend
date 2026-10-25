@@ -345,7 +345,7 @@ describe("mountClient com caminho pré-renderizado", () => {
 })
 
 describe("mountClient de Projetos sem HTML pré-renderizado", () => {
-    it("aplica a query já na primeira renderização", async () => {
+    it("aplica a query já na primeira renderização com um só pedido de projects.json para lista, índice e opções", async () => {
         const fetchMock = stubProjectsContent()
         await i18n.changeLanguage("pt-BR")
         window.history.pushState({}, "", "/pt-BR/projects?type=web&sort=title")
@@ -357,6 +357,6 @@ describe("mountClient de Projetos sem HTML pré-renderizado", () => {
         const requests = fetchMock.mock.calls.filter(([url]) =>
             String(url).includes("projects.json")
         )
-        expect(requests).toHaveLength(3)
+        expect(requests).toHaveLength(1)
     })
 })
