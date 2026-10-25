@@ -1,23 +1,23 @@
 ## Contexto
 
-Projeto acadêmico para praticar manipulação de estado e formulários em React: converter unidades de comprimento, peso e temperatura entre si.
+Proyecto académico para practicar el manejo de estado y formularios en React: convertir entre sí unidades de longitud, peso y temperatura.
 
 ## Mi rol
 
-Desenvolvi sozinho, frontend puro, sem backend.
+Lo desarrollé yo solo, frontend puro, sin backend.
 
 ## Solución
 
-O usuário escolhe uma categoria (comprimento, peso ou temperatura), informa um valor e a unidade de origem, e o sistema calcula e exibe o valor convertido na unidade de destino. Um botão permite inverter rapidamente a unidade de origem e destino.
+El usuario elige una categoría (longitud, peso o temperatura), ingresa un valor y la unidad de origen, y el sistema calcula y muestra el valor convertido en la unidad de destino. Un botón permite invertir rápidamente la unidad de origen y la de destino.
 
 ## Decisiones técnicas
 
-Toda a lógica de conversão roda no cliente, sem necessidade de API externa — as fórmulas de conversão entre unidades são fixas e conhecidas, então não há motivo para depender de um serviço externo para isso (diferente de conversões que dependem de dados atualizados, como as de moeda).
+Toda la lógica de conversión se ejecuta en el cliente, sin necesidad de una API externa. Las fórmulas de conversión entre unidades son fijas y conocidas, así que no hay motivo para depender de un servicio externo para esto (a diferencia de las conversiones que dependen de datos actualizados, como las de moneda).
 
 ## Resultado
 
-Funciona como esperado — testado convertendo comprimento (km para m).
+Funciona como se esperaba, probado convirtiendo longitud (km a m).
 
 ## Aprendizajes
 
-Projeto pequeno, mas útil para reforçar que nem toda funcionalidade "de conversão" precisa de uma API: às vezes a lógica pura já resolve, com menos pontos de falha.
+Un proyecto pequeño, pero útil para reforzar que no toda funcionalidad "de conversión" necesita una API: a veces la lógica pura ya lo resuelve, con menos puntos de falla.

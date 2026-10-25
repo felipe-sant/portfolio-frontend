@@ -1,23 +1,23 @@
 ## Contexto
 
-Projeto pessoal para praticar o ciclo completo de um produto com IA: treinar um modelo de reconhecimento de dígitos manuscritos e expor isso numa aplicação web interativa, do desenho até a predição.
+Proyecto personal para practicar el ciclo completo de un producto con IA: entrenar un modelo de reconocimiento de dígitos manuscritos y exponerlo en una aplicación web interactiva, desde el dibujo hasta la predicción.
 
 ## Mi rol
 
-Desenvolvi sozinho as três camadas: o frontend (canvas de desenho), o backend (intermediário entre front e IA) e o serviço de inferência em Python, além de treinar o modelo.
+Desarrollé yo solo las tres capas: el frontend (canvas de dibujo), el backend (intermediario entre front e IA) y el servicio de inferencia en Python, además de entrenar el modelo.
 
 ## Solución
 
-O usuário desenha um número de 0 a 9 num canvas HTML. Ao clicar em "Adivinhar", o frontend envia a imagem desenhada para um backend em Node.js/Express, que repassa a imagem para um serviço separado em Python (FastAPI) responsável por carregar o modelo treinado (Keras/TensorFlow) e retornar o dígito previsto.
+El usuario dibuja un número del 0 al 9 en un canvas HTML. Al hacer clic en "Adivinhar" (Adivinar), el frontend envía la imagen dibujada a un backend en Node.js/Express, que la reenvía a un servicio separado en Python (FastAPI) responsable de cargar el modelo entrenado (Keras/TensorFlow) y devolver el dígito predicho.
 
 ## Decisiones técnicas
 
-Separar a inferência de IA num serviço Python próprio, independente do backend em Node, permite usar bibliotecas de IA nativas do ecossistema Python (TensorFlow/Keras) sem forçar isso dentro do runtime JavaScript. O backend em Node atua só como intermediário/gateway, lidando com upload de arquivo (Multer) e repassando para o serviço de IA.
+Separar la inferencia de IA en un servicio Python propio, independiente del backend en Node, permite usar bibliotecas de IA nativas del ecosistema Python (TensorFlow/Keras) sin forzarlas dentro del runtime de JavaScript. El backend en Node actúa solo como intermediario/gateway, encargándose de la carga de archivos (Multer) y de reenviarlos al servicio de IA.
 
 ## Resultado
 
-A aplicação funciona corretamente de ponta a ponta — testado localmente desenhando dígitos e conferindo a predição do modelo. A demo pública está com uma limitação: o serviço de IA hospedado no Railway está fora do ar (deploy gratuito expirado), então a predição falha em produção, mesmo com o resto da aplicação no ar normalmente. Bug documentado na [issue #1 do mnist-classifier-ai](https://github.com/felipe-sant/mnist-classifier-ai/issues/1).
+La aplicación funciona correctamente de punta a punta, probada localmente dibujando dígitos y verificando la predicción del modelo. La demo pública tiene una limitación: el servicio de IA alojado en Railway está caído (el despliegue gratuito expiró), así que la predicción falla en producción aunque el resto de la aplicación esté en línea con normalidad. Bug documentado en la [issue #1 de mnist-classifier-ai](https://github.com/felipe-sant/mnist-classifier-ai/issues/1).
 
 ## Aprendizajes
 
-Arquitetar um sistema poliglota (Node.js + Python) com responsabilidades bem separadas, e lidar com os desafios de manter no ar vários serviços hospedados em planos gratuitos diferentes ao mesmo tempo.
+Diseñar la arquitectura de un sistema políglota (Node.js + Python) con responsabilidades bien separadas, y lidiar con los desafíos de mantener en línea varios servicios alojados en distintos planes gratuitos al mismo tiempo.

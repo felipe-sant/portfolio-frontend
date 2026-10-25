@@ -1,6 +1,6 @@
-## Pré-requisitos
+## Requisitos previos
 
-Node.js, npm e uma instância do MongoDB (local ou Atlas).
+Node.js, npm y una instancia de MongoDB (local o Atlas).
 
 ## Backend
 
@@ -9,10 +9,10 @@ cd back
 npm install
 ```
 
-Crie um arquivo `.env` na raiz do back com:
+Crea un archivo `.env` en la raíz del back con:
 
 ```env
-MONGODB_URI=sua_connection_string_do_mongodb
+MONGODB_URI=tu_connection_string_de_mongodb
 PORT=3001
 ```
 
@@ -20,7 +20,7 @@ PORT=3001
 npm start
 ```
 
-Sobe em `http://localhost:3001`.
+Se inicia en `http://localhost:3001`.
 
 ## Frontend
 
@@ -30,14 +30,14 @@ npm install
 npm start
 ```
 
-Sobe em `http://localhost:3000`, já configurado para consumir a API em `http://localhost:3001`.
+Se inicia en `http://localhost:3000`, ya configurado para consumir la API en `http://localhost:3001`.
 
-## Observação
+## Observación
 
-Para testes locais, uma alternativa rápida é rodar um MongoDB via Docker:
+Para pruebas locales, una alternativa rápida es ejecutar MongoDB con Docker:
 
 ```bash
 docker run -d -p 27017:27017 mongo:7
 ```
 
-E usar `MONGODB_URI=mongodb://localhost:27017/despesas` no `.env`.
+Y usar `MONGODB_URI=mongodb://localhost:27017/despesas` en el `.env`.

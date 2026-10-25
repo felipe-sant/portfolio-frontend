@@ -1,23 +1,23 @@
 ## Contexto
 
-Projeto acadêmico para praticar operações CRUD completas (criar, listar, editar, excluir) com um banco NoSQL, construindo tanto o frontend quanto a API.
+Proyecto académico para practicar operaciones CRUD completas (crear, listar, editar, eliminar) con una base de datos NoSQL, construyendo tanto el frontend como la API.
 
 ## Mi rol
 
-Desenvolvi sozinho o frontend e o backend.
+Desarrollé yo solo el frontend y el backend.
 
 ## Solución
 
-A aplicação permite cadastrar despesas (descrição, data e valor), listar todas as despesas cadastradas, editar e excluir cada uma. O frontend consome uma API REST própria, que persiste os dados no MongoDB via Mongoose.
+La aplicación permite registrar gastos (descripción, fecha y valor), listar todos los gastos registrados, y editar y eliminar cada uno. El frontend consume una API REST propia, que persiste los datos en MongoDB mediante Mongoose.
 
 ## Decisiones técnicas
 
-Separação clara entre frontend e backend em repositórios próprios, unidos por um repositório wrapper com git submodules. O backend expõe uma API REST simples em Express, e o frontend usa React puro (sem bibliotecas de estado), com chamadas diretas à API.
+Separación clara entre frontend y backend en repositorios propios, unidos por un repositorio contenedor con git submodules. El backend expone una API REST simple en Express, y el frontend usa React puro (sin bibliotecas de estado), con llamadas directas a la API.
 
 ## Resultado
 
-O CRUD funciona de ponta a ponta — testado criando, listando e confirmando a persistência de uma despesa. A interface, porém, ainda está em nível de protótipo (sem estilização real, com textos de placeholder como "Hello world"), por isso o projeto está marcado para retrabalho visual futuro.
+El CRUD funciona de punta a punta, probado creando, listando y confirmando la persistencia de un gasto. La interfaz, sin embargo, todavía está a nivel de prototipo (sin estilos reales, con textos de relleno como "Hello world"), por lo que el proyecto está marcado para un retrabajo visual futuro.
 
 ## Aprendizajes
 
-A ideia e a base funcional do projeto são sólidas — a maior lacuna hoje é só de acabamento de interface, não de lógica ou arquitetura.
+La idea y la base funcional del proyecto son sólidas. La mayor carencia hoy es solo de acabado de la interfaz, no de lógica ni de arquitectura.
