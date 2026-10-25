@@ -13,7 +13,7 @@ const LANGUAGES = {
         button: "Idioma: Português",
         option: "Português",
         heading: "Desenvolvedor full stack em TypeScript",
-        title: "Portfolio · Luiz Felipe dos Santos"
+        title: "Portfólio · Luiz Felipe dos Santos"
     },
     en: {
         menu: "Menu",
@@ -27,7 +27,7 @@ const LANGUAGES = {
         button: "Idioma: Español",
         option: "Español",
         heading: "Desarrollador full stack en TypeScript",
-        title: "Portfolio · Luiz Felipe dos Santos"
+        title: "Portafolio · Luiz Felipe dos Santos"
     }
 }
 

@@ -16,7 +16,7 @@ const UI_TEXTS = {
             "Busca, filtros, troca de idioma e de tema precisam de JavaScript. O conteúdo desta página está disponível sem ele.",
         resumePdf: "Baixar CV (PDF), abre a pré-visualização",
         homeHeading: "Desenvolvedor full stack em TypeScript",
-        homeTitle: "Portfolio · Luiz Felipe dos Santos",
+        homeTitle: "Portfólio · Luiz Felipe dos Santos",
         homeDescription:
             "Portfólio de Luiz Felipe dos Santos, desenvolvedor full stack em TypeScript: projetos, trajetória e contato.",
         heroViewProjects: "Ver projetos",
@@ -104,7 +104,7 @@ const UI_TEXTS = {
             "La búsqueda, los filtros y el cambio de idioma y de tema necesitan JavaScript. El contenido de esta página está disponible sin él.",
         resumePdf: "Descargar CV (PDF), abre la vista previa",
         homeHeading: "Desarrollador full stack en TypeScript",
-        homeTitle: "Portfolio · Luiz Felipe dos Santos",
+        homeTitle: "Portafolio · Luiz Felipe dos Santos",
         homeDescription:
             "Portafolio de Luiz Felipe dos Santos, desarrollador full stack en TypeScript: proyectos, trayectoria y contacto.",
         heroViewProjects: "Ver proyectos",
