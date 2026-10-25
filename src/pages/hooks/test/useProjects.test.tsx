@@ -9,6 +9,8 @@ import projectsApi from "@/store/api/projects.api"
 import createStore from "@/store/createStore"
 import buildProjectRecord from "@/testUtils/buildProjectRecord"
 import buildProjectRecords from "@/testUtils/buildProjectRecords"
+import failFetchAfter from "@/testUtils/failFetchAfter"
+import holdFetchAfter from "@/testUtils/holdFetchAfter"
 import stubContentFetch from "@/testUtils/stubContentFetch"
 import type ProjectRecord from "@/types/project/ProjectRecord.types"
 
@@ -85,51 +87,6 @@ function stubProjects(records: ProjectRecord[]) {
 
 function projectRequests(fetchMock: ReturnType<typeof stubContentFetch>) {
     return fetchMock.mock.calls.filter(([url]) => String(url).includes("projects.json")).length
-}
-
-function ignore() {}
-
-function holdFetchAfter(fetchMock: ReturnType<typeof stubContentFetch>, allowed: number) {
-    let release = ignore
-    const gate = new Promise<void>((resolve) => {
-        release = resolve
-    })
-    let calls = 0
-    vi.stubGlobal(
-        "fetch",
-        vi.fn(async (input: string | URL | Request) => {
-            calls += 1
-
-            if (calls > allowed) {
-                await gate
-            }
-
-            return fetchMock(input)
-        })
-    )
-
-    return release
-}
-
-function failFetchAfter(fetchMock: ReturnType<typeof stubContentFetch>, allowed: number) {
-    let calls = 0
-    let shouldFail = true
-    vi.stubGlobal(
-        "fetch",
-        vi.fn(async (input: string | URL | Request) => {
-            calls += 1
-
-            if (calls > allowed && shouldFail) {
-                return new Response("", { status: 500 })
-            }
-
-            return fetchMock(input)
-        })
-    )
-
-    return () => {
-        shouldFail = false
-    }
 }
 
 async function settled() {
