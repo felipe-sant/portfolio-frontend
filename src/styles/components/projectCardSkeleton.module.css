@@ -1,0 +1,11 @@
+.card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}

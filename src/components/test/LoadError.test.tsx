@@ -46,6 +46,23 @@ describe("LoadError", () => {
         expect(document.activeElement).toBe(alert)
     })
 
+    it("não renderiza o parágrafo de descrição quando ela não é passada", () => {
+        const { container } = render(
+            <LoadError title="Sem descrição" retryLabel="Tentar de novo" onRetry={vi.fn()} />
+        )
+
+        expect(screen.getByText("Sem descrição")).toBeInTheDocument()
+        expect(container.querySelectorAll("p")).toHaveLength(1)
+    })
+
+    it("não tem violações de acessibilidade sem descrição", async () => {
+        const { container } = render(
+            <LoadError title="Sem descrição" retryLabel="Tentar de novo" onRetry={vi.fn()} />
+        )
+
+        await expectNoAxeViolations(container)
+    }, 15000)
+
     it("não tem violações de acessibilidade", async () => {
         const { container } = renderLoadError()
 

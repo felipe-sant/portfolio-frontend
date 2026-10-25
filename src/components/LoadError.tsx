@@ -4,7 +4,7 @@ import Icon from "@/components/Icon"
 
 interface LoadErrorProps {
     title: string
-    description: string
+    description?: string
     retryLabel: string
     onRetry: () => void
     id?: string
@@ -16,7 +16,7 @@ function LoadError({ title, description, retryLabel, onRetry, id }: LoadErrorPro
             <Icon name="alert" size={20} />
             <div className={css.text}>
                 <p className={css.title}>{title}</p>
-                <p className={css.description}>{description}</p>
+                {description && <p className={css.description}>{description}</p>}
             </div>
             <Button variant="secondary" className={css.retry} onClick={onRetry}>
                 {retryLabel}
