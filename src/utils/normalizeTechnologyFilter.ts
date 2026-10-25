@@ -1,12 +1,10 @@
-function toKey(text: string): string {
-    return text.normalize("NFD").replace(/\p{M}/gu, "").toLowerCase()
-}
+import toTechnologyKey from "@/utils/toTechnologyKey"
 
 function normalizeTechnologyFilter(values: string[]): string[] {
     const byKey = new Map<string, string>()
 
     values.forEach((value) => {
-        const key = toKey(value)
+        const key = toTechnologyKey(value)
 
         if (!byKey.has(key)) {
             byKey.set(key, value)
