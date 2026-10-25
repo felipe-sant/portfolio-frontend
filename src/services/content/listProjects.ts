@@ -38,7 +38,9 @@ function listAvailableTechnologies(records: ProjectRecord[], lang: SupportedLang
         })
     })
 
-    return [...byKey.values()].toSorted((first, second) => first.localeCompare(second, lang))
+    const collator = new Intl.Collator(lang, { sensitivity: "base" })
+
+    return [...byKey.values()].toSorted(collator.compare)
 }
 
 function listAvailableYears(records: ProjectRecord[]): string[] {
