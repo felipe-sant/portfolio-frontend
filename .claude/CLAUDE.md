@@ -185,6 +185,7 @@ contra `npm run preview:fatec` (`base` `/ra2581392423047/`), que serve o `dist/`
 inicial (relativa ao `baseURL`). Toda tela nova acrescenta o caminho em `e2e/support/routesUnderTest.ts`
 (o axe, com `color-contrast` ligada, roda em todas) e, se tiver teclado próprio, um roteiro em
 `e2e/<tema>.spec.ts`. Violação do axe se corrige na marcação ou no CSS, nunca desligando regra. Os projetos rodam com `reducedMotion: "reduce"`: roteiro que precisa de movimento pleno usa `test.use({ reducedMotion: "no-preference" })`. Elemento com `useReveal` leva `suppressHydrationWarning` (o `data-reveal` do HTML do servidor difere do primeiro render no navegador).
+
 **Toda tela nova entrega os E2E dos próprios fluxos**: clique e navegação, estados de carregamento e erro (forçados por `page.route`) e HTML sem JavaScript (`javaScriptEnabled: false`), com o ID do requisito no título (`"RF-LAY-18: o botão alterna o tema"`) e a prova de que o teste falha quando o comportamento quebra (mutação desfeita). A base são `e2e/theme`, `motion`, `language`, `navigation`, `footer`, `home-flows`, `not-found` e `no-javascript`; o apoio fica em `e2e/support/` (`readContent`, `readProfile`, `readFeaturedProjects`, `readAppVersion`, `readStackOffset`, `openPreferences`, `uiTexts`). O E2E não importa `src/`: o texto de cada idioma de que ele precisa vive em `uiTexts`.
 
 O CI (`.github/workflows/`) roda `npm run build`, `npm run lint`, a suíte de testes e o job `e2e`
