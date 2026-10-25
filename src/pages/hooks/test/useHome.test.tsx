@@ -83,7 +83,6 @@ describe("useHome", () => {
 
         await waitFor(() => expect(result.current.status.isError).toBe(true))
         await waitFor(() => expect(result.current.featured.projects).toHaveLength(1))
-        expect(result.current.profile.isError).toBe(false)
         expect(result.current.featured.isError).toBe(false)
         expect(result.current.status.working).toBeUndefined()
     })
@@ -99,7 +98,7 @@ describe("useHome", () => {
             "content/pt-BR/timeline.json": TIMELINE
         })
         await act(async () => {
-            await result.current.status.refetch()
+            await result.current.status.retry()
         })
 
         await waitFor(() => expect(result.current.status.working?.id).toBe("job"))

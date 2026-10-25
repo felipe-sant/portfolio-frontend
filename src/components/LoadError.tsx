@@ -1,4 +1,3 @@
-import type { Ref } from "react"
 import css from "@/styles/components/loadError.module.css"
 import Button from "@/components/Button"
 import Icon from "@/components/Icon"
@@ -8,12 +7,12 @@ interface LoadErrorProps {
     description: string
     retryLabel: string
     onRetry: () => void
-    ref?: Ref<HTMLDivElement>
+    id?: string
 }
 
-function LoadError({ title, description, retryLabel, onRetry, ref }: LoadErrorProps) {
+function LoadError({ title, description, retryLabel, onRetry, id }: LoadErrorProps) {
     return (
-        <div className={css.error} role={"alert"} tabIndex={-1} ref={ref}>
+        <div className={css.error} role={"alert"} tabIndex={-1} id={id}>
             <Icon name="alert" size={20} />
             <div className={css.text}>
                 <p className={css.title}>{title}</p>
