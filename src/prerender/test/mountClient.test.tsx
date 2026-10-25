@@ -107,7 +107,7 @@ describe("mountClient sem caminho pré-renderizado", () => {
 
         await screen.findByRole("heading", { name: "Desenvolvedor full stack em TypeScript" })
         expect(document.head.querySelectorAll("title")).toHaveLength(1)
-        expect(document.title).toBe("Luiz Felipe dos Santos · Desenvolvedor full stack")
+        expect(document.title).toBe("Portfolio · Luiz Felipe dos Santos")
         expect(document.head.querySelectorAll("meta[name='description']")).toHaveLength(1)
     })
 })
@@ -133,6 +133,26 @@ describe("mountClient com caminho pré-renderizado", () => {
         expect(hydrationWarnings(consoleSpies.warn)).toEqual([])
         expect(errorListener).not.toHaveBeenCalled()
         expect(document.head.querySelectorAll("title")).toHaveLength(1)
+    })
+
+    it("hidrata sem erro nem aviso com IntersectionObserver disponível", async () => {
+        class StubObserver {
+            observe = vi.fn()
+            disconnect = vi.fn()
+            unobserve = vi.fn()
+            takeRecords = vi.fn(() => [])
+        }
+        vi.stubGlobal("IntersectionObserver", StubObserver)
+        injectPrerendered("en.html", rootElement)
+        await i18n.changeLanguage("en")
+        window.history.pushState({}, "", "/en")
+        const consoleSpies = spyOnConsole()
+
+        await mount()
+        await settle()
+
+        expect(consoleSpies.error).not.toHaveBeenCalled()
+        expect(hydrationWarnings(consoleSpies.warn)).toEqual([])
     })
 
     it("hidrata sem erro com tema escuro salvo e movimento reduzido", async () => {

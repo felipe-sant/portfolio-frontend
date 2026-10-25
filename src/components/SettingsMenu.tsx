@@ -11,6 +11,8 @@ function SettingsMenu() {
     const { t } = useTranslation()
     const { isOpen, isMounted, toggle, containerRef, buttonRef, panelProps } = useDropdown()
     const panelId = useId()
+    const preferencesId = useId()
+    const accessibilityId = useId()
 
     return (
         <div ref={containerRef} className={css.menu}>
@@ -24,8 +26,18 @@ function SettingsMenu() {
             />
             {isMounted && (
                 <div id={panelId} className={`${css.panel} ${dropdown.panel}`} {...panelProps}>
-                    <ThemeToggle variant="labeled" />
-                    <MotionToggle variant="labeled" />
+                    <div role={"group"} aria-labelledby={preferencesId} className={css.group}>
+                        <p id={preferencesId} className={css.title}>
+                            {t("settings.preferences")}
+                        </p>
+                        <ThemeToggle variant="labeled" />
+                    </div>
+                    <div role={"group"} aria-labelledby={accessibilityId} className={css.group}>
+                        <p id={accessibilityId} className={css.title}>
+                            {t("settings.accessibility")}
+                        </p>
+                        <MotionToggle variant="labeled" />
+                    </div>
                 </div>
             )}
         </div>

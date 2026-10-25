@@ -38,6 +38,19 @@ describe("SettingsMenu", () => {
         expect(screen.getByRole("button", { name: "Reduzir movimento" })).toBeInTheDocument()
     })
 
+    it("agrupa o tema em Preferências e o movimento em Acessibilidade", async () => {
+        render(<SettingsMenu />)
+
+        await userEvent.click(screen.getByRole("button", { name: "Configurações" }))
+
+        expect(screen.getByRole("group", { name: "Preferências" })).toContainElement(
+            screen.getByRole("button", { name: "Tema escuro" })
+        )
+        expect(screen.getByRole("group", { name: "Acessibilidade" })).toContainElement(
+            screen.getByRole("button", { name: "Reduzir movimento" })
+        )
+    })
+
     it("mantém aberto ao alternar tema e movimento", async () => {
         render(<SettingsMenu />)
         await userEvent.click(screen.getByRole("button", { name: "Configurações" }))

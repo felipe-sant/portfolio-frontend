@@ -20,7 +20,8 @@ const ICON_NAMES = [
     "star",
     "motion",
     "settings",
-    "copy"
+    "copy",
+    "arrowRight"
 ] as const
 
 export default ICON_NAMES

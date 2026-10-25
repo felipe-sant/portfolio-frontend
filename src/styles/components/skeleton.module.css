@@ -37,6 +37,10 @@
     aspect-ratio: 1 / 1;
 }
 
+.card {
+    height: 6.5rem;
+}
+
 .full {
     width: 100%;
 }

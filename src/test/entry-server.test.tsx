@@ -5,22 +5,24 @@ import render from "@/entry-server"
 import prerenderRoutes from "@/prerender/prerenderRoutes"
 import routes from "@/routers/routes"
 import buildProfile from "@/testUtils/buildProfile"
+import buildProjectRecord from "@/testUtils/buildProjectRecord"
+import buildTimelineItemRecord from "@/testUtils/buildTimelineItemRecord"
 import stubContentFetch from "@/testUtils/stubContentFetch"
 
 const EXPECTED_BY_FILE: Record<string, { heading: string; content: string; language: string }> = {
     "pt-BR.html": {
         heading: "Desenvolvedor full stack em TypeScript",
-        content: "Trabalho em produtos web de ponta a ponta, do banco à interface.",
+        content: "Trabalho em produtos web de ponta a ponta.",
         language: "pt-BR"
     },
     "en.html": {
         heading: "Full stack developer in TypeScript",
-        content: "I build web products end to end, from the database to the interface.",
+        content: "Trabalho em produtos web de ponta a ponta.",
         language: "en"
     },
     "es.html": {
         heading: "Desarrollador full stack en TypeScript",
-        content: "Trabajo en productos web de punta a punta, de la base de datos a la interfaz.",
+        content: "Trabalho em produtos web de ponta a ponta.",
         language: "es"
     },
     "404.html": {
@@ -32,13 +34,32 @@ const EXPECTED_BY_FILE: Record<string, { heading: string; content: string; langu
 
 const { targets } = listTargets(routes, prerenderRoutes, { "pt-BR": [], en: [], es: [] })
 
+const FEATURED_TITLE = "Projeto Destaque Pré-renderizado"
+
+function buildHomeFiles() {
+    const files: Record<string, unknown> = {}
+
+    for (const language of ["pt-BR", "en", "es"]) {
+        files[`content/${language}/profile.json`] = buildProfile()
+        files[`content/${language}/timeline.json`] = {
+            items: [
+                buildTimelineItemRecord({
+                    title: "Cargo em Curso",
+                    organization: "Empresa Exemplo"
+                })
+            ]
+        }
+        files[`content/${language}/projects.json`] = {
+            items: [buildProjectRecord({ title: FEATURED_TITLE, featured: true })]
+        }
+    }
+
+    return files
+}
+
 beforeEach(() => {
     vi.stubGlobal("ReadableStream", ReadableStream)
-    stubContentFetch({
-        "content/pt-BR/profile.json": buildProfile(),
-        "content/en/profile.json": buildProfile(),
-        "content/es/profile.json": buildProfile()
-    })
+    stubContentFetch(buildHomeFiles())
 })
 
 afterEach(() => {
@@ -54,10 +75,26 @@ describe("render", () => {
 
             const result = await render(target)
 
-            expect(result.html).toContain(`<h1>${expected.heading}</h1>`)
+            expect(result.html).toMatch(new RegExp(`<h1[^>]*>${expected.heading}</h1>`))
             expect(result.html).toContain(expected.content)
             expect(result.html).toContain("contato@example.com")
             expect(result.language).toBe(expected.language)
+        }
+    )
+
+    it.each(["pt-BR.html", "en.html", "es.html"])(
+        "renderiza o status, a faixa de stack e um destaque em %s",
+        async (file) => {
+            const target = targets.find((item) => item.file === file)
+            if (!target) {
+                throw new Error(`Alvo ${file} não encontrado`)
+            }
+
+            const { html } = await render(target)
+
+            expect(html).toContain("Cargo em Curso")
+            expect(html).toContain("TypeScript")
+            expect(html).toContain(FEATURED_TITLE)
         }
     )
 
@@ -116,6 +153,7 @@ describe("render", () => {
 
     it("escapa o menor como \\u003c no estado", async () => {
         stubContentFetch({
+            ...buildHomeFiles(),
             "content/pt-BR/profile.json": buildProfile({ role: "</script><b>" })
         })
 

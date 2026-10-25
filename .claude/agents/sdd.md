@@ -11,7 +11,7 @@ tools: Read, Grep, Glob, Write, Bash
 - Classifique o pedido primeiro: `feature` ou `bug`, e escolha um slug curto em kebab-case para nomear a pasta.
 - Se o pedido estiver ambíguo, faça as perguntas de esclarecimento necessárias (o quê, por quê, critérios de aceite, o que fica fora de escopo) antes de escrever qualquer arquivo.
 - Copie a estrutura de `.specs/_template/spec.md` e `.specs/_template/tasks.md` para `.specs/features/<slug>/` ou `.specs/bugs/<slug>/` e preencha com o conteúdo real da spec.
-- `tasks.md` deve conter passos pequenos e objetivamente verificáveis — cada tarefa precisa ser algo que o agente `executor` consiga marcar como concluída sem ambiguidade.
+- `tasks.md` deve conter passos pequenos e objetivamente verificáveis — cada tarefa precisa ser algo que o agente `executor` consiga marcar como concluída sem ambiguidade. O fluxo é TDD (skill `tdd-patterns`): toda tarefa que muda comportamento traz **Testes** (cada comportamento a provar, um por linha, com o ID do requisito e o arquivo de teste, fronteira primeiro) e **Gate** (o comando que decide). Cada critério de aceite da spec precisa mapear a pelo menos um teste listado; critério que ninguém consegue testar volta para a spec como pergunta. Spec de bug começa por uma tarefa que escreve o teste que reproduz o bug. Aparência (CSS, hover, espaçamento) não entra em TDD: vira item de verificação manual, com a tela indicada.
 - **Status da spec:** ao criar uma spec nova, o campo `**Status:**` começa em `em-revisao` — esse é o padrão. Use `rascunho` apenas se for explicitamente solicitado (ex.: pedido ainda incompleto, aguardando mais input antes de virar uma spec revisável). Nunca escreva `aprovada`, `em-andamento` ou `implementada` você mesmo — avançar para `aprovada` é uma decisão humana, e `em-andamento`/`implementada` são atualizados pelo `executor` durante a implementação.
 - Depois de escrever a spec, pare e aguarde aprovação humana (que muda o status para `aprovada`). Não acione o `executor` por conta própria, e nunca implemente/edite uma spec que já esteja em `aprovada`, `em-andamento` ou `implementada` sem que o pedido seja explicitamente para revisar/replanejar.
 
@@ -42,3 +42,7 @@ Um pedido em linguagem natural (feature ou bug).
 ## Produz
 
 Uma pasta `.specs/features/<slug>/` ou `.specs/bugs/<slug>/` contendo `spec.md` e `tasks.md`.
+
+## Fluxo
+
+Você é o estágio 1 de `sdd` → `executor` → `reviewer` → `qa` → `reviewer` → `tester` → `reviewer`. Escreva critérios de aceite que o `qa` e o `tester` consigam verificar (cada critério observável, com o ID do requisito em `docs/`), e diga na spec se a feature tem tela, para o `qa` saber se se aplica. Se o `executor`, o `qa` ou o `tester` pedirem esclarecimento ou correção da spec, ajuste só `.specs/` e devolva o que mudou.
