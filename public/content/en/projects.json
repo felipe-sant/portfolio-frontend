@@ -250,7 +250,7 @@
         },
         {
             "id": "01a13216-9960-7a66-8288-462bf96ec9a5",
-            "title": "Expense Control (Controle de Despesas)",
+            "title": "Expense Control",
             "summary": "Aplicação de controle de despesas pessoais com CRUD completo — criar, listar, editar e excluir — usando MongoDB.",
             "date": "2025-06",
             "types": ["web", "api"],
@@ -332,7 +332,7 @@
         },
         {
             "id": "01a13229-0594-7b2f-a012-ecf61257f6ad",
-            "title": "Unit Converter (Conversor de Unidades)",
+            "title": "Unit Converter",
             "summary": "Conversor de unidades de comprimento, peso e temperatura, com interface simples e troca rápida entre unidade de origem e destino.",
             "date": "2024-09",
             "types": ["web"],
