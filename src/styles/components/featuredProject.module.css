@@ -97,12 +97,26 @@
     color: var(--text-strong);
 }
 
+.item:focus-within .cta {
+    color: var(--text-link);
+}
+
 @media (hover: hover) {
-    .media {
+    .media,
+    .body {
         transition: transform var(--dur-base) var(--ease);
     }
 
-    .item:hover .media {
+    .cta {
+        transition: color var(--dur-base) var(--ease);
+    }
+
+    .item:hover .cta {
+        color: var(--text-link);
+    }
+
+    .item:hover .media,
+    .item:hover .body {
         transform: translateY(-3px);
     }
 }
