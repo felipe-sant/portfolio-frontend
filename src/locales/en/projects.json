@@ -16,6 +16,8 @@
         "title": "A–Z"
     },
     "filters": {
+        "open": "Filters",
+        "openWithCount": "Filters ({{count}})",
         "type": {
             "label": "Type",
             "all": "All"
@@ -25,6 +27,17 @@
             "academic": "Academic",
             "personal": "Personal",
             "professional": "Professional"
+        },
+        "modal": {
+            "title": "Filters",
+            "summaryNone": "No filters selected",
+            "summary_one": "{{count}} filter selected",
+            "summary_other": "{{count}} filters selected",
+            "technology": "Technology",
+            "year": "Year",
+            "close": "Close",
+            "clear": "Clear",
+            "apply": "Apply"
         }
     },
     "results": {
