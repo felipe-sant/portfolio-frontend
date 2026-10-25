@@ -36,7 +36,7 @@ describe("enums do contrato", () => {
     })
 
     it("lista o inventário fechado de ícones", () => {
-        expect(ICON_NAMES).toHaveLength(22)
+        expect(ICON_NAMES).toHaveLength(25)
         expect(new Set(ICON_NAMES).size).toBe(ICON_NAMES.length)
     })
 })
