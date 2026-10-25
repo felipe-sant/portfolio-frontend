@@ -46,7 +46,7 @@ test.describe("página não encontrada", () => {
             await expect(page.getByRole("main")).toContainText(texts.notFoundLabel)
             await expect(page.getByRole("main")).toContainText(texts.notFoundDescription)
             await expect(page.getByRole("banner")).toBeVisible()
-            await expect(page.getByRole("contentinfo")).toBeVisible()
+            await expect(page.getByRole("contentinfo")).toHaveCount(0)
             await expect(page.locator("html")).toHaveAttribute("lang", language)
         })
 
@@ -96,7 +96,7 @@ test.describe("página de erro", () => {
 
         await expect(page.getByRole("banner")).toHaveCount(1)
         await expect(page.getByRole("main")).toHaveCount(1)
-        await expect(page.getByRole("contentinfo")).toHaveCount(1)
+        await expect(page.getByRole("contentinfo")).toHaveCount(0)
         await expect(page.getByRole("link", { name: texts.skipToContent })).toBeAttached()
         await expect(
             page.getByRole("main").getByRole("button", { name: texts.errorRetry })

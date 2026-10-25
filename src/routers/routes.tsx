@@ -19,7 +19,8 @@ const pageRoutes: RouteObject[] = [
     },
     {
         path: ROUTES.notFound,
-        element: <NotFound />
+        element: <NotFound />,
+        handle: { hideFooter: true }
     }
 ]
 
@@ -46,7 +47,8 @@ const routes: RouteObject[] = [
         children: [
             {
                 path: ROUTES.notFound,
-                element: <NotFound />
+                element: <NotFound />,
+                handle: { hideFooter: true }
             }
         ]
     }

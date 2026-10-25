@@ -53,19 +53,17 @@ afterEach(() => {
 describe("ErrorPage", () => {
     it("não tem violações de acessibilidade", async () => {
         const { container } = renderErrorPage()
-        await screen.findByRole("button", { name: "Copiar e-mail" })
 
         await expectNoAxeViolations(container)
     }, 15000)
 
-    it("renderiza banner, main único com id e contentinfo", async () => {
+    it("renderiza banner e main único com id, sem rodapé", async () => {
         renderErrorPage()
 
         expect(screen.getByRole("banner")).toBeInTheDocument()
         expect(screen.getAllByRole("main")).toHaveLength(1)
         expect(screen.getByRole("main")).toHaveAttribute("id", "main-content")
-        expect(screen.getByRole("contentinfo")).toBeInTheDocument()
-        await screen.findByRole("button", { name: "Copiar e-mail" })
+        expect(screen.queryByRole("contentinfo")).not.toBeInTheDocument()
     })
 
     it("tem o link Pular para o conteúdo como primeiro foco", async () => {
@@ -76,7 +74,6 @@ describe("ErrorPage", () => {
         const skip = screen.getByRole("link", { name: "Pular para o conteúdo" })
         expect(skip).toHaveFocus()
         expect(skip).toHaveAttribute("href", "#main-content")
-        await screen.findByRole("button", { name: "Copiar e-mail" })
     })
 
     it("renderiza o título, o texto e as ações", async () => {
@@ -93,7 +90,6 @@ describe("ErrorPage", () => {
             "href",
             "/pt-BR"
         )
-        await screen.findByRole("button", { name: "Copiar e-mail" })
     })
 
     it("recarrega a página ao clicar em Tentar novamente", async () => {
@@ -102,7 +98,6 @@ describe("ErrorPage", () => {
         await userEvent.click(screen.getByRole("button", { name: "Tentar novamente" }))
 
         expect(reloadPage).toHaveBeenCalledTimes(1)
-        await screen.findByRole("button", { name: "Copiar e-mail" })
     })
 
     it("não mostra a mensagem técnica de um Error", async () => {
@@ -110,7 +105,6 @@ describe("ErrorPage", () => {
 
         expect(screen.queryByText("Falha proposital de teste")).not.toBeInTheDocument()
         expect(screen.queryByText("Erro desconhecido.")).not.toBeInTheDocument()
-        await screen.findByRole("button", { name: "Copiar e-mail" })
     })
 
     it("mostra a mesma página quando o valor lançado não é um Error", async () => {
@@ -119,7 +113,6 @@ describe("ErrorPage", () => {
         expect(screen.getByRole("heading", { name: "Erro inesperado" })).toBeInTheDocument()
         expect(screen.queryByText("falha que não é um Error")).not.toBeInTheDocument()
         expect(screen.queryByText("Erro desconhecido.")).not.toBeInTheDocument()
-        await screen.findByRole("button", { name: "Copiar e-mail" })
     })
 
     it("define title, description e noindex em pt-BR, en e es", async () => {
@@ -164,10 +157,9 @@ describe("ErrorPage", () => {
         renderErrorPage()
 
         expect(screen.queryAllByRole("link", { current: "page", hidden: true })).toHaveLength(0)
-        await screen.findByRole("button", { name: "Copiar e-mail" })
     })
 
-    it("aplica inert no skip link, main e rodapé com o menu aberto", async () => {
+    it("aplica inert no skip link e main com o menu aberto", async () => {
         renderErrorPage()
         const skip = screen.getByRole("link", { name: "Pular para o conteúdo", hidden: true })
 
@@ -175,7 +167,6 @@ describe("ErrorPage", () => {
 
         expect(skip).toHaveAttribute("inert")
         expect(document.getElementById("main-content")).toHaveAttribute("inert")
-        expect(document.querySelector("footer")).toHaveAttribute("inert")
         await act(async () => {})
     })
 

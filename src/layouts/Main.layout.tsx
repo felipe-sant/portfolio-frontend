@@ -1,6 +1,6 @@
 import { Suspense, useRef } from "react"
 import { useTranslation } from "react-i18next"
-import { Outlet, ScrollRestoration, useLocation } from "react-router-dom"
+import { Outlet, ScrollRestoration, useLocation, useMatches } from "react-router-dom"
 import Footer from "@/components/Footer"
 import Header from "@/components/Header"
 import SkipLink from "@/components/SkipLink"
@@ -18,6 +18,9 @@ function MainLayout() {
     const { t } = useTranslation()
     const { pathname } = useLocation()
     const menu = useMobileMenu()
+    const hideFooter = useMatches().some(
+        (match) => (match.handle as { hideFooter?: boolean } | undefined)?.hideFooter
+    )
     const mainRef = useRef<HTMLElement>(null)
     useRouteFocus(mainRef)
 
@@ -42,10 +45,12 @@ function MainLayout() {
                     <Outlet />
                 </Suspense>
             </main>
-            <Footer
-                variant={activeItem === "contact" ? "navigation" : "default"}
-                inert={menu.isOpen}
-            />
+            {!hideFooter && (
+                <Footer
+                    variant={activeItem === "contact" ? "navigation" : "default"}
+                    inert={menu.isOpen}
+                />
+            )}
             <ScrollRestoration />
         </div>
     )

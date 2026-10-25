@@ -69,7 +69,7 @@ afterEach(() => {
 
 describe("render", () => {
     it.each(targets.map((target) => [target.file, target] as const))(
-        "renderiza %s com o h1, o conteúdo principal e o rodapé com o perfil",
+        "renderiza %s com o h1, o conteúdo principal e o rodapé conforme a rota",
         async (file, target) => {
             const expected = EXPECTED_BY_FILE[file]
 
@@ -77,7 +77,11 @@ describe("render", () => {
 
             expect(result.html).toMatch(new RegExp(`<h1[^>]*>${expected.heading}</h1>`))
             expect(result.html).toContain(expected.content)
-            expect(result.html).toContain("contato@example.com")
+            if (file === "404.html") {
+                expect(result.html).not.toContain("contato@example.com")
+            } else {
+                expect(result.html).toContain("contato@example.com")
+            }
             expect(result.language).toBe(expected.language)
         }
     )
