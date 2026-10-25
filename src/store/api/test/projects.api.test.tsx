@@ -329,7 +329,7 @@ function pagesOf(store: ReturnType<typeof createStore>, args: ProjectListParams)
     return result.data?.pages ?? []
 }
 
-describe("projectsApi, páginas e índice", () => {
+describe("projectsApi, páginas", () => {
     it("devolve uma página vazia, sem próxima, para conteúdo sem projeto", async () => {
         stubProjects(0)
         const store = createStore()
@@ -460,43 +460,16 @@ describe("projectsApi, páginas e índice", () => {
         ])
     })
 
-    it("devolve os 120 pares id e título em ordem recent com três chamadas de limit 50", async () => {
-        stubProjects(120)
-        const store = createStore()
-        vi.mocked(listProjects).mockClear()
-
-        const result = await store.dispatch(
-            projectsApi.endpoints.getProjectsIndex.initiate({ lang: "pt-BR" })
-        )
-
-        expect(result.data?.items).toHaveLength(120)
-        expect(result.data?.items[0]).toEqual({
-            id: "0192f1a0-0000-7000-8000-000000000120",
-            title: "Projeto 120"
-        })
-        expect(result.data?.items.at(-1)?.title).toBe("Projeto 1")
-        expect(Object.keys(result.data?.items[0] ?? {})).toEqual(["id", "title"])
-        expect(
-            vi.mocked(listProjects).mock.calls.map(([, params]) => [params.offset, params.limit])
-        ).toEqual([
-            [0, 50],
-            [50, 50],
-            [100, 50]
+    it("expõe só os endpoints de projetos usados, sem a consulta de índice", () => {
+        expect(projectsApi.endpoints).not.toHaveProperty("getProjectsIndex")
+        expect(Object.keys(projectsApi.endpoints).toSorted()).toEqual([
+            "getProject",
+            "getProjectDocumentContent",
+            "getProjectDocuments",
+            "getProjectFilterOptions",
+            "getProjects",
+            "getProjectsPages"
         ])
-        expect(
-            vi.mocked(listProjects).mock.calls.every(([, params]) => params.sort === "recent")
-        ).toBe(true)
-    })
-
-    it("converte a falha da camada local em erro no formato do contrato no índice", async () => {
-        stubContentFetch({})
-        const store = createStore()
-
-        const result = await store.dispatch(
-            projectsApi.endpoints.getProjectsIndex.initiate({ lang: "pt-BR" })
-        )
-
-        expect(result.error).toMatchObject({ status: "FETCH_ERROR" })
     })
 })
 
