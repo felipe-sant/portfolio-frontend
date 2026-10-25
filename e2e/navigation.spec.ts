@@ -100,9 +100,18 @@ test.describe("cabeçalho e navegação", () => {
 
                 await expect(page).toHaveURL(new RegExp(`/${language}${path}$`))
                 const heading = page.getByRole("heading", { level: 1 })
-                await expect(heading).toHaveText(UI_TEXTS[language].notFoundHeading)
+                const isProjects = id === "projects"
+                await expect(heading).toHaveText(
+                    isProjects
+                        ? UI_TEXTS[language].projects.heading
+                        : UI_TEXTS[language].notFoundHeading
+                )
                 await expect(heading).toBeFocused()
-                await expect(page).toHaveTitle(UI_TEXTS[language].notFoundTitle)
+                await expect(page).toHaveTitle(
+                    isProjects
+                        ? UI_TEXTS[language].projects.title
+                        : UI_TEXTS[language].notFoundTitle
+                )
             })
         }
     }
@@ -139,7 +148,7 @@ test.describe("cabeçalho e navegação", () => {
 
         await expect(page).toHaveURL(/\/pt-BR\/projects$/)
         await expect(page.getByRole("heading", { level: 1 })).toHaveText(
-            UI_TEXTS["pt-BR"].notFoundHeading
+            UI_TEXTS["pt-BR"].projects.heading
         )
     })
 
