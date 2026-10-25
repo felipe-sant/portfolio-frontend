@@ -1,23 +1,23 @@
 ## Context
 
-Projeto pessoal para praticar o ciclo completo de um produto com IA: treinar um modelo de reconhecimento de dígitos manuscritos e expor isso numa aplicação web interativa, do desenho até a predição.
+Personal project to practice the full cycle of an AI product: training a handwritten digit recognition model and exposing it in an interactive web application, from the drawing to the prediction.
 
 ## My role
 
-Desenvolvi sozinho as três camadas: o frontend (canvas de desenho), o backend (intermediário entre front e IA) e o serviço de inferência em Python, além de treinar o modelo.
+I developed all three layers on my own: the frontend (drawing canvas), the backend (intermediary between front and AI) and the Python inference service, in addition to training the model.
 
 ## Solution
 
-O usuário desenha um número de 0 a 9 num canvas HTML. Ao clicar em "Adivinhar", o frontend envia a imagem desenhada para um backend em Node.js/Express, que repassa a imagem para um serviço separado em Python (FastAPI) responsável por carregar o modelo treinado (Keras/TensorFlow) e retornar o dígito previsto.
+The user draws a number from 0 to 9 on an HTML canvas. When clicking "Adivinhar" (Guess), the frontend sends the drawn image to a Node.js/Express backend, which forwards it to a separate Python service (FastAPI) responsible for loading the trained model (Keras/TensorFlow) and returning the predicted digit.
 
 ## Technical decisions
 
-Separar a inferência de IA num serviço Python próprio, independente do backend em Node, permite usar bibliotecas de IA nativas do ecossistema Python (TensorFlow/Keras) sem forçar isso dentro do runtime JavaScript. O backend em Node atua só como intermediário/gateway, lidando com upload de arquivo (Multer) e repassando para o serviço de IA.
+Separating AI inference into its own Python service, independent from the Node backend, makes it possible to use AI libraries native to the Python ecosystem (TensorFlow/Keras) without forcing them into the JavaScript runtime. The Node backend acts only as an intermediary/gateway, handling file upload (Multer) and forwarding it to the AI service.
 
 ## Outcome
 
-A aplicação funciona corretamente de ponta a ponta — testado localmente desenhando dígitos e conferindo a predição do modelo. A demo pública está com uma limitação: o serviço de IA hospedado no Railway está fora do ar (deploy gratuito expirado), então a predição falha em produção, mesmo com o resto da aplicação no ar normalmente. Bug documentado na [issue #1 do mnist-classifier-ai](https://github.com/felipe-sant/mnist-classifier-ai/issues/1).
+The application works correctly end to end, tested locally by drawing digits and checking the model's prediction. The public demo has a limitation: the AI service hosted on Railway is down (free deploy expired), so the prediction fails in production even though the rest of the application is up normally. Bug documented in [issue #1 of mnist-classifier-ai](https://github.com/felipe-sant/mnist-classifier-ai/issues/1).
 
 ## Learnings
 
-Arquitetar um sistema poliglota (Node.js + Python) com responsabilidades bem separadas, e lidar com os desafios de manter no ar vários serviços hospedados em planos gratuitos diferentes ao mesmo tempo.
+Architecting a polyglot system (Node.js + Python) with well-separated responsibilities, and dealing with the challenges of keeping several services hosted on different free plans up at the same time.

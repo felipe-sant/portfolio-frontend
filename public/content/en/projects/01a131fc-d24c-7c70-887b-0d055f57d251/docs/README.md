@@ -1,23 +1,23 @@
 ## Context
 
-Projeto de hobby, feito só por diversão num único dia: um site de "pedido de namoro impossível de recusar", onde o botão de recusa foge do cursor sempre que o usuário tenta se aproximar dele.
+Hobby project, made just for fun in a single day: an "irresistible dating proposal" website, where the decline button runs away from the cursor whenever the user tries to get close to it.
 
 ## My role
 
-Desenvolvi sozinho, do zero ao deploy.
+I developed it on my own, from scratch to deploy.
 
 ## Solution
 
-Ao passar o mouse perto do botão "Não", a posição dele é recalculada aleatoriamente dentro da tela, tornando praticamente impossível clicar nele. O botão "Sim" aceita o convite e redireciona para uma música.
+When the mouse gets close to the "Não" (No) button, its position is randomly recalculated within the screen, making it practically impossible to click. The "Sim" (Yes) button accepts the invitation and redirects to a song.
 
 ## Technical decisions
 
-A lógica de "fuga" é simples e direta: no evento de mouseover (e no clique, como segurança extra), o botão recebe uma nova posição absoluta gerada aleatoriamente dentro de uma faixa segura da tela, via uma função utilitária de geração de posição.
+The "escape" logic is simple and direct: on the mouseover event (and on click, as extra safety), the button receives a new absolute position randomly generated within a safe area of the screen, through a position generation utility function.
 
 ## Outcome
 
-Projeto pequeno e funcional, publicado e no ar.
+Small and functional project, published and live.
 
 ## Learnings
 
-Às vezes um projeto não precisa resolver um problema sério para ser um bom exercício de frontend — foi uma forma leve de praticar manipulação de DOM e posicionamento dinâmico de elementos.
+Sometimes a project does not need to solve a serious problem to be a good frontend exercise. It was a light way to practice DOM manipulation and dynamic element positioning.

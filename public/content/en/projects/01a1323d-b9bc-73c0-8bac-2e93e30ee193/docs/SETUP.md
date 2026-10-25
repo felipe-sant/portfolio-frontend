@@ -1,34 +1,34 @@
-## Treinamento do modelo (opcional)
+## Model training (optional)
 
 ```bash
 cd player-profile-clustering-ai
 pip install -r requirements.txt
 ```
 
-Abrir e rodar `src/k-means_model.ipynb` (Jupyter). Gera `model/player-profile-clustering.onnx` e `model/scaler_params.json`.
+Open and run `src/k-means_model.ipynb` (Jupyter). It generates `model/player-profile-clustering.onnx` and `model/scaler_params.json`.
 
-## Serviço de inferência
+## Inference service
 
 ```bash
 cd player-profile-clustering-service
 npm install
 ```
 
-Crie um `.env` com:
+Create a `.env` with:
 
 ```env
-POSTGRESQL_URL=sua_connection_string_do_postgres
+POSTGRESQL_URL=your_postgres_connection_string
 ```
 
-A variável é obrigatória só para o endpoint `/api/athlete/metrics`; o `/api/match/predict` funciona sem banco, só com o modelo.
+The variable is required only for the `/api/athlete/metrics` endpoint; `/api/match/predict` works without a database, with only the model.
 
 ```bash
 npm run dev
 ```
 
-Sobe em `http://localhost:3000`.
+It starts at `http://localhost:3000`.
 
-## Testando a predição sem banco
+## Testing the prediction without a database
 
 ```bash
 curl -X POST http://localhost:3000/api/match/predict \
