@@ -73,7 +73,7 @@ describe("routes", () => {
     )
 
     it.each([["/fr/projects"], ["/projects"], ["/pt-BR/inexistente"]])(
-        "renderiza a não encontrada em %s dentro do layout com cabeçalho e rodapé padrão",
+        "renderiza a não encontrada em %s dentro do layout com cabeçalho e sem rodapé",
         async (path) => {
             renderRoutes([path])
 
@@ -81,10 +81,7 @@ describe("routes", () => {
                 /Page not found|Página não encontrada/
             )
             expect(screen.getByRole("banner")).toBeInTheDocument()
-            expect(screen.getByRole("contentinfo")).toBeInTheDocument()
-            expect(
-                screen.queryByRole("navigation", { name: /Rodapé|Footer/ })
-            ).not.toBeInTheDocument()
+            expect(screen.queryByRole("contentinfo")).not.toBeInTheDocument()
             expect(
                 screen.getByRole("link", { name: /Ver projetos|View projects/ })
             ).toBeInTheDocument()

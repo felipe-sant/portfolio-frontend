@@ -107,7 +107,7 @@ describe("mountClient sem caminho pré-renderizado", () => {
 
         await screen.findByRole("heading", { name: "Desenvolvedor full stack em TypeScript" })
         expect(document.head.querySelectorAll("title")).toHaveLength(1)
-        expect(document.title).toBe("Portfolio · Luiz Felipe dos Santos")
+        expect(document.title).toBe("Portfólio · Luiz Felipe dos Santos")
         expect(document.head.querySelectorAll("meta[name='description']")).toHaveLength(1)
     })
 })
