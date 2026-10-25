@@ -41,7 +41,9 @@
         "label": "Reduce motion"
     },
     "settings": {
-        "label": "Settings"
+        "label": "Settings",
+        "preferences": "Preferences",
+        "accessibility": "Accessibility"
     },
     "footer": {
         "contact": {
