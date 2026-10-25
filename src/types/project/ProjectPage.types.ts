@@ -7,6 +7,8 @@ type ProjectPage = {
     offset: number
     limit: number
     availableTypes: ProjectType[]
+    availableTechnologies: string[]
+    availableYears: string[]
 }
 
 export default ProjectPage

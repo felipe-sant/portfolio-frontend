@@ -148,4 +148,118 @@ describe("listProjects com os dados do protótipo", () => {
         expect(page.items).toEqual([])
         expect(page.total).toBe(0)
     })
+
+    it("filtra por uma tecnologia", () => {
+        expect(
+            listPrototype({ tech: ["React"], sort: "title" }).items.map((item) => item.title)
+        ).toEqual(["Maps", "Plataforma de cursos"])
+    })
+
+    it("combina tecnologias por e", () => {
+        const withTwo = [
+            protoRecord(1, "Plataforma de cursos", ["web"], "academic", "React"),
+            buildProjectRecord({
+                id: "0192f1a0-0000-7000-8000-000000000299",
+                title: "Fullstack",
+                stack: [
+                    {
+                        category: "frontend",
+                        items: [{ name: "React" }, { name: "Node.js" }]
+                    }
+                ]
+            }),
+            protoRecord(8, "Gateway de pagamentos", ["api"], "professional", "Node.js")
+        ]
+
+        const page = listProjects(
+            withTwo,
+            validateProjectListParams({ lang: "pt-BR", tech: ["React", "Node.js"] })
+        )
+
+        expect(page.items.map((item) => item.title)).toEqual(["Fullstack"])
+    })
+
+    it("compara a tecnologia pelo texto normalizado", () => {
+        expect(listPrototype({ tech: ["react"] }).total).toBe(2)
+        expect(listPrototype({ tech: ["node.JS"] }).total).toBe(1)
+    })
+
+    it("devolve vazio para tecnologia inexistente", () => {
+        const page = listPrototype({ tech: ["Inexistente"] })
+
+        expect(page.items).toEqual([])
+        expect(page.total).toBe(0)
+    })
+
+    it("filtra por ano e combina anos por ou", () => {
+        const dated = [
+            build(1, { date: "2024-01" }),
+            build(2, { date: "2025-06" }),
+            build(3, { date: "2026-02" })
+        ]
+        const run = (year: string[]) =>
+            listProjects(dated, validateProjectListParams({ lang: "pt-BR", year }))
+                .items.map((item) => item.date)
+                .toSorted()
+
+        expect(run(["2025"])).toEqual(["2025-06"])
+        expect(run(["2024", "2026"])).toEqual(["2024-01", "2026-02"])
+    })
+
+    it("combina tech e year com type, category e q por e", () => {
+        const page = listPrototype({
+            tech: ["Prisma"],
+            year: ["2026"],
+            type: "web",
+            category: "academic",
+            q: "estoque"
+        })
+
+        expect(page.items.map((item) => item.title)).toEqual(["Controle de estoque"])
+        expect(listPrototype({ tech: ["Prisma"], type: "web", category: "personal" }).total).toBe(0)
+        expect(listPrototype({ year: ["2020"], type: "web", category: "academic" }).total).toBe(0)
+    })
+
+    it("aplica offset e limit depois do filtro e totaliza o filtrado", () => {
+        const page = listPrototype({ tech: ["React Native"], limit: 1, offset: 1, sort: "title" })
+
+        expect(page.items.map((item) => item.title)).toEqual(["Rastreio de entregas"])
+        expect(page).toMatchObject({ total: 2, offset: 1, limit: 1 })
+    })
+
+    it("lista tecnologias sem repetição e anos do mais recente ao mais antigo, com ou sem filtros", () => {
+        const dated = [
+            build(1, {
+                date: "2024-01",
+                stack: [{ category: "frontend", items: [{ name: "React" }, { name: "Zod" }] }]
+            }),
+            build(2, {
+                date: "2026-06",
+                stack: [{ category: "frontend", items: [{ name: "react" }, { name: "Árvore" }] }]
+            }),
+            build(3, {
+                date: "2024-12",
+                stack: [{ category: "frontend", items: [{ name: "Node.js" }] }]
+            })
+        ]
+        const expected = {
+            availableTechnologies: ["Árvore", "Node.js", "React", "Zod"],
+            availableYears: ["2026", "2024"]
+        }
+
+        expect(listProjects(dated, validateProjectListParams({ lang: "pt-BR" }))).toMatchObject(
+            expected
+        )
+        expect(
+            listProjects(
+                dated,
+                validateProjectListParams({
+                    lang: "pt-BR",
+                    q: "projeto",
+                    tech: ["Zod"],
+                    year: ["2024"]
+                })
+            )
+        ).toMatchObject(expected)
+    })
 })

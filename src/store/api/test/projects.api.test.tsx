@@ -416,6 +416,25 @@ describe("projectsApi, páginas e índice", () => {
         expect(result.data?.pages[0]?.availableTypes).toEqual(["web", "api"])
     })
 
+    it("repassa tech e year e devolve a primeira página filtrada com as opções", async () => {
+        stubProjects(20)
+        const store = createStore()
+
+        const result = await store.dispatch(
+            projectsApi.endpoints.getProjectsPages.initiate({
+                lang: "pt-BR",
+                tech: ["React"],
+                year: ["2001"]
+            })
+        )
+
+        expect(result.data?.pages[0]).toMatchObject({
+            total: 8,
+            availableTechnologies: ["React", "TypeScript"],
+            availableYears: ["2001", "2000"]
+        })
+    })
+
     it("mantém a primeira página quando a segunda falha e refaz só a que faltou", async () => {
         stubProjects(20)
         const store = createStore()

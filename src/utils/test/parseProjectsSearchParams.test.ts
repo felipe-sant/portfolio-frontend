@@ -50,4 +50,34 @@ describe("parseProjectsSearchParams", () => {
     it("trata q só com espaços como sem busca", () => {
         expect(parse("q=%20%20%20").q).toBe("")
     })
+
+    it("lê todas as tecnologias e anos, sem duplicata e ordenados", () => {
+        expect(parse("tech=React&tech=Node.js&tech=react&year=2025&year=2024&year=2025")).toEqual({
+            q: "",
+            tech: ["Node.js", "React"],
+            year: ["2024", "2025"],
+            sort: "recent"
+        })
+    })
+
+    it.each([
+        ["tech vazio", "tech="],
+        ["tech só com espaços", "tech=%20"],
+        ["year curto", "year=25"],
+        ["year com mês", "year=2025-06"],
+        ["tech com 101 caracteres", `tech=${"a".repeat(101)}`]
+    ])("ignora %s", (_name, query) => {
+        expect(parse(query)).toEqual({ q: "", sort: "recent" })
+    })
+
+    it("corta tecnologias e anos em 10 valores", () => {
+        const techs = Array.from({ length: 12 }, (_value, index) => `tech=T${index}`).join("&")
+        const years = Array.from({ length: 12 }, (_value, index) => `year=${2000 + index}`).join(
+            "&"
+        )
+        const parsed = parse(`${techs}&${years}`)
+
+        expect(parsed.tech).toHaveLength(10)
+        expect(parsed.year).toHaveLength(10)
+    })
 })

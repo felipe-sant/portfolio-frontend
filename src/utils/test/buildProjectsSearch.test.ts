@@ -28,4 +28,23 @@ describe("buildProjectsSearch", () => {
 
         expect(parseProjectsSearchParams(new URLSearchParams(search)).q).toBe(q)
     })
+
+    it("mantém a ordem q, type, category, tech, year, sort com valores repetidos e ordenados", () => {
+        expect(
+            buildProjectsSearch({
+                sort: "title",
+                year: ["2025", "2024"],
+                tech: ["React", "Node.js"],
+                category: "academic",
+                type: "web",
+                q: "react"
+            })
+        ).toBe(
+            "?q=react&type=web&category=academic&tech=Node.js&tech=React&year=2024&year=2025&sort=title"
+        )
+    })
+
+    it("não escreve tech nem year ausentes ou vazios", () => {
+        expect(buildProjectsSearch({ q: "", tech: [], year: [], sort: "recent" })).toBe("")
+    })
 })

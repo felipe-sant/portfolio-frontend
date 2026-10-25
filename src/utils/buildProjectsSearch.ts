@@ -1,6 +1,8 @@
+import normalizeTechnologyFilter from "@/utils/normalizeTechnologyFilter"
+import normalizeYearFilter from "@/utils/normalizeYearFilter"
 import type ProjectsFilters from "@/types/project/ProjectsFilters.types"
 
-function buildProjectsSearch({ q, type, category, sort }: ProjectsFilters): string {
+function buildProjectsSearch({ q, type, category, tech, year, sort }: ProjectsFilters): string {
     const params = new URLSearchParams()
 
     if (q !== "") {
@@ -14,6 +16,9 @@ function buildProjectsSearch({ q, type, category, sort }: ProjectsFilters): stri
     if (category) {
         params.set("category", category)
     }
+
+    normalizeTechnologyFilter(tech ?? []).forEach((value) => params.append("tech", value))
+    normalizeYearFilter(year ?? []).forEach((value) => params.append("year", value))
 
     if (sort !== "recent") {
         params.set("sort", sort)

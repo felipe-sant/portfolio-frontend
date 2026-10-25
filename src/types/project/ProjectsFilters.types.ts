@@ -6,6 +6,8 @@ type ProjectsFilters = {
     q: string
     type?: ProjectType
     category?: ProjectCategory
+    tech?: string[]
+    year?: string[]
     sort: ProjectSort
 }
 
