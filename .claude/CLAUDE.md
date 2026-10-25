@@ -424,7 +424,7 @@ para editores compatíveis, coerente com o `.prettierrc`.
   (`src/utils/`, chamada por `useTheme.setTheme`) liga `data-theme-transition` no `<html>` durante a
   troca; `useReveal()` (`src/hooks/`, devolve `ref` e `revealProps`) e o componente `SkeletonSwap`
   são usados pela Início (destaques, cabeçalho da seção e botões finais pelo componente `Reveal`, e skeletons dos blocos), com `useReveal` escondendo só o que está abaixo da primeira tela depois da hidratação (o HTML pré-renderizado sai visível); Projetos usa `useReveal` nos cards (`ProjectCard`, por `revealIndex`) e `SkeletonSwap` na grade; `useDragScroll` (arrastar com o mouse região rolável), `useMediaQuery` (consulta de mídia por `useSyncExternalStore`), `useDebounce` e `useHasHydrated` (`false` só durante a hidratação, por `useSyncExternalStore`) completam `src/hooks/`; tokens `--dur-page`,
-  `--stagger` e `--press-scale` são neutralizados nos dois blocos de movimento reduzido.
+  `--stagger` e `--press-scale` são neutralizados nos dois blocos de movimento reduzido. O hover de `projectCard.module.css` e `featuredProject.module.css` zera o deslocamento com movimento reduzido por `:global(:root[data-motion="reduced"])` e `:global(:root:not([data-motion]))` dentro de `@media (prefers-reduced-motion: reduce)`, espelhando a lógica do `global.css`; é o único uso de `:global` em CSS Module do projeto, e não usa token como `--hover-lift` porque o `transform` computado precisa ser `none`.
 - **Alias de import `@/`** — `@/*` resolve para `src/*`. Configurado em dois lugares que precisam
   continuar concordando: `paths` no `tsconfig.app.json` (para o `tsc` e o editor) e `resolve.alias` no
   `vite.config.ts` (para o dev server e o build). Mexer em um sem o outro deixa o `tsc -b`
