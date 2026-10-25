@@ -61,6 +61,40 @@ describe("render", () => {
         }
     )
 
+    it.each([
+        ["pt-BR.html", "pt-BR"],
+        ["en.html", "en"],
+        ["es.html", "es"]
+    ])("declara canônica, quatro hreflang e JSON-LD em %s", async (file, language) => {
+        const target = targets.find((item) => item.file === file)
+        if (!target) {
+            throw new Error(`Alvo ${file} não encontrado`)
+        }
+
+        const { html } = await render(target)
+
+        expect(html).toContain(`<link rel="canonical" href="http://localhost:5173/${language}"/>`)
+        expect(html.match(/<link rel="alternate" hrefLang="[^"]+"/g)).toHaveLength(4)
+        expect(html).toContain('hrefLang="x-default" href="http://localhost:5173/en"')
+        expect(html).toContain('<script type="application/ld+json">')
+        expect(html).toContain(`http://localhost:5173/${language}#person`)
+        expect(html).toContain("https://github.com/example")
+    })
+
+    it("não declara canônica, hreflang, Open Graph nem JSON-LD no 404.html", async () => {
+        const target = targets.find((item) => item.file === "404.html")
+        if (!target) {
+            throw new Error("Alvo 404.html não encontrado")
+        }
+
+        const { html } = await render(target)
+
+        expect(html).not.toContain('rel="canonical"')
+        expect(html).not.toContain("hrefLang")
+        expect(html).not.toContain("og:title")
+        expect(html).not.toContain("application/ld+json")
+    })
+
     it("não deixa bloco de Suspense fora de linha nem o fallback de carregamento", async () => {
         for (const target of targets) {
             const { html } = await render(target)
