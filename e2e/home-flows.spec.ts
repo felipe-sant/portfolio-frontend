@@ -104,6 +104,21 @@ for (const language of LANGUAGES) {
             await expectNotFoundIn(page, language, `/projects/${featured[0].id}`)
         })
 
+        test("RF-HOME-19, NF-MO-01, A11Y-G12: com movimento reduzido o hover não desloca o destaque", async ({
+            page
+        }) => {
+            const article = page.getByRole("article").first()
+
+            await article.hover()
+
+            const transforms = await article.evaluate((element) =>
+                [element, ...element.querySelectorAll("*")].map(
+                    (node) => getComputedStyle(node).transform
+                )
+            )
+            expect(transforms.every((transform) => transform === "none")).toBe(true)
+        })
+
         test("RF-HOME-07: Baixar CV aponta para o PDF do idioma e não é um download direto", async ({
             page
         }) => {

@@ -482,10 +482,6 @@ test.describe("filtros de tipo e categoria", () => {
         page
     }) => {
         test.skip(isDesktop(page), "a linha rolável existe só abaixo de 640px")
-        test.fail(
-            true,
-            "bug: ao focar Acadêmicos a linha não rola e o botão fica cortado (issue a abrir)"
-        )
         await openProjects(page, "pt-BR")
         const row = getProjectsView(page, "pt-BR").typeGroup.locator("xpath=..")
         const buttons = row.getByRole("button")
@@ -634,10 +630,6 @@ test.describe("card", () => {
     test("RF-PROJECTS-15, NF-MO-01, A11Y-G12: com movimento reduzido o hover não desloca o card", async ({
         page
     }) => {
-        test.fail(
-            true,
-            "bug: o hover desloca o card 3px mesmo com movimento reduzido (issue a abrir)"
-        )
         await openProjects(page, "pt-BR")
         const card = getProjectsView(page, "pt-BR").cards.first()
 
