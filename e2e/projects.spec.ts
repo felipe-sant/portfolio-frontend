@@ -622,9 +622,7 @@ test.describe("card", () => {
         await page.mouse.click(target.x + target.width / 2, target.y + target.height / 2)
 
         await expect(page).toHaveURL(new RegExp(`/pt-BR/projects/${first.id}$`))
-        await expect(page.getByRole("heading", { level: 1 })).toHaveText(
-            UI_TEXTS["pt-BR"].notFoundHeading
-        )
+        await expect(page.getByRole("heading", { level: 1 })).toHaveText(first.title)
     })
 
     test("RF-PROJECTS-15, NF-MO-01, A11Y-G12: com movimento reduzido o hover não desloca o card", async ({
