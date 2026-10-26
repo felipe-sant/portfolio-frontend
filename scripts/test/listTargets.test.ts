@@ -74,7 +74,7 @@ describe("listTargets com as rotas atuais", () => {
     })
 
     it("ignora as rotas que ainda não têm tela", () => {
-        expect(ignored).toEqual(["about", "contact", "projects/:id", "projects/:id/docs/:name"])
+        expect(ignored).toEqual(["about", "contact"])
     })
 
     it("nunca lista a raiz", () => {
