@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
-import { MemoryRouter } from "react-router-dom"
+import { createMemoryRouter, MemoryRouter, RouterProvider, useLocation } from "react-router-dom"
 import { act, render, screen, within } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import ProjectDocumentSection from "@/components/ProjectDocumentSection"
@@ -60,6 +60,20 @@ function renderSection(state: DocumentState) {
         <MemoryRouter>
             <ProjectDocumentSection project={PROJECT} state={state} />
         </MemoryRouter>
+    )
+}
+
+function SectionByPath() {
+    const { pathname } = useLocation()
+
+    return (
+        <ProjectDocumentSection
+            project={PROJECT}
+            state={buildState(pathname === "/b" ? LICENSE : README, {
+                content: "x",
+                format: "text"
+            })}
+        />
     )
 }
 
@@ -185,6 +199,79 @@ describe("ProjectDocumentSection", () => {
 
         expect(scroll).toHaveBeenCalledTimes(1)
     })
+
+    it("não rola até o título ao voltar no histórico, para preservar a rolagem restaurada", async () => {
+        const scroll = vi.spyOn(Element.prototype, "scrollIntoView")
+        const router = createMemoryRouter([{ path: "*", element: <SectionByPath /> }], {
+            initialEntries: ["/a", "/b", "/c"],
+            initialIndex: 2
+        })
+        render(<RouterProvider router={router} />)
+        vi.spyOn(HTMLElement.prototype, "getBoundingClientRect").mockImplementation(function (
+            this: HTMLElement
+        ) {
+            const isTitle = this instanceof HTMLHeadingElement
+            return new DOMRect(0, isTitle ? -300 : 0, 100, isTitle ? 20 : 48)
+        })
+
+        await act(() => router.navigate(-1))
+
+        expect(screen.getByRole("heading", { level: 2, name: "LICENSE" })).toHaveFocus()
+        expect(scroll).not.toHaveBeenCalled()
+    })
+
+    it("rola até o título da âncora quando o markdown chega depois da navegação", async () => {
+        const scroll = vi.spyOn(Element.prototype, "scrollIntoView")
+        const loading = buildState(README, { status: "loading", content: undefined })
+        const { rerender } = render(
+            <MemoryRouter initialEntries={["/projeto#seção"]}>
+                <ProjectDocumentSection project={PROJECT} state={loading} />
+            </MemoryRouter>
+        )
+
+        expect(scroll).not.toHaveBeenCalled()
+
+        rerender(
+            <MemoryRouter initialEntries={["/projeto#seção"]}>
+                <ProjectDocumentSection project={PROJECT} state={buildState(README)} />
+            </MemoryRouter>
+        )
+        const target = await screen.findByRole(
+            "heading",
+            { level: 3, name: "Seção" },
+            { timeout: 10000 }
+        )
+
+        await vi.waitFor(() => expect(scroll.mock.contexts).toContain(target))
+    }, 15000)
+
+    it("rola até a âncora quando o documento já está renderizado", async () => {
+        const scroll = vi.spyOn(Element.prototype, "scrollIntoView")
+        render(
+            <MemoryRouter initialEntries={["/projeto#seção"]}>
+                <ProjectDocumentSection project={PROJECT} state={buildState(README)} />
+            </MemoryRouter>
+        )
+        const target = await screen.findByRole(
+            "heading",
+            { level: 3, name: "Seção" },
+            { timeout: 10000 }
+        )
+
+        await vi.waitFor(() => expect(scroll.mock.contexts).toContain(target))
+    }, 15000)
+
+    it("não rola quando a âncora não existe no documento", async () => {
+        const scroll = vi.spyOn(Element.prototype, "scrollIntoView")
+        render(
+            <MemoryRouter initialEntries={["/projeto#inexistente"]}>
+                <ProjectDocumentSection project={PROJECT} state={buildState(README)} />
+            </MemoryRouter>
+        )
+        await screen.findByRole("heading", { level: 3, name: "Seção" }, { timeout: 10000 })
+
+        expect(scroll).not.toHaveBeenCalled()
+    }, 15000)
 
     it("não move o foco na primeira renderização", () => {
         renderSection(buildState(LICENSE, { content: "x" }))

@@ -1,5 +1,7 @@
 import { lazy, Suspense, useEffect, useId, useRef } from "react"
 import { useTranslation } from "react-i18next"
+import { useLocation, useNavigationType } from "react-router-dom"
+import useScrollToHash from "@/hooks/useScrollToHash"
 import LoadError from "@/components/LoadError"
 import ProjectDocumentsNav from "@/components/ProjectDocumentsNav"
 import Skeleton from "@/components/Skeleton"
@@ -31,6 +33,10 @@ function ProjectDocumentSection({ project, state }: ProjectDocumentSectionProps)
     const titleId = useId()
     const navRef = useRef<HTMLElement>(null)
     const titleRef = useRef<HTMLHeadingElement>(null)
+    const sectionRef = useRef<HTMLElement>(null)
+    const location = useLocation()
+    const navigationType = useNavigationType()
+    const isHistoryRestore = navigationType === "POP" && location.key !== "default"
     const documentName = state.document?.name
     const previousName = useRef(documentName)
 
@@ -49,17 +55,19 @@ function ProjectDocumentSection({ project, state }: ProjectDocumentSectionProps)
         title.focus({ preventScroll: true })
         const navBottom = navRef.current?.getBoundingClientRect().bottom ?? 0
 
-        if (title.getBoundingClientRect().top < navBottom) {
+        if (!isHistoryRestore && title.getBoundingClientRect().top < navBottom) {
             title.scrollIntoView()
         }
-    }, [documentName])
+    }, [documentName, isHistoryRestore])
+
+    useScrollToHash(sectionRef, location.hash, state.status === "success" && !isHistoryRestore)
 
     if (!state.document) {
         return null
     }
 
     return (
-        <section className={css.section}>
+        <section ref={sectionRef} className={css.section}>
             <ProjectDocumentsNav
                 navRef={navRef}
                 projectId={project.id}
