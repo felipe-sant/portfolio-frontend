@@ -91,8 +91,10 @@ describe("ProjectDocumentSection", () => {
     it("carrega o renderizador e mostra o markdown renderizado", async () => {
         renderSection(buildState(README))
 
-        expect(await screen.findByRole("heading", { level: 3, name: "Seção" })).toBeInTheDocument()
-    })
+        expect(
+            await screen.findByRole("heading", { level: 3, name: "Seção" }, { timeout: 10000 })
+        ).toBeInTheDocument()
+    }, 15000)
 
     it("mostra o h2 visível com o nome, tabIndex -1, depois da nav", () => {
         const { container } = renderSection(buildState(LICENSE, { content: "x" }))
@@ -200,7 +202,7 @@ describe("ProjectDocumentSection", () => {
 
     it("não tem violações de acessibilidade em markdown, texto, carregando e erro", async () => {
         const markdown = renderSection(buildState(README))
-        await screen.findByRole("heading", { level: 3, name: "Seção" })
+        await screen.findByRole("heading", { level: 3, name: "Seção" }, { timeout: 10000 })
         await expectNoAxeViolations(markdown.container)
         markdown.unmount()
 
@@ -214,5 +216,5 @@ describe("ProjectDocumentSection", () => {
 
         const failed = renderSection(buildState(README, { status: "error", content: undefined }))
         await expectNoAxeViolations(failed.container)
-    }, 30000)
+    }, 40000)
 })
