@@ -97,12 +97,6 @@
             "category": "tooling",
             "items": [
                 {
-                    "name": "Git"
-                },
-                {
-                    "name": "GitHub"
-                },
-                {
                     "name": "Docker"
                 },
                 {

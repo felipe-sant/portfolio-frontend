@@ -1,13 +1,22 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
 import { Provider } from "react-redux"
-import { screen } from "@testing-library/react"
+import { render, screen } from "@testing-library/react"
+import listProjects from "@/services/content/listProjects"
 import projectsApi from "@/store/api/projects.api"
+import createStore from "@/store/createStore"
+import buildProfile from "@/testUtils/buildProfile"
 import buildProjectRecord from "@/testUtils/buildProjectRecord"
 import parseUntyped from "@/testUtils/parseUntyped"
 import renderWithStore from "@/testUtils/renderWithStore"
 import stubContentFetch from "@/testUtils/stubContentFetch"
 import type SupportedLanguage from "@/types/language/SupportedLanguage.types"
 import type ProjectListParams from "@/types/project/ProjectListParams.types"
+
+vi.mock("@/services/content/listProjects", async (importOriginal) => {
+    const original = await importOriginal<typeof import("@/services/content/listProjects")>()
+
+    return { default: vi.fn(original.default) }
+})
 
 type Endpoint = "list" | "detail" | "documents" | "content"
 
@@ -284,5 +293,265 @@ describe("projectsApi", () => {
         expect(fetchMock.mock.calls.map(([url]) => String(url))).toEqual([
             "/ra2581392423047/content/pt-BR/projects.json"
         ])
+    })
+})
+
+function PagesReader() {
+    const { data } = projectsApi.useGetProjectsPagesInfiniteQuery({ lang: "pt-BR" })
+
+    return <p>{data ? `total ${data.pages[0]?.total}` : "vazio"}</p>
+}
+
+function buildRecords(count: number) {
+    return Array.from({ length: count }, (_value, index) =>
+        buildProjectRecord({
+            id: `0192f1a0-0000-7000-8000-${String(index + 1).padStart(12, "0")}`,
+            title: `Projeto ${index + 1}`,
+            date: `${2000 + Math.floor(index / 12)}-${String((index % 12) + 1).padStart(2, "0")}`,
+            types: index % 2 === 0 ? ["web"] : ["api"]
+        })
+    )
+}
+
+function stubProjects(count: number) {
+    return stubContentFetch({ "content/pt-BR/projects.json": { items: buildRecords(count) } })
+}
+
+function fetchNext(store: ReturnType<typeof createStore>, args: ProjectListParams) {
+    return store.dispatch(
+        projectsApi.endpoints.getProjectsPages.initiate(args, { direction: "forward" })
+    )
+}
+
+function pagesOf(store: ReturnType<typeof createStore>, args: ProjectListParams) {
+    const result = projectsApi.endpoints.getProjectsPages.select(args)(store.getState())
+
+    return result.data?.pages ?? []
+}
+
+describe("projectsApi, páginas", () => {
+    it("devolve uma página vazia, sem próxima, para conteúdo sem projeto", async () => {
+        stubProjects(0)
+        const store = createStore()
+
+        const result = await store.dispatch(
+            projectsApi.endpoints.getProjectsPages.initiate({ lang: "pt-BR" })
+        )
+
+        expect(result.data?.pages).toHaveLength(1)
+        expect(result.data?.pages[0]).toMatchObject({ items: [], total: 0 })
+        expect(result.hasNextPage).toBe(false)
+    })
+
+    it("traz 9 na primeira página e 1 na segunda, sem próxima, com 10 projetos", async () => {
+        stubProjects(10)
+        const store = createStore()
+
+        const firstPage = await store.dispatch(
+            projectsApi.endpoints.getProjectsPages.initiate({ lang: "pt-BR" })
+        )
+        expect(firstPage.data?.pages.map((page) => page.items.length)).toEqual([9])
+        expect(firstPage.hasNextPage).toBe(true)
+
+        const secondPage = await fetchNext(store, { lang: "pt-BR" })
+        expect(secondPage.data?.pages.map((page) => page.items.length)).toEqual([9, 1])
+        expect(secondPage.hasNextPage).toBe(false)
+    })
+
+    it("acumula 9, 18 e 20 com 20 projetos", async () => {
+        stubProjects(20)
+        const store = createStore()
+        const args = { lang: "pt-BR" } as const
+
+        await store.dispatch(projectsApi.endpoints.getProjectsPages.initiate(args))
+        const secondPage = await fetchNext(store, args)
+        expect(secondPage.hasNextPage).toBe(true)
+        const thirdPage = await fetchNext(store, args)
+
+        const counts = thirdPage.data?.pages.map((page) => page.items.length)
+        expect(counts).toEqual([9, 9, 2])
+        expect(thirdPage.hasNextPage).toBe(false)
+        expect(pagesOf(store, args)).toHaveLength(3)
+    })
+
+    it("usa só o argumento sem offset como chave e o hook relê o que o initiate assinou", async () => {
+        const fetchMock = stubProjects(3)
+        const store = createStore()
+        await store.dispatch(projectsApi.endpoints.getProjectsPages.initiate({ lang: "pt-BR" }))
+        const calls = fetchMock.mock.calls.length
+
+        render(
+            <Provider store={store}>
+                <PagesReader />
+            </Provider>
+        )
+
+        expect(await screen.findByText("total 3")).toBeInTheDocument()
+        expect(fetchMock.mock.calls.length).toBe(calls)
+        expect(pagesOf(store, { lang: "pt-BR" })).toHaveLength(1)
+    })
+
+    it("repassa q, type, category e sort e devolve availableTypes da primeira página", async () => {
+        stubProjects(10)
+        const store = createStore()
+        vi.mocked(listProjects).mockClear()
+
+        const result = await store.dispatch(
+            projectsApi.endpoints.getProjectsPages.initiate({
+                lang: "pt-BR",
+                q: "projeto",
+                type: "web",
+                category: "personal",
+                sort: "title"
+            })
+        )
+
+        expect(vi.mocked(listProjects).mock.calls[0]?.[1]).toMatchObject({
+            q: "projeto",
+            type: "web",
+            category: "personal",
+            sort: "title",
+            offset: 0,
+            limit: 9
+        })
+        expect(result.data?.pages[0]?.availableTypes).toEqual(["web", "api"])
+    })
+
+    it("repassa tech e year e devolve a primeira página filtrada sem as opções do modal", async () => {
+        stubProjects(20)
+        const store = createStore()
+
+        const result = await store.dispatch(
+            projectsApi.endpoints.getProjectsPages.initiate({
+                lang: "pt-BR",
+                tech: ["React"],
+                year: ["2001"]
+            })
+        )
+
+        expect(result.data?.pages[0]).toMatchObject({ total: 8 })
+        expect(Object.keys(result.data?.pages[0] ?? {}).toSorted()).toEqual([
+            "availableTypes",
+            "items",
+            "limit",
+            "offset",
+            "total"
+        ])
+    })
+
+    it("mantém a primeira página quando a segunda falha e refaz só a que faltou", async () => {
+        stubProjects(20)
+        const store = createStore()
+        await store.dispatch(projectsApi.endpoints.getProjectsPages.initiate({ lang: "pt-BR" }))
+        vi.mocked(listProjects).mockClear()
+        vi.mocked(listProjects).mockImplementationOnce(() => {
+            throw new Error("falha")
+        })
+
+        const failed = await fetchNext(store, { lang: "pt-BR" })
+        expect(failed.isError).toBe(true)
+        expect(failed.data?.pages).toHaveLength(1)
+
+        const retried = await fetchNext(store, { lang: "pt-BR" })
+        expect(retried.isError).toBe(false)
+        expect(retried.data?.pages).toHaveLength(2)
+        expect(vi.mocked(listProjects).mock.calls.map(([, params]) => params.offset)).toEqual([
+            9, 9
+        ])
+    })
+
+    it("expõe só os endpoints de projetos usados, sem a consulta de índice", () => {
+        expect(projectsApi.endpoints).not.toHaveProperty("getProjectsIndex")
+        expect(Object.keys(projectsApi.endpoints).toSorted()).toEqual([
+            "getProject",
+            "getProjectDocumentContent",
+            "getProjectDocuments",
+            "getProjectFilterOptions",
+            "getProjects",
+            "getProjectsPages"
+        ])
+    })
+})
+
+function requestOptions(store: ReturnType<typeof createStore>, args: { lang: SupportedLanguage }) {
+    return store.dispatch(projectsApi.endpoints.getProjectFilterOptions.initiate(args))
+}
+
+function optionFiles(lang: string) {
+    return {
+        [`content/${lang}/projects.json`]: { items: [first, second] },
+        [`content/${lang}/profile.json`]: buildProfile({
+            stack: [
+                {
+                    category: "frontend",
+                    items: [{ name: "React" }, { name: "Docker" }]
+                }
+            ]
+        })
+    }
+}
+
+describe("projectsApi, getProjectFilterOptions", () => {
+    it("devolve a forma ProjectFilterOptions com a stack do perfil e os projetos", async () => {
+        stubContentFetch(optionFiles("pt-BR"))
+        const store = createStore()
+
+        const result = await requestOptions(store, { lang: "pt-BR" })
+
+        expect(result.data).toStrictEqual({
+            technologies: [
+                { value: "Docker", count: 0 },
+                { value: "React", count: 2 },
+                { value: "TypeScript", count: 2 }
+            ],
+            years: [
+                { value: "2026", count: 1 },
+                { value: "2025", count: 1 }
+            ]
+        })
+    })
+
+    it("trocar o idioma faz outro pedido e outra chave de cache", async () => {
+        const fetchMock = stubContentFetch({ ...optionFiles("pt-BR"), ...optionFiles("en") })
+        const store = createStore()
+
+        await requestOptions(store, { lang: "pt-BR" })
+        await requestOptions(store, { lang: "en" })
+
+        expect(fetchMock).toHaveBeenCalledWith("/content/en/profile.json")
+        expect(fetchMock).toHaveBeenCalledWith("/content/en/projects.json")
+        const keys = Object.keys(store.getState().api.queries)
+        expect(keys).toContain('getProjectFilterOptions({"lang":"pt-BR"})')
+        expect(keys).toContain('getProjectFilterOptions({"lang":"en"})')
+    })
+
+    it("responde UNSUPPORTED_LANGUAGE para um idioma inválido sem ler o conteúdo", async () => {
+        const fetchMock = stubContentFetch({})
+        const store = createStore()
+
+        const result = await store.dispatch(
+            projectsApi.endpoints.getProjectFilterOptions.initiate(parseUntyped('{"lang":"fr"}'))
+        )
+
+        expect(result.error).toMatchObject({
+            status: 400,
+            data: { error: { code: "UNSUPPORTED_LANGUAGE" } }
+        })
+        expect(fetchMock).not.toHaveBeenCalled()
+    })
+
+    it.each([
+        ["o perfil", "content/pt-BR/profile.json"],
+        ["os projetos", "content/pt-BR/projects.json"]
+    ])("vira erro no formato do contrato quando falha a leitura d%s", async (_name, path) => {
+        const available: Record<string, unknown> = optionFiles("pt-BR")
+        delete available[path]
+        stubContentFetch(available)
+        const store = createStore()
+
+        const result = await requestOptions(store, { lang: "pt-BR" })
+
+        expect(result.isError).toBe(true)
+        expect(result.error).toMatchObject({ status: "FETCH_ERROR" })
     })
 })

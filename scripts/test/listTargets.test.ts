@@ -53,11 +53,14 @@ describe("listTargets com conteúdo incompleto", () => {
 describe("listTargets com as rotas atuais", () => {
     const { targets, ignored } = listTargets(routes, prerenderRoutes, recordsOf([]))
 
-    it("lista a Início nos três idiomas e o 404.html", () => {
+    it("lista a Início e Projetos nos três idiomas e o 404.html", () => {
         expect(targets.map((target) => target.file)).toEqual([
             "pt-BR.html",
             "en.html",
             "es.html",
+            "pt-BR/projects.html",
+            "en/projects.html",
+            "es/projects.html",
             "404.html"
         ])
     })
@@ -71,13 +74,7 @@ describe("listTargets com as rotas atuais", () => {
     })
 
     it("ignora as rotas que ainda não têm tela", () => {
-        expect(ignored).toEqual([
-            "projects",
-            "about",
-            "contact",
-            "projects/:id",
-            "projects/:id/docs/:name"
-        ])
+        expect(ignored).toEqual(["about", "contact", "projects/:id", "projects/:id/docs/:name"])
     })
 
     it("nunca lista a raiz", () => {

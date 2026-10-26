@@ -6,8 +6,11 @@ import prerenderRoutes from "@/prerender/prerenderRoutes"
 import routes from "@/routers/routes"
 import buildProfile from "@/testUtils/buildProfile"
 import buildProjectRecord from "@/testUtils/buildProjectRecord"
+import buildProjectRecords from "@/testUtils/buildProjectRecords"
 import buildTimelineItemRecord from "@/testUtils/buildTimelineItemRecord"
 import stubContentFetch from "@/testUtils/stubContentFetch"
+
+const FEATURED_TITLE = "Projeto Destaque Pré-renderizado"
 
 const EXPECTED_BY_FILE: Record<string, { heading: string; content: string; language: string }> = {
     "pt-BR.html": {
@@ -25,6 +28,21 @@ const EXPECTED_BY_FILE: Record<string, { heading: string; content: string; langu
         content: "Trabalho em produtos web de ponta a ponta.",
         language: "es"
     },
+    "pt-BR/projects.html": {
+        heading: "Projetos",
+        content: FEATURED_TITLE,
+        language: "pt-BR"
+    },
+    "en/projects.html": {
+        heading: "Projects",
+        content: FEATURED_TITLE,
+        language: "en"
+    },
+    "es/projects.html": {
+        heading: "Proyectos",
+        content: FEATURED_TITLE,
+        language: "es"
+    },
     "404.html": {
         heading: "Page not found",
         content: "The address may have changed or the project is no longer online.",
@@ -33,8 +51,6 @@ const EXPECTED_BY_FILE: Record<string, { heading: string; content: string; langu
 }
 
 const { targets } = listTargets(routes, prerenderRoutes, { "pt-BR": [], en: [], es: [] })
-
-const FEATURED_TITLE = "Projeto Destaque Pré-renderizado"
 
 function buildHomeFiles() {
     const files: Record<string, unknown> = {}
@@ -55,6 +71,25 @@ function buildHomeFiles() {
     }
 
     return files
+}
+
+function stubTenProjects() {
+    const files = buildHomeFiles()
+
+    for (const language of ["pt-BR", "en", "es"]) {
+        files[`content/${language}/projects.json`] = { items: buildProjectRecords(10) }
+    }
+
+    stubContentFetch(files)
+}
+
+async function renderProjects(file: string) {
+    const target = targets.find((item) => item.file === file)
+    if (!target) {
+        throw new Error(`Alvo ${file} não encontrado`)
+    }
+
+    return render(target)
 }
 
 beforeEach(() => {
@@ -120,6 +155,157 @@ describe("render", () => {
         expect(html).toContain('<script type="application/ld+json">')
         expect(html).toContain(`http://localhost:5173/${language}#person`)
         expect(html).toContain("https://github.com/example")
+    })
+
+    describe("Projetos com dez projetos", () => {
+        const PROJECT_FILES = ["pt-BR/projects.html", "en/projects.html", "es/projects.html"]
+
+        it.each(PROJECT_FILES)(
+            "traz o primeiro lote de nove cards, os links e Carregar mais em %s",
+            async (file) => {
+                stubTenProjects()
+                const language = file.split("/")[0]
+
+                const { html } = await renderProjects(file)
+
+                expect(
+                    html.match(new RegExp(`href="/${language}/projects/0192f1a0-`, "g"))
+                ).toHaveLength(9)
+                expect(html.indexOf("Projeto 10")).toBeGreaterThan(-1)
+                expect(html.indexOf("Projeto 10")).toBeLessThan(html.indexOf("Projeto 9"))
+                expect(html).not.toContain(">Projeto 1<")
+                expect(html).toMatch(/Carregar mais|Load more|Cargar más/)
+            }
+        )
+
+        it.each([
+            ["pt-BR/projects.html", "9 de 10 projetos"],
+            ["en/projects.html", "9 of 10 projects"],
+            ["es/projects.html", "9 de 10 proyectos"]
+        ])("mostra a contagem pronta no status em %s", async (file, count) => {
+            stubTenProjects()
+
+            const { html } = await renderProjects(file)
+
+            expect(html).toMatch(new RegExp(`<p role="status"[^>]*>${count}</p>`))
+            expect(html).not.toContain("Carregando projetos")
+        })
+
+        it.each([
+            ["pt-BR/projects.html", "Filtros"],
+            ["en/projects.html", "Filters"],
+            ["es/projects.html", "Filtros"]
+        ])("traz o botão de filtros sem contador e sem diálogo em %s", async (file, label) => {
+            stubTenProjects()
+
+            const { html } = await renderProjects(file)
+
+            expect(html).toMatch(
+                new RegExp(`<button[^>]*aria-haspopup="dialog"[^>]*aria-expanded="false"[^>]*>`)
+            )
+            expect(html).toMatch(new RegExp(`${label}</button>`))
+            expect(html).not.toMatch(new RegExp(`${label} \\(\\d+\\)`))
+            expect(html).not.toContain('role="dialog"')
+        })
+
+        it.each([
+            ["pt-BR/projects.html", "Ordenar"],
+            ["en/projects.html", "Sort"],
+            ["es/projects.html", "Ordenar"]
+        ])("não traz nenhum controle de ordenação no HTML de %s", async (file, label) => {
+            stubTenProjects()
+
+            const { html } = await renderProjects(file)
+
+            expect(html).not.toMatch(new RegExp(`<button[^>]*>[^<]*${label}`))
+            expect(html).not.toContain('role="listbox"')
+            expect(html).not.toContain('type="radio"')
+            expect(html).not.toMatch(new RegExp(`<legend[^>]*>${label}</legend>`))
+            expect(html).not.toContain('role="dialog"')
+            expect(html).toContain('aria-haspopup="dialog"')
+        })
+
+        it.each([
+            ["pt-BR/projects.html", "pt-BR", "Projetos · Luiz Felipe dos Santos"],
+            ["en/projects.html", "en", "Projects · Luiz Felipe dos Santos"],
+            ["es/projects.html", "es", "Proyectos · Luiz Felipe dos Santos"]
+        ])(
+            "declara título, canônica, hreflang e JSON-LD com os nove projetos do primeiro lote em %s",
+            async (file, language, title) => {
+                stubTenProjects()
+
+                const { html } = await renderProjects(file)
+
+                expect(html).toContain(`<title>${title}</title>`)
+                expect(html).toContain(
+                    `<link rel="canonical" href="http://localhost:5173/${language}/projects"/>`
+                )
+                expect(html.match(/<link rel="alternate" hrefLang="[^"]+"/g)).toHaveLength(4)
+                expect(html).toContain(
+                    'hrefLang="x-default" href="http://localhost:5173/en/projects"'
+                )
+                const jsonLd = html.match(
+                    /<script type="application\/ld\+json">([^<]*)<\/script>/
+                )?.[1]
+                const data = JSON.parse(jsonLd ?? "null")
+                expect(data["@type"]).toBe("CollectionPage")
+                expect(data.mainEntity.itemListElement).toHaveLength(9)
+                expect(data.mainEntity.itemListElement[8].name).toBe("Projeto 2")
+                expect(JSON.stringify(data)).not.toContain('Projeto 1"')
+            }
+        )
+
+        it("serializa a página consultada com a chave só do idioma, sem consulta de índice", async () => {
+            stubTenProjects()
+
+            const { state } = await renderProjects("pt-BR/projects.html")
+
+            const keys = Object.keys(JSON.parse(state).api.queries)
+            expect(keys).toContain('getProjectsPages({"lang":"pt-BR"})')
+            expect(keys).not.toContain('getProjectsIndex({"lang":"pt-BR"})')
+        })
+
+        it.each([
+            ["pt-BR/projects.html", "pt-BR"],
+            ["en/projects.html", "en"],
+            ["es/projects.html", "es"]
+        ])("lista no ItemList os mesmos projetos dos cards em %s", async (file, language) => {
+            stubTenProjects()
+
+            const { html } = await renderProjects(file)
+
+            const jsonLd = html.match(/<script type="application\/ld\+json">([^<]*)<\/script>/)?.[1]
+            const data = JSON.parse(jsonLd ?? "null")
+            const itemUrls: string[] = data.mainEntity.itemListElement.map(
+                (element: { url: string }) => element.url.replace("http://localhost:5173", "")
+            )
+            const cardUrls = [...html.matchAll(/<h2[^>]*><a[^>]*href="([^"]+)"/g)].map(
+                (match) => match[1]
+            )
+            expect(cardUrls).toHaveLength(9)
+            expect(itemUrls).toEqual(cardUrls)
+            expect(itemUrls[0].startsWith(`/${language}/projects/`)).toBe(true)
+        })
+
+        it.each([
+            ["pt-BR/projects.html", "pt-BR"],
+            ["en/projects.html", "en"],
+            ["es/projects.html", "es"]
+        ])(
+            "serializa a consulta das opções do modal em %s, sem diálogo nem opção no HTML",
+            async (file, language) => {
+                stubTenProjects()
+
+                const { state, html } = await renderProjects(file)
+
+                const keys = Object.keys(JSON.parse(state).api.queries)
+                expect(keys).toContain(`getProjectFilterOptions({"lang":"${language}"})`)
+                expect(keys).toContain(`getProjectsPages({"lang":"${language}"})`)
+                expect(keys).not.toContain(`getProjectsIndex({"lang":"${language}"})`)
+                expect(html).not.toContain('role="dialog"')
+                expect(html).not.toContain('type="checkbox"')
+            }
+        )
     })
 
     it("não declara canônica, hreflang, Open Graph nem JSON-LD no 404.html", async () => {

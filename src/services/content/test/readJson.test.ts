@@ -27,4 +27,26 @@ describe("readJson", () => {
 
         await expect(readJson("content/pt-BR/projects.json")).rejects.toThrow("Failed to fetch")
     })
+
+    it("faz um fetch para duas leituras e devolve objetos iguais e independentes", async () => {
+        const fetchMock = vi.fn(async () => new Response(JSON.stringify({ items: [3, 1, 2] })))
+        vi.stubGlobal("fetch", fetchMock)
+
+        const first = await readJson<{ items: number[] }>("content/pt-BR/projects.json")
+        const second = await readJson<{ items: number[] }>("content/pt-BR/projects.json")
+        first.items.sort()
+        first.items.push(9)
+
+        expect(fetchMock).toHaveBeenCalledTimes(1)
+        expect(second).not.toBe(first)
+        expect(second).toEqual({ items: [3, 1, 2] })
+    })
+
+    it("rejeita a cada chamada quando o JSON é inválido", async () => {
+        const fetchMock = vi.fn(async () => new Response("{inválido"))
+        vi.stubGlobal("fetch", fetchMock)
+
+        await expect(readJson("content/pt-BR/broken.json")).rejects.toThrow()
+        await expect(readJson("content/pt-BR/broken.json")).rejects.toThrow()
+    })
 })

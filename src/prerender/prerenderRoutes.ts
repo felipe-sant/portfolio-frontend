@@ -2,6 +2,7 @@ import profileApi from "@/store/api/profile.api"
 import projectsApi from "@/store/api/projects.api"
 import timelineApi from "@/store/api/timeline.api"
 import buildFeaturedProjectsParams from "@/utils/buildFeaturedProjectsParams"
+import buildProjectsQueryArgs from "@/utils/buildProjectsQueryArgs"
 import type PrerenderRoute from "@/types/prerender/PrerenderRoute.types"
 
 const prerenderRoutes: PrerenderRoute[] = [
@@ -21,7 +22,13 @@ const prerenderRoutes: PrerenderRoute[] = [
         pattern: "projects",
         scope: "none",
         queries: (lang) => [
-            (dispatch) => dispatch(projectsApi.endpoints.getProjects.initiate({ lang }))
+            (dispatch) =>
+                dispatch(
+                    projectsApi.endpoints.getProjectsPages.initiate(
+                        buildProjectsQueryArgs(lang, { q: "", sort: "recent" })
+                    )
+                ),
+            (dispatch) => dispatch(projectsApi.endpoints.getProjectFilterOptions.initiate({ lang }))
         ]
     },
     {

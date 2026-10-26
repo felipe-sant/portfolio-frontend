@@ -3,9 +3,14 @@ import { cleanup } from "@testing-library/react"
 import { afterEach, beforeEach } from "vitest"
 import i18n from "@/i18n/i18n"
 import LANGUAGE_STORAGE_KEY from "@/i18n/languageStorageKey"
+import clearContentCache from "@/services/content/clearContentCache"
 import THEME_STORAGE_KEY from "@/utils/themeStorageKey"
 
 beforeEach(async () => {
+    if (typeof Element !== "undefined") {
+        Element.prototype.scrollIntoView = () => undefined
+    }
+    clearContentCache()
     if (typeof localStorage !== "undefined") {
         localStorage.removeItem(LANGUAGE_STORAGE_KEY)
         localStorage.removeItem(THEME_STORAGE_KEY)

@@ -8,6 +8,8 @@ type ProjectListParams = {
     q?: string
     type?: ProjectType
     category?: ProjectCategory
+    tech?: string[]
+    year?: string[]
     featured?: true
     sort?: ProjectSort
     offset?: number

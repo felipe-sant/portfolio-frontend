@@ -17,6 +17,13 @@ describe("Icon", () => {
         expect(svg?.querySelector("path, circle, rect, polygon")).not.toBeNull()
     })
 
+    it("renderiza o ícone filter com três traços e aria-hidden", () => {
+        const { container } = render(<Icon name="filter" />)
+
+        expect(container.querySelector("svg")).toHaveAttribute("aria-hidden", "true")
+        expect(container.querySelectorAll("path")).toHaveLength(3)
+    })
+
     it("preenche só a estrela", () => {
         const { container: star } = render(<Icon name="star" />)
         const { container: check } = render(<Icon name="check" />)

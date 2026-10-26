@@ -21,6 +21,13 @@ async function expectNotFoundIn(page: Page, language: Language, path: string) {
     )
 }
 
+async function expectProjectsIn(page: Page, language: Language) {
+    await expect(page).toHaveURL(new RegExp(`/${language}/projects$`))
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(
+        UI_TEXTS[language].projects.heading
+    )
+}
+
 for (const language of LANGUAGES) {
     const texts = UI_TEXTS[language]
 
@@ -37,7 +44,7 @@ for (const language of LANGUAGES) {
             await expect(link).toHaveAttribute("href", `${FATEC_BASE_PATH}${language}/projects`)
             await link.click()
 
-            await expectNotFoundIn(page, language, "/projects")
+            await expectProjectsIn(page, language)
         })
 
         test("RF-HOME-22, RF-HOME-25: Ler sobre mim leva à tela sobre do idioma", async ({
@@ -61,7 +68,7 @@ for (const language of LANGUAGES) {
             await expect(exit).toHaveAttribute("href", `${FATEC_BASE_PATH}${language}/projects`)
             await exit.click()
 
-            await expectNotFoundIn(page, language, "/projects")
+            await expectProjectsIn(page, language)
         })
 
         test("RF-HOME-16, RF-HOME-25: o Ver todos do cabeçalho da seção leva à lista do idioma", async ({
@@ -72,7 +79,7 @@ for (const language of LANGUAGES) {
             await expect(link).toHaveAttribute("href", `${FATEC_BASE_PATH}${language}/projects`)
             await link.click()
 
-            await expectNotFoundIn(page, language, "/projects")
+            await expectProjectsIn(page, language)
         })
 
         test("RF-HOME-17, RF-HOME-19, RF-HOME-25: os destaques seguem a ordem do conteúdo e o título de cada um leva ao projeto", async ({
@@ -95,6 +102,21 @@ for (const language of LANGUAGES) {
             await articles.first().getByRole("link").click()
 
             await expectNotFoundIn(page, language, `/projects/${featured[0].id}`)
+        })
+
+        test("RF-HOME-19, NF-MO-01, A11Y-G12: com movimento reduzido o hover não desloca o destaque", async ({
+            page
+        }) => {
+            const article = page.getByRole("article").first()
+
+            await article.hover()
+
+            const transforms = await article.evaluate((element) =>
+                [element, ...element.querySelectorAll("*")].map(
+                    (node) => getComputedStyle(node).transform
+                )
+            )
+            expect(transforms.every((transform) => transform === "none")).toBe(true)
         })
 
         test("RF-HOME-07: Baixar CV aponta para o PDF do idioma e não é um download direto", async ({

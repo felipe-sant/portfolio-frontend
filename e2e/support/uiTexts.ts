@@ -41,7 +41,76 @@ const UI_TEXTS = {
         errorHeading: "Erro inesperado",
         errorTitle: "Erro inesperado · Luiz Felipe dos Santos",
         errorDescription: "Algo quebrou do meu lado, não do seu. Tente de novo em alguns segundos.",
-        errorRetry: "Tentar novamente"
+        errorRetry: "Tentar novamente",
+        projects: {
+            heading: "Projetos",
+            title: "Projetos · Luiz Felipe dos Santos",
+            description:
+                "Projetos de Luiz Felipe dos Santos, com busca por tipo, categoria e tecnologia.",
+            intro: "Tudo o que construí e posso mostrar: trabalho profissional, projetos da faculdade e o que fiz por conta própria.",
+            searchLabel: "Buscar projeto",
+            searchPlaceholder: "Busque por nome ou tecnologia",
+            searchClear: "Limpar busca",
+            sortLegend: "Ordenar",
+            sortRecent: "Mais recente",
+            sortOldest: "Mais antigo",
+            sortTitle: "A–Z",
+            filtersOpen: "Filtros",
+            filtersOpenWithCount: (count: number) => `Filtros (${count})`,
+            typeGroup: "Tipo",
+            typeAll: "Todos",
+            categoryGroup: "Categoria",
+            categories: {
+                academic: "Acadêmicos",
+                personal: "Pessoais",
+                professional: "Profissionais"
+            },
+            modalTitle: "Filtros",
+            modalSummaryNone: "Nenhum filtro selecionado",
+            modalSummary: (count: number) =>
+                count === 1 ? "1 filtro selecionado" : `${count} filtros selecionados`,
+            modalTechnology: "Tecnologia",
+            modalYear: "Ano",
+            modalClose: "Fechar",
+            modalClear: "Limpar",
+            modalApply: "Aplicar",
+            noProjects: "(nenhum projeto)",
+            count: (shown: number, total: number) =>
+                total === 1 ? `${shown} de ${total} projeto` : `${shown} de ${total} projetos`,
+            countNone: "0 projetos",
+            loading: "Carregando projetos…",
+            clearFilters: "Limpar filtros",
+            noResultsHeading: "Nenhum projeto encontrado",
+            noResultsWithSearch: (query: string) =>
+                `Nenhum resultado para “${query}”. Tente outro termo ou remova os filtros.`,
+            noResultsWithoutSearch: "Nenhum projeto com essa combinação de filtros.",
+            emptyHeading: "Nenhum projeto publicado",
+            emptyDescription: "Os projetos aparecem aqui assim que eu publicar o primeiro.",
+            errorHeading: "Não consegui carregar a lista de projetos",
+            errorDescription: "Verifique sua conexão e tente de novo. Seus filtros foram mantidos.",
+            errorRetry: "Tentar novamente",
+            loadMore: "Carregar mais",
+            featured: "Em destaque",
+            projectTypes: {
+                web: "Web",
+                mobile: "Mobile",
+                api: "API",
+                desktop: "Desktop",
+                cli: "CLI",
+                library: "Biblioteca",
+                extension: "Extensão",
+                bot: "Bot / automação",
+                data: "Dados / IA",
+                game: "Jogo",
+                iot: "IoT / embarcado",
+                infra: "Infraestrutura"
+            },
+            projectCategories: {
+                academic: "Acadêmico",
+                personal: "Pessoal",
+                professional: "Profissional"
+            }
+        }
     },
     en: {
         menu: "Menu",
@@ -85,7 +154,76 @@ const UI_TEXTS = {
         errorHeading: "Unexpected error",
         errorTitle: "Unexpected error · Luiz Felipe dos Santos",
         errorDescription: "Something broke on my side, not yours. Try again in a few seconds.",
-        errorRetry: "Try again"
+        errorRetry: "Try again",
+        projects: {
+            heading: "Projects",
+            title: "Projects · Luiz Felipe dos Santos",
+            description:
+                "Projects by Luiz Felipe dos Santos, with search by type, category and technology.",
+            intro: "Everything I built and can show: professional work, college projects and what I made on my own.",
+            searchLabel: "Search projects",
+            searchPlaceholder: "Search by name or technology",
+            searchClear: "Clear search",
+            sortLegend: "Sort",
+            sortRecent: "Most recent",
+            sortOldest: "Oldest",
+            sortTitle: "A–Z",
+            filtersOpen: "Filters",
+            filtersOpenWithCount: (count: number) => `Filters (${count})`,
+            typeGroup: "Type",
+            typeAll: "All",
+            categoryGroup: "Category",
+            categories: {
+                academic: "Academic",
+                personal: "Personal",
+                professional: "Professional"
+            },
+            modalTitle: "Filters",
+            modalSummaryNone: "No filters selected",
+            modalSummary: (count: number) =>
+                count === 1 ? "1 filter selected" : `${count} filters selected`,
+            modalTechnology: "Technology",
+            modalYear: "Year",
+            modalClose: "Close",
+            modalClear: "Clear",
+            modalApply: "Apply",
+            noProjects: "(no projects)",
+            count: (shown: number, total: number) =>
+                total === 1 ? `${shown} of ${total} project` : `${shown} of ${total} projects`,
+            countNone: "0 projects",
+            loading: "Loading projects…",
+            clearFilters: "Clear filters",
+            noResultsHeading: "No projects found",
+            noResultsWithSearch: (query: string) =>
+                `No results for “${query}”. Try another term or remove the filters.`,
+            noResultsWithoutSearch: "No project matches this combination of filters.",
+            emptyHeading: "No projects published",
+            emptyDescription: "Projects will appear here as soon as I publish the first one.",
+            errorHeading: "I couldn't load the list of projects",
+            errorDescription: "Check your connection and try again. Your filters were kept.",
+            errorRetry: "Try again",
+            loadMore: "Load more",
+            featured: "Featured",
+            projectTypes: {
+                web: "Web",
+                mobile: "Mobile",
+                api: "API",
+                desktop: "Desktop",
+                cli: "CLI",
+                library: "Library",
+                extension: "Extension",
+                bot: "Bot / automation",
+                data: "Data / AI",
+                game: "Game",
+                iot: "IoT / embedded",
+                infra: "Infrastructure"
+            },
+            projectCategories: {
+                academic: "Academic",
+                personal: "Personal",
+                professional: "Professional"
+            }
+        }
     },
     es: {
         menu: "Menú",
@@ -130,7 +268,77 @@ const UI_TEXTS = {
         errorTitle: "Error inesperado · Luiz Felipe dos Santos",
         errorDescription:
             "Algo falló de mi lado, no del tuyo. Inténtalo de nuevo en unos segundos.",
-        errorRetry: "Intentar de nuevo"
+        errorRetry: "Intentar de nuevo",
+        projects: {
+            heading: "Proyectos",
+            title: "Proyectos · Luiz Felipe dos Santos",
+            description:
+                "Proyectos de Luiz Felipe dos Santos, con búsqueda por tipo, categoría y tecnología.",
+            intro: "Todo lo que construí y puedo mostrar: trabajo profesional, proyectos de la facultad y lo que hice por mi cuenta.",
+            searchLabel: "Buscar proyecto",
+            searchPlaceholder: "Busca por nombre o tecnología",
+            searchClear: "Borrar búsqueda",
+            sortLegend: "Ordenar",
+            sortRecent: "Más reciente",
+            sortOldest: "Más antiguo",
+            sortTitle: "A–Z",
+            filtersOpen: "Filtros",
+            filtersOpenWithCount: (count: number) => `Filtros (${count})`,
+            typeGroup: "Tipo",
+            typeAll: "Todos",
+            categoryGroup: "Categoría",
+            categories: {
+                academic: "Académicos",
+                personal: "Personales",
+                professional: "Profesionales"
+            },
+            modalTitle: "Filtros",
+            modalSummaryNone: "Ningún filtro seleccionado",
+            modalSummary: (count: number) =>
+                count === 1 ? "1 filtro seleccionado" : `${count} filtros seleccionados`,
+            modalTechnology: "Tecnología",
+            modalYear: "Año",
+            modalClose: "Cerrar",
+            modalClear: "Limpiar",
+            modalApply: "Aplicar",
+            noProjects: "(ningún proyecto)",
+            count: (shown: number, total: number) =>
+                total === 1 ? `${shown} de ${total} proyecto` : `${shown} de ${total} proyectos`,
+            countNone: "0 proyectos",
+            loading: "Cargando proyectos…",
+            clearFilters: "Limpiar filtros",
+            noResultsHeading: "Ningún proyecto encontrado",
+            noResultsWithSearch: (query: string) =>
+                `Ningún resultado para “${query}”. Prueba otro término o quita los filtros.`,
+            noResultsWithoutSearch: "Ningún proyecto con esa combinación de filtros.",
+            emptyHeading: "Ningún proyecto publicado",
+            emptyDescription: "Los proyectos aparecerán aquí en cuanto publique el primero.",
+            errorHeading: "No pude cargar la lista de proyectos",
+            errorDescription:
+                "Verifica tu conexión e inténtalo de nuevo. Tus filtros se mantuvieron.",
+            errorRetry: "Intentar de nuevo",
+            loadMore: "Cargar más",
+            featured: "Destacado",
+            projectTypes: {
+                web: "Web",
+                mobile: "Mobile",
+                api: "API",
+                desktop: "Desktop",
+                cli: "CLI",
+                library: "Biblioteca",
+                extension: "Extensión",
+                bot: "Bot / automatización",
+                data: "Datos / IA",
+                game: "Juego",
+                iot: "IoT / embebido",
+                infra: "Infraestructura"
+            },
+            projectCategories: {
+                academic: "Académico",
+                personal: "Personal",
+                professional: "Profesional"
+            }
+        }
     }
 }
 

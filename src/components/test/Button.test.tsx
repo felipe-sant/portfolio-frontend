@@ -93,6 +93,12 @@ describe("Button", () => {
         expect(onClick).not.toHaveBeenCalled()
     })
 
+    it("mantém o aria-disabled recebido sem carregar", () => {
+        render(<Button aria-disabled>Filtros</Button>)
+
+        expect(screen.getByRole("button")).toHaveAttribute("aria-disabled", "true")
+    })
+
     it("não tem violações de acessibilidade no estado normal e carregando", async () => {
         const { container, rerender } = render(<Button icon="download">Baixar CV</Button>)
 

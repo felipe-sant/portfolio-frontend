@@ -88,4 +88,30 @@ describe("i18n", () => {
         expect(i18n.t("loading")).toBe("Cargando...")
         expect(i18n.t("backHome")).toBe("Back to home")
     })
+
+    it.each([
+        ["pt-BR", "9 de 10 projetos", "1 de 1 projeto", "0 projetos", "Em destaque"],
+        ["en", "9 of 10 projects", "1 of 1 project", "0 projects", "Featured"],
+        ["es", "9 de 10 proyectos", "1 de 1 proyecto", "0 proyectos", "Destacado"]
+    ])(
+        "resolve as chaves de contagem e de destaque em %s",
+        async (language, plural, singular, none, featured) => {
+            const i18n = await loadPage({ path: `/${language}` })
+
+            expect(i18n.t("projects:results.count", { count: 10, shown: 9 })).toBe(plural)
+            expect(i18n.t("projects:results.count", { count: 1, shown: 1 })).toBe(singular)
+            expect(i18n.t("projects:results.countNone")).toBe(none)
+            expect(i18n.t("common:projectCard.featured")).toBe(featured)
+        }
+    )
+
+    it.each([
+        ["pt-BR", "(nenhum projeto)"],
+        ["en", "(no projects)"],
+        ["es", "(ningún proyecto)"]
+    ])("resolve o texto da opção sem projeto em %s", async (language, text) => {
+        const i18n = await loadPage({ path: `/${language}` })
+
+        expect(i18n.t("projects:filters.modal.noProjects")).toBe(text)
+    })
 })
