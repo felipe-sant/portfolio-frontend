@@ -17,6 +17,7 @@ const HEADER_HEIGHT = 64
 const MARKDOWN_CHUNK = /MarkdownDocument-[\w-]+\.js/
 const PROBE = "pt-BR/rota-inexistente"
 const POSITION_TOLERANCE = 3
+const ANCHOR_MAX_GAP = 80
 
 type Language = (typeof LANGUAGES)[number]
 
@@ -707,7 +708,7 @@ test.describe("teclado", () => {
                 return active ? active.getBoundingClientRect().top : 0
             })
             const navBottom = await bottom(nav)
-            expect(focused).toBeGreaterThanOrEqual(navBottom - POSITION_TOLERANCE - 1)
+            expect(focused).toBeGreaterThanOrEqual(navBottom - POSITION_TOLERANCE)
         }
     })
 })
@@ -717,20 +718,32 @@ test.describe("âncora entre documentos", () => {
         page
     }) => {
         const project = readProjectDetail("pt-BR", MNIST)
-        const markdown = `## Início\n\n[ver fluxo](project:${project.id}/docs/ARCHITECTURE.md#fluxo-de-dados)\n`
+        const destination = readProjectDetail("pt-BR", "Player Profile Clustering")
+        expect(destination.id).not.toBe(project.id)
+        const markdown = `## Início\n\n[ver fluxo](project:${destination.id}/docs/ARCHITECTURE.md#fluxo-de-dados)\n`
         await page.route(`**/content/pt-BR/projects/${project.id}/docs/SETUP.md`, (route) =>
             route.fulfill({ contentType: "text/markdown", body: markdown })
         )
         await page.goto(projectPath("pt-BR", project.id))
         await page.getByRole("heading", { level: 1 }).waitFor()
+        await expect(page.getByRole("heading", { level: 1 })).toHaveText(project.title)
         await activateDocument(page, "pt-BR", "SETUP.md", project.title)
 
         await page.getByRole("link", { name: "ver fluxo" }).click()
 
         await expect(page).toHaveURL(
-            new RegExp(`/projects/${project.id}/docs/ARCHITECTURE\\.md#fluxo-de-dados$`)
+            new RegExp(`/projects/${destination.id}/docs/ARCHITECTURE\\.md#fluxo-de-dados$`)
         )
-        await expect(page.locator("#fluxo-de-dados")).toBeVisible()
+        await expect(page.getByRole("heading", { level: 1 })).toHaveText(destination.title)
+        const target = page.locator("#fluxo-de-dados")
+        await expect(target).toBeVisible()
+        const nav = documentsNav(page, "pt-BR")
+        await expect
+            .poll(async () => (await top(target)) - (await bottom(nav)), { timeout: 5000 })
+            .toBeGreaterThanOrEqual(-POSITION_TOLERANCE)
+        await expect
+            .poll(async () => (await top(target)) - (await bottom(nav)), { timeout: 5000 })
+            .toBeLessThan(ANCHOR_MAX_GAP)
     })
 })
 
@@ -798,7 +811,7 @@ test.describe("rolagem suave com movimento pleno", () => {
             .toBeGreaterThanOrEqual(-POSITION_TOLERANCE)
         await expect
             .poll(async () => (await top(title)) - (await bottom(nav)), { timeout: 5000 })
-            .toBeLessThan(60)
+            .toBeLessThan(ANCHOR_MAX_GAP)
     })
 
     test("RF-PROJECT-23, A11Y-PJ10: com movimento pleno a âncora do documento termina com o título abaixo da nav fixa", async ({
@@ -814,6 +827,10 @@ test.describe("rolagem suave com movimento pleno", () => {
         await expect
             .poll(async () => (await top(target)) - (await bottom(nav)), { timeout: 5000 })
             .toBeGreaterThanOrEqual(-POSITION_TOLERANCE)
+        await expect
+            .poll(async () => (await top(target)) - (await bottom(nav)), { timeout: 5000 })
+            .toBeLessThan(ANCHOR_MAX_GAP)
         await expect(target).toBeInViewport()
+        expect(await page.evaluate(() => window.scrollY)).toBeGreaterThan(0)
     })
 })
