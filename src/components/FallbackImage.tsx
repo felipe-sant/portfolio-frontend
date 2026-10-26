@@ -5,14 +5,24 @@ import css from "@/styles/components/fallbackImage.module.css"
 interface FallbackImageProps extends Omit<ComponentPropsWithoutRef<"img">, "alt" | "onError"> {
     alt: string
     decorative?: boolean
+    placeholderClassName?: string
 }
 
-function FallbackImage({ alt, decorative = false, className, src, ...rest }: FallbackImageProps) {
+function FallbackImage({
+    alt,
+    decorative = false,
+    className,
+    placeholderClassName,
+    src,
+    ...rest
+}: FallbackImageProps) {
     const [failedSource, setFailedSource] = useState<string>()
     const classes = [className, css.image].filter(Boolean).join(" ")
 
     if (failedSource !== undefined && failedSource === src) {
-        const placeholderClasses = [className, css.placeholder].filter(Boolean).join(" ")
+        const placeholderClasses = [className, css.placeholder, placeholderClassName]
+            .filter(Boolean)
+            .join(" ")
 
         return decorative ? (
             <div className={placeholderClasses} aria-hidden="true" />

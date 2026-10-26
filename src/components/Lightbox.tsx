@@ -108,6 +108,7 @@ function Lightbox({ images, activeIndex, isOpen, onClose, onChange }: LightboxPr
                 <div className={css.stage}>
                     <FallbackImage
                         className={css.image}
+                        placeholderClassName={css.imagePlaceholder}
                         alt={image.alt}
                         src={publicUrl(image.large.src)}
                         width={image.large.width}
