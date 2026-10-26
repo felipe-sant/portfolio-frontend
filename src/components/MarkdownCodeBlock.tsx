@@ -25,6 +25,9 @@ function MarkdownCodeBlock({ node, children }: ComponentPropsWithoutRef<"pre"> &
     const languageLabel = language ? t(`codeBlock.language.${language}`) : languageName
     const file = parseCodeFenceTitle(code?.data?.meta)
     const hasHeader = Boolean(file || languageLabel)
+    const index = node?.properties.dataCodeBlockIndex
+    const baseLabel = [file, languageLabel].filter(Boolean).join(" ") || t("codeBlock.label")
+    const numberedLabel = index === undefined ? undefined : `${baseLabel} ${index}`
 
     return (
         <div className={css.block}>
@@ -38,8 +41,8 @@ function MarkdownCodeBlock({ node, children }: ComponentPropsWithoutRef<"pre"> &
                 className={css.body}
                 role={"region"}
                 tabIndex={0}
-                aria-labelledby={hasHeader ? headerId : undefined}
-                aria-label={hasHeader ? undefined : t("codeBlock.label")}
+                aria-labelledby={hasHeader && !numberedLabel ? headerId : undefined}
+                aria-label={numberedLabel ?? (hasHeader ? undefined : t("codeBlock.label"))}
             >
                 <MarkdownCodeContext.Provider value>{children}</MarkdownCodeContext.Provider>
             </pre>

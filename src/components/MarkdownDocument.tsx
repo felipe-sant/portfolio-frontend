@@ -12,6 +12,7 @@ import rehypeSlug from "rehype-slug"
 import remarkGfm from "remark-gfm"
 import css from "@/styles/components/markdownDocument.module.css"
 import rehypeHighlightCode from "@/utils/rehypeHighlightCode"
+import rehypeNumberCodeBlocks from "@/utils/rehypeNumberCodeBlocks"
 import rehypeNumberTables from "@/utils/rehypeNumberTables"
 import isAllowedMarkdownUrl from "@/utils/isAllowedMarkdownUrl"
 
@@ -52,7 +53,12 @@ function MarkdownDocument({ content }: MarkdownDocumentProps) {
         <div className={css.document}>
             <ReactMarkdown
                 remarkPlugins={[remarkGfm]}
-                rehypePlugins={[rehypeNumberTables, rehypeSlug, rehypeHighlightCode]}
+                rehypePlugins={[
+                    rehypeNumberTables,
+                    rehypeNumberCodeBlocks,
+                    rehypeSlug,
+                    rehypeHighlightCode
+                ]}
                 skipHtml
                 disallowedElements={DISALLOWED_ELEMENTS}
                 urlTransform={transformUrl}

@@ -109,6 +109,32 @@ describe("MarkdownCodeBlock", () => {
         expect(within(document.body).getByRole("region", { name: "Code" })).toBeInTheDocument()
     })
 
+    it("numera o nome dos blocos que repetem linguagem, sem numerar o que é único", () => {
+        renderMarkdown(
+            `${fence("bash", "a")}\n\n${fence("ts", "b")}\n\n${fence("sh", "c")}\n\n${fence("", "d")}`
+        )
+
+        expect(screen.getByRole("region", { name: "Bash 1" })).toBeInTheDocument()
+        expect(screen.getByRole("region", { name: "Bash 2" })).toBeInTheDocument()
+        expect(screen.getByRole("region", { name: "TypeScript" })).toBeInTheDocument()
+        expect(screen.getByRole("region", { name: "Código" })).toBeInTheDocument()
+    })
+
+    it("numera blocos com o mesmo arquivo e sem linguagem", () => {
+        renderMarkdown(`${fence("", "a")}\n\n${fence("", "b")}`)
+
+        expect(screen.getByRole("region", { name: "Código 1" })).toBeInTheDocument()
+        expect(screen.getByRole("region", { name: "Código 2" })).toBeInTheDocument()
+    })
+
+    it("com blocos repetidos, não tem violações de acessibilidade", async () => {
+        const { container } = renderMarkdown(
+            `${fence("bash", "a")}\n\n${fence("bash", "b")}\n\n${fence("", "c")}\n\n${fence("", "d")}`
+        )
+
+        await expectNoAxeViolations(container)
+    }, 15000)
+
     it("não tem violações de acessibilidade", async () => {
         const { container } = renderMarkdown(
             `${fence('ts title="a.ts"', "const a = 1")}\n\n${fence("", "texto")}\n\nUse \`x\``
