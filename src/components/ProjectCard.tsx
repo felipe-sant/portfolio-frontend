@@ -6,6 +6,7 @@ import VisuallyHidden from "@/components/VisuallyHidden"
 import useLocalizedPath from "@/hooks/useLocalizedPath"
 import usePageTransition from "@/hooks/usePageTransition"
 import useReveal from "@/hooks/useReveal"
+import ROUTES from "@/routers/paths"
 import css from "@/styles/components/projectCard.module.css"
 import type ProjectSummary from "@/types/project/ProjectSummary.types"
 import formatProjectMeta from "@/utils/formatProjectMeta"
@@ -72,7 +73,7 @@ function ProjectCard({ project, index, revealIndex }: ProjectCardProps) {
                     <h2 className={css.title}>
                         <Link
                             className={css.link}
-                            to={localizedPath("/projects/:id", { id: project.id })}
+                            to={localizedPath(ROUTES.project, { id: project.id })}
                             viewTransition={viewTransition}
                         >
                             {project.title}
