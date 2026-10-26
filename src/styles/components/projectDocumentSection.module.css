@@ -1,0 +1,29 @@
+.section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    min-width: 0;
+}
+
+.title {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: var(--text-h3);
+    font-weight: var(--weight-semibold);
+    line-height: var(--lh-h3);
+    color: var(--text-strong);
+}
+
+.title:focus {
+    outline: none;
+}
+
+.title:focus-visible {
+    outline: revert;
+}
+
+.skeleton {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
