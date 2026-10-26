@@ -2,8 +2,7 @@
     position: sticky;
     top: var(--header-height);
     z-index: 5;
-    margin-inline: calc(-1 * var(--pad-page));
-    padding-inline: var(--pad-page);
+    min-height: var(--documents-nav-height);
     border-bottom: var(--border-width) solid var(--border-subtle);
     background-color: var(--bg-page);
 }

@@ -1,3 +1,4 @@
+import type { Ref } from "react"
 import { useTranslation } from "react-i18next"
 import { Link, useLocation } from "react-router-dom"
 import useLocalizedPath from "@/hooks/useLocalizedPath"
@@ -11,6 +12,7 @@ interface ProjectDocumentsNavProps {
     projectTitle: string
     documents: ProjectDocument[]
     current: string
+    navRef?: Ref<HTMLElement>
 }
 
 const README_NAME = "README.md"
@@ -19,7 +21,8 @@ function ProjectDocumentsNav({
     projectId,
     projectTitle,
     documents,
-    current
+    current,
+    navRef
 }: ProjectDocumentsNavProps) {
     const { t } = useTranslation("project")
     const localizedPath = useLocalizedPath()
@@ -28,7 +31,7 @@ function ProjectDocumentsNav({
     const nextState = origin && { fromProjects: true, documentSteps: origin.documentSteps + 1 }
 
     return (
-        <nav className={css.nav} aria-label={t("documents.label")}>
+        <nav ref={navRef} className={css.nav} aria-label={t("documents.label")}>
             <ul className={css.list}>
                 {documents.map((document) => (
                     <li key={document.id}>

@@ -29,7 +29,7 @@ function DocumentSkeleton() {
 function ProjectDocumentSection({ project, state }: ProjectDocumentSectionProps) {
     const { t } = useTranslation("project")
     const titleId = useId()
-    const navRef = useRef<HTMLDivElement>(null)
+    const navRef = useRef<HTMLElement>(null)
     const titleRef = useRef<HTMLHeadingElement>(null)
     const documentName = state.document?.name
     const previousName = useRef(documentName)
@@ -60,14 +60,13 @@ function ProjectDocumentSection({ project, state }: ProjectDocumentSectionProps)
 
     return (
         <section className={css.section}>
-            <div ref={navRef}>
-                <ProjectDocumentsNav
-                    projectId={project.id}
-                    projectTitle={project.title}
-                    documents={project.documents}
-                    current={state.document.name}
-                />
-            </div>
+            <ProjectDocumentsNav
+                navRef={navRef}
+                projectId={project.id}
+                projectTitle={project.title}
+                documents={project.documents}
+                current={state.document.name}
+            />
             <h2 ref={titleRef} id={titleId} tabIndex={-1} className={css.title}>
                 {state.document.name}
             </h2>

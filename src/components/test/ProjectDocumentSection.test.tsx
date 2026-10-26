@@ -106,6 +106,15 @@ describe("ProjectDocumentSection", () => {
         expect(container.querySelectorAll("h2")).toHaveLength(1)
     })
 
+    it("mantém a nav como filha direta da seção, para o sticky valer na seção inteira", () => {
+        renderSection(buildState(LICENSE, { content: "x" }))
+        const nav = screen.getByRole("navigation", { name: "Documentação do projeto" })
+        const title = screen.getByRole("heading", { level: 2, name: "LICENSE" })
+
+        expect(nav.parentElement).toBe(title.parentElement)
+        expect(nav.parentElement?.tagName).toBe("SECTION")
+    })
+
     it("carregando, mostra o título, o skeleton aria-hidden e o status só na área, com a nav", () => {
         renderSection(buildState(README, { status: "loading", content: undefined }))
 
