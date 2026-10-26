@@ -38,7 +38,7 @@ describe("MarkdownLink", () => {
 
         expect(screen.getByRole("link", { name: "texto do link" })).toHaveAttribute(
             "href",
-            `/pt-BR/projects/${ID}/docs/%E0%A4%A`
+            `/pt-BR/projects/${ID}/docs/%25E0%25A4%25A`
         )
     })
 
