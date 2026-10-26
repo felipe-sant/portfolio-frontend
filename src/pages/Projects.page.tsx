@@ -36,7 +36,12 @@ function SkeletonItems({ count }: SkeletonItemsProps) {
 function ProjectListItem({ project, index }: ProjectListItemProps) {
     return (
         <li className={css.item}>
-            <ProjectCard project={project} index={index} revealIndex={index % projectsPageSize} />
+            <ProjectCard
+                project={project}
+                index={index}
+                revealIndex={index % projectsPageSize}
+                fromProjects
+            />
         </li>
     )
 }

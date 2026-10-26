@@ -573,6 +573,18 @@ describe("ProjectsPage", () => {
         )
     })
 
+    it("navega do card ao projeto com a marca fromProjects no estado", async () => {
+        stubProjects(10)
+        const user = userEvent.setup()
+        const { router } = renderRoutes("/pt-BR/projects")
+
+        const [firstCard] = await screen.findAllByRole("heading", { level: 2 })
+        await user.click(within(firstCard).getByRole("link"))
+
+        expect(router.state.location.pathname).toMatch(/^\/pt-BR\/projects\/0192f1a0-/)
+        expect(router.state.location.state).toEqual({ fromProjects: true })
+    })
+
     it("abre a rota já filtrada e ordenada e reescreve a URL por replace", async () => {
         stubProjects(10)
         const user = userEvent.setup()
