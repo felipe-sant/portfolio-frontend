@@ -4,10 +4,13 @@ import { describe, expect, it } from "vitest"
 
 const SOURCE_ROOT = join(process.cwd(), "src")
 const OWNER = ["components", "MarkdownDocument.tsx"].join(sep)
-const LANGUAGES_OWNER = ["utils", "codeLanguages.ts"].join(sep)
+const LANGUAGES_OWNERS = [
+    ["utils", "codeLanguages.ts"].join(sep),
+    ["utils", "rehypeHighlightCode.ts"].join(sep)
+]
 const SELF = ["utils", "test", "markdownImports.test.ts"].join(sep)
 const VALIDATION = ["services", "content", "validation"].join(sep) + sep
-const PACKAGES = ["react-markdown", "remark-gfm", "rehype-highlight", "rehype-slug", "highlight.js"]
+const PACKAGES = ["react-markdown", "remark-gfm", "lowlight", "rehype-slug", "highlight.js"]
 
 function listSources(directory: string): string[] {
     return readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
@@ -38,7 +41,9 @@ describe("importação das bibliotecas de markdown", () => {
             )
 
         expect(
-            importers.filter((relative) => relative !== OWNER && relative !== LANGUAGES_OWNER)
+            importers.filter(
+                (relative) => relative !== OWNER && !LANGUAGES_OWNERS.includes(relative)
+            )
         ).toEqual([])
     })
 })

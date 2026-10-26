@@ -8,23 +8,15 @@ import MarkdownTable from "@/components/MarkdownTable"
 import MarkdownTableHeaderCell from "@/components/MarkdownTableHeaderCell"
 import MarkdownTaskCheckbox from "@/components/MarkdownTaskCheckbox"
 import MarkdownToken from "@/components/MarkdownToken"
-import rehypeHighlight from "rehype-highlight"
 import rehypeSlug from "rehype-slug"
 import remarkGfm from "remark-gfm"
 import css from "@/styles/components/markdownDocument.module.css"
+import rehypeHighlightCode from "@/utils/rehypeHighlightCode"
 import rehypeNumberTables from "@/utils/rehypeNumberTables"
-import CODE_LANGUAGE_ALIASES from "@/utils/codeLanguageAliases"
-import CODE_LANGUAGES from "@/utils/codeLanguages"
 import isAllowedMarkdownUrl from "@/utils/isAllowedMarkdownUrl"
 
 interface MarkdownDocumentProps {
     content: string
-}
-
-const HIGHLIGHT_OPTIONS = {
-    languages: CODE_LANGUAGES,
-    aliases: CODE_LANGUAGE_ALIASES,
-    plainText: ["mermaid"]
 }
 
 const DISALLOWED_ELEMENTS = ["img", "sup", "section"]
@@ -60,11 +52,7 @@ function MarkdownDocument({ content }: MarkdownDocumentProps) {
         <div className={css.document}>
             <ReactMarkdown
                 remarkPlugins={[remarkGfm]}
-                rehypePlugins={[
-                    rehypeNumberTables,
-                    rehypeSlug,
-                    [rehypeHighlight, HIGHLIGHT_OPTIONS]
-                ]}
+                rehypePlugins={[rehypeNumberTables, rehypeSlug, rehypeHighlightCode]}
                 skipHtml
                 disallowedElements={DISALLOWED_ELEMENTS}
                 urlTransform={transformUrl}
