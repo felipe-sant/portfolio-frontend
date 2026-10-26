@@ -88,7 +88,6 @@ describe("useProject", () => {
 
         await waitFor(() => expect(latest.status).toBe("success"))
         expect(latest.project?.title).toBe("Mapas")
-        expect(latest.title).toBe("Mapas · Luiz Felipe dos Santos")
         const queries = Object.values(store.getState().api.queries)
         expect(queries).toHaveLength(1)
         expect(queries[0]?.endpointName).toBe("getProject")
@@ -101,10 +100,10 @@ describe("useProject", () => {
         mount(ID)
 
         expect(latest.status).toBe("loading")
-        expect(latest.title).toBe("Projeto · Luiz Felipe dos Santos")
+        expect(latest.fallbackTitle).toBe("Projeto · Luiz Felipe dos Santos")
 
         await waitFor(() => expect(latest.status).toBe("error"))
-        expect(latest.title).toBe("Projeto · Luiz Felipe dos Santos")
+        expect(latest.fallbackTitle).toBe("Projeto · Luiz Felipe dos Santos")
     })
 
     it("mantém o carregando enquanto a resposta não chega", async () => {

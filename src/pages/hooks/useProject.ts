@@ -40,10 +40,7 @@ function useProject() {
     return {
         status: resolveStatus(),
         project,
-        id,
-        language,
         fallbackTitle,
-        title: project ? t("meta.title", { project: project.title }) : fallbackTitle,
         retry
     }
 }
