@@ -26,7 +26,10 @@ const pageRoutes: RouteObject[] = [
     {
         path: ROUTES.project.slice(1),
         element: <Project />,
-        children: [{ index: true }, { path: "docs/:name" }]
+        children: [
+            { index: true, element: null },
+            { path: "docs/:name", element: null }
+        ]
     },
     {
         path: ROUTES.notFound,
