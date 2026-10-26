@@ -40,7 +40,7 @@ function createBlankProject(): ProjectRecord {
                 updatedAt: ""
             }
         ],
-        related: [{ id: "", reason: "" }],
+        related: [{ id: "" }],
         updatedAt: ""
     }
 }

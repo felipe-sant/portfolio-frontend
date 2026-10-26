@@ -64,7 +64,7 @@ function buildRecords(language: (typeof LANGUAGES)[number], count = 2): ProjectR
             featured: number === 1,
             images: number === 1 ? [image(1), image(2)] : [],
             documents: number === 1 ? [README, SETUP, LICENSE] : [README],
-            related: number === 1 ? [{ id: ID_TWO, reason: `Motivo ${language}` }] : []
+            related: number === 1 ? [{ id: ID_TWO }] : []
         })
     })
 }
@@ -291,7 +291,7 @@ describe("ProjectPage, rota e conteúdo", () => {
         const related = screen.getByRole("heading", { level: 2, name: "Projetos relacionados" })
 
         expect(related).toBeInTheDocument()
-        expect(screen.getByText("Motivo pt-BR")).toBeInTheDocument()
+        expect(screen.queryByText(/Motivo/)).not.toBeInTheDocument()
 
         await user.click(screen.getByRole("link", { name: "Projeto 2" }))
 

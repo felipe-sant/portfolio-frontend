@@ -196,18 +196,6 @@ describe("ProjectCard", () => {
         expect(screen.getAllByRole("link")).toHaveLength(1)
     })
 
-    it("mostra o motivo acima do título, fora do link, sem alterar o nome do link", () => {
-        const { project } = renderCard({}, 0, { reason: "Mesma área de dados" })
-        const reason = screen.getByText("Mesma área de dados")
-        const heading = screen.getByRole("heading", { level: 2 })
-
-        expect(
-            reason.compareDocumentPosition(heading) & Node.DOCUMENT_POSITION_FOLLOWING
-        ).toBeTruthy()
-        expect(screen.getByRole("link")).not.toContainElement(reason)
-        expect(screen.getByRole("link", { name: project.title })).toBeInTheDocument()
-    })
-
     it("com a prioridade da imagem desligada, a primeira imagem fica sem fetchpriority e carrega tarde", () => {
         const { container } = renderCard({}, 0, { prioritizeImage: false })
         const image = container.querySelector("img")

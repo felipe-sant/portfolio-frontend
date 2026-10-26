@@ -59,7 +59,7 @@ function buildRecords(language: (typeof LANGUAGES)[number]): ProjectRecord[] {
                 }
             ],
             documents: [README, SETUP, LICENSE],
-            related: [{ id: BARE_ID, reason: "Mesmo tema" }]
+            related: [{ id: BARE_ID }]
         }),
         buildProjectRecord({ id: BARE_ID, title: `Simples ${language}`, documents: [README] })
     ]
@@ -141,7 +141,6 @@ describe("render de projeto", { timeout: 20000 }, () => {
             expect(result.html).toContain("<pre")
             expect(result.html).toContain("Texto do readme")
             expect(result.html).toContain(`Simples ${language}`)
-            expect(result.html).toContain("Mesmo tema")
             expect(result.state).toContain("getProject")
             expect(result.state).toContain("Texto do readme")
             expect(result.state).not.toContain("getProjectsPages")
@@ -173,7 +172,7 @@ describe("render de projeto", { timeout: 20000 }, () => {
 
         expect(result.html).toMatch(/<h1[^>]*>Simples es<\/h1>/)
         expect(result.html).toContain("Leia-me")
-        expect(result.html).not.toContain("Mesmo tema")
+        expect(result.html).not.toContain("Projetos relacionados")
         expect(result.html.match(/<script type="application\/ld\+json">/g)).toHaveLength(1)
     })
 })

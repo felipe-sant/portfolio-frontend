@@ -17,7 +17,6 @@ interface ProjectCardProps {
     index: number
     revealIndex: number
     headingLevel?: 2 | 3
-    reason?: string
     prioritizeImage?: boolean
     fromProjects?: boolean
 }
@@ -46,7 +45,6 @@ function ProjectCard({
     index,
     revealIndex,
     headingLevel = 2,
-    reason,
     prioritizeImage = true,
     fromProjects = false
 }: ProjectCardProps) {
@@ -82,7 +80,6 @@ function ProjectCard({
                 <div className={css.placeholder} aria-hidden="true" />
             )}
             <div className={css.body}>
-                {reason && <p className={css.reason}>{reason}</p>}
                 <div className={css.titleRow}>
                     <Heading className={css.title}>
                         <Link

@@ -24,7 +24,6 @@ function RelatedItem({ item, index }: RelatedItemProps) {
                 index={index}
                 revealIndex={index}
                 headingLevel={3}
-                reason={item.reason}
                 prioritizeImage={false}
             />
         </li>

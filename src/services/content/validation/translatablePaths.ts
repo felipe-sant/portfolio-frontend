@@ -30,8 +30,7 @@ const TRANSLATABLE_PATHS = {
         "items[].duration",
         "items[].team",
         "items[].images[].alt",
-        "items[].images[].caption",
-        "items[].related[].reason"
+        "items[].images[].caption"
     ]
 }
 

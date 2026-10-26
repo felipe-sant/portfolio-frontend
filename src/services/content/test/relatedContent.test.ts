@@ -18,15 +18,15 @@ async function readProjects(language: string): Promise<ProjectRecord[]> {
 }
 
 describe.each(SUPPORTED_LANGUAGES)("relacionados do conteúdo real em %s", (language) => {
-    it("liga MNIST Classifier e Player Profile Clustering um ao outro com motivo", async () => {
+    it("liga MNIST Classifier e Player Profile Clustering um ao outro, sem texto de motivo", async () => {
         const projects = await readProjects(language)
         const mnist = projects.find((project) => project.id === MNIST)
         const clustering = projects.find((project) => project.id === CLUSTERING)
 
         expect(mnist?.related.map((item) => item.id)).toEqual([CLUSTERING])
         expect(clustering?.related.map((item) => item.id)).toEqual([MNIST])
-        expect(mnist?.related[0].reason.trim()).not.toBe("")
-        expect(clustering?.related[0].reason.trim()).not.toBe("")
+        expect(Object.keys(mnist?.related[0] ?? {})).toEqual(["id"])
+        expect(Object.keys(clustering?.related[0] ?? {})).toEqual(["id"])
     })
 
     it("deixa os outros quatro projetos sem relacionados", async () => {

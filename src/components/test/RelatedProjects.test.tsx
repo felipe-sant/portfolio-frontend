@@ -9,7 +9,6 @@ import type RelatedProject from "@/types/project/RelatedProject.types"
 
 function buildRelated(count: number): RelatedProject[] {
     return Array.from({ length: count }, (_value, index) => ({
-        reason: `Motivo ${index + 1}`,
         project: buildProjectSummary({
             id: `0192f1b2-3a4c-7d5e-8f60-718293a4b5c${index}`,
             title: `Relacionado ${index + 1}`
@@ -47,14 +46,13 @@ describe("RelatedProjects", () => {
         }
     )
 
-    it("mostra o título em h3 como único link do card e o motivo fora do link", () => {
+    it("mostra o título em h3 como único link do card, sem texto de motivo", () => {
         renderRelated(buildRelated(2))
         const link = screen.getByRole("link", { name: "Relacionado 1" })
-        const reason = screen.getByText("Motivo 1")
 
         expect(link.closest("h3")).not.toBeNull()
         expect(link).toHaveAttribute("href", "/pt-BR/projects/0192f1b2-3a4c-7d5e-8f60-718293a4b5c0")
-        expect(link).not.toContainElement(reason)
+        expect(screen.queryByText(/Motivo/)).not.toBeInTheDocument()
         expect(screen.getAllByRole("heading", { level: 3 })).toHaveLength(2)
     })
 

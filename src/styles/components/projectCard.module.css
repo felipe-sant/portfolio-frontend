@@ -33,15 +33,6 @@
     min-width: 0;
 }
 
-.reason {
-    margin: 0;
-    font-family: var(--font-mono);
-    font-size: var(--text-caption);
-    letter-spacing: var(--ls-label);
-    text-transform: uppercase;
-    color: var(--text-weak);
-}
-
 .titleRow {
     display: flex;
     align-items: baseline;
