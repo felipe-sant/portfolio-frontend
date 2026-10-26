@@ -120,6 +120,22 @@ describe("MarkdownLink", () => {
         expect(window.location.hash).toBe("")
     })
 
+    it("usa o id cru quando a âncora tem codificação inválida, sem lançar", async () => {
+        const user = userEvent.setup()
+        const scrollIntoView = vi.fn()
+        render(
+            <MemoryRouter>
+                <MarkdownLink href={"#%E0%A4%A"}>{"ir"}</MarkdownLink>
+                <h3 id="%E0%A4%A">{"Cru"}</h3>
+            </MemoryRouter>
+        )
+        screen.getByRole("heading", { name: "Cru" }).scrollIntoView = scrollIntoView
+
+        await user.click(screen.getByRole("link", { name: "ir" }))
+
+        expect(scrollIntoView).toHaveBeenCalledTimes(1)
+    })
+
     it("aplica a classe de link em texto corrido", () => {
         renderLink("https://github.com")
 

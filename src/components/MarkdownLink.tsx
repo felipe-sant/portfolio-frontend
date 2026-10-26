@@ -10,9 +10,17 @@ import isUuidV7 from "@/utils/isUuidV7"
 
 const PROJECT_PATTERN = /^project:([^/#]+)(?:\/docs\/([^#]+))?(#.*)?$/i
 
+function decodeAnchor(id: string) {
+    try {
+        return decodeURIComponent(id)
+    } catch {
+        return id
+    }
+}
+
 function scrollToAnchor(event: MouseEvent<HTMLAnchorElement>, href: string) {
     event.preventDefault()
-    document.getElementById(decodeURIComponent(href.slice(1)))?.scrollIntoView()
+    document.getElementById(decodeAnchor(href.slice(1)))?.scrollIntoView()
 }
 
 function MarkdownLink({ href, children }: ComponentPropsWithoutRef<"a">) {
