@@ -1,0 +1,6 @@
+.document {
+    min-width: 0;
+    color: var(--text-body);
+    font-size: var(--text-body-md);
+    line-height: var(--lh-body);
+}

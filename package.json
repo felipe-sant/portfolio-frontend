@@ -13,8 +13,12 @@
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-i18next": "^17.0.15",
+    "react-markdown": "^10.1.0",
     "react-redux": "^9.3.0",
-    "react-router-dom": "^7.9.6"
+    "react-router-dom": "^7.9.6",
+    "rehype-highlight": "^7.0.2",
+    "rehype-slug": "^6.0.0",
+    "remark-gfm": "^4.0.1"
   },
   "scripts": {
     "dev": "vite",
@@ -57,7 +61,6 @@
     "lint-staged": "^17.6.0",
     "oxlint": "^1.86.0",
     "prettier": "^3.9.9",
-    "remark-gfm": "^4.0.1",
     "remark-parse": "^11.0.0",
     "tsx": "^4.23.15",
     "typescript": "^7.0.2",
