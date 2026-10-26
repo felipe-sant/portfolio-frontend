@@ -1,6 +1,7 @@
 import type { ComponentPropsWithoutRef } from "react"
 import ReactMarkdown from "react-markdown"
 import type { ExtraProps } from "react-markdown"
+import MarkdownLink from "@/components/MarkdownLink"
 import rehypeSlug from "rehype-slug"
 import remarkGfm from "remark-gfm"
 import css from "@/styles/components/markdownDocument.module.css"
@@ -12,10 +13,6 @@ interface MarkdownDocumentProps {
 
 const DISALLOWED_ELEMENTS = ["img", "sup", "section"]
 
-function MarkdownAnchor({ href, children }: ComponentPropsWithoutRef<"a">) {
-    return href ? <a href={href}>{children}</a> : <>{children}</>
-}
-
 function createHeading(Tag: "h3" | "h4" | "h5" | "h6") {
     return function Heading({ id, children }: ComponentPropsWithoutRef<"h2"> & ExtraProps) {
         return <Tag id={id}>{children}</Tag>
@@ -23,7 +20,7 @@ function createHeading(Tag: "h3" | "h4" | "h5" | "h6") {
 }
 
 const COMPONENTS = {
-    a: MarkdownAnchor,
+    a: MarkdownLink,
     h1: createHeading("h3"),
     h2: createHeading("h3"),
     h3: createHeading("h4"),

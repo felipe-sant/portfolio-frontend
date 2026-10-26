@@ -59,7 +59,7 @@ describe("MarkdownDocument, GFM", () => {
         renderMarkdown("Veja https://github.com/felipe-sant")
 
         expect(
-            screen.getByRole("link", { name: "https://github.com/felipe-sant" })
+            screen.getByRole("link", { name: /^https:\/\/github\.com\/felipe-sant/ })
         ).toHaveAttribute("href", "https://github.com/felipe-sant")
     })
 
