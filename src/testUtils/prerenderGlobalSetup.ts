@@ -9,6 +9,7 @@ import type PrerenderTarget from "@/types/prerender/PrerenderTarget.types"
 const PROJECT_ID = "01a131df-93ee-72f3-8c7a-f67501e47a7a"
 const PROJECT_README_ID = "01a131df-93ef-7e0d-9b54-0e725d9f9c4d"
 const PROJECT_SETUP_ID = "01a131fc-1e60-7eeb-9495-8dbe3349a860"
+const PROJECT_LICENSE_ID = "01a17614-cf8e-7df8-b3f6-49262756aa73"
 
 function buildProjectTarget(lang: SupportedLanguage): PrerenderTarget {
     return {
@@ -33,6 +34,13 @@ const FIXTURE_TARGETS: PrerenderTarget[] = [
         lang: "pt-BR",
         pattern: "projects/:id/docs/:name",
         params: { id: PROJECT_ID, name: "SETUP.md", documentId: PROJECT_SETUP_ID }
+    },
+    {
+        path: `pt-BR/projects/${PROJECT_ID}/docs/LICENSE`,
+        file: `pt-BR/projects/${PROJECT_ID}/docs/LICENSE.html`,
+        lang: "pt-BR",
+        pattern: "projects/:id/docs/:name",
+        params: { id: PROJECT_ID, name: "LICENSE", documentId: PROJECT_LICENSE_ID }
     },
     { path: "not-found", file: "404.html", lang: "en" }
 ]

@@ -278,6 +278,23 @@ describe("mountClient com caminho pré-renderizado", () => {
         }
     )
 
+    it("hidrata o documento de texto sem erro nem aviso e sem carregar o renderizador de markdown", async () => {
+        injectPrerendered(`pt-BR/projects/${PROJECT_ID}/docs/LICENSE.html`, rootElement)
+        await i18n.changeLanguage("pt-BR")
+        window.history.pushState({}, "", `/pt-BR/projects/${PROJECT_ID}/docs/LICENSE`)
+        vi.mocked(loadMarkdownRenderer).mockClear()
+        const license = screen.getByRole("region", { name: "LICENSE" })
+        const consoleSpies = spyOnConsole()
+
+        await mount()
+        await settle()
+
+        expect(screen.getByRole("region", { name: "LICENSE" })).toBe(license)
+        expect(loadMarkdownRenderer).not.toHaveBeenCalled()
+        expect(consoleSpies.error).not.toHaveBeenCalled()
+        expect(hydrationWarnings(consoleSpies.warn)).toEqual([])
+    })
+
     it("não carrega o renderizador de markdown ao hidratar a lista de projetos", async () => {
         injectPrerendered("pt-BR/projects.html", rootElement)
         await i18n.changeLanguage("pt-BR")
