@@ -1,3 +1,4 @@
+import type { ReactNode } from "react"
 import { describe, expect, it } from "vitest"
 import { act, render, screen } from "@testing-library/react"
 import { createMemoryRouter, Outlet, RouterProvider } from "react-router-dom"
@@ -10,25 +11,29 @@ import expectNoAxeViolations from "@/testUtils/expectNoAxeViolations"
 
 const SITE_URL = "http://localhost:5173"
 
-function Page() {
+const DEFAULT_META = (
+    <PageMeta
+        title={"Título da página"}
+        description={"Descrição da página"}
+        path={ROUTES.projects}
+    />
+)
+
+function createPage(meta: ReactNode) {
     return (
         <>
             <h1>{"Página"}</h1>
-            <PageMeta
-                title={"Título da página"}
-                description={"Descrição da página"}
-                path={ROUTES.projects}
-            />
+            {meta}
             <Outlet />
         </>
     )
 }
 
-async function renderPage(entry: string) {
+async function renderPage(entry: string, meta: ReactNode = DEFAULT_META) {
     const router = createMemoryRouter(
         SUPPORTED_LANGUAGES.map((language) => ({
             path: `/${language}/*`,
-            element: <Page />,
+            element: createPage(meta),
             loader: createLanguageLoader(language)
         })),
         { initialEntries: [entry] }
@@ -112,6 +117,58 @@ describe("PageMeta", () => {
         expect(getLink("canonical")).toBe(`${SITE_URL}/en/projects`)
         expect(getMeta("og:locale")).toBe("en_US")
         expect(getMeta("og:image:alt")).toBe("Cat next to the name Luiz Felipe dos Santos")
+    })
+
+    it.each(["pt-BR", "en", "es"] as const)(
+        "mantém a imagem padrão de 1200 por 630 sem as props de imagem em %s",
+        async (language) => {
+            await renderPage(`/${language}/projects`)
+
+            expect(getMeta("og:image")).toBe(`${SITE_URL}/images/og-site.png`)
+            expect(getMeta("og:image:width")).toBe("1200")
+            expect(getMeta("og:image:height")).toBe("630")
+        }
+    )
+
+    it("usa a imagem, o alt e as dimensões recebidos", async () => {
+        await renderPage(
+            "/pt-BR/projects",
+            <PageMeta
+                title={"Projeto"}
+                description={"Resumo"}
+                path={ROUTES.projects}
+                image={"images/projects/x-large.webp"}
+                imageAlt={"Captura do projeto"}
+                imageWidth={1600}
+                imageHeight={900}
+            />
+        )
+
+        expect(getMeta("og:image")).toBe(`${SITE_URL}/images/projects/x-large.webp`)
+        expect(getMeta("og:image:alt")).toBe("Captura do projeto")
+        expect(getMeta("og:image:width")).toBe("1600")
+        expect(getMeta("og:image:height")).toBe("900")
+    })
+
+    it("declara og:type article e o nome exato do documento na canônica e nos hreflang", async () => {
+        await renderPage(
+            "/en/projects",
+            <PageMeta
+                title={"Documento"}
+                description={"Resumo"}
+                path={ROUTES.projectDocument}
+                params={{ id: "abc", name: "SETUP.md" }}
+                type={"article"}
+            />
+        )
+
+        expect(getMeta("og:type")).toBe("article")
+        expect(getLink("canonical")).toBe(`${SITE_URL}/en/projects/abc/docs/SETUP.md`)
+        expect(getLink("alternate", "es")).toBe(`${SITE_URL}/es/projects/abc/docs/SETUP.md`)
+        expect(getLink("alternate", "pt-BR")).toBe(`${SITE_URL}/pt-BR/projects/abc/docs/SETUP.md`)
+        expect(getLink("alternate", "x-default")).toBe(`${SITE_URL}/en/projects/abc/docs/SETUP.md`)
+        expect(getMeta("og:locale")).toBe("en_US")
+        expect(getMeta("twitter:card")).toBe("summary_large_image")
     })
 
     it("não tem violações de acessibilidade", async () => {
