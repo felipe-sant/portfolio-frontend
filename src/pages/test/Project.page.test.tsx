@@ -8,6 +8,7 @@ import buildProjectRecord from "@/testUtils/buildProjectRecord"
 import expectNoAxeViolations from "@/testUtils/expectNoAxeViolations"
 import failFetchAfter from "@/testUtils/failFetchAfter"
 import holdFetchAfter from "@/testUtils/holdFetchAfter"
+import parseUntyped from "@/testUtils/parseUntyped"
 import renderWithStore from "@/testUtils/renderWithStore"
 import stubContentFetch from "@/testUtils/stubContentFetch"
 import type ProjectDocument from "@/types/project/ProjectDocument.types"
@@ -54,7 +55,7 @@ function buildRecords(language: (typeof LANGUAGES)[number], count = 2): ProjectR
         return buildProjectRecord({
             id,
             title: `${NAMES[language]} ${number}`,
-            summary: `Resumo ${language} ${number}`,
+            summary: `Resumo ${language} ${number}${number === 2 ? " <b>" : ""}`,
             date: `2026-${String((number % 12) + 1).padStart(2, "0")}`,
             types: number % 2 === 1 ? ["web", "api"] : ["api"],
             featured: number === 1,
@@ -128,7 +129,7 @@ describe("ProjectPage, não encontrada", () => {
             "noindex"
         )
         expect(document.head.querySelector('link[rel="canonical"]')).toBeNull()
-        expect(document.head.querySelector('script[type="application/ld+json"]')).toBeNull()
+        expect(document.querySelector('script[type="application/ld+json"]')).toBeNull()
     })
 
     it("mostra a não encontrada em inglês sem o prefixo do idioma", async () => {
@@ -395,7 +396,7 @@ describe("ProjectPage, carregando e erro", () => {
         "mostra a barra de volta, o skeleton e o aviso, sem h1, com o título genérico (%s)",
         async (_name, path) => {
             const { control, render } = startRender(path)
-            const release = holdFetchAfter(control.fetchMock, 2)
+            const release = holdFetchAfter(control.fetchMock, 0)
             const { container } = render()
 
             const status = await screen.findByText("Carregando...", {}, { timeout: 5000 })
@@ -415,7 +416,7 @@ describe("ProjectPage, carregando e erro", () => {
 
     it("não tem violações de acessibilidade carregando", async () => {
         const { control, render } = startRender(`/pt-BR/projects/${ID_ONE}`)
-        holdFetchAfter(control.fetchMock, 2)
+        holdFetchAfter(control.fetchMock, 0)
         const { container } = render()
         await screen.findByText("Carregando...", {}, { timeout: 5000 })
 
@@ -508,7 +509,7 @@ describe("ProjectPage, carregando e erro", () => {
         ["es", "Cargando..."]
     ] as const)("traduz o carregando em %s", async (language, loading) => {
         const { control, render } = startRender(`/${language}/projects/${ID_ONE}`)
-        holdFetchAfter(control.fetchMock, 2)
+        holdFetchAfter(control.fetchMock, 0)
         render()
 
         expect(await screen.findByText(loading, {}, { timeout: 5000 })).toBeInTheDocument()
@@ -527,3 +528,180 @@ describe("ProjectPage, carregando e erro", () => {
         ).toBeInTheDocument()
     })
 })
+
+const SITE = "http://localhost:5173"
+
+function head(selector: string) {
+    return document.head.querySelector(selector)
+}
+
+function jsonLdNodes() {
+    return Array.from(document.querySelectorAll('script[type="application/ld+json"]')).map(
+        (script) => parseUntyped(script.textContent ?? "")
+    )
+}
+
+describe("ProjectPage, SEO", () => {
+    it("com imagem usa a variante grande da primeira captura com alt, largura e altura", async () => {
+        renderProject(`/pt-BR/projects/${ID_ONE}`)
+        await projectLoaded()
+
+        await waitFor(() =>
+            expect(head('meta[property="og:image"]')).toHaveAttribute(
+                "content",
+                `${SITE}/images/p/1-large.webp`
+            )
+        )
+        expect(head('meta[property="og:image:alt"]')).toHaveAttribute("content", "Captura 1")
+        expect(head('meta[property="og:image:width"]')).toHaveAttribute("content", "1600")
+        expect(head('meta[property="og:image:height"]')).toHaveAttribute("content", "900")
+    })
+
+    it("sem imagem usa a imagem padrão do site e o alt padrão", async () => {
+        renderProject(`/pt-BR/projects/${ID_TWO}`)
+        await projectLoaded("Projeto 2")
+
+        await waitFor(() =>
+            expect(head('meta[property="og:image"]')).toHaveAttribute(
+                "content",
+                `${SITE}/images/og-site.png`
+            )
+        )
+        expect(head('meta[property="og:image:width"]')).toHaveAttribute("content", "1200")
+        expect(head('meta[property="og:image:alt"]')?.getAttribute("content")).toMatch(/\S{5,}/)
+    })
+
+    it("tem a mesma descrição, igual ao resumo, no README e nos outros documentos", async () => {
+        const { router } = renderProject(`/pt-BR/projects/${ID_ONE}`)
+        await projectLoaded()
+
+        for (const path of ["", "/docs/SETUP.md"]) {
+            await act(async () => {
+                await router.navigate(`/pt-BR/projects/${ID_ONE}${path}`)
+            })
+            await waitFor(() =>
+                expect(head('meta[name="description"]')).toHaveAttribute(
+                    "content",
+                    "Resumo pt-BR 1"
+                )
+            )
+            expect(head('meta[property="og:description"]')).toHaveAttribute(
+                "content",
+                "Resumo pt-BR 1"
+            )
+        }
+    })
+
+    it.each(LANGUAGES)(
+        "README em %s tem canônica, hreflang, og:type article e og:url",
+        async (language) => {
+            renderProject(`/${language}/projects/${ID_ONE}`)
+            await projectLoaded(`${NAMES[language]} 1`)
+
+            const canonical = `${SITE}/${language}/projects/${ID_ONE}`
+            await waitFor(() =>
+                expect(head('link[rel="canonical"]')).toHaveAttribute("href", canonical)
+            )
+            expect(head('meta[property="og:url"]')).toHaveAttribute("content", canonical)
+            expect(head('meta[property="og:type"]')).toHaveAttribute("content", "article")
+            expect(head('meta[name="twitter:card"]')).toHaveAttribute(
+                "content",
+                "summary_large_image"
+            )
+            expect(head('link[hreflang="x-default"]')).toHaveAttribute(
+                "href",
+                `${SITE}/en/projects/${ID_ONE}`
+            )
+            for (const item of LANGUAGES) {
+                expect(head(`link[hreflang="${item}"]`)).toHaveAttribute(
+                    "href",
+                    `${SITE}/${item}/projects/${ID_ONE}`
+                )
+            }
+        }
+    )
+
+    it("documento além do README tem canônica do nome exato mesmo aberto em outra caixa", async () => {
+        renderProject(`/pt-BR/projects/${ID_ONE}/docs/setup.md`)
+        await screen.findByRole("heading", { level: 2, name: "SETUP.md" }, { timeout: 5000 })
+
+        const canonical = `${SITE}/pt-BR/projects/${ID_ONE}/docs/SETUP.md`
+        await waitFor(() =>
+            expect(head('link[rel="canonical"]')).toHaveAttribute("href", canonical)
+        )
+        expect(head('meta[property="og:url"]')).toHaveAttribute("content", canonical)
+        expect(head('link[hreflang="es"]')).toHaveAttribute(
+            "href",
+            `${SITE}/es/projects/${ID_ONE}/docs/SETUP.md`
+        )
+        expect(head('link[hreflang="x-default"]')).toHaveAttribute(
+            "href",
+            `${SITE}/en/projects/${ID_ONE}/docs/SETUP.md`
+        )
+    })
+
+    it("README tem um JSON-LD do projeto e o documento além do README tem também o TechArticle", async () => {
+        const { router } = renderProject(`/pt-BR/projects/${ID_ONE}`)
+        await projectLoaded()
+
+        await waitFor(() => expect(jsonLdNodes()).toHaveLength(1))
+        const [project] = jsonLdNodes()
+        expect(project["@id"]).toBe(`${SITE}/pt-BR/projects/${ID_ONE}#project`)
+        expect(["SoftwareSourceCode", "CreativeWork"]).toContain(project["@type"])
+
+        await act(async () => {
+            await router.navigate(`/pt-BR/projects/${ID_ONE}/docs/SETUP.md`)
+        })
+
+        await waitFor(() => expect(jsonLdNodes()).toHaveLength(2))
+        const article = jsonLdNodes().find((node) => node["@type"] === "TechArticle")
+        expect(article?.about).toEqual({ "@id": `${SITE}/pt-BR/projects/${ID_ONE}#project` })
+    })
+
+    it("escapa o < no JSON-LD", async () => {
+        renderProject(`/pt-BR/projects/${ID_TWO}`)
+        await projectLoaded("Projeto 2")
+
+        await waitFor(() => expect(jsonLdNodes()).toHaveLength(1))
+        const raw = document.querySelector('script[type="application/ld+json"]')?.textContent
+        expect(raw).not.toContain("<")
+        expect(raw).toContain("\\u003cb>")
+    })
+
+    it.each([
+        ["carregando", () => holdOnly()],
+        ["erro", () => failOnly()],
+        ["documento inexistente", () => notFoundOnly()]
+    ])("não declara canônica, Open Graph nem JSON-LD em %s", async (_name, setup) => {
+        await setup()
+
+        expect(head('link[rel="canonical"]')).toBeNull()
+        expect(head('meta[property="og:title"]')).toBeNull()
+        expect(document.querySelector('script[type="application/ld+json"]')).toBeNull()
+    })
+})
+
+async function holdOnly() {
+    const fetchMock = stubContentFetch(buildFiles())
+    holdFetchAfter(fetchMock, 0)
+    const router = createMemoryRouter(routes, { initialEntries: [`/pt-BR/projects/${ID_ONE}`] })
+    renderWithStore(<RouterProvider router={router} />)
+    await screen.findByText("Carregando...", {}, { timeout: 5000 })
+}
+
+async function failOnly() {
+    const fetchMock = stubContentFetch(buildFiles())
+    failFetchAfter(fetchMock, 0)
+    const router = createMemoryRouter(routes, { initialEntries: [`/pt-BR/projects/${ID_ONE}`] })
+    renderWithStore(<RouterProvider router={router} />)
+    await screen.findByRole("alert", {}, { timeout: 5000 })
+}
+
+async function notFoundOnly() {
+    renderProject(`/pt-BR/projects/${ID_ONE}/docs/OUTRO.md`)
+    await screen.findByRole(
+        "heading",
+        { level: 1, name: "Página não encontrada" },
+        { timeout: 5000 }
+    )
+}

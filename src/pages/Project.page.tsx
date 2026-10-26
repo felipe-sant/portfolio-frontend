@@ -1,6 +1,8 @@
 import { useTranslation } from "react-i18next"
 import { Link, Navigate, useLocation, useParams } from "react-router-dom"
 import Icon from "@/components/Icon"
+import JsonLd from "@/components/JsonLd"
+import PageMeta from "@/components/PageMeta"
 import ProjectError from "@/components/ProjectError"
 import ProjectDocumentSection from "@/components/ProjectDocumentSection"
 import ProjectFacts from "@/components/ProjectFacts"
@@ -9,6 +11,8 @@ import ProjectLinks from "@/components/ProjectLinks"
 import ProjectStack from "@/components/ProjectStack"
 import ProjectSkeleton from "@/components/ProjectSkeleton"
 import RelatedProjects from "@/components/RelatedProjects"
+import FALLBACK_LANGUAGE from "@/i18n/fallbackLanguage"
+import resolveSupportedLanguage from "@/i18n/resolveSupportedLanguage"
 import useLocalizedPath from "@/hooks/useLocalizedPath"
 import usePageTransition from "@/hooks/usePageTransition"
 import NotFoundPage from "@/pages/NotFound.page"
@@ -17,6 +21,8 @@ import useProject from "@/pages/hooks/useProject"
 import useProjectDocument from "@/pages/hooks/useProjectDocument"
 import ROUTES from "@/routers/paths"
 import css from "@/styles/pages/project.module.css"
+import buildDocumentJsonLd from "@/utils/buildDocumentJsonLd"
+import buildProjectJsonLd from "@/utils/buildProjectJsonLd"
 import findDocumentByName from "@/utils/findDocumentByName"
 import type ProjectDetail from "@/types/project/ProjectDetail.types"
 
@@ -55,12 +61,14 @@ function MetaItem({ text, hasSeparator }: MetaItemProps) {
 }
 
 function ProjectDetailView({ project, documentName }: ProjectContentProps) {
-    const { t } = useTranslation(["project", "common"])
+    const { t, i18n } = useTranslation(["project", "common"])
+    const language = resolveSupportedLanguage(i18n.resolvedLanguage) ?? FALLBACK_LANGUAGE
     const document = useProjectDocument(project, documentName)
-    const labelItems = [
-        ...project.types.map((type) => t(`common:projectType.${type}`)),
-        project.date.slice(0, 4)
-    ]
+    const typeLabels = project.types.map((type) => t(`common:projectType.${type}`))
+    const labelItems = [...typeLabels, project.date.slice(0, 4)]
+    const firstImage = project.images[0]
+    const documentEntry = document.document
+    const isDocumentPage = documentEntry !== undefined && documentEntry.name !== "README.md"
     const isReadme = document.exactName === "README.md"
     const title = isReadme
         ? t("project:meta.title", { project: project.title })
@@ -73,6 +81,25 @@ function ProjectDetailView({ project, documentName }: ProjectContentProps) {
         <>
             <title>{title}</title>
             <meta name="description" content={project.summary} />
+            <PageMeta
+                title={title}
+                description={project.summary}
+                path={isDocumentPage ? ROUTES.projectDocument : ROUTES.project}
+                params={
+                    isDocumentPage
+                        ? { id: project.id, name: documentEntry.name }
+                        : { id: project.id }
+                }
+                type="article"
+                image={firstImage?.large.src}
+                imageAlt={firstImage?.alt}
+                imageWidth={firstImage?.large.width}
+                imageHeight={firstImage?.large.height}
+            />
+            <JsonLd data={buildProjectJsonLd(language, project, typeLabels)} />
+            {isDocumentPage && (
+                <JsonLd data={buildDocumentJsonLd(language, project, documentEntry)} />
+            )}
             <header className={css.header}>
                 <div className={css.badges}>
                     {project.featured && (
