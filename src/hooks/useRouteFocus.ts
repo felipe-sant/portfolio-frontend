@@ -1,6 +1,7 @@
 import { type RefObject, useEffect, useRef } from "react"
 import { useLocation } from "react-router-dom"
 import stripLanguagePrefix from "@/i18n/stripLanguagePrefix"
+import getProjectContext from "@/utils/getProjectContext"
 
 function focusHeading(heading: HTMLElement) {
     if (!heading.hasAttribute("tabindex")) {
@@ -20,7 +21,13 @@ function useRouteFocus(mainRef: RefObject<HTMLElement | null>) {
             return
         }
 
+        const previous = getProjectContext(previousPath.current)
+        const next = getProjectContext(contentPath)
         previousPath.current = contentPath
+
+        if (previous && previous.id === next?.id) {
+            return
+        }
 
         const main = mainRef.current
 
