@@ -4,9 +4,10 @@ import { describe, expect, it } from "vitest"
 
 const SOURCE_ROOT = join(process.cwd(), "src")
 const OWNER = ["components", "MarkdownDocument.tsx"].join(sep)
+const LANGUAGES_OWNER = ["utils", "codeLanguages.ts"].join(sep)
 const SELF = ["utils", "test", "markdownImports.test.ts"].join(sep)
 const VALIDATION = ["services", "content", "validation"].join(sep) + sep
-const PACKAGES = ["react-markdown", "remark-gfm", "rehype-highlight", "rehype-slug"]
+const PACKAGES = ["react-markdown", "remark-gfm", "rehype-highlight", "rehype-slug", "highlight.js"]
 
 function listSources(directory: string): string[] {
     return readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
@@ -16,12 +17,13 @@ function listSources(directory: string): string[] {
             return listSources(path)
         }
 
-        return /\.(ts|tsx)$/.test(entry.name) ? [path] : []
+        return /\.(ts|tsx)$/.test(entry.name) && !entry.name.endsWith(".d.ts") ? [path] : []
     })
 }
 
-function importsOf(source: string, name: string) {
-    const escaped = name.replace(/[-/]/g, "\\$&")
+function importsOf(rawSource: string, name: string) {
+    const source = rawSource.replace(/import type[^"']*["'][^"']*["']/g, "")
+    const escaped = name.replace(/[-/.]/g, "\\$&")
 
     return new RegExp(`(from|import)\\s*\\(?\\s*["']${escaped}(/[^"']*)?["']`).test(source)
 }
@@ -35,6 +37,8 @@ describe("importação das bibliotecas de markdown", () => {
                 importsOf(readFileSync(join(SOURCE_ROOT, relative), "utf-8"), name)
             )
 
-        expect(importers.filter((relative) => relative !== OWNER)).toEqual([])
+        expect(
+            importers.filter((relative) => relative !== OWNER && relative !== LANGUAGES_OWNER)
+        ).toEqual([])
     })
 })
