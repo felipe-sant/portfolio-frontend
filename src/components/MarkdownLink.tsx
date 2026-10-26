@@ -60,6 +60,10 @@ function MarkdownLink({ href, children }: ComponentPropsWithoutRef<"a">) {
         )
     }
 
+    if (/^project:/i.test(href)) {
+        return <>{children}</>
+    }
+
     if (/^mailto:/i.test(href)) {
         return (
             <a className={css.link} href={href}>

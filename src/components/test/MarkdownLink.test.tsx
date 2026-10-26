@@ -55,6 +55,18 @@ describe("MarkdownLink", () => {
         expect(container).toHaveTextContent("texto do link")
     })
 
+    it.each([
+        "project:abc/outro",
+        `project:${ID}/outro`,
+        `project:${ID}/docs/`,
+        "project:/docs/a.md"
+    ])("mostra só o texto, sem link externo, quando %s não casa o padrão do project:", (href) => {
+        const { container } = renderLink(href)
+
+        expect(container.querySelector("a")).toBeNull()
+        expect(container).toHaveTextContent("texto do link")
+    })
+
     it("mostra só o texto sem href", () => {
         const { container } = renderLink(undefined)
 
