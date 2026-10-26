@@ -177,6 +177,7 @@ function ProjectPage() {
                         search: location.search,
                         hash: location.hash
                     }}
+                    state={location.state}
                 />
             )
         }

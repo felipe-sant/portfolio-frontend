@@ -179,6 +179,21 @@ describe("ProjectPage, rota e conteúdo", () => {
         }
     )
 
+    it("preserva o state da navegação ao trocar a caixa do nome do documento", async () => {
+        const { router } = renderProject(`/pt-BR/projects/${ID_ONE}`)
+        await projectLoaded()
+        const state = { fromProjects: true, documentSteps: 1 }
+
+        await act(async () => {
+            await router.navigate(`/pt-BR/projects/${ID_ONE}/docs/setup.md`, { state })
+        })
+
+        await waitFor(() =>
+            expect(router.state.location.pathname).toBe(`/pt-BR/projects/${ID_ONE}/docs/SETUP.md`)
+        )
+        expect(router.state.location.state).toEqual(state)
+    })
+
     it("o pai da rota enxerga o name da filha e troca a caixa do nome por replace", async () => {
         const { router } = renderProject(`/pt-BR/projects/${ID_ONE}/docs/setup.md`)
 
