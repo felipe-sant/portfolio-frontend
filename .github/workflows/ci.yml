@@ -106,20 +106,75 @@ jobs:
         steps:
             - name: Checkout
               uses: actions/checkout@v7
+              with:
+                  fetch-depth: 0
+                  ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+            - name: Decide E2E scope
+              id: scope
+              env:
+                  EVENT_NAME: ${{ github.event_name }}
+                  BASE_REF: ${{ github.event.pull_request.base.ref }}
+              run: |
+                  if [ "$EVENT_NAME" = "push" ] || [ "$BASE_REF" = "main" ]; then
+                    echo "mode=full" >> "$GITHUB_OUTPUT"
+                    exit 0
+                  fi
+                  CHANGED_FILES=$(git diff --name-only "origin/$BASE_REF...HEAD")
+                  echo "Arquivos alterados no PR:"
+                  echo "$CHANGED_FILES"
+                  SPECS=""
+                  FULL=false
+                  while IFS= read -r file; do
+                    [ -z "$file" ] && continue
+                    case "$file" in
+                      e2e/*.spec.ts)
+                        SPECS="$SPECS $file" ;;
+                      src/pages/Home.page.tsx|src/pages/hooks/useHome*|src/styles/pages/home.module.css|src/locales/*/home.json|src/components/FeaturedProject.tsx|src/components/StackMarquee.tsx|src/components/Reveal.tsx|src/components/SkeletonSwap.tsx|src/utils/buildHomeJsonLd.ts)
+                        SPECS="$SPECS e2e/home.spec.ts e2e/home-flows.spec.ts e2e/accessibility.spec.ts e2e/no-javascript.spec.ts" ;;
+                      src/pages/Projects.page.tsx|src/pages/hooks/useProjects*|src/styles/pages/projects.module.css|src/locales/*/projects.json|src/components/ProjectCard*.tsx|src/components/FilterGroup.tsx|src/components/Modal.tsx|src/components/ProjectsFiltersModal.tsx|src/components/SearchInput.tsx|src/utils/buildProjectsJsonLd.ts)
+                        SPECS="$SPECS e2e/projects.spec.ts e2e/projects-filters.spec.ts e2e/accessibility.spec.ts e2e/no-javascript.spec.ts" ;;
+                      src/pages/NotFound.page.tsx|src/styles/pages/notFound.module.css|src/locales/*/notFound.json)
+                        SPECS="$SPECS e2e/not-found.spec.ts e2e/accessibility.spec.ts" ;;
+                      docs/*|.specs/*|*.md|src/*/test/*|src/testUtils/*|.claude/*|.github/workflows/deploy.yml|.github/workflows/fatec-pages.yml|.github/PULL_REQUEST_TEMPLATE.md)
+                        ;;
+                      *)
+                        FULL=true ;;
+                    esac
+                  done <<< "$CHANGED_FILES"
+                  if [ "$FULL" = true ]; then
+                    echo "mode=full" >> "$GITHUB_OUTPUT"
+                  elif [ -z "$SPECS" ]; then
+                    echo "mode=none" >> "$GITHUB_OUTPUT"
+                  else
+                    SPECS=$(echo "$SPECS" | tr ' ' '\n' | sort -u | while read -r spec; do [ -f "$spec" ] && echo "$spec"; done | tr '\n' ' ')
+                    echo "Specs selecionados: $SPECS"
+                    echo "mode=changed" >> "$GITHUB_OUTPUT"
+                    echo "specs=$SPECS" >> "$GITHUB_OUTPUT"
+                  fi
             - name: Setup Node
+              if: steps.scope.outputs.mode != 'none'
               uses: actions/setup-node@v7
               with:
                   node-version-file: ".nvmrc"
                   cache: npm
                   cache-dependency-path: package-lock.json
             - name: Install dependencies
+              if: steps.scope.outputs.mode != 'none'
               run: npm ci
             - name: Install Chromium
+              if: steps.scope.outputs.mode != 'none'
               run: npx playwright install --with-deps chromium
             - name: Build
+              if: steps.scope.outputs.mode != 'none'
               run: npm run build:fatec
-            - name: Run end-to-end tests
+            - name: Run all end-to-end tests
+              if: steps.scope.outputs.mode == 'full'
               run: npm run test:e2e
+            - name: Run end-to-end tests affected by the diff
+              if: steps.scope.outputs.mode == 'changed'
+              env:
+                  SPECS: ${{ steps.scope.outputs.specs }}
+              run: npx playwright test $SPECS
             - name: Upload Playwright report
               if: failure()
               uses: actions/upload-artifact@v7
