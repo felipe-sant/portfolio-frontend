@@ -1,6 +1,9 @@
 import { expect, test } from "@playwright/test"
+import PROJECT_TEXTS from "./support/projectTexts"
+import projectPath from "./support/projectPath"
 import readFeaturedProjects from "./support/readFeaturedProjects"
 import readProfile from "./support/readProfile"
+import readProjectDetail from "./support/readProjectDetail"
 import ROUTES_UNDER_TEST from "./support/routesUnderTest"
 import UI_TEXTS from "./support/uiTexts"
 
@@ -95,5 +98,81 @@ test.describe("sem JavaScript", () => {
             UI_TEXTS.en.notFoundHeading
         )
         await expect(page.locator("html")).toHaveAttribute("lang", "en")
+    })
+})
+
+test.describe("sem JavaScript, projeto", () => {
+    test.use({ javaScriptEnabled: false })
+
+    for (const language of LANGUAGES) {
+        const texts = PROJECT_TEXTS[language]
+
+        for (const documentName of [undefined, "SETUP.md", "LICENSE"]) {
+            test(`RF-PROJECT-35, NF-CO-03, NF-IA-01, NF-IA-02: em ${language} o projeto${documentName ? ` com ${documentName}` : ""} traz cabeçalho, ficha, stack, links, nav, documento e relacionados no HTML`, async ({
+                page
+            }) => {
+                const project = readProjectDetail(language, "MNIST Classifier")
+
+                const response = await page.goto(projectPath(language, project.id, documentName))
+
+                expect(response?.status()).toBe(200)
+                await expect(page.locator("html")).toHaveAttribute("lang", language)
+                await expect(page).toHaveTitle(
+                    documentName
+                        ? texts.documentTitle(documentName, project.title)
+                        : texts.title(project.title)
+                )
+                const main = page.getByRole("main")
+                await expect(main.getByRole("heading", { level: 1 })).toHaveText(project.title)
+                await expect(main.getByText(project.summary)).toBeVisible()
+                await expect(
+                    main.getByRole("heading", { level: 2, name: texts.factsHeading })
+                ).toBeVisible()
+                await expect(
+                    main.getByRole("heading", { level: 2, name: texts.stackHeading })
+                ).toBeVisible()
+                await expect(
+                    main.getByRole("link", { name: texts.codeName(project.title) })
+                ).toBeVisible()
+                await expect(main.getByRole("img", { name: project.images[0].alt })).toBeVisible()
+                const nav = main.getByRole("navigation", { name: texts.documentsLabel })
+                await expect(nav.getByRole("link")).toHaveCount(project.documents.length)
+                await expect(nav.getByRole("link").nth(1)).toHaveAttribute(
+                    "href",
+                    new RegExp(`/${language}/projects/${project.id}/docs/ARCHITECTURE\\.md$`)
+                )
+                await expect(
+                    main.getByRole("heading", { level: 2, name: documentName ?? "README.md" })
+                ).toBeVisible()
+                await expect(
+                    main.getByRole("heading", { level: 2, name: texts.relatedHeading })
+                ).toBeVisible()
+                if (documentName === "LICENSE") {
+                    await expect(main.getByRole("region", { name: "LICENSE" })).toContainText(
+                        "MIT License"
+                    )
+                } else {
+                    await expect(main.getByRole("heading", { level: 3 }).first()).toBeVisible()
+                }
+            })
+        }
+    }
+
+    test("NF-IA-04, RF-PROJECT-34: id inexistente e documento inexistente respondem 404 com a não encontrada", async ({
+        page
+    }) => {
+        const project = readProjectDetail("pt-BR", "MNIST Classifier")
+
+        for (const route of [
+            "pt-BR/projects/01a131df-93ee-72f3-8c7a-f67501e47a7b",
+            projectPath("pt-BR", project.id, "NAO-EXISTE.md")
+        ]) {
+            const response = await page.goto(route)
+
+            expect(response?.status()).toBe(404)
+            await expect(page.getByRole("heading", { level: 1 })).toHaveText(
+                UI_TEXTS.en.notFoundHeading
+            )
+        }
     })
 })
