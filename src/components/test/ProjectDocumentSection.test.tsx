@@ -114,7 +114,7 @@ describe("ProjectDocumentSection", () => {
         ).toBeInTheDocument()
     }, 15000)
 
-    it("mostra o h2 visível com o nome, tabIndex -1, depois da nav", () => {
+    it("mantém o h2 do documento no DOM com o nome e tabIndex -1, depois da nav", () => {
         const { container } = renderSection(buildState(LICENSE, { content: "x" }))
         const title = screen.getByRole("heading", { level: 2, name: "LICENSE" })
         const nav = screen.getByRole("navigation", { name: "Documentação do projeto" })
@@ -163,7 +163,7 @@ describe("ProjectDocumentSection", () => {
         expect(retry).toHaveBeenCalledTimes(1)
     })
 
-    it("move o foco para o h2 do novo documento sem rolar quando o título está visível", () => {
+    it("move o foco para o h2 do novo documento sem rolar quando o início do documento está visível", () => {
         const scroll = vi.spyOn(Element.prototype, "scrollIntoView")
         const { rerender } = renderSection(buildState(README))
 
@@ -182,14 +182,37 @@ describe("ProjectDocumentSection", () => {
         expect(scroll).not.toHaveBeenCalled()
     })
 
-    it("rola até o título quando ele ficou acima da área visível", () => {
+    it("não rola quando o início do documento está abaixo da nav, mesmo com o h2 oculto sob ela", () => {
         const scroll = vi.spyOn(Element.prototype, "scrollIntoView")
         const { rerender } = renderSection(buildState(README))
         vi.spyOn(HTMLElement.prototype, "getBoundingClientRect").mockImplementation(function (
             this: HTMLElement
         ) {
-            const isTitle = this instanceof HTMLHeadingElement
-            return new DOMRect(0, isTitle ? -300 : 0, 100, isTitle ? 20 : 48)
+            const isBody = this.parentElement?.tagName === "SECTION" && this.tagName === "DIV"
+            return new DOMRect(0, isBody ? 200 : 0, 100, isBody ? 20 : 48)
+        })
+
+        rerender(
+            <MemoryRouter>
+                <ProjectDocumentSection
+                    project={PROJECT}
+                    state={buildState(LICENSE, { content: "x" })}
+                />
+            </MemoryRouter>
+        )
+
+        expect(screen.getByRole("heading", { level: 2, name: "LICENSE" })).toHaveFocus()
+        expect(scroll).not.toHaveBeenCalled()
+    })
+
+    it("rola até o início do documento quando ele ficou acima da área visível", () => {
+        const scroll = vi.spyOn(Element.prototype, "scrollIntoView")
+        const { rerender } = renderSection(buildState(README))
+        vi.spyOn(HTMLElement.prototype, "getBoundingClientRect").mockImplementation(function (
+            this: HTMLElement
+        ) {
+            const isBody = this.parentElement?.tagName === "SECTION" && this.tagName === "DIV"
+            return new DOMRect(0, isBody ? -300 : 0, 100, isBody ? 20 : 48)
         })
 
         rerender(
@@ -204,7 +227,7 @@ describe("ProjectDocumentSection", () => {
         expect(scroll).toHaveBeenCalledTimes(1)
     })
 
-    it("não rola até o título ao voltar no histórico, para preservar a rolagem restaurada", async () => {
+    it("não rola até o início do documento ao voltar no histórico, para preservar a rolagem restaurada", async () => {
         const scroll = vi.spyOn(Element.prototype, "scrollIntoView")
         const router = createMemoryRouter([{ path: "*", element: <SectionByPath /> }], {
             initialEntries: ["/a", "/b", "/c"],
@@ -214,8 +237,8 @@ describe("ProjectDocumentSection", () => {
         vi.spyOn(HTMLElement.prototype, "getBoundingClientRect").mockImplementation(function (
             this: HTMLElement
         ) {
-            const isTitle = this instanceof HTMLHeadingElement
-            return new DOMRect(0, isTitle ? -300 : 0, 100, isTitle ? 20 : 48)
+            const isBody = this.parentElement?.tagName === "SECTION" && this.tagName === "DIV"
+            return new DOMRect(0, isBody ? -300 : 0, 100, isBody ? 20 : 48)
         })
 
         await act(() => router.navigate(-1))

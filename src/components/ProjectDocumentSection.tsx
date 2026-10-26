@@ -33,6 +33,7 @@ function ProjectDocumentSection({ project, state }: ProjectDocumentSectionProps)
     const titleId = useId()
     const navRef = useRef<HTMLElement>(null)
     const titleRef = useRef<HTMLHeadingElement>(null)
+    const bodyRef = useRef<HTMLDivElement>(null)
     const sectionRef = useRef<HTMLElement>(null)
     const location = useLocation()
     const navigationType = useNavigationType()
@@ -47,16 +48,17 @@ function ProjectDocumentSection({ project, state }: ProjectDocumentSectionProps)
 
         previousName.current = documentName
         const title = titleRef.current
+        const body = bodyRef.current
 
-        if (!title) {
+        if (!title || !body) {
             return
         }
 
         title.focus({ preventScroll: true })
         const navBottom = navRef.current?.getBoundingClientRect().bottom ?? 0
 
-        if (!isHistoryRestore && title.getBoundingClientRect().top < navBottom) {
-            title.scrollIntoView()
+        if (!isHistoryRestore && body.getBoundingClientRect().top < navBottom) {
+            body.scrollIntoView()
         }
     }, [documentName, isHistoryRestore])
 
@@ -78,29 +80,35 @@ function ProjectDocumentSection({ project, state }: ProjectDocumentSectionProps)
             <h2 ref={titleRef} id={titleId} tabIndex={-1} className={css.title}>
                 {state.document.name}
             </h2>
-            {state.status === "loading" && <DocumentSkeleton />}
-            {state.status === "error" && (
-                <LoadError
-                    title={t("documents.loadError.heading")}
-                    description={t("documents.loadError.description")}
-                    retryLabel={t("retry")}
-                    onRetry={state.retry}
-                />
-            )}
-            {state.status === "success" &&
-                state.content !== undefined &&
-                state.format === "text" && (
-                    <TextDocument content={state.content} labelledBy={titleId} lang={state.lang} />
+            <div ref={bodyRef} className={css.body}>
+                {state.status === "loading" && <DocumentSkeleton />}
+                {state.status === "error" && (
+                    <LoadError
+                        title={t("documents.loadError.heading")}
+                        description={t("documents.loadError.description")}
+                        retryLabel={t("retry")}
+                        onRetry={state.retry}
+                    />
                 )}
-            {state.status === "success" &&
-                state.content !== undefined &&
-                state.format === "markdown" && (
-                    <div lang={state.lang}>
-                        <Suspense fallback={<DocumentSkeleton />}>
-                            <MarkdownRenderer content={state.content} />
-                        </Suspense>
-                    </div>
-                )}
+                {state.status === "success" &&
+                    state.content !== undefined &&
+                    state.format === "text" && (
+                        <TextDocument
+                            content={state.content}
+                            labelledBy={titleId}
+                            lang={state.lang}
+                        />
+                    )}
+                {state.status === "success" &&
+                    state.content !== undefined &&
+                    state.format === "markdown" && (
+                        <div lang={state.lang}>
+                            <Suspense fallback={<DocumentSkeleton />}>
+                                <MarkdownRenderer content={state.content} />
+                            </Suspense>
+                        </div>
+                    )}
+            </div>
         </section>
     )
 }
