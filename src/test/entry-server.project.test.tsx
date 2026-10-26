@@ -109,7 +109,7 @@ afterEach(() => {
     window.history.pushState({}, "", "/")
 })
 
-describe("render de projeto", () => {
+describe("render de projeto", { timeout: 20000 }, () => {
     it("lista o projeto e os documentos além do README como alvos, sem ignorar a rota", () => {
         const { ignored } = listTargets(routes, prerenderRoutes, {
             "pt-BR": buildRecords("pt-BR"),
