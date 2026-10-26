@@ -124,6 +124,16 @@ describe("MarkdownDocument, títulos e âncoras", () => {
         expect(screen.getByRole("heading", { name: "Dois" })).toHaveAttribute("id", "dois")
     })
 
+    it("mantém o id dos títulos com blocos de código realçados no documento", () => {
+        const { container } = renderMarkdown(
+            "## Instalação\n\n```bash\nnpm install\n```\n\n## Uso\n\n```ts\nconst a = 1\n```"
+        )
+        const ids = Array.from(container.querySelectorAll("h3")).map((heading) => heading.id)
+
+        expect(ids).toEqual(["instalação", "uso"])
+        expect(container.querySelectorAll("pre code span").length).toBeGreaterThan(0)
+    })
+
     it("o link interno aponta para um título existente do mesmo documento", () => {
         renderMarkdown("[ir](#instalação)\n\n## Instalação")
         const link = screen.getByRole("link", { name: "ir" })
