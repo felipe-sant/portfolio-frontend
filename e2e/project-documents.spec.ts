@@ -39,8 +39,16 @@ async function activateDocument(page: Page, language: Language, name: string, ti
     await expect(documentTitle(page, name)).toBeFocused()
 }
 
+function isNarrow(page: Page) {
+    return (page.viewportSize()?.width ?? 0) < 640
+}
+
+function documentBody(page: Page, name: string) {
+    return documentTitle(page, name).locator("xpath=following-sibling::div[1]")
+}
+
 async function scrollToTitleOf(page: Page, name: string, offset: number) {
-    const natural = await documentTitle(page, name).evaluate(
+    const natural = await documentBody(page, name).evaluate(
         (element) => element.getBoundingClientRect().top + window.scrollY
     )
     await scrollTo(page, Math.round(natural - offset))
@@ -173,12 +181,14 @@ test.describe("navegação entre documentos", () => {
         await expect(page.getByRole("main").getByRole("status")).toHaveCount(0)
     })
 
-    test("RF-PROJECT-18: com o título visível a troca não rola a página", async ({ page }) => {
+    test("RF-PROJECT-18: com o início do documento visível a troca não rola a página", async ({
+        page
+    }) => {
         const project = await openProject(page, "pt-BR", MNIST)
-        const title = documentTitle(page, "README.md")
+        const body = documentBody(page, "README.md")
         await scrollToTitleOf(page, "README.md", 250)
         const before = await page.evaluate(() => window.scrollY)
-        expect(await top(title)).toBeGreaterThan(HEADER_HEIGHT)
+        expect(await top(body)).toBeGreaterThan(HEADER_HEIGHT)
 
         await activateDocument(page, "pt-BR", "SETUP.md", project.title)
 
@@ -187,7 +197,7 @@ test.describe("navegação entre documentos", () => {
         )
     })
 
-    test("RF-PROJECT-18, RF-PROJECT-16, A11Y-PJ10: com o título acima da área visível a página rola só até ele ficar logo abaixo da nav fixa", async ({
+    test("RF-PROJECT-18, RF-PROJECT-16, A11Y-PJ10: com o início do documento acima da área visível a página rola só até ele ficar logo abaixo da nav fixa", async ({
         page
     }) => {
         const project = await openProject(page, "pt-BR", MNIST)
@@ -196,10 +206,10 @@ test.describe("navegação entre documentos", () => {
 
         await activateDocument(page, "pt-BR", "ARCHITECTURE.md", project.title)
 
-        const titleTop = await top(documentTitle(page, "ARCHITECTURE.md"))
+        const bodyTop = await top(documentBody(page, "ARCHITECTURE.md"))
         const navBottom = await bottom(nav)
-        expect(titleTop).toBeGreaterThanOrEqual(navBottom - POSITION_TOLERANCE)
-        expect(titleTop).toBeLessThan(navBottom + 60)
+        expect(bodyTop).toBeGreaterThanOrEqual(navBottom - POSITION_TOLERANCE)
+        expect(bodyTop).toBeLessThan(navBottom + 60)
     })
 
     test("RF-PROJECT-18, RF-LAY-32: voltar e avançar com o título visível restauram a rolagem da entrada e põem o foco no título do documento", async ({
@@ -390,7 +400,8 @@ test.describe("âncoras", () => {
         await expect(page.getByRole("heading", { level: 1 })).toHaveText(
             readProjectDetail("en", MNIST).title
         )
-        await expect(documentTitle(page, "ARCHITECTURE.md")).toBeVisible()
+        await expect(documentTitle(page, "ARCHITECTURE.md")).toHaveCount(1)
+        await expect(documentBody(page, "ARCHITECTURE.md")).toBeVisible()
         await expect(documentsNav(page, "en").locator('[aria-current="page"]')).toHaveText(
             "ARCHITECTURE.md"
         )
@@ -410,7 +421,7 @@ test.describe("documento de texto", () => {
             await expect(block).toHaveAttribute("tabindex", "0")
             await expect(block).toHaveAttribute("lang", "en")
             expect(await block.evaluate((element) => element.tagName)).toBe("PRE")
-            await expect(page.getByRole("heading", { level: 2, name: "LICENSE" })).toBeVisible()
+            await expect(page.getByRole("heading", { level: 2, name: "LICENSE" })).toHaveCount(1)
             await expect(page).toHaveTitle(
                 PROJECT_TEXTS[language].documentTitle("LICENSE", project.title)
             )
@@ -488,6 +499,33 @@ test.describe("markdown", () => {
                 /.+/
             )
         }
+    })
+
+    test("RF-PROJECT-17, RF-PROJECT-18: o h2 do documento fica no DOM só para leitores e foco, visualmente oculto, e o conteúdo vem num contêiner com borda e respiro", async ({
+        page
+    }) => {
+        await openProject(page, "pt-BR", MNIST)
+        const title = documentTitle(page, "README.md")
+        const body = documentBody(page, "README.md")
+
+        await expect(title).toHaveCount(1)
+        await expect(title).toHaveAttribute("tabindex", "-1")
+        const titleBox = await title.boundingBox()
+        expect(titleBox?.width ?? 0).toBeLessThanOrEqual(1)
+        expect(titleBox?.height ?? 0).toBeLessThanOrEqual(1)
+        await expect(body).toBeVisible()
+        await expect(body).toHaveCSS("border-top-width", "1px")
+        const padding = isNarrow(page) ? "16px" : "24px"
+        await expect(body).toHaveCSS("padding-left", padding)
+        await expect(body).toHaveCSS("padding-top", padding)
+        expect(
+            await page.evaluate(() => {
+                const heading = Array.from(document.querySelectorAll("h2")).find(
+                    (element) => element.textContent === "README.md"
+                )
+                return heading?.nextElementSibling?.tagName
+            })
+        ).toBe("DIV")
     })
 
     for (const [language, headings] of [
@@ -796,7 +834,7 @@ test.describe("acessibilidade do documento", () => {
 test.describe("rolagem suave com movimento pleno", () => {
     test.use({ reducedMotion: "no-preference" })
 
-    test("RF-PROJECT-18, A11Y-PJ10: com movimento pleno a troca de documento termina com o título abaixo da nav fixa", async ({
+    test("RF-PROJECT-18, A11Y-PJ10: com movimento pleno a troca de documento termina com o início do documento abaixo da nav fixa", async ({
         page
     }) => {
         const project = await openProject(page, "pt-BR", MNIST)
@@ -805,12 +843,12 @@ test.describe("rolagem suave com movimento pleno", () => {
 
         await activateDocument(page, "pt-BR", "ARCHITECTURE.md", project.title)
 
-        const title = documentTitle(page, "ARCHITECTURE.md")
+        const body = documentBody(page, "ARCHITECTURE.md")
         await expect
-            .poll(async () => (await top(title)) - (await bottom(nav)), { timeout: 5000 })
+            .poll(async () => (await top(body)) - (await bottom(nav)), { timeout: 5000 })
             .toBeGreaterThanOrEqual(-POSITION_TOLERANCE)
         await expect
-            .poll(async () => (await top(title)) - (await bottom(nav)), { timeout: 5000 })
+            .poll(async () => (await top(body)) - (await bottom(nav)), { timeout: 5000 })
             .toBeLessThan(ANCHOR_MAX_GAP)
     })
 

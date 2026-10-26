@@ -10,6 +10,7 @@ import openProjectsFromHeader from "./support/openProjectsFromHeader"
 import PROJECT_TEXTS from "./support/projectTexts"
 import projectPath from "./support/projectPath"
 import readProjectDetail from "./support/readProjectDetail"
+import readRawProjects from "./support/readRawProjects"
 import serveProjectFixture from "./support/serveProjectFixture"
 import serveProjectsFixture from "./support/serveProjectsFixture"
 import UI_TEXTS from "./support/uiTexts"
@@ -22,6 +23,7 @@ const TOUCH_TARGET = 44
 const BATCH = 9
 const DESKTOP_MIN_WIDTH = 980
 const NOT_FOUND_PROBE = "pt-BR/rota-inexistente"
+const OLD_REASON_MARKER = "Outro modelo de Machine Learning que construí"
 const MISSING_ID = "01a131df-93ee-72f3-8c7a-f67501e47a7b"
 
 function isWide(page: Page) {
@@ -58,7 +60,7 @@ test.describe("rotas do projeto", () => {
                 )
                 await expect(
                     page.getByRole("heading", { level: 2, name: documentName ?? "README.md" })
-                ).toBeVisible()
+                ).toHaveCount(1)
 
                 await page.reload()
                 await expect(page.getByRole("heading", { level: 1 })).toHaveText(project.title)
@@ -424,7 +426,7 @@ test.describe("carregando e erro", () => {
 })
 
 test.describe("relacionados", () => {
-    test("RF-PROJECT-28, RF-PROJECT-19, RF-PROJECT-33: MNIST e Player Profile Clustering mostram um ao outro com o motivo e o destino foca o h1", async ({
+    test("RF-PROJECT-28, RF-PROJECT-19, RF-PROJECT-33: MNIST e Player Profile Clustering mostram um ao outro, sem texto de motivo, e o destino foca o h1", async ({
         page
     }) => {
         const mnist = await openProject(page, "pt-BR", MNIST)
@@ -438,7 +440,7 @@ test.describe("relacionados", () => {
             "href",
             `${FATEC_BASE_PATH}pt-BR/projects`
         )
-        await expect(main.getByText(mnist.related[0].reason)).toBeVisible()
+        await expect(main.getByText(OLD_REASON_MARKER)).toHaveCount(0)
         await expect(main.getByRole("article")).toHaveCount(1)
         await expect(main.getByRole("article").getByRole("heading", { level: 3 })).toContainText(
             player.title
@@ -449,7 +451,7 @@ test.describe("relacionados", () => {
         await expect(page).toHaveURL(new RegExp(`/projects/${player.id}$`))
         await expect(page.getByRole("heading", { level: 1 })).toHaveText(player.title)
         await expect(page.getByRole("heading", { level: 1 })).toBeFocused()
-        await expect(main.getByText(player.related[0].reason)).toBeVisible()
+        await expect(main.getByText(OLD_REASON_MARKER)).toHaveCount(0)
 
         await main.getByRole("article").getByRole("link", { name: mnist.title }).click()
 
@@ -475,7 +477,7 @@ test.describe("relacionados", () => {
         ).toHaveCount(0)
     })
 
-    test("RF-PROJECT-28: com três relacionados a seção mostra três cards em lista com o motivo de cada", async ({
+    test("RF-PROJECT-28: com três relacionados a seção mostra três cards em lista, só com o card de cada um e sem motivo", async ({
         page
     }) => {
         const mnist = readProjectDetail("pt-BR", MNIST)
@@ -493,8 +495,18 @@ test.describe("relacionados", () => {
 
         await expect(cards).toHaveCount(3)
         for (const item of fixture.related) {
-            await expect(page.getByText(String(item.reason))).toBeVisible()
+            const title = String(
+                readRawProjects("pt-BR").find((candidate) => candidate.id === item.id)?.title
+            )
+            const link = cards.getByRole("link", { name: title })
+            await expect(link).toBeVisible()
+            await expect(link).toHaveAttribute(
+                "href",
+                `${FATEC_BASE_PATH}pt-BR/projects/${item.id}`
+            )
         }
+        await expect(page.getByText(OLD_REASON_MARKER)).toHaveCount(0)
+        await expect(page.getByText(/^Motivo /)).toHaveCount(0)
         await expect(
             page.getByRole("main").getByRole("list").last().getByRole("listitem")
         ).toHaveCount(3)
@@ -544,10 +556,12 @@ test.describe("links e layout", () => {
             name: PROJECT_TEXTS["pt-BR"].factsHeading
         })
         const gallery = page.getByRole("region", { name: PROJECT_TEXTS["pt-BR"].gallery })
-        const documentTitle = page.getByRole("heading", { level: 2, name: "README.md" })
+        const documentBody = page
+            .getByRole("heading", { level: 2, name: "README.md" })
+            .locator("xpath=following-sibling::div[1]")
         const factsBefore = await facts.boundingBox()
         const galleryBox = await gallery.boundingBox()
-        const documentBox = await documentTitle.boundingBox()
+        const documentBox = await documentBody.boundingBox()
         expect(factsBefore?.x ?? 0).toBeGreaterThan((galleryBox?.x ?? 0) + (galleryBox?.width ?? 0))
         expect(documentBox?.x ?? 0).toBeLessThan(factsBefore?.x ?? 0)
 
@@ -571,12 +585,13 @@ test.describe("links e layout", () => {
         const facts = await page
             .getByRole("heading", { level: 2, name: PROJECT_TEXTS["pt-BR"].factsHeading })
             .boundingBox()
-        const documentTitle = await page
+        const documentBody = await page
             .getByRole("heading", { level: 2, name: "README.md" })
+            .locator("xpath=following-sibling::div[1]")
             .boundingBox()
 
         expect(facts?.y ?? 0).toBeGreaterThan(gallery?.y ?? 0)
-        expect(documentTitle?.y ?? 0).toBeGreaterThan(facts?.y ?? 0)
+        expect(documentBody?.y ?? 0).toBeGreaterThan(facts?.y ?? 0)
         expect(Math.abs((facts?.x ?? 0) - (gallery?.x ?? 0))).toBeLessThan(40)
     })
 

@@ -3,7 +3,7 @@ import readRawProjects from "./readRawProjects"
 
 type ProjectDocumentInfo = { name: string; format: string }
 type ProjectImageInfo = { alt: string; caption: string; large: string; small: string }
-type RelatedInfo = { id: string; reason: string }
+type RelatedInfo = { id: string }
 
 function readString(record: Record<string, unknown>, key: string): string {
     const value = record[key]
@@ -42,8 +42,7 @@ function readProjectDetail(language: string, title: string) {
         small: readSource(image, "small")
     }))
     const related: RelatedInfo[] = readList(item.related).map((entry) => ({
-        id: readString(entry, "id"),
-        reason: readString(entry, "reason")
+        id: readString(entry, "id")
     }))
     return {
         id: readString(item, "id"),

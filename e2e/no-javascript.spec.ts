@@ -143,7 +143,7 @@ test.describe("sem JavaScript, projeto", () => {
                 )
                 await expect(
                     main.getByRole("heading", { level: 2, name: documentName ?? "README.md" })
-                ).toBeVisible()
+                ).toHaveCount(1)
                 await expect(
                     main.getByRole("heading", { level: 2, name: texts.relatedHeading })
                 ).toBeVisible()

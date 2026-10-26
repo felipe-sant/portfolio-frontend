@@ -14,6 +14,7 @@ const MNIST = "MNIST Classifier"
 const IMAGES = 4
 const TOUCH_TARGET = 44
 const MOBILE_THUMBNAILS_MAX = 640
+const DESKTOP_MIN_WIDTH = 980
 
 type Language = (typeof LANGUAGES)[number]
 
@@ -36,6 +37,10 @@ async function openProjectWithImages(
     await navigateClientSide(page, projectPath(language, project.id))
     await page.getByRole("heading", { level: 1, name: project.title }).waitFor()
     return { project, images: fixture.images }
+}
+
+function isWide(page: Page) {
+    return (page.viewportSize()?.width ?? 0) >= DESKTOP_MIN_WIDTH
 }
 
 function mainButton(page: Page, language: Language) {
@@ -63,12 +68,11 @@ test.describe("galeria", () => {
         await expect(gallery.getByText(texts.counter(1, 1))).toHaveCount(0)
     })
 
-    test("RF-PROJECT-07, NF-DE-13: a imagem principal tem fetchpriority alta, sem lazy e com dimensões; a variante grande só é pedida com a lightbox", async ({
+    test("RF-PROJECT-07, NF-DE-13: a imagem principal tem fetchpriority alta, sem lazy, com dimensões da variante pequena e srcset com as duas variantes", async ({
         page
     }) => {
-        const requested: string[] = []
-        page.on("request", (request) => requested.push(request.url()))
         const project = await openProject(page, "pt-BR", MNIST)
+        const first = project.images[0]
         const image = page
             .getByRole("region", { name: PROJECT_TEXTS["pt-BR"].gallery })
             .getByRole("img")
@@ -77,14 +81,57 @@ test.describe("galeria", () => {
         await expect(image).not.toHaveAttribute("loading", "lazy")
         await expect(image).toHaveAttribute("width", /\d+/)
         await expect(image).toHaveAttribute("height", /\d+/)
-        expect(requested.some((url) => url.endsWith(project.images[0].large))).toBe(false)
+        await expect(image).toHaveAttribute("src", new RegExp(`${first.small}$`))
+        await expect(image).toHaveAttribute("sizes", "(min-width: 980px) 66vw, 100vw")
+        await expect(image).toHaveAttribute("srcset", new RegExp(`${first.small} 640w`))
+        await expect(image).toHaveAttribute("srcset", new RegExp(`${first.large} 1600w`))
+        const width = Number(await image.getAttribute("width"))
+        const height = Number(await image.getAttribute("height"))
+        expect(width).toBe(640)
+        expect(height).toBeGreaterThan(0)
+        const natural = await image.evaluate((element) =>
+            element instanceof HTMLImageElement
+                ? { width: element.naturalWidth, height: element.naturalHeight }
+                : { width: 0, height: 0 }
+        )
+        expect(Math.abs(natural.width / natural.height - width / height)).toBeLessThan(0.02)
+    })
 
-        await mainButton(page, "pt-BR").click()
-        await expect(lightbox(page, "pt-BR")).toBeVisible()
+    test("RF-PROJECT-07, NF-DE-13: o navegador escolhe a variante grande a partir de 980px e a pequena abaixo, e as miniaturas só usam a pequena", async ({
+        page
+    }) => {
+        const requested: string[] = []
+        page.on("request", (request) => requested.push(request.url()))
+        const { project } = await openProjectWithImages(page, "pt-BR", 3)
+        const first = project.images[0]
+        const texts = PROJECT_TEXTS["pt-BR"]
+        const gallery = page.getByRole("region", { name: texts.gallery })
+        const main = gallery.getByRole("button", { name: new RegExp(`${texts.enlarge}$`) })
+        const expected = isWide(page) ? first.large : first.small
 
         await expect
-            .poll(() => requested.some((url) => url.endsWith(project.images[0].large)))
-            .toBe(true)
+            .poll(() =>
+                main
+                    .locator("img")
+                    .evaluate((element) =>
+                        element instanceof HTMLImageElement ? element.currentSrc : ""
+                    )
+            )
+            .toMatch(new RegExp(`${expected}$`))
+        const thumbnails = gallery.getByRole("group", { name: texts.thumbnails }).locator("img")
+        const sources = await thumbnails.evaluateAll((elements) =>
+            elements.map((element) =>
+                element instanceof HTMLImageElement ? element.currentSrc : ""
+            )
+        )
+        expect(sources).toHaveLength(3)
+        for (const source of sources) {
+            expect(source).toMatch(/-small\.webp$/)
+            expect(source).not.toMatch(/-large\.webp$/)
+        }
+        if (!isWide(page)) {
+            expect(requested.some((url) => url.endsWith(first.large))).toBe(false)
+        }
     })
 
     test("RF-PROJECT-05: com cinco imagens a galeria completa e com quatro mostra quatro miniaturas", async ({
@@ -178,7 +225,7 @@ test.describe("galeria", () => {
     test("RF-PROJECT-32: imagem que não carrega dá lugar ao placeholder com role img e o alt, mantendo legenda e miniaturas", async ({
         page
     }) => {
-        await page.route("**/images/projects/**/*-small.webp", (route) => route.abort())
+        await page.route("**/images/projects/**/*-{small,large}.webp", (route) => route.abort())
         const { images } = await openProjectWithImages(page, "pt-BR", 3)
         const texts = PROJECT_TEXTS["pt-BR"]
         const gallery = page.getByRole("region", { name: texts.gallery })

@@ -30,7 +30,7 @@ async function serveProjectFixture(page: Page, options: FixtureOptions) {
     const related = items
         .filter((item) => item.id !== options.projectId)
         .slice(0, options.relatedCount)
-        .map((item) => ({ id: item.id, reason: `Motivo ${String(item.title)}` }))
+        .map((item) => ({ id: item.id }))
     const body = JSON.stringify({
         items: items.map((item) => (item === target ? { ...item, images, related } : item))
     })
