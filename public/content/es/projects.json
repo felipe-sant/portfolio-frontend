@@ -187,7 +187,12 @@
                     "translated": true
                 }
             ],
-            "related": []
+            "related": [
+                {
+                    "id": "01a1323d-b9bc-73c0-8bac-2e93e30ee193",
+                    "reason": "Otro modelo de Machine Learning que construí, aquí servido mediante una API con ONNX."
+                }
+            ]
         },
         {
             "id": "01a131fc-d24c-7c70-887b-0d055f57d251",
@@ -471,7 +476,12 @@
                     "translated": true
                 }
             ],
-            "related": [],
+            "related": [
+                {
+                    "id": "01a131df-93ee-72f3-8c7a-f67501e47a7a",
+                    "reason": "Otro modelo de Machine Learning que construí, aquí una red neuronal que reconoce dígitos dibujados."
+                }
+            ],
             "updatedAt": "2026-04-19"
         }
     ]
