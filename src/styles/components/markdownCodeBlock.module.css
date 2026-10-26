@@ -19,6 +19,13 @@
     color: var(--text-weak);
 }
 
+.file {
+    min-width: 0;
+    overflow-wrap: anywhere;
+    font-family: var(--font-mono);
+    color: var(--code-text);
+}
+
 .language {
     margin-left: auto;
     text-transform: uppercase;

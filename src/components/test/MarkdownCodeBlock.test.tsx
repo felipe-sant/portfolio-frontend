@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs"
 import { describe, expect, it } from "vitest"
 import { MemoryRouter } from "react-router-dom"
 import { act, render, screen, within } from "@testing-library/react"
@@ -31,6 +32,14 @@ describe("MarkdownCodeBlock", () => {
         expect(block).toHaveAttribute("tabindex", "0")
         expect(block).toHaveAttribute("aria-labelledby", header.id)
         expect(block.querySelectorAll("code span[class]").length).toBeGreaterThan(0)
+    })
+
+    it("define no módulo de estilo a classe do nome do arquivo usada no cabeçalho", () => {
+        renderMarkdown(fence('ts title="src/group.ts"', "const total = 1"))
+        const styles = readFileSync("src/styles/components/markdownCodeBlock.module.css", "utf-8")
+
+        expect(screen.getByText("src/group.ts").className).toContain("file")
+        expect(styles).toMatch(/^\.file \{/m)
     })
 
     it("com só a linguagem, o cabeçalho tem só a linguagem", () => {
