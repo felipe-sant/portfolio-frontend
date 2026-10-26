@@ -1,7 +1,8 @@
 {
     "meta": {
         "title": "{{project}} · Luiz Felipe dos Santos",
-        "fallbackTitle": "Project · Luiz Felipe dos Santos"
+        "fallbackTitle": "Project · Luiz Felipe dos Santos",
+        "documentTitle": "{{document}} · {{project}} · Luiz Felipe dos Santos"
     },
     "backToProjects": "Back to Projects",
     "gallery": {
@@ -46,5 +47,32 @@
         "heading": "I couldn't load this project",
         "description": "The project data didn't arrive. The rest of the site keeps working.",
         "otherProjects": "See other projects"
+    },
+    "documents": {
+        "label": "Project documentation",
+        "linkName": "{{document}}: {{project}}",
+        "loadError": {
+            "heading": "I couldn't load this document",
+            "description": "The rest of the page is still here. Try again in a few seconds."
+        }
+    },
+    "markdown": {
+        "newTab": "(opens in a new tab)",
+        "table": "Table {{index}}",
+        "taskDone": "Done",
+        "taskTodo": "To do"
+    },
+    "codeBlock": {
+        "label": "Code",
+        "language": {
+            "typescript": "TypeScript",
+            "javascript": "JavaScript",
+            "tsx": "TSX",
+            "java": "Java",
+            "python": "Python",
+            "json": "JSON",
+            "bash": "Bash",
+            "env": ".env"
+        }
     }
 }

@@ -229,4 +229,88 @@ describe("i18n", () => {
             i18n.t("project:lightbox.next")
         ]).toEqual(lightbox)
     })
+
+    it.each([
+        [
+            "pt-BR",
+            "SETUP.md · Maps · Luiz Felipe dos Santos",
+            ["Documentação do projeto", "SETUP.md: Maps"],
+            [
+                "Não consegui carregar este documento",
+                "O restante da página continua aqui. Tente de novo em alguns segundos."
+            ],
+            ["(abre em nova aba)", "Tabela 2", "Feito", "A fazer", "Código"]
+        ],
+        [
+            "en",
+            "SETUP.md · Maps · Luiz Felipe dos Santos",
+            ["Project documentation", "SETUP.md: Maps"],
+            [
+                "I couldn't load this document",
+                "The rest of the page is still here. Try again in a few seconds."
+            ],
+            ["(opens in a new tab)", "Table 2", "Done", "To do", "Code"]
+        ],
+        [
+            "es",
+            "SETUP.md · Maps · Luiz Felipe dos Santos",
+            ["Documentación del proyecto", "SETUP.md: Maps"],
+            [
+                "No pude cargar este documento",
+                "El resto de la página sigue aquí. Inténtalo de nuevo en unos segundos."
+            ],
+            ["(se abre en una pestaña nueva)", "Tabla 2", "Hecho", "Pendiente", "Código"]
+        ]
+    ])(
+        "resolve os textos de documentação em %s",
+        async (language, documentTitle, documents, loadError, markdown) => {
+            const i18n = await loadPage({ path: `/${language}` })
+
+            expect(
+                i18n.t("project:meta.documentTitle", { document: "SETUP.md", project: "Maps" })
+            ).toBe(documentTitle)
+            expect([
+                i18n.t("project:documents.label"),
+                i18n.t("project:documents.linkName", { document: "SETUP.md", project: "Maps" })
+            ]).toEqual(documents)
+            expect([
+                i18n.t("project:documents.loadError.heading"),
+                i18n.t("project:documents.loadError.description")
+            ]).toEqual(loadError)
+            expect([
+                i18n.t("project:markdown.newTab"),
+                i18n.t("project:markdown.table", { index: 2 }),
+                i18n.t("project:markdown.taskDone"),
+                i18n.t("project:markdown.taskTodo"),
+                i18n.t("project:codeBlock.label")
+            ]).toEqual(markdown)
+        }
+    )
+
+    it.each(["pt-BR", "en", "es"])(
+        "mantém o nome oficial de cada linguagem de código em %s",
+        async (language) => {
+            const i18n = await loadPage({ path: `/${language}` })
+
+            expect([
+                i18n.t("project:codeBlock.language.typescript"),
+                i18n.t("project:codeBlock.language.javascript"),
+                i18n.t("project:codeBlock.language.tsx"),
+                i18n.t("project:codeBlock.language.java"),
+                i18n.t("project:codeBlock.language.python"),
+                i18n.t("project:codeBlock.language.json"),
+                i18n.t("project:codeBlock.language.bash"),
+                i18n.t("project:codeBlock.language.env")
+            ]).toEqual([
+                "TypeScript",
+                "JavaScript",
+                "TSX",
+                "Java",
+                "Python",
+                "JSON",
+                "Bash",
+                ".env"
+            ])
+        }
+    )
 })
