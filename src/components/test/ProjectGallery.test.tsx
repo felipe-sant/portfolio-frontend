@@ -119,11 +119,24 @@ describe("ProjectGallery", () => {
         expect(thumbImage).toHaveAttribute("decoding", "async")
     })
 
-    it("só pede a variante grande quando a lightbox abre", async () => {
+    it("a imagem principal oferece as variantes pequena e grande por srcset e sizes", () => {
+        renderGallery(buildImages(2))
+        const main = document.querySelector("button img")
+
+        expect(main).toHaveAttribute("src", "/images/p/1-small.webp")
+        expect(main).toHaveAttribute(
+            "srcset",
+            "/images/p/1-small.webp 640w, /images/p/1-large.webp 1600w"
+        )
+        expect(main).toHaveAttribute("sizes", "(min-width: 980px) 66vw, 100vw")
+    })
+
+    it("as miniaturas continuam só com a variante pequena e a lightbox usa a grande", async () => {
         const user = userEvent.setup()
         renderGallery(buildImages(2))
 
-        expect(document.querySelector('img[src*="large"]')).not.toBeInTheDocument()
+        const thumbnails = document.querySelectorAll('[role="group"] img')
+        thumbnails.forEach((thumb) => expect(thumb.getAttribute("srcset")).not.toContain("large"))
 
         await user.click(screen.getByRole("button", { name: /Ampliar imagem/ }))
 

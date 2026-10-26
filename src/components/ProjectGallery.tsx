@@ -11,6 +11,7 @@ interface ProjectGalleryProps {
     images: ProjectImage[]
 }
 
+const MAIN_IMAGE_SIZES = "(min-width: 980px) 66vw, 100vw"
 const THUMBNAIL_SIZES = "(min-width: 640px) 12vw, 6.5rem"
 
 function ProjectGallery({ images }: ProjectGalleryProps) {
@@ -31,6 +32,8 @@ function ProjectGallery({ images }: ProjectGalleryProps) {
                     className={css.mainImage}
                     alt={active.alt}
                     src={publicUrl(active.small.src)}
+                    srcSet={`${publicUrl(active.small.src)} ${active.small.width}w, ${publicUrl(active.large.src)} ${active.large.width}w`}
+                    sizes={MAIN_IMAGE_SIZES}
                     width={active.small.width}
                     height={active.small.height}
                     fetchPriority="high"
