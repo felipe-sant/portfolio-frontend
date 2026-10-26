@@ -1,10 +1,26 @@
-import { Fragment } from "react"
 import { useTranslation } from "react-i18next"
 import css from "@/styles/components/projectFacts.module.css"
+import type ProjectType from "@/types/project/ProjectType.types"
 import type ProjectDetail from "@/types/project/ProjectDetail.types"
+
+interface TypeItemProps {
+    type: ProjectType
+    hasSeparator: boolean
+}
 
 interface ProjectFactsProps {
     project: ProjectDetail
+}
+
+function TypeItem({ type, hasSeparator }: TypeItemProps) {
+    const { t } = useTranslation("common")
+
+    return (
+        <>
+            {hasSeparator && <span aria-hidden="true"> {t("symbols.separator")} </span>}
+            {t(`projectType.${type}`)}
+        </>
+    )
 }
 
 function ProjectFacts({ project }: ProjectFactsProps) {
@@ -24,15 +40,7 @@ function ProjectFacts({ project }: ProjectFactsProps) {
                     <dt>{t("project:facts.type")}</dt>
                     <dd>
                         {project.types.map((type, position) => (
-                            <Fragment key={type}>
-                                {position > 0 && (
-                                    <span aria-hidden="true">
-                                        {" "}
-                                        {t("common:symbols.separator")}{" "}
-                                    </span>
-                                )}
-                                {t(`common:projectType.${type}`)}
-                            </Fragment>
+                            <TypeItem key={type} type={type} hasSeparator={position > 0} />
                         ))}
                     </dd>
                 </div>
