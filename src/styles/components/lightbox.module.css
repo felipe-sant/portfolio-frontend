@@ -60,6 +60,11 @@
     object-fit: contain;
 }
 
+div.image {
+    width: min(100%, calc(70vh * 16 / 9));
+    aspect-ratio: var(--ratio-media);
+}
+
 .nav {
     position: absolute;
     top: 50%;
