@@ -4,11 +4,15 @@ import type { ExtraProps } from "react-markdown"
 import MarkdownCodeBlock from "@/components/MarkdownCodeBlock"
 import MarkdownInlineCode from "@/components/MarkdownInlineCode"
 import MarkdownLink from "@/components/MarkdownLink"
+import MarkdownTable from "@/components/MarkdownTable"
+import MarkdownTableHeaderCell from "@/components/MarkdownTableHeaderCell"
+import MarkdownTaskCheckbox from "@/components/MarkdownTaskCheckbox"
 import MarkdownToken from "@/components/MarkdownToken"
 import rehypeHighlight from "rehype-highlight"
 import rehypeSlug from "rehype-slug"
 import remarkGfm from "remark-gfm"
 import css from "@/styles/components/markdownDocument.module.css"
+import rehypeNumberTables from "@/utils/rehypeNumberTables"
 import CODE_LANGUAGE_ALIASES from "@/utils/codeLanguageAliases"
 import CODE_LANGUAGES from "@/utils/codeLanguages"
 import isAllowedMarkdownUrl from "@/utils/isAllowedMarkdownUrl"
@@ -34,6 +38,9 @@ function createHeading(Tag: "h3" | "h4" | "h5" | "h6") {
 const COMPONENTS = {
     a: MarkdownLink,
     pre: MarkdownCodeBlock,
+    table: MarkdownTable,
+    th: MarkdownTableHeaderCell,
+    input: MarkdownTaskCheckbox,
     code: MarkdownInlineCode,
     span: MarkdownToken,
     h1: createHeading("h3"),
@@ -53,7 +60,11 @@ function MarkdownDocument({ content }: MarkdownDocumentProps) {
         <div className={css.document}>
             <ReactMarkdown
                 remarkPlugins={[remarkGfm]}
-                rehypePlugins={[rehypeSlug, [rehypeHighlight, HIGHLIGHT_OPTIONS]]}
+                rehypePlugins={[
+                    rehypeNumberTables,
+                    rehypeSlug,
+                    [rehypeHighlight, HIGHLIGHT_OPTIONS]
+                ]}
                 skipHtml
                 disallowedElements={DISALLOWED_ELEMENTS}
                 urlTransform={transformUrl}
