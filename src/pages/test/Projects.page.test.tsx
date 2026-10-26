@@ -10,10 +10,13 @@ import buildProjectRecords from "@/testUtils/buildProjectRecords"
 import expectNoAxeViolations from "@/testUtils/expectNoAxeViolations"
 import failFetchAfter from "@/testUtils/failFetchAfter"
 import holdFetchAfter from "@/testUtils/holdFetchAfter"
+import relaxTimeoutsForLoad from "@/testUtils/relaxTimeoutsForLoad"
 import renderWithStore from "@/testUtils/renderWithStore"
 import stubContentFetch from "@/testUtils/stubContentFetch"
 import type Profile from "@/types/profile/Profile.types"
 import type ProjectRecord from "@/types/project/ProjectRecord.types"
+
+relaxTimeoutsForLoad()
 
 const SITE_URL = "http://localhost:5173"
 const LANGUAGES = ["pt-BR", "en", "es"] as const

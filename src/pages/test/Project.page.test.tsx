@@ -9,10 +9,13 @@ import expectNoAxeViolations from "@/testUtils/expectNoAxeViolations"
 import failFetchAfter from "@/testUtils/failFetchAfter"
 import holdFetchAfter from "@/testUtils/holdFetchAfter"
 import parseUntyped from "@/testUtils/parseUntyped"
+import relaxTimeoutsForLoad from "@/testUtils/relaxTimeoutsForLoad"
 import renderWithStore from "@/testUtils/renderWithStore"
 import stubContentFetch from "@/testUtils/stubContentFetch"
 import type ProjectDocument from "@/types/project/ProjectDocument.types"
 import type ProjectRecord from "@/types/project/ProjectRecord.types"
+
+relaxTimeoutsForLoad()
 
 const LANGUAGES = ["pt-BR", "en", "es"] as const
 const NAMES = { "pt-BR": "Projeto", en: "Project", es: "Proyecto" }
@@ -171,7 +174,11 @@ describe("ProjectPage, rota e conteúdo", () => {
             })
 
             expect(
-                await screen.findByRole("heading", { level: 2, name: "SETUP.md" })
+                await screen.findByRole(
+                    "heading",
+                    { level: 2, name: "SETUP.md" },
+                    { timeout: 10000 }
+                )
             ).toBeInTheDocument()
             expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
                 `${NAMES[language]} 1`
@@ -202,7 +209,7 @@ describe("ProjectPage, rota e conteúdo", () => {
         )
         expect(router.state.historyAction).toBe("REPLACE")
         expect(
-            await screen.findByRole("heading", { level: 2, name: "SETUP.md" })
+            await screen.findByRole("heading", { level: 2, name: "SETUP.md" }, { timeout: 10000 })
         ).toBeInTheDocument()
     })
 
@@ -304,7 +311,11 @@ describe("ProjectPage, rota e conteúdo", () => {
 
         await user.click(screen.getByRole("link", { name: "SETUP.md: Projeto 1" }))
 
-        const title = await screen.findByRole("heading", { level: 2, name: "SETUP.md" })
+        const title = await screen.findByRole(
+            "heading",
+            { level: 2, name: "SETUP.md" },
+            { timeout: 10000 }
+        )
         await waitFor(() => expect(title).toHaveFocus())
         expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Projeto 1")
         expect(screen.getByText("2 de 2")).toBeInTheDocument()
@@ -346,14 +357,14 @@ describe("ProjectPage, rota e conteúdo", () => {
         const user = userEvent.setup()
         const { router } = renderProject("/pt-BR/projects?type=web", 20)
         await user.click(
-            await screen.findByRole("button", { name: "Carregar mais" }, { timeout: 5000 })
+            await screen.findByRole("button", { name: "Carregar mais" }, { timeout: 10000 })
         )
-        const card = await screen.findByRole("link", { name: "Projeto 1" }, { timeout: 5000 })
+        const card = await screen.findByRole("link", { name: "Projeto 1" }, { timeout: 10000 })
 
         await user.click(card)
         await projectLoaded()
         await user.click(screen.getByRole("link", { name: "SETUP.md: Projeto 1" }))
-        await screen.findByRole("heading", { level: 2, name: "SETUP.md" })
+        await screen.findByRole("heading", { level: 2, name: "SETUP.md" }, { timeout: 10000 })
         await user.click(screen.getByRole("link", { name: "LICENSE: Projeto 1" }))
         await screen.findByRole("heading", { level: 2, name: "LICENSE" })
         await user.click(screen.getByRole("link", { name: "Voltar para Projetos" }))

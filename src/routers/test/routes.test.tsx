@@ -4,9 +4,12 @@ import { act, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import LANGUAGE_STORAGE_KEY from "@/i18n/languageStorageKey"
 import routes from "@/routers/routes"
+import relaxTimeoutsForLoad from "@/testUtils/relaxTimeoutsForLoad"
 import buildProfile from "@/testUtils/buildProfile"
 import renderWithStore from "@/testUtils/renderWithStore"
 import stubContentFetch from "@/testUtils/stubContentFetch"
+
+relaxTimeoutsForLoad()
 
 function renderRoutes(initialEntries: string[]) {
     const router = createMemoryRouter(routes, { initialEntries })

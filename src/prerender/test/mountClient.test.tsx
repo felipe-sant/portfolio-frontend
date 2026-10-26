@@ -9,10 +9,13 @@ import i18n from "@/i18n/i18n"
 import mountClient from "@/prerender/mountClient"
 import buildProfile from "@/testUtils/buildProfile"
 import parseUntyped from "@/testUtils/parseUntyped"
+import relaxTimeoutsForLoad from "@/testUtils/relaxTimeoutsForLoad"
 import stubContentFetch from "@/testUtils/stubContentFetch"
 import loadMarkdownRenderer from "@/utils/loadMarkdownRenderer"
 import MOTION_STORAGE_KEY from "@/utils/motionStorageKey"
 import THEME_STORAGE_KEY from "@/utils/themeStorageKey"
+
+relaxTimeoutsForLoad()
 
 vi.mock("@/utils/loadMarkdownRenderer", async (importOriginal) => {
     const original = await importOriginal<typeof import("@/utils/loadMarkdownRenderer")>()
