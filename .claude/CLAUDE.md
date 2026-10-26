@@ -640,6 +640,28 @@ chamada ao dispatcher interno do runtime. E pacotes ESM com bom tree-shaking (`l
 `date-fns` v3) já resolvem isso pela primeira regra — subpath é a saída para pacotes CJS ou mal
 empacotados.
 
+### Dependências novas
+
+Antes de acrescentar um pacote ao `package.json` (ou de planejar uma tarefa que o acrescente),
+verifique se ele vale a pena e registre o resultado na spec (`.specs/`) ou, sem spec, na descrição
+do PR:
+
+- **Manutenção:** data da última versão e do último commit (`npm view <pacote> time`,
+  `gh api repos/<dono>/<repo>`); repositório não arquivado; sem `deprecated` no npm.
+- **Problemas conhecidos:** issues abertas do repositório (`gh issue list -R <dono>/<repo>`), em
+  especial bugs que atinjam o uso previsto, e avisos de segurança
+  (`gh api "advisories?ecosystem=npm&affects=<pacote>"`), incluindo as dependências transitivas
+  relevantes. Pacote parado há muito tempo não é problema por si só (utilitário pequeno e estável),
+  mas o motivo precisa estar anotado.
+- **Compatibilidade:** `peerDependencies` com a versão de React, TypeScript e Vite do projeto, tipos
+  embutidos e formato ESM com tree-shaking.
+- **Necessidade e peso:** se o que o pacote entrega já existe no projeto ou se resolve com poucas
+  linhas; custo em kB gzip no bundle e, quando for carregado sob demanda, no chunk dele.
+
+Pacote com aviso de segurança sem correção, arquivado, depreciado ou incompatível não entra sem o PO
+decidir. Atualizar versão de pacote existente segue a mesma checagem quando a mudança for de versão
+maior.
+
 ## Padrão de branches, commits e PRs
 
 ### Tipos de alteração
