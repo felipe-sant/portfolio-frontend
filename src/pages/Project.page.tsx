@@ -1,11 +1,13 @@
 import { useTranslation } from "react-i18next"
 import { Link, Navigate, useLocation, useParams } from "react-router-dom"
 import Icon from "@/components/Icon"
+import ProjectError from "@/components/ProjectError"
 import ProjectDocumentSection from "@/components/ProjectDocumentSection"
 import ProjectFacts from "@/components/ProjectFacts"
 import ProjectGallery from "@/components/ProjectGallery"
 import ProjectLinks from "@/components/ProjectLinks"
 import ProjectStack from "@/components/ProjectStack"
+import ProjectSkeleton from "@/components/ProjectSkeleton"
 import RelatedProjects from "@/components/RelatedProjects"
 import useLocalizedPath from "@/hooks/useLocalizedPath"
 import usePageTransition from "@/hooks/usePageTransition"
@@ -15,6 +17,7 @@ import useProject from "@/pages/hooks/useProject"
 import useProjectDocument from "@/pages/hooks/useProjectDocument"
 import ROUTES from "@/routers/paths"
 import css from "@/styles/pages/project.module.css"
+import findDocumentByName from "@/utils/findDocumentByName"
 import type ProjectDetail from "@/types/project/ProjectDetail.types"
 
 interface ProjectContentProps {
@@ -51,32 +54,9 @@ function MetaItem({ text, hasSeparator }: MetaItemProps) {
     )
 }
 
-function ProjectContent({ project, documentName }: ProjectContentProps) {
+function ProjectDetailView({ project, documentName }: ProjectContentProps) {
     const { t } = useTranslation(["project", "common"])
-    const location = useLocation()
-    const localizedPath = useLocalizedPath()
     const document = useProjectDocument(project, documentName)
-
-    if (document.status === "notFound") {
-        return <NotFoundPage />
-    }
-
-    if (documentName !== undefined && document.exactName && document.exactName !== documentName) {
-        return (
-            <Navigate
-                replace
-                to={{
-                    pathname: localizedPath(ROUTES.projectDocument, {
-                        id: project.id,
-                        name: document.exactName
-                    }),
-                    search: location.search,
-                    hash: location.hash
-                }}
-            />
-        )
-    }
-
     const labelItems = [
         ...project.types.map((type) => t(`common:projectType.${type}`)),
         project.date.slice(0, 4)
@@ -93,70 +73,97 @@ function ProjectContent({ project, documentName }: ProjectContentProps) {
         <>
             <title>{title}</title>
             <meta name="description" content={project.summary} />
-            <div className={css.container}>
-                <BackBar />
-                <header className={css.header}>
-                    <div className={css.badges}>
-                        {project.featured && (
-                            <span className={css.featured}>
-                                <Icon name="star" size={12} />
-                                {t("common:projectCard.featured")}
-                            </span>
-                        )}
-                        <span className={css.category}>
-                            {t(`common:projectCategory.${project.category}`)}
+            <header className={css.header}>
+                <div className={css.badges}>
+                    {project.featured && (
+                        <span className={css.featured}>
+                            <Icon name="star" size={12} />
+                            {t("common:projectCard.featured")}
                         </span>
-                        <p className={css.label}>
-                            {labelItems.map((item, position) => (
-                                <MetaItem
-                                    key={`${item}-${position}`}
-                                    text={item}
-                                    hasSeparator={position > 0}
-                                />
-                            ))}
-                        </p>
-                    </div>
-                    <h1 tabIndex={-1} className={css.heading}>
-                        {project.title}
-                    </h1>
-                    <p className={css.summary}>{project.summary}</p>
-                </header>
-                <div className={css.grid}>
-                    <div className={css.gallery}>
-                        <ProjectGallery key={project.id} images={project.images} />
-                    </div>
-                    <div className={css.aside}>
-                        <ProjectFacts project={project} />
-                        <ProjectStack stack={project.stack} />
-                        <ProjectLinks
-                            title={project.title}
-                            demoUrl={project.demoUrl}
-                            repositoryUrl={project.repositoryUrl}
-                        />
-                    </div>
-                    <div className={css.documents}>
-                        <ProjectDocumentSection project={project} state={document} />
-                    </div>
+                    )}
+                    <span className={css.category}>
+                        {t(`common:projectCategory.${project.category}`)}
+                    </span>
+                    <p className={css.label}>
+                        {labelItems.map((item, position) => (
+                            <MetaItem
+                                key={`${item}-${position}`}
+                                text={item}
+                                hasSeparator={position > 0}
+                            />
+                        ))}
+                    </p>
                 </div>
-                <RelatedProjects related={project.related} />
+                <h1 tabIndex={-1} className={css.heading}>
+                    {project.title}
+                </h1>
+                <p className={css.summary}>{project.summary}</p>
+            </header>
+            <div className={css.grid}>
+                <div className={css.gallery}>
+                    <ProjectGallery key={project.id} images={project.images} />
+                </div>
+                <div className={css.aside}>
+                    <ProjectFacts project={project} />
+                    <ProjectStack stack={project.stack} />
+                    <ProjectLinks
+                        title={project.title}
+                        demoUrl={project.demoUrl}
+                        repositoryUrl={project.repositoryUrl}
+                    />
+                </div>
+                <div className={css.documents}>
+                    <ProjectDocumentSection project={project} state={document} />
+                </div>
             </div>
+            <RelatedProjects related={project.related} />
         </>
     )
 }
 
 function ProjectPage() {
     const { name } = useParams()
-    const { status, project } = useProject()
+    const location = useLocation()
+    const localizedPath = useLocalizedPath()
+    const { status, project, fallbackTitle, retry } = useProject()
 
     if (status === "notFound") {
         return <NotFoundPage />
     }
 
     if (status === "success" && project) {
-        return <ProjectContent project={project} documentName={name} />
+        const document = findDocumentByName(project.documents, name)
+
+        if (!document) {
+            return <NotFoundPage />
+        }
+
+        if (name !== undefined && document.name !== name) {
+            return (
+                <Navigate
+                    replace
+                    to={{
+                        pathname: localizedPath(ROUTES.projectDocument, {
+                            id: project.id,
+                            name: document.name
+                        }),
+                        search: location.search,
+                        hash: location.hash
+                    }}
+                />
+            )
+        }
     }
 
-    return <BackBar />
+    return (
+        <div className={css.container}>
+            {!project && <title>{fallbackTitle}</title>}
+            <BackBar />
+            {project && <ProjectDetailView project={project} documentName={name} />}
+            {!project && status === "error" && <ProjectError onRetry={retry} />}
+            {!project && status !== "error" && <ProjectSkeleton />}
+        </div>
+    )
 }
 
 export default ProjectPage

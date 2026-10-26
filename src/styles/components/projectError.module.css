@@ -1,0 +1,33 @@
+.error {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-3);
+    padding: var(--space-6);
+    border-radius: var(--radius);
+    background-color: var(--danger-surface);
+    color: var(--danger-ink);
+}
+
+.heading {
+    margin: 0;
+    font-family: var(--font-heading);
+    font-size: var(--text-h2);
+    font-weight: var(--weight-black);
+    line-height: var(--lh-h2);
+}
+
+.heading:focus {
+    outline: none;
+}
+
+.description {
+    margin: 0;
+    font-size: var(--text-body-md);
+}
+
+.actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+}

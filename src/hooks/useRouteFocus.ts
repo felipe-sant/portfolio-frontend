@@ -36,10 +36,19 @@ function useRouteFocus(mainRef: RefObject<HTMLElement | null>) {
         }
 
         let focused: HTMLElement | null = null
+        const baseline = document.activeElement
+
+        function hasFocusUntouched() {
+            const active = document.activeElement
+
+            return !active || active === document.body || active === baseline || !active.isConnected
+        }
 
         function focusCurrentHeading() {
             const heading = main?.querySelector<HTMLElement>("h1")
-            const lostFocus = !focused?.isConnected || document.activeElement === document.body
+            const lostFocus = focused
+                ? !focused.isConnected || document.activeElement === document.body
+                : hasFocusUntouched()
 
             if (heading && heading !== focused && lostFocus) {
                 focused = heading

@@ -6,6 +6,8 @@ import routes from "@/routers/routes"
 import buildProfile from "@/testUtils/buildProfile"
 import buildProjectRecord from "@/testUtils/buildProjectRecord"
 import expectNoAxeViolations from "@/testUtils/expectNoAxeViolations"
+import failFetchAfter from "@/testUtils/failFetchAfter"
+import holdFetchAfter from "@/testUtils/holdFetchAfter"
 import renderWithStore from "@/testUtils/renderWithStore"
 import stubContentFetch from "@/testUtils/stubContentFetch"
 import type ProjectDocument from "@/types/project/ProjectDocument.types"
@@ -371,4 +373,157 @@ describe("ProjectPage, rota e conteúdo", () => {
 
         await expectNoAxeViolations(container)
     }, 40000)
+})
+
+function startRender(entry: string) {
+    const fetchMock = stubContentFetch(buildFiles())
+    const control = { fetchMock }
+    const router = createMemoryRouter(routes, { initialEntries: [entry] })
+
+    return {
+        control,
+        router,
+        render: () => renderWithStore(<RouterProvider router={router} />)
+    }
+}
+
+describe("ProjectPage, carregando e erro", () => {
+    it.each([
+        ["README", `/pt-BR/projects/${ID_ONE}`],
+        ["documento", `/pt-BR/projects/${ID_ONE}/docs/SETUP.md`]
+    ])(
+        "mostra a barra de volta, o skeleton e o aviso, sem h1, com o título genérico (%s)",
+        async (_name, path) => {
+            const { control, render } = startRender(path)
+            const release = holdFetchAfter(control.fetchMock, 2)
+            const { container } = render()
+
+            const status = await screen.findByText("Carregando...", {}, { timeout: 5000 })
+            expect(status).toHaveAttribute("role", "status")
+            expect(screen.getByRole("link", { name: "Voltar para Projetos" })).toBeInTheDocument()
+            expect(screen.queryByRole("heading", { level: 1 })).not.toBeInTheDocument()
+            expect(container.querySelector('main [aria-hidden="true"]')).toBeInTheDocument()
+            await waitFor(() => expect(document.title).toBe("Projeto · Luiz Felipe dos Santos"))
+            expect(document.head.querySelector('link[rel="canonical"]')).toBeNull()
+
+            await act(async () => {
+                release()
+            })
+            await projectLoaded()
+        }
+    )
+
+    it("não tem violações de acessibilidade carregando", async () => {
+        const { control, render } = startRender(`/pt-BR/projects/${ID_ONE}`)
+        holdFetchAfter(control.fetchMock, 2)
+        const { container } = render()
+        await screen.findByText("Carregando...", {}, { timeout: 5000 })
+
+        await expectNoAxeViolations(container)
+    }, 20000)
+
+    it("não tem violações de acessibilidade em erro", async () => {
+        const { control, render } = startRender(`/pt-BR/projects/${ID_ONE}`)
+        failFetchAfter(control.fetchMock, 0)
+        const { container } = render()
+        await screen.findByRole("alert", {}, { timeout: 5000 })
+
+        await expectNoAxeViolations(container)
+    }, 20000)
+
+    it("leva o foco ao h1 quando o conteúdo chega, se o visitante não moveu o foco", async () => {
+        const { control, router, render } = startRender("/pt-BR/projects")
+        render()
+        await screen.findAllByRole("heading", { level: 2 }, { timeout: 5000 })
+        const release = holdFetchAfter(control.fetchMock, 0)
+
+        await act(async () => {
+            await router.navigate(`/pt-BR/projects/${ID_TWO}`)
+        })
+        await screen.findByText("Carregando...", {}, { timeout: 5000 })
+        await act(async () => {
+            release()
+        })
+
+        const heading = await projectLoaded("Projeto 2")
+        await waitFor(() => expect(heading).toHaveFocus())
+    })
+
+    it("mantém o foco onde o visitante o pôs ao chegar o conteúdo", async () => {
+        const { control, router, render } = startRender("/pt-BR/projects")
+        render()
+        await screen.findAllByRole("heading", { level: 2 }, { timeout: 5000 })
+        const release = holdFetchAfter(control.fetchMock, 0)
+
+        await act(async () => {
+            await router.navigate(`/pt-BR/projects/${ID_TWO}`)
+        })
+        await screen.findByText("Carregando...", {}, { timeout: 5000 })
+        const back = screen.getByRole("link", { name: "Voltar para Projetos" })
+        back.focus()
+        await act(async () => {
+            release()
+        })
+
+        const heading = await projectLoaded("Projeto 2")
+        expect(heading).not.toHaveFocus()
+        expect(back).toHaveFocus()
+    })
+
+    it("mostra o erro com alerta, h1 e saída, sem texto técnico, e tenta de novo sem recarregar", async () => {
+        const user = userEvent.setup()
+        const { control, render } = startRender(`/pt-BR/projects/${ID_ONE}`)
+        const recover = failFetchAfter(control.fetchMock, 0)
+        const { container } = render()
+
+        const alert = await screen.findByRole("alert", {}, { timeout: 5000 })
+        expect(
+            within(alert).getByRole("heading", {
+                level: 1,
+                name: "Não consegui carregar este projeto"
+            })
+        ).toBeInTheDocument()
+        expect(
+            within(alert).getByText(
+                "Os dados do projeto não chegaram. O restante do site continua funcionando."
+            )
+        ).toBeInTheDocument()
+        expect(screen.getByRole("link", { name: "Voltar para Projetos" })).toBeInTheDocument()
+        expect(within(alert).getByRole("link", { name: "Ver outros projetos" })).toHaveAttribute(
+            "href",
+            "/pt-BR/projects"
+        )
+        expect(container.textContent).not.toMatch(/500|Falha|status/)
+        expect(document.title).toBe("Projeto · Luiz Felipe dos Santos")
+
+        recover()
+        await user.click(within(alert).getByRole("button", { name: "Tentar novamente" }))
+
+        expect(await projectLoaded()).toBeInTheDocument()
+        expect(screen.queryByRole("alert")).not.toBeInTheDocument()
+    })
+
+    it.each([
+        ["en", "Loading..."],
+        ["es", "Cargando..."]
+    ] as const)("traduz o carregando em %s", async (language, loading) => {
+        const { control, render } = startRender(`/${language}/projects/${ID_ONE}`)
+        holdFetchAfter(control.fetchMock, 2)
+        render()
+
+        expect(await screen.findByText(loading, {}, { timeout: 5000 })).toBeInTheDocument()
+    })
+
+    it.each([
+        ["en", "I couldn't load this project"],
+        ["es", "No pude cargar este proyecto"]
+    ] as const)("traduz o erro em %s", async (language, errorHeading) => {
+        const { control, render } = startRender(`/${language}/projects/${ID_ONE}`)
+        failFetchAfter(control.fetchMock, 0)
+        render()
+
+        expect(
+            await screen.findByRole("heading", { level: 1, name: errorHeading }, { timeout: 5000 })
+        ).toBeInTheDocument()
+    })
 })
