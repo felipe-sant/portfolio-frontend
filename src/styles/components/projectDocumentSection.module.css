@@ -7,6 +7,7 @@
 
 .title {
     margin: 0;
+    scroll-margin-top: calc(var(--header-height) + var(--documents-nav-height) + var(--space-2));
     font-family: var(--font-mono);
     font-size: var(--text-h3);
     font-weight: var(--weight-semibold);

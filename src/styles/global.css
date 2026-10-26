@@ -134,6 +134,7 @@
     --code-type: #6d3fc0;
     --focus-ring: var(--brand-deep);
     --header-height: 4rem;
+    --documents-nav-height: calc(var(--hit-min) + var(--space-2) + var(--border-width));
     color-scheme: light;
 
     --font-heading: "Bricolage Grotesque", system-ui, sans-serif;
