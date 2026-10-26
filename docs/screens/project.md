@@ -397,33 +397,33 @@ NF-DE-09.
 
 ### Funcionais
 
-- [ ] `RF-PROJECT-01` — "Voltar para Projetos" com seta oculta, link real para `/projects` do idioma, que volta pelo histórico quando a entrada anterior é a lista (restaurando query, quantidade e rolagem), também em carregando e erro, sem contador nem "Próximo" [teste] [e2e]
+- [x] `RF-PROJECT-01` — "Voltar para Projetos" com seta oculta, link real para `/projects` do idioma, que volta pelo histórico quando a entrada anterior é a lista (restaurando query, quantidade e rolagem), também em carregando e erro, sem contador nem "Próximo" [teste] [e2e]
 - [x] `RF-PROJECT-02` — Badges de destaque e categoria, rótulo com todos os tipos e o ano com separadores ocultos, `h1` e resumo do conteúdo, nos três idiomas, sem chave no lugar de texto [teste]
-- [ ] `RF-PROJECT-03` — Duas colunas a partir de 980px com aside fixo; uma coluna abaixo, na ordem galeria, aside, documentação [e2e]
+- [x] `RF-PROJECT-03` — Duas colunas a partir de 980px com aside fixo; uma coluna abaixo, na ordem galeria, aside, documentação [e2e]
 - [x] `RF-PROJECT-04` — Imagem principal com o `alt` do dado dentro do botão "Ampliar imagem", legenda e contador [teste]
 - [x] `RF-PROJECT-05` — Zero, uma e de duas a cinco imagens com o comportamento definido [teste]
-- [ ] `RF-PROJECT-06` — Miniaturas "Imagem N de M" com `aria-current`, cinco colunas e linha rolável abaixo de 640px; trocar não move o foco [teste] [e2e]
-- [ ] `RF-PROJECT-07` — Imagem principal sem `lazy` e com `fetchpriority="high"`; miniaturas `lazy` com variante pequena; variante grande só na lightbox [teste] [medição]
+- [x] `RF-PROJECT-06` — Miniaturas "Imagem N de M" com `aria-current`, cinco colunas e linha rolável abaixo de 640px; trocar não move o foco [teste] [e2e]
+- [x] `RF-PROJECT-07` — Imagem principal sem `lazy` e com `fetchpriority="high"`; miniaturas `lazy` com variante pequena; variante grande só na lightbox [teste] [medição]
 - [x] `RF-PROJECT-08` — Lightbox como diálogo nomeado, legenda e contador anunciados, Fechar, anterior e próxima nomeados [teste]
-- [ ] `RF-PROJECT-09` — Foco em Fechar ao abrir, preso, setas em ciclo, Esc, clique no fundo, foco devolvido, resto `inert`, rolagem travada [teste] [e2e] [leitor]
-- [ ] `RF-PROJECT-10` — Lightbox sem animação com movimento reduzido [navegador]
+- [ ] `RF-PROJECT-09` — Foco em Fechar ao abrir, preso, setas em ciclo, Esc, clique no fundo, foco devolvido, resto `inert`, rolagem travada [teste] [e2e] [leitor] — pendente: falta a verificação com leitor de tela (PO)
+- [x] `RF-PROJECT-10` — Lightbox sem animação com movimento reduzido [navegador]
 - [x] `RF-PROJECT-11` — Ficha técnica em `dl` com os sete pares na ordem, ano de `date` em `<time>`, tipos e categoria por chave [teste]
-- [ ] `RF-PROJECT-12` — Situação com um dos três valores por chave, indicador oculto e cor por valor [teste] [medição]
+- [ ] `RF-PROJECT-12` — Situação com um dos três valores por chave, indicador oculto e cor por valor [teste] [medição] — pendente: cor por valor depende de medição de contraste (PO)
 - [x] `RF-PROJECT-13` — Stack por categoria com `h3` e lista, sem categoria vazia [teste]
 - [x] `RF-PROJECT-14` — Links externos em nova aba com `rel`, nome com projeto e aviso; link ausente não aparece; código vira primário sem demonstração [teste]
 - [x] `RF-PROJECT-15` — `README.md` em `/projects/:id` e cada outro documento em `/projects/:id/docs/<name>`, nos três prefixos; nome em outra caixa troca a URL pela do nome exato por `replace`; nome fora da lista, `/docs/README.md` e subcaminho desconhecido dão página não encontrada [teste]
-- [ ] `RF-PROJECT-16` — `nav` "Documentação do projeto" com links na ordem fixa, rótulos iguais nos três idiomas, nome com o projeto, `aria-current="page"`, fixa abaixo do cabeçalho [teste] [e2e]
+- [x] `RF-PROJECT-16` — `nav` "Documentação do projeto" com links na ordem fixa, rótulos iguais nos três idiomas, nome com o projeto, `aria-current="page"`, fixa abaixo do cabeçalho [teste] [e2e]
 - [x] `RF-PROJECT-17` — `h2` visível com o rótulo do documento, alvo do foco [teste]
-- [ ] `RF-PROJECT-18` — Troca de documento sem recarregar, resto montado sem nova requisição, push no histórico, `<title>` novo, rolagem preservada e foco no título do documento [teste] [e2e]
+- [x] `RF-PROJECT-18` — Troca de documento sem recarregar, resto montado sem nova requisição, push no histórico, `<title>` novo, rolagem preservada e foco no título do documento [teste] [e2e]
 - [x] `RF-PROJECT-19` — Chegada de fora é navegação nova (topo e `h1`); troca de idioma mantém documento e âncora [teste]
 - [x] `RF-PROJECT-20` — Só o idioma ativo é carregado; documento ausente num idioma é erro parcial, sem fallback [teste]
-- [ ] `RF-PROJECT-21` — Markdown, `remark-gfm` e realce só por `import()` nesta rota, chunk ≤ 100 KB gzip, só as linguagens usadas, sem nota de rodapé [review] [medição]
+- [x] `RF-PROJECT-21` — Markdown, `remark-gfm` e realce só por `import()` nesta rota, chunk ≤ 100 KB gzip, só as linguagens usadas, sem nota de rodapé [review] [medição]
 - [x] `RF-PROJECT-22` — HTML, imagem, nota de rodapé e URL fora da lista não são renderizados [teste]
 - [x] `RF-PROJECT-23` — Títulos rebaixados (`##` → `h3`), nunca `h1` nem `h2` no markdown, com `id` para âncora [teste]
-- [ ] `RF-PROJECT-24` — Bloco de código com arquivo e linguagem no cabeçalho, rolável, focável e nomeado; tokens `--code-*` nos dois temas [teste] [axe] [medição]
+- [x] `RF-PROJECT-24` — Bloco de código com arquivo e linguagem no cabeçalho, rolável, focável e nomeado; tokens `--code-*` nos dois temas [teste] [axe] [medição]
 - [x] `RF-PROJECT-25` — `project:<id>` vira link interno do idioma; externo em nova aba com aviso; `mailto:` sem `target` [teste]
-- [ ] `RF-PROJECT-26` — Texto do documento com até 80 caracteres por linha e entrelinha de 1,5 ou mais [navegador]
-- [ ] `RF-PROJECT-27` — `README.md` com as seções na ordem nos três idiomas (teste de conteúdo da #13) [review]
+- [ ] `RF-PROJECT-26` — Texto do documento com até 80 caracteres por linha e entrelinha de 1,5 ou mais [navegador] — pendente: depende de verificação visual no navegador (PO)
+- [x] `RF-PROJECT-27` — `README.md` com as seções na ordem nos três idiomas (teste de conteúdo da #13) [review]
 - [x] `RF-PROJECT-28` — Até três relacionados com o card de Projetos, título em `h3` e motivo, um link por card com o título, "Ver todos os projetos"; seção ausente sem relacionados [teste]
 - [x] `RF-PROJECT-29` — Skeleton oculto e status "Carregando..."; foco no `h1` quando o conteúdo chega [teste]
 - [x] `RF-PROJECT-30` — Erro do projeto em `role="alert"` com `h1`, "Tentar novamente" que refaz a requisição e "Ver outros projetos" [teste]
@@ -431,11 +431,11 @@ NF-DE-09.
 - [x] `RF-PROJECT-32` — Imagem que falha vira placeholder com o `alt` como nome [teste]
 - [x] `RF-PROJECT-33` — Projeto sem relacionados não mostra a seção, sem mensagem [teste]
 - [x] `RF-PROJECT-34` — Id fora do formato, id inexistente, nome de documento fora da lista e subcaminho desconhecido dão página não encontrada no idioma [teste]
-- [ ] `RF-PROJECT-35` — HTML pré-renderizado por projeto, documento e idioma com o documento renderizado, sem erro de hidratação [teste] [e2e]
-- [ ] `RF-PROJECT-36` — Dados só por endpoints do RTK Query, um por projeto e idioma e um por documento e idioma [review] [teste]
+- [x] `RF-PROJECT-35` — HTML pré-renderizado por projeto, documento e idioma com o documento renderizado, sem erro de hidratação [teste] [e2e]
+- [x] `RF-PROJECT-36` — Dados só por endpoints do RTK Query, um por projeto e idioma e um por documento e idioma [review] [teste]
 - [x] `RF-PROJECT-37` — Internos por `<Link>` com prefixo, externos em nova aba com aviso [teste]
 - [x] `RF-PROJECT-39` — Documento `text` num `<pre>` monoespaçado, sem interpretação, com rolagem própria focável e nomeada, `lang` de `contentLanguage` em documento neutro, sem o chunk do markdown; formato desconhecido mostrado como `text` [teste] [axe]
-- [ ] `RF-PROJECT-38` — Tabela com `th` e rolagem própria focável e nomeada, sem rolagem da página a 320px; tarefas com caixa só leitura nomeada [teste] [axe] [medição]
+- [x] `RF-PROJECT-38` — Tabela com `th` e rolagem própria focável e nomeada, sem rolagem da página a 320px; tarefas com caixa só leitura nomeada [teste] [axe] [medição]
 
 ### Acessibilidade
 
@@ -443,32 +443,32 @@ Copiados de [`accessibility.md`](../product/accessibility.md#checklist-por-tela)
 
 - [x] `A11Y-G01` — Um `main`, um `h1` e um `<title>` próprio e traduzido [teste]
 - [x] `A11Y-G02` — `<html lang>` igual ao idioma da URL (`/pt-BR`, `/en`, `/es`) [teste]
-- [ ] `A11Y-G03` — Nenhuma violação do axe em cada estado da tela [axe]
-- [ ] `A11Y-G04` — Nenhuma violação do axe no navegador, nos dois temas [e2e]
-- [ ] `A11Y-G05` — Ordem de foco igual à visual e foco visível em todo elemento focável [teclado]
-- [ ] `A11Y-G06` — Contorno de foco de D27 com 2px, afastado, 3:1 em toda superfície e nunca cortado (2.4.13) [e2e] [medição]
+- [x] `A11Y-G03` — Nenhuma violação do axe em cada estado da tela [axe]
+- [x] `A11Y-G04` — Nenhuma violação do axe no navegador, nos dois temas [e2e]
+- [x] `A11Y-G05` — Ordem de foco igual à visual e foco visível em todo elemento focável [teclado]
+- [ ] `A11Y-G06` — Contorno de foco de D27 com 2px, afastado, 3:1 em toda superfície e nunca cortado (2.4.13) [e2e] [medição] — pendente: 2px e 3:1 em toda superfície dependem de medição (PO)
 - [x] `A11Y-G07` — Todo link tem um nome que diz o destino sozinho (2.4.9) [teste]
-- [ ] `A11Y-G08` — Controles e links isolados com alvo de 44px em todas as larguras (2.5.5) [e2e] [medição]
-- [ ] `A11Y-G09` — Texto corrido com até 80 caracteres por linha, entrelinha de pelo menos 1,5 e sem justificar (1.4.8) [navegador]
-- [ ] `A11Y-G10` — Contraste AA nos dois temas e em todos os estados [e2e] [medição]
-- [ ] `A11Y-G11` — Sem rolagem horizontal a 320px e sem perda com texto a 200% [medição]
-- [ ] `A11Y-G12` — Movimento reduzido respeitado, inclusive a animação disparada por interação (2.3.3) [navegador]
+- [x] `A11Y-G08` — Controles e links isolados com alvo de 44px em todas as larguras (2.5.5) [e2e] [medição]
+- [ ] `A11Y-G09` — Texto corrido com até 80 caracteres por linha, entrelinha de pelo menos 1,5 e sem justificar (1.4.8) [navegador] — pendente: depende de verificação visual no navegador (PO)
+- [x] `A11Y-G10` — Contraste AA nos dois temas e em todos os estados [e2e] [medição]
+- [ ] `A11Y-G11` — Sem rolagem horizontal a 320px e sem perda com texto a 200% [medição] — pendente: zoom de 200% depende de verificação manual (PO)
+- [ ] `A11Y-G12` — Movimento reduzido respeitado, inclusive a animação disparada por interação (2.3.3) [navegador] — pendente: animação disparada por interação depende de verificação manual (PO)
 - [x] `A11Y-G13` — Skeleton com `aria-hidden` e status "Carregando" visualmente oculto [teste]
 - [x] `A11Y-G14` — Erro de carregamento em `role="alert"`, com a saída [teste]
 - [x] `A11Y-G15` — Texto em `pt-BR`, `en` e `es`, inclusive os nomes acessíveis [teste]
-- [ ] `A11Y-G16` — Nenhum erro de `jsx-a11y` [lint]
+- [x] `A11Y-G16` — Nenhum erro de `jsx-a11y` [lint]
 
 - [x] `A11Y-PJ01` — "← Voltar para Projetos" com a seta oculta do leitor [teste]
-- [ ] `A11Y-PJ02` — "Ver código no GitHub" com o nome do projeto no nome acessível e aviso de nova aba, se abrir (2.4.9) [teste]
-- [ ] `A11Y-PJ03` — Galeria: imagem com o `alt` do dado e miniaturas "Imagem N de M" com `aria-current` [teste]
-- [ ] `A11Y-PJ04` — Lightbox: diálogo nomeado, foco preso, Esc e devolução do foco, anterior e próxima nomeados [teste] [e2e] [leitor]
-- [ ] `A11Y-PJ05` — Documentos do projeto: `nav` com nome acessível, links com `aria-current="page"` no aberto e foco no título do documento ao trocar (D33) [teste] [e2e]
-- [ ] `A11Y-PJ06` — Markdown da documentação sem segundo `h1` [teste]
-- [ ] `A11Y-PJ07` — Bloco de código rolável focável e com nome [axe]
-- [ ] `A11Y-PJ08` — Contraste do nome de arquivo do bloco de código no tema escuro (PI2) [medição]
-- [ ] `A11Y-PJ09` — Ficha técnica em `dl` [teste]
-- [ ] `A11Y-PJ10` — A navegação fixa entre documentos não cobre o foco [teclado]
-- [ ] `A11Y-PJ11` — Slug inexistente mostra a página não encontrada [teste]
+- [x] `A11Y-PJ02` — "Ver código no GitHub" com o nome do projeto no nome acessível e aviso de nova aba, se abrir (2.4.9) [teste]
+- [x] `A11Y-PJ03` — Galeria: imagem com o `alt` do dado e miniaturas "Imagem N de M" com `aria-current` [teste]
+- [ ] `A11Y-PJ04` — Lightbox: diálogo nomeado, foco preso, Esc e devolução do foco, anterior e próxima nomeados [teste] [e2e] [leitor] — pendente: falta a verificação com leitor de tela (PO)
+- [x] `A11Y-PJ05` — Documentos do projeto: `nav` com nome acessível, links com `aria-current="page"` no aberto e foco no título do documento ao trocar (D33) [teste] [e2e]
+- [x] `A11Y-PJ06` — Markdown da documentação sem segundo `h1` [teste]
+- [x] `A11Y-PJ07` — Bloco de código rolável focável e com nome [axe]
+- [ ] `A11Y-PJ08` — Contraste do nome de arquivo do bloco de código no tema escuro (PI2) [medição] — pendente: contraste formal do PI2 depende de medição (PO)
+- [x] `A11Y-PJ09` — Ficha técnica em `dl` [teste]
+- [x] `A11Y-PJ10` — A navegação fixa entre documentos não cobre o foco [teclado]
+- [x] `A11Y-PJ11` — Slug inexistente mostra a página não encontrada [teste]
 
 Em `A11Y-PJ11`, "slug" lê-se "id": o projeto é identificado pelo UUID v7 (D32, NF-DA-07), e o
 texto de `accessibility.md` é anterior a essa decisão.
@@ -484,11 +484,11 @@ verificação de lá (nos orçamentos, a forma de medir).
 - [ ] `NF-IN-10` — Seletor navega para o mesmo documento, id e âncora no outro idioma [CI; #53; #33]
 - [ ] `NF-IN-11` — Todo link interno mantém o prefixo do idioma, montado por função única [CI; #53]
 - [ ] `NF-IN-13` — Caminhos em inglês: `/projects/:id` e `/projects/:id/docs/<name>` [CI; #53; #36, #62]
-- [ ] `NF-DA-02` — A tela não importa JSON de conteúdo: o acesso é por endpoint do RTK Query [Review; CI]
+- [x] `NF-DA-02` — A tela não importa JSON de conteúdo: o acesso é por endpoint do RTK Query [Review; CI]
 - [ ] `NF-DA-03` — Imagens e documentos com caminho montado por `import.meta.env.BASE_URL` [Review; #45; #41]
 - [ ] `NF-DA-05` — A tela carrega só o conteúdo do idioma ativo [#10; #41]
 - [ ] `NF-DA-07` — Id UUID v7 gerado uma vez e nunca regenerado [CI; #13; #43]
-- [ ] `NF-DE-09` — Markdown, `remark-gfm` e realce até 100 KB gzip, num chunk só baixado em `/projects/:id` [DevTools Network; nenhum desses módulos nas outras rotas]
+- [x] `NF-DE-09` — Markdown, `remark-gfm` e realce até 100 KB gzip, num chunk só baixado em `/projects/:id` [DevTools Network; nenhum desses módulos nas outras rotas]
 - [ ] `NF-DE-13` — Imagem grande 16:9 até 200 KB, AVIF ou WebP, até 1600px [tamanho dos arquivos em `public/`]
 - [ ] `NF-DE-14` — Miniatura 16:9 até 80 KB, servida por `srcset`/`sizes` [DevTools em 390px]
 - [ ] `NF-DE-16` — Imagens e placeholders com `width` e `height` (ou `aspect-ratio`) reservados [Review; #41]
@@ -506,13 +506,13 @@ verificação de lá (nos orçamentos, a forma de medir).
 - [ ] `NF-IA-10` — `<title>`, descrição, Open Graph com a captura e `twitter:card` por documento e idioma [CI; #52; #41]
 - [ ] `NF-IA-11` — Canônica absoluta por documento e idioma e `hreflang` recíproco [CI; #52; #41]
 - [ ] `NF-IA-16` — HTML semântico, com o conteúdo principal dentro do `main` e a stack em texto [CI; #33, #34 a #38]
-- [ ] `NF-IA-21` — Documentos como rotas filhas: troca sem recarregar, resto montado, rolagem preservada, push e `nav` com `aria-current="page"` [CI; #62]
+- [x] `NF-IA-21` — Documentos como rotas filhas: troca sem recarregar, resto montado, rolagem preservada, push e `nav` com `aria-current="page"` [CI; #62]
 - [ ] `NF-PR-01` — Imagens e documentos da própria origem; link externo só seguido por clique [#41; Review]
 - [ ] `NF-CO-03` — Sem JavaScript, projeto e documento legíveis; galeria e lightbox precisam de JavaScript [#41]
 
 ### Gerais
 
-- [ ] A rota abre e recarrega em `/projects/<id>` e em `/projects/<id>/docs/<name>` (um documento `markdown` e um `text`), nos três prefixos, no build com o `base` do Pages
-- [ ] `npm run build`, `npm run lint` e `npm test -- --run` passam
-- [ ] Textos novos de `project` e `common` em `pt-BR`, `en` e `es`, namespace `project` registrado em `resources.ts` e no `ns` de `i18n.ts`, e chaves sem uso removidas (R2)
-- [ ] `/projects/<id>` e um documento em `/docs/<name>` entram na suíte da #55
+- [x] A rota abre e recarrega em `/projects/<id>` e em `/projects/<id>/docs/<name>` (um documento `markdown` e um `text`), nos três prefixos, no build com o `base` do Pages
+- [x] `npm run build`, `npm run lint` e `npm test -- --run` passam
+- [x] Textos novos de `project` e `common` em `pt-BR`, `en` e `es`, namespace `project` registrado em `resources.ts` e no `ns` de `i18n.ts`, e chaves sem uso removidas (R2)
+- [x] `/projects/<id>` e um documento em `/docs/<name>` entram na suíte da #55
