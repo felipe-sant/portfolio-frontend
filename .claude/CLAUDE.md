@@ -37,7 +37,7 @@ Module em vez de classe global `.ds-*` e código sem comentários. `docs/design/
 referência visual validada pelo PO (abre por `npm run dev` em
 `/docs/design/prototype/prototipo-indice.dc.html`).
 
-**Rotas:** cinco telas, das quais hoje existem no código a Início e Projetos (`/projects`, sem o `/projects/:id`; os links de Informações e Contato do cabeçalho levam à não encontrada até lá; as demais vêm nas specs de tela),
+**Rotas:** cinco telas, das quais hoje existem no código a Início, Projetos (`/projects`) e Projeto (`/projects/:id` e `/projects/:id/docs/:name`; os links de Informações e Contato do cabeçalho levam à não encontrada até lá; as demais vêm nas specs de tela),
 com caminhos em inglês (D32), como os identificadores, sempre sob o prefixo do idioma
 (`/<idioma>`, onde `<idioma>` é `pt-BR`, `en` ou `es`, sem barra final); a raiz `/` só
 redireciona e `/projects` sem prefixo cai em não encontrada. O `:id` é um UUID v7, não slug. Os
@@ -104,6 +104,7 @@ npm run typecheck # checagem de tipos (tsc -b) de src/ e vite.config.ts
 npm run lint      # oxlint sobre o projeto (configuração em .oxlintrc.json)
 npm run build:fatec   # build com BASE_PATH=/ra2581392423047/ + .nojekyll em dist/; falha sem o 404.html pré-renderizado (GitHub Pages da Fatec)
 npm run preview:fatec # servidor Node que imita o Pages (arquivo, <caminho>.html, pasta com 301, 404.html) em http://localhost:4173/ra2581392423047/
+npm run check:chunk # depois do build: o chunk MarkdownDocument-*.js (markdown + realce) tem de ficar em até 102400 bytes gzip e nenhum chunk de entrada, Início ou Projetos pode conter o react-markdown (CI, job Build)
 npm run og:image  # regera public/images/og-site.png (Chromium do Playwright, versionado)
 npm run lint:fix  # mesma coisa, aplicando as correções automáticas possíveis (oxlint --fix)
 npm run format    # prettier --write em **/*.{ts,tsx,css,json,md,yml,html}, conforme .prettierrc e .prettierignore
@@ -369,6 +370,7 @@ para editores compatíveis, coerente com o `.prettierrc`.
   literal: passe `role={"status"}`. Controle de formulário tem borda `--border-control`, nunca
   `--border-subtle`. `LoadError` aceita `description` opcional e `SearchInput` aceita `id` (o hook de Projetos foca o campo por ele). `ProjectCard` recebe `index` (carga e prioridade da imagem) e `revealIndex` (atraso do `useReveal`, recomeça a cada lote de 9) e a página o envolve num `<li>` pelo `ProjectListItem`, local ao arquivo. `FilterGroup` (`role="group"`, `aria-pressed`) é sem estado e o hook decide a regra do clique. `Modal` (portal no `body`, só monta aberto, `role="dialog"`, foco no `h2`, foco preso, `#root` `inert`, trava de rolagem por `data-scroll-locked` no `body`, tela cheia abaixo de 640px) usa `useModalBehavior` (`src/hooks/`) e é genérico; `ProjectsFiltersModal` mantém o rascunho de ordenação, tecnologia e ano e aplica ao fechar por ×, Esc, fundo ou "Aplicar" (`onApply` só se mudou; "Limpar" volta a ordenação a `defaultProjectSort`). A primeira seção é "Ordenar" (`fieldset` de `radio` com o mesmo `name`, sempre presente); Tecnologia e Ano só aparecem com opções, e a opção com `count` 0 fora do rascunho é `disabled` nativo com nome terminando em `filters.modal.noProjects` (a vinda da URL fica marcada e habilitada). O botão "Filtros" nunca fica `aria-disabled`, e o contador "Filtros (N)" conta só tecnologia e ano. `applyModalFilters` de `useProjectsFilters` escreve os três de uma vez. `Button` repassa `aria-disabled`. O ícone `filter` são três traços decrescentes. `TextField` aceita `reserveMessageSpace` (campo com aviso possível) e
   `focusOnError` (hook `useFocusOnError` de `src/hooks/`, só no primeiro campo inválido do envio).
+- **Projeto** (`/projects/:id`, `/projects/:id/docs/:name`) — `Project.page.tsx` com uma rota-pai `projects/:id` e filhas `index` e `docs/:name` (`element: null`, para a hidratação não avisar folha sem elemento); o `README.md` abre em `:id` e os outros documentos em `/docs/<name>` (nome em outra caixa vira o exato por `replace`; `/docs/README.md`, documento fora da lista e id inválido caem na não encontrada). Dados por `getProject` e `getProjectDocumentContent` (hooks `useProject`, `useProjectDocument`, `useBackToProjects` em `src/pages/hooks/`); o card da lista de Projetos leva `state: { fromProjects: true }` e a `nav` de documentos soma `documentSteps`, ambos lidos por `readProjectsOrigin`, e "Voltar para Projetos" volta `-(documentSteps + 1)` no histórico. `useRouteFocus` não foca o `h1` na troca de documento do mesmo projeto (`getProjectContext`), mas foca-o quando o conteúdo chega depois do skeleton se o visitante não moveu o foco. Componentes: `ProjectFacts`, `ProjectStack`, `ProjectLinks`, `ExternalButtonLink`, `ProjectGallery`, `Lightbox`, `FallbackImage`, `RelatedProjects`, `ProjectDocumentsNav`, `ProjectDocumentSection`, `TextDocument`, `ProjectError`, `ProjectSkeleton` e `MarkdownDocument` (com as peças `Markdown*`). **Só `MarkdownDocument`, `codeLanguages.ts` e `rehypeHighlightCode.ts` importam `react-markdown`, `remark-gfm`, `lowlight`, `rehype-slug` e `highlight.js`** (`markdownImports.test.ts` guarda), carregados por `lazy(loadMarkdownRenderer)` só na seção de documento `markdown`; o realce é o plugin local `rehypeHighlightCode` (o `rehype-highlight` importa as 37 linguagens `common` e estoura o orçamento), e o orçamento de 100 KB gzip é conferido por `npm run check:chunk`. `rehypeNumberCodeBlocks` (`src/utils/`, usado só no `MarkdownDocument`) numera os blocos de código "Bash 1", "Bash 2" só quando o nome do bloco repete. `useScrollToHash` (`src/hooks/`, usado só por `ProjectDocumentSection`) rola até o título da âncora assim que ele existe no container, observando-o com `MutationObserver`, e a `nav` fixa não o cobre por `scroll-margin-top`; não age na volta do histórico. Documento `text` (`LICENSE` de cada projeto, neutro em `public/content/shared/projects/<id>/docs/`) vai num `<pre>` sem o chunk. Pré-renderização: o registro dá `documentId` do README ao escopo `project`, e `mountClient` (assíncrono) espera `loadMarkdownRenderer` antes de hidratar quando `shouldPreloadMarkdown` diz que o documento aberto é `markdown`.
 - **SEO por tela** — toda tela pública nova declara `<PageMeta title description path />`
   (`src/components/`: canônica autorreferente, quatro `hreflang` com `x-default` em `en`, Open
   Graph e `twitter:card`; `params` e `image` opcionais) e `<JsonLd data={...} />` com o objeto de
@@ -639,6 +641,28 @@ que o pacote publica em vez de presumir. Não se aplica ao React, que só expõe
 chamada ao dispatcher interno do runtime. E pacotes ESM com bom tree-shaking (`lodash-es`,
 `date-fns` v3) já resolvem isso pela primeira regra — subpath é a saída para pacotes CJS ou mal
 empacotados.
+
+### Dependências novas
+
+Antes de acrescentar um pacote ao `package.json` (ou de planejar uma tarefa que o acrescente),
+verifique se ele vale a pena e registre o resultado na spec (`.specs/`) ou, sem spec, na descrição
+do PR:
+
+- **Manutenção:** data da última versão e do último commit (`npm view <pacote> time`,
+  `gh api repos/<dono>/<repo>`); repositório não arquivado; sem `deprecated` no npm.
+- **Problemas conhecidos:** issues abertas do repositório (`gh issue list -R <dono>/<repo>`), em
+  especial bugs que atinjam o uso previsto, e avisos de segurança
+  (`gh api "advisories?ecosystem=npm&affects=<pacote>"`), incluindo as dependências transitivas
+  relevantes. Pacote parado há muito tempo não é problema por si só (utilitário pequeno e estável),
+  mas o motivo precisa estar anotado.
+- **Compatibilidade:** `peerDependencies` com a versão de React, TypeScript e Vite do projeto, tipos
+  embutidos e formato ESM com tree-shaking.
+- **Necessidade e peso:** se o que o pacote entrega já existe no projeto ou se resolve com poucas
+  linhas; custo em kB gzip no bundle e, quando for carregado sob demanda, no chunk dele.
+
+Pacote com aviso de segurança sem correção, arquivado, depreciado ou incompatível não entra sem o PO
+decidir. Atualizar versão de pacote existente segue a mesma checagem quando a mudança for de versão
+maior.
 
 ## Padrão de branches, commits e PRs
 

@@ -1,0 +1,13 @@
+.text {
+    margin: 0;
+    padding: var(--space-4);
+    border: var(--border-width) solid var(--border-subtle);
+    border-radius: var(--radius);
+    background-color: var(--code-bg);
+    color: var(--code-text);
+    font-family: var(--font-mono);
+    font-size: var(--text-body-sm);
+    line-height: var(--lh-tight);
+    white-space: pre;
+    overflow: auto;
+}

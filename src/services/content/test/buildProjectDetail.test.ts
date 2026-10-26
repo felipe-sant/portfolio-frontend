@@ -12,23 +12,20 @@ const other = buildProjectRecord({ id: "0192f1a0-0000-7000-8000-000000000003", t
 describe("buildProjectDetail", () => {
     it("expande related com ProjectSummary na ordem do conteúdo", () => {
         const record = buildProjectRecord({
-            related: [
-                { id: other.id, reason: "Mesma stack" },
-                { id: target.id, reason: "Mesmo tema" }
-            ]
+            related: [{ id: other.id }, { id: target.id }]
         })
 
         const detail = buildProjectDetail(record, [record, target, other])
 
-        expect(detail.related.map((item) => [item.reason, item.project.title])).toEqual([
-            ["Mesma stack", "Outro"],
-            ["Mesmo tema", "Check-in de eventos"]
+        expect(detail.related.map((item) => item.project.title)).toEqual([
+            "Outro",
+            "Check-in de eventos"
         ])
         expect("related" in detail.related[0].project).toBe(false)
     })
 
     it("ignora relacionado que não existe", () => {
-        const record = buildProjectRecord({ related: [{ id: other.id, reason: "x" }] })
+        const record = buildProjectRecord({ related: [{ id: other.id }] })
 
         expect(buildProjectDetail(record, [record]).related).toEqual([])
     })

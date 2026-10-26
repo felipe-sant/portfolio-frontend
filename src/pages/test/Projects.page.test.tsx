@@ -10,10 +10,13 @@ import buildProjectRecords from "@/testUtils/buildProjectRecords"
 import expectNoAxeViolations from "@/testUtils/expectNoAxeViolations"
 import failFetchAfter from "@/testUtils/failFetchAfter"
 import holdFetchAfter from "@/testUtils/holdFetchAfter"
+import relaxTimeoutsForLoad from "@/testUtils/relaxTimeoutsForLoad"
 import renderWithStore from "@/testUtils/renderWithStore"
 import stubContentFetch from "@/testUtils/stubContentFetch"
 import type Profile from "@/types/profile/Profile.types"
 import type ProjectRecord from "@/types/project/ProjectRecord.types"
+
+relaxTimeoutsForLoad()
 
 const SITE_URL = "http://localhost:5173"
 const LANGUAGES = ["pt-BR", "en", "es"] as const
@@ -571,6 +574,18 @@ describe("ProjectsPage", () => {
             "href",
             expect.stringMatching(new RegExp(`^/${language}/projects/0192f1a0-`))
         )
+    })
+
+    it("navega do card ao projeto com a marca fromProjects no estado", async () => {
+        stubProjects(10)
+        const user = userEvent.setup()
+        const { router } = renderRoutes("/pt-BR/projects")
+
+        const [firstCard] = await screen.findAllByRole("heading", { level: 2 })
+        await user.click(within(firstCard).getByRole("link"))
+
+        expect(router.state.location.pathname).toMatch(/^\/pt-BR\/projects\/0192f1a0-/)
+        expect(router.state.location.state).toEqual({ fromProjects: true })
     })
 
     it("abre a rota já filtrada e ordenada e reescreve a URL por replace", async () => {

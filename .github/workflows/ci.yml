@@ -31,6 +31,8 @@ jobs:
               env:
                   VITE_SITE_URL: https://felipe-sant.vercel.app
               run: npm run build
+            - name: Check markdown chunk
+              run: npm run check:chunk
 
     lint:
         name: Lint

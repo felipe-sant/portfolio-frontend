@@ -89,6 +89,35 @@ describe("prerenderRoutes", () => {
         expect(options.data?.years).toEqual([{ value: "2026", count: 1 }])
     })
 
+    it("pede o projeto e o README na rota de projeto, sem a lista de documentos", async () => {
+        const record = buildProjectRecord({
+            documents: [
+                { id: DOCUMENT_ID, name: "README.md", format: "markdown", translated: true }
+            ]
+        })
+        stubContentFetch({
+            "content/pt-BR/profile.json": buildProfile(),
+            "content/pt-BR/projects.json": { items: [record] },
+            [`content/pt-BR/projects/${record.id}/docs/README.md`]: "## Leia-me"
+        })
+        const store = createStore()
+
+        await loadPrerenderData(
+            store,
+            findRoute("projects/:id"),
+            { id: record.id, documentId: DOCUMENT_ID },
+            "pt-BR"
+        )
+
+        const entries = Object.values(store.getState().api.queries)
+        expect(entries.map((entry) => entry?.endpointName).toSorted()).toEqual([
+            "getProfile",
+            "getProject",
+            "getProjectDocumentContent"
+        ])
+        expect(entries.map((entry) => entry?.data)).toContain("## Leia-me")
+    })
+
     it("pede o conteúdo do documento na rota de documento", async () => {
         const record = buildProjectRecord({
             documents: [{ id: DOCUMENT_ID, name: "SETUP.md", format: "markdown", translated: true }]

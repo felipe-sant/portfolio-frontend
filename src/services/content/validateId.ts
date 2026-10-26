@@ -1,6 +1,6 @@
 import ContentException from "@/services/content/ContentException"
 import createContentError from "@/services/content/createContentError"
-import isUuidV7 from "@/services/content/isUuidV7"
+import isUuidV7 from "@/utils/isUuidV7"
 
 function validateId(id: unknown): asserts id is string {
     if (!isUuidV7(id)) {

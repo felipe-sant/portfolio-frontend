@@ -665,7 +665,7 @@ O projeto inteiro, no idioma pedido, com os relacionados expandidos.
 
 **Regras:**
 
-- `related` vem expandido: cada item é `{ reason, project }`, com `project` na forma
+- `related` vem expandido: cada item é `{ project }`, com `project` na forma
   `ProjectSummary` no `lang` pedido, na ordem do conteúdo (até três, RF-PROJECT-28). A tela não pede
   a lista de projetos para montar os relacionados (D51).
 - `technologies` e `cover` são montados de `stack` e de `images[0]`, como em `GET /projects`.
@@ -774,7 +774,6 @@ O projeto inteiro, no idioma pedido, com os relacionados expandidos.
     ],
     "related": [
         {
-            "reason": "Mesma stack",
             "project": {
                 "id": "0193087b-1d2a-7e6f-9b3c-4a5d6e7f8091",
                 "title": "Check-in de eventos",
@@ -1017,7 +1016,7 @@ origem, sem mudar telas.
   `public/content/<lang>/`, um conjunto por idioma, salvo os documentos neutros, guardados uma vez
   só, e são lidos com `import.meta.env.BASE_URL` (NF-DA-03). Cada idioma tem três arquivos,
   `profile.json` (`Profile`), `timeline.json` (`{ items: TimelineItem[] }`, com `projectIds`) e
-  `projects.json` (`{ items: ProjectDetail[] }`, com `related` como `{ id, reason }`). A lista de
+  `projects.json` (`{ items: ProjectDetail[] }`, com `related` como `{ id }`). A lista de
   documentos vem do próprio registro do projeto (`documents`), sem arquivo à parte, e a camada local
   deriva dela a resposta de `GET /projects/{id}/documents`; cada documento traduzido fica em
   `public/content/<lang>/projects/<id>/docs/<name>` e cada documento neutro em
@@ -1028,7 +1027,7 @@ origem, sem mudar telas.
   endpoints do RTK Query em `src/store/api/` (NF-DA-02), cujo `queryFn` chama a camada local.
 - **Forma dos registros:** cada registro guardado tem a forma da entidade de
   [`data-model.md`](data-model.md) no seu idioma (`Profile`, `TimelineItem` com `projectIds`,
-  projeto na forma `ProjectDetail` com `related` como `{ id, reason }`), como o backend guardaria.
+  projeto na forma `ProjectDetail` com `related` como `{ id }`), como o backend guardaria.
 - **Respostas montadas como o backend montaria:** a camada local monta, a partir dos registros e
   com as mesmas regras deste documento, tudo o que a API calcula: o envelope `ProjectPage` com
   `total` e `availableTypes`, as opções de filtro (`ProjectFilterOptions`), `technologies` e `cover` de cada projeto, `related` expandido, o

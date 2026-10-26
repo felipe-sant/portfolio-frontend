@@ -4,11 +4,13 @@ import { createBrowserRouter } from "react-router-dom"
 import App from "@/App"
 import routes from "@/routers/routes"
 import createStore from "@/store/createStore"
+import loadMarkdownRenderer from "@/utils/loadMarkdownRenderer"
 import publicUrl from "@/utils/publicUrl"
 import removePrerenderedHead from "@/utils/removePrerenderedHead"
 import shouldHydrate from "@/utils/shouldHydrate"
+import shouldPreloadMarkdown from "@/utils/shouldPreloadMarkdown"
 
-function mountClient(rootElement: HTMLElement) {
+async function mountClient(rootElement: HTMLElement) {
     const hydrate = shouldHydrate(window.prerenderedPath, window.location.pathname)
     const store = createStore(hydrate ? window.preloadedState : undefined)
     const router = createBrowserRouter(routes, {
@@ -22,6 +24,10 @@ function mountClient(rootElement: HTMLElement) {
     )
 
     if (hydrate) {
+        if (shouldPreloadMarkdown(window.location.pathname, window.preloadedState)) {
+            await loadMarkdownRenderer()
+        }
+
         return hydrateRoot(rootElement, app)
     }
 

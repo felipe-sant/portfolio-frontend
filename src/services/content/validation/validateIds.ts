@@ -1,5 +1,5 @@
 import SUPPORTED_LANGUAGES from "@/i18n/supportedLanguages"
-import isUuidV7 from "@/services/content/isUuidV7"
+import isUuidV7 from "@/utils/isUuidV7"
 import isRecord from "@/services/content/validation/isRecord"
 import requireList from "@/services/content/validation/requireList"
 import type ContentIssue from "@/types/content/ContentIssue.types"

@@ -84,6 +84,14 @@
                     "format": "markdown",
                     "translated": true,
                     "updatedAt": "2025-02-19"
+                },
+                {
+                    "id": "01a17614-ccc2-7606-871c-ba17eec301fc",
+                    "name": "LICENSE",
+                    "format": "text",
+                    "translated": false,
+                    "contentLanguage": "en",
+                    "updatedAt": "2025-12-11"
                 }
             ],
             "related": [],
@@ -185,9 +193,21 @@
                     "name": "SETUP.md",
                     "format": "markdown",
                     "translated": true
+                },
+                {
+                    "id": "01a17614-cf8e-7df8-b3f6-49262756aa73",
+                    "name": "LICENSE",
+                    "format": "text",
+                    "translated": false,
+                    "contentLanguage": "en",
+                    "updatedAt": "2025-06-29"
                 }
             ],
-            "related": []
+            "related": [
+                {
+                    "id": "01a1323d-b9bc-73c0-8bac-2e93e30ee193"
+                }
+            ]
         },
         {
             "id": "01a131fc-d24c-7c70-887b-0d055f57d251",
@@ -240,6 +260,14 @@
                     "name": "README.md",
                     "format": "markdown",
                     "translated": true,
+                    "updatedAt": "2024-12-27"
+                },
+                {
+                    "id": "01a17614-d25b-7f9b-93ba-cef6dc876729",
+                    "name": "LICENSE",
+                    "format": "text",
+                    "translated": false,
+                    "contentLanguage": "en",
                     "updatedAt": "2024-12-27"
                 }
             ],
@@ -322,6 +350,14 @@
                     "name": "SETUP.md",
                     "format": "markdown",
                     "translated": true
+                },
+                {
+                    "id": "01a17614-d52d-7268-a4ed-2bffa6df5ed1",
+                    "name": "LICENSE",
+                    "format": "text",
+                    "translated": false,
+                    "contentLanguage": "en",
+                    "updatedAt": "2025-06-19"
                 }
             ],
             "related": [],
@@ -378,6 +414,14 @@
                     "name": "README.md",
                     "format": "markdown",
                     "translated": true
+                },
+                {
+                    "id": "01a17614-d80b-747f-b18e-8afa792f30d5",
+                    "name": "LICENSE",
+                    "format": "text",
+                    "translated": false,
+                    "contentLanguage": "en",
+                    "updatedAt": "2024-09-08"
                 }
             ],
             "related": [],
@@ -469,9 +513,21 @@
                     "name": "SETUP.md",
                     "format": "markdown",
                     "translated": true
+                },
+                {
+                    "id": "01a17614-dada-7f65-aa85-da32106d31cf",
+                    "name": "LICENSE",
+                    "format": "text",
+                    "translated": false,
+                    "contentLanguage": "en",
+                    "updatedAt": "2026-04-15"
                 }
             ],
-            "related": [],
+            "related": [
+                {
+                    "id": "01a131df-93ee-72f3-8c7a-f67501e47a7a"
+                }
+            ],
             "updatedAt": "2026-04-19"
         }
     ]

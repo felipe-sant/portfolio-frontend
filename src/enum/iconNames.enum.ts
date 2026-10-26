@@ -22,6 +22,7 @@ const ICON_NAMES = [
     "settings",
     "copy",
     "arrowRight",
+    "arrowLeft",
     "filter"
 ] as const
 

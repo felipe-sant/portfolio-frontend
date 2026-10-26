@@ -24,7 +24,11 @@ const NOT_FOUND_TARGET: PrerenderTarget = {
 
 function listParams(route: PrerenderRouteDescriptor, records: ProjectRecord[]): PrerenderParams[] {
     if (route.scope === "project") {
-        return records.map((record) => ({ id: record.id }))
+        return records.flatMap((record) => {
+            const readme = record.documents.find((document) => document.name === README_NAME)
+
+            return readme ? [{ id: record.id, documentId: readme.id }] : []
+        })
     }
 
     if (route.scope === "document") {

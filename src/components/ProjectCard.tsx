@@ -6,6 +6,7 @@ import VisuallyHidden from "@/components/VisuallyHidden"
 import useLocalizedPath from "@/hooks/useLocalizedPath"
 import usePageTransition from "@/hooks/usePageTransition"
 import useReveal from "@/hooks/useReveal"
+import ROUTES from "@/routers/paths"
 import css from "@/styles/components/projectCard.module.css"
 import type ProjectSummary from "@/types/project/ProjectSummary.types"
 import formatProjectMeta from "@/utils/formatProjectMeta"
@@ -15,6 +16,9 @@ interface ProjectCardProps {
     project: ProjectSummary
     index: number
     revealIndex: number
+    headingLevel?: 2 | 3
+    prioritizeImage?: boolean
+    fromProjects?: boolean
 }
 
 interface MetaItemProps {
@@ -36,7 +40,14 @@ function MetaItem({ text, hasSeparator }: MetaItemProps) {
     )
 }
 
-function ProjectCard({ project, index, revealIndex }: ProjectCardProps) {
+function ProjectCard({
+    project,
+    index,
+    revealIndex,
+    headingLevel = 2,
+    prioritizeImage = true,
+    fromProjects = false
+}: ProjectCardProps) {
     const { t } = useTranslation("common")
     const { ref, revealProps } = useReveal<HTMLElement>(revealIndex)
     const localizedPath = useLocalizedPath()
@@ -47,7 +58,8 @@ function ProjectCard({ project, index, revealIndex }: ProjectCardProps) {
         t(`projectCategory.${category}`)
     ]
     const cover = project.cover
-    const isEager = index < EAGER_IMAGE_COUNT
+    const isEager = prioritizeImage && index < EAGER_IMAGE_COUNT
+    const Heading = headingLevel === 3 ? "h3" : "h2"
 
     return (
         <article ref={ref} {...revealProps} className={css.card} suppressHydrationWarning>
@@ -62,17 +74,18 @@ function ProjectCard({ project, index, revealIndex }: ProjectCardProps) {
                     height={cover.large.height}
                     loading={isEager ? undefined : "lazy"}
                     decoding={isEager ? undefined : "async"}
-                    fetchPriority={index === 0 ? "high" : undefined}
+                    fetchPriority={prioritizeImage && index === 0 ? "high" : undefined}
                 />
             ) : (
                 <div className={css.placeholder} aria-hidden="true" />
             )}
             <div className={css.body}>
                 <div className={css.titleRow}>
-                    <h2 className={css.title}>
+                    <Heading className={css.title}>
                         <Link
                             className={css.link}
-                            to={localizedPath("/projects/:id", { id: project.id })}
+                            to={localizedPath(ROUTES.project, { id: project.id })}
+                            state={fromProjects ? { fromProjects: true } : undefined}
                             viewTransition={viewTransition}
                         >
                             {project.title}
@@ -85,7 +98,7 @@ function ProjectCard({ project, index, revealIndex }: ProjectCardProps) {
                                 <VisuallyHidden>{t("projectCard.featured")}</VisuallyHidden>
                             </>
                         )}
-                    </h2>
+                    </Heading>
                     <time className={css.year} dateTime={project.date}>
                         {year}
                     </time>

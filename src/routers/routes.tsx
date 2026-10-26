@@ -11,6 +11,7 @@ import type SupportedLanguage from "@/types/language/SupportedLanguage.types"
 
 const Home = lazy(() => import("@/pages/Home.page"))
 const NotFound = lazy(() => import("@/pages/NotFound.page"))
+const Project = lazy(() => import("@/pages/Project.page"))
 const Projects = lazy(() => import("@/pages/Projects.page"))
 
 const pageRoutes: RouteObject[] = [
@@ -21,6 +22,14 @@ const pageRoutes: RouteObject[] = [
     {
         path: ROUTES.projects.slice(1),
         element: <Projects />
+    },
+    {
+        path: ROUTES.project.slice(1),
+        element: <Project />,
+        children: [
+            { index: true, element: null },
+            { path: "docs/:name", element: null }
+        ]
     },
     {
         path: ROUTES.notFound,

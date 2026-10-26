@@ -31,6 +31,7 @@ Siga as convenções do `CLAUDE.md` deste repositório. Todo código que você e
 - **Identificadores em inglês.** Componente, função, método, variável, propriedade, atributo, tipo/interface, hook, arquivo e classe de CSS Module: tudo em inglês. O texto que o usuário lê (conteúdo de JSX, `label`, `placeholder`, `title`/`meta`, mensagem de erro exibida na tela) nunca é escrito literal no código: vem de uma chave via `t()`/`<Trans>` do `react-i18next`, e toda chave nova precisa de valor em todos os idiomas de `src/locales/` (`pt-BR`, `en` e `es`). `npm run lint` acusa texto literal em JSX (`react/jsx-no-literals`). Exceção: mensagem de `Error` lançada no código do cliente continua literal em português, como diagnóstico.
 - **Sem comentários no código.** Não escreva `//`, `/* */` nem `{/* */}` em JSX. Se um trecho precisa de comentário para ser entendido, renomeie, extraia função ou simplifique. Contexto vai para o `README.md`, a descrição do PR, o `spec.md` ou a mensagem de commit. Exceção só para diretiva de ferramenta (`@ts-expect-error`, `eslint-disable`).
 - **Estilo:** token global novo vai em `src/styles/global.css`; estilo específico de página vai no CSS Module dela. Não introduza estilo inline nem CSS global de escopo local.
+- **Dependência nova:** antes do `npm install` de um pacote, confira se a spec registra a checagem de "Dependências novas" do `CLAUDE.md`; se não registrar, faça a checagem agora e anote na spec. Se ela reprovar o pacote, pare e avise em vez de instalar.
 
 ## Verificação
 

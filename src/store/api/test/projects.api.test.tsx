@@ -83,7 +83,7 @@ const first = buildProjectRecord({
             contentLanguage: "en"
         }
     ],
-    related: [{ id: "0192f1a0-0000-7000-8000-000000000002", reason: "Mesma stack" }]
+    related: [{ id: "0192f1a0-0000-7000-8000-000000000002" }]
 })
 const second = buildProjectRecord({
     id: "0192f1a0-0000-7000-8000-000000000002",

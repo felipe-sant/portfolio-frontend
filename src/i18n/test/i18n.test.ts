@@ -114,4 +114,203 @@ describe("i18n", () => {
 
         expect(i18n.t("projects:filters.modal.noProjects")).toBe(text)
     })
+
+    it.each([
+        [
+            "pt-BR",
+            "Maps · Luiz Felipe dos Santos",
+            "Projeto · Luiz Felipe dos Santos",
+            "Voltar para Projetos",
+            "Situação",
+            "Ver código no GitHub: Maps (abre em nova aba)",
+            "Ver todos os projetos",
+            "Não consegui carregar este projeto"
+        ],
+        [
+            "en",
+            "Maps · Luiz Felipe dos Santos",
+            "Project · Luiz Felipe dos Santos",
+            "Back to Projects",
+            "Status",
+            "View code on GitHub: Maps (opens in a new tab)",
+            "View all projects",
+            "I couldn't load this project"
+        ],
+        [
+            "es",
+            "Maps · Luiz Felipe dos Santos",
+            "Proyecto · Luiz Felipe dos Santos",
+            "Volver a Proyectos",
+            "Estado",
+            "Ver código en GitHub: Maps (se abre en una pestaña nueva)",
+            "Ver todos los proyectos",
+            "No pude cargar este proyecto"
+        ]
+    ])(
+        "resolve os textos do namespace project do Marco 1 em %s",
+        async (
+            language,
+            title,
+            fallbackTitle,
+            back,
+            status,
+            codeName,
+            viewAllName,
+            errorHeading
+        ) => {
+            const i18n = await loadPage({ path: `/${language}` })
+
+            expect(i18n.t("project:meta.title", { project: "Maps" })).toBe(title)
+            expect(i18n.t("project:meta.fallbackTitle")).toBe(fallbackTitle)
+            expect(i18n.t("project:backToProjects")).toBe(back)
+            expect(i18n.t("project:facts.status")).toBe(status)
+            expect(i18n.t("project:links.codeName", { project: "Maps" })).toBe(codeName)
+            expect(i18n.t("project:related.viewAllName")).toBe(viewAllName)
+            expect(i18n.t("project:loadError.heading")).toBe(errorHeading)
+        }
+    )
+
+    it.each([
+        [
+            "pt-BR",
+            "Em desenvolvimento",
+            "Concluído",
+            "Descontinuado",
+            "Frontend",
+            "Infra e ferramentas"
+        ],
+        ["en", "In development", "Completed", "Discontinued", "Frontend", "Infra and tooling"],
+        ["es", "En desarrollo", "Concluido", "Descontinuado", "Frontend", "Infra y herramientas"]
+    ])(
+        "resolve projectStatus e stackCategory de common em %s",
+        async (language, inDevelopment, completed, discontinued, frontend, tooling) => {
+            const i18n = await loadPage({ path: `/${language}` })
+
+            expect(i18n.t("common:projectStatus.inDevelopment")).toBe(inDevelopment)
+            expect(i18n.t("common:projectStatus.completed")).toBe(completed)
+            expect(i18n.t("common:projectStatus.discontinued")).toBe(discontinued)
+            expect(i18n.t("common:stackCategory.frontend")).toBe(frontend)
+            expect(i18n.t("common:stackCategory.backend")).toBe("Backend")
+            expect(i18n.t("common:stackCategory.tooling")).toBe(tooling)
+        }
+    )
+
+    it.each([
+        [
+            "pt-BR",
+            ["Galeria", "Ampliar imagem", "2 de 5", "Miniaturas", "Imagem 2 de 5"],
+            ["Imagem ampliada", "Fechar", "Imagem anterior", "Próxima imagem"]
+        ],
+        [
+            "en",
+            ["Gallery", "Enlarge image", "2 of 5", "Thumbnails", "Image 2 of 5"],
+            ["Enlarged image", "Close", "Previous image", "Next image"]
+        ],
+        [
+            "es",
+            ["Galería", "Ampliar imagen", "2 de 5", "Miniaturas", "Imagen 2 de 5"],
+            ["Imagen ampliada", "Cerrar", "Imagen anterior", "Imagen siguiente"]
+        ]
+    ])("resolve os textos de galeria e lightbox em %s", async (language, gallery, lightbox) => {
+        const i18n = await loadPage({ path: `/${language}` })
+        const values = { current: 2, total: 5 }
+
+        expect([
+            i18n.t("project:gallery.label"),
+            i18n.t("project:gallery.enlarge"),
+            i18n.t("project:gallery.counter", values),
+            i18n.t("project:gallery.thumbnails"),
+            i18n.t("project:gallery.thumbnail", values)
+        ]).toEqual(gallery)
+        expect([
+            i18n.t("project:lightbox.label"),
+            i18n.t("project:lightbox.close"),
+            i18n.t("project:lightbox.previous"),
+            i18n.t("project:lightbox.next")
+        ]).toEqual(lightbox)
+    })
+
+    it.each([
+        [
+            "pt-BR",
+            "SETUP.md · Maps · Luiz Felipe dos Santos",
+            ["Documentação do projeto", "SETUP.md: Maps"],
+            [
+                "Não consegui carregar este documento",
+                "O restante da página continua aqui. Tente de novo em alguns segundos."
+            ],
+            ["(abre em nova aba)", "Tabela 2", "Feito", "A fazer", "Código"]
+        ],
+        [
+            "en",
+            "SETUP.md · Maps · Luiz Felipe dos Santos",
+            ["Project documentation", "SETUP.md: Maps"],
+            [
+                "I couldn't load this document",
+                "The rest of the page is still here. Try again in a few seconds."
+            ],
+            ["(opens in a new tab)", "Table 2", "Done", "To do", "Code"]
+        ],
+        [
+            "es",
+            "SETUP.md · Maps · Luiz Felipe dos Santos",
+            ["Documentación del proyecto", "SETUP.md: Maps"],
+            [
+                "No pude cargar este documento",
+                "El resto de la página sigue aquí. Inténtalo de nuevo en unos segundos."
+            ],
+            ["(se abre en una pestaña nueva)", "Tabla 2", "Hecho", "Pendiente", "Código"]
+        ]
+    ])(
+        "resolve os textos de documentação em %s",
+        async (language, documentTitle, documents, loadError, markdown) => {
+            const i18n = await loadPage({ path: `/${language}` })
+
+            expect(
+                i18n.t("project:meta.documentTitle", { document: "SETUP.md", project: "Maps" })
+            ).toBe(documentTitle)
+            expect([
+                i18n.t("project:documents.label"),
+                i18n.t("project:documents.linkName", { document: "SETUP.md", project: "Maps" })
+            ]).toEqual(documents)
+            expect([
+                i18n.t("project:documents.loadError.heading"),
+                i18n.t("project:documents.loadError.description")
+            ]).toEqual(loadError)
+            expect([
+                i18n.t("project:markdown.newTab"),
+                i18n.t("project:markdown.table", { index: 2 }),
+                i18n.t("project:markdown.taskDone"),
+                i18n.t("project:markdown.taskTodo"),
+                i18n.t("project:codeBlock.label")
+            ]).toEqual(markdown)
+        }
+    )
+
+    it.each(["pt-BR", "en", "es"])(
+        "mantém o nome oficial de cada linguagem de código em %s",
+        async (language) => {
+            const i18n = await loadPage({ path: `/${language}` })
+
+            expect([
+                i18n.t("project:codeBlock.language.typescript"),
+                i18n.t("project:codeBlock.language.javascript"),
+                i18n.t("project:codeBlock.language.tsx"),
+                i18n.t("project:codeBlock.language.java"),
+                i18n.t("project:codeBlock.language.python"),
+                i18n.t("project:codeBlock.language.json"),
+                i18n.t("project:codeBlock.language.bash"),
+                i18n.t("project:codeBlock.language.env")
+            ]).toEqual([
+                "TypeScript",
+                "JavaScript",
+                "TSX",
+                "Java",
+                "Python",
+                "JSON",
+                "Bash",
+                ".env"
+            ])
+        }
+    )
 })

@@ -7,7 +7,7 @@ import type RelatedProject from "@/types/project/RelatedProject.types"
 function buildProjectDetail(record: ProjectRecord, records: ProjectRecord[]): ProjectDetail {
     const related = record.related.flatMap((item): RelatedProject[] => {
         const target = records.find((candidate) => candidate.id === item.id)
-        return target ? [{ reason: item.reason, project: buildProjectSummary(target) }] : []
+        return target ? [{ project: buildProjectSummary(target) }] : []
     })
     const detail: ProjectDetail = {
         ...buildProjectSummary(record),

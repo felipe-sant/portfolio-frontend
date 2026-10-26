@@ -1,5 +1,7 @@
+import type { ComponentProps } from "react"
 import { describe, expect, it } from "vitest"
-import { MemoryRouter } from "react-router-dom"
+import { createMemoryRouter, MemoryRouter, RouterProvider, useLocation } from "react-router-dom"
+import userEvent from "@testing-library/user-event"
 import { act, render, screen, within } from "@testing-library/react"
 import ProjectCard from "@/components/ProjectCard"
 import setLanguage from "@/i18n/setLanguage"
@@ -7,7 +9,9 @@ import buildProjectSummary from "@/testUtils/buildProjectSummary"
 import expectNoAxeViolations from "@/testUtils/expectNoAxeViolations"
 import type ProjectSummary from "@/types/project/ProjectSummary.types"
 
-function renderCard(overrides: Partial<ProjectSummary> = {}, index = 0) {
+type CardOptions = Partial<ComponentProps<typeof ProjectCard>>
+
+function renderCard(overrides: Partial<ProjectSummary> = {}, index = 0, options: CardOptions = {}) {
     const project = buildProjectSummary(overrides)
 
     return {
@@ -16,12 +20,40 @@ function renderCard(overrides: Partial<ProjectSummary> = {}, index = 0) {
             <MemoryRouter>
                 <ul>
                     <li>
-                        <ProjectCard project={project} index={index} revealIndex={index} />
+                        <ProjectCard
+                            project={project}
+                            index={index}
+                            revealIndex={index}
+                            {...options}
+                        />
                     </li>
                 </ul>
             </MemoryRouter>
         )
     }
+}
+
+function StateProbe() {
+    const location = useLocation()
+
+    return <p>{JSON.stringify(location.state)}</p>
+}
+
+async function clickCard(options: CardOptions) {
+    const project = buildProjectSummary()
+    const router = createMemoryRouter(
+        [
+            {
+                path: "/",
+                element: <ProjectCard project={project} index={0} revealIndex={0} {...options} />
+            },
+            { path: "/pt-BR/projects/:id", element: <StateProbe /> }
+        ],
+        { initialEntries: ["/"] }
+    )
+    render(<RouterProvider router={router} />)
+    await userEvent.click(screen.getByRole("link", { name: project.title }))
+    return router.state.location.state
 }
 
 describe("ProjectCard", () => {
@@ -153,6 +185,32 @@ describe("ProjectCard", () => {
         expect(screen.getByText(summary)).toBeInTheDocument()
         expect(screen.getAllByRole("listitem")).toHaveLength(1 + 3)
         expect(screen.queryByText("D")).not.toBeInTheDocument()
+    })
+
+    it("usa título em h3 sendo o nome do único link do card", () => {
+        const { project } = renderCard({}, 0, { headingLevel: 3 })
+        const heading = screen.getByRole("heading", { level: 3 })
+
+        expect(screen.queryByRole("heading", { level: 2 })).not.toBeInTheDocument()
+        expect(within(heading).getByRole("link", { name: project.title })).toBeInTheDocument()
+        expect(screen.getAllByRole("link")).toHaveLength(1)
+    })
+
+    it("com a prioridade da imagem desligada, a primeira imagem fica sem fetchpriority e carrega tarde", () => {
+        const { container } = renderCard({}, 0, { prioritizeImage: false })
+        const image = container.querySelector("img")
+
+        expect(image).not.toHaveAttribute("fetchpriority")
+        expect(image).toHaveAttribute("loading", "lazy")
+        expect(image).toHaveAttribute("decoding", "async")
+    })
+
+    it("navega com a marca fromProjects quando recebe a prop", async () => {
+        expect(await clickCard({ fromProjects: true })).toEqual({ fromProjects: true })
+    })
+
+    it("navega sem estado quando não recebe a marca", async () => {
+        expect(await clickCard({})).toBeNull()
     })
 
     it("não tem violações de acessibilidade", async () => {

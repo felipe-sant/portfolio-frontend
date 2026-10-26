@@ -9,9 +9,21 @@ import i18n from "@/i18n/i18n"
 import mountClient from "@/prerender/mountClient"
 import buildProfile from "@/testUtils/buildProfile"
 import parseUntyped from "@/testUtils/parseUntyped"
+import relaxTimeoutsForLoad from "@/testUtils/relaxTimeoutsForLoad"
 import stubContentFetch from "@/testUtils/stubContentFetch"
+import loadMarkdownRenderer from "@/utils/loadMarkdownRenderer"
 import MOTION_STORAGE_KEY from "@/utils/motionStorageKey"
 import THEME_STORAGE_KEY from "@/utils/themeStorageKey"
+
+relaxTimeoutsForLoad()
+
+vi.mock("@/utils/loadMarkdownRenderer", async (importOriginal) => {
+    const original = await importOriginal<typeof import("@/utils/loadMarkdownRenderer")>()
+
+    return { default: vi.fn(original.default) }
+})
+
+const PROJECT_ID = "01a131df-93ee-72f3-8c7a-f67501e47a7a"
 
 const TEMPLATE =
     '<!doctype html><html lang="pt-BR"><head><title>Estático</title><meta name="description" content="Estática" /></head><body><noscript>x</noscript><div id="root"></div></body></html>'
@@ -81,7 +93,7 @@ let mountedRoots: Root[] = []
 
 async function mount() {
     await act(async () => {
-        mountedRoots.push(mountClient(rootElement))
+        mountedRoots.push(await mountClient(rootElement))
     })
 }
 
@@ -234,6 +246,68 @@ describe("mountClient com caminho pré-renderizado", () => {
         expect(cardTitles()).toHaveLength(6)
         expect(consoleSpies.error).not.toHaveBeenCalled()
         expect(hydrationWarnings(consoleSpies.warn)).toEqual([])
+    })
+
+    it.each([
+        [
+            "o README do projeto",
+            `pt-BR/projects/${PROJECT_ID}.html`,
+            `/pt-BR/projects/${PROJECT_ID}`
+        ],
+        [
+            "um documento do projeto",
+            `pt-BR/projects/${PROJECT_ID}/docs/SETUP.md.html`,
+            `/pt-BR/projects/${PROJECT_ID}/docs/SETUP.md`
+        ]
+    ])(
+        "hidrata %s sem erro nem aviso, mantém o h1 e carrega o renderizador de markdown antes",
+        async (_name, file, url) => {
+            injectPrerendered(file, rootElement)
+            await i18n.changeLanguage("pt-BR")
+            window.history.pushState({}, "", url)
+            vi.mocked(loadMarkdownRenderer).mockClear()
+            const heading = screen.getByRole("heading", { level: 1, name: "MNIST Classifier" })
+            const consoleSpies = spyOnConsole()
+
+            await mount()
+            await settle()
+
+            expect(loadMarkdownRenderer).toHaveBeenCalled()
+            expect(screen.getByRole("heading", { level: 1, name: "MNIST Classifier" })).toBe(
+                heading
+            )
+            expect(consoleSpies.error).not.toHaveBeenCalled()
+            expect(hydrationWarnings(consoleSpies.warn)).toEqual([])
+        }
+    )
+
+    it("hidrata o documento de texto sem erro nem aviso e sem carregar o renderizador de markdown", async () => {
+        injectPrerendered(`pt-BR/projects/${PROJECT_ID}/docs/LICENSE.html`, rootElement)
+        await i18n.changeLanguage("pt-BR")
+        window.history.pushState({}, "", `/pt-BR/projects/${PROJECT_ID}/docs/LICENSE`)
+        vi.mocked(loadMarkdownRenderer).mockClear()
+        const license = screen.getByRole("region", { name: "LICENSE" })
+        const consoleSpies = spyOnConsole()
+
+        await mount()
+        await settle()
+
+        expect(screen.getByRole("region", { name: "LICENSE" })).toBe(license)
+        expect(loadMarkdownRenderer).not.toHaveBeenCalled()
+        expect(consoleSpies.error).not.toHaveBeenCalled()
+        expect(hydrationWarnings(consoleSpies.warn)).toEqual([])
+    })
+
+    it("não carrega o renderizador de markdown ao hidratar a lista de projetos", async () => {
+        injectPrerendered("pt-BR/projects.html", rootElement)
+        await i18n.changeLanguage("pt-BR")
+        window.history.pushState({}, "", "/pt-BR/projects")
+        vi.mocked(loadMarkdownRenderer).mockClear()
+
+        await mount()
+        await settle()
+
+        expect(loadMarkdownRenderer).not.toHaveBeenCalled()
     })
 
     it("hidrata com a query na URL: primeira renderização igual ao HTML e filtro aplicado depois", async () => {

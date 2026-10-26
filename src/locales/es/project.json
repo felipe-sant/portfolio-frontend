@@ -1,0 +1,78 @@
+{
+    "meta": {
+        "title": "{{project}} · Luiz Felipe dos Santos",
+        "fallbackTitle": "Proyecto · Luiz Felipe dos Santos",
+        "documentTitle": "{{document}} · {{project}} · Luiz Felipe dos Santos"
+    },
+    "backToProjects": "Volver a Proyectos",
+    "gallery": {
+        "label": "Galería",
+        "enlarge": "Ampliar imagen",
+        "counter": "{{current}} de {{total}}",
+        "thumbnails": "Miniaturas",
+        "thumbnail": "Imagen {{current}} de {{total}}"
+    },
+    "lightbox": {
+        "label": "Imagen ampliada",
+        "close": "Cerrar",
+        "previous": "Imagen anterior",
+        "next": "Imagen siguiente"
+    },
+    "facts": {
+        "heading": "Ficha técnica",
+        "year": "Año",
+        "type": "Tipo",
+        "category": "Categoría",
+        "role": "Rol",
+        "duration": "Duración",
+        "team": "Equipo",
+        "status": "Estado"
+    },
+    "stack": {
+        "heading": "Stack"
+    },
+    "links": {
+        "demo": "Ver proyecto en vivo",
+        "demoName": "Ver proyecto en vivo: {{project}} (se abre en una pestaña nueva)",
+        "code": "Ver código en GitHub",
+        "codeName": "Ver código en GitHub: {{project}} (se abre en una pestaña nueva)"
+    },
+    "retry": "Intentar de nuevo",
+    "related": {
+        "heading": "Proyectos relacionados",
+        "viewAll": "Ver todos",
+        "viewAllName": "Ver todos los proyectos"
+    },
+    "loadError": {
+        "heading": "No pude cargar este proyecto",
+        "description": "Los datos del proyecto no llegaron. El resto del sitio sigue funcionando.",
+        "otherProjects": "Ver otros proyectos"
+    },
+    "documents": {
+        "label": "Documentación del proyecto",
+        "linkName": "{{document}}: {{project}}",
+        "loadError": {
+            "heading": "No pude cargar este documento",
+            "description": "El resto de la página sigue aquí. Inténtalo de nuevo en unos segundos."
+        }
+    },
+    "markdown": {
+        "newTab": "(se abre en una pestaña nueva)",
+        "table": "Tabla {{index}}",
+        "taskDone": "Hecho",
+        "taskTodo": "Pendiente"
+    },
+    "codeBlock": {
+        "label": "Código",
+        "language": {
+            "typescript": "TypeScript",
+            "javascript": "JavaScript",
+            "tsx": "TSX",
+            "java": "Java",
+            "python": "Python",
+            "json": "JSON",
+            "bash": "Bash",
+            "env": ".env"
+        }
+    }
+}

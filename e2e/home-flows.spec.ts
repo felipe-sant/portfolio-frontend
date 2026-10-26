@@ -87,6 +87,7 @@ for (const language of LANGUAGES) {
         }) => {
             const featured = readFeaturedProjects(language)
             expect(featured.length).toBeGreaterThan(0)
+            const featuredTitleInLanguage = featured[0].title
             const articles = page.getByRole("article")
 
             await expect(articles).toHaveCount(featured.length)
@@ -101,7 +102,10 @@ for (const language of LANGUAGES) {
 
             await articles.first().getByRole("link").click()
 
-            await expectNotFoundIn(page, language, `/projects/${featured[0].id}`)
+            await expect(page).toHaveURL(new RegExp(`/${language}/projects/${featured[0].id}$`))
+            await expect(page.getByRole("heading", { level: 1 })).toHaveText(
+                featuredTitleInLanguage
+            )
         })
 
         test("RF-HOME-19, NF-MO-01, A11Y-G12: com movimento reduzido o hover não desloca o destaque", async ({
