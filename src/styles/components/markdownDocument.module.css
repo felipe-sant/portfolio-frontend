@@ -21,6 +21,11 @@
     scroll-margin-top: calc(var(--header-height) + var(--documents-nav-height) + var(--space-2));
 }
 
+.document :is(h3, h4) {
+    padding-bottom: var(--space-2);
+    border-bottom: var(--border-width) solid var(--border-subtle);
+}
+
 .document h5,
 .document h6 {
     font-size: var(--text-body-md);
@@ -62,9 +67,14 @@
     margin-left: calc(-1 * var(--space-6));
 }
 
+.document li > input[type="checkbox"] {
+    margin: 0 var(--space-2) 0 0;
+    vertical-align: middle;
+}
+
 .document blockquote {
     padding: var(--space-1) var(--space-4);
-    border-left: var(--border-width-active) solid var(--border-strong);
+    border-left: var(--space-1) solid var(--border-strong);
     color: var(--text-weak);
 }
 
