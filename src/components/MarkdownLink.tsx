@@ -8,7 +8,7 @@ import ROUTES from "@/routers/paths"
 import css from "@/styles/components/markdownLink.module.css"
 import isUuidV7 from "@/utils/isUuidV7"
 
-const PROJECT_PATTERN = /^project:([^/#]+)(?:\/docs\/([^#]+))?(#.*)?$/
+const PROJECT_PATTERN = /^project:([^/#]+)(?:\/docs\/([^#]+))?(#.*)?$/i
 
 function scrollToAnchor(event: MouseEvent<HTMLAnchorElement>, href: string) {
     event.preventDefault()
@@ -52,7 +52,7 @@ function MarkdownLink({ href, children }: ComponentPropsWithoutRef<"a">) {
         )
     }
 
-    if (href.startsWith("mailto:")) {
+    if (/^mailto:/i.test(href)) {
         return (
             <a className={css.link} href={href}>
                 {children}

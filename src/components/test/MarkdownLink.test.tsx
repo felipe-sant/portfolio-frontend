@@ -83,6 +83,16 @@ describe("MarkdownLink", () => {
         expect(link).toHaveAccessibleName("texto do link")
     })
 
+    it("aceita o esquema project: e mailto: em qualquer caixa", () => {
+        const { unmount } = renderLink(`PROJECT:${ID}`)
+
+        expect(screen.getByRole("link")).toHaveAttribute("href", `/pt-BR/projects/${ID}`)
+        unmount()
+        renderLink("MAILTO:felipe@example.com")
+
+        expect(screen.getByRole("link")).not.toHaveAttribute("target")
+    })
+
     it("rola até o título da âncora no documento, sem navegar", async () => {
         const user = userEvent.setup()
         const scrollIntoView = vi.fn()
