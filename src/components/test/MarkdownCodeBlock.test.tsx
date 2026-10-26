@@ -20,17 +20,17 @@ function fence(info: string, body: string) {
 
 describe("MarkdownCodeBlock", () => {
     it("mostra arquivo e linguagem no cabeçalho, realça e nomeia o bloco pelo cabeçalho", () => {
-        const { container } = renderMarkdown(
-            fence('ts title="src/group.ts"', "const total: number = 1")
-        )
+        renderMarkdown(fence('ts title="src/group.ts"', "const total: number = 1"))
         const block = screen.getByRole("region", { name: /src\/group\.ts/ })
-        const header = container.querySelector("[id]") as HTMLElement
+        const headerId = block.getAttribute("aria-labelledby") ?? ""
+        const header = document.getElementById(headerId)
 
+        expect(headerId).not.toBe("")
         expect(header).toHaveTextContent("src/group.ts")
         expect(header).toHaveTextContent("TypeScript")
         expect(block.tagName).toBe("PRE")
         expect(block).toHaveAttribute("tabindex", "0")
-        expect(block).toHaveAttribute("aria-labelledby", header.id)
+        expect(block).toHaveAttribute("aria-labelledby", headerId)
         expect(block.querySelectorAll("code span[class]").length).toBeGreaterThan(0)
     })
 

@@ -48,8 +48,8 @@ describe("MarkdownTable", () => {
     it("aplica o alinhamento do markdown às células", () => {
         const { container } = renderMarkdown("| a | b | c |\n|:---|---:|:---:|\n| 1 | 2 | 3 |")
         const align = (selector: string) =>
-            Array.from(container.querySelectorAll(selector)).map(
-                (cell) => (cell as HTMLElement).style.textAlign
+            Array.from(container.querySelectorAll<HTMLElement>(selector)).map(
+                (cell) => cell.style.textAlign
             )
 
         expect(align("th")).toEqual(["left", "right", "center"])

@@ -1,6 +1,6 @@
-import { describe, expect, it } from "vitest"
+import { describe, expect, it, vi } from "vitest"
 import { createMemoryRouter, Link, RouterProvider, useLocation } from "react-router-dom"
-import { render, screen } from "@testing-library/react"
+import { fireEvent, render, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import useBackToProjects from "@/pages/hooks/useBackToProjects"
 
@@ -10,7 +10,15 @@ function Back() {
 
     return (
         <>
-            <Link to={to} onClick={onClick}>
+            <Link
+                to={to}
+                onClick={onClick}
+                onClickCapture={(event) => {
+                    if (new URLSearchParams(location.search).has("prevent")) {
+                        event.preventDefault()
+                    }
+                }}
+            >
                 {"Voltar"}
             </Link>
             <output>{`${location.pathname}${location.search}`}</output>
@@ -98,5 +106,60 @@ describe("useBackToProjects", () => {
         await user.keyboard("{/Control}")
 
         expect(router.state.location.pathname).toBe("/pt-BR/projects/abc")
+    })
+
+    it.each([["Meta"], ["Shift"], ["Alt"]])(
+        "com a marca, o clique com %s não é interceptado",
+        async (key) => {
+            const user = userEvent.setup()
+            const router = mount({
+                initialEntries: [
+                    { pathname: "/pt-BR/projects", search: "?q=a" },
+                    { pathname: "/pt-BR/projects/abc", state: { fromProjects: true } }
+                ],
+                initialIndex: 1
+            })
+            const history = vi.spyOn(router, "navigate")
+
+            await user.keyboard(`{${key}>}`)
+            await user.click(screen.getByRole("link", { name: "Voltar" }))
+            await user.keyboard(`{/${key}}`)
+
+            expect(history).not.toHaveBeenCalledWith(-1)
+        }
+    )
+
+    it("com a marca, o clique com o botão do meio não volta pelo histórico", () => {
+        const router = mount({
+            initialEntries: [
+                { pathname: "/pt-BR/projects", search: "?q=a" },
+                { pathname: "/pt-BR/projects/abc", state: { fromProjects: true } }
+            ],
+            initialIndex: 1
+        })
+        const history = vi.spyOn(router, "navigate")
+
+        fireEvent.click(screen.getByRole("link", { name: "Voltar" }), { button: 1 })
+
+        expect(history).not.toHaveBeenCalledWith(-1)
+    })
+
+    it("com a marca, não volta pelo histórico se o clique já foi cancelado", () => {
+        const router = mount({
+            initialEntries: [
+                { pathname: "/pt-BR/projects", search: "?q=a" },
+                {
+                    pathname: "/pt-BR/projects/abc",
+                    search: "?prevent",
+                    state: { fromProjects: true }
+                }
+            ],
+            initialIndex: 1
+        })
+        const history = vi.spyOn(router, "navigate")
+
+        fireEvent.click(screen.getByRole("link", { name: "Voltar" }))
+
+        expect(history).not.toHaveBeenCalledWith(-1)
     })
 })

@@ -107,4 +107,25 @@ describe("rehypeHighlightCode", () => {
         expect(JSON.stringify(code.children)).toContain("echo")
         expect(JSON.stringify(code.children)).toContain("oi")
     })
+
+    it("lê o texto de elementos filhos e ignora nós que não são texto nem elemento", () => {
+        const tree = buildTree(["language-bash"], "echo ")
+        const code = codeOf(tree)
+        code.children.push(
+            {
+                type: "element",
+                tagName: "span",
+                properties: {},
+                children: [{ type: "text", value: "oi" }]
+            },
+            { type: "comment", value: "ignorado" }
+        )
+
+        highlight(tree)
+
+        const text = JSON.stringify(code.children)
+        expect(text).toContain("echo")
+        expect(text).toContain("oi")
+        expect(text).not.toContain("ignorado")
+    })
 })

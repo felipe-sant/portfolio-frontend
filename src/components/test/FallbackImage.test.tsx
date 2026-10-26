@@ -3,7 +3,7 @@ import { fireEvent, render, screen } from "@testing-library/react"
 import FallbackImage from "@/components/FallbackImage"
 import expectNoAxeViolations from "@/testUtils/expectNoAxeViolations"
 
-function renderImage(decorative = false) {
+function renderImage(decorative = false, placeholderClassName?: string) {
     return render(
         <FallbackImage
             alt={"Tela inicial do projeto"}
@@ -16,6 +16,8 @@ function renderImage(decorative = false) {
             decoding={"async"}
             fetchPriority={"high"}
             decorative={decorative}
+            className={"card"}
+            placeholderClassName={placeholderClassName}
         />
     )
 }
@@ -53,12 +55,38 @@ describe("FallbackImage", () => {
     it("com decorative, o placeholder da falha fica aria-hidden e sem role", () => {
         const { container } = renderImage(true)
 
-        fireEvent.error(container.querySelector("img") as HTMLImageElement)
+        fireEvent.error(screen.getByRole("img"))
 
         const placeholder = container.firstElementChild
+        expect(placeholder).toBeInTheDocument()
         expect(placeholder).toHaveAttribute("aria-hidden", "true")
         expect(placeholder).not.toHaveAttribute("role")
         expect(placeholder).not.toHaveAttribute("aria-label")
+    })
+
+    it("aplica placeholderClassName só ao placeholder, junto da className, e não à imagem", () => {
+        const { container } = renderImage(false, "extra")
+        const image = screen.getByRole("img")
+
+        expect(image).toHaveClass("card")
+        expect(image).not.toHaveClass("extra")
+
+        fireEvent.error(image)
+
+        const placeholder = screen.getByRole("img", { name: "Tela inicial do projeto" })
+        expect(placeholder).toHaveClass("card", "extra")
+        expect(container.querySelector("img")).not.toBeInTheDocument()
+    })
+
+    it("sem placeholderClassName, o placeholder mantém só a className e a classe própria", () => {
+        renderImage()
+
+        fireEvent.error(screen.getByRole("img"))
+
+        const placeholder = screen.getByRole("img", { name: "Tela inicial do projeto" })
+        expect(placeholder).toHaveClass("card")
+        expect(placeholder.classList).toHaveLength(2)
+        expect(placeholder).not.toHaveClass("undefined")
     })
 
     it("não tem violações de acessibilidade com a imagem nem com o placeholder", async () => {

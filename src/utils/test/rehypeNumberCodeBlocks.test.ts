@@ -14,6 +14,13 @@ function block(language: string | undefined, meta?: string): Element {
     return { type: "element", tagName: "pre", properties: {}, children: [code] }
 }
 
+const empty = (): Element => ({
+    type: "element",
+    tagName: "pre",
+    properties: {},
+    children: [{ type: "text", value: "x" }]
+})
+
 function run(blocks: Element[]) {
     const tree: Root = { type: "root", children: blocks }
     rehypeNumberCodeBlocks()(tree)
@@ -70,5 +77,10 @@ describe("rehypeNumberCodeBlocks", () => {
         rehypeNumberCodeBlocks()(tree)
 
         expect([first, second].map((item) => item.properties.dataCodeBlockIndex)).toEqual([1, 2])
+    })
+
+    it("trata como o mesmo nome os blocos sem código elemento e não numera blocos únicos", () => {
+        expect(run([empty(), empty()])).toEqual([1, 2])
+        expect(run([empty(), block("bash")])).toEqual([undefined, undefined])
     })
 })

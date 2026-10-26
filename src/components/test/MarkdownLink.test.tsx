@@ -33,6 +33,15 @@ describe("MarkdownLink", () => {
         )
     })
 
+    it("decodifica o nome do documento no caminho do link interno", () => {
+        renderLink(`project:${ID}/docs/Meu%20Guia.md`)
+
+        expect(screen.getByRole("link", { name: "texto do link" })).toHaveAttribute(
+            "href",
+            `/pt-BR/projects/${ID}/docs/Meu%20Guia.md`
+        )
+    })
+
     it("mantém a âncora depois do projeto sem documento", () => {
         renderLink(`project:${ID}#stack`)
 

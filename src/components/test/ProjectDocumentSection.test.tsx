@@ -63,6 +63,10 @@ function renderSection(state: DocumentState) {
     )
 }
 
+function ReadmeSection() {
+    return <ProjectDocumentSection project={PROJECT} state={buildState(README)} />
+}
+
 function SectionByPath() {
     const { pathname } = useLocation()
 
@@ -259,6 +263,24 @@ describe("ProjectDocumentSection", () => {
         )
 
         await vi.waitFor(() => expect(scroll.mock.contexts).toContain(target))
+    }, 15000)
+
+    it("não rola até a âncora ao voltar no histórico, para preservar a rolagem restaurada", async () => {
+        const scroll = vi.spyOn(Element.prototype, "scrollIntoView")
+        const router = createMemoryRouter([{ path: "*", element: <ReadmeSection /> }], {
+            initialEntries: ["/a", "/b#seção", "/c"],
+            initialIndex: 2
+        })
+        render(<RouterProvider router={router} />)
+
+        await act(() => router.navigate(-1))
+        await screen.findByRole("heading", { level: 3, name: "Seção" }, { timeout: 10000 })
+        await act(async () => {
+            await Promise.resolve()
+        })
+
+        expect(router.state.location.hash).toBe("#seção")
+        expect(scroll).not.toHaveBeenCalled()
     }, 15000)
 
     it("não rola quando a âncora não existe no documento", async () => {

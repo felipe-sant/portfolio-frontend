@@ -72,6 +72,16 @@ afterEach(() => {
     appRoot.remove()
 })
 
+function getBackdrop() {
+    const backdrop = screen.getByRole("dialog").parentElement
+
+    if (!backdrop) {
+        throw new Error("O diálogo da lightbox não tem fundo")
+    }
+
+    return backdrop
+}
+
 describe("Lightbox", () => {
     it("fechada, não renderiza nada nem pede imagem", () => {
         renderLightbox({ images: buildImages(2), initialOpen: false })
@@ -179,7 +189,7 @@ describe("Lightbox", () => {
         for (const close of [
             () => user.keyboard("{Escape}"),
             () => user.click(screen.getByRole("button", { name: "Fechar" })),
-            () => user.click(screen.getByRole("dialog").parentElement as HTMLElement)
+            () => user.click(getBackdrop())
         ]) {
             const opener = screen.getByRole("button", { name: "Abrir" })
             await user.click(opener)
@@ -197,7 +207,7 @@ describe("Lightbox", () => {
         const onClose = vi.fn()
         renderLightbox({ images: buildImages(2), onClose })
         const dialog = screen.getByRole("dialog")
-        const backdrop = dialog.parentElement as HTMLElement
+        const backdrop = getBackdrop()
 
         fireEvent.mouseDown(dialog)
         fireEvent.click(backdrop)
