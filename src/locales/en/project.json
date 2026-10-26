@@ -1,0 +1,37 @@
+{
+    "meta": {
+        "title": "{{project}} · Luiz Felipe dos Santos",
+        "fallbackTitle": "Project · Luiz Felipe dos Santos"
+    },
+    "backToProjects": "Back to Projects",
+    "facts": {
+        "heading": "Fact sheet",
+        "year": "Year",
+        "type": "Type",
+        "category": "Category",
+        "role": "Role",
+        "duration": "Duration",
+        "team": "Team",
+        "status": "Status"
+    },
+    "stack": {
+        "heading": "Stack"
+    },
+    "links": {
+        "demo": "View live project",
+        "demoName": "View live project: {{project}} (opens in a new tab)",
+        "code": "View code on GitHub",
+        "codeName": "View code on GitHub: {{project}} (opens in a new tab)"
+    },
+    "retry": "Try again",
+    "related": {
+        "heading": "Related projects",
+        "viewAll": "View all",
+        "viewAllName": "View all projects"
+    },
+    "loadError": {
+        "heading": "I couldn't load this project",
+        "description": "The project data didn't arrive. The rest of the site keeps working.",
+        "otherProjects": "See other projects"
+    }
+}

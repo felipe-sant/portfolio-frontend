@@ -114,4 +114,84 @@ describe("i18n", () => {
 
         expect(i18n.t("projects:filters.modal.noProjects")).toBe(text)
     })
+
+    it.each([
+        [
+            "pt-BR",
+            "Maps · Luiz Felipe dos Santos",
+            "Projeto · Luiz Felipe dos Santos",
+            "Voltar para Projetos",
+            "Situação",
+            "Ver código no GitHub: Maps (abre em nova aba)",
+            "Ver todos os projetos",
+            "Não consegui carregar este projeto"
+        ],
+        [
+            "en",
+            "Maps · Luiz Felipe dos Santos",
+            "Project · Luiz Felipe dos Santos",
+            "Back to Projects",
+            "Status",
+            "View code on GitHub: Maps (opens in a new tab)",
+            "View all projects",
+            "I couldn't load this project"
+        ],
+        [
+            "es",
+            "Maps · Luiz Felipe dos Santos",
+            "Proyecto · Luiz Felipe dos Santos",
+            "Volver a Proyectos",
+            "Estado",
+            "Ver código en GitHub: Maps (se abre en una pestaña nueva)",
+            "Ver todos los proyectos",
+            "No pude cargar este proyecto"
+        ]
+    ])(
+        "resolve os textos do namespace project do Marco 1 em %s",
+        async (
+            language,
+            title,
+            fallbackTitle,
+            back,
+            status,
+            codeName,
+            viewAllName,
+            errorHeading
+        ) => {
+            const i18n = await loadPage({ path: `/${language}` })
+
+            expect(i18n.t("project:meta.title", { project: "Maps" })).toBe(title)
+            expect(i18n.t("project:meta.fallbackTitle")).toBe(fallbackTitle)
+            expect(i18n.t("project:backToProjects")).toBe(back)
+            expect(i18n.t("project:facts.status")).toBe(status)
+            expect(i18n.t("project:links.codeName", { project: "Maps" })).toBe(codeName)
+            expect(i18n.t("project:related.viewAllName")).toBe(viewAllName)
+            expect(i18n.t("project:loadError.heading")).toBe(errorHeading)
+        }
+    )
+
+    it.each([
+        [
+            "pt-BR",
+            "Em desenvolvimento",
+            "Concluído",
+            "Descontinuado",
+            "Frontend",
+            "Infra e ferramentas"
+        ],
+        ["en", "In development", "Completed", "Discontinued", "Frontend", "Infra and tooling"],
+        ["es", "En desarrollo", "Concluido", "Descontinuado", "Frontend", "Infra y herramientas"]
+    ])(
+        "resolve projectStatus e stackCategory de common em %s",
+        async (language, inDevelopment, completed, discontinued, frontend, tooling) => {
+            const i18n = await loadPage({ path: `/${language}` })
+
+            expect(i18n.t("common:projectStatus.inDevelopment")).toBe(inDevelopment)
+            expect(i18n.t("common:projectStatus.completed")).toBe(completed)
+            expect(i18n.t("common:projectStatus.discontinued")).toBe(discontinued)
+            expect(i18n.t("common:stackCategory.frontend")).toBe(frontend)
+            expect(i18n.t("common:stackCategory.backend")).toBe("Backend")
+            expect(i18n.t("common:stackCategory.tooling")).toBe(tooling)
+        }
+    )
 })

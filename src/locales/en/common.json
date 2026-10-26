@@ -107,5 +107,15 @@
     },
     "period": {
         "since": "since {{date}}"
+    },
+    "projectStatus": {
+        "inDevelopment": "In development",
+        "completed": "Completed",
+        "discontinued": "Discontinued"
+    },
+    "stackCategory": {
+        "frontend": "Frontend",
+        "backend": "Backend",
+        "tooling": "Infra and tooling"
     }
 }
