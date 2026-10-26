@@ -4,6 +4,19 @@
         "fallbackTitle": "Project · Luiz Felipe dos Santos"
     },
     "backToProjects": "Back to Projects",
+    "gallery": {
+        "label": "Gallery",
+        "enlarge": "Enlarge image",
+        "counter": "{{current}} of {{total}}",
+        "thumbnails": "Thumbnails",
+        "thumbnail": "Image {{current}} of {{total}}"
+    },
+    "lightbox": {
+        "label": "Enlarged image",
+        "close": "Close",
+        "previous": "Previous image",
+        "next": "Next image"
+    },
     "facts": {
         "heading": "Fact sheet",
         "year": "Year",

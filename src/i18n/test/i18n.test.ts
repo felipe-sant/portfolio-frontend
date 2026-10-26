@@ -194,4 +194,39 @@ describe("i18n", () => {
             expect(i18n.t("common:stackCategory.tooling")).toBe(tooling)
         }
     )
+
+    it.each([
+        [
+            "pt-BR",
+            ["Galeria", "Ampliar imagem", "2 de 5", "Miniaturas", "Imagem 2 de 5"],
+            ["Imagem ampliada", "Fechar", "Imagem anterior", "Próxima imagem"]
+        ],
+        [
+            "en",
+            ["Gallery", "Enlarge image", "2 of 5", "Thumbnails", "Image 2 of 5"],
+            ["Enlarged image", "Close", "Previous image", "Next image"]
+        ],
+        [
+            "es",
+            ["Galería", "Ampliar imagen", "2 de 5", "Miniaturas", "Imagen 2 de 5"],
+            ["Imagen ampliada", "Cerrar", "Imagen anterior", "Imagen siguiente"]
+        ]
+    ])("resolve os textos de galeria e lightbox em %s", async (language, gallery, lightbox) => {
+        const i18n = await loadPage({ path: `/${language}` })
+        const values = { current: 2, total: 5 }
+
+        expect([
+            i18n.t("project:gallery.label"),
+            i18n.t("project:gallery.enlarge"),
+            i18n.t("project:gallery.counter", values),
+            i18n.t("project:gallery.thumbnails"),
+            i18n.t("project:gallery.thumbnail", values)
+        ]).toEqual(gallery)
+        expect([
+            i18n.t("project:lightbox.label"),
+            i18n.t("project:lightbox.close"),
+            i18n.t("project:lightbox.previous"),
+            i18n.t("project:lightbox.next")
+        ]).toEqual(lightbox)
+    })
 })

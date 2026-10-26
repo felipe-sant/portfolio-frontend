@@ -4,6 +4,19 @@
         "fallbackTitle": "Projeto · Luiz Felipe dos Santos"
     },
     "backToProjects": "Voltar para Projetos",
+    "gallery": {
+        "label": "Galeria",
+        "enlarge": "Ampliar imagem",
+        "counter": "{{current}} de {{total}}",
+        "thumbnails": "Miniaturas",
+        "thumbnail": "Imagem {{current}} de {{total}}"
+    },
+    "lightbox": {
+        "label": "Imagem ampliada",
+        "close": "Fechar",
+        "previous": "Imagem anterior",
+        "next": "Próxima imagem"
+    },
     "facts": {
         "heading": "Ficha técnica",
         "year": "Ano",
