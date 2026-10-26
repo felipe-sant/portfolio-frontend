@@ -47,9 +47,16 @@ const prerenderRoutes: PrerenderRoute[] = [
     {
         pattern: "projects/:id",
         scope: "project",
-        queries: (lang, { id }) => [
+        queries: (lang, { id, documentId }) => [
             (dispatch) => dispatch(projectsApi.endpoints.getProject.initiate({ id, lang })),
-            (dispatch) => dispatch(projectsApi.endpoints.getProjectDocuments.initiate({ id, lang }))
+            (dispatch) =>
+                dispatch(
+                    projectsApi.endpoints.getProjectDocumentContent.initiate({
+                        id,
+                        documentId,
+                        lang
+                    })
+                )
         ]
     },
     {
@@ -57,8 +64,6 @@ const prerenderRoutes: PrerenderRoute[] = [
         scope: "document",
         queries: (lang, { id, documentId }) => [
             (dispatch) => dispatch(projectsApi.endpoints.getProject.initiate({ id, lang })),
-            (dispatch) =>
-                dispatch(projectsApi.endpoints.getProjectDocuments.initiate({ id, lang })),
             (dispatch) =>
                 dispatch(
                     projectsApi.endpoints.getProjectDocumentContent.initiate({
