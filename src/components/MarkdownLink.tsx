@@ -10,17 +10,17 @@ import isUuidV7 from "@/utils/isUuidV7"
 
 const PROJECT_PATTERN = /^project:([^/#]+)(?:\/docs\/([^#]+))?(#.*)?$/i
 
-function decodeAnchor(id: string) {
+function safeDecode(value: string) {
     try {
-        return decodeURIComponent(id)
+        return decodeURIComponent(value)
     } catch {
-        return id
+        return value
     }
 }
 
 function scrollToAnchor(event: MouseEvent<HTMLAnchorElement>, href: string) {
     event.preventDefault()
-    document.getElementById(decodeAnchor(href.slice(1)))?.scrollIntoView()
+    document.getElementById(safeDecode(href.slice(1)))?.scrollIntoView()
 }
 
 function MarkdownLink({ href, children }: ComponentPropsWithoutRef<"a">) {
@@ -50,7 +50,7 @@ function MarkdownLink({ href, children }: ComponentPropsWithoutRef<"a">) {
         }
 
         const path = name
-            ? localizedPath(ROUTES.projectDocument, { id, name: decodeURIComponent(name) })
+            ? localizedPath(ROUTES.projectDocument, { id, name: safeDecode(name) })
             : localizedPath(ROUTES.project, { id })
 
         return (

@@ -33,6 +33,15 @@ describe("MarkdownLink", () => {
         )
     })
 
+    it("mantém o nome cru do documento quando a codificação do project: é inválida", () => {
+        renderLink(`project:${ID}/docs/%E0%A4%A`)
+
+        expect(screen.getByRole("link", { name: "texto do link" })).toHaveAttribute(
+            "href",
+            `/pt-BR/projects/${ID}/docs/%E0%A4%A`
+        )
+    })
+
     it("decodifica o nome do documento no caminho do link interno", () => {
         renderLink(`project:${ID}/docs/Meu%20Guia.md`)
 
