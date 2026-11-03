@@ -24,10 +24,7 @@ describe("CertificateChip", () => {
 
     it("não tem violações de acessibilidade", async () => {
         const { container } = render(
-            <CertificateChip
-                certificate={{ id: "a", name: "Practitioner", issuer: "AWS" }}
-                onDark
-            />
+            <CertificateChip certificate={{ id: "a", name: "Practitioner", issuer: "AWS" }} />
         )
 
         await expectNoAxeViolations(container)

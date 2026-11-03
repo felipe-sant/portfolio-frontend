@@ -1,21 +1,24 @@
 import { useTranslation } from "react-i18next"
 import Chip from "@/components/Chip"
+import css from "@/styles/components/certificateChip.module.css"
 import type Certificate from "@/types/timeline/Certificate.types"
 
 interface CertificateChipProps {
     certificate: Certificate
-    onDark?: boolean
 }
 
-function CertificateChip({ certificate, onDark = false }: CertificateChipProps) {
+function CertificateChip({ certificate }: CertificateChipProps) {
     const { t } = useTranslation("common")
+    const separator = ` ${t("symbols.separator")} `
 
     return (
-        <Chip onDark={onDark}>
+        <Chip>
             {certificate.name}
             {certificate.issuer && (
                 <>
-                    <span aria-hidden="true"> {t("symbols.separator")} </span>
+                    <span className={css.separator} aria-hidden="true">
+                        {separator}
+                    </span>
                     {certificate.issuer}
                 </>
             )}
