@@ -8,11 +8,19 @@ interface LoadErrorProps {
     retryLabel: string
     onRetry: () => void
     id?: string
+    announce?: boolean
 }
 
-function LoadError({ title, description, retryLabel, onRetry, id }: LoadErrorProps) {
+function LoadError({
+    title,
+    description,
+    retryLabel,
+    onRetry,
+    id,
+    announce = true
+}: LoadErrorProps) {
     return (
-        <div className={css.error} role={"alert"} tabIndex={-1} id={id}>
+        <div className={css.error} role={announce ? "alert" : undefined} tabIndex={-1} id={id}>
             <Icon name="alert" size={20} />
             <div className={css.text}>
                 <p className={css.title}>{title}</p>
