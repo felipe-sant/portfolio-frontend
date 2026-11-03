@@ -81,7 +81,8 @@
     "noscript": "Search, filters, language and theme switching need JavaScript. The content of this page is available without it.",
     "resume": {
         "download": "Download CV",
-        "downloadPdf": "Download CV (PDF), opens the preview"
+        "downloadPdf": "Download CV (PDF), opens the preview",
+        "unavailableName": "Download CV (PDF), currently unavailable"
     },
     "projectType": {
         "web": "Web",
@@ -106,7 +107,9 @@
         "featured": "Featured"
     },
     "period": {
-        "since": "since {{date}}"
+        "range": "<start>{{start}}</start> – <end>{{end}}</end>",
+        "since": "since {{date}}",
+        "current": "Current"
     },
     "projectStatus": {
         "inDevelopment": "In development",

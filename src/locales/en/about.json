@@ -1,0 +1,45 @@
+{
+    "meta": {
+        "title": "About · Luiz Felipe dos Santos",
+        "description": "Who Luiz Felipe dos Santos is: about me, stack, background and education."
+    },
+    "hero": {
+        "label": "About",
+        "photoAlt": "Photo of {{name}}"
+    },
+    "aboutMe": {
+        "heading": "About me"
+    },
+    "stack": {
+        "heading": "Stack",
+        "count_one": "{{count}} technology",
+        "count_other": "{{count}} technologies"
+    },
+    "complements": {
+        "certificates": "Certificates",
+        "workStyle": "How I work"
+    },
+    "trajectory": {
+        "heading": "Background",
+        "hint": "Select an item to see the details.",
+        "groups": {
+            "experience": "Professional experience",
+            "education": "Education",
+            "course": "Courses"
+        },
+        "count_one": "{{count}} item",
+        "count_other": "{{count}} items"
+    },
+    "modal": {
+        "close": "Close",
+        "responsibilities": "Responsibilities",
+        "disciplines": "Main subjects",
+        "technologies": "Technologies",
+        "certificates": "Certificates",
+        "relatedProjects": "Related projects"
+    },
+    "loadError": {
+        "message": "This part of the page could not be loaded.",
+        "retry": "Try again"
+    }
+}
