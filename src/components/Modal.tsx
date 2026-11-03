@@ -13,9 +13,19 @@ interface ModalProps {
     children: ReactNode
     footer?: ReactNode
     description?: string
+    subtitle?: ReactNode
 }
 
-function Modal({ isOpen, title, closeLabel, onClose, children, footer, description }: ModalProps) {
+function Modal({
+    isOpen,
+    title,
+    closeLabel,
+    onClose,
+    children,
+    footer,
+    description,
+    subtitle
+}: ModalProps) {
     const titleId = useId()
     const boxRef = useRef<HTMLDivElement>(null)
     const titleRef = useRef<HTMLHeadingElement>(null)
@@ -26,6 +36,12 @@ function Modal({ isOpen, title, closeLabel, onClose, children, footer, descripti
     if (!isOpen) {
         return null
     }
+
+    const heading = (
+        <h2 ref={titleRef} id={titleId} tabIndex={-1} className={css.title}>
+            {title}
+        </h2>
+    )
 
     return createPortal(
         <div
@@ -51,9 +67,14 @@ function Modal({ isOpen, title, closeLabel, onClose, children, footer, descripti
                 className={css.box}
             >
                 <div className={css.header}>
-                    <h2 ref={titleRef} id={titleId} tabIndex={-1} className={css.title}>
-                        {title}
-                    </h2>
+                    {subtitle ? (
+                        <div className={css.headings}>
+                            {heading}
+                            <div className={css.subtitle}>{subtitle}</div>
+                        </div>
+                    ) : (
+                        heading
+                    )}
                     <IconButton icon="close" label={closeLabel} onClick={onClose} />
                 </div>
                 <div className={css.body}>{children}</div>
