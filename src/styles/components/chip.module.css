@@ -10,3 +10,8 @@
     font-size: var(--text-chip);
     line-height: 1.4;
 }
+
+.onDark {
+    border-color: var(--dark-border);
+    color: var(--dark-200);
+}
