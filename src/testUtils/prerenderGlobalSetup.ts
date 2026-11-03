@@ -25,6 +25,8 @@ const FIXTURE_TARGETS: PrerenderTarget[] = [
     { path: "pt-BR", file: "pt-BR.html", lang: "pt-BR", pattern: "" },
     { path: "en", file: "en.html", lang: "en", pattern: "" },
     { path: "pt-BR/projects", file: "pt-BR/projects.html", lang: "pt-BR", pattern: "projects" },
+    { path: "pt-BR/about", file: "pt-BR/about.html", lang: "pt-BR", pattern: "about" },
+    { path: "en/about", file: "en/about.html", lang: "en", pattern: "about" },
     buildProjectTarget("pt-BR"),
     buildProjectTarget("en"),
     buildProjectTarget("es"),
