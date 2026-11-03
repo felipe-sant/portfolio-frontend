@@ -1,7 +1,6 @@
-import { Fragment } from "react"
 import type { Ref } from "react"
-import { useTranslation } from "react-i18next"
 import TrajectoryDetail from "@/components/TrajectoryDetail"
+import TrajectoryDetailsLine from "@/components/TrajectoryDetailsLine"
 import TrajectoryPeriod from "@/components/TrajectoryPeriod"
 import css from "@/styles/components/trajectoryItem.module.css"
 import type TimelineItem from "@/types/timeline/TimelineItem.types"
@@ -14,7 +13,6 @@ interface TrajectoryItemProps {
 }
 
 function TrajectoryItem({ item, onOpen, ref }: TrajectoryItemProps) {
-    const { t } = useTranslation("common")
     const lines = getTrajectoryLines(item)
 
     return (
@@ -30,14 +28,7 @@ function TrajectoryItem({ item, onOpen, ref }: TrajectoryItemProps) {
                     <span className={css.highlight}>{lines.highlight}</span>
                     {lines.details.length > 0 && (
                         <span className={css.details}>
-                            {lines.details.map((detail, index) => (
-                                <Fragment key={detail}>
-                                    {index > 0 && (
-                                        <span aria-hidden="true"> {t("symbols.separator")} </span>
-                                    )}
-                                    {detail}
-                                </Fragment>
-                            ))}
+                            <TrajectoryDetailsLine details={lines.details} />
                         </span>
                     )}
                 </span>

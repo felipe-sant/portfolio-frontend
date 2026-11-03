@@ -22,6 +22,10 @@
     animation: modal-in var(--dur-base) var(--ease);
 }
 
+.wide {
+    max-width: 34rem;
+}
+
 .header {
     display: flex;
     flex: 0 0 auto;
