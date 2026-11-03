@@ -40,7 +40,10 @@ describe("ProfilePhoto", () => {
             "srcset",
             "/images/profile/photo-small.webp 320w, /images/profile/photo-large.webp 362w"
         )
-        expect(image).toHaveAttribute("sizes", "(min-width: 640px) 18rem, 100vw")
+        expect(image).toHaveAttribute(
+            "sizes",
+            "(min-width: 1000px) 15rem, (min-width: 600px) 24vw, 9rem"
+        )
         expect(image).toHaveAttribute("fetchpriority", "high")
         expect(image).not.toHaveAttribute("loading")
     })

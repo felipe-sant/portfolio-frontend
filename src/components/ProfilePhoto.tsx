@@ -8,7 +8,7 @@ interface ProfilePhotoProps {
     photo?: ResponsiveImage
 }
 
-const PHOTO_SIZES = "(min-width: 640px) 18rem, 100vw"
+const PHOTO_SIZES = "(min-width: 1000px) 15rem, (min-width: 600px) 24vw, 9rem"
 
 function ProfilePhoto({ photo }: ProfilePhotoProps) {
     const { t } = useTranslation(["about", "common"])
