@@ -1,0 +1,62 @@
+.detail {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+}
+
+.summary {
+    margin: 0;
+    color: var(--text-body);
+    font-size: var(--text-body-md);
+    line-height: var(--lh-body);
+}
+
+.block {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.label {
+    margin: 0;
+    color: var(--text-label);
+    font-family: var(--font-mono);
+    font-size: var(--text-label-sm);
+    font-weight: var(--weight-regular);
+    letter-spacing: var(--ls-label);
+    text-transform: uppercase;
+}
+
+.bullets {
+    margin: 0;
+    padding-left: var(--space-5);
+    color: var(--text-body);
+    font-size: var(--text-body-sm);
+    line-height: var(--lh-tight);
+}
+
+.chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.projects {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.projectLink {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-height: 2.75rem;
+    color: var(--text-link);
+    font-size: var(--text-body-sm);
+}
