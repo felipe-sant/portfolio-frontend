@@ -33,7 +33,6 @@
     "workPrinciples": [
         "Discuto as regras com o PO antes de implementar, não só sigo o que está escrito na tarefa",
         "Quebro features grandes em partes menores antes de começar",
-        "Testo minha própria entrega antes de mandar para QA",
         "Uso IA no fluxo de desenvolvimento, com agentes e skills para planejar, implementar e revisar o que entrego, não só para escrever código mais rápido"
     ],
     "stack": [
