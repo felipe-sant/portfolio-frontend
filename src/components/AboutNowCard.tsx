@@ -11,10 +11,17 @@ interface AboutNowCardProps {
 
 const NETWORKS = ["github", "linkedin"] as const
 
+function getNetworkLinks(profile: Profile) {
+    return NETWORKS.flatMap((network) => {
+        const href = profile.links[network]
+        return href ? [{ network, href }] : []
+    })
+}
+
 function AboutNowCard({ profile }: AboutNowCardProps) {
     const { t } = useTranslation(["about", "common"])
     const headingId = useId()
-    const networks = NETWORKS.filter((network) => profile.links[network])
+    const networks = getNetworkLinks(profile)
 
     return (
         <aside className={css.card} aria-labelledby={headingId}>
@@ -36,10 +43,10 @@ function AboutNowCard({ profile }: AboutNowCardProps) {
             </dl>
             {networks.length > 0 && (
                 <ul className={css.links} aria-label={t("about:aboutMe.now.links")}>
-                    {networks.map((network) => (
+                    {networks.map(({ network, href }) => (
                         <li key={network}>
                             <ExternalButtonLink
-                                href={profile.links[network] ?? ""}
+                                href={href}
                                 variant="secondary"
                                 size="sm"
                                 aria-label={t(`common:footer.social.${network}Name`, {
