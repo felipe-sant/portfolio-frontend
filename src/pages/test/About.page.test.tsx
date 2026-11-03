@@ -413,6 +413,12 @@ describe("AboutPage, vazio", () => {
 
         expect(screen.queryByRole("heading", { name: "Como eu trabalho" })).not.toBeInTheDocument()
         expect(screen.getByRole("heading", { name: "Certificados" })).toBeInTheDocument()
+        const labelledBy = screen
+            .getByRole("region", { name: "Certificados" })
+            .getAttribute("aria-labelledby")
+
+        expect(labelledBy).toBe("about-certificates-heading")
+        expect(document.getElementById(labelledBy ?? "")).not.toBeNull()
     })
 })
 

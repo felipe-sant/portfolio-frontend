@@ -2,6 +2,7 @@ import { useTranslation } from "react-i18next"
 import AvailabilityBadge from "@/components/AvailabilityBadge"
 import Button from "@/components/Button"
 import ButtonLink from "@/components/ButtonLink"
+import CertificateChip from "@/components/CertificateChip"
 import Chip from "@/components/Chip"
 import Icon from "@/components/Icon"
 import JsonLd from "@/components/JsonLd"
@@ -18,16 +19,11 @@ import VisuallyHidden from "@/components/VisuallyHidden"
 import useAbout from "@/pages/hooks/useAbout"
 import ROUTES from "@/routers/paths"
 import css from "@/styles/pages/about.module.css"
-import type Certificate from "@/types/timeline/Certificate.types"
 
 interface PartErrorProps {
     announce: boolean
     id?: string
     onRetry: () => void
-}
-
-interface CertificateChipProps {
-    certificate: Certificate
 }
 
 function PartError({ announce, id, onRetry }: PartErrorProps) {
@@ -54,22 +50,6 @@ function ChipsSkeleton() {
     )
 }
 
-function CertificateChip({ certificate }: CertificateChipProps) {
-    const { t } = useTranslation("common")
-
-    return (
-        <Chip onDark>
-            {certificate.name}
-            {certificate.issuer && (
-                <>
-                    <span aria-hidden="true"> {t("symbols.separator")} </span>
-                    {certificate.issuer}
-                </>
-            )}
-        </Chip>
-    )
-}
-
 function AboutPage() {
     const {
         t,
@@ -88,6 +68,12 @@ function AboutPage() {
         registerTrigger
     } = useAbout()
     const data = profile.data
+    const complementsLabelledBy = [
+        show.certificates && "about-certificates-heading",
+        show.workStyle && "about-work-style-heading"
+    ]
+        .filter(Boolean)
+        .join(" ")
     const location =
         data &&
         [data.location.city, data.location.region].join(` ${t("common:symbols.separator")} `)
@@ -241,7 +227,7 @@ function AboutPage() {
                     <section
                         className={css.complements}
                         data-surface="band"
-                        aria-labelledby="about-certificates-heading about-work-style-heading"
+                        aria-labelledby={complementsLabelledBy}
                     >
                         <div className={css.complementsGrid}>
                             {show.certificates && (
@@ -266,7 +252,10 @@ function AboutPage() {
                                         <ul className={css.chips}>
                                             {timeline.certificates.map((certificate) => (
                                                 <li key={certificate.id}>
-                                                    <CertificateChip certificate={certificate} />
+                                                    <CertificateChip
+                                                        certificate={certificate}
+                                                        onDark
+                                                    />
                                                 </li>
                                             ))}
                                         </ul>
