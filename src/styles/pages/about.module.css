@@ -121,10 +121,18 @@
     outline-offset: var(--space-1);
 }
 
-.paragraphs {
+.aboutMeGrid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
-    gap: var(--space-4) clamp(1.5rem, 4vw, 3rem);
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-8);
+    align-items: start;
+}
+
+.paragraphs {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+    max-width: var(--measure);
 }
 
 .paragraph {
@@ -140,8 +148,8 @@
 }
 
 .complements {
-    background-color: var(--neutral-900);
-    color: var(--dark-200);
+    background-color: var(--bg-raised);
+    border-block: var(--border-width) solid var(--border-subtle);
 }
 
 .complementsGrid {
@@ -162,7 +170,7 @@
 
 .columnHeading {
     margin: 0;
-    color: var(--dark-050);
+    color: var(--text-strong);
     font-family: var(--font-mono);
     font-size: var(--text-label-sm);
     font-weight: var(--weight-medium);
@@ -199,7 +207,30 @@
 
 @media (min-width: 640px) {
     .heroGrid {
-        grid-template-columns: clamp(9rem, 24vw, 15rem) 1fr;
+        grid-template-columns: clamp(9rem, 24vw, 15rem) minmax(0, var(--measure));
+        justify-content: center;
         gap: clamp(2rem, 5vw, 4rem);
+    }
+}
+
+@media (min-width: 900px) {
+    .aboutMeGrid {
+        grid-template-columns: minmax(0, var(--measure)) minmax(16rem, 22rem);
+        justify-content: space-between;
+    }
+
+    .aboutMeGrid > aside {
+        position: sticky;
+        top: calc(var(--space-8) + var(--header-height, 4rem));
+    }
+}
+
+@media (max-width: 639px) {
+    .photoColumn {
+        display: grid;
+        grid-template-columns: clamp(7rem, 38vw, 10rem) minmax(0, 1fr);
+        align-items: center;
+        gap: var(--space-4);
+        width: 100%;
     }
 }

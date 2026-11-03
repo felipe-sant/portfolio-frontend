@@ -205,6 +205,7 @@ describe("AboutPage, estrutura", () => {
         expect(
             screen.getAllByRole("heading", { level: 3 }).map((heading) => heading.textContent)
         ).toEqual([
+            "Agora",
             "Frontend",
             "Backend",
             "Infra e ferramentas",
@@ -213,6 +214,19 @@ describe("AboutPage, estrutura", () => {
             "Cursos"
         ])
         expect(screen.getByText("Selecione um item para ver o detalhe.")).toBeInTheDocument()
+    })
+})
+
+describe("AboutPage, cartão Agora", () => {
+    it("mostra o cargo e os links de redes do perfil ao lado de Sobre mim", async () => {
+        renderAbout()
+        await loaded()
+
+        const card = screen.getByRole("complementary", { name: "Agora" })
+
+        expect(card).toHaveTextContent("Cargo")
+        expect(card).toHaveTextContent("Desenvolvedor full stack")
+        expect(within(card).getAllByRole("link")).toHaveLength(1)
     })
 })
 

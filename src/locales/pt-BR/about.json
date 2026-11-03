@@ -8,7 +8,13 @@
         "photoAlt": "Foto de {{name}}"
     },
     "aboutMe": {
-        "heading": "Sobre mim"
+        "heading": "Sobre mim",
+        "now": {
+            "heading": "Agora",
+            "role": "Cargo",
+            "mode": "Modalidade",
+            "links": "Redes"
+        }
     },
     "stack": {
         "heading": "Stack",

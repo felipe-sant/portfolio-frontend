@@ -1,4 +1,5 @@
 import { useTranslation } from "react-i18next"
+import AboutNowCard from "@/components/AboutNowCard"
 import AvailabilityBadge from "@/components/AvailabilityBadge"
 import Button from "@/components/Button"
 import ButtonLink from "@/components/ButtonLink"
@@ -176,29 +177,32 @@ function AboutPage() {
                         <h2 id="about-me-heading" className={css.sectionHeading}>
                             {t("about:aboutMe.heading")}
                         </h2>
-                        <SkeletonSwap
-                            isLoading={profile.isLoading}
-                            skeleton={
-                                <div className={css.paragraphs}>
-                                    <Skeleton />
-                                    <Skeleton />
-                                    <Skeleton width="medium" />
-                                </div>
-                            }
-                        >
-                            {profile.isError && (
-                                <PartError announce={false} onRetry={profile.retry} />
-                            )}
-                            {data && (
-                                <div className={css.paragraphs}>
-                                    {data.aboutParagraphs.map((paragraph) => (
-                                        <p key={paragraph} className={css.paragraph}>
-                                            {paragraph}
-                                        </p>
-                                    ))}
-                                </div>
-                            )}
-                        </SkeletonSwap>
+                        <div className={css.aboutMeGrid}>
+                            <SkeletonSwap
+                                isLoading={profile.isLoading}
+                                skeleton={
+                                    <div className={css.paragraphs}>
+                                        <Skeleton />
+                                        <Skeleton />
+                                        <Skeleton width="medium" />
+                                    </div>
+                                }
+                            >
+                                {profile.isError && (
+                                    <PartError announce={false} onRetry={profile.retry} />
+                                )}
+                                {data && (
+                                    <div className={css.paragraphs}>
+                                        {data.aboutParagraphs.map((paragraph) => (
+                                            <p key={paragraph} className={css.paragraph}>
+                                                {paragraph}
+                                            </p>
+                                        ))}
+                                    </div>
+                                )}
+                            </SkeletonSwap>
+                            {data && <AboutNowCard profile={data} />}
+                        </div>
                     </div>
                 </section>
             </Reveal>
@@ -224,11 +228,7 @@ function AboutPage() {
             )}
             {show.complements && (
                 <Reveal>
-                    <section
-                        className={css.complements}
-                        data-surface="band"
-                        aria-labelledby={complementsLabelledBy}
-                    >
+                    <section className={css.complements} aria-labelledby={complementsLabelledBy}>
                         <div className={css.complementsGrid}>
                             {show.certificates && (
                                 <div className={css.column}>
@@ -252,10 +252,7 @@ function AboutPage() {
                                         <ul className={css.chips}>
                                             {timeline.certificates.map((certificate) => (
                                                 <li key={certificate.id}>
-                                                    <CertificateChip
-                                                        certificate={certificate}
-                                                        onDark
-                                                    />
+                                                    <CertificateChip certificate={certificate} />
                                                 </li>
                                             ))}
                                         </ul>
@@ -277,7 +274,7 @@ function AboutPage() {
                                         <ul className={css.chips}>
                                             {workPrinciples.map((principle) => (
                                                 <li key={principle}>
-                                                    <Chip onDark>{principle}</Chip>
+                                                    <Chip>{principle}</Chip>
                                                 </li>
                                             ))}
                                         </ul>

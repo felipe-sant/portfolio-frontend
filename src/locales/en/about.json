@@ -8,7 +8,13 @@
         "photoAlt": "Photo of {{name}}"
     },
     "aboutMe": {
-        "heading": "About me"
+        "heading": "About me",
+        "now": {
+            "heading": "Now",
+            "role": "Role",
+            "mode": "Work mode",
+            "links": "Social links"
+        }
     },
     "stack": {
         "heading": "Stack",
