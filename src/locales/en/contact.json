@@ -47,6 +47,7 @@
             "label": "Message",
             "placeholder": "Scope, deadline and links to what already exists",
             "tooShort": "Write a little more: at least 20 characters.",
+            "remaining_zero": "No characters left.",
             "remaining_one": "{{count}} left",
             "remaining_other": "{{count}} left",
             "nearLimit": "{{count}} characters left.",

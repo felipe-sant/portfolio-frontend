@@ -153,7 +153,7 @@ describe("ContactForm", () => {
 
         fireEvent.change(message, { target: { value: "a".repeat(600) } })
         expect(live).toHaveTextContent("Você chegou ao limite de 600 caracteres.")
-        expect(screen.getByText("0 restante")).toBeInTheDocument()
+        expect(screen.getByText("Nenhum caractere restante.")).toBeInTheDocument()
     })
 
     it("no envio vazio mostra o resumo, os erros por campo e foca o Nome", async () => {
@@ -292,6 +292,20 @@ describe("ContactForm", () => {
 
         expect(await screen.findByRole("heading", { name: sent })).toBeInTheDocument()
         expect(document.body).not.toHaveTextContent(/form\.|contact:/)
+    })
+
+    it.each([
+        ["en", "No characters left."],
+        ["es", "Ningún carácter restante."]
+    ] as const)("mostra o contador zerado sem número em %s", async (language, zeroText) => {
+        renderForm()
+        await act(() => setLanguage(language))
+
+        fireEvent.change(screen.getAllByRole("textbox")[2] as HTMLElement, {
+            target: { value: "a".repeat(600) }
+        })
+
+        expect(screen.getByText(zeroText)).toBeInTheDocument()
     })
 
     it("não tem violações de acessibilidade no estado normal", async () => {

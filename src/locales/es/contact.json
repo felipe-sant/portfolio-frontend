@@ -47,6 +47,7 @@
             "label": "Mensaje",
             "placeholder": "Alcance, plazo y enlaces de lo que ya existe",
             "tooShort": "Escribe un poco más: 20 caracteres como mínimo.",
+            "remaining_zero": "Ningún carácter restante.",
             "remaining_one": "{{count}} restante",
             "remaining_other": "{{count}} restantes",
             "nearLimit": "Quedan {{count}} caracteres.",
