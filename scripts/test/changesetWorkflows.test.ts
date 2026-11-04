@@ -1,123 +1,172 @@
 import { readFileSync } from "node:fs"
+import { parse } from "yaml"
 import { describe, expect, it } from "vitest"
 
-function runScriptLines(workflow: string): string[] {
-    const lines = workflow.split("\n")
-    const result: string[] = []
-    for (let index = 0; index < lines.length; index++) {
-        const match = lines[index].match(/^(\s*)(?:- )?run:\s*(.*)$/)
-        if (!match) continue
-        if (!/^[|>]/.test(match[2])) {
-            result.push(match[2])
-            continue
-        }
-        const indent = match[1].length
-        for (let next = index + 1; next < lines.length; next++) {
-            const line = lines[next]
-            if (line.trim() !== "" && line.length - line.trimStart().length <= indent) break
-            result.push(line)
-        }
+type Step = {
+    name?: string
+    id?: string
+    if?: string
+    uses?: string
+    run?: string
+    env?: Record<string, string>
+    with?: Record<string, string | number | boolean>
+}
+
+type Job = {
+    name?: string
+    if?: string
+    needs?: string
+    uses?: string
+    permissions?: Record<string, string>
+    outputs?: Record<string, string>
+    with?: Record<string, string>
+    secrets?: Record<string, string>
+    steps?: Step[]
+}
+
+type Workflow = {
+    on: {
+        push?: { branches?: string[] }
+        pull_request?: { branches?: string[] }
+        workflow_dispatch?: unknown
     }
-    return result
+    permissions: Record<string, string>
+    concurrency: { group: string; "cancel-in-progress": boolean }
+    jobs: Record<string, Job>
+}
+
+function readWorkflow(name: string): Workflow {
+    return parse(readFileSync(`.github/workflows/${name}`, "utf-8")) as Workflow
+}
+
+function runScripts(workflow: Workflow): string[] {
+    return Object.values(workflow.jobs).flatMap((job) =>
+        (job.steps ?? []).flatMap((step) => (step.run === undefined ? [] : [step.run]))
+    )
+}
+
+function findStep(job: Job, predicate: (step: Step) => boolean): Step {
+    const step = (job.steps ?? []).find(predicate)
+    if (!step) throw new Error("Passo não encontrado no workflow")
+    return step
 }
 
 describe("version.yml", () => {
-    const workflow = readFileSync(".github/workflows/version.yml", "utf-8")
+    const workflow = readWorkflow("version.yml")
     const title = "Chore :see_no_evil: Atualiza versão e CHANGELOG"
+    const job = workflow.jobs.version
+    const action = findStep(job, (step) => step.uses === "changesets/action@v2")
 
     it("roda em push na staging e por workflow_dispatch, sem pull_request", () => {
-        expect(workflow).toMatch(/^ {4}push:\n {8}branches: \[staging\]/m)
-        expect(workflow).toMatch(/^ {4}workflow_dispatch:/m)
-        expect(workflow).not.toMatch(/^ {4}pull_request/m)
+        expect(workflow.on.push?.branches).toEqual(["staging"])
+        expect(Object.keys(workflow.on)).toContain("workflow_dispatch")
+        expect(workflow.on.pull_request).toBeUndefined()
     })
 
     it("usa a changesets/action v2 com o script de versão e o título e o commit padronizados", () => {
-        expect(workflow).toContain("uses: changesets/action@v2")
-        expect(workflow).toContain("version-script: npm run changeset:version")
-        expect(workflow).toContain(`commit-message: "${title}"`)
-        expect(workflow).toContain(`pr-title: "${title}"`)
+        expect(action.with?.["version-script"]).toBe("npm run changeset:version")
+        expect(action.with?.["commit-message"]).toBe(title)
+        expect(action.with?.["pr-title"]).toBe(title)
     })
 
     it("tem as permissões mínimas, serializa sem cancelar e faz checkout completo", () => {
-        expect(workflow).toMatch(/^permissions:\n {4}contents: write\n {4}pull-requests: write/m)
-        expect(workflow).toMatch(/^concurrency:\n {4}group: .*\n {4}cancel-in-progress: false/m)
-        expect(workflow).not.toContain("cancel-in-progress: true")
-        expect(workflow).toContain("fetch-depth: 0")
-        expect(workflow).toContain("github-token: ${{ secrets.GITHUB_TOKEN }}")
+        expect(workflow.permissions).toEqual({ contents: "write", "pull-requests": "write" })
+        expect(workflow.concurrency["cancel-in-progress"]).toBe(false)
+        expect(workflow.concurrency.group).toContain("version-")
+        const checkout = findStep(
+            job,
+            (step) => step.uses?.startsWith("actions/checkout@") ?? false
+        )
+        expect(checkout.with?.["fetch-depth"]).toBe(0)
+        expect(action.with?.["github-token"]).toBe("${{ secrets.GITHUB_TOKEN }}")
     })
 
     it("não interpola expressões direto em blocos run", () => {
-        runScriptLines(workflow).forEach((line) => {
-            expect(line).not.toContain("${{")
+        runScripts(workflow).forEach((script) => {
+            expect(script).not.toContain("${{")
         })
     })
 })
 
 describe("changeset-check.yml", () => {
-    const workflow = readFileSync(".github/workflows/changeset-check.yml", "utf-8")
+    const workflow = readWorkflow("changeset-check.yml")
+    const job = workflow.jobs.changeset
 
     it("roda em pull_request para a staging e ignora o PR de versão e o de retorno da main", () => {
-        expect(workflow).toMatch(/^ {4}pull_request:\n {8}branches: \[staging\]/m)
-        expect(workflow).toContain("github.head_ref != 'changeset-release/staging'")
-        expect(workflow).toContain("github.head_ref != 'main'")
+        expect(workflow.on.pull_request?.branches).toEqual(["staging"])
+        expect(job.if).toContain("github.head_ref != 'changeset-release/staging'")
+        expect(job.if).toContain("github.head_ref != 'main'")
     })
 
     it("checa o changeset contra origin/staging com o histórico completo", () => {
-        expect(workflow).toContain("npx changeset status --since=origin/staging")
-        expect(workflow).toContain("fetch-depth: 0")
+        expect(runScripts(workflow)).toContain("npx changeset status --since=origin/staging")
+        const checkout = findStep(
+            job,
+            (step) => step.uses?.startsWith("actions/checkout@") ?? false
+        )
+        expect(checkout.with?.["fetch-depth"]).toBe(0)
     })
 
     it("tem permissão só de leitura e cancela apenas execuções de PR", () => {
-        expect(workflow).toMatch(/^permissions:\n {4}contents: read$/m)
-        expect(workflow).toMatch(/^concurrency:\n {4}group: .*\n {4}cancel-in-progress: true/m)
+        expect(workflow.permissions).toEqual({ contents: "read" })
+        expect(workflow.concurrency["cancel-in-progress"]).toBe(true)
     })
 })
 
 describe("release.yml", () => {
-    const workflow = readFileSync(".github/workflows/release.yml", "utf-8")
-    const publishStart = workflow.indexOf("\n    publish-fatec:")
-    const releaseJob = workflow.slice(0, publishStart)
-    const publishJob = workflow.slice(publishStart)
+    const workflow = readWorkflow("release.yml")
+    const releaseJob = workflow.jobs.release
+    const publishJob = workflow.jobs["publish-fatec"]
 
     it("roda só em push na main, sem workflow_dispatch", () => {
-        expect(workflow).toMatch(/^ {4}push:\n {8}branches: \[main\]/m)
-        expect(workflow).not.toMatch(/^ {4}workflow_dispatch:/m)
-        expect(workflow).not.toMatch(/^ {4}pull_request/m)
+        expect(workflow.on.push?.branches).toEqual(["main"])
+        expect(Object.keys(workflow.on)).not.toContain("workflow_dispatch")
+        expect(workflow.on.pull_request).toBeUndefined()
     })
 
     it("prepara o release com histórico e tags e cria o Release só quando a saída é true", () => {
-        expect(releaseJob).toContain("fetch-depth: 0")
-        expect(releaseJob).toContain("fetch-tags: true")
-        expect(releaseJob).toContain("scripts/prepareRelease.ts")
-        expect(releaseJob).toMatch(
-            /if: steps\.prepare\.outputs\.release == 'true'\n(?:.*\n)*?.*GH_TOKEN: \$\{\{ github\.token \}\}/
+        const checkout = findStep(
+            releaseJob,
+            (step) => step.uses?.startsWith("actions/checkout@") ?? false
         )
-        expect(releaseJob).toContain('--target "$TARGET_SHA"')
-        expect(releaseJob).toContain('--notes-file "$NOTES_FILE"')
-        expect(releaseJob).toContain("TARGET_SHA: ${{ github.sha }}")
+        expect(checkout.with?.["fetch-depth"]).toBe(0)
+        expect(checkout.with?.["fetch-tags"]).toBe(true)
+        const prepare = findStep(releaseJob, (step) => step.id === "prepare")
+        expect(prepare.run).toContain("scripts/prepareRelease.ts")
+        const create = findStep(
+            releaseJob,
+            (step) => step.run?.includes("gh release create") ?? false
+        )
+        expect(create.if).toBe("steps.prepare.outputs.release == 'true'")
+        expect(create.env?.GH_TOKEN).toBe("${{ github.token }}")
+        expect(create.env?.TARGET_SHA).toBe("${{ github.sha }}")
+        expect(create.run).toContain('--target "$TARGET_SHA"')
+        expect(create.run).toContain('--notes-file "$NOTES_FILE"')
     })
 
     it("só cria tag e Release no passo condicional", () => {
-        const runLines = runScriptLines(workflow)
-        const creators = runLines.filter((line) => /gh release create|git tag|git push/.test(line))
+        const scripts = runScripts(workflow)
+        const creators = scripts.filter((script) =>
+            /gh release create|git tag|git push/.test(script)
+        )
         expect(creators).toHaveLength(1)
         expect(creators[0]).toContain("gh release create")
-        runLines.forEach((line) => {
-            expect(line).not.toContain("${{")
+        scripts.forEach((script) => {
+            expect(script).not.toContain("${{")
         })
     })
 
     it("publica na Fatec só para a saída publish-fatec, com a tag e o token", () => {
-        expect(publishJob).toContain("needs: release")
-        expect(publishJob).toContain("if: needs.release.outputs.publish-fatec == 'true'")
-        expect(publishJob).toContain("uses: ./.github/workflows/fatec-pages.yml")
-        expect(publishJob).toContain("tag: ${{ needs.release.outputs.tag }}")
-        expect(publishJob).toContain("FATEC_PAGES_TOKEN: ${{ secrets.FATEC_PAGES_TOKEN }}")
+        expect(publishJob.needs).toBe("release")
+        expect(publishJob.if).toBe("needs.release.outputs.publish-fatec == 'true'")
+        expect(publishJob.uses).toBe("./.github/workflows/fatec-pages.yml")
+        expect(publishJob.with?.tag).toBe("${{ needs.release.outputs.tag }}")
+        expect(publishJob.secrets?.FATEC_PAGES_TOKEN).toBe("${{ secrets.FATEC_PAGES_TOKEN }}")
     })
 
     it("dá contents write ao release, read ao chamador da Fatec e não cancela execuções", () => {
-        expect(releaseJob).toMatch(/permissions:\n {12}contents: write/)
-        expect(publishJob).toMatch(/permissions:\n {12}contents: read/)
-        expect(workflow).toMatch(/^concurrency:\n {4}group: .*\n {4}cancel-in-progress: false/m)
+        expect(releaseJob.permissions).toEqual({ contents: "write" })
+        expect(publishJob.permissions).toEqual({ contents: "read" })
+        expect(workflow.concurrency["cancel-in-progress"]).toBe(false)
     })
 })
