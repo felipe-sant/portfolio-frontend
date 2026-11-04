@@ -19,7 +19,7 @@
         "response": {
             "heading": "Respuesta"
         },
-        "loadError": "No se pudieron cargar los canales de contacto",
+        "loadError": "No se pudieron cargar los canales de contacto.",
         "retry": "Intentar de nuevo"
     },
     "form": {
@@ -60,7 +60,7 @@
         "sendError": "No pude enviar tu mensaje. Inténtalo de nuevo o escribe al correo de esta página.",
         "sent": {
             "heading": "Mensaje enviado",
-            "description": "Recibí tu mensaje y respondo al correo que indicaste",
+            "description": "Recibí tu mensaje y respondo al correo que indicaste.",
             "again": "Enviar otro mensaje"
         }
     }
