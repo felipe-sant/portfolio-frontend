@@ -16,6 +16,6 @@ A publicação real da `v1.0.0` funcionou (commit 6ff65c9 na `main` da Fatec) e 
 
 ## Notas
 
-- O token usado foi um PAT classic com escopo `repo`: a organização não listou o repositório no fine-grained. Expiração curta e revogação após a entrega.
+- O token usado foi um PAT classic com escopo `repo`: a organização não listou o repositório no fine-grained. Ele continua em uso pela publicação automática da #47 (release 1.x chama o workflow); a revogação e a remoção do secret `FATEC_PAGES_TOKEN` ficam pendentes até a entrega final da v1 (M7, 22/11/2026). Se a validade vencer antes, gera-se outro token com o mesmo escopo, atualiza-se o secret e revoga-se o antigo; o fine-grained substitui o classic se a organização passar a aceitá-lo.
 - O primeiro deploy do Pages travou e só voltou com um commit vazio (46207a4), feito por nós; se acontecer de novo, esse é o caminho.
 - O gatilho automático `release: published` fica como evolução da #47.
