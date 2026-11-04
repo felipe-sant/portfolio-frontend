@@ -135,8 +135,10 @@ jobs:
                         SPECS="$SPECS e2e/home.spec.ts e2e/home-flows.spec.ts e2e/accessibility.spec.ts e2e/no-javascript.spec.ts" ;;
                       src/pages/Projects.page.tsx|src/pages/hooks/useProjects*|src/styles/pages/projects.module.css|src/locales/*/projects.json|src/components/ProjectCard*.tsx|src/components/FilterGroup.tsx|src/components/Modal.tsx|src/components/ProjectsFiltersModal.tsx|src/components/SearchInput.tsx|src/utils/buildProjectsJsonLd.ts)
                         SPECS="$SPECS e2e/projects.spec.ts e2e/projects-filters.spec.ts e2e/accessibility.spec.ts e2e/no-javascript.spec.ts" ;;
-                      src/pages/Contact.page.tsx|src/pages/hooks/useContact*|src/styles/pages/contact.module.css|src/locales/*/contact.json|src/components/Contact*.tsx|src/components/RadioChipGroup.tsx|src/components/TextField.tsx|src/store/api/contact.api.ts|src/services/content/simulateContactSend.ts|src/utils/buildContactJsonLd.ts|src/utils/validateContactForm.ts|src/utils/contactFormEnabled.ts)
+                      src/pages/Contact.page.tsx|src/pages/hooks/useContact*|src/styles/pages/contact.module.css|src/locales/*/contact.json|src/components/Contact*.tsx|src/components/TextField.tsx|src/store/api/contact.api.ts|src/services/content/simulateContactSend.ts|src/utils/buildContactJsonLd.ts|src/utils/validateContactForm.ts|src/utils/contactFormEnabled.ts)
                         SPECS="$SPECS e2e/contact.spec.ts e2e/contact-form.spec.ts e2e/accessibility.spec.ts e2e/no-javascript.spec.ts" ;;
+                      src/components/RadioChipGroup.tsx|src/styles/components/radioChipGroup.module.css)
+                        SPECS="$SPECS e2e/contact-form.spec.ts e2e/projects-filters.spec.ts e2e/accessibility.spec.ts" ;;
                       src/pages/NotFound.page.tsx|src/styles/pages/notFound.module.css|src/locales/*/notFound.json)
                         SPECS="$SPECS e2e/not-found.spec.ts e2e/accessibility.spec.ts" ;;
                       docs/*|.specs/*|*.md|src/*/test/*|src/testUtils/*|.claude/*|.github/workflows/deploy.yml|.github/workflows/fatec-pages.yml|.github/PULL_REQUEST_TEMPLATE.md)
