@@ -174,7 +174,10 @@ function AboutPage() {
             <Reveal>
                 <section className={css.aboutMe} aria-labelledby="about-me-heading">
                     <div className={css.container}>
-                        <h2 id="about-me-heading" className={css.sectionHeading}>
+                        <h2
+                            id="about-me-heading"
+                            className={`${css.sectionHeading} ${css.aboutMeHeading}`}
+                        >
                             {t("about:aboutMe.heading")}
                         </h2>
                         <div className={css.aboutMeGrid}>
