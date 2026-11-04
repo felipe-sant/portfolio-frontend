@@ -85,8 +85,13 @@ O PO tem push, mas não admin, no repositório da Fatec, então não há Pages p
 - **Preferido:** PAT fine-grained (Settings > Developer settings > Personal access tokens > Fine-grained tokens), com o repositório `fatec-jacarei-dsm-portfolio/ra2581392423047` como único acesso e a permissão `Contents: Read and write`. A organização pode exigir aprovação do token ou não aceitar fine-grained.
 - **Alternativa:** PAT classic com escopo `repo`, com expiração curta, só se a organização recusar o fine-grained. Dá acesso a todos os repositórios do PO, por isso a expiração curta.
 - **Expiração e rotação:** defina a validade ao criar. Perto de vencer, crie outro token com o mesmo escopo, atualize o secret e revogue o antigo. O token vencido faz o checkout do destino falhar.
-- **Revogação:** token comprometido ou entrega da Fatec encerrada: revogue em Settings > Developer settings e apague o secret.
+- **Revogação:** o token classic da `v1.0.0` segue em uso pela publicação automática da #47 e a revogação está pendente até a entrega final da v1 (M7, 22/11/2026), junto com a remoção do secret. Se o fine-grained passar a ser aceito pela organização, ele substitui o classic. Token comprometido ou entrega da Fatec encerrada: revogue em Settings > Developer settings e apague o secret.
 - O token nunca é impresso nem interpolado em `run`.
+
+#### Pontos de atenção da primeira publicação
+
+- Na `v1.0.0` foi usado o PAT classic com escopo `repo`, porque a organização não listou o repositório da Fatec na criação do token fine-grained.
+- O primeiro deploy do Pages travou e só voltou depois de um commit vazio em `main` do repositório da Fatec (`git commit --allow-empty` e push). Se uma publicação aparecer commitada mas o site não atualizar, esse é o caminho antes de investigar mais.
 
 #### Plano B manual
 
