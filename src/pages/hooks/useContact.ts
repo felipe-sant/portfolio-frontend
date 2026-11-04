@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react"
 import { useTranslation } from "react-i18next"
 import FALLBACK_LANGUAGE from "@/i18n/fallbackLanguage"
 import resolveSupportedLanguage from "@/i18n/resolveSupportedLanguage"
@@ -25,11 +26,19 @@ function useContact() {
         profile
     )
 
+    const focusTimeoutRef = useRef<number | undefined>(undefined)
+
+    useEffect(() => () => window.clearTimeout(focusTimeoutRef.current), [])
+
     async function retry() {
         const result = await profileQuery.refetch()
         const target = result.isError ? FOCUS_IDS.alert : FOCUS_IDS.heading
 
-        window.setTimeout(() => document.getElementById(target)?.focus(), 0)
+        window.clearTimeout(focusTimeoutRef.current)
+        focusTimeoutRef.current = window.setTimeout(
+            () => document.getElementById(target)?.focus(),
+            0
+        )
     }
 
     return {
