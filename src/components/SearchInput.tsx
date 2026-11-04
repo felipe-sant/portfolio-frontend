@@ -12,6 +12,7 @@ interface SearchInputProps {
     placeholder?: string
     maxLength?: number
     name?: string
+    id?: string
 }
 
 function SearchInput({
@@ -21,10 +22,12 @@ function SearchInput({
     label,
     placeholder,
     maxLength,
-    name
+    name,
+    id
 }: SearchInputProps) {
     const { t } = useTranslation()
-    const id = useId()
+    const generatedId = useId()
+    const inputId = id ?? generatedId
     const inputRef = useRef<HTMLInputElement>(null)
 
     function handleClear() {
@@ -34,12 +37,12 @@ function SearchInput({
 
     return (
         <div className={css.wrapper}>
-            <label htmlFor={id}>
+            <label htmlFor={inputId}>
                 <VisuallyHidden>{label}</VisuallyHidden>
             </label>
             <input
                 ref={inputRef}
-                id={id}
+                id={inputId}
                 type="search"
                 name={name}
                 className={css.input}

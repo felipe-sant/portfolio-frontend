@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
 import generateUuidV7 from "@/services/content/generateUuidV7"
-import isUuidV7 from "@/services/content/isUuidV7"
+import isUuidV7 from "@/utils/isUuidV7"
 
 afterEach(() => {
     vi.useRealTimers()

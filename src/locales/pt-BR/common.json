@@ -81,7 +81,8 @@
     "noscript": "Busca, filtros, troca de idioma e de tema precisam de JavaScript. O conteúdo desta página está disponível sem ele.",
     "resume": {
         "download": "Baixar CV",
-        "downloadPdf": "Baixar CV (PDF), abre a pré-visualização"
+        "downloadPdf": "Baixar CV (PDF), abre a pré-visualização",
+        "unavailableName": "Baixar CV (PDF), indisponível no momento"
     },
     "projectType": {
         "web": "Web",
@@ -102,7 +103,22 @@
         "personal": "Pessoal",
         "professional": "Profissional"
     },
+    "projectCard": {
+        "featured": "Em destaque"
+    },
     "period": {
-        "since": "desde {{date}}"
+        "range": "<start>{{start}}</start> – <end>{{end}}</end>",
+        "since": "desde {{date}}",
+        "current": "Atual"
+    },
+    "projectStatus": {
+        "inDevelopment": "Em desenvolvimento",
+        "completed": "Concluído",
+        "discontinued": "Descontinuado"
+    },
+    "stackCategory": {
+        "frontend": "Frontend",
+        "backend": "Backend",
+        "tooling": "Infra e ferramentas"
     }
 }

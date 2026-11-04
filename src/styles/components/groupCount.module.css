@@ -1,0 +1,5 @@
+.count {
+    color: var(--text-label);
+    font-family: var(--font-mono);
+    font-size: var(--text-label-sm);
+}

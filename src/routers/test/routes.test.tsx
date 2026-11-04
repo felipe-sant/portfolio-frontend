@@ -1,12 +1,15 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { createMemoryRouter, RouterProvider } from "react-router-dom"
-import { act, screen } from "@testing-library/react"
+import { act, screen, waitFor, within } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import LANGUAGE_STORAGE_KEY from "@/i18n/languageStorageKey"
 import routes from "@/routers/routes"
+import relaxTimeoutsForLoad from "@/testUtils/relaxTimeoutsForLoad"
 import buildProfile from "@/testUtils/buildProfile"
 import renderWithStore from "@/testUtils/renderWithStore"
 import stubContentFetch from "@/testUtils/stubContentFetch"
+
+relaxTimeoutsForLoad()
 
 function renderRoutes(initialEntries: string[]) {
     const router = createMemoryRouter(routes, { initialEntries })
@@ -60,6 +63,130 @@ describe("routes", () => {
         expect(document.documentElement.lang).toBe(language)
     })
 
+    it.each([
+        ["/pt-BR/projects", "Projetos", "pt-BR"],
+        ["/en/projects", "Projects", "en"],
+        ["/es/projects", "Proyectos", "es"]
+    ])(
+        "renderiza a tela Projetos em %s com o idioma do prefixo",
+        async (path, heading, language) => {
+            renderRoutes([path])
+
+            expect(
+                await screen.findByRole("heading", { level: 1, name: heading })
+            ).toBeInTheDocument()
+            expect(document.documentElement.lang).toBe(language)
+        }
+    )
+
+    it.each([
+        ["/pt-BR/contact", "Contato", "pt-BR"],
+        ["/en/contact", "Contact", "en"],
+        ["/es/contact", "Contacto", "es"]
+    ])(
+        "renderiza a tela Contato em %s com o idioma do prefixo",
+        async (path, heading, language) => {
+            renderRoutes([path])
+
+            expect(
+                await screen.findByRole("heading", { level: 1, name: heading })
+            ).toBeInTheDocument()
+            expect(document.documentElement.lang).toBe(language)
+        }
+    )
+
+    it("renderiza a não encontrada em /contact sem prefixo", async () => {
+        renderRoutes(["/contact"])
+
+        expect(await screen.findByRole("heading", { name: "Page not found" })).toBeInTheDocument()
+    })
+
+    it.each([
+        ["/pt-BR/about", "pt-BR"],
+        ["/en/about", "en"],
+        ["/es/about", "es"]
+    ])("renderiza a tela Informações em %s com o idioma do prefixo", async (path, language) => {
+        renderRoutes([path])
+
+        expect(
+            await screen.findByRole("heading", { level: 1, name: "Luiz Felipe dos Santos" })
+        ).toBeInTheDocument()
+        expect(document.documentElement.lang).toBe(language)
+    })
+
+    it("renderiza a não encontrada em inglês em /about sem prefixo", async () => {
+        renderRoutes(["/about"])
+
+        expect(await screen.findByRole("heading", { name: "Page not found" })).toBeInTheDocument()
+    })
+
+    it("leva o foco ao h1 e marca Contato como página atual ao navegar pelo cabeçalho", async () => {
+        const user = userEvent.setup()
+        renderRoutes(["/pt-BR"])
+        await screen.findByRole("heading", { name: "Desenvolvedor full stack em TypeScript" })
+
+        const link = within(screen.getByRole("banner")).getByRole("link", { name: "Contato" })
+        await user.click(link)
+
+        const heading = await screen.findByRole("heading", { level: 1, name: "Contato" })
+        await waitFor(() => expect(heading).toHaveFocus())
+        expect(
+            within(screen.getByRole("banner")).getByRole("link", { name: "Contato" })
+        ).toHaveAttribute("aria-current", "page")
+        expect(document.title).toBe("Contato · Luiz Felipe dos Santos")
+    })
+
+    it("leva o link Informações do cabeçalho à tela e o marca como ativo", async () => {
+        const user = userEvent.setup()
+        const router = renderRoutes(["/pt-BR/projects"])
+        const banner = await screen.findByRole("banner")
+
+        await user.click(within(banner).getAllByRole("link", { name: "Informações" })[0])
+
+        expect(
+            await screen.findByRole("heading", { level: 1, name: "Luiz Felipe dos Santos" })
+        ).toBeInTheDocument()
+        expect(router.state.location.pathname).toBe("/pt-BR/about")
+        expect(
+            within(screen.getByRole("banner"))
+                .getAllByRole("link", { name: "Informações" })
+                .some((link) => link.getAttribute("aria-current") === "page")
+        ).toBe(true)
+    })
+
+    it("leva o Ler sobre mim do Início à tela Informações", async () => {
+        const user = userEvent.setup()
+        const router = renderRoutes(["/pt-BR"])
+
+        await user.click(await screen.findByRole("link", { name: "Ler sobre mim" }))
+
+        expect(
+            await screen.findByRole("heading", { level: 1, name: "Luiz Felipe dos Santos" })
+        ).toBeInTheDocument()
+        expect(router.state.location.pathname).toBe("/pt-BR/about")
+    })
+
+    it("troca de idioma em /pt-BR/about para /en/about", async () => {
+        const user = userEvent.setup()
+        const router = renderRoutes(["/pt-BR/about"])
+        await screen.findByRole("heading", { level: 1, name: "Luiz Felipe dos Santos" })
+
+        await user.click(screen.getByRole("button", { name: "Idioma: Português" }))
+        await user.click(screen.getByRole("link", { name: "English" }))
+
+        await waitFor(() => expect(router.state.location.pathname).toBe("/en/about"))
+        await waitFor(() => expect(document.documentElement.lang).toBe("en"))
+        expect(await screen.findByRole("button", { name: /Download CV/ })).toBeInTheDocument()
+    })
+
+    it("mantém a não encontrada em /pt-BR/projects/abc, sem rota de projeto", async () => {
+        renderRoutes(["/pt-BR/projects/abc"])
+
+        expect(
+            await screen.findByRole("heading", { name: "Página não encontrada" })
+        ).toBeInTheDocument()
+    })
+
     it.each([["/fr/projects"], ["/pt/projects"], ["/projects"]])(
         "renderiza a não encontrada em inglês em %s",
         async (path) => {
@@ -73,7 +200,7 @@ describe("routes", () => {
     )
 
     it.each([["/fr/projects"], ["/projects"], ["/pt-BR/inexistente"]])(
-        "renderiza a não encontrada em %s dentro do layout com cabeçalho e rodapé padrão",
+        "renderiza a não encontrada em %s dentro do layout com cabeçalho e sem rodapé",
         async (path) => {
             renderRoutes([path])
 
@@ -81,10 +208,7 @@ describe("routes", () => {
                 /Page not found|Página não encontrada/
             )
             expect(screen.getByRole("banner")).toBeInTheDocument()
-            expect(screen.getByRole("contentinfo")).toBeInTheDocument()
-            expect(
-                screen.queryByRole("navigation", { name: /Rodapé|Footer/ })
-            ).not.toBeInTheDocument()
+            expect(screen.queryByRole("contentinfo")).not.toBeInTheDocument()
             expect(
                 screen.getByRole("link", { name: /Ver projetos|View projects/ })
             ).toBeInTheDocument()

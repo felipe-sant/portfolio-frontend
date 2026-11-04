@@ -21,7 +21,9 @@ const ICON_NAMES = [
     "motion",
     "settings",
     "copy",
-    "arrowRight"
+    "arrowRight",
+    "arrowLeft",
+    "filter"
 ] as const
 
 export default ICON_NAMES

@@ -17,6 +17,20 @@ describe("Icon", () => {
         expect(svg?.querySelector("path, circle, rect, polygon")).not.toBeNull()
     })
 
+    it("renderiza o ícone filter com três traços e aria-hidden", () => {
+        const { container } = render(<Icon name="filter" />)
+
+        expect(container.querySelector("svg")).toHaveAttribute("aria-hidden", "true")
+        expect(container.querySelectorAll("path")).toHaveLength(3)
+    })
+
+    it("renderiza o ícone arrowLeft espelhando arrowRight com aria-hidden", () => {
+        const { container } = render(<Icon name="arrowLeft" />)
+
+        expect(container.querySelector("svg")).toHaveAttribute("aria-hidden", "true")
+        expect(container.querySelector("path[d='m12 19-7-7 7-7']")).not.toBeNull()
+    })
+
     it("preenche só a estrela", () => {
         const { container: star } = render(<Icon name="star" />)
         const { container: check } = render(<Icon name="check" />)

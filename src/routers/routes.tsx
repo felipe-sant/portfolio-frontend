@@ -9,8 +9,12 @@ import ROUTES from "@/routers/paths"
 import redirectRootLoader from "@/routers/redirectRootLoader"
 import type SupportedLanguage from "@/types/language/SupportedLanguage.types"
 
+const Contact = lazy(() => import("@/pages/Contact.page"))
+const About = lazy(() => import("@/pages/About.page"))
 const Home = lazy(() => import("@/pages/Home.page"))
 const NotFound = lazy(() => import("@/pages/NotFound.page"))
+const Project = lazy(() => import("@/pages/Project.page"))
+const Projects = lazy(() => import("@/pages/Projects.page"))
 
 const pageRoutes: RouteObject[] = [
     {
@@ -18,8 +22,29 @@ const pageRoutes: RouteObject[] = [
         element: <Home />
     },
     {
+        path: ROUTES.projects.slice(1),
+        element: <Projects />
+    },
+    {
+        path: ROUTES.project.slice(1),
+        element: <Project />,
+        children: [
+            { index: true, element: null },
+            { path: "docs/:name", element: null }
+        ]
+    },
+    {
+        path: ROUTES.contact.slice(1),
+        element: <Contact />
+    },
+    {
+        path: ROUTES.about.slice(1),
+        element: <About />
+    },
+    {
         path: ROUTES.notFound,
-        element: <NotFound />
+        element: <NotFound />,
+        handle: { hideFooter: true }
     }
 ]
 
@@ -46,7 +71,8 @@ const routes: RouteObject[] = [
         children: [
             {
                 path: ROUTES.notFound,
-                element: <NotFound />
+                element: <NotFound />,
+                handle: { hideFooter: true }
             }
         ]
     }

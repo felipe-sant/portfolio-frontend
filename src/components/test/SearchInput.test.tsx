@@ -33,6 +33,23 @@ describe("SearchInput", () => {
         expect(screen.queryByRole("button")).not.toBeInTheDocument()
     })
 
+    it("usa o id recebido no campo, ligado ao rótulo", () => {
+        render(
+            <SearchInput
+                id="projects-search"
+                value=""
+                label="Buscar projetos"
+                onChange={vi.fn()}
+                onClear={vi.fn()}
+            />
+        )
+
+        expect(screen.getByRole("searchbox", { name: "Buscar projetos" })).toHaveAttribute(
+            "id",
+            "projects-search"
+        )
+    })
+
     it("mostra o botão Limpar busca com texto e traduz ao trocar o idioma", async () => {
         render(
             <SearchInput

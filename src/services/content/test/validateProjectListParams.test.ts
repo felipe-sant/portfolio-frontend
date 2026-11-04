@@ -89,4 +89,41 @@ describe("validateProjectListParams", () => {
 
         expect(fields?.map((issue) => issue.field)).toEqual(["sort", "limit"])
     })
+
+    it.each([["tech"], ["year"]])("trata %s vazio como sem filtro", (field) => {
+        const normalized = validateProjectListParams({ lang: "pt-BR", [field]: [] })
+
+        expect(normalized[field === "tech" ? "tech" : "year"]).toBeUndefined()
+    })
+
+    it.each([
+        ["tech", Array.from({ length: 10 }, (_value, index) => `Tecnologia ${index}`)],
+        ["year", Array.from({ length: 10 }, (_value, index) => String(2010 + index))]
+    ])("aceita 10 valores em %s e rejeita 11", (field, values) => {
+        expect(fieldsOf({ lang: "pt-BR", [field]: values })).toBeUndefined()
+        expect(fieldsOf({ lang: "pt-BR", [field]: [...values, "2030"] })).toEqual([
+            expect.objectContaining({ field })
+        ])
+    })
+
+    it.each([
+        ["tech", [""]],
+        ["tech", ["a".repeat(101)]],
+        ["tech", "React"],
+        ["tech", [10]],
+        ["year", ["25"]],
+        ["year", ["2025-06"]],
+        ["year", ["abcd"]],
+        ["year", "2025"]
+    ])("rejeita %s com %j", (field, value) => {
+        expect(fieldsOf({ lang: "pt-BR", [field]: value })).toEqual([
+            expect.objectContaining({ field })
+        ])
+    })
+
+    it("mantém tech e year válidos", () => {
+        expect(
+            validateProjectListParams({ lang: "pt-BR", tech: ["React", "Node.js"], year: ["2025"] })
+        ).toMatchObject({ tech: ["React", "Node.js"], year: ["2025"] })
+    })
 })

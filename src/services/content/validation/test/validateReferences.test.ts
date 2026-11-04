@@ -39,10 +39,10 @@ describe("validateReferences", () => {
         const messages = messagesAfter((snapshot) => {
             const [first, second] = projectsOf(snapshot, "es")
             first.related = [
-                { id: MISSING, reason: "x" },
-                { id: first.id, reason: "y" },
-                { id: second.id, reason: "z" },
-                { id: second.id, reason: "w" }
+                { id: MISSING },
+                { id: first.id },
+                { id: second.id },
+                { id: second.id }
             ]
         })
 

@@ -1,10 +1,10 @@
-import type { ComponentPropsWithoutRef, MouseEvent } from "react"
+import type { ComponentPropsWithRef, MouseEvent } from "react"
 import css from "@/styles/components/button.module.css"
 import Icon from "@/components/Icon"
 import Spinner from "@/components/Spinner"
 import type IconName from "@/types/icon/IconName.types"
 
-interface ButtonProps extends ComponentPropsWithoutRef<"button"> {
+interface ButtonProps extends ComponentPropsWithRef<"button"> {
     variant?: "primary" | "secondary" | "ghost"
     size?: "sm" | "md" | "lg"
     loading?: boolean
@@ -24,6 +24,7 @@ function Button({
     className,
     onClick,
     children,
+    "aria-disabled": ariaDisabled,
     ...rest
 }: ButtonProps) {
     const classes = [css.button, css[variant], css[size], fullWidth && css.fullWidth, className]
@@ -48,7 +49,7 @@ function Button({
             type={type}
             className={classes}
             aria-busy={loading || undefined}
-            aria-disabled={loading || undefined}
+            aria-disabled={loading || ariaDisabled || undefined}
             onClick={handleClick}
         >
             {showStart}

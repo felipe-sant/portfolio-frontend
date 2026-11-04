@@ -1,7 +1,6 @@
 import { useTranslation } from "react-i18next"
 import Button from "@/components/Button"
 import ButtonLink from "@/components/ButtonLink"
-import Footer from "@/components/Footer"
 import Header from "@/components/Header"
 import Icon from "@/components/Icon"
 import SkipLink from "@/components/SkipLink"
@@ -40,7 +39,6 @@ function ErrorPage() {
                     </div>
                 </div>
             </main>
-            <Footer variant="default" inert={menu.isOpen} />
         </div>
     )
 }

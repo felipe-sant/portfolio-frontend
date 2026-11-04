@@ -59,3 +59,52 @@ describe("searchProjects", () => {
         expect(titles("colaborativo")).toEqual([])
     })
 })
+
+function protoRecord(index: number, title: string, technologies: string[]) {
+    return buildProjectRecord({
+        id: `0192f1a0-0000-7000-8000-0000000001${String(index).padStart(2, "0")}`,
+        title,
+        stack: [{ category: "frontend", items: technologies.map((name) => ({ name })) }]
+    })
+}
+
+const prototype = [
+    protoRecord(1, "Maps", ["React", "PostGIS"]),
+    protoRecord(2, "Plataforma de cursos", ["React", "Node.js"]),
+    protoRecord(3, "Check-in de eventos", ["React Native", "Expo"]),
+    protoRecord(4, "Rastreio de entregas", ["React Native", "Firebase"]),
+    protoRecord(5, "Catálogo de componentes", ["Storybook", "Vue"]),
+    protoRecord(6, "Controle de estoque", ["Prisma", "Express"])
+]
+
+function prototypeTitles(query: string) {
+    return searchProjects(prototype, query, "pt-BR").map((project) => project.title)
+}
+
+describe("searchProjects com os dados do protótipo", () => {
+    it("acha Maps por maps", () => {
+        expect(prototypeTitles("maps")).toEqual(["Maps"])
+    })
+
+    it("acha os quatro projetos com React ou React Native por REACT", () => {
+        expect(prototypeTitles("REACT").toSorted()).toEqual([
+            "Check-in de eventos",
+            "Maps",
+            "Plataforma de cursos",
+            "Rastreio de entregas"
+        ])
+    })
+
+    it("acha os dois projetos com React Native por react native", () => {
+        expect(prototypeTitles("react native").toSorted()).toEqual([
+            "Check-in de eventos",
+            "Rastreio de entregas"
+        ])
+    })
+
+    it("acha Maps por react postgis, catálogo por catalogo e nada por blockchain", () => {
+        expect(prototypeTitles("react postgis")).toEqual(["Maps"])
+        expect(prototypeTitles("catalogo")).toEqual(["Catálogo de componentes"])
+        expect(prototypeTitles("blockchain")).toEqual([])
+    })
+})

@@ -1,0 +1,5 @@
+.link {
+    color: var(--text-link);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+}

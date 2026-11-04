@@ -58,9 +58,7 @@ function validateRelated(related: unknown, path: string, issues: ContentIssue[])
 
     items.forEach((item, index) => {
         const itemPath = `${path}[${index}]`
-        if (checkObjectKeys(item, itemPath, ["id", "reason"], [], issues)) {
-            requireText(item, "reason", itemPath, issues)
-        }
+        checkObjectKeys(item, itemPath, ["id"], [], issues)
     })
 }
 

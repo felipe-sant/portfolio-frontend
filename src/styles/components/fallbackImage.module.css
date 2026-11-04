@@ -1,0 +1,13 @@
+.image {
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+}
+
+.placeholder {
+    display: block;
+    width: 100%;
+    aspect-ratio: var(--ratio-media);
+    background-color: var(--bg-placeholder);
+}

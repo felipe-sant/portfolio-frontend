@@ -15,6 +15,9 @@ const DEFAULT_OFFSET = 0
 const DEFAULT_LIMIT = 9
 const MAX_QUERY_LENGTH = 100
 const MAX_LIMIT = 50
+const MAX_FILTER_VALUES = 10
+const MAX_TECH_LENGTH = 100
+const YEAR_PATTERN = /^\d{4}$/
 
 function isOneOf<T extends string>(options: readonly T[], value: unknown): value is T {
     return options.some((option) => option === value)
@@ -24,11 +27,23 @@ function invalidValue(field: string, message: string): FieldIssue {
     return { field, code: "INVALID_VALUE", message }
 }
 
+function isValidList(value: unknown, isValidItem: (item: string) => boolean): boolean {
+    return (
+        Array.isArray(value) &&
+        value.length <= MAX_FILTER_VALUES &&
+        value.every((item) => typeof item === "string" && isValidItem(item))
+    )
+}
+
+function pickList(value: unknown): string[] | undefined {
+    return Array.isArray(value) && value.length > 0 ? value.map(String) : undefined
+}
+
 function validateProjectListParams(params: RawProjectListParams): NormalizedProjectListParams {
     validateLang(params.lang)
 
     const issues: FieldIssue[] = []
-    const { q, type, category, featured, sort, offset, limit } = params
+    const { q, type, category, tech, year, featured, sort, offset, limit } = params
 
     if (q !== undefined && typeof q !== "string") {
         issues.push(invalidValue("q", "Use um texto."))
@@ -46,6 +61,22 @@ function validateProjectListParams(params: RawProjectListParams): NormalizedProj
 
     if (category !== undefined && !isOneOf(PROJECT_CATEGORIES, category)) {
         issues.push(invalidValue("category", `Use ${PROJECT_CATEGORIES.join(", ")}.`))
+    }
+
+    if (
+        tech !== undefined &&
+        !isValidList(tech, (item) => item.length >= 1 && item.length <= MAX_TECH_LENGTH)
+    ) {
+        issues.push(
+            invalidValue(
+                "tech",
+                `Use até ${MAX_FILTER_VALUES} textos de 1 a ${MAX_TECH_LENGTH} caracteres.`
+            )
+        )
+    }
+
+    if (year !== undefined && !isValidList(year, (item) => YEAR_PATTERN.test(item))) {
+        issues.push(invalidValue("year", `Use até ${MAX_FILTER_VALUES} anos com quatro dígitos.`))
     }
 
     if (featured !== undefined && featured !== true) {
@@ -83,6 +114,8 @@ function validateProjectListParams(params: RawProjectListParams): NormalizedProj
         q: typeof q === "string" ? q : undefined,
         type: isOneOf(PROJECT_TYPES, type) ? type : undefined,
         category: isOneOf(PROJECT_CATEGORIES, category) ? category : undefined,
+        tech: pickList(tech),
+        year: pickList(year),
         featured: featured === true ? true : undefined,
         sort: isOneOf(PROJECT_SORTS, sort) ? sort : DEFAULT_SORT,
         offset: typeof offset === "number" ? offset : DEFAULT_OFFSET,

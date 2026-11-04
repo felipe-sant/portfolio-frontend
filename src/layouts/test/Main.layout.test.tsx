@@ -22,6 +22,8 @@ function createRoutes(page = <h1>Conteúdo da rota</h1>) {
         children: [
             { index: true, element: page },
             { path: "projects", element: <h1>Projetos da rota</h1> },
+            { path: "projects/:id", element: <h1>Projeto da rota</h1> },
+            { path: "projects/:id/docs/:name", element: <h1>Documento da rota</h1> },
             { path: "contact", element: <h1>Contato da rota</h1> },
             { path: "not-found", element: <h1>Rota de teste não encontrada</h1> },
             { path: "*", element: <h1>Não encontrada</h1> }
@@ -192,5 +194,40 @@ describe("MainLayout", () => {
         )
         expect(screen.getByRole("banner")).toBeInTheDocument()
         expect(screen.getByRole("contentinfo")).toBeInTheDocument()
+    })
+
+    describe("rolagem na troca de página", () => {
+        afterEach(() => {
+            vi.restoreAllMocks()
+        })
+
+        const FIRST = "0192f1a0-7c3e-7b21-8d4f-2a9e6c1b3f50"
+        const SECOND = "0192f1a0-7c3e-7b21-8d4f-2a9e6c1b3f51"
+
+        it("com preventScrollReset, a troca entre documentos não leva a rolagem ao topo", async () => {
+            const { router } = await renderLayout(`/pt-BR/projects/${FIRST}`)
+            await act(async () => {})
+            const scrollTo = vi.spyOn(window, "scrollTo").mockImplementation(() => undefined)
+
+            await act(async () => {
+                await router.navigate(`/pt-BR/projects/${FIRST}/docs/SETUP.md`, {
+                    preventScrollReset: true
+                })
+            })
+
+            expect(scrollTo).not.toHaveBeenCalled()
+        })
+
+        it("a navegação a outro projeto leva a rolagem ao topo", async () => {
+            const { router } = await renderLayout(`/pt-BR/projects/${FIRST}`)
+            await act(async () => {})
+            const scrollTo = vi.spyOn(window, "scrollTo").mockImplementation(() => undefined)
+
+            await act(async () => {
+                await router.navigate(`/pt-BR/projects/${SECOND}`)
+            })
+
+            expect(scrollTo).toHaveBeenCalledWith(0, 0)
+        })
     })
 })

@@ -112,10 +112,23 @@ const DRAWINGS: Record<IconName, ReactNode> = {
             <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
         </>
     ),
+    arrowLeft: (
+        <>
+            <path d="M19 12H5" />
+            <path d="m12 19-7-7 7-7" />
+        </>
+    ),
     arrowRight: (
         <>
             <path d="M5 12h14" />
             <path d="m12 5 7 7-7 7" />
+        </>
+    ),
+    filter: (
+        <>
+            <path d="M3 6h18" />
+            <path d="M6 12h12" />
+            <path d="M10 18h4" />
         </>
     ),
     motion: <path d="M22 12h-4l-3 9L9 3l-3 9H2" />,

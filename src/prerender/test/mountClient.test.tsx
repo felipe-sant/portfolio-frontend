@@ -1,14 +1,29 @@
+import { readFileSync } from "node:fs"
 import type { Root } from "react-dom/client"
 import type { MockInstance } from "vitest"
 import { afterEach, beforeEach, describe, expect, inject, it, vi } from "vitest"
-import { act, screen } from "@testing-library/react"
+import { act, screen, within } from "@testing-library/react"
+import userEvent from "@testing-library/user-event"
 import composePage from "@scripts/prerender/composePage"
 import i18n from "@/i18n/i18n"
 import mountClient from "@/prerender/mountClient"
 import buildProfile from "@/testUtils/buildProfile"
+import parseUntyped from "@/testUtils/parseUntyped"
+import relaxTimeoutsForLoad from "@/testUtils/relaxTimeoutsForLoad"
 import stubContentFetch from "@/testUtils/stubContentFetch"
+import loadMarkdownRenderer from "@/utils/loadMarkdownRenderer"
 import MOTION_STORAGE_KEY from "@/utils/motionStorageKey"
 import THEME_STORAGE_KEY from "@/utils/themeStorageKey"
+
+relaxTimeoutsForLoad()
+
+vi.mock("@/utils/loadMarkdownRenderer", async (importOriginal) => {
+    const original = await importOriginal<typeof import("@/utils/loadMarkdownRenderer")>()
+
+    return { default: vi.fn(original.default) }
+})
+
+const PROJECT_ID = "01a131df-93ee-72f3-8c7a-f67501e47a7a"
 
 const TEMPLATE =
     '<!doctype html><html lang="pt-BR"><head><title>Estático</title><meta name="description" content="Estática" /></head><body><noscript>x</noscript><div id="root"></div></body></html>'
@@ -29,6 +44,29 @@ function injectPrerendered(file: string, rootElement: HTMLElement) {
     window.prerenderedPath = `/${target.path}`
     window.preloadedState = JSON.parse(result.state)
     window.routerData = JSON.parse(result.routerData)
+}
+
+const REAL_PROJECTS = parseUntyped(readFileSync("public/content/pt-BR/projects.json", "utf-8"))
+
+function stubProjectsContent() {
+    return stubContentFetch({
+        "content/pt-BR/profile.json": buildProfile(),
+        "content/pt-BR/projects.json": REAL_PROJECTS
+    })
+}
+
+function readJsonLdText() {
+    return document.querySelector('script[type="application/ld+json"]')?.textContent ?? null
+}
+
+function countRegion() {
+    return within(screen.getByRole("main")).getByRole("status")
+}
+
+function cardTitles() {
+    return screen
+        .getAllByRole("heading", { level: 2 })
+        .map((heading) => heading.querySelector("a")?.textContent)
 }
 
 async function settle() {
@@ -55,7 +93,7 @@ let mountedRoots: Root[] = []
 
 async function mount() {
     await act(async () => {
-        mountedRoots.push(mountClient(rootElement))
+        mountedRoots.push(await mountClient(rootElement))
     })
 }
 
@@ -107,7 +145,7 @@ describe("mountClient sem caminho pré-renderizado", () => {
 
         await screen.findByRole("heading", { name: "Desenvolvedor full stack em TypeScript" })
         expect(document.head.querySelectorAll("title")).toHaveLength(1)
-        expect(document.title).toBe("Portfolio · Luiz Felipe dos Santos")
+        expect(document.title).toBe("Portfólio · Luiz Felipe dos Santos")
         expect(document.head.querySelectorAll("meta[name='description']")).toHaveLength(1)
     })
 })
@@ -190,5 +228,251 @@ describe("mountClient com caminho pré-renderizado", () => {
         expect(document.head.querySelectorAll("meta[name='robots']")).toHaveLength(1)
         expect(consoleSpies.error).not.toHaveBeenCalled()
         expect(document.documentElement.lang).toBe("pt-BR")
+    })
+
+    it("hidrata pt-BR/projects.html sem erro nem aviso e mantém os cards do HTML", async () => {
+        injectPrerendered("pt-BR/projects.html", rootElement)
+        await i18n.changeLanguage("pt-BR")
+        window.history.pushState({}, "", "/pt-BR/projects")
+        const link = screen.getByRole("link", { name: "Maps" })
+        const htmlJsonLd = readJsonLdText()
+        const consoleSpies = spyOnConsole()
+
+        await mount()
+        await settle()
+
+        expect(screen.getByRole("link", { name: "Maps" })).toBe(link)
+        expect(readJsonLdText()).toBe(htmlJsonLd)
+        expect(cardTitles()).toHaveLength(6)
+        expect(consoleSpies.error).not.toHaveBeenCalled()
+        expect(hydrationWarnings(consoleSpies.warn)).toEqual([])
+    })
+
+    it.each([
+        ["pt-BR/about.html", "pt-BR", "/pt-BR/about"],
+        ["en/about.html", "en", "/en/about"]
+    ])("hidrata %s sem erro nem aviso e mantém o h1 do HTML", async (file, language, path) => {
+        class StubObserver {
+            observe = vi.fn()
+            disconnect = vi.fn()
+            unobserve = vi.fn()
+            takeRecords = vi.fn(() => [])
+        }
+        vi.stubGlobal("IntersectionObserver", StubObserver)
+        injectPrerendered(file, rootElement)
+        await i18n.changeLanguage(language)
+        window.history.pushState({}, "", path)
+        const heading = screen.getByRole("heading", { level: 1, name: "Luiz Felipe dos Santos" })
+        const hiddenDetail = rootElement.querySelectorAll("li > [hidden]")
+        const consoleSpies = spyOnConsole()
+
+        await mount()
+        await settle()
+
+        expect(screen.getByRole("heading", { level: 1, name: "Luiz Felipe dos Santos" })).toBe(
+            heading
+        )
+        expect(hiddenDetail.length).toBeGreaterThan(0)
+        expect(rootElement.querySelectorAll("li > [hidden]")).toHaveLength(hiddenDetail.length)
+        expect(consoleSpies.error).not.toHaveBeenCalled()
+        expect(hydrationWarnings(consoleSpies.warn)).toEqual([])
+    })
+
+    it.each([
+        [
+            "o README do projeto",
+            `pt-BR/projects/${PROJECT_ID}.html`,
+            `/pt-BR/projects/${PROJECT_ID}`
+        ],
+        [
+            "um documento do projeto",
+            `pt-BR/projects/${PROJECT_ID}/docs/SETUP.md.html`,
+            `/pt-BR/projects/${PROJECT_ID}/docs/SETUP.md`
+        ]
+    ])(
+        "hidrata %s sem erro nem aviso, mantém o h1 e carrega o renderizador de markdown antes",
+        async (_name, file, url) => {
+            injectPrerendered(file, rootElement)
+            await i18n.changeLanguage("pt-BR")
+            window.history.pushState({}, "", url)
+            vi.mocked(loadMarkdownRenderer).mockClear()
+            const heading = screen.getByRole("heading", { level: 1, name: "MNIST Classifier" })
+            const consoleSpies = spyOnConsole()
+
+            await mount()
+            await settle()
+
+            expect(loadMarkdownRenderer).toHaveBeenCalled()
+            expect(screen.getByRole("heading", { level: 1, name: "MNIST Classifier" })).toBe(
+                heading
+            )
+            expect(consoleSpies.error).not.toHaveBeenCalled()
+            expect(hydrationWarnings(consoleSpies.warn)).toEqual([])
+        }
+    )
+
+    it("hidrata o documento de texto sem erro nem aviso e sem carregar o renderizador de markdown", async () => {
+        injectPrerendered(`pt-BR/projects/${PROJECT_ID}/docs/LICENSE.html`, rootElement)
+        await i18n.changeLanguage("pt-BR")
+        window.history.pushState({}, "", `/pt-BR/projects/${PROJECT_ID}/docs/LICENSE`)
+        vi.mocked(loadMarkdownRenderer).mockClear()
+        const license = screen.getByRole("region", { name: "LICENSE" })
+        const consoleSpies = spyOnConsole()
+
+        await mount()
+        await settle()
+
+        expect(screen.getByRole("region", { name: "LICENSE" })).toBe(license)
+        expect(loadMarkdownRenderer).not.toHaveBeenCalled()
+        expect(consoleSpies.error).not.toHaveBeenCalled()
+        expect(hydrationWarnings(consoleSpies.warn)).toEqual([])
+    })
+
+    it("não carrega o renderizador de markdown ao hidratar a lista de projetos", async () => {
+        injectPrerendered("pt-BR/projects.html", rootElement)
+        await i18n.changeLanguage("pt-BR")
+        window.history.pushState({}, "", "/pt-BR/projects")
+        vi.mocked(loadMarkdownRenderer).mockClear()
+
+        await mount()
+        await settle()
+
+        expect(loadMarkdownRenderer).not.toHaveBeenCalled()
+    })
+
+    it("hidrata com a query na URL: primeira renderização igual ao HTML e filtro aplicado depois", async () => {
+        stubProjectsContent()
+        injectPrerendered("pt-BR/projects.html", rootElement)
+        await i18n.changeLanguage("pt-BR")
+        window.history.pushState({}, "", "/pt-BR/projects?type=web&sort=title")
+        const consoleSpies = spyOnConsole()
+
+        await mount()
+        await settle()
+
+        expect(screen.getByRole("button", { name: "Web" })).toHaveAttribute("aria-pressed", "true")
+        expect(screen.queryByRole("button", { name: /^Ordenar/ })).not.toBeInTheDocument()
+        expect(cardTitles()).toEqual([
+            "Controle de Despesas",
+            "Conversor de Unidades",
+            "Maps",
+            "MNIST Classifier",
+            "Pedido de Namoro Irrecusável"
+        ])
+        const items = JSON.parse(readJsonLdText() ?? "null").mainEntity.itemListElement
+        expect(items.map((item: { name: string }) => item.name)).toEqual(cardTitles())
+        await userEvent.click(await screen.findByRole("button", { name: "Filtros" }))
+        expect(screen.getByRole("radio", { name: "A–Z" })).toBeChecked()
+        expect(consoleSpies.error).not.toHaveBeenCalled()
+        expect(hydrationWarnings(consoleSpies.warn)).toEqual([])
+    })
+
+    it("hidrata com tech e year na URL, aplica o filtro depois e mostra Filtros (2)", async () => {
+        stubProjectsContent()
+        injectPrerendered("pt-BR/projects.html", rootElement)
+        await i18n.changeLanguage("pt-BR")
+        window.history.pushState({}, "", "/pt-BR/projects?tech=Leaflet&year=2025")
+        const consoleSpies = spyOnConsole()
+
+        await mount()
+        await settle()
+
+        expect(await screen.findByRole("button", { name: "Filtros (2)" })).toBeVisible()
+        expect(cardTitles()).toEqual(["Maps"])
+        expect(consoleSpies.error).not.toHaveBeenCalled()
+        expect(hydrationWarnings(consoleSpies.warn)).toEqual([])
+    })
+
+    it("hidrata com sort e tech na URL, mostra Filtros (1) e abre o modal com A–Z e Leaflet marcados", async () => {
+        stubProjectsContent()
+        injectPrerendered("pt-BR/projects.html", rootElement)
+        await i18n.changeLanguage("pt-BR")
+        window.history.pushState({}, "", "/pt-BR/projects?sort=title&tech=Leaflet")
+        const consoleSpies = spyOnConsole()
+
+        await mount()
+        await settle()
+
+        const button = await screen.findByRole("button", { name: "Filtros (1)" })
+        expect(cardTitles()).toEqual(["Maps"])
+        await userEvent.click(button)
+        expect(screen.getByRole("radio", { name: "A–Z" })).toBeChecked()
+        expect(screen.getByRole("checkbox", { name: "Leaflet" })).toBeChecked()
+        expect(consoleSpies.error).not.toHaveBeenCalled()
+        expect(hydrationWarnings(consoleSpies.warn)).toEqual([])
+    })
+
+    it("hidrata e abre o modal logo depois com as opções da store, com a tecnologia só da stack desabilitada", async () => {
+        stubProjectsContent()
+        injectPrerendered("pt-BR/projects.html", rootElement)
+        await i18n.changeLanguage("pt-BR")
+        window.history.pushState({}, "", "/pt-BR/projects")
+        const consoleSpies = spyOnConsole()
+
+        await mount()
+        await settle()
+
+        await userEvent.click(screen.getByRole("button", { name: "Filtros" }))
+        expect(screen.getByRole("group", { name: "Tecnologia" })).toBeVisible()
+        expect(screen.getByRole("group", { name: "Ano" })).toBeVisible()
+        expect(screen.getByRole("checkbox", { name: "Docker (nenhum projeto)" })).toBeDisabled()
+        expect(screen.getByRole("checkbox", { name: "Leaflet" })).toBeEnabled()
+        expect(consoleSpies.error).not.toHaveBeenCalled()
+        expect(hydrationWarnings(consoleSpies.warn)).toEqual([])
+    })
+
+    it("hidrata com ?tech= de uma tecnologia só da stack e mostra a opção marcada e habilitada", async () => {
+        stubProjectsContent()
+        injectPrerendered("pt-BR/projects.html", rootElement)
+        await i18n.changeLanguage("pt-BR")
+        window.history.pushState({}, "", "/pt-BR/projects?tech=Docker")
+        const consoleSpies = spyOnConsole()
+
+        await mount()
+        await settle()
+
+        await userEvent.click(await screen.findByRole("button", { name: "Filtros (1)" }))
+        const box = screen.getByRole("checkbox", { name: "Docker" })
+        expect(box).toBeChecked()
+        expect(box).toBeEnabled()
+        expect(consoleSpies.error).not.toHaveBeenCalled()
+        expect(hydrationWarnings(consoleSpies.warn)).toEqual([])
+    })
+
+    it("não deixa a tela em Carregando projetos ao hidratar", async () => {
+        injectPrerendered("pt-BR/projects.html", rootElement)
+        await i18n.changeLanguage("pt-BR")
+        window.history.pushState({}, "", "/pt-BR/projects")
+        const observed: string[] = []
+        const observer = new MutationObserver(() => observed.push(countRegion().textContent ?? ""))
+        observer.observe(rootElement, { childList: true, subtree: true, characterData: true })
+
+        await mount()
+        await settle()
+        observer.disconnect()
+
+        expect(countRegion()).toHaveTextContent("6 de 6 projetos")
+        expect(observed.join(" ")).not.toContain("Carregando")
+    })
+})
+
+describe("mountClient de Projetos sem HTML pré-renderizado", () => {
+    it("aplica a query já na primeira renderização com um pedido de projects.json e um de profile.json para lista e opções", async () => {
+        const fetchMock = stubProjectsContent()
+        await i18n.changeLanguage("pt-BR")
+        window.history.pushState({}, "", "/pt-BR/projects?type=web&sort=title")
+
+        await mount()
+
+        expect(await screen.findByRole("heading", { name: "Conversor de Unidades" })).toBeVisible()
+        expect(screen.getByRole("button", { name: "Web" })).toHaveAttribute("aria-pressed", "true")
+        const requests = fetchMock.mock.calls.filter(([url]) =>
+            String(url).includes("projects.json")
+        )
+        expect(requests).toHaveLength(1)
+        const profileRequests = fetchMock.mock.calls.filter(([url]) =>
+            String(url).includes("profile.json")
+        )
+        expect(profileRequests).toHaveLength(1)
     })
 })

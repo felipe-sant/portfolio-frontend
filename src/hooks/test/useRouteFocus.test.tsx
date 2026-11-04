@@ -40,6 +40,10 @@ function renderRoutes(
                     { path: "en", element: <h1>Home</h1> },
                     { path: "pt-BR/about", element: <h1>Sobre</h1> },
                     { path: "en/about", element: <h1>About</h1> },
+                    { path: "pt-BR/projects", element: <h1>Projetos</h1> },
+                    { path: "pt-BR/projects/:id", element: <h1>Projeto</h1> },
+                    { path: "pt-BR/projects/:id/docs/:name", element: <h1>Projeto</h1> },
+                    { path: "en/projects/:id/docs/:name", element: <h1>Project</h1> },
                     ...extra
                 ]
             }
@@ -92,5 +96,49 @@ describe("useRouteFocus", () => {
         })
 
         expect(document.body).toHaveFocus()
+    })
+
+    describe("troca dentro do mesmo projeto", () => {
+        const FIRST = "0192f1a0-7c3e-7b21-8d4f-2a9e6c1b3f50"
+        const SECOND = "0192f1a0-7c3e-7b21-8d4f-2a9e6c1b3f51"
+
+        it.each([
+            [`/pt-BR/projects/${FIRST}`, `/pt-BR/projects/${FIRST}/docs/SETUP.md`],
+            [`/pt-BR/projects/${FIRST}/docs/SETUP.md`, `/pt-BR/projects/${FIRST}/docs/LICENSE`],
+            [`/pt-BR/projects/${FIRST}/docs/SETUP.md`, `/pt-BR/projects/${FIRST}`]
+        ])("não foca o h1 de %s para %s", async (from, to) => {
+            const router = renderRoutes([from])
+
+            await act(async () => {
+                await router.navigate(to)
+            })
+
+            expect(document.body).toHaveFocus()
+        })
+
+        it.each([
+            [`/pt-BR/projects/${FIRST}`, `/pt-BR/projects/${SECOND}`],
+            ["/pt-BR/projects", `/pt-BR/projects/${FIRST}`],
+            ["/pt-BR/about", `/pt-BR/projects/${FIRST}/docs/SETUP.md`],
+            [`/pt-BR/projects/${FIRST}/docs/SETUP.md`, `/pt-BR/projects/${SECOND}`]
+        ])("continua focando o h1 de %s para %s", async (from, to) => {
+            const router = renderRoutes([from])
+
+            await act(async () => {
+                await router.navigate(to)
+            })
+
+            expect(document.activeElement?.tagName).toBe("H1")
+        })
+
+        it("não foca o h1 ao trocar só o idioma de um documento", async () => {
+            const router = renderRoutes([`/pt-BR/projects/${FIRST}/docs/SETUP.md`])
+
+            await act(async () => {
+                await router.navigate(`/en/projects/${FIRST}/docs/SETUP.md`)
+            })
+
+            expect(document.body).toHaveFocus()
+        })
     })
 })

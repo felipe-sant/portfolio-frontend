@@ -37,7 +37,7 @@ Module em vez de classe global `.ds-*` e código sem comentários. `docs/design/
 referência visual validada pelo PO (abre por `npm run dev` em
 `/docs/design/prototype/prototipo-indice.dc.html`).
 
-**Rotas:** cinco telas, das quais hoje só a Início existe no código (os links de Projetos, Informações e Contato do cabeçalho levam à não encontrada até lá; as demais vêm nas specs de tela),
+**Rotas:** cinco telas, todas existentes hoje no código: Início, Projetos (`/projects`), Projeto (`/projects/:id` e `/projects/:id/docs/:name`), Informações (`/about`) e Contato (`/contact`),
 com caminhos em inglês (D32), como os identificadores, sempre sob o prefixo do idioma
 (`/<idioma>`, onde `<idioma>` é `pt-BR`, `en` ou `es`, sem barra final); a raiz `/` só
 redireciona e `/projects` sem prefixo cai em não encontrada. O `:id` é um UUID v7, não slug. Os
@@ -103,7 +103,10 @@ npm test -- --run src/pages/test/Home.page.test.tsx   # um arquivo específico
 npm run typecheck # checagem de tipos (tsc -b) de src/ e vite.config.ts
 npm run lint      # oxlint sobre o projeto (configuração em .oxlintrc.json)
 npm run build:fatec   # build com BASE_PATH=/ra2581392423047/ + .nojekyll em dist/; falha sem o 404.html pré-renderizado (GitHub Pages da Fatec)
+npm run build:fatec:form # build do Pages com a flag do formulário de Contato ligada, em dist-form/ (só para o E2E)
+npm run publish:fatec:docs -- <artefato> <clone> # troca o docs/ do clone da Fatec pelo artefato (usado pelo job publish de fatec-pages.yml)
 npm run preview:fatec # servidor Node que imita o Pages (arquivo, <caminho>.html, pasta com 301, 404.html) em http://localhost:4173/ra2581392423047/
+npm run check:chunk # depois do build: o chunk MarkdownDocument-*.js (markdown + realce) tem de ficar em até 102400 bytes gzip e nenhum chunk de entrada, Início ou Projetos pode conter o react-markdown (CI, job Build)
 npm run og:image  # regera public/images/og-site.png (Chromium do Playwright, versionado)
 npm run lint:fix  # mesma coisa, aplicando as correções automáticas possíveis (oxlint --fix)
 npm run format    # prettier --write em **/*.{ts,tsx,css,json,md,yml,html}, conforme .prettierrc e .prettierignore
@@ -125,7 +128,7 @@ O mesmo setup roda um `beforeEach` que remove `LANGUAGE_STORAGE_KEY` do `localSt
 língua de referência, independente do navegador do `jsdom` (que reporta `en-US`). O literal é
 `"pt-BR"`, não `FALLBACK_LANGUAGE`, e o reset não grava nada. Teste de rota abre o caminho com
 prefixo (`createMemoryRouter(routes, { initialEntries: ["/pt-BR"] })`), porque `/` só redireciona e o
-`jsdom` reporta `en-US`. Teste de
+`jsdom` reporta `en-US`. O `beforeEach` também stuba `Element.prototype.scrollIntoView` (o `jsdom` não o implementa) e chama `clearContentCache()` (cache de leitura de `src/services/content/`), e `failFetchAfter`/`holdFetchAfter` o limpam ao criar o stub: stub novo significa memória vazia. Teste de
 tela afirma o texto em português, nunca a chave (o i18next devolve a própria chave quando falta
 tradução), não mocka `react-i18next` e troca de idioma com `setLanguage` dentro do `it`. Para
 simular uma nova carga de página (idioma inicial lido do caminho), prepare a URL, rode
@@ -185,6 +188,8 @@ contra `npm run preview:fatec` (`base` `/ra2581392423047/`), que serve o `dist/`
 inicial (relativa ao `baseURL`). Toda tela nova acrescenta o caminho em `e2e/support/routesUnderTest.ts`
 (o axe, com `color-contrast` ligada, roda em todas) e, se tiver teclado próprio, um roteiro em
 `e2e/<tema>.spec.ts`. Violação do axe se corrige na marcação ou no CSS, nunca desligando regra. Os projetos rodam com `reducedMotion: "reduce"`: roteiro que precisa de movimento pleno usa `test.use({ reducedMotion: "no-preference" })`. Elemento com `useReveal` leva `suppressHydrationWarning` (o `data-reveal` do HTML do servidor difere do primeiro render no navegador).
+
+**Toda tela nova entrega os E2E dos próprios fluxos**: clique e navegação, estados de carregamento e erro (forçados por `page.route`) e HTML sem JavaScript (`javaScriptEnabled: false`), com o ID do requisito no título (`"RF-LAY-18: o botão alterna o tema"`) e a prova de que o teste falha quando o comportamento quebra (mutação desfeita). A base são `e2e/theme`, `motion`, `language`, `navigation`, `footer`, `home-flows`, `not-found` e `no-javascript`; o apoio fica em `e2e/support/` (`readContent`, `readProfile`, `readFeaturedProjects`, `readAppVersion`, `readStackOffset`, `openPreferences`, `uiTexts`). O E2E não importa `src/`: o texto de cada idioma de que ele precisa vive em `uiTexts`.
 
 O CI (`.github/workflows/`) roda `npm run build`, `npm run lint`, a suíte de testes e o job `e2e`
 (`E2E`: instala o Chromium, `npm run build:fatec`, `npm run test:e2e`, relatório como artefato em
@@ -250,7 +255,7 @@ para editores compatíveis, coerente com o `.prettierrc`.
 - **`src/locales/`** — tradução é dado, separado da configuração em `src/i18n/`:
   `src/locales/<idioma>/<namespace>.json`, JSON com 4 espaços, os mesmos namespaces e chaves nos
   três idiomas. Um namespace por dono do texto, com o nome do CSS Module correspondente (ex.:
-  `home`, `notFound`, `error`); `common` guarda texto compartilhado (`backHome`, `loading`)
+  `home`, `notFound`, `error`, `about`); `common` guarda texto compartilhado (`backHome`, `loading`)
   e texto fixo de componente de `src/components/` (inclusive o do rodapé, `footer.*`). Chave em inglês, lowerCamelCase, hierárquica por
   papel (`meta.title`, `meta.description`, `heading`, `filters.category.academic`). Página com
   namespace próprio chama `useTranslation("home")`; quem também usa chave de `common` carrega os
@@ -325,6 +330,7 @@ para editores compatíveis, coerente com o `.prettierrc`.
       página usa continua `useState` no hook da página; estado compartilhado vai para um slice;
       dado do servidor vai para um endpoint do RTK Query. Idioma continua em `src/i18n/`.
     - Refetch on focus/reconnect (`setupListeners`) segue desligado, o padrão do RTK Query.
+    - **Projetos** usa `getProjectsPages` (`build.infiniteQuery`, `queryFn` sobre `listProjects`, `limit` 9, argumento `ProjectsQueryArgs` sem `offset` nem `limit` como chave de cache) e `getProjectFilterOptions` (`{ lang }`, `queryFn` sobre `listProjectFilterOptions`: `technologies` e `years` como `{ value, count }`, a união da stack do perfil com as tecnologias dos projetos e o intervalo de anos dos projetos, sem busca nem filtros; a tela abre só `getProjectsPages` e `getProjectFilterOptions`, e a entrada `projects` do registro de pré-renderização dispara as mesmas duas; o `ItemList` do JSON-LD vem do primeiro lote da lista mostrada (`pages[0].items`, 9 itens, sem `numberOfItems`), não de uma consulta de índice). `ProjectPage` traz `availableTypes`; `tech` combina por E (texto normalizado), `year` por OU e campos diferentes por E (`listProjects`). `buildProjectsQueryArgs(language, filters)` (`src/utils/`) omite todo valor padrão, de modo que o estado padrão é `{ lang }`; o hook da tela e a entrada `projects` do registro de pré-renderização o usam, e é isso que faz a hidratação achar o cache. A query da tela (`q`, `type`, `category`, `tech`, `year`, `sort`; `tech` e `year` repetidos, até 10, normalizados e ordenados por `normalizeTechnologyFilter` e `normalizeYearFilter`) vive na URL (`parseProjectsSearchParams`/`buildProjectsSearch`, sempre `replace` com `preventScrollReset`), e a quantidade de páginas mostradas vive em `location.state.pages` (`useProjectsPages`), que também restaura a volta do detalhe.
     - Endpoints de conteúdo (`profile.api.ts`, `timeline.api.ts`, `projects.api.ts`) usam `queryFn`
       que chama `src/services/content/`, com `lang` no argumento (cache por idioma) e erro no
       formato do contrato (`toQueryError`); a #43 troca cada `queryFn` por `query`.
@@ -360,12 +366,15 @@ para editores compatíveis, coerente com o `.prettierrc`.
 
 - **`src/components/`** — componentes base reutilizáveis (`Button`, `Chip`, `TextField`, `SearchInput`,
   `Skeleton`, `Spinner`, `VisuallyHidden`, `Icon`, `IconButton`, `CatLogo`, `ThemeToggle`,
-  `MotionToggle`, `SettingsMenu`, `Flag`, `LanguageSelector`, `Header`, `SkipLink`, `Footer`, `CopyEmailButton`, `ButtonLink`, `AvailabilityBadge`, `LoadError`, `StatusCard`, `StackMarquee`, `FeaturedProject`, `Reveal`). O desenho de cada ícone fica num mapa local de
+  `MotionToggle`, `SettingsMenu`, `Flag`, `LanguageSelector`, `Header`, `SkipLink`, `Footer`, `CopyEmailButton`, `ButtonLink`, `AvailabilityBadge`, `LoadError`, `StatusCard`, `StackMarquee`, `FeaturedProject`, `Reveal`, `ProjectCard`, `ProjectCardSkeleton`, `FilterGroup`, `Modal`, `ProjectsFiltersModal`, `ProfilePhoto`, `AboutNowCard`, `CertificateChip`, `GroupCount`, `StackGroupList`, `TrajectoryGroup`, `TrajectoryItem`, `TrajectoryDetail`, `TrajectoryDetailsLine`, `TrajectoryPeriod`, `TrajectoryModal`, `RadioChipGroup`, `ContactChannels`, `ContactForm`). O desenho de cada ícone fica num mapa local de
   `Icon.tsx`, com os nomes em `src/enum/iconNames.enum.ts`. Texto fixo de componente vive em `common`
   (`searchInput.clear`); o resto chega por prop. O `jsx-a11y/prefer-tag-over-role` acusa `role="status"`
   literal: passe `role={"status"}`. Controle de formulário tem borda `--border-control`, nunca
-  `--border-subtle`. `TextField` aceita `reserveMessageSpace` (campo com aviso possível) e
+  `--border-subtle`. `LoadError` aceita `description` opcional e `SearchInput` aceita `id` (o hook de Projetos foca o campo por ele). `ProjectCard` recebe `index` (carga e prioridade da imagem) e `revealIndex` (atraso do `useReveal`, recomeça a cada lote de 9) e a página o envolve num `<li>` pelo `ProjectListItem`, local ao arquivo. `FilterGroup` (`role="group"`, `aria-pressed`) é sem estado e o hook decide a regra do clique. `Modal` (portal no `body`, só monta aberto, `role="dialog"`, foco no `h2`, foco preso, `#root` `inert`, trava de rolagem por `data-scroll-locked` no `body`, tela cheia abaixo de 640px) usa `useModalBehavior` (`src/hooks/`) e é genérico; `ProjectsFiltersModal` mantém o rascunho de ordenação, tecnologia e ano e aplica ao fechar por ×, Esc, fundo ou "Aplicar" (`onApply` só se mudou; "Limpar" volta a ordenação a `defaultProjectSort`). A primeira seção é "Ordenar" (`fieldset` de `radio` com o mesmo `name`, sempre presente); Tecnologia e Ano só aparecem com opções, e a opção com `count` 0 fora do rascunho é `disabled` nativo com nome terminando em `filters.modal.noProjects` (a vinda da URL fica marcada e habilitada). O botão "Filtros" nunca fica `aria-disabled`, e o contador "Filtros (N)" conta só tecnologia e ano. `applyModalFilters` de `useProjectsFilters` escreve os três de uma vez. `Button` repassa `aria-disabled`. O ícone `filter` são três traços decrescentes. `TextField` aceita `reserveMessageSpace` (campo com aviso possível) e
   `focusOnError` (hook `useFocusOnError` de `src/hooks/`, só no primeiro campo inválido do envio).
+- **Projeto** (`/projects/:id`, `/projects/:id/docs/:name`) — `Project.page.tsx` com uma rota-pai `projects/:id` e filhas `index` e `docs/:name` (`element: null`, para a hidratação não avisar folha sem elemento); o `README.md` abre em `:id` e os outros documentos em `/docs/<name>` (nome em outra caixa vira o exato por `replace`; `/docs/README.md`, documento fora da lista e id inválido caem na não encontrada). Dados por `getProject` e `getProjectDocumentContent` (hooks `useProject`, `useProjectDocument`, `useBackToProjects` em `src/pages/hooks/`); o card da lista de Projetos leva `state: { fromProjects: true }` e a `nav` de documentos soma `documentSteps`, ambos lidos por `readProjectsOrigin`, e "Voltar para Projetos" volta `-(documentSteps + 1)` no histórico. `useRouteFocus` não foca o `h1` na troca de documento do mesmo projeto (`getProjectContext`), mas foca-o quando o conteúdo chega depois do skeleton se o visitante não moveu o foco. Componentes: `ProjectFacts`, `ProjectStack`, `ProjectLinks`, `ExternalButtonLink`, `ProjectGallery`, `Lightbox`, `FallbackImage`, `RelatedProjects`, `ProjectDocumentsNav`, `ProjectDocumentSection`, `TextDocument`, `ProjectError`, `ProjectSkeleton` e `MarkdownDocument` (com as peças `Markdown*`). **Só `MarkdownDocument`, `codeLanguages.ts` e `rehypeHighlightCode.ts` importam `react-markdown`, `remark-gfm`, `lowlight`, `rehype-slug` e `highlight.js`** (`markdownImports.test.ts` guarda), carregados por `lazy(loadMarkdownRenderer)` só na seção de documento `markdown`; o realce é o plugin local `rehypeHighlightCode` (o `rehype-highlight` importa as 37 linguagens `common` e estoura o orçamento), e o orçamento de 100 KB gzip é conferido por `npm run check:chunk`. `rehypeNumberCodeBlocks` (`src/utils/`, usado só no `MarkdownDocument`) numera os blocos de código "Bash 1", "Bash 2" só quando o nome do bloco repete. `useScrollToHash` (`src/hooks/`, usado só por `ProjectDocumentSection`) rola até o título da âncora assim que ele existe no container, observando-o com `MutationObserver`, e a `nav` fixa não o cobre por `scroll-margin-top`; não age na volta do histórico. Documento `text` (`LICENSE` de cada projeto, neutro em `public/content/shared/projects/<id>/docs/`) vai num `<pre>` sem o chunk. Pré-renderização: o registro dá `documentId` do README ao escopo `project`, e `mountClient` (assíncrono) espera `loadMarkdownRenderer` antes de hidratar quando `shouldPreloadMarkdown` diz que o documento aberto é `markdown`.
+- **Informações** (`/about`) — `About.page.tsx` chama só `useAbout` (`src/pages/hooks/`), que lê `getProfile` e `getTimeline` (`{ lang }`, as mesmas consultas da entrada `about` do registro de pré-renderização), isola erro por fonte (`retry` refaz só aquela fonte e foca o título ou o alerta), ordena a stack por `sortStackGroups`, descarta `kind` fora de `TIMELINE_KINDS`, calcula o que some por vazio (`show`) e guarda o item aberto, que fecha quando o caminho muda (sem escrever na URL). `Reveal` envolve Sobre mim, Stack, Complementos e Trajetória, nunca a Apresentação. O erro anuncia `role="alert"` uma vez por fonte: `LoadError` aceita `announce` (padrão `true`) e só a primeira parte afetada anuncia. "Baixar CV" nasce `Button` `disabled` com nome `common:resume.unavailableName` até a #54. Cada item da trajetória é um `TrajectoryItem` (`button` com `aria-haspopup="dialog"`) cujo `<li>` leva o `TrajectoryDetail` num contêiner `hidden` (HTML pré-renderizado e sem JavaScript, D37); o `TrajectoryModal` renderiza o mesmo `TrajectoryDetail` pelo portal do `Modal`, e os dois nunca dividem `id`. `Modal` aceita `subtitle` (linha de metadados no cabeçalho) e `wide` (34rem); `AboutNowCard` é o cartão "Agora" ao lado de Sobre mim (função, modo de trabalho e links de GitHub e LinkedIn do perfil) e a faixa de Complementos usa `--bg-raised`. O foco volta ao item por `registerTrigger` (ref do botão) depois do fechamento, porque o Safari não foca o botão no clique. O período vem de `formatPeriod` (compõe `formatSinceDate`), o destaque e a linha de detalhes de `getTrajectoryLines`, e o JSON-LD `ProfilePage` + `Person` de `buildAboutJsonLd`.
+- **Contato** (`/contact`) — `Contact.page.tsx` chama só `useContact` (`getProfile`, `{ lang }`; erro com `LoadError` no lugar dos canais, `retry` refaz a consulta e foca o `h1` ou o alerta). O formulário fica atrás de `VITE_CONTACT_FORM_ENABLED`, lida só em `src/utils/contactFormEnabled.ts` (só `"true"` liga; desligada por padrão em todo ambiente publicado até a #44): desligada, a tela é uma coluna só com `ContactChannels`; ligada, `ContactForm` entra por `lazy` num `<Suspense fallback={null}>` local (única exceção à regra de página sem `<Suspense>` próprio, para o `lazy` não esconder a página inteira), em duas colunas a partir de 900px por media query. O chunk do formulário é emitido em `dist/` mas não é referenciado nem baixado com a flag desligada, e o `<form id="contact-form">` é o marcador para conferir isso. Testes de página e de formulário trocam a flag com `vi.mock("@/utils/contactFormEnabled", () => ({ get default() { return flag.enabled } }))`, nunca com `vi.resetModules()` (só o teste do próprio módulo usa). O envio é `contactApi.sendContactMessage` (`build.mutation` com `queryFn` sobre `simulateContactSend`, ~1,4 s, sem requisição; a #44 troca por `query`); o estado do formulário vive em `useContactForm` (`validateContactForm` devolve chaves de erro; foco imperativo por `focusRequest`) e os campos usam `TextField` com `inputRef`, `labelAddon` e `announceError={false}` (só o formulário de Contato: resumo e foco é que anunciam). `Button` aceita `ref`. "Baixar CV" é `Button` `disabled` com nome `common:resume.unavailableName` até a #54. `RadioChipGroup` (genérico, `fieldset` de `radio`) é o assunto do formulário e a ordenação de `ProjectsFiltersModal`; o CSS de chip vive em `radioChipGroup.module.css`. `npm run build:fatec:form` gera `dist-form/` com a flag ligada (segundo artefato do Pages, preservando o `dist/` do `build:fatec`), servido na porta 4174 por `PREVIEW_DIR=dist-form PREVIEW_PORT=4174 npm run preview:fatec` para os projetos Playwright `contact-form-*` (só `e2e/contact-form.spec.ts`; os demais projetos o ignoram).
 - **SEO por tela** — toda tela pública nova declara `<PageMeta title description path />`
   (`src/components/`: canônica autorreferente, quatro `hreflang` com `x-default` em `en`, Open
   Graph e `twitter:card`; `params` e `image` opcionais) e `<JsonLd data={...} />` com o objeto de
@@ -420,8 +429,8 @@ para editores compatíveis, coerente com o `.prettierrc`.
   prop `viewTransition` dos `Link` de navegação (o `LanguageSelector` fica sem); `startThemeTransition`
   (`src/utils/`, chamada por `useTheme.setTheme`) liga `data-theme-transition` no `<html>` durante a
   troca; `useReveal()` (`src/hooks/`, devolve `ref` e `revealProps`) e o componente `SkeletonSwap`
-  são usados pela Início (destaques, cabeçalho da seção e botões finais pelo componente `Reveal`, e skeletons dos blocos), com `useReveal` escondendo só o que está abaixo da primeira tela depois da hidratação (o HTML pré-renderizado sai visível); Projetos ainda não os usa; `useDragScroll` (arrastar com o mouse região rolável) e `useMediaQuery` (consulta de mídia por `useSyncExternalStore`) completam `src/hooks/`; tokens `--dur-page`,
-  `--stagger` e `--press-scale` são neutralizados nos dois blocos de movimento reduzido.
+  são usados pela Início (destaques, cabeçalho da seção e botões finais pelo componente `Reveal`, e skeletons dos blocos), com `useReveal` escondendo só o que está abaixo da primeira tela depois da hidratação (o HTML pré-renderizado sai visível); Projetos usa `useReveal` nos cards (`ProjectCard`, por `revealIndex`) e `SkeletonSwap` na grade; `useDragScroll` (arrastar com o mouse região rolável), `useMediaQuery` (consulta de mídia por `useSyncExternalStore`), `useDebounce` e `useHasHydrated` (`false` só durante a hidratação, por `useSyncExternalStore`) completam `src/hooks/`; tokens `--dur-page`,
+  `--stagger` e `--press-scale` são neutralizados nos dois blocos de movimento reduzido. O hover de `projectCard.module.css` e `featuredProject.module.css` zera o deslocamento com movimento reduzido por `:global(:root[data-motion="reduced"])` (dentro de `@media (hover: hover)`, sem depender do media de movimento reduzido) e por `:global(:root:not([data-motion]))` (dentro de `@media (hover: hover) and (prefers-reduced-motion: reduce)`), espelhando a lógica do `global.css`; é o único uso de `:global` em CSS Module do projeto, e não usa token como `--hover-lift` porque o `transform` computado precisa ser `none`.
 - **Alias de import `@/`** — `@/*` resolve para `src/*`. Configurado em dois lugares que precisam
   continuar concordando: `paths` no `tsconfig.app.json` (para o `tsc` e o editor) e `resolve.alias` no
   `vite.config.ts` (para o dev server e o build). Mexer em um sem o outro deixa o `tsc -b`
@@ -445,7 +454,7 @@ o caminho relativo. Timeout próprio não existe: quem quiser usa `AbortSignal.t
 **`src/services/content/`** é a camada de dados local da v1 (R1), usada só pelos `queryFn` de
 `src/store/api/` (e removida na #43): `readJson`/`readText` leem `public/` por `fetch`, os `load*` carregam os
 registros de um idioma, e funções puras montam o que a API calcularia (busca, ordenação, paginação,
-trajetória). Página e componente nunca importam essa pasta nem JSON de `public/`. O conteúdo fica
+trajetória). `readText` guarda a promessa por caminho em `contentCache` (`projects.json` e `profile.json` são lidos uma vez por carga; falha não fica guardada; `clearContentCache()` esvazia; `readJson` analisa o texto a cada chamada, cada consumidor com objeto próprio). Página e componente nunca importam essa pasta nem JSON de `public/`. **Migração para o backend (#43):** busca, filtros por tipo, categoria, tecnologia e ano, ordenação, paginação, opções e contagens simulados aqui saem do frontend quando a #43 trocar cada `queryFn` por `query`; o servidor passa a receber `q`, `type`, `category`, `tech`, `year`, `sort`, `offset` e `limit`, e o cache de leitura sai com a camada. O conteúdo fica
 em `public/content/<idioma>/` e `public/images/`, o modelo em branco em `content/template/` e a
 validação do conteúdo em `src/services/content/validation/`, executada por
 `src/services/content/test/content.test.ts` (`npm run content:check`). `scripts/` guarda os
@@ -636,6 +645,28 @@ que o pacote publica em vez de presumir. Não se aplica ao React, que só expõe
 chamada ao dispatcher interno do runtime. E pacotes ESM com bom tree-shaking (`lodash-es`,
 `date-fns` v3) já resolvem isso pela primeira regra — subpath é a saída para pacotes CJS ou mal
 empacotados.
+
+### Dependências novas
+
+Antes de acrescentar um pacote ao `package.json` (ou de planejar uma tarefa que o acrescente),
+verifique se ele vale a pena e registre o resultado na spec (`.specs/`) ou, sem spec, na descrição
+do PR:
+
+- **Manutenção:** data da última versão e do último commit (`npm view <pacote> time`,
+  `gh api repos/<dono>/<repo>`); repositório não arquivado; sem `deprecated` no npm.
+- **Problemas conhecidos:** issues abertas do repositório (`gh issue list -R <dono>/<repo>`), em
+  especial bugs que atinjam o uso previsto, e avisos de segurança
+  (`gh api "advisories?ecosystem=npm&affects=<pacote>"`), incluindo as dependências transitivas
+  relevantes. Pacote parado há muito tempo não é problema por si só (utilitário pequeno e estável),
+  mas o motivo precisa estar anotado.
+- **Compatibilidade:** `peerDependencies` com a versão de React, TypeScript e Vite do projeto, tipos
+  embutidos e formato ESM com tree-shaking.
+- **Necessidade e peso:** se o que o pacote entrega já existe no projeto ou se resolve com poucas
+  linhas; custo em kB gzip no bundle e, quando for carregado sob demanda, no chunk dele.
+
+Pacote com aviso de segurança sem correção, arquivado, depreciado ou incompatível não entra sem o PO
+decidir. Atualizar versão de pacote existente segue a mesma checagem quando a mudança for de versão
+maior.
 
 ## Padrão de branches, commits e PRs
 

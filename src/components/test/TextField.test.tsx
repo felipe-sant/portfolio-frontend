@@ -1,3 +1,4 @@
+import { createRef } from "react"
 import { describe, expect, it, vi } from "vitest"
 import { render, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
@@ -137,6 +138,44 @@ describe("TextField", () => {
 
         expect(input).toHaveAttribute("aria-required", "true")
         expect(input).not.toHaveAttribute("required")
+    })
+
+    it("entrega o input e o textarea pelo inputRef", () => {
+        const inputRef = createRef<HTMLInputElement | HTMLTextAreaElement>()
+        const { rerender } = render(<TextField label="Nome" inputRef={inputRef} />)
+
+        expect(inputRef.current).toBe(screen.getByLabelText("Nome"))
+        expect(inputRef.current?.tagName).toBe("INPUT")
+
+        rerender(<TextField label="Nome" multiline inputRef={inputRef} />)
+
+        expect(inputRef.current?.tagName).toBe("TEXTAREA")
+    })
+
+    it("mostra o labelAddon na linha do rótulo sem entrar no nome acessível", () => {
+        render(<TextField label="Mensagem" labelAddon={<span>600 restantes</span>} />)
+
+        expect(screen.getByLabelText("Mensagem")).toBeInTheDocument()
+        expect(screen.getByLabelText("Mensagem")).toHaveAccessibleName("Mensagem")
+        expect(screen.getByText("600 restantes").parentElement).toBe(
+            screen.getByText("Mensagem").parentElement
+        )
+    })
+
+    it("com announceError falso mantém o erro visível e ligado sem role alert", () => {
+        render(<TextField label="Nome" error="Informe o nome" announceError={false} />)
+        const input = screen.getByLabelText("Nome")
+
+        expect(screen.getByText("Informe o nome")).toBeVisible()
+        expect(screen.queryByRole("alert")).not.toBeInTheDocument()
+        expect(input).toHaveAttribute("aria-invalid", "true")
+        expect(input).toHaveAccessibleDescription("Informe o nome")
+    })
+
+    it("anuncia o erro como alerta por padrão", () => {
+        render(<TextField label="Nome" error="Informe o nome" />)
+
+        expect(screen.getByRole("alert")).toHaveTextContent("Informe o nome")
     })
 
     it("não tem violações de acessibilidade normal, com erro e multiline", async () => {

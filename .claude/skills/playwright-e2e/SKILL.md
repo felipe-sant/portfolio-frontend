@@ -27,6 +27,7 @@ Código de produto mudou, rode `build:fatec` de novo: o E2E testa o `dist/`, nã
 
 - Teste que precisa de movimento pleno usa `test.use({ reducedMotion: "no-preference" })` no `describe`.
 - Teste que só vale num tamanho se pula com `test.skip(condição, "motivo")` (ex.: menu existe só no mobile, largura <= 480).
+- Bug de produto conhecido se marca com `test.fail(condição, "motivo e número da issue")` só no teste que prova o comportamento quebrado: ele continua rodando e fica vermelho sozinho quando o bug for corrigido, forçando a remover a marca. Como `test.fail` passa com qualquer falha, as outras verificações (idioma, foco, navegação) ficam em teste separado, sem a marca. `test.skip` para esconder bug é proibido.
 - Teste que depende do tema lê `colorScheme` do projeto, não clica no botão de tema, salvo se o assunto for o botão.
 
 ## 3. Convenções
@@ -74,12 +75,45 @@ Idioma: o idioma vem do caminho (`pt-BR`, `en`, `es`); teste de texto afirma a l
 
 JavaScript desligado: `test.use({ javaScriptEnabled: false })` num `describe` verifica o HTML pré-renderizado (NF-CO-03).
 
-## 5. Armadilhas
+## 5. Fluxos que toda tela entrega
+
+Toda tela nova entrega os E2E dos próprios fluxos, no arquivo do tema (ou num arquivo novo `e2e/<tela>.spec.ts`), junto do axe e do teclado:
+
+- clique e navegação: cada controle e link da tela leva ao destino com o idioma mantido, nos três idiomas;
+- estados de carregamento e erro: alerta com "Tentar novamente", retry sem recarregar e devolvendo o foco, `role="status"` de carregando com o esqueleto `aria-hidden`;
+- HTML sem JavaScript: `main`, `h1`, conteúdo principal, `lang`, `title` e `description` no HTML pré-renderizado.
+
+A base atual: `theme`, `motion`, `language`, `navigation`, `footer`, `home-flows`, `not-found` e `no-javascript`.
+
+Título de teste: `"<ID>: <comportamento em português>"`, com o ID do requisito (`RF-LAY-18`, `RF-HOME-24`, `A11Y-L07`, `NF-IN-09`); dois requisitos separados por vírgula. `describe` agrupa por tema. O requisito vai no título, nunca em comentário.
+
+Helpers de `e2e/support/` (um símbolo por arquivo, `export default`, sem importar `src/`):
+
+| Helper                       | Para quê                                                                                           |
+| ---------------------------- | -------------------------------------------------------------------------------------------------- |
+| `readContent(lang, file)`    | lê `public/content/<idioma>/<arquivo>.json` no Node (`unknown`)                                    |
+| `readProfile(lang)`          | e-mail, GitHub, LinkedIn, disponibilidade, apresentação e itens da stack do perfil                 |
+| `readFeaturedProjects(lang)` | destaques da Início na ordem da tela (`featured`, mais recentes primeiro, até 4), com `id`/`title` |
+| `readAppVersion()`           | `version` do `package.json`                                                                        |
+| `readStackOffset(page, h)`   | deslocamento horizontal da faixa de tecnologias (movimento)                                        |
+| `openPreferences(page)`      | abre a engrenagem (desktop) ou o Menu (mobile) e devolve o painel com tema e movimento             |
+| `uiTexts`                    | texto de UI por idioma que o teste afirma (copiado de `src/locales/`, nunca importado)             |
+
+Dado de conteúdo que o teste afirma vem desses helpers, nunca digitado. Se o conteúdo vier vazio, o teste falha de propósito (`expect(lista.length).toBeGreaterThan(0)`), não pula.
+
+Prova de mutação, por tarefa: depois de ver o teste passar, quebre o comportamento de propósito no working tree (inverta `aria-pressed`, troque a chave de armazenamento, remova `aria-current`, troque o destino de um link, remova o `role`), rode `npm run build:fatec` e o teste, veja falhar pelo motivo certo, desfaça (`git checkout -- <arquivo>`), refaça o build e veja passar. A mutação nunca é commitada. Mutação que sobrevive é teste fraco: reforce a asserção (mutante equivalente, que não muda comportamento observável, é registrado como tal). Mutação que quebra o typecheck do `build:fatec` não conta como prova.
+
+Erro e carregando forçados: a primeira carga vem hidratada do HTML e não faz `fetch` dos JSON. Para forçar erro, troque o idioma pelo seletor (a consulta é por idioma) com `page.route("**/content/<idioma-destino>/<arquivo>.json", (route) => route.abort())` e, no retry, `page.unroute`. Para forçar carregando ou perfil ausente, abra `pt-BR/rota-inexistente` e vá à Início pelo cabeçalho (a consulta nasce do zero): retenha a resposta com uma promessa do teste (`Promise.withResolvers`, nunca por tempo). Página de erro: aborte o chunk lazy (`**/assets/Home.page-*.js`) e clique em "Início" no cabeçalho. O RTK Query mantém o dado do idioma anterior ao trocar de idioma, então a troca não mostra esqueleto.
+
+## 6. Armadilhas
 
 - `reducedMotion: "reduce"` é o padrão: animação, fade-in (`data-reveal`) e faixa de stack rodam no modo reduzido. Não afirme movimento sem trocar o projeto para `no-preference`.
 - O Pages serve sob `/ra2581392423047/`: nunca escreva caminho absoluto (`/pt-BR`), ele sai do `base`.
 - Elementos com `inert` ou fora da viewport não recebem clique: role até eles ou espere o estado.
 - `getByRole("link", { name })` casa por substring sem `exact: true`; nomes curtos ("Ver") casam vários links. Use nome completo ou `exact`.
-- Teste que depende de dado (projetos em destaque) usa o conteúdo real de `public/content/`; se o conteúdo mudar, use contagem mínima ou `test.skip` com motivo, não valor fixo frágil.
+- Teste que depende de dado (projetos em destaque) usa o conteúdo real de `public/content/`; o dado vem dos helpers de `e2e/support/`, nunca digitado, e conteúdo vazio faz o teste falhar de propósito, não pular.
+- Nome acessível muda por idioma (o botão "Menu" é "Menú" em `es`, a nav é "Main" em `en`): leia de `uiTexts`.
+- `<noscript>` com JavaScript desligado: `toHaveText` e `getByText` não o enxergam; leia `locator("noscript").innerHTML()`.
+- Clique que o Playwright faz pode rolar a página; para afirmar posição de rolagem, ative por teclado (`focus()` e `Enter`).
 - Link para PDF de CV pode dar 404 até a #54: afirme que o link existe e o `href`, não que o arquivo baixa.
 - Falha só no CI: abra o relatório HTML e o trace (`--trace on`); `retries` é 2 no CI e 0 local, então teste instável aparece local como falha única.

@@ -3,8 +3,11 @@ import { createBrowserRouter } from "react-router-dom"
 import { render, screen } from "@testing-library/react"
 import App from "@/App"
 import routes from "@/routers/routes"
+import relaxTimeoutsForLoad from "@/testUtils/relaxTimeoutsForLoad"
 import createStore from "@/store/createStore"
 import THEME_STORAGE_KEY from "@/utils/themeStorageKey"
+
+relaxTimeoutsForLoad()
 
 function renderApp() {
     return render(<App store={createStore()} router={createBrowserRouter(routes)} />)
@@ -61,7 +64,7 @@ describe("App", () => {
         expect(
             await screen.findByRole("heading", { name: "Desenvolvedor full stack em TypeScript" })
         ).toBeInTheDocument()
-        expect(document.title).toBe("Portfolio · Luiz Felipe dos Santos")
+        expect(document.title).toBe("Portfólio · Luiz Felipe dos Santos")
         expect(document.querySelector('meta[name="description"]')?.getAttribute("content")).toBe(
             "Portfólio de Luiz Felipe dos Santos, desenvolvedor full stack em TypeScript: projetos, trajetória e contato."
         )

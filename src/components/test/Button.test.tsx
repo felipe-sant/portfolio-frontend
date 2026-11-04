@@ -1,3 +1,4 @@
+import { createRef } from "react"
 import { describe, expect, it, vi } from "vitest"
 import { render, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
@@ -14,6 +15,13 @@ describe("Button", () => {
 
         expect(onClick).toHaveBeenCalledTimes(1)
         expect(button).toHaveAttribute("type", "button")
+    })
+
+    it("entrega o elemento button pelo ref", () => {
+        const ref = createRef<HTMLButtonElement>()
+        render(<Button ref={ref}>Enviar mensagem</Button>)
+
+        expect(ref.current).toBe(screen.getByRole("button", { name: "Enviar mensagem" }))
     })
 
     it("aceita type submit", () => {
@@ -91,6 +99,12 @@ describe("Button", () => {
 
         expect(screen.getByRole("button")).toBeDisabled()
         expect(onClick).not.toHaveBeenCalled()
+    })
+
+    it("mantém o aria-disabled recebido sem carregar", () => {
+        render(<Button aria-disabled>Filtros</Button>)
+
+        expect(screen.getByRole("button")).toHaveAttribute("aria-disabled", "true")
     })
 
     it("não tem violações de acessibilidade no estado normal e carregando", async () => {

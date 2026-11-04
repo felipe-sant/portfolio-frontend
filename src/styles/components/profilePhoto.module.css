@@ -1,0 +1,13 @@
+.photo,
+.placeholder {
+    display: block;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border: var(--border-width) solid var(--border-subtle);
+    border-radius: var(--radius);
+    object-fit: cover;
+}
+
+.placeholder {
+    background-color: var(--bg-placeholder);
+}

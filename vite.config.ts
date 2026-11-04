@@ -52,6 +52,7 @@ export default defineConfig(({ command, mode, isSsrBuild }) => {
                     "scripts/generateOgImage.ts",
                     "scripts/prerender.ts",
                     "scripts/previewFatec.ts",
+                    "scripts/publishFatecDocs.ts",
                     "src/setupTests.ts",
                     "src/testUtils/prerenderGlobalSetup.ts"
                 ],

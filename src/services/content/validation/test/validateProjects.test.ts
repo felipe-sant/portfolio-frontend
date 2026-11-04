@@ -91,11 +91,11 @@ describe("validateProjects", () => {
         ).toContain("fora da ordem")
     })
 
-    it("reprova mais de três relacionados e relacionado sem motivo", () => {
+    it("reprova mais de três relacionados e relacionado com campo de motivo", () => {
         const issues = issuesAfter((project) => {
             project.related = [1, 2, 3, 4].map((id) => ({
                 id: `0192f1a0-0000-7000-8000-00000000000${id}`,
-                reason: id === 4 ? "" : "Motivo"
+                ...(id === 4 ? { reason: "Motivo" } : {})
             }))
         })
 

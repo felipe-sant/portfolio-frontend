@@ -14,6 +14,7 @@ type RecordsByLanguage = Record<SupportedLanguage, ProjectRecord[]>
 
 const FIRST_ID = "0192f1a0-7c3e-7b21-8d4f-2a9e6c1b3f50"
 const SECOND_ID = "0192f1b0-7c3e-7b21-8d4f-2a9e6c1b3f51"
+const THIRD_ID = "0192f1b0-7c3e-7b21-8d4f-2a9e6c1b3f52"
 
 function recordsOf(records: ProjectRecord[]): RecordsByLanguage {
     return { "pt-BR": records, en: records, es: records }
@@ -53,11 +54,20 @@ describe("listTargets com conteúdo incompleto", () => {
 describe("listTargets com as rotas atuais", () => {
     const { targets, ignored } = listTargets(routes, prerenderRoutes, recordsOf([]))
 
-    it("lista a Início nos três idiomas e o 404.html", () => {
+    it("lista a Início, Projetos, Informações e Contato nos três idiomas e o 404.html", () => {
         expect(targets.map((target) => target.file)).toEqual([
             "pt-BR.html",
             "en.html",
             "es.html",
+            "pt-BR/projects.html",
+            "en/projects.html",
+            "es/projects.html",
+            "pt-BR/about.html",
+            "en/about.html",
+            "es/about.html",
+            "pt-BR/contact.html",
+            "en/contact.html",
+            "es/contact.html",
             "404.html"
         ])
     })
@@ -71,13 +81,7 @@ describe("listTargets com as rotas atuais", () => {
     })
 
     it("ignora as rotas que ainda não têm tela", () => {
-        expect(ignored).toEqual([
-            "projects",
-            "about",
-            "contact",
-            "projects/:id",
-            "projects/:id/docs/:name"
-        ])
+        expect(ignored).toEqual([])
     })
 
     it("nunca lista a raiz", () => {
@@ -93,11 +97,15 @@ describe("listTargets com rotas de fixture", () => {
             { id: "b", name: "SETUP.md", format: "markdown", translated: true }
         ]
     })
-    const other = buildProjectRecord({ id: SECOND_ID, documents: [] })
+    const other = buildProjectRecord({
+        id: SECOND_ID,
+        documents: [{ id: "c", name: "README.md", format: "markdown", translated: true }]
+    })
+    const withoutReadme = buildProjectRecord({ id: THIRD_ID, documents: [] })
     const { targets, ignored } = listTargets(
         buildFixtureRoutes(),
         prerenderRoutes,
-        recordsOf([record, other])
+        recordsOf([record, other, withoutReadme])
     )
     const files = targets.map((target) => target.file)
 
@@ -116,6 +124,10 @@ describe("listTargets com rotas de fixture", () => {
         expect(files).toContain(`en/projects/${SECOND_ID}.html`)
     })
 
+    it("não pré-renderiza projeto sem README, que a tela mostra como não encontrada", () => {
+        expect(files.some((file) => file.includes(THIRD_ID))).toBe(false)
+    })
+
     it("emite o documento com extensão e nunca em pasta", () => {
         expect(files).toContain(`pt-BR/projects/${FIRST_ID}/docs/SETUP.md.html`)
         expect(files.some((file) => file.endsWith("index.html"))).toBe(false)
@@ -123,6 +135,14 @@ describe("listTargets com rotas de fixture", () => {
 
     it("não emite arquivo de documento para o README.md", () => {
         expect(files.some((file) => file.includes("README.md"))).toBe(false)
+    })
+
+    it("guarda o id do README nos parâmetros do alvo do projeto", () => {
+        const target = targets.find(
+            (candidate) => candidate.file === `en/projects/${FIRST_ID}.html`
+        )
+
+        expect(target?.params).toEqual({ id: FIRST_ID, documentId: "a" })
     })
 
     it("guarda o id do documento nos parâmetros do alvo", () => {

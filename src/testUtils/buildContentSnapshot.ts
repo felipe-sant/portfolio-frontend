@@ -73,7 +73,7 @@ function buildProjects(lang: SupportedLanguage): ProjectRecord[] {
                     translated: false
                 }
             ],
-            related: [{ id: SECOND_PROJECT, reason: `Mesma stack (${lang})` }],
+            related: [{ id: SECOND_PROJECT }],
             updatedAt: "2026-09-30"
         },
         {

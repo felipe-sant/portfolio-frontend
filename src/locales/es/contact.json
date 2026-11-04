@@ -1,0 +1,68 @@
+{
+    "meta": {
+        "title": "Contacto · Luiz Felipe dos Santos",
+        "description": "Cómo hablar con Luiz Felipe dos Santos: correo electrónico y currículo."
+    },
+    "heading": "Contacto",
+    "lede": {
+        "direct": "Proyecto, freelance o empleo: escribe a mi correo contándome el contexto y el plazo.",
+        "form": "Cuéntame el alcance, el plazo y lo que ya existe."
+    },
+    "channels": {
+        "email": {
+            "heading": "Correo directo",
+            "send": "Enviar correo"
+        },
+        "location": {
+            "heading": "Ubicación"
+        },
+        "response": {
+            "heading": "Respuesta"
+        },
+        "loadError": "No se pudieron cargar los canales de contacto.",
+        "retry": "Intentar de nuevo"
+    },
+    "form": {
+        "label": "Formulario de contacto",
+        "requiredNote": "Todos los campos son obligatorios.",
+        "name": {
+            "label": "Nombre",
+            "required": "Dime cómo debo llamarte."
+        },
+        "email": {
+            "label": "Correo electrónico",
+            "required": "Necesito un correo electrónico para responderte.",
+            "invalid": "Esa dirección no parece completa."
+        },
+        "subject": {
+            "legend": "Asunto",
+            "options": {
+                "newProject": "Proyecto nuevo",
+                "freelance": "Freelance",
+                "job": "Empleo",
+                "other": "Otro"
+            }
+        },
+        "message": {
+            "label": "Mensaje",
+            "placeholder": "Alcance, plazo y enlaces de lo que ya existe",
+            "tooShort": "Escribe un poco más: 20 caracteres como mínimo.",
+            "remaining_zero": "Ningún carácter restante.",
+            "remaining_one": "{{count}} restante",
+            "remaining_other": "{{count}} restantes",
+            "nearLimit": "Quedan {{count}} caracteres.",
+            "limitReached": "Has llegado al límite de {{max}} caracteres."
+        },
+        "errorSummary_one": "Queda {{count}} campo por corregir.",
+        "errorSummary_other": "Quedan {{count}} campos por corregir.",
+        "submit": "Enviar mensaje",
+        "sending": "Enviando",
+        "privacyNote": "Sin newsletter y sin registro.",
+        "sendError": "No pude enviar tu mensaje. Inténtalo de nuevo o escribe al correo de esta página.",
+        "sent": {
+            "heading": "Mensaje enviado",
+            "description": "Recibí tu mensaje y respondo al correo que indicaste.",
+            "again": "Enviar otro mensaje"
+        }
+    }
+}

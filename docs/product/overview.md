@@ -100,7 +100,7 @@ Os pontos que o handoff deixava em aberto estão decididos em [`decisions.md`](.
 3. **Imagens reais (D26, que substitui D03):** capturas reais dos projetos (16:9) e foto de perfil (1:1) entram na v1; projeto sem captura mantém o placeholder neutro 16:9. Os sketches do handoff não vão para produção.
 4. **Rodapé (D04):** linha superior em degradê e fundo neutro, pelos tokens `--surface-chrome` e `--border-chrome`; em Contato ele vira navegação.
 5. **Formulário de contato (D05):** implementado no frontend com envio simulado (R1) e escondido em produção atrás de uma flag até o backend existir; endpoint real e proteção contra spam vêm depois.
-6. **Renderizador de markdown (D06):** `react-markdown` com `rehype-highlight`, sem HTML embutido, com as cores de realce do protótipo.
+6. **Renderizador de markdown (D06):** `react-markdown` com o realce do `lowlight` (plugin local), sem HTML embutido, com as cores de realce do protótipo.
 
 Os itens à espera de material são o conteúdo do CV em Markdown (D52) e as capturas e a foto (D26).
 

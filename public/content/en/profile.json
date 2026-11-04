@@ -33,7 +33,6 @@
     "workPrinciples": [
         "I discuss the rules with the PO before implementing, instead of just following what is written in the task",
         "I break large features into smaller parts before starting",
-        "I test my own delivery before sending it to QA",
         "I use AI in my development workflow, with agents and skills to plan, implement and review what I deliver, not only to write code faster"
     ],
     "stack": [
@@ -96,12 +95,6 @@
         {
             "category": "tooling",
             "items": [
-                {
-                    "name": "Git"
-                },
-                {
-                    "name": "GitHub"
-                },
                 {
                     "name": "Docker"
                 },

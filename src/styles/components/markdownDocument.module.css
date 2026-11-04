@@ -1,0 +1,98 @@
+.document {
+    min-width: 0;
+    color: var(--text-body);
+    font-size: var(--text-body-md);
+    line-height: var(--lh-body);
+    overflow-wrap: anywhere;
+}
+
+.document > :first-child {
+    margin-top: 0;
+}
+
+.document > :last-child {
+    margin-bottom: 0;
+}
+
+.document :is(h3, h4, h5, h6) {
+    margin: var(--space-8) 0 var(--space-3);
+    color: var(--text-strong);
+    font-weight: var(--weight-semibold);
+    scroll-margin-top: calc(var(--header-height) + var(--documents-nav-height) + var(--space-2));
+}
+
+.document :is(h3, h4) {
+    padding-bottom: var(--space-2);
+    border-bottom: var(--border-width) solid var(--border-subtle);
+}
+
+.document h5,
+.document h6 {
+    font-size: var(--text-body-md);
+    line-height: var(--lh-h4);
+}
+
+.document :is(p, ul, ol, blockquote, hr) {
+    margin: 0 0 var(--space-4);
+}
+
+.document p {
+    max-width: none;
+}
+
+.document :is(ul, ol) {
+    padding-left: var(--space-6);
+}
+
+.document ul {
+    list-style: disc outside;
+}
+
+.document ol {
+    list-style: decimal outside;
+}
+
+.document li {
+    margin: 0 0 var(--space-2);
+    padding-left: var(--space-1);
+}
+
+.document li > :is(ul, ol) {
+    margin-top: var(--space-2);
+    margin-bottom: 0;
+}
+
+.document li:has(> input[type="checkbox"]) {
+    list-style: none;
+    margin-left: calc(-1 * var(--space-6));
+}
+
+.document li > input[type="checkbox"] {
+    margin: 0 var(--space-2) 0 0;
+    vertical-align: middle;
+}
+
+.document blockquote {
+    padding: var(--space-1) var(--space-4);
+    border-left: var(--space-1) solid var(--border-strong);
+    color: var(--text-weak);
+}
+
+.document blockquote > :last-child {
+    margin-bottom: 0;
+}
+
+.document hr {
+    border: 0;
+    border-top: var(--border-width) solid var(--border-subtle);
+    margin: var(--space-8) 0;
+}
+
+.document strong {
+    color: var(--text-strong);
+    font-weight: var(--weight-semibold);
+}
+
+.document em {
+    font-style: italic;
+}

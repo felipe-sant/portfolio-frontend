@@ -1,0 +1,51 @@
+{
+    "meta": {
+        "title": "Información · Luiz Felipe dos Santos",
+        "description": "Quién es Luiz Felipe dos Santos: sobre mí, stack, trayectoria y formación."
+    },
+    "hero": {
+        "label": "Información",
+        "photoAlt": "Foto de {{name}}"
+    },
+    "aboutMe": {
+        "heading": "Sobre mí",
+        "now": {
+            "heading": "Ahora",
+            "role": "Cargo",
+            "mode": "Modalidad",
+            "links": "Redes"
+        }
+    },
+    "stack": {
+        "heading": "Stack",
+        "count_one": "{{count}} tecnología",
+        "count_other": "{{count}} tecnologías"
+    },
+    "complements": {
+        "certificates": "Certificados",
+        "workStyle": "Cómo trabajo"
+    },
+    "trajectory": {
+        "heading": "Trayectoria",
+        "hint": "Selecciona un elemento para ver el detalle.",
+        "groups": {
+            "experience": "Experiencia profesional",
+            "education": "Formación",
+            "course": "Cursos"
+        },
+        "count_one": "{{count}} elemento",
+        "count_other": "{{count}} elementos"
+    },
+    "modal": {
+        "close": "Cerrar",
+        "responsibilities": "Responsabilidades",
+        "disciplines": "Principales asignaturas",
+        "technologies": "Tecnologías",
+        "certificates": "Certificados",
+        "relatedProjects": "Proyectos relacionados"
+    },
+    "loadError": {
+        "message": "No se pudo cargar esta parte de la página.",
+        "retry": "Intentar de nuevo"
+    }
+}

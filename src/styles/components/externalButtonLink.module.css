@@ -1,0 +1,9 @@
+.link {
+    min-width: var(--hit-min);
+    min-height: var(--hit-min);
+    text-decoration: none;
+}
+
+.link:hover {
+    text-decoration: none;
+}

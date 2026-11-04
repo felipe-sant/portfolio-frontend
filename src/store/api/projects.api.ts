@@ -1,7 +1,9 @@
 import buildProjectDetail from "@/services/content/buildProjectDetail"
 import findProjectDocument from "@/services/content/findProjectDocument"
 import findProjectRecord from "@/services/content/findProjectRecord"
+import listProjectFilterOptions from "@/services/content/listProjectFilterOptions"
 import listProjects from "@/services/content/listProjects"
+import loadProfile from "@/services/content/loadProfile"
 import loadProjectDocument from "@/services/content/loadProjectDocument"
 import loadProjectRecords from "@/services/content/loadProjectRecords"
 import sortProjectDocuments from "@/services/content/sortProjectDocuments"
@@ -14,11 +16,18 @@ import type ListResponse from "@/types/api/ListResponse.types"
 import type SupportedLanguage from "@/types/language/SupportedLanguage.types"
 import type ProjectDetail from "@/types/project/ProjectDetail.types"
 import type ProjectDocument from "@/types/project/ProjectDocument.types"
+import type ProjectFilterOptions from "@/types/project/ProjectFilterOptions.types"
 import type ProjectListParams from "@/types/project/ProjectListParams.types"
 import type ProjectPage from "@/types/project/ProjectPage.types"
+import type ProjectsQueryArgs from "@/types/project/ProjectsQueryArgs.types"
+import projectsPageSize from "@/utils/projectsPageSize"
 
 type GetProjectArgs = {
     id: string
+    lang: SupportedLanguage
+}
+
+type GetProjectFilterOptionsArgs = {
     lang: SupportedLanguage
 }
 
@@ -34,6 +43,43 @@ const projectsApi = api.injectEndpoints({
                     const normalized = validateProjectListParams(params)
                     const records = await loadProjectRecords(normalized.lang)
                     return { data: listProjects(records, normalized) }
+                } catch (error) {
+                    return { error: toQueryError(error) }
+                }
+            }
+        }),
+        getProjectsPages: build.infiniteQuery<ProjectPage, ProjectsQueryArgs, number>({
+            infiniteQueryOptions: {
+                initialPageParam: 0,
+                getNextPageParam: (lastPage) => {
+                    const next = lastPage.offset + lastPage.items.length
+
+                    return next < lastPage.total ? next : undefined
+                }
+            },
+            queryFn: async ({ queryArg, pageParam }) => {
+                try {
+                    const normalized = validateProjectListParams({
+                        ...queryArg,
+                        offset: pageParam,
+                        limit: projectsPageSize
+                    })
+                    const records = await loadProjectRecords(normalized.lang)
+                    return { data: listProjects(records, normalized) }
+                } catch (error) {
+                    return { error: toQueryError(error) }
+                }
+            }
+        }),
+        getProjectFilterOptions: build.query<ProjectFilterOptions, GetProjectFilterOptionsArgs>({
+            queryFn: async ({ lang }) => {
+                try {
+                    validateLang(lang)
+                    const [records, profile] = await Promise.all([
+                        loadProjectRecords(lang),
+                        loadProfile(lang)
+                    ])
+                    return { data: listProjectFilterOptions(records, profile.stack, lang) }
                 } catch (error) {
                     return { error: toQueryError(error) }
                 }

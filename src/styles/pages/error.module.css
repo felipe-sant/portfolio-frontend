@@ -8,6 +8,7 @@
 .main {
     display: flex;
     flex: 1;
+    min-height: calc(100svh - var(--header-height));
     align-items: center;
     justify-content: center;
     padding: var(--space-16) var(--pad-page);

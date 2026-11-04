@@ -1,0 +1,9 @@
+.summary {
+    margin: 0 0 var(--space-4);
+    color: var(--text-weak);
+    font-size: var(--text-body-sm);
+}
+
+.spacing {
+    margin-bottom: var(--space-4);
+}

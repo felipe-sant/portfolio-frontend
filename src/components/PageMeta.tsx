@@ -14,11 +14,14 @@ interface PageMetaProps {
     params?: Record<string, string>
     type?: string
     image?: string
+    imageAlt?: string
+    imageWidth?: number
+    imageHeight?: number
 }
 
 const DEFAULT_IMAGE = "images/og-site.png"
-const IMAGE_WIDTH = "1200"
-const IMAGE_HEIGHT = "630"
+const IMAGE_WIDTH = 1200
+const IMAGE_HEIGHT = 630
 
 const OG_LOCALES: Record<SupportedLanguage, string> = {
     "pt-BR": "pt_BR",
@@ -32,7 +35,10 @@ function PageMeta({
     path,
     params,
     type = "website",
-    image = DEFAULT_IMAGE
+    image = DEFAULT_IMAGE,
+    imageAlt,
+    imageWidth = IMAGE_WIDTH,
+    imageHeight = IMAGE_HEIGHT
 }: PageMetaProps) {
     const { t, i18n } = useTranslation("common")
     const language = resolveSupportedLanguage(i18n.resolvedLanguage) ?? FALLBACK_LANGUAGE
@@ -61,9 +67,9 @@ function PageMeta({
             <meta property="og:type" content={type} />
             <meta property="og:url" content={canonical} />
             <meta property="og:image" content={imageUrl} />
-            <meta property="og:image:width" content={IMAGE_WIDTH} />
-            <meta property="og:image:height" content={IMAGE_HEIGHT} />
-            <meta property="og:image:alt" content={t("meta.imageAlt")} />
+            <meta property="og:image:width" content={String(imageWidth)} />
+            <meta property="og:image:height" content={String(imageHeight)} />
+            <meta property="og:image:alt" content={imageAlt ?? t("meta.imageAlt")} />
             <meta property="og:locale" content={OG_LOCALES[language]} />
             {otherLanguages.map((item) => (
                 <meta key={item} property="og:locale:alternate" content={OG_LOCALES[item]} />
