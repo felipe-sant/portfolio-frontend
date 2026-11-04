@@ -337,11 +337,11 @@ Cada item tem um ID estável e a forma de verificação entre colchetes: `[teste
 
 ### Informações
 
-- [ ] `A11Y-IF01` — Foto de perfil com `alt` (D26) [teste]
-- [ ] `A11Y-IF02` — Stack e trajetória em listas, datas em `time` [teste]
-- [ ] `A11Y-IF03` — Item de trajetória é `button` com `aria-haspopup="dialog"` [teste]
+- [x] `A11Y-IF01` — Foto de perfil com `alt` (D26) [teste]
+- [x] `A11Y-IF02` — Stack e trajetória em listas, datas em `time` [teste]
+- [x] `A11Y-IF03` — Item de trajetória é `button` com `aria-haspopup="dialog"` [teste]
 - [ ] `A11Y-IF04` — Modal de trajetória com `aria-labelledby`, foco preso, Esc, devolução do foco e tela cheia abaixo de 640px (D20) [teste] [e2e] [leitor]
-- [ ] `A11Y-IF05` — "Baixar CV (PDF)" no nome do link [teste]
+- [x] `A11Y-IF05` — "Baixar CV (PDF)" no nome do botão desativado, que começa pelo texto visível (2.5.3) [teste]
 
 ### Contato
 

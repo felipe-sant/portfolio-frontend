@@ -100,18 +100,16 @@ test.describe("cabeçalho e navegação", () => {
 
                 await expect(page).toHaveURL(new RegExp(`/${language}${path}$`))
                 const heading = page.getByRole("heading", { level: 1 })
-                const isProjects = id === "projects"
-                await expect(heading).toHaveText(
-                    isProjects
-                        ? UI_TEXTS[language].projects.heading
-                        : UI_TEXTS[language].notFoundHeading
-                )
+                const texts = UI_TEXTS[language]
+                const expected = {
+                    home: { heading: texts.homeHeading, title: texts.homeTitle },
+                    projects: { heading: texts.projects.heading, title: texts.projects.title },
+                    about: { heading: texts.aboutPage.heading, title: texts.aboutPage.title },
+                    contact: { heading: texts.notFoundHeading, title: texts.notFoundTitle }
+                }[id]
+                await expect(heading).toHaveText(expected.heading)
                 await expect(heading).toBeFocused()
-                await expect(page).toHaveTitle(
-                    isProjects
-                        ? UI_TEXTS[language].projects.title
-                        : UI_TEXTS[language].notFoundTitle
-                )
+                await expect(page).toHaveTitle(expected.title)
             })
         }
     }

@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { createMemoryRouter, RouterProvider } from "react-router-dom"
-import { act, screen } from "@testing-library/react"
+import { act, screen, waitFor, within } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import LANGUAGE_STORAGE_KEY from "@/i18n/languageStorageKey"
 import routes from "@/routers/routes"
@@ -78,6 +78,68 @@ describe("routes", () => {
             expect(document.documentElement.lang).toBe(language)
         }
     )
+
+    it.each([
+        ["/pt-BR/about", "pt-BR"],
+        ["/en/about", "en"],
+        ["/es/about", "es"]
+    ])("renderiza a tela Informações em %s com o idioma do prefixo", async (path, language) => {
+        renderRoutes([path])
+
+        expect(
+            await screen.findByRole("heading", { level: 1, name: "Luiz Felipe dos Santos" })
+        ).toBeInTheDocument()
+        expect(document.documentElement.lang).toBe(language)
+    })
+
+    it("renderiza a não encontrada em inglês em /about sem prefixo", async () => {
+        renderRoutes(["/about"])
+
+        expect(await screen.findByRole("heading", { name: "Page not found" })).toBeInTheDocument()
+    })
+
+    it("leva o link Informações do cabeçalho à tela e o marca como ativo", async () => {
+        const user = userEvent.setup()
+        const router = renderRoutes(["/pt-BR/projects"])
+        const banner = await screen.findByRole("banner")
+
+        await user.click(within(banner).getAllByRole("link", { name: "Informações" })[0])
+
+        expect(
+            await screen.findByRole("heading", { level: 1, name: "Luiz Felipe dos Santos" })
+        ).toBeInTheDocument()
+        expect(router.state.location.pathname).toBe("/pt-BR/about")
+        expect(
+            within(screen.getByRole("banner"))
+                .getAllByRole("link", { name: "Informações" })
+                .some((link) => link.getAttribute("aria-current") === "page")
+        ).toBe(true)
+    })
+
+    it("leva o Ler sobre mim do Início à tela Informações", async () => {
+        const user = userEvent.setup()
+        const router = renderRoutes(["/pt-BR"])
+
+        await user.click(await screen.findByRole("link", { name: "Ler sobre mim" }))
+
+        expect(
+            await screen.findByRole("heading", { level: 1, name: "Luiz Felipe dos Santos" })
+        ).toBeInTheDocument()
+        expect(router.state.location.pathname).toBe("/pt-BR/about")
+    })
+
+    it("troca de idioma em /pt-BR/about para /en/about", async () => {
+        const user = userEvent.setup()
+        const router = renderRoutes(["/pt-BR/about"])
+        await screen.findByRole("heading", { level: 1, name: "Luiz Felipe dos Santos" })
+
+        await user.click(screen.getByRole("button", { name: "Idioma: Português" }))
+        await user.click(screen.getByRole("link", { name: "English" }))
+
+        await waitFor(() => expect(router.state.location.pathname).toBe("/en/about"))
+        await waitFor(() => expect(document.documentElement.lang).toBe("en"))
+        expect(await screen.findByRole("button", { name: /Download CV/ })).toBeInTheDocument()
+    })
 
     it("mantém a não encontrada em /pt-BR/projects/abc, sem rota de projeto", async () => {
         renderRoutes(["/pt-BR/projects/abc"])

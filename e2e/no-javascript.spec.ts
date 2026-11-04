@@ -3,6 +3,7 @@ import PROJECT_TEXTS from "./support/projectTexts"
 import projectPath from "./support/projectPath"
 import readFeaturedProjects from "./support/readFeaturedProjects"
 import readProfile from "./support/readProfile"
+import readAbout from "./support/readAbout"
 import readProjectDetail from "./support/readProjectDetail"
 import ROUTES_UNDER_TEST from "./support/routesUnderTest"
 import UI_TEXTS from "./support/uiTexts"
@@ -175,4 +176,76 @@ test.describe("sem JavaScript, projeto", () => {
             )
         }
     })
+})
+
+test.describe("sem JavaScript, informações", () => {
+    test.use({ javaScriptEnabled: false })
+
+    for (const language of LANGUAGES) {
+        const texts = UI_TEXTS[language].aboutPage
+
+        test(`RF-ABOUT-30, RF-ABOUT-23, NF-CO-03, NF-IA-07: em ${language} /about traz as seções e o detalhe de cada item no HTML, sem abrir o modal`, async ({
+            page
+        }) => {
+            const about = readAbout(language)
+            expect(about.entries.length).toBeGreaterThan(0)
+
+            const response = await page.goto(`${language}/about`)
+
+            expect(response?.status()).toBe(200)
+            await expect(page.locator("html")).toHaveAttribute("lang", language)
+            await expect(page).toHaveTitle(texts.title)
+            await expect(page.locator('meta[name="description"]')).toHaveAttribute(
+                "content",
+                texts.description
+            )
+            const main = page.getByRole("main")
+            await expect(main.getByRole("heading", { level: 1 })).toHaveText(texts.heading)
+            await expect(main.getByText(about.summary, { exact: true })).toBeVisible()
+            await expect(main.getByRole("heading", { level: 2 })).toHaveText([
+                texts.aboutMe,
+                texts.stack,
+                texts.certificates,
+                texts.workStyle,
+                texts.trajectory
+            ])
+            for (const paragraph of about.aboutParagraphs) {
+                await expect(main.getByText(paragraph, { exact: true })).toBeVisible()
+            }
+            await expect(main.getByRole("group", { name: texts.nowHeading })).toBeVisible()
+            for (const principle of about.workPrinciples) {
+                await expect(main.getByText(principle, { exact: true })).toBeVisible()
+            }
+            for (const entry of about.entries) {
+                await expect(main.getByRole("button", { name: entry.highlight })).toBeVisible()
+                await expect(main.getByText(entry.summary, { exact: true })).toBeHidden()
+                await expect(main.getByText(entry.summary, { exact: true })).toHaveCount(1)
+            }
+        })
+
+        test(`RF-ABOUT-05, RF-ABOUT-06, NF-CO-03: em ${language} Baixar CV segue desativado e Entrar em contato funciona`, async ({
+            page
+        }) => {
+            await page.goto(`${language}/about`)
+
+            await expect(page.getByRole("button", { name: texts.unavailable })).toBeDisabled()
+            await page
+                .getByRole("main")
+                .getByRole("link", { name: UI_TEXTS[language].contactCta })
+                .click()
+            await expect(page).toHaveURL(new RegExp(`/${language}/contact$`))
+        })
+
+        test(`RF-ABOUT-20, NF-CO-03: em ${language} clicar num item não abre o modal`, async ({
+            page
+        }) => {
+            const about = readAbout(language)
+            await page.goto(`${language}/about`)
+
+            await page.getByRole("button", { name: about.entries[0].highlight }).click()
+
+            await expect(page.getByRole("dialog")).toHaveCount(0)
+            await expect(page.getByText(about.entries[0].summary, { exact: true })).toBeHidden()
+        })
+    }
 })

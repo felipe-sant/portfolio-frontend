@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
+import type { ReactNode } from "react"
 import { fireEvent, render, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import Modal from "@/components/Modal"
@@ -10,9 +11,15 @@ type ModalTestProps = {
     isOpen?: boolean
     onClose?: () => void
     withDescription?: boolean
+    subtitle?: ReactNode
 }
 
-function ModalPage({ isOpen = true, onClose = vi.fn(), withDescription = false }: ModalTestProps) {
+function ModalPage({
+    isOpen = true,
+    onClose = vi.fn(),
+    withDescription = false,
+    subtitle
+}: ModalTestProps) {
     return (
         <>
             <button type="button">Abrir</button>
@@ -22,6 +29,7 @@ function ModalPage({ isOpen = true, onClose = vi.fn(), withDescription = false }
                 closeLabel="Fechar"
                 onClose={onClose}
                 description={withDescription ? "resumo" : undefined}
+                subtitle={subtitle}
                 footer={<button type="button">Aplicar</button>}
             >
                 <p id="resumo">Resumo</p>
@@ -159,5 +167,51 @@ describe("Modal", () => {
         renderModal({ withDescription: true })
 
         await expectNoAxeViolations(document.body)
+    }, 15000)
+    it("sem subtitle, o cabeçalho tem só o título e o Fechar", () => {
+        renderModal()
+
+        const header = screen.getByRole("heading", { name: "Filtros" }).parentElement
+
+        expect(header?.children).toHaveLength(2)
+        expect(header?.lastElementChild).toBe(screen.getByRole("button", { name: "Fechar" }))
+    })
+
+    it("com subtitle, mostra o nó depois do título e antes do corpo, fora do nome do diálogo", () => {
+        renderModal({ subtitle: <p>Empresa · CLT</p> })
+
+        const dialog = screen.getByRole("dialog", { name: "Filtros" })
+        const title = screen.getByRole("heading", { name: "Filtros" })
+        const subtitle = screen.getByText("Empresa · CLT")
+        const body = screen.getByText("Resumo")
+
+        expect(
+            title.compareDocumentPosition(subtitle) & Node.DOCUMENT_POSITION_FOLLOWING
+        ).toBeTruthy()
+        expect(
+            subtitle.compareDocumentPosition(body) & Node.DOCUMENT_POSITION_FOLLOWING
+        ).toBeTruthy()
+        expect(dialog).toHaveAccessibleName("Filtros")
+    })
+
+    it("com subtitle, mantém o foco no título e fecha por Esc, fundo e Fechar", async () => {
+        const onClose = vi.fn()
+        renderModal({ onClose, subtitle: <p>Empresa · CLT</p> })
+
+        expect(screen.getByRole("heading", { name: "Filtros" })).toHaveFocus()
+
+        await userEvent.keyboard("{Escape}")
+        await userEvent.click(screen.getByRole("button", { name: "Fechar" }))
+        const backdrop = screen.getByRole("dialog").parentElement as HTMLElement
+        fireEvent.mouseDown(backdrop)
+        fireEvent.click(backdrop)
+
+        expect(onClose).toHaveBeenCalledTimes(3)
+    })
+
+    it("com subtitle, não tem violações de acessibilidade", async () => {
+        const { container } = renderModal({ subtitle: <p>Empresa · CLT</p> })
+
+        await expectNoAxeViolations(container)
     }, 15000)
 })

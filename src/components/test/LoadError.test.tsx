@@ -68,4 +68,44 @@ describe("LoadError", () => {
 
         await expectNoAxeViolations(container)
     }, 15000)
+    it("mantém role alert, tabIndex e id quando announce não é passada", () => {
+        renderLoadError(vi.fn(), "alert-id")
+
+        const alert = screen.getByRole("alert")
+
+        expect(alert).toHaveAttribute("tabindex", "-1")
+        expect(alert).toHaveAttribute("id", "alert-id")
+    })
+
+    it("não anuncia com announce falso e mantém a mensagem e o botão", async () => {
+        const onRetry = vi.fn()
+        render(
+            <LoadError
+                title="Não foi possível carregar"
+                retryLabel="Tentar de novo"
+                onRetry={onRetry}
+                announce={false}
+            />
+        )
+
+        expect(screen.queryByRole("alert")).not.toBeInTheDocument()
+        expect(screen.getByText("Não foi possível carregar")).toBeInTheDocument()
+
+        await userEvent.click(screen.getByRole("button", { name: "Tentar de novo" }))
+
+        expect(onRetry).toHaveBeenCalledTimes(1)
+    })
+
+    it("não tem violações de acessibilidade com announce falso", async () => {
+        const { container } = render(
+            <LoadError
+                title="Não foi possível carregar"
+                retryLabel="Tentar de novo"
+                onRetry={vi.fn()}
+                announce={false}
+            />
+        )
+
+        await expectNoAxeViolations(container)
+    }, 15000)
 })
