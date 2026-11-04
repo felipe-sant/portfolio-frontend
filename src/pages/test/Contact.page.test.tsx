@@ -149,13 +149,14 @@ describe("ContactPage", () => {
     it("A11Y-G14: com o retry falhando de novo o foco vai para o alerta, que volta ao DOM depois da consulta", async () => {
         flag.enabled = true
         let calls = 0
+        const gate = Promise.withResolvers<void>()
         clearContentCache()
         vi.stubGlobal(
             "fetch",
             vi.fn(async () => {
                 calls += 1
                 if (calls > 1) {
-                    await new Promise((resolve) => setTimeout(resolve, 40))
+                    await gate.promise
                 }
                 return new Response("", { status: 500 })
             })
@@ -165,9 +166,10 @@ describe("ContactPage", () => {
 
         await userEvent.click(screen.getByRole("button", { name: "Tentar novamente" }))
         await waitFor(() => expect(calls).toBeGreaterThan(1))
-        await new Promise((resolve) => setTimeout(resolve, 120))
+        await waitFor(() => expect(screen.queryByRole("alert")).toBeNull())
+        gate.resolve()
 
-        expect(screen.getByRole("alert")).toHaveFocus()
+        await waitFor(() => expect(screen.getByRole("alert")).toHaveFocus(), { timeout: 3000 })
         expect(document.activeElement?.id).toBe("contact-alert")
     })
 
