@@ -2,7 +2,9 @@ import { useId, useState } from "react"
 import { useTranslation } from "react-i18next"
 import Button from "@/components/Button"
 import Modal from "@/components/Modal"
+import RadioChipGroup from "@/components/RadioChipGroup"
 import css from "@/styles/components/projectsFiltersModal.module.css"
+import chipCss from "@/styles/components/radioChipGroup.module.css"
 import type ProjectFilterOption from "@/types/project/ProjectFilterOption.types"
 import type ProjectSort from "@/types/project/ProjectSort.types"
 import type ProjectsAppliedFilters from "@/types/project/ProjectsAppliedFilters.types"
@@ -42,10 +44,10 @@ function FilterOption({ option, isChecked, onToggle }: FilterOptionProps) {
     const isDisabled = option.count === 0 && !isChecked
 
     return (
-        <label className={css.chip}>
+        <label className={chipCss.chip}>
             <input
                 type="checkbox"
-                className={css.input}
+                className={chipCss.input}
                 checked={isChecked}
                 disabled={isDisabled}
                 aria-label={
@@ -53,7 +55,7 @@ function FilterOption({ option, isChecked, onToggle }: FilterOptionProps) {
                 }
                 onChange={() => onToggle(option.value)}
             />
-            <span className={css.text}>{option.value}</span>
+            <span className={chipCss.text}>{option.value}</span>
         </label>
     )
 }
@@ -64,9 +66,9 @@ function FilterSection({ legend, options, isChecked, onToggle }: FilterSectionPr
     }
 
     return (
-        <fieldset className={css.section}>
-            <legend className={css.legend}>{legend}</legend>
-            <div className={css.options}>
+        <fieldset className={`${chipCss.section} ${css.spacing}`}>
+            <legend className={chipCss.legend}>{legend}</legend>
+            <div className={chipCss.options}>
                 {options.map((option) => (
                     <FilterOption
                         key={option.value}
@@ -74,37 +76,6 @@ function FilterSection({ legend, options, isChecked, onToggle }: FilterSectionPr
                         isChecked={isChecked(option.value)}
                         onToggle={onToggle}
                     />
-                ))}
-            </div>
-        </fieldset>
-    )
-}
-
-interface SortSectionProps {
-    legend: string
-    options: readonly SortOption[]
-    value: ProjectSort
-    onChange: (sort: ProjectSort) => void
-}
-
-function SortSection({ legend, options, value, onChange }: SortSectionProps) {
-    const name = useId()
-
-    return (
-        <fieldset className={css.section}>
-            <legend className={css.legend}>{legend}</legend>
-            <div className={css.options}>
-                {options.map((option) => (
-                    <label key={option.value} className={css.chip}>
-                        <input
-                            type="radio"
-                            name={name}
-                            className={css.input}
-                            checked={value === option.value}
-                            onChange={() => onChange(option.value)}
-                        />
-                        <span className={css.text}>{option.label}</span>
-                    </label>
                 ))}
             </div>
         </fieldset>
@@ -189,10 +160,11 @@ function ProjectsFiltersDialog({
                     ? t("filters.modal.summaryNone")
                     : t("filters.modal.summary", { count })}
             </p>
-            <SortSection
+            <RadioChipGroup
                 legend={t("sort.label")}
                 options={sorts}
                 value={draft.sort}
+                className={css.spacing}
                 onChange={(sort) => setDraft({ ...draft, sort })}
             />
             <FilterSection
