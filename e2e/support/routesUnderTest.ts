@@ -18,6 +18,9 @@ const ROUTES_UNDER_TEST = [
     "pt-BR/projects",
     "en/projects",
     "es/projects",
+    "pt-BR/contact",
+    "en/contact",
+    "es/contact",
     ...PROJECT_ROUTES,
     projectPath("pt-BR", PROJECT_ID, "LICENSE"),
     "pt-BR/rota-inexistente"
