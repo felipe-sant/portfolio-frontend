@@ -77,7 +77,12 @@ const UI_TEXTS = {
             messageLabel: "Mensagem",
             messagePlaceholder: "Escopo, prazo e links do que já existe",
             messageTooShort: "Escreva um pouco mais: 20 caracteres no mínimo.",
-            remaining: (count: number) => (count < 2 ? `${count} restante` : `${count} restantes`),
+            remaining: (count: number) =>
+                count === 0
+                    ? "Nenhum caractere restante."
+                    : count === 1
+                      ? `${count} restante`
+                      : `${count} restantes`,
             nearLimit: (count: number) => `Restam ${count} caracteres.`,
             limitReached: (count: number) => `Você chegou ao limite de ${count} caracteres.`,
             errorSummary: (count: number) =>
@@ -239,7 +244,7 @@ const UI_TEXTS = {
             messageLabel: "Message",
             messagePlaceholder: "Scope, deadline and links to what already exists",
             messageTooShort: "Write a little more: at least 20 characters.",
-            remaining: (count: number) => `${count} left`,
+            remaining: (count: number) => (count === 0 ? "No characters left." : `${count} left`),
             nearLimit: (count: number) => `${count} characters left.`,
             limitReached: (count: number) => `You've reached the ${count}-character limit.`,
             errorSummary: (count: number) =>
@@ -405,7 +410,11 @@ const UI_TEXTS = {
             messagePlaceholder: "Alcance, plazo y enlaces de lo que ya existe",
             messageTooShort: "Escribe un poco más: 20 caracteres como mínimo.",
             remaining: (count: number) =>
-                count === 1 ? `${count} restante` : `${count} restantes`,
+                count === 0
+                    ? "Ningún carácter restante."
+                    : count === 1
+                      ? `${count} restante`
+                      : `${count} restantes`,
             nearLimit: (count: number) => `Quedan ${count} caracteres.`,
             limitReached: (count: number) => `Has llegado al límite de ${count} caracteres.`,
             errorSummary: (count: number) =>
