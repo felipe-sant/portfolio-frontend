@@ -103,19 +103,17 @@ test.describe("estrutura e apresentação", () => {
             ])
         })
 
-        test(`RF-ABOUT-05: em ${language} Baixar CV é um botão desativado, sem href e com o nome de indisponível`, async ({
+        test(`RF-ABOUT-05: em ${language} Baixar CV é um link para o PDF do idioma, sem download nem target`, async ({
             page
         }) => {
             await openAbout(page, language)
 
-            const button = page.getByRole("button", { name: texts.unavailable })
-            await expect(button).toBeVisible()
-            await expect(button).toBeDisabled()
-            await expect(button).toHaveText(texts.download)
-            await expect(button).not.toHaveAttribute("href")
-            await expect(page.getByRole("main").locator('a[href$=".pdf"]')).toHaveCount(0)
-            await button.click({ force: true })
-            await expect(getDialog(page)).toHaveCount(0)
+            const link = page.getByRole("main").getByRole("link", { name: texts.resumeName })
+            await expect(link).toBeVisible()
+            await expect(link).toHaveText(texts.download)
+            await expect(link).toHaveAttribute("href", `${BASE_URL_SEGMENT}cv/cv-${language}.pdf`)
+            await expect(link).not.toHaveAttribute("download", /.*/)
+            await expect(link).not.toHaveAttribute("target", /.*/)
         })
 
         test(`RF-ABOUT-06, NF-IN-11: em ${language} Entrar em contato leva à tela de contato do idioma`, async ({
@@ -552,7 +550,7 @@ test.describe("carregamento e erro", () => {
         await expect(loadingStatus).toHaveCount(1)
         await expect(page.getByRole("heading", { level: 1 })).toHaveText(texts.heading)
         await expect(main.getByRole("heading", { level: 2, name: texts.aboutMe })).toBeVisible()
-        await expect(main.getByRole("button", { name: texts.unavailable })).toBeVisible()
+        await expect(main.getByRole("link", { name: texts.resumeName })).toBeVisible()
         await expect(main.getByRole("link", { name: UI_TEXTS["pt-BR"].contactCta })).toBeVisible()
         await expect(main.getByText(about.summary, { exact: true })).toHaveCount(0)
         await expect(page.locator('main [aria-hidden="true"]').first()).toBeAttached()

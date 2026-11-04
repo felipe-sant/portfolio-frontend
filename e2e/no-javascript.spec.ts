@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test"
+import FATEC_BASE_PATH from "@scripts/fatecBasePath"
 import PROJECT_TEXTS from "./support/projectTexts"
 import projectPath from "./support/projectPath"
 import readFeaturedProjects from "./support/readFeaturedProjects"
@@ -223,12 +224,16 @@ test.describe("sem JavaScript, informações", () => {
             }
         })
 
-        test(`RF-ABOUT-05, RF-ABOUT-06, NF-CO-03: em ${language} Baixar CV segue desativado e Entrar em contato funciona`, async ({
+        test(`RF-ABOUT-05, RF-ABOUT-06, NF-CO-03: em ${language} Baixar CV abre o PDF do idioma e Entrar em contato funciona`, async ({
             page
         }) => {
             await page.goto(`${language}/about`)
 
-            await expect(page.getByRole("button", { name: texts.unavailable })).toBeDisabled()
+            const resume = page.getByRole("link", { name: texts.resumeName })
+            await expect(resume).toHaveAttribute("href", `${FATEC_BASE_PATH}cv/cv-${language}.pdf`)
+            const pdf = await page.request.get((await resume.getAttribute("href")) ?? "")
+            expect(pdf.status()).toBe(200)
+            expect(pdf.headers()["content-type"]).toBe("application/pdf")
             await page
                 .getByRole("main")
                 .getByRole("link", { name: UI_TEXTS[language].contactCta })
