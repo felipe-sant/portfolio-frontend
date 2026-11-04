@@ -1,0 +1,60 @@
+name: Release
+
+on:
+    push:
+        branches: [main]
+
+permissions:
+    contents: read
+
+concurrency:
+    group: release
+    cancel-in-progress: false
+
+jobs:
+    release:
+        name: Release
+        runs-on: ubuntu-latest
+        permissions:
+            contents: write
+        outputs:
+            tag: ${{ steps.prepare.outputs.tag }}
+            release: ${{ steps.prepare.outputs.release }}
+            publish-fatec: ${{ steps.prepare.outputs.publish-fatec }}
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v7
+              with:
+                  fetch-depth: 0
+                  fetch-tags: true
+            - name: Setup Node
+              uses: actions/setup-node@v7
+              with:
+                  node-version-file: ".nvmrc"
+                  cache: npm
+                  cache-dependency-path: package-lock.json
+            - name: Install dependencies
+              run: npm ci
+            - name: Prepare release
+              id: prepare
+              run: npx tsx --tsconfig tsconfig.node.json scripts/prepareRelease.ts
+            - name: Create tag and GitHub Release
+              if: steps.prepare.outputs.release == 'true'
+              env:
+                  GH_TOKEN: ${{ github.token }}
+                  TAG: ${{ steps.prepare.outputs.tag }}
+                  NOTES_FILE: ${{ steps.prepare.outputs.notes-file }}
+                  TARGET_SHA: ${{ github.sha }}
+              run: gh release create "$TAG" --target "$TARGET_SHA" --title "$TAG" --notes-file "$NOTES_FILE"
+
+    publish-fatec:
+        name: Publish Fatec
+        needs: release
+        if: needs.release.outputs.publish-fatec == 'true'
+        permissions:
+            contents: read
+        uses: ./.github/workflows/fatec-pages.yml
+        with:
+            tag: ${{ needs.release.outputs.tag }}
+        secrets:
+            FATEC_PAGES_TOKEN: ${{ secrets.FATEC_PAGES_TOKEN }}

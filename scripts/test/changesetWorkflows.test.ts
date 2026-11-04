@@ -72,3 +72,52 @@ describe("changeset-check.yml", () => {
         expect(workflow).toMatch(/^concurrency:\n {4}group: .*\n {4}cancel-in-progress: true/m)
     })
 })
+
+describe("release.yml", () => {
+    const workflow = readFileSync(".github/workflows/release.yml", "utf-8")
+    const publishStart = workflow.indexOf("\n    publish-fatec:")
+    const releaseJob = workflow.slice(0, publishStart)
+    const publishJob = workflow.slice(publishStart)
+
+    it("roda só em push na main, sem workflow_dispatch", () => {
+        expect(workflow).toMatch(/^ {4}push:\n {8}branches: \[main\]/m)
+        expect(workflow).not.toMatch(/^ {4}workflow_dispatch:/m)
+        expect(workflow).not.toMatch(/^ {4}pull_request/m)
+    })
+
+    it("prepara o release com histórico e tags e cria o Release só quando a saída é true", () => {
+        expect(releaseJob).toContain("fetch-depth: 0")
+        expect(releaseJob).toContain("fetch-tags: true")
+        expect(releaseJob).toContain("scripts/prepareRelease.ts")
+        expect(releaseJob).toMatch(
+            /if: steps\.prepare\.outputs\.release == 'true'\n(?:.*\n)*?.*GH_TOKEN: \$\{\{ github\.token \}\}/
+        )
+        expect(releaseJob).toContain('--target "$TARGET_SHA"')
+        expect(releaseJob).toContain('--notes-file "$NOTES_FILE"')
+        expect(releaseJob).toContain("TARGET_SHA: ${{ github.sha }}")
+    })
+
+    it("só cria tag e Release no passo condicional", () => {
+        const runLines = runScriptLines(workflow)
+        const creators = runLines.filter((line) => /gh release create|git tag|git push/.test(line))
+        expect(creators).toHaveLength(1)
+        expect(creators[0]).toContain("gh release create")
+        runLines.forEach((line) => {
+            expect(line).not.toContain("${{")
+        })
+    })
+
+    it("publica na Fatec só para a saída publish-fatec, com a tag e o token", () => {
+        expect(publishJob).toContain("needs: release")
+        expect(publishJob).toContain("if: needs.release.outputs.publish-fatec == 'true'")
+        expect(publishJob).toContain("uses: ./.github/workflows/fatec-pages.yml")
+        expect(publishJob).toContain("tag: ${{ needs.release.outputs.tag }}")
+        expect(publishJob).toContain("FATEC_PAGES_TOKEN: ${{ secrets.FATEC_PAGES_TOKEN }}")
+    })
+
+    it("dá contents write ao release, read ao chamador da Fatec e não cancela execuções", () => {
+        expect(releaseJob).toMatch(/permissions:\n {12}contents: write/)
+        expect(publishJob).toMatch(/permissions:\n {12}contents: read/)
+        expect(workflow).toMatch(/^concurrency:\n {4}group: .*\n {4}cancel-in-progress: false/m)
+    })
+})
