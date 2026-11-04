@@ -222,7 +222,7 @@ describe("AboutPage, cartão Agora", () => {
         renderAbout()
         await loaded()
 
-        const card = screen.getByRole("complementary", { name: "Agora" })
+        const card = screen.getByRole("group", { name: "Agora" })
 
         expect(card).toHaveTextContent("Cargo")
         expect(card).toHaveTextContent("Desenvolvedor full stack")

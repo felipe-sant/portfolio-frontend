@@ -219,7 +219,7 @@
         justify-content: space-between;
     }
 
-    .aboutMeGrid > aside {
+    .aboutMeGrid > [role="group"] {
         position: sticky;
         top: calc(var(--space-8) + var(--header-height, 4rem));
     }

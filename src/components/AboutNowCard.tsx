@@ -24,7 +24,7 @@ function AboutNowCard({ profile }: AboutNowCardProps) {
     const networks = getNetworkLinks(profile)
 
     return (
-        <aside className={css.card} aria-labelledby={headingId}>
+        <div className={css.card} role={"group"} aria-labelledby={headingId}>
             <h3 id={headingId} className={css.heading}>
                 <span className={css.dot} aria-hidden="true" />
                 {t("about:aboutMe.now.heading")}
@@ -60,7 +60,7 @@ function AboutNowCard({ profile }: AboutNowCardProps) {
                     ))}
                 </ul>
             )}
-        </aside>
+        </div>
     )
 }
 

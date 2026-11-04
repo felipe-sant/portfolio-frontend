@@ -17,7 +17,7 @@ describe("AboutNowCard", () => {
     it("mostra o cargo e a modalidade", () => {
         render(<AboutNowCard profile={profile} />)
 
-        expect(screen.getByRole("complementary", { name: "Agora" })).toBeInTheDocument()
+        expect(screen.getByRole("group", { name: "Agora" })).toBeInTheDocument()
         expect(screen.getByText("Cargo")).toBeInTheDocument()
         expect(screen.getByText("Estagiário de Desenvolvimento Frontend")).toBeInTheDocument()
         expect(screen.getByText("Modalidade")).toBeInTheDocument()
