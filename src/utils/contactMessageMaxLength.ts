@@ -1,0 +1,3 @@
+const MESSAGE_MAX_LENGTH = 600
+
+export default MESSAGE_MAX_LENGTH

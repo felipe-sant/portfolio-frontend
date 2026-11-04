@@ -9,9 +9,8 @@ import useContactForm from "@/pages/hooks/useContactForm"
 import css from "@/styles/components/contactForm.module.css"
 import visuallyHiddenCss from "@/styles/components/visuallyHidden.module.css"
 import type ContactAnnouncement from "@/types/contact/ContactAnnouncement.types"
-
-const MESSAGE_MAX_LENGTH = 600
-const NEAR_LIMIT_THRESHOLD = 60
+import MESSAGE_MAX_LENGTH from "@/utils/contactMessageMaxLength"
+import NEAR_LIMIT_THRESHOLD from "@/utils/contactNearLimitThreshold"
 
 interface AnnouncementTextProps {
     announcement: ContactAnnouncement | null

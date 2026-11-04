@@ -1,0 +1,3 @@
+const NEAR_LIMIT_THRESHOLD = 60
+
+export default NEAR_LIMIT_THRESHOLD

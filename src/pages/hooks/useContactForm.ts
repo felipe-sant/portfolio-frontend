@@ -5,6 +5,8 @@ import contactApi from "@/store/api/contact.api"
 import type ContactAnnouncement from "@/types/contact/ContactAnnouncement.types"
 import type ContactFormErrors from "@/types/contact/ContactFormErrors.types"
 import type ContactFormValues from "@/types/contact/ContactFormValues.types"
+import MESSAGE_MAX_LENGTH from "@/utils/contactMessageMaxLength"
+import NEAR_LIMIT_THRESHOLD from "@/utils/contactNearLimitThreshold"
 import validateContactForm from "@/utils/validateContactForm"
 
 type FocusTarget = "name" | "email" | "message" | "submit" | "sentHeading"
@@ -15,8 +17,6 @@ type ErrorState = { errors: ContactFormErrors; summaryCount: number }
 
 type ContactFormStatus = "idle" | "sending" | "sent" | "failed"
 
-const MESSAGE_MAX_LENGTH = 600
-const NEAR_LIMIT_THRESHOLD = 60
 const FIELD_ORDER = ["name", "email", "message"] as const
 
 const EMPTY_VALUES: ContactFormValues = {
