@@ -7,6 +7,26 @@ const publishStart = lines.findIndex((line) => /^ {4}publish:/.test(line))
 const publishJob = publishStart === -1 ? "" : lines.slice(publishStart).join("\n")
 const buildJob = lines.slice(0, publishStart === -1 ? lines.length : publishStart).join("\n")
 
+function runScriptLines(job: string): string[] {
+    const jobLines = job.split("\n")
+    const result: string[] = []
+    for (let index = 0; index < jobLines.length; index++) {
+        const match = jobLines[index].match(/^(\s*)(?:- )?run:\s*(.*)$/)
+        if (!match) continue
+        if (!/^[|>]/.test(match[2])) {
+            result.push(match[2])
+            continue
+        }
+        const indent = match[1].length
+        for (let next = index + 1; next < jobLines.length; next++) {
+            const line = jobLines[next]
+            if (line.trim() !== "" && line.length - line.trimStart().length <= indent) break
+            result.push(line)
+        }
+    }
+    return result
+}
+
 describe("fatec-pages.yml", () => {
     it("tem o job publish dependente do build e só roda em tag de release", () => {
         expect(publishJob).toMatch(/needs: build/)
@@ -55,9 +75,9 @@ describe("fatec-pages.yml", () => {
         }
         const tagLines = lines.filter((line) => line.includes("inputs.tag"))
         for (const line of tagLines) {
-            expect(line).toMatch(/^\s+TAG: \$\{\{ inputs\.tag \}\}$|group: /)
+            expect(line).toMatch(/^\s+TAG: \$\{\{ inputs\.tag \}\}$|group: |ref: refs\/tags\//)
         }
-        expect(publishJob).not.toMatch(/run: .*\$\{\{/)
+        expect(runScriptLines(publishJob).filter((line) => line.includes("${{"))).toEqual([])
     })
 
     it("declara o secret no workflow_call como opcional", () => {
@@ -86,5 +106,11 @@ describe("fatec-pages.yml", () => {
         expect(publishJob).toContain("GH_TOKEN: ${{ github.token }}")
         expect(workflow.match(/github\.token/g)).toHaveLength(1)
         expect(workflow).toMatch(/^permissions:\n {4}contents: read$/m)
+    })
+
+    it("faz checkout deste repositório na tag, sem persistir credenciais", () => {
+        const checkout = publishJob.split("- name: Checkout\n")[1].split("- name:")[0]
+        expect(checkout).toContain("ref: refs/tags/${{ inputs.tag }}")
+        expect(checkout).toContain("persist-credentials: false")
     })
 })

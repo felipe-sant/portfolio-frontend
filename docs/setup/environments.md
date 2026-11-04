@@ -53,7 +53,7 @@ Reutilizável (`workflow_call`) e manual (`workflow_dispatch`), com a entrada op
 #### Job `publish`
 
 1. **Guarda de origem:** consulta `repos/<repositório>/compare/<tag>...main` pela API do GitHub (com `github.token`, só leitura) e falha a menos que o `status` seja `ahead` ou `identical`, ou seja, o commit da tag precisa estar na `main` deste repositório.
-2. Faz checkout deste repositório, instala as dependências e baixa o artefato `fatec-pages` (com `.nojekyll` e `404.html`).
+2. Faz checkout deste repositório na tag (`refs/tags/<tag>`, sem persistir credenciais), para o script e o artefato serem da mesma versão, instala as dependências e baixa o artefato `fatec-pages` (com `.nojekyll` e `404.html`).
 3. Faz checkout de `fatec-jacarei-dsm-portfolio/ra2581392423047` em `main`, em `fatec-repository`, com `FATEC_PAGES_TOKEN`.
 4. `npm run publish:fatec:docs -- fatec-artifact fatec-repository` (`scripts/replaceFatecDocs.ts`) valida o artefato (`index.html`, `404.html` e `.nojekyll`; senão falha em português sem tocar o destino), remove o `docs/` inteiro do destino e copia o artefato. Nada fora de `docs/` muda, inclusive o `README.md` da raiz. O `docs/` é removido e recriado para não sobrar arquivo do build antigo (Create React App).
 5. Faz commit como `github-actions[bot]` com a mensagem `Publica a <tag> do portfólio` e `git push origin main`, sem `--force`. Se `git status --porcelain` não mostra mudança, termina verde sem commit. Se o push é rejeitado (alguém commitou na `main` da Fatec no meio), o job falha e não faz rebase: o PO resolve à mão.
