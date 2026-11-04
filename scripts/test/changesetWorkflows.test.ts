@@ -52,3 +52,23 @@ describe("version.yml", () => {
         })
     })
 })
+
+describe("changeset-check.yml", () => {
+    const workflow = readFileSync(".github/workflows/changeset-check.yml", "utf-8")
+
+    it("roda em pull_request para a staging e ignora o PR de versão e o de retorno da main", () => {
+        expect(workflow).toMatch(/^ {4}pull_request:\n {8}branches: \[staging\]/m)
+        expect(workflow).toContain("github.head_ref != 'changeset-release/staging'")
+        expect(workflow).toContain("github.head_ref != 'main'")
+    })
+
+    it("checa o changeset contra origin/staging com o histórico completo", () => {
+        expect(workflow).toContain("npx changeset status --since=origin/staging")
+        expect(workflow).toContain("fetch-depth: 0")
+    })
+
+    it("tem permissão só de leitura e cancela apenas execuções de PR", () => {
+        expect(workflow).toMatch(/^permissions:\n {4}contents: read$/m)
+        expect(workflow).toMatch(/^concurrency:\n {4}group: .*\n {4}cancel-in-progress: true/m)
+    })
+})
