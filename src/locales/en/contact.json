@@ -1,0 +1,67 @@
+{
+    "meta": {
+        "title": "Contact · Luiz Felipe dos Santos",
+        "description": "How to reach Luiz Felipe dos Santos: email and résumé."
+    },
+    "heading": "Contact",
+    "lede": {
+        "direct": "Project, freelance or job: write to my email with the context and the deadline.",
+        "form": "Tell me the scope, the deadline and what already exists."
+    },
+    "channels": {
+        "email": {
+            "heading": "Direct email",
+            "send": "Send email"
+        },
+        "location": {
+            "heading": "Location"
+        },
+        "response": {
+            "heading": "Response"
+        },
+        "loadError": "Couldn't load the contact channels.",
+        "retry": "Try again"
+    },
+    "form": {
+        "label": "Contact form",
+        "requiredNote": "All fields are required.",
+        "name": {
+            "label": "Name",
+            "required": "Tell me what to call you."
+        },
+        "email": {
+            "label": "Email",
+            "required": "I need an email address to reply.",
+            "invalid": "That address doesn't look complete."
+        },
+        "subject": {
+            "legend": "Subject",
+            "options": {
+                "newProject": "New project",
+                "freelance": "Freelance",
+                "job": "Job",
+                "other": "Other"
+            }
+        },
+        "message": {
+            "label": "Message",
+            "placeholder": "Scope, deadline and links to what already exists",
+            "tooShort": "Write a little more: at least 20 characters.",
+            "remaining_one": "{{count}} left",
+            "remaining_other": "{{count}} left",
+            "nearLimit": "{{count}} characters left.",
+            "limitReached": "You've reached the {{max}}-character limit."
+        },
+        "errorSummary_one": "{{count}} field still needs fixing.",
+        "errorSummary_other": "{{count}} fields still need fixing.",
+        "submit": "Send message",
+        "sending": "Sending",
+        "privacyNote": "No newsletter, no sign-up.",
+        "sendError": "I couldn't send your message. Try again or write to the email on this page.",
+        "sent": {
+            "heading": "Message sent",
+            "description": "I got your message and will reply to the email you gave.",
+            "again": "Send another message"
+        }
+    }
+}

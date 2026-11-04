@@ -1,0 +1,67 @@
+{
+    "meta": {
+        "title": "Contato · Luiz Felipe dos Santos",
+        "description": "Como falar com Luiz Felipe dos Santos: e-mail e currículo."
+    },
+    "heading": "Contato",
+    "lede": {
+        "direct": "Projeto, freelance ou vaga: escreva para o meu e-mail contando o contexto e o prazo.",
+        "form": "Conte o escopo, o prazo e o que já existe."
+    },
+    "channels": {
+        "email": {
+            "heading": "E-mail direto",
+            "send": "Enviar e-mail"
+        },
+        "location": {
+            "heading": "Localização"
+        },
+        "response": {
+            "heading": "Resposta"
+        },
+        "loadError": "Não foi possível carregar os canais de contato.",
+        "retry": "Tentar novamente"
+    },
+    "form": {
+        "label": "Formulário de contato",
+        "requiredNote": "Todos os campos são obrigatórios.",
+        "name": {
+            "label": "Nome",
+            "required": "Diga como devo te chamar."
+        },
+        "email": {
+            "label": "E-mail",
+            "required": "Preciso de um e-mail para responder.",
+            "invalid": "Esse endereço não parece completo."
+        },
+        "subject": {
+            "legend": "Assunto",
+            "options": {
+                "newProject": "Projeto novo",
+                "freelance": "Freelance",
+                "job": "Vaga",
+                "other": "Outro"
+            }
+        },
+        "message": {
+            "label": "Mensagem",
+            "placeholder": "Escopo, prazo e links do que já existe",
+            "tooShort": "Escreva um pouco mais: 20 caracteres no mínimo.",
+            "remaining_one": "{{count}} restante",
+            "remaining_other": "{{count}} restantes",
+            "nearLimit": "Restam {{count}} caracteres.",
+            "limitReached": "Você chegou ao limite de {{max}} caracteres."
+        },
+        "errorSummary_one": "Falta corrigir {{count}} campo.",
+        "errorSummary_other": "Falta corrigir {{count}} campos.",
+        "submit": "Enviar mensagem",
+        "sending": "Enviando",
+        "privacyNote": "Sem newsletter e sem cadastro.",
+        "sendError": "Não consegui enviar sua mensagem. Tente de novo ou escreva para o e-mail desta página.",
+        "sent": {
+            "heading": "Mensagem enviada",
+            "description": "Recebi sua mensagem e respondo pelo e-mail que você informou.",
+            "again": "Enviar outra mensagem"
+        }
+    }
+}

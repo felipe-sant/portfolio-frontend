@@ -81,7 +81,8 @@
     "noscript": "Search, filters, language and theme switching need JavaScript. The content of this page is available without it.",
     "resume": {
         "download": "Download CV",
-        "downloadPdf": "Download CV (PDF), opens the preview"
+        "downloadPdf": "Download CV (PDF), opens the preview",
+        "unavailableName": "Download CV (PDF), currently unavailable"
     },
     "projectType": {
         "web": "Web",
