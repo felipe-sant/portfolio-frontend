@@ -35,7 +35,7 @@ Para conferir o beta, com o bypass de automação (`x-vercel-protection-bypass`)
 
 ## Fatec (GitHub Pages)
 
-A v1 é publicada no GitHub Pages de `fatec-jacarei-dsm-portfolio/ra2581392423047` (Pages legacy em `main:/docs`), ou seja, num subcaminho: `/ra2581392423047/`. A publicação em si é a #63; a #45 entrega o build e o artefato.
+A v1 é publicada no GitHub Pages de `fatec-jacarei-dsm-portfolio/ra2581392423047` (Pages legacy em `main:/docs`), ou seja, num subcaminho: `/ra2581392423047/`. A #45 entrega o build e o artefato; a #63 entrega a publicação, que é um commit em `main:/docs` do repositório da Fatec feito por este repositório.
 
 - `npm run build:fatec` roda `npm run build` com `BASE_PATH=/ra2581392423047/` (constante em `scripts/fatecBasePath.ts`) e prepara o `dist/`: cria o `.nojekyll` vazio (o Jekyll do Pages ignoraria arquivos e pastas iniciados em `_`) e falha em português se o `404.html` pré-renderizado não existir ou não contiver o base. O `404.html` não é mais cópia do `index.html`: é a página não encontrada em inglês, gerada pelo `npm run build`.
 - `npm run preview:fatec` serve esse `dist/` com o mesmo base em `http://localhost:4173/ra2581392423047/`. É um servidor Node próprio (`scripts/previewFatec.ts`, sem dependência nova) que resolve o caminho como o Pages (`scripts/resolvePagesFile.ts`): arquivo exato, depois `<caminho>.html`, depois pasta com `index.html` (301 para a barra final) e, senão, o `404.html` com status 404. Serve para conferir por `curl` o HTML pré-renderizado (`/pt-BR`, `/en`, `/es` com 200; `/xyz` e `/en/` com 404). O `vite preview` não serve para isso, pois devolve o `index.html` em qualquer rota.
@@ -43,11 +43,64 @@ A v1 é publicada no GitHub Pages de `fatec-jacarei-dsm-portfolio/ra258139242304
 
 ### Workflow `fatec-pages.yml`
 
-Reutilizável (`workflow_call`) e manual (`workflow_dispatch`), com a entrada opcional `tag`. Um job roda `npm ci`, `npm run build`, `npm run lint`, `npm run test:cov` e `npm run build:fatec`, e só então publica o `dist/` como artefato `fatec-pages` do run (com `include-hidden-files`, senão o `.nojekyll` não sobe). Falha em qualquer passo anterior ao upload não gera artefato. Não há publicação nem segredo: `contents: read`.
+Reutilizável (`workflow_call`) e manual (`workflow_dispatch`), com a entrada opcional `tag`. O job `build` roda `npm ci`, `npm run build`, `npm run lint`, `npm run test:cov` e `npm run build:fatec`, e só então anexa o `dist/` como artefato `fatec-pages` do run (com `include-hidden-files`, senão o `.nojekyll` não sobe). Falha em qualquer passo anterior ao upload não gera artefato. O job `publish` depende do `build` e só roda quando `is-release` é `true`. O workflow tem `contents: read`; o único segredo é `FATEC_PAGES_TOKEN`, usado só no job `publish`.
 
-- Sem `tag`, ou com `tag` fora de `^v1\.[0-9]+\.[0-9]+$` (`v2.0.0`, `1.0.0`, `v1.0`), é ensaio: usa o código do ref do run e `is-release` é `false`.
-- Com `tag` `v1.x.y`, faz checkout dessa tag e `is-release` é `true`. A saída `is-release` é para a #63 encadear a publicação, em um job novo neste arquivo ou em um workflow que o chame.
-- A `tag` entra por `env:` no passo de validação, nunca interpolada no `run`, para não abrir injeção.
+- Sem `tag`, ou com `tag` fora de `^v1\.[0-9]+\.[0-9]+$` (`v2.0.0`, `1.0.0`, `v1.0`), é ensaio: usa o código do ref do run, `is-release` é `false` e o job `publish` é pulado.
+- Com `tag` `v1.x.y`, o `build` faz checkout dessa tag e `is-release` é `true`.
+- A `tag` entra por `env:` nos passos que a usam, nunca interpolada no `run`, para não abrir injeção. O token só aparece em `with:` do checkout do destino.
+- `concurrency` sem cancelar: o workflow agrupa por `tag` e o job `publish` usa um grupo único (`fatec-publish`), então duas publicações nunca correm em paralelo. Com `cancel-in-progress: false`, o GitHub mantém só uma execução pendente por grupo e cancela as demais pendentes (a em andamento nunca é cancelada). Ensaios com `tag` vazia caem todos no mesmo grupo `fatec-pages-`. Repetir a publicação da mesma tag é seguro: o passo "sem mudança, sem commit" termina verde sem criar commit vazio.
+
+#### Job `publish`
+
+1. **Guarda de origem:** consulta `repos/<repositório>/compare/<tag>...main` pela API do GitHub (com `github.token`, só leitura) e falha a menos que o `status` seja `ahead` ou `identical`, ou seja, o commit da tag precisa estar na `main` deste repositório.
+2. Faz checkout deste repositório na tag (`refs/tags/<tag>`, sem persistir credenciais), para o script e o artefato serem da mesma versão, instala as dependências e baixa o artefato `fatec-pages` (com `.nojekyll` e `404.html`).
+3. Faz checkout de `fatec-jacarei-dsm-portfolio/ra2581392423047` em `main`, em `fatec-repository`, com `FATEC_PAGES_TOKEN`.
+4. `npm run publish:fatec:docs -- fatec-artifact fatec-repository` (`scripts/replaceFatecDocs.ts`) valida o artefato (`index.html`, `404.html` e `.nojekyll`; senão falha em português sem tocar o destino), remove o `docs/` inteiro do destino e copia o artefato. Nada fora de `docs/` muda, inclusive o `README.md` da raiz. O `docs/` é removido e recriado para não sobrar arquivo do build antigo (Create React App).
+5. Faz commit como `github-actions[bot]` com a mensagem `Publica a <tag> do portfólio` e `git push origin main`, sem `--force`. Se `git status --porcelain` não mostra mudança, termina verde sem commit. Se o push é rejeitado (alguém commitou na `main` da Fatec no meio), o job falha e não faz rebase: o PO resolve à mão.
+
+#### Como disparar
+
+A versão SemVer é manual por enquanto, então a publicação também: Actions > Fatec Pages > Run workflow, informando `tag` (por exemplo `v1.0.0`), com a tag já existente e dentro da `main`. Sem `tag`, só gera o artefato (ensaio). Reverter uma publicação é `git revert` do commit dela no repositório da Fatec, feito pelo PO.
+
+O gatilho automático `release: types: [published]` não existe: ele é evolução da #47 (ou de issue futura). Tag ou release criada por workflow com `GITHUB_TOKEN` não dispara outro workflow, por isso o contrato abaixo usa `workflow_call`.
+
+#### Contrato com a #47
+
+O job de release chama o workflow no mesmo run da criação da tag, só para versão 1.x:
+
+```yaml
+publish-fatec:
+    uses: ./.github/workflows/fatec-pages.yml
+    with:
+        tag: v1.x.y
+    secrets: inherit
+```
+
+O job de release precisa de ao menos `contents: read` e passar os segredos (`secrets: inherit`). O `secrets.FATEC_PAGES_TOKEN` é opcional no `workflow_call` para o ensaio e o `workflow_dispatch` não o exigirem.
+
+#### Credencial `FATEC_PAGES_TOKEN`
+
+O PO tem push, mas não admin, no repositório da Fatec, então não há Pages por Actions, deploy key nem secret do lado de lá: a publicação usa um token do PO guardado como secret de repositório deste repositório (Settings > Secrets and variables > Actions > New repository secret, nome `FATEC_PAGES_TOKEN`).
+
+- **Preferido:** PAT fine-grained (Settings > Developer settings > Personal access tokens > Fine-grained tokens), com o repositório `fatec-jacarei-dsm-portfolio/ra2581392423047` como único acesso e a permissão `Contents: Read and write`. A organização pode exigir aprovação do token ou não aceitar fine-grained.
+- **Alternativa:** PAT classic com escopo `repo`, com expiração curta, só se a organização recusar o fine-grained. Dá acesso a todos os repositórios do PO, por isso a expiração curta.
+- **Expiração e rotação:** defina a validade ao criar. Perto de vencer, crie outro token com o mesmo escopo, atualize o secret e revogue o antigo. O token vencido faz o checkout do destino falhar.
+- **Revogação:** token comprometido ou entrega da Fatec encerrada: revogue em Settings > Developer settings e apague o secret.
+- O token nunca é impresso nem interpolado em `run`.
+
+#### Plano B manual
+
+Se o workflow não puder rodar (token indisponível, Actions fora do ar), o PO publica à mão, com push na Fatec:
+
+1. `git clone git@github.com:fatec-jacarei-dsm-portfolio/ra2581392423047.git` em outra pasta e `git switch main`.
+2. Neste repositório, na tag da versão (`git switch --detach v1.x.y`), `npm ci` e `npm run build:fatec`.
+3. No clone da Fatec, `rm -rf docs` e `mkdir docs`; copie o `dist/` inteiro, incluindo o `.nojekyll` (`cp -a <este repositório>/dist/. docs/`).
+4. `git add --all docs`, `git commit -m "Publica a v1.x.y do portfólio"` e `git push origin main`.
+5. Aguarde o Pages e abra `https://fatec-jacarei-dsm-portfolio.github.io/ra2581392423047/pt-BR`, mais `/en`, `/es`, `/pt-BR/projects` e uma rota inexistente (404.html), recarregando cada uma.
+
+#### Na V2
+
+O workflow não é removido: fica inerte, porque a classificação `is-release` só aceita tag `v1.x.y` (qualquer outra pula o job `publish`) e a guarda recusa tag fora da `main`. Continua podendo publicar uma correção `v1.x.y` se a Fatec pedir. Remover é um `Chore` opcional quando a entrega da Fatec for encerrada.
 
 ## Variáveis
 

@@ -104,6 +104,7 @@ npm run typecheck # checagem de tipos (tsc -b) de src/ e vite.config.ts
 npm run lint      # oxlint sobre o projeto (configuração em .oxlintrc.json)
 npm run build:fatec   # build com BASE_PATH=/ra2581392423047/ + .nojekyll em dist/; falha sem o 404.html pré-renderizado (GitHub Pages da Fatec)
 npm run build:fatec:form # build do Pages com a flag do formulário de Contato ligada, em dist-form/ (só para o E2E)
+npm run publish:fatec:docs -- <artefato> <clone> # troca o docs/ do clone da Fatec pelo artefato (usado pelo job publish de fatec-pages.yml)
 npm run preview:fatec # servidor Node que imita o Pages (arquivo, <caminho>.html, pasta com 301, 404.html) em http://localhost:4173/ra2581392423047/
 npm run check:chunk # depois do build: o chunk MarkdownDocument-*.js (markdown + realce) tem de ficar em até 102400 bytes gzip e nenhum chunk de entrada, Início ou Projetos pode conter o react-markdown (CI, job Build)
 npm run og:image  # regera public/images/og-site.png (Chromium do Playwright, versionado)
