@@ -44,10 +44,13 @@
     "content:template": "tsx --tsconfig tsconfig.node.json scripts/generateContentTemplate.ts",
     "content:placeholders": "tsx --tsconfig tsconfig.node.json scripts/generatePlaceholderImages.ts",
     "content:check": "vitest run src/services/content/test/content.test.ts",
+    "changeset": "changeset",
+    "changeset:version": "changeset version && npm install --package-lock-only --ignore-scripts",
     "prepare": "husky"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.14.0",
+    "@changesets/cli": "^3.0.3",
     "@playwright/test": "^1.64.1",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^7.0.1",
