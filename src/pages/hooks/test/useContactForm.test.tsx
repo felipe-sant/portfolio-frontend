@@ -244,6 +244,17 @@ describe("useContactForm", () => {
         expect(form.result.current.announcement).toEqual({ kind: "nearLimit", count: 59 })
     })
 
+    it("não anuncia com exatamente 60 restantes e anuncia ao chegar a 59", () => {
+        const form = renderForm()
+
+        act(() => form.result.current.setField("message", "a".repeat(540)))
+        expect(form.result.current.remaining).toBe(60)
+        expect(form.result.current.announcement).toBeNull()
+
+        act(() => form.result.current.setField("message", "a".repeat(541)))
+        expect(form.result.current.announcement).toEqual({ kind: "nearLimit", count: 59 })
+    })
+
     it("anuncia o limite ao chegar a 0 e limpa ao voltar acima de 60", () => {
         const form = renderForm()
 
