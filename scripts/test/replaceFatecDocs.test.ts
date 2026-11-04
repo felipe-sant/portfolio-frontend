@@ -128,4 +128,12 @@ describe("replaceFatecDocs", () => {
             /artefato .* não existe/
         )
     })
+
+    it("falha em português quando o diretório do repositório não existe e não cria nada", () => {
+        writeValidArtifact()
+        const missing = join(root, "sem-clone")
+
+        expect(() => replaceFatecDocs(artifact, missing)).toThrow(/repositório .* não existe/)
+        expect(existsSync(missing)).toBe(false)
+    })
 })

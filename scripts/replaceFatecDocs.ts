@@ -20,6 +20,10 @@ function assertValidArtifact(artifactDirectory: string) {
 function replaceFatecDocs(artifactDirectory: string, repositoryDirectory: string) {
     assertValidArtifact(artifactDirectory)
 
+    if (!existsSync(repositoryDirectory)) {
+        throw new Error(`O diretório do repositório "${repositoryDirectory}" não existe.`)
+    }
+
     const docsDirectory = join(repositoryDirectory, "docs")
 
     rmSync(docsDirectory, { recursive: true, force: true })
