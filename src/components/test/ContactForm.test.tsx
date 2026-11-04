@@ -294,28 +294,47 @@ describe("ContactForm", () => {
         expect(document.body).not.toHaveTextContent(/form\.|contact:/)
     })
 
-    it("não tem violações de acessibilidade em cada estado", async () => {
+    it("não tem violações de acessibilidade no estado normal", async () => {
         const { container } = renderForm()
-        await expectNoAxeViolations(container)
 
+        await expectNoAxeViolations(container)
+    }, 15000)
+
+    it("não tem violações de acessibilidade com erros e resumo", async () => {
+        const { container } = renderForm()
         await submit()
-        await expectNoAxeViolations(container)
 
-        await fillValid()
+        await expectNoAxeViolations(container)
+    }, 15000)
+
+    it("não tem violações de acessibilidade enviando", async () => {
         const gate = Promise.withResolvers<void>()
         vi.mocked(simulateContactSend).mockReturnValue(gate.promise)
+        const { container } = renderForm()
+        await fillValid()
         await submit()
+
         await expectNoAxeViolations(container)
 
         await act(async () => gate.resolve())
-        await screen.findByRole("heading", { name: "Mensagem enviada" })
-        await expectNoAxeViolations(container)
+    }, 15000)
 
-        await userEvent.click(screen.getByRole("button", { name: "Enviar outra mensagem" }))
+    it("não tem violações de acessibilidade enviado", async () => {
+        const { container } = renderForm()
+        await fillValid()
+        await submit()
+        await screen.findByRole("heading", { name: "Mensagem enviada" })
+
+        await expectNoAxeViolations(container)
+    }, 15000)
+
+    it("não tem violações de acessibilidade na falha de envio", async () => {
         vi.mocked(simulateContactSend).mockRejectedValueOnce(new Error("falhou"))
+        const { container } = renderForm()
         await fillValid()
         await submit()
         await screen.findByRole("alert")
+
         await expectNoAxeViolations(container)
     }, 15000)
 })
