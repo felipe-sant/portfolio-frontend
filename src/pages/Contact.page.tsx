@@ -23,7 +23,7 @@ function ContactPage() {
                 path={ROUTES.contact}
             />
             <JsonLd data={jsonLd} />
-            <div className={css.container}>
+            <div className={isFormEnabled ? css.container : css.containerDirect}>
                 <div className={css.header}>
                     <div className={css.badgeSlot}>
                         {profile?.availability.isAvailable && (

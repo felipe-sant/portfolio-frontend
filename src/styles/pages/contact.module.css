@@ -5,6 +5,12 @@
     padding: clamp(2rem, 5vw, 3.5rem) var(--pad-page) clamp(3rem, 6vw, 5rem);
 }
 
+.containerDirect {
+    composes: container;
+    width: fit-content;
+    max-width: min(100%, var(--container-max));
+}
+
 .header {
     display: flex;
     flex-direction: column;
