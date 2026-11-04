@@ -1,0 +1,82 @@
+.container {
+    width: 100%;
+    max-width: var(--container-max);
+    margin-inline: auto;
+    padding: clamp(2rem, 5vw, 3.5rem) var(--pad-page) clamp(3rem, 6vw, 5rem);
+}
+
+.header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-3);
+    margin-bottom: clamp(1.5rem, 3vw, 2.5rem);
+}
+
+.badgeSlot {
+    min-height: var(--space-8);
+}
+
+.heading {
+    margin: 0;
+    font-family: var(--font-heading);
+    font-size: var(--text-h1);
+    font-weight: var(--weight-black);
+    line-height: var(--lh-h1);
+    letter-spacing: var(--ls-h1);
+    color: var(--text-strong);
+}
+
+.heading:focus {
+    outline: none;
+}
+
+.lede {
+    max-width: var(--measure);
+    margin: 0;
+    font-size: var(--text-body-lg);
+    line-height: var(--lh-body);
+    text-wrap: pretty;
+}
+
+.direct {
+    max-width: var(--measure);
+}
+
+.withForm {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+}
+
+.form {
+    min-width: 0;
+    max-width: 32rem;
+}
+
+.withForm .channels {
+    padding-top: var(--space-8);
+    border-top: var(--border-width) solid var(--border-subtle);
+}
+
+.channels {
+    min-width: 0;
+}
+
+@media (min-width: 900px) {
+    .withForm {
+        display: grid;
+        grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+        gap: clamp(2rem, 5vw, 4rem);
+        align-items: start;
+    }
+
+    .withForm .form {
+        max-width: 32rem;
+    }
+
+    .withForm .channels {
+        padding-top: 0;
+        border-top: 0;
+    }
+}
