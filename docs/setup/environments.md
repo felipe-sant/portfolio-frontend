@@ -88,6 +88,11 @@ O PO tem push, mas não admin, no repositório da Fatec, então não há Pages p
 - **Revogação:** token comprometido ou entrega da Fatec encerrada: revogue em Settings > Developer settings e apague o secret.
 - O token nunca é impresso nem interpolado em `run`.
 
+#### Pontos de atenção da primeira publicação
+
+- Na `v1.0.0` foi usado o PAT classic com escopo `repo`, porque a organização não listou o repositório da Fatec na criação do token fine-grained.
+- O primeiro deploy do Pages travou e só voltou depois de um commit vazio em `main` do repositório da Fatec (`git commit --allow-empty` e push). Se uma publicação aparecer commitada mas o site não atualizar, esse é o caminho antes de investigar mais.
+
 #### Plano B manual
 
 Se o workflow não puder rodar (token indisponível, Actions fora do ar), o PO publica à mão, com push na Fatec:
