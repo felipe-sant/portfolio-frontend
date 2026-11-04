@@ -194,7 +194,7 @@ inicial (relativa ao `baseURL`). Toda tela nova acrescenta o caminho em `e2e/sup
 
 O CI (`.github/workflows/`) roda `npm run build`, `npm run lint`, a suíte de testes e o job `e2e`
 (`E2E`: instala o Chromium, `npm run build:fatec`, `npm run test:e2e`, relatório como artefato em
-falha), os mesmos comandos da verificação local, em PR e em push na `main` e na `staging`. O `deploy.yml` publica na
+falha), os mesmos comandos da verificação local, em PR para a `staging` e em push na `main`, na `staging` e em `hotfix/**` (o PR para a `main` reaproveita os checks do push no mesmo SHA, ver `docs/setup/environments.md`). O `deploy.yml` publica na
 Vercel (`staging` = beta, `main` = produção) só depois do CI de push verde; detalhe em
 `docs/setup/environments.md`.
 
