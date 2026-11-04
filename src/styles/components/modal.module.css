@@ -26,6 +26,11 @@
     max-width: 34rem;
 }
 
+.large {
+    max-width: 56rem;
+    height: min(100%, 52rem);
+}
+
 .header {
     display: flex;
     flex: 0 0 auto;

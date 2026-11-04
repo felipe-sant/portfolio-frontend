@@ -82,7 +82,15 @@
     "resume": {
         "download": "Download CV",
         "downloadPdf": "Download CV (PDF), opens the preview",
-        "unavailableName": "Download CV (PDF), currently unavailable"
+        "unavailableName": "Download CV (PDF), currently unavailable",
+        "modal": {
+            "title": "Resume",
+            "close": "Close",
+            "pdfTitle": "Resume in PDF",
+            "download": "Download PDF",
+            "viewText": "View text version (Markdown)",
+            "noViewer": "Your browser does not show PDFs here. Download the file or read the text version."
+        }
     },
     "projectType": {
         "web": "Web",

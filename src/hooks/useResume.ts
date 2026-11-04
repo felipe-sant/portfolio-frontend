@@ -29,7 +29,7 @@ function useResume() {
         setOpenedAt(null)
     }
 
-    return { language, href: getResumePath(language), isOpen, open, close }
+    return { href: getResumePath(language), isOpen, open, close }
 }
 
 export default useResume

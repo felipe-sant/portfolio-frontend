@@ -82,7 +82,15 @@
     "resume": {
         "download": "Baixar CV",
         "downloadPdf": "Baixar CV (PDF), abre a pré-visualização",
-        "unavailableName": "Baixar CV (PDF), indisponível no momento"
+        "unavailableName": "Baixar CV (PDF), indisponível no momento",
+        "modal": {
+            "title": "Currículo",
+            "close": "Fechar",
+            "pdfTitle": "Currículo em PDF",
+            "download": "Baixar PDF",
+            "viewText": "Ver versão em texto (Markdown)",
+            "noViewer": "Seu navegador não mostra PDF aqui. Baixe o arquivo ou leia a versão em texto."
+        }
     },
     "projectType": {
         "web": "Web",
