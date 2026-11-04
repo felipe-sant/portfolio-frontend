@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
 import loadPrerenderData from "@/prerender/loadPrerenderData"
 import prerenderRoutes from "@/prerender/prerenderRoutes"
+import profileApi from "@/store/api/profile.api"
 import projectsApi from "@/store/api/projects.api"
 import createStore from "@/store/createStore"
 import buildProfile from "@/testUtils/buildProfile"
@@ -87,6 +88,19 @@ describe("prerenderRoutes", () => {
             { value: "TypeScript", count: 1 }
         ])
         expect(options.data?.years).toEqual([{ value: "2026", count: 1 }])
+    })
+
+    it("pede o perfil do idioma na rota de contato e o deixa no cache", async () => {
+        const profile = buildProfile()
+        stubContentFetch({ "content/en/profile.json": profile })
+        const store = createStore()
+
+        await loadPrerenderData(store, findRoute("contact"), {}, "en")
+
+        expect(findRoute("contact").queries("en", {})).toHaveLength(1)
+        expect(
+            profileApi.endpoints.getProfile.select({ lang: "en" })(store.getState()).data
+        ).toEqual(profile)
     })
 
     it("pede o projeto e o README na rota de projeto, sem a lista de documentos", async () => {

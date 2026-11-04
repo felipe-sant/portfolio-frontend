@@ -43,6 +43,21 @@ const EXPECTED_BY_FILE: Record<string, { heading: string; content: string; langu
         content: FEATURED_TITLE,
         language: "es"
     },
+    "pt-BR/contact.html": {
+        heading: "Contato",
+        content: "E-mail direto",
+        language: "pt-BR"
+    },
+    "en/contact.html": {
+        heading: "Contact",
+        content: "Direct email",
+        language: "en"
+    },
+    "es/contact.html": {
+        heading: "Contacto",
+        content: "Correo directo",
+        language: "es"
+    },
     "404.html": {
         heading: "Page not found",
         content: "The address may have changed or the project is no longer online.",
@@ -156,6 +171,25 @@ describe("render", () => {
         expect(html).toContain(`http://localhost:5173/${language}#person`)
         expect(html).toContain("https://github.com/example")
     })
+
+    it.each(["pt-BR/contact.html", "en/contact.html", "es/contact.html"])(
+        "renderiza os canais de contato sem formulário em %s",
+        async (file) => {
+            const target = targets.find((item) => item.file === file)
+            if (!target) {
+                throw new Error(`Alvo ${file} não encontrado`)
+            }
+
+            const { html, state } = await render(target)
+
+            expect(html).toContain('href="mailto:contato@example.com"')
+            expect(html).toContain("São José dos Campos · SP")
+            expect(html).not.toContain("<form")
+            expect(html).toMatch(/<button[^>]*disabled=""[^>]*aria-label="[^"]*CV[^"]*"/)
+            expect(html).toContain('"@type":"ContactPage"')
+            expect(state).toContain("contato@example.com")
+        }
+    )
 
     describe("Projetos com dez projetos", () => {
         const PROJECT_FILES = ["pt-BR/projects.html", "en/projects.html", "es/projects.html"]
