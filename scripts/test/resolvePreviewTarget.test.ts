@@ -19,4 +19,11 @@ describe("resolvePreviewTarget", () => {
             port: 4173
         })
     })
+
+    it("trata a porta 0 como inválida e usa 4173", () => {
+        expect(resolvePreviewTarget({ PREVIEW_PORT: "0" })).toEqual({
+            directory: "dist",
+            port: 4173
+        })
+    })
 })
