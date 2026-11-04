@@ -107,6 +107,15 @@ Se o workflow não puder rodar (token indisponível, Actions fora do ar), o PO p
 
 O workflow não é removido: fica inerte, porque a classificação `is-release` só aceita tag `v1.x.y` (qualquer outra pula o job `publish`) e a guarda recusa tag fora da `main`. Continua podendo publicar uma correção `v1.x.y` se a Fatec pedir. Remover é um `Chore` opcional quando a entrega da Fatec for encerrada.
 
+## Currículo em PDF
+
+Os PDFs do currículo (`public/cv/cv-pt-BR.pdf`, `cv-en.pdf` e `cv-es.pdf`) são gerados à mão por
+`npm run cv:pdf` a partir dos `cv-<idioma>.md` da mesma pasta (Chromium do Playwright) e
+commitados. O build, o CI e a Vercel não geram PDF nem precisam de Chromium para isso. Quando um
+`.md` muda, rode `npm run cv:pdf` e commite os PDFs: o teste
+`scripts/test/resumePdfsUpToDate.test.ts`, que roda no job de testes do CI, regera o PDF em
+temporário e compara o texto extraído com o do PDF versionado, e falha se estiverem diferentes.
+
 ## Versionamento (Changesets)
 
 Três workflows em `.github/workflows/`, descritos aqui porque os arquivos não têm comentários. A regra de incremento e o fluxo estão em [`roadmap.md`](../product/roadmap.md#versionamento).
