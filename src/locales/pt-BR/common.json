@@ -82,7 +82,6 @@
     "resume": {
         "download": "Baixar CV",
         "downloadPdf": "Baixar CV (PDF), abre a pré-visualização",
-        "unavailableName": "Baixar CV (PDF), indisponível no momento",
         "modal": {
             "title": "Currículo",
             "close": "Fechar",

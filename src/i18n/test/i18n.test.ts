@@ -331,13 +331,13 @@ describe("i18n", () => {
     })
 
     it.each([
-        ["pt-BR", "Baixar CV (PDF), indisponível no momento"],
-        ["en", "Download CV (PDF), currently unavailable"],
-        ["es", "Descargar CV (PDF), no disponible por ahora"]
-    ])("traduz common:resume.unavailableName em %s", async (language, expected) => {
+        ["pt-BR", "Baixar CV (PDF), abre a pré-visualização"],
+        ["en", "Download CV (PDF), opens the preview"],
+        ["es", "Descargar CV (PDF), abre la vista previa"]
+    ])("traduz common:resume.downloadPdf em %s", async (language, expected) => {
         const i18n = await loadPage({ path: `/${language}` })
 
-        expect(i18n.t("common:resume.unavailableName")).toBe(expected)
+        expect(i18n.t("common:resume.downloadPdf")).toBe(expected)
     })
 
     it.each([
@@ -464,31 +464,31 @@ describe("i18n", () => {
     it.each([
         [
             "pt-BR",
-            "Baixar CV (PDF), indisponível no momento",
+            "Baixar CV (PDF), abre a pré-visualização",
             "Atual",
             "desde 06/2026",
             "<start>06/2024</start> – <end>05/2026</end>"
         ],
         [
             "en",
-            "Download CV (PDF), currently unavailable",
+            "Download CV (PDF), opens the preview",
             "Current",
             "since 06/2026",
             "<start>06/2024</start> – <end>05/2026</end>"
         ],
         [
             "es",
-            "Descargar CV (PDF), no disponible por ahora",
+            "Descargar CV (PDF), abre la vista previa",
             "Actual",
             "desde 06/2026",
             "<start>06/2024</start> – <end>05/2026</end>"
         ]
     ])(
-        "resolve o CV indisponível e o período de common em %s",
-        async (language, unavailable, current, since, range) => {
+        "resolve o CV e o período de common em %s",
+        async (language, resumeName, current, since, range) => {
             const i18n = await loadPage({ path: `/${language}` })
 
-            expect(i18n.t("common:resume.unavailableName")).toBe(unavailable)
+            expect(i18n.t("common:resume.downloadPdf")).toBe(resumeName)
             expect(i18n.t("common:period.current")).toBe(current)
             expect(i18n.t("common:period.since", { date: "06/2026" })).toBe(since)
             expect(i18n.t("common:period.range", { start: "06/2024", end: "05/2026" })).toBe(range)
