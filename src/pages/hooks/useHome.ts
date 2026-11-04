@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next"
 import useLocalizedPath from "@/hooks/useLocalizedPath"
 import usePageTransition from "@/hooks/usePageTransition"
+import useResume from "@/hooks/useResume"
 import FALLBACK_LANGUAGE from "@/i18n/fallbackLanguage"
 import resolveSupportedLanguage from "@/i18n/resolveSupportedLanguage"
 import ROUTES from "@/routers/paths"
@@ -28,6 +29,7 @@ function useHome() {
     const language = resolveSupportedLanguage(i18n.resolvedLanguage) ?? FALLBACK_LANGUAGE
     const localizedPath = useLocalizedPath()
     const viewTransition = usePageTransition()
+    const resume = useResume()
     const profileQuery = profileApi.useGetProfileQuery({ lang: language })
     const timelineQuery = timelineApi.useGetCurrentTimelineQuery({ lang: language })
     const featuredQuery = projectsApi.useGetProjectsQuery(buildFeaturedProjectsParams(language))
@@ -56,10 +58,10 @@ function useHome() {
         isLoading,
         paths: {
             projects: localizedPath(ROUTES.projects),
-            about: localizedPath(ROUTES.about),
-            resume: `/cv/cv-${language}.pdf`
+            about: localizedPath(ROUTES.about)
         },
         viewTransition,
+        resume,
         ids: FOCUS_IDS,
         profile: {
             isLoading: profileQuery.isLoading,

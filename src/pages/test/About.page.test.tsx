@@ -268,20 +268,20 @@ describe("AboutPage, apresentação", () => {
     })
 
     it.each([
-        ["pt-BR", "Baixar CV", "Baixar CV (PDF), indisponível no momento", "Entrar em contato"],
-        ["en", "Download CV", "Download CV (PDF), currently unavailable", "Get in touch"],
-        ["es", "Descargar CV", "Descargar CV (PDF), no disponible por ahora", "Ponerse en contacto"]
+        ["pt-BR", "Baixar CV", "Baixar CV (PDF), abre a pré-visualização", "Entrar em contato"],
+        ["en", "Download CV", "Download CV (PDF), opens the preview", "Get in touch"],
+        ["es", "Descargar CV", "Descargar CV (PDF), abre la vista previa", "Ponerse en contacto"]
     ] as const)(
-        "mostra Baixar CV desativado e Entrar em contato em %s",
+        "mostra Baixar CV como link do PDF e Entrar em contato em %s",
         async (language, visible, name, contact) => {
             await act(() => setLanguage(language))
             renderAbout()
-            const button = screen.getByRole("button", { name })
+            const link = screen.getByRole("link", { name })
 
-            expect(button).toBeDisabled()
-            expect(button).toHaveTextContent(visible)
-            expect(button).not.toHaveAttribute("href")
-            expect(button.closest("a")).toBeNull()
+            expect(link).toHaveTextContent(visible)
+            expect(link).toHaveAttribute("href", `/cv/cv-${language}.pdf`)
+            expect(link).not.toHaveAttribute("download")
+            expect(link).not.toHaveAttribute("target")
             expect(screen.getByRole("link", { name: contact })).toHaveAttribute(
                 "href",
                 `/${language}/contact`
@@ -289,13 +289,22 @@ describe("AboutPage, apresentação", () => {
         }
     )
 
-    it("clicar em Baixar CV não abre modal nem muda a rota", async () => {
-        const { container } = renderAbout()
+    it("clicar em Baixar CV abre o modal e fechar devolve o foco ao link", async () => {
+        renderAbout()
+        const link = screen.getByRole("link", { name: /Baixar CV/ })
 
-        await userEvent.click(screen.getByRole("button", { name: /Baixar CV/ }))
+        await userEvent.click(link)
+
+        const dialog = screen.getByRole("dialog", { name: "Currículo" })
+        expect(within(dialog).getByTitle("Currículo em PDF")).toHaveAttribute(
+            "src",
+            "/cv/cv-pt-BR.pdf"
+        )
+
+        await userEvent.keyboard("{Escape}")
 
         expect(screen.queryByRole("dialog")).not.toBeInTheDocument()
-        expect(container.querySelector("a[href$='.pdf']")).toBeNull()
+        expect(link).toHaveFocus()
     })
 
     it("mostra h1, botões e títulos das seções já no carregamento", () => {
@@ -303,7 +312,7 @@ describe("AboutPage, apresentação", () => {
         renderAbout()
 
         expect(screen.getByRole("heading", { level: 1 })).toBeInTheDocument()
-        expect(screen.getByRole("button", { name: /Baixar CV/ })).toBeInTheDocument()
+        expect(screen.getByRole("link", { name: /Baixar CV/ })).toBeInTheDocument()
         expect(screen.getByRole("link", { name: "Entrar em contato" })).toBeInTheDocument()
         expect(screen.getByRole("heading", { level: 2, name: "Sobre mim" })).toBeInTheDocument()
         expect(screen.getByRole("heading", { level: 2, name: "Trajetória" })).toBeInTheDocument()
