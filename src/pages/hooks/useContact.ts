@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useTranslation } from "react-i18next"
 import FALLBACK_LANGUAGE from "@/i18n/fallbackLanguage"
 import resolveSupportedLanguage from "@/i18n/resolveSupportedLanguage"
@@ -16,6 +16,7 @@ function useContact() {
     const language = resolveSupportedLanguage(i18n.resolvedLanguage) ?? FALLBACK_LANGUAGE
     const profileQuery = profileApi.useGetProfileQuery({ lang: language })
     const profile = profileQuery.data
+    const isError = profileQuery.isError && !profile
     const jsonLd = buildContactJsonLd(
         language,
         {
@@ -26,26 +27,35 @@ function useContact() {
         profile
     )
 
-    const focusTimeoutRef = useRef<number | undefined>(undefined)
+    const [focusRequest, setFocusRequest] = useState<{ id: string } | undefined>(undefined)
 
-    useEffect(() => () => window.clearTimeout(focusTimeoutRef.current), [])
+    const handledRequestRef = useRef<object | undefined>(undefined)
+
+    useEffect(() => {
+        const isAlertMissing = focusRequest?.id === FOCUS_IDS.alert && !isError
+
+        if (!focusRequest || isAlertMissing || handledRequestRef.current === focusRequest) {
+            return
+        }
+
+        const target = document.getElementById(focusRequest.id)
+
+        if (target) {
+            target.focus()
+            handledRequestRef.current = focusRequest
+        }
+    }, [focusRequest, isError])
 
     async function retry() {
         const result = await profileQuery.refetch()
-        const target = result.isError ? FOCUS_IDS.alert : FOCUS_IDS.heading
-
-        window.clearTimeout(focusTimeoutRef.current)
-        focusTimeoutRef.current = window.setTimeout(
-            () => document.getElementById(target)?.focus(),
-            0
-        )
+        setFocusRequest({ id: result.isError ? FOCUS_IDS.alert : FOCUS_IDS.heading })
     }
 
     return {
         t,
         jsonLd,
         profile,
-        isError: profileQuery.isError && !profile,
+        isError,
         isFormEnabled: contactFormEnabled,
         ids: FOCUS_IDS,
         retry

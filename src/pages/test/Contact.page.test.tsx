@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { MemoryRouter } from "react-router-dom"
 import userEvent from "@testing-library/user-event"
 import { act, screen, waitFor } from "@testing-library/react"
+import clearContentCache from "@/services/content/clearContentCache"
 import setLanguage from "@/i18n/setLanguage"
 import ContactPage from "@/pages/Contact.page"
 import buildProfile from "@/testUtils/buildProfile"
@@ -143,6 +144,45 @@ describe("ContactPage", () => {
 
         expect(await screen.findByText("contato@example.com")).toBeInTheDocument()
         expect(screen.queryByText("Não foi possível carregar os canais de contato.")).toBeNull()
+    })
+
+    it("A11Y-G14: com o retry falhando de novo o foco vai para o alerta, que volta ao DOM depois da consulta", async () => {
+        flag.enabled = true
+        let calls = 0
+        clearContentCache()
+        vi.stubGlobal(
+            "fetch",
+            vi.fn(async () => {
+                calls += 1
+                if (calls > 1) {
+                    await new Promise((resolve) => setTimeout(resolve, 40))
+                }
+                return new Response("", { status: 500 })
+            })
+        )
+        renderPage()
+        await screen.findByRole("alert")
+
+        await userEvent.click(screen.getByRole("button", { name: "Tentar novamente" }))
+        await waitFor(() => expect(calls).toBeGreaterThan(1))
+        await new Promise((resolve) => setTimeout(resolve, 120))
+
+        expect(screen.getByRole("alert")).toHaveFocus()
+        expect(document.activeElement?.id).toBe("contact-alert")
+    })
+
+    it("A11Y-G14: com o retry funcionando o foco vai para o título", async () => {
+        flag.enabled = true
+        const allow = failFetchAfter(stubProfiles(), 0)
+        renderPage()
+        await screen.findByRole("alert")
+
+        allow()
+        await userEvent.click(screen.getByRole("button", { name: "Tentar novamente" }))
+
+        await waitFor(() =>
+            expect(screen.getByRole("heading", { level: 1, name: "Contato" })).toHaveFocus()
+        )
     })
 
     it("declara título, descrição, canônica, hreflang, Open Graph e JSON-LD ContactPage", async () => {
