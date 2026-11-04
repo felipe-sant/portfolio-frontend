@@ -431,7 +431,7 @@ test.describe("carregando e erro dos canais", () => {
         expect(await page.evaluate(() => Reflect.get(window, "e2eMarker"))).toBe(true)
     })
 
-    test("A11Y-G14: se o retry falhar de novo o alerta e o botão Tentar novamente continuam na tela", async ({
+    test("A11Y-G14: se o retry falhar de novo o alerta e o botão Tentar novamente continuam na tela e o foco fica no alerta", async ({
         page
     }) => {
         const texts = UI_TEXTS["pt-BR"].contact
@@ -450,6 +450,7 @@ test.describe("carregando e erro dos canais", () => {
 
         await expect.poll(() => attempts).toBeGreaterThan(attemptsBeforeRetry)
         await expect(alert.getByRole("button", { name: texts.retry })).toBeVisible()
+        await expect(page.locator("#contact-alert")).toBeFocused()
     })
 })
 
