@@ -105,7 +105,7 @@ test.describe("cabeçalho e navegação", () => {
                     home: { heading: texts.homeHeading, title: texts.homeTitle },
                     projects: { heading: texts.projects.heading, title: texts.projects.title },
                     about: { heading: texts.aboutPage.heading, title: texts.aboutPage.title },
-                    contact: { heading: texts.notFoundHeading, title: texts.notFoundTitle }
+                    contact: { heading: texts.contact.heading, title: texts.contact.title }
                 }[id]
                 await expect(heading).toHaveText(expected.heading)
                 await expect(heading).toBeFocused()

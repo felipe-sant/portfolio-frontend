@@ -73,6 +73,60 @@ const UI_TEXTS = {
         errorTitle: "Erro inesperado · Luiz Felipe dos Santos",
         errorDescription: "Algo quebrou do meu lado, não do seu. Tente de novo em alguns segundos.",
         errorRetry: "Tentar novamente",
+        contact: {
+            title: "Contato · Luiz Felipe dos Santos",
+            description: "Como falar com Luiz Felipe dos Santos: e-mail e currículo.",
+            heading: "Contato",
+            ledeDirect:
+                "Projeto, freelance ou vaga: escreva para o meu e-mail contando o contexto e o prazo.",
+            ledeForm: "Conte o escopo, o prazo e o que já existe.",
+            emailHeading: "E-mail direto",
+            sendEmail: "Enviar e-mail",
+            locationHeading: "Localização",
+            responseHeading: "Resposta",
+            loadError: "Não foi possível carregar os canais de contato.",
+            retry: "Tentar novamente",
+            copyEmail: "Copiar e-mail",
+            emailCopied: "E-mail copiado",
+            copyFailed: "Não foi possível copiar",
+            resumeButton: "Baixar CV",
+            resumeUnavailableName: "Baixar CV (PDF), indisponível no momento",
+            formLabel: "Formulário de contato",
+            requiredNote: "Todos os campos são obrigatórios.",
+            nameLabel: "Nome",
+            nameRequired: "Diga como devo te chamar.",
+            emailLabel: "E-mail",
+            emailRequired: "Preciso de um e-mail para responder.",
+            emailInvalid: "Esse endereço não parece completo.",
+            subjectLegend: "Assunto",
+            subjects: {
+                newProject: "Projeto novo",
+                freelance: "Freelance",
+                job: "Vaga",
+                other: "Outro"
+            },
+            messageLabel: "Mensagem",
+            messagePlaceholder: "Escopo, prazo e links do que já existe",
+            messageTooShort: "Escreva um pouco mais: 20 caracteres no mínimo.",
+            remaining: (count: number) =>
+                count === 0
+                    ? "Nenhum caractere restante."
+                    : count === 1
+                      ? `${count} restante`
+                      : `${count} restantes`,
+            nearLimit: (count: number) => `Restam ${count} caracteres.`,
+            limitReached: (count: number) => `Você chegou ao limite de ${count} caracteres.`,
+            errorSummary: (count: number) =>
+                count === 1 ? `Falta corrigir ${count} campo.` : `Falta corrigir ${count} campos.`,
+            submit: "Enviar mensagem",
+            sending: "Enviando",
+            privacyNote: "Sem newsletter e sem cadastro.",
+            sendError:
+                "Não consegui enviar sua mensagem. Tente de novo ou escreva para o e-mail desta página.",
+            sentHeading: "Mensagem enviada",
+            sentDescription: "Recebi sua mensagem e respondo pelo e-mail que você informou.",
+            sentAgain: "Enviar outra mensagem"
+        },
         projects: {
             heading: "Projetos",
             title: "Projetos · Luiz Felipe dos Santos",
@@ -218,6 +272,57 @@ const UI_TEXTS = {
         errorTitle: "Unexpected error · Luiz Felipe dos Santos",
         errorDescription: "Something broke on my side, not yours. Try again in a few seconds.",
         errorRetry: "Try again",
+        contact: {
+            title: "Contact · Luiz Felipe dos Santos",
+            description: "How to reach Luiz Felipe dos Santos: email and résumé.",
+            heading: "Contact",
+            ledeDirect:
+                "Project, freelance or job: write to my email with the context and the deadline.",
+            ledeForm: "Tell me the scope, the deadline and what already exists.",
+            emailHeading: "Direct email",
+            sendEmail: "Send email",
+            locationHeading: "Location",
+            responseHeading: "Response",
+            loadError: "Couldn't load the contact channels.",
+            retry: "Try again",
+            copyEmail: "Copy email",
+            emailCopied: "Email copied",
+            copyFailed: "Could not copy",
+            resumeButton: "Download CV",
+            resumeUnavailableName: "Download CV (PDF), currently unavailable",
+            formLabel: "Contact form",
+            requiredNote: "All fields are required.",
+            nameLabel: "Name",
+            nameRequired: "Tell me what to call you.",
+            emailLabel: "Email",
+            emailRequired: "I need an email address to reply.",
+            emailInvalid: "That address doesn't look complete.",
+            subjectLegend: "Subject",
+            subjects: {
+                newProject: "New project",
+                freelance: "Freelance",
+                job: "Job",
+                other: "Other"
+            },
+            messageLabel: "Message",
+            messagePlaceholder: "Scope, deadline and links to what already exists",
+            messageTooShort: "Write a little more: at least 20 characters.",
+            remaining: (count: number) => (count === 0 ? "No characters left." : `${count} left`),
+            nearLimit: (count: number) => `${count} characters left.`,
+            limitReached: (count: number) => `You've reached the ${count}-character limit.`,
+            errorSummary: (count: number) =>
+                count === 1
+                    ? `${count} field still needs fixing.`
+                    : `${count} fields still need fixing.`,
+            submit: "Send message",
+            sending: "Sending",
+            privacyNote: "No newsletter, no sign-up.",
+            sendError:
+                "I couldn't send your message. Try again or write to the email on this page.",
+            sentHeading: "Message sent",
+            sentDescription: "I got your message and will reply to the email you gave.",
+            sentAgain: "Send another message"
+        },
         projects: {
             heading: "Projects",
             title: "Projects · Luiz Felipe dos Santos",
@@ -364,6 +469,62 @@ const UI_TEXTS = {
         errorDescription:
             "Algo falló de mi lado, no del tuyo. Inténtalo de nuevo en unos segundos.",
         errorRetry: "Intentar de nuevo",
+        contact: {
+            title: "Contacto · Luiz Felipe dos Santos",
+            description: "Cómo hablar con Luiz Felipe dos Santos: correo electrónico y currículo.",
+            heading: "Contacto",
+            ledeDirect:
+                "Proyecto, freelance o empleo: escribe a mi correo contándome el contexto y el plazo.",
+            ledeForm: "Cuéntame el alcance, el plazo y lo que ya existe.",
+            emailHeading: "Correo directo",
+            sendEmail: "Enviar correo",
+            locationHeading: "Ubicación",
+            responseHeading: "Respuesta",
+            loadError: "No se pudieron cargar los canales de contacto.",
+            retry: "Intentar de nuevo",
+            copyEmail: "Copiar correo",
+            emailCopied: "Correo copiado",
+            copyFailed: "No se pudo copiar",
+            resumeButton: "Descargar CV",
+            resumeUnavailableName: "Descargar CV (PDF), no disponible por ahora",
+            formLabel: "Formulario de contacto",
+            requiredNote: "Todos los campos son obligatorios.",
+            nameLabel: "Nombre",
+            nameRequired: "Dime cómo debo llamarte.",
+            emailLabel: "Correo electrónico",
+            emailRequired: "Necesito un correo electrónico para responderte.",
+            emailInvalid: "Esa dirección no parece completa.",
+            subjectLegend: "Asunto",
+            subjects: {
+                newProject: "Proyecto nuevo",
+                freelance: "Freelance",
+                job: "Empleo",
+                other: "Otro"
+            },
+            messageLabel: "Mensaje",
+            messagePlaceholder: "Alcance, plazo y enlaces de lo que ya existe",
+            messageTooShort: "Escribe un poco más: 20 caracteres como mínimo.",
+            remaining: (count: number) =>
+                count === 0
+                    ? "Ningún carácter restante."
+                    : count === 1
+                      ? `${count} restante`
+                      : `${count} restantes`,
+            nearLimit: (count: number) => `Quedan ${count} caracteres.`,
+            limitReached: (count: number) => `Has llegado al límite de ${count} caracteres.`,
+            errorSummary: (count: number) =>
+                count === 1
+                    ? `Queda ${count} campo por corregir.`
+                    : `Quedan ${count} campos por corregir.`,
+            submit: "Enviar mensaje",
+            sending: "Enviando",
+            privacyNote: "Sin newsletter y sin registro.",
+            sendError:
+                "No pude enviar tu mensaje. Inténtalo de nuevo o escribe al correo de esta página.",
+            sentHeading: "Mensaje enviado",
+            sentDescription: "Recibí tu mensaje y respondo al correo que indicaste.",
+            sentAgain: "Enviar otro mensaje"
+        },
         projects: {
             heading: "Proyectos",
             title: "Proyectos · Luiz Felipe dos Santos",

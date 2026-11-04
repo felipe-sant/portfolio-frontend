@@ -42,7 +42,9 @@ const prerenderRoutes: PrerenderRoute[] = [
     {
         pattern: "contact",
         scope: "none",
-        queries: () => []
+        queries: (lang) => [
+            (dispatch) => dispatch(profileApi.endpoints.getProfile.initiate({ lang }))
+        ]
     },
     {
         pattern: "projects/:id",

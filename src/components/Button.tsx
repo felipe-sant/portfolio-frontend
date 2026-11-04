@@ -1,10 +1,10 @@
-import type { ComponentPropsWithoutRef, MouseEvent } from "react"
+import type { ComponentPropsWithRef, MouseEvent } from "react"
 import css from "@/styles/components/button.module.css"
 import Icon from "@/components/Icon"
 import Spinner from "@/components/Spinner"
 import type IconName from "@/types/icon/IconName.types"
 
-interface ButtonProps extends ComponentPropsWithoutRef<"button"> {
+interface ButtonProps extends ComponentPropsWithRef<"button"> {
     variant?: "primary" | "secondary" | "ghost"
     size?: "sm" | "md" | "lg"
     loading?: boolean

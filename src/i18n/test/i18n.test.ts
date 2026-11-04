@@ -313,6 +313,33 @@ describe("i18n", () => {
             ])
         }
     )
+
+    it("registra o namespace contact", async () => {
+        const i18n = await loadPage({ path: "/pt-BR" })
+
+        expect(i18n.options.ns).toContain("contact")
+    })
+
+    it.each([
+        ["pt-BR", "Contato"],
+        ["en", "Contact"],
+        ["es", "Contacto"]
+    ])("traduz contact:heading em %s", async (language, expected) => {
+        const i18n = await loadPage({ path: `/${language}` })
+
+        expect(i18n.t("contact:heading")).toBe(expected)
+    })
+
+    it.each([
+        ["pt-BR", "Baixar CV (PDF), indisponível no momento"],
+        ["en", "Download CV (PDF), currently unavailable"],
+        ["es", "Descargar CV (PDF), no disponible por ahora"]
+    ])("traduz common:resume.unavailableName em %s", async (language, expected) => {
+        const i18n = await loadPage({ path: `/${language}` })
+
+        expect(i18n.t("common:resume.unavailableName")).toBe(expected)
+    })
+
     it.each([
         [
             "pt-BR",

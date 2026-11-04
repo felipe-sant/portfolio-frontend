@@ -11,6 +11,7 @@ import ROUTES from "@/routers/paths"
 import css from "@/styles/components/footer.module.css"
 import profileApi from "@/store/api/profile.api"
 import type Profile from "@/types/profile/Profile.types"
+import formatLocation from "@/utils/formatLocation"
 import getAppVersion from "@/utils/getAppVersion"
 import getBuildYear from "@/utils/getBuildYear"
 
@@ -32,8 +33,6 @@ interface ExternalLinkProps {
     network: "github" | "linkedin"
     url: string
 }
-
-const LOCATION_SEPARATOR = " · "
 
 const FOOTER_NAV_ITEMS = [
     { id: "home", path: ROUTES.home },
@@ -77,8 +76,7 @@ function TextExternalLink({ network, url }: ExternalLinkProps) {
 function ContactBlock({ profile }: ProfileBlockProps) {
     const { t } = useTranslation()
     const localizedPath = useLocalizedPath()
-    const location =
-        profile && [profile.location.city, profile.location.region].join(LOCATION_SEPARATOR)
+    const location = profile && formatLocation(profile.location)
 
     return (
         <div className={css.column}>

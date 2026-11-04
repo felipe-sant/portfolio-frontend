@@ -80,6 +80,28 @@ describe("routes", () => {
     )
 
     it.each([
+        ["/pt-BR/contact", "Contato", "pt-BR"],
+        ["/en/contact", "Contact", "en"],
+        ["/es/contact", "Contacto", "es"]
+    ])(
+        "renderiza a tela Contato em %s com o idioma do prefixo",
+        async (path, heading, language) => {
+            renderRoutes([path])
+
+            expect(
+                await screen.findByRole("heading", { level: 1, name: heading })
+            ).toBeInTheDocument()
+            expect(document.documentElement.lang).toBe(language)
+        }
+    )
+
+    it("renderiza a não encontrada em /contact sem prefixo", async () => {
+        renderRoutes(["/contact"])
+
+        expect(await screen.findByRole("heading", { name: "Page not found" })).toBeInTheDocument()
+    })
+
+    it.each([
         ["/pt-BR/about", "pt-BR"],
         ["/en/about", "en"],
         ["/es/about", "es"]
@@ -96,6 +118,22 @@ describe("routes", () => {
         renderRoutes(["/about"])
 
         expect(await screen.findByRole("heading", { name: "Page not found" })).toBeInTheDocument()
+    })
+
+    it("leva o foco ao h1 e marca Contato como página atual ao navegar pelo cabeçalho", async () => {
+        const user = userEvent.setup()
+        renderRoutes(["/pt-BR"])
+        await screen.findByRole("heading", { name: "Desenvolvedor full stack em TypeScript" })
+
+        const link = within(screen.getByRole("banner")).getByRole("link", { name: "Contato" })
+        await user.click(link)
+
+        const heading = await screen.findByRole("heading", { level: 1, name: "Contato" })
+        await waitFor(() => expect(heading).toHaveFocus())
+        expect(
+            within(screen.getByRole("banner")).getByRole("link", { name: "Contato" })
+        ).toHaveAttribute("aria-current", "page")
+        expect(document.title).toBe("Contato · Luiz Felipe dos Santos")
     })
 
     it("leva o link Informações do cabeçalho à tela e o marca como ativo", async () => {

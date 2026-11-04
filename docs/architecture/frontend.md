@@ -40,7 +40,7 @@ Link interno é montado por `buildPath(path, language, params?)` ou, em componen
 | `/<idioma>/projects/:id`             | Projeto               | Prevista (D32), sem página |
 | `/<idioma>/projects/:id/docs/<name>` | Documentos do projeto | Prevista (D55), sem página |
 | `/<idioma>/about`                    | Informações           | Prevista (D32), sem página |
-| `/<idioma>/contact`                  | Contato               | Prevista (D32), sem página |
+| `/<idioma>/contact`                  | Contato               | Existe                     |
 
 Uma rota só entra em `paths.ts` junto com a página que ela renderiza. Navegação interna usa `<Link>` ou `useNavigate` com o path de `ROUTES`.
 
