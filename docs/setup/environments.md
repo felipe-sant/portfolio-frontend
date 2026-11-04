@@ -48,7 +48,7 @@ Reutilizável (`workflow_call`) e manual (`workflow_dispatch`), com a entrada op
 - Sem `tag`, ou com `tag` fora de `^v1\.[0-9]+\.[0-9]+$` (`v2.0.0`, `1.0.0`, `v1.0`), é ensaio: usa o código do ref do run, `is-release` é `false` e o job `publish` é pulado.
 - Com `tag` `v1.x.y`, o `build` faz checkout dessa tag e `is-release` é `true`.
 - A `tag` entra por `env:` nos passos que a usam, nunca interpolada no `run`, para não abrir injeção. O token só aparece em `with:` do checkout do destino.
-- `concurrency` sem cancelar: o workflow agrupa por `tag` e o job `publish` usa um grupo único (`fatec-publish`), então duas publicações nunca correm em paralelo. Duas execuções para a mesma tag terminam verdes, a segunda sem commit.
+- `concurrency` sem cancelar: o workflow agrupa por `tag` e o job `publish` usa um grupo único (`fatec-publish`), então duas publicações nunca correm em paralelo. Com `cancel-in-progress: false`, o GitHub mantém só uma execução pendente por grupo e cancela as demais pendentes (a em andamento nunca é cancelada). Ensaios com `tag` vazia caem todos no mesmo grupo `fatec-pages-`. Repetir a publicação da mesma tag é seguro: o passo "sem mudança, sem commit" termina verde sem criar commit vazio.
 
 #### Job `publish`
 
@@ -100,7 +100,7 @@ Se o workflow não puder rodar (token indisponível, Actions fora do ar), o PO p
 
 #### Na V2
 
-O workflow não é removido: fica inerte, porque a release só o chama para 1.x e a guarda recusa outra tag. Remover é um `Chore` opcional quando a entrega da Fatec for encerrada.
+O workflow não é removido: fica inerte, porque a classificação `is-release` só aceita tag `v1.x.y` (qualquer outra pula o job `publish`) e a guarda recusa tag fora da `main`. Continua podendo publicar uma correção `v1.x.y` se a Fatec pedir. Remover é um `Chore` opcional quando a entrega da Fatec for encerrada.
 
 ## Variáveis
 
