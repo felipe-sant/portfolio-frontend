@@ -141,7 +141,7 @@ jobs:
                         SPECS="$SPECS e2e/contact-form.spec.ts e2e/projects-filters.spec.ts e2e/accessibility.spec.ts" ;;
                       src/pages/NotFound.page.tsx|src/styles/pages/notFound.module.css|src/locales/*/notFound.json)
                         SPECS="$SPECS e2e/not-found.spec.ts e2e/accessibility.spec.ts" ;;
-                      docs/*|.specs/*|*.md|src/*/test/*|src/testUtils/*|.claude/*|.github/workflows/deploy.yml|.github/workflows/fatec-pages.yml|.github/PULL_REQUEST_TEMPLATE.md)
+                      docs/*|.specs/*|*.md|src/*/test/*|src/testUtils/*|.claude/*|.changeset/*|scripts/test/*|.github/workflows/deploy.yml|.github/workflows/fatec-pages.yml|.github/workflows/version.yml|.github/workflows/release.yml|.github/workflows/changeset-check.yml|.github/PULL_REQUEST_TEMPLATE.md)
                         ;;
                       *)
                         FULL=true ;;
