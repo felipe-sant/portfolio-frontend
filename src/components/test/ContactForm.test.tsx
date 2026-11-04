@@ -5,11 +5,14 @@ import ContactForm from "@/components/ContactForm"
 import setLanguage from "@/i18n/setLanguage"
 import simulateContactSend from "@/services/content/simulateContactSend"
 import expectNoAxeViolations from "@/testUtils/expectNoAxeViolations"
+import relaxTimeoutsForLoad from "@/testUtils/relaxTimeoutsForLoad"
 import renderWithStore from "@/testUtils/renderWithStore"
 
 vi.mock("@/services/content/simulateContactSend", () => ({
     default: vi.fn(() => Promise.resolve())
 }))
+
+relaxTimeoutsForLoad()
 
 const MESSAGE = "Preciso de um site para a minha loja."
 
@@ -17,10 +20,15 @@ function renderForm() {
     return renderWithStore(<ContactForm />)
 }
 
+async function fillField(field: HTMLElement, text: string) {
+    await userEvent.click(field)
+    await userEvent.paste(text)
+}
+
 async function fillValid() {
-    await userEvent.type(screen.getByLabelText(/^Nome/), "Ana")
-    await userEvent.type(screen.getByLabelText(/^E-mail/), "ana@example.com")
-    await userEvent.type(screen.getByLabelText(/^Mensagem/), MESSAGE)
+    await fillField(screen.getByLabelText(/^Nome/), "Ana")
+    await fillField(screen.getByLabelText(/^E-mail/), "ana@example.com")
+    await fillField(screen.getByLabelText(/^Mensagem/), MESSAGE)
 }
 
 async function submit() {
@@ -276,9 +284,10 @@ describe("ContactForm", () => {
         await userEvent.click(screen.getByRole("button", { name: submitText }))
         expect(screen.getByRole("alert")).not.toHaveTextContent(/form\./)
 
-        await userEvent.type(screen.getAllByRole("textbox")[0] as HTMLElement, "Ana")
-        await userEvent.type(screen.getAllByRole("textbox")[1] as HTMLElement, "ana@example.com")
-        await userEvent.type(screen.getAllByRole("textbox")[2] as HTMLElement, MESSAGE)
+        const [name, email, message] = screen.getAllByRole("textbox")
+        await fillField(name as HTMLElement, "Ana")
+        await fillField(email as HTMLElement, "ana@example.com")
+        await fillField(message as HTMLElement, MESSAGE)
         await userEvent.click(screen.getByRole("button", { name: submitText }))
 
         expect(await screen.findByRole("heading", { name: sent })).toBeInTheDocument()

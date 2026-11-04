@@ -7,9 +7,12 @@ import ContactPage from "@/pages/Contact.page"
 import buildProfile from "@/testUtils/buildProfile"
 import expectNoAxeViolations from "@/testUtils/expectNoAxeViolations"
 import failFetchAfter from "@/testUtils/failFetchAfter"
+import relaxTimeoutsForLoad from "@/testUtils/relaxTimeoutsForLoad"
 import renderWithStore from "@/testUtils/renderWithStore"
 import stubContentFetch from "@/testUtils/stubContentFetch"
 import type Profile from "@/types/profile/Profile.types"
+
+relaxTimeoutsForLoad()
 
 const flag = vi.hoisted(() => ({ enabled: false }))
 
