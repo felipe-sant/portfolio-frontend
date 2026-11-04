@@ -624,23 +624,8 @@ test.describe("carregamento e erro", () => {
 
         await expect(getTrajectoryItem(page, about.entries[0].highlight)).toBeVisible()
         await expect(page.getByRole("alert")).toHaveCount(0)
-        expect(profileRequests).toBe(profileBefore)
-    })
-
-    test("RF-ABOUT-26, A11Y-G14: depois do Tentar novamente da trajetória o foco vai para o título", async ({
-        page
-    }) => {
-        const texts = UI_TEXTS["pt-BR"].aboutPage
-        const about = readAbout("pt-BR")
-        await page.route("**/content/pt-BR/timeline.json", (route) => route.abort())
-        await openAboutFromHeader(page, "pt-BR")
-        await expect(page.getByRole("alert")).toHaveCount(1)
-        await page.unroute("**/content/pt-BR/timeline.json")
-
-        await page.getByRole("button", { name: texts.retry }).first().click()
-
-        await expect(getTrajectoryItem(page, about.entries[0].highlight)).toBeVisible()
         await expect(page.getByRole("heading", { level: 2, name: texts.trajectory })).toBeFocused()
+        expect(profileRequests).toBe(profileBefore)
     })
 
     for (const language of ["en", "es"] as const) {
