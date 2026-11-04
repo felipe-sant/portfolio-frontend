@@ -3,10 +3,10 @@ import { createServer } from "node:http"
 import { extname, join } from "node:path"
 import FATEC_BASE_PATH from "@scripts/fatecBasePath"
 import resolvePagesFile from "@scripts/resolvePagesFile"
+import resolvePreviewTarget from "@scripts/resolvePreviewTarget"
 import type PagesResolution from "@/types/prerender/PagesResolution.types"
 
-const DIRECTORY = "dist"
-const PORT = 4173
+const { directory: DIRECTORY, port: PORT } = resolvePreviewTarget(process.env)
 const BASE_WITHOUT_SLASH = FATEC_BASE_PATH.replace(/\/$/, "")
 
 const CONTENT_TYPES: Record<string, string> = {

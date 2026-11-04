@@ -1,8 +1,9 @@
 import { defineConfig, devices } from "@playwright/test"
 import FATEC_BASE_PATH from "@scripts/fatecBasePath"
 
-const origin = "http://localhost:4173"
-const baseURL = `${origin}${FATEC_BASE_PATH}`
+const baseURL = `http://localhost:4173${FATEC_BASE_PATH}`
+const formBaseURL = `http://localhost:4174${FATEC_BASE_PATH}`
+const formSpec = "contact-form.spec.ts"
 
 const mobile = { width: 390, height: 844 }
 const desktop = { width: 1280, height: 800 }
@@ -10,11 +11,26 @@ const desktop = { width: 1280, height: 800 }
 function createProject(name: string, viewport: typeof mobile, colorScheme: "light" | "dark") {
     return {
         name,
+        testIgnore: formSpec,
         use: {
             ...devices["Desktop Chrome"],
             viewport,
             colorScheme,
             reducedMotion: "reduce" as const
+        }
+    }
+}
+
+function createFormProject(name: string, viewport: typeof mobile, colorScheme: "light" | "dark") {
+    return {
+        name,
+        testMatch: formSpec,
+        use: {
+            ...devices["Desktop Chrome"],
+            viewport,
+            colorScheme,
+            reducedMotion: "reduce" as const,
+            baseURL: formBaseURL
         }
     }
 }
@@ -27,15 +43,27 @@ export default defineConfig({
         ? [["list"], ["html", { open: "never" }]]
         : [["html", { open: "never" }]],
     use: { baseURL },
-    webServer: {
-        command: "npm run preview:fatec",
-        url: baseURL,
-        reuseExistingServer: !process.env.CI
-    },
+    webServer: [
+        {
+            command: "npm run preview:fatec",
+            url: baseURL,
+            reuseExistingServer: !process.env.CI
+        },
+        {
+            command: "npm run preview:fatec",
+            port: 4174,
+            env: { PREVIEW_DIR: "dist-form", PREVIEW_PORT: "4174" },
+            reuseExistingServer: !process.env.CI
+        }
+    ],
     projects: [
         createProject("mobile-light", mobile, "light"),
         createProject("mobile-dark", mobile, "dark"),
         createProject("desktop-light", desktop, "light"),
-        createProject("desktop-dark", desktop, "dark")
+        createProject("desktop-dark", desktop, "dark"),
+        createFormProject("contact-form-mobile-light", mobile, "light"),
+        createFormProject("contact-form-mobile-dark", mobile, "dark"),
+        createFormProject("contact-form-desktop-light", desktop, "light"),
+        createFormProject("contact-form-desktop-dark", desktop, "dark")
     ]
 })
