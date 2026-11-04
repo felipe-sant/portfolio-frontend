@@ -60,13 +60,13 @@ Reutilizável (`workflow_call`) e manual (`workflow_dispatch`), com a entrada op
 
 #### Como disparar
 
-A versão SemVer é manual por enquanto, então a publicação também: Actions > Fatec Pages > Run workflow, informando `tag` (por exemplo `v1.0.0`), com a tag já existente e dentro da `main`. Sem `tag`, só gera o artefato (ensaio). Reverter uma publicação é `git revert` do commit dela no repositório da Fatec, feito pelo PO.
+A publicação automática vem do `release.yml` (ver [Versionamento](#versionamento-changesets)); a manual continua disponível: Actions > Fatec Pages > Run workflow, informando `tag` (por exemplo `v1.0.0`), com a tag já existente e dentro da `main`. Sem `tag`, só gera o artefato (ensaio). Reverter uma publicação é `git revert` do commit dela no repositório da Fatec, feito pelo PO.
 
-O gatilho automático `release: types: [published]` não existe: ele é evolução da #47 (ou de issue futura). Tag ou release criada por workflow com `GITHUB_TOKEN` não dispara outro workflow, por isso o contrato abaixo usa `workflow_call`.
+O gatilho automático `release: types: [published]` não existe. Tag ou release criada por workflow com `GITHUB_TOKEN` não dispara outro workflow, por isso o contrato abaixo usa `workflow_call`.
 
-#### Contrato com a #47
+#### Contrato com o `release.yml`
 
-O job de release chama o workflow no mesmo run da criação da tag, só para versão 1.x:
+O job `publish-fatec` do `release.yml` chama o workflow no mesmo run da criação da tag, só para versão 1.x:
 
 ```yaml
 publish-fatec:
@@ -85,8 +85,13 @@ O PO tem push, mas não admin, no repositório da Fatec, então não há Pages p
 - **Preferido:** PAT fine-grained (Settings > Developer settings > Personal access tokens > Fine-grained tokens), com o repositório `fatec-jacarei-dsm-portfolio/ra2581392423047` como único acesso e a permissão `Contents: Read and write`. A organização pode exigir aprovação do token ou não aceitar fine-grained.
 - **Alternativa:** PAT classic com escopo `repo`, com expiração curta, só se a organização recusar o fine-grained. Dá acesso a todos os repositórios do PO, por isso a expiração curta.
 - **Expiração e rotação:** defina a validade ao criar. Perto de vencer, crie outro token com o mesmo escopo, atualize o secret e revogue o antigo. O token vencido faz o checkout do destino falhar.
-- **Revogação:** token comprometido ou entrega da Fatec encerrada: revogue em Settings > Developer settings e apague o secret.
+- **Revogação:** o token classic da `v1.0.0` segue em uso pela publicação automática da #47 e a revogação está pendente até a entrega final da v1 (M7, 22/11/2026), junto com a remoção do secret. Se o fine-grained passar a ser aceito pela organização, ele substitui o classic. Token comprometido ou entrega da Fatec encerrada: revogue em Settings > Developer settings e apague o secret.
 - O token nunca é impresso nem interpolado em `run`.
+
+#### Pontos de atenção da primeira publicação
+
+- Na `v1.0.0` foi usado o PAT classic com escopo `repo`, porque a organização não listou o repositório da Fatec na criação do token fine-grained.
+- O primeiro deploy do Pages travou e só voltou depois de um commit vazio em `main` do repositório da Fatec (`git commit --allow-empty` e push). Se uma publicação aparecer commitada mas o site não atualizar, esse é o caminho antes de investigar mais.
 
 #### Plano B manual
 
@@ -101,6 +106,15 @@ Se o workflow não puder rodar (token indisponível, Actions fora do ar), o PO p
 #### Na V2
 
 O workflow não é removido: fica inerte, porque a classificação `is-release` só aceita tag `v1.x.y` (qualquer outra pula o job `publish`) e a guarda recusa tag fora da `main`. Continua podendo publicar uma correção `v1.x.y` se a Fatec pedir. Remover é um `Chore` opcional quando a entrega da Fatec for encerrada.
+
+## Versionamento (Changesets)
+
+Três workflows em `.github/workflows/`, descritos aqui porque os arquivos não têm comentários. A regra de incremento e o fluxo estão em [`roadmap.md`](../product/roadmap.md#versionamento).
+
+- **`changeset-check.yml`** (`pull_request` para a `staging`): roda `npx changeset status --since=origin/staging` e falha sem changeset. O job é pulado quando o head é `changeset-release/staging` (PR de versão) ou `main` (retorno depois de hotfix, cujo changeset já foi consumido; conflito em `CHANGELOG.md` e `package.json` nesse retorno se resolve à mão).
+- **`version.yml`** (push na `staging` e `workflow_dispatch`): `changesets/action@v2` com `version-script: npm run changeset:version`, que aplica `changeset version` e sincroniza o `package-lock.json`. Abre ou atualiza o PR `changeset-release/staging` → `staging` com título e commit `Chore :see_no_evil: Atualiza versão e CHANGELOG`. Com só changesets vazios, a versão não muda. O PR aberto com `GITHUB_TOKEN` não dispara CI; a validação completa acontece no push na `staging` depois do merge. Exige "Allow GitHub Actions to create and approve pull requests" ligado em Settings > Actions > General.
+- **`release.yml`** (push na `main`, sem `workflow_dispatch`): `scripts/prepareRelease.ts` lê a versão do `package.json`, as tags e o `CHANGELOG.md`. Com versão `>= 1.0.0` e sem a tag `vX.Y.Z`, `gh release create` cria a tag e o Release na `main` com a seção do `CHANGELOG.md`; com `0.x` ou tag existente não faz nada. Para `1.x`, o job `publish-fatec` chama `fatec-pages.yml` com a tag e o `FATEC_PAGES_TOKEN`; `2.0.0` em diante não publica. Tag e Release criados por engano: `gh release delete <tag> --cleanup-tag`.
+- **Hotfix:** o changeset `patch` e o `npm run changeset:version` rodam na `hotfix/*`, antes do PR para a `main`; o push cria a tag normalmente.
 
 ## Variáveis
 
