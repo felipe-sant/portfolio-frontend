@@ -3,8 +3,11 @@ import { Link } from "react-router-dom"
 import ButtonLink from "@/components/ButtonLink"
 import CopyEmailButton from "@/components/CopyEmailButton"
 import Icon from "@/components/Icon"
+import ResumeLink from "@/components/ResumeLink"
+import ResumeModal from "@/components/ResumeModal"
 import useLocalizedPath from "@/hooks/useLocalizedPath"
 import usePageTransition from "@/hooks/usePageTransition"
+import useResume from "@/hooks/useResume"
 import FALLBACK_LANGUAGE from "@/i18n/fallbackLanguage"
 import resolveSupportedLanguage from "@/i18n/resolveSupportedLanguage"
 import ROUTES from "@/routers/paths"
@@ -131,6 +134,7 @@ function FooterNavItem({ id, path }: FooterNavItemProps) {
 
 function NavigationBlock({ profile }: ProfileBlockProps) {
     const { t } = useTranslation()
+    const resume = useResume()
 
     return (
         <>
@@ -158,18 +162,19 @@ function NavigationBlock({ profile }: ProfileBlockProps) {
                         </li>
                     )}
                     <li>
-                        <button
-                            type="button"
-                            disabled
+                        <ResumeLink
+                            href={resume.href}
+                            onOpen={resume.open}
                             className={css.resume}
                             aria-label={t("footer.resumeName")}
                         >
                             <span aria-hidden="true">{t("footer.resume")}</span>
                             <span aria-hidden="true">{t("symbols.download")}</span>
-                        </button>
+                        </ResumeLink>
                     </li>
                 </ul>
             </div>
+            <ResumeModal isOpen={resume.isOpen} onClose={resume.close} />
         </>
     )
 }

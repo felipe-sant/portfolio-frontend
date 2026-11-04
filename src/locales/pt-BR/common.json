@@ -68,7 +68,7 @@
             "heading": "Navegação"
         },
         "resume": "Currículo em PDF",
-        "resumeName": "Currículo em PDF, indisponível no momento",
+        "resumeName": "Currículo em PDF, abre a pré-visualização",
         "copyright": "© {{year}} · {{name}}",
         "version": "v{{version}}"
     },

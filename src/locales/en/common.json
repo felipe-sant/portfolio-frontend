@@ -68,7 +68,7 @@
             "heading": "Navigation"
         },
         "resume": "Resume in PDF",
-        "resumeName": "Resume in PDF, currently unavailable",
+        "resumeName": "Resume in PDF, opens the preview",
         "copyright": "© {{year}} · {{name}}",
         "version": "v{{version}}"
     },

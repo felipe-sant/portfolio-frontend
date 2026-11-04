@@ -1,9 +1,20 @@
+import type { ReactElement, ReactNode } from "react"
 import { describe, expect, it } from "vitest"
-import { act, render, screen } from "@testing-library/react"
+import { MemoryRouter } from "react-router-dom"
+import { act, render as baseRender, screen, within } from "@testing-library/react"
+import userEvent from "@testing-library/user-event"
 import ContactChannels from "@/components/ContactChannels"
 import setLanguage from "@/i18n/setLanguage"
 import buildProfile from "@/testUtils/buildProfile"
 import expectNoAxeViolations from "@/testUtils/expectNoAxeViolations"
+
+function RouterWrapper({ children }: { children: ReactNode }) {
+    return <MemoryRouter>{children}</MemoryRouter>
+}
+
+function render(ui: ReactElement) {
+    return baseRender(ui, { wrapper: RouterWrapper })
+}
 
 const PROFILE = buildProfile({
     location: {
@@ -75,16 +86,35 @@ describe("ContactChannels", () => {
         expect(screen.queryByText("Remoto ou híbrido na região")).not.toBeInTheDocument()
     })
 
-    it("Baixar CV é botão desabilitado sem href, com o nome acessível de indisponível", () => {
+    it("Baixar CV é link do PDF com o nome acessível de pré-visualização", () => {
         render(<ContactChannels profile={PROFILE} />)
-        const resume = screen.getByRole("button", {
-            name: "Baixar CV (PDF), indisponível no momento"
+        const resume = screen.getByRole("link", {
+            name: "Baixar CV (PDF), abre a pré-visualização"
         })
 
-        expect(resume).toBeDisabled()
         expect(resume).toHaveTextContent("Baixar CV")
-        expect(resume).not.toHaveAttribute("href")
-        expect(screen.queryByRole("link", { name: /CV/ })).not.toBeInTheDocument()
+        expect(resume).toHaveAttribute("href", "/cv/cv-pt-BR.pdf")
+        expect(resume).not.toHaveAttribute("download")
+        expect(resume).not.toHaveAttribute("target")
+        expect(screen.queryByRole("button", { name: /Baixar CV/ })).not.toBeInTheDocument()
+    })
+
+    it("clicar em Baixar CV abre o modal do PDF e fechar devolve o foco ao link", async () => {
+        render(<ContactChannels profile={PROFILE} />)
+        const resume = screen.getByRole("link", { name: /Baixar CV/ })
+
+        await userEvent.click(resume)
+
+        const dialog = screen.getByRole("dialog", { name: "Currículo" })
+        expect(within(dialog).getByTitle("Currículo em PDF")).toHaveAttribute(
+            "src",
+            "/cv/cv-pt-BR.pdf"
+        )
+
+        await userEvent.click(within(dialog).getByRole("button", { name: "Fechar" }))
+
+        expect(screen.queryByRole("dialog")).not.toBeInTheDocument()
+        expect(resume).toHaveFocus()
     })
 
     it("não tem agendamento, lista de redes nem vaga fixa", () => {
@@ -117,13 +147,13 @@ describe("ContactChannels", () => {
         })
         expect(screen.queryByText(/channels\.|resume\./)).not.toBeInTheDocument()
         expect(
-            screen.getByRole("button", {
+            screen.getByRole("link", {
                 name:
                     language === "en"
-                        ? "Download CV (PDF), currently unavailable"
-                        : "Descargar CV (PDF), no disponible por ahora"
+                        ? "Download CV (PDF), opens the preview"
+                        : "Descargar CV (PDF), abre la vista previa"
             })
-        ).toBeDisabled()
+        ).toHaveAttribute("href", `/cv/cv-${language}.pdf`)
     })
 
     it("não tem violações de acessibilidade nos estados normal e carregando", async () => {
