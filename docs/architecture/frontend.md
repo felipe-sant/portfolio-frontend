@@ -140,4 +140,4 @@ Toda feature com texto de UI entrega o texto nos três idiomas, e chave sem uso 
 - Vitest com Testing Library em `jsdom`; o teste fica em `test/` dentro da pasta do arquivo testado.
 - Teste de página e de componente afirma o texto em português; teste que lê a store usa `renderWithStore`.
 - Teste de hook com `renderHook` e de função pura sem renderizar interface.
-- `npm run test:cov` aplica cobertura mínima de 80% em statements, branches, functions e lines. O CI roda a suíte inteira com cobertura em push e em PR para a `main`, e só os testes afetados nos demais PRs.
+- `npm run test:cov` aplica cobertura mínima de 80% em statements, branches, functions e lines. O CI roda a suíte inteira com cobertura em push, e só os testes afetados nos PRs para a `staging`.

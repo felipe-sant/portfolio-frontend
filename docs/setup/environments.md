@@ -17,11 +17,11 @@ A hospedagem é a Vercel, num projeto só (decisão em [ADR 0003](../adr/0003-ho
 PR -> staging -> (promoção) -> main
 ```
 
-1. Toda alteração entra por PR na `staging`. O CI roda no PR e no push na `staging`.
+1. Toda alteração entra por PR na `staging`. O CI roda no PR (com escopo por diff) e no push na `staging`.
 2. Com o CI de push verde, o `deploy.yml` publica a `staging` no beta.
-3. A promoção é um PR de `staging` para `main`; o push na `main` roda o CI e, verde, o `deploy.yml` publica em produção.
+3. A promoção é um PR de `staging` para `main`. O CI não roda de novo no PR: os checks são os do push na `staging`, no mesmo commit, e aparecem uma única vez na página do PR. O push na `main` roda o CI e, verde, o `deploy.yml` publica em produção.
 
-O `deploy.yml` dispara por `workflow_run` do CI e só publica quando o CI de um push na `main` ou na `staging` termina com sucesso: CI falhando, cancelado ou vindo de PR não publica. Como o `workflow_run` usa o arquivo de workflow da branch padrão (`staging`), o primeiro deploy de produção só acontece depois da primeira promoção `staging` -> `main`.
+O `deploy.yml` dispara por `workflow_run` do CI e só publica quando o CI de um push na `main` ou na `staging` termina com sucesso: CI falhando, cancelado ou vindo de PR não publica. O CI também roda em push em `hotfix/**` para validar o PR `hotfix/*` -> `main` (o PR para a `main` não dispara o CI); esse push não publica, porque o `deploy.yml` só escuta `main` e `staging`. Como o `workflow_run` usa o arquivo de workflow da branch padrão (`staging`), o primeiro deploy de produção só acontece depois da primeira promoção `staging` -> `main`.
 
 O beta tem Vercel Authentication ligada (Deployment Protection, "Standard Protection"): abrir exige login Vercel com acesso ao projeto, e `curl -I` sem login devolve a resposta de proteção, sem os headers da aplicação. Para conferir `X-Robots-Tag: noindex` por `curl`, use o bypass de automação da Vercel. A produção é pública e não traz `noindex`.
 
