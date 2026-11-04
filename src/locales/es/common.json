@@ -107,7 +107,9 @@
         "featured": "Destacado"
     },
     "period": {
-        "since": "desde {{date}}"
+        "range": "<start>{{start}}</start> – <end>{{end}}</end>",
+        "since": "desde {{date}}",
+        "current": "Actual"
     },
     "projectStatus": {
         "inDevelopment": "En desarrollo",

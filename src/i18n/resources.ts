@@ -1,3 +1,4 @@
+import enAbout from "@/locales/en/about.json"
 import enCommon from "@/locales/en/common.json"
 import enContact from "@/locales/en/contact.json"
 import enError from "@/locales/en/error.json"
@@ -5,6 +6,7 @@ import enHome from "@/locales/en/home.json"
 import enNotFound from "@/locales/en/notFound.json"
 import enProject from "@/locales/en/project.json"
 import enProjects from "@/locales/en/projects.json"
+import esAbout from "@/locales/es/about.json"
 import esCommon from "@/locales/es/common.json"
 import esContact from "@/locales/es/contact.json"
 import esError from "@/locales/es/error.json"
@@ -12,6 +14,7 @@ import esHome from "@/locales/es/home.json"
 import esNotFound from "@/locales/es/notFound.json"
 import esProject from "@/locales/es/project.json"
 import esProjects from "@/locales/es/projects.json"
+import ptBRAbout from "@/locales/pt-BR/about.json"
 import ptBRCommon from "@/locales/pt-BR/common.json"
 import ptBRContact from "@/locales/pt-BR/contact.json"
 import ptBRError from "@/locales/pt-BR/error.json"
@@ -27,7 +30,8 @@ const ptBR = {
     notFound: ptBRNotFound,
     error: ptBRError,
     projects: ptBRProjects,
-    project: ptBRProject
+    project: ptBRProject,
+    about: ptBRAbout
 }
 
 const en: typeof ptBR = {
@@ -37,7 +41,8 @@ const en: typeof ptBR = {
     notFound: enNotFound,
     error: enError,
     projects: enProjects,
-    project: enProject
+    project: enProject,
+    about: enAbout
 }
 
 const es: typeof ptBR = {
@@ -47,7 +52,8 @@ const es: typeof ptBR = {
     notFound: esNotFound,
     error: esError,
     projects: esProjects,
-    project: esProject
+    project: esProject,
+    about: esAbout
 }
 
 const resources = {

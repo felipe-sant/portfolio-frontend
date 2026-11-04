@@ -14,13 +14,6 @@ async function openHome(page: Page, language: Language) {
     await page.getByRole("article").first().waitFor()
 }
 
-async function expectNotFoundIn(page: Page, language: Language, path: string) {
-    await expect(page).toHaveURL(new RegExp(`/${language}${path}$`))
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText(
-        UI_TEXTS[language].notFoundHeading
-    )
-}
-
 async function expectProjectsIn(page: Page, language: Language) {
     await expect(page).toHaveURL(new RegExp(`/${language}/projects$`))
     await expect(page.getByRole("heading", { level: 1 })).toHaveText(
@@ -55,7 +48,11 @@ for (const language of LANGUAGES) {
             await expect(link).toHaveAttribute("href", `${FATEC_BASE_PATH}${language}/about`)
             await link.click()
 
-            await expectNotFoundIn(page, language, "/about")
+            await expect(page).toHaveURL(new RegExp(`/${language}/about$`))
+            await expect(page.getByRole("heading", { level: 1 })).toHaveText(
+                texts.aboutPage.heading
+            )
+            await expect(page).toHaveTitle(texts.aboutPage.title)
         })
 
         test("RF-HOME-22, RF-HOME-25: a saída final Ver todos os projetos leva à lista do idioma", async ({

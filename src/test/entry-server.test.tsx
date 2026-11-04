@@ -58,6 +58,21 @@ const EXPECTED_BY_FILE: Record<string, { heading: string; content: string; langu
         content: "Correo directo",
         language: "es"
     },
+    "pt-BR/about.html": {
+        heading: "Luiz Felipe dos Santos",
+        content: "Desenvolvedor full stack em TypeScript.",
+        language: "pt-BR"
+    },
+    "en/about.html": {
+        heading: "Luiz Felipe dos Santos",
+        content: "Desenvolvedor full stack em TypeScript.",
+        language: "en"
+    },
+    "es/about.html": {
+        heading: "Luiz Felipe dos Santos",
+        content: "Desenvolvedor full stack em TypeScript.",
+        language: "es"
+    },
     "404.html": {
         heading: "Page not found",
         content: "The address may have changed or the project is no longer online.",

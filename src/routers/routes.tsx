@@ -10,6 +10,7 @@ import redirectRootLoader from "@/routers/redirectRootLoader"
 import type SupportedLanguage from "@/types/language/SupportedLanguage.types"
 
 const Contact = lazy(() => import("@/pages/Contact.page"))
+const About = lazy(() => import("@/pages/About.page"))
 const Home = lazy(() => import("@/pages/Home.page"))
 const NotFound = lazy(() => import("@/pages/NotFound.page"))
 const Project = lazy(() => import("@/pages/Project.page"))
@@ -35,6 +36,10 @@ const pageRoutes: RouteObject[] = [
     {
         path: ROUTES.contact.slice(1),
         element: <Contact />
+    },
+    {
+        path: ROUTES.about.slice(1),
+        element: <About />
     },
     {
         path: ROUTES.notFound,

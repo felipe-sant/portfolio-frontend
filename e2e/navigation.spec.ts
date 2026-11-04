@@ -102,9 +102,10 @@ test.describe("cabeçalho e navegação", () => {
                 const heading = page.getByRole("heading", { level: 1 })
                 const texts = UI_TEXTS[language]
                 const expected = {
+                    home: { heading: texts.homeHeading, title: texts.homeTitle },
                     projects: { heading: texts.projects.heading, title: texts.projects.title },
-                    contact: { heading: texts.contact.heading, title: texts.contact.title },
-                    about: { heading: texts.notFoundHeading, title: texts.notFoundTitle }
+                    about: { heading: texts.aboutPage.heading, title: texts.aboutPage.title },
+                    contact: { heading: texts.contact.heading, title: texts.contact.title }
                 }[id]
                 await expect(heading).toHaveText(expected.heading)
                 await expect(heading).toBeFocused()

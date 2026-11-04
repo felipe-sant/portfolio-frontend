@@ -249,6 +249,36 @@ describe("mountClient com caminho pré-renderizado", () => {
     })
 
     it.each([
+        ["pt-BR/about.html", "pt-BR", "/pt-BR/about"],
+        ["en/about.html", "en", "/en/about"]
+    ])("hidrata %s sem erro nem aviso e mantém o h1 do HTML", async (file, language, path) => {
+        class StubObserver {
+            observe = vi.fn()
+            disconnect = vi.fn()
+            unobserve = vi.fn()
+            takeRecords = vi.fn(() => [])
+        }
+        vi.stubGlobal("IntersectionObserver", StubObserver)
+        injectPrerendered(file, rootElement)
+        await i18n.changeLanguage(language)
+        window.history.pushState({}, "", path)
+        const heading = screen.getByRole("heading", { level: 1, name: "Luiz Felipe dos Santos" })
+        const hiddenDetail = rootElement.querySelectorAll("li > [hidden]")
+        const consoleSpies = spyOnConsole()
+
+        await mount()
+        await settle()
+
+        expect(screen.getByRole("heading", { level: 1, name: "Luiz Felipe dos Santos" })).toBe(
+            heading
+        )
+        expect(hiddenDetail.length).toBeGreaterThan(0)
+        expect(rootElement.querySelectorAll("li > [hidden]")).toHaveLength(hiddenDetail.length)
+        expect(consoleSpies.error).not.toHaveBeenCalled()
+        expect(hydrationWarnings(consoleSpies.warn)).toEqual([])
+    })
+
+    it.each([
         [
             "o README do projeto",
             `pt-BR/projects/${PROJECT_ID}.html`,

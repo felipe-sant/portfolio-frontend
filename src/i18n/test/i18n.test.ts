@@ -339,4 +339,159 @@ describe("i18n", () => {
 
         expect(i18n.t("common:resume.unavailableName")).toBe(expected)
     })
+
+    it.each([
+        [
+            "pt-BR",
+            "Informações · Luiz Felipe dos Santos",
+            "Quem é Luiz Felipe dos Santos: sobre mim, stack, trajetória e formação.",
+            "Informações",
+            "Foto de Luiz Felipe dos Santos",
+            ["Sobre mim", "Stack", "Certificados", "Como eu trabalho", "Trajetória"],
+            "Selecione um item para ver o detalhe.",
+            ["Experiências profissionais", "Formações", "Cursos"],
+            [
+                "Fechar",
+                "Responsabilidades",
+                "Principais disciplinas",
+                "Tecnologias",
+                "Certificados",
+                "Projetos relacionados"
+            ],
+            ["Não foi possível carregar esta parte da página.", "Tentar novamente"]
+        ],
+        [
+            "en",
+            "About · Luiz Felipe dos Santos",
+            "Who Luiz Felipe dos Santos is: about me, stack, background and education.",
+            "About",
+            "Photo of Luiz Felipe dos Santos",
+            ["About me", "Stack", "Certificates", "How I work", "Background"],
+            "Select an item to see the details.",
+            ["Professional experience", "Education", "Courses"],
+            [
+                "Close",
+                "Responsibilities",
+                "Main subjects",
+                "Technologies",
+                "Certificates",
+                "Related projects"
+            ],
+            ["This part of the page could not be loaded.", "Try again"]
+        ],
+        [
+            "es",
+            "Información · Luiz Felipe dos Santos",
+            "Quién es Luiz Felipe dos Santos: sobre mí, stack, trayectoria y formación.",
+            "Información",
+            "Foto de Luiz Felipe dos Santos",
+            ["Sobre mí", "Stack", "Certificados", "Cómo trabajo", "Trayectoria"],
+            "Selecciona un elemento para ver el detalle.",
+            ["Experiencia profesional", "Formación", "Cursos"],
+            [
+                "Cerrar",
+                "Responsabilidades",
+                "Principales asignaturas",
+                "Tecnologías",
+                "Certificados",
+                "Proyectos relacionados"
+            ],
+            ["No se pudo cargar esta parte de la página.", "Intentar de nuevo"]
+        ]
+    ])(
+        "resolve os textos fixos do namespace about em %s",
+        async (
+            language,
+            title,
+            description,
+            label,
+            photoAlt,
+            headings,
+            hint,
+            groups,
+            modal,
+            error
+        ) => {
+            const i18n = await loadPage({ path: `/${language}` })
+
+            expect(i18n.t("about:meta.title")).toBe(title)
+            expect(i18n.t("about:meta.description")).toBe(description)
+            expect(i18n.t("about:hero.label")).toBe(label)
+            expect(i18n.t("about:hero.photoAlt", { name: "Luiz Felipe dos Santos" })).toBe(photoAlt)
+            expect([
+                i18n.t("about:aboutMe.heading"),
+                i18n.t("about:stack.heading"),
+                i18n.t("about:complements.certificates"),
+                i18n.t("about:complements.workStyle"),
+                i18n.t("about:trajectory.heading")
+            ]).toEqual(headings)
+            expect(i18n.t("about:trajectory.hint")).toBe(hint)
+            expect([
+                i18n.t("about:trajectory.groups.experience"),
+                i18n.t("about:trajectory.groups.education"),
+                i18n.t("about:trajectory.groups.course")
+            ]).toEqual(groups)
+            expect([
+                i18n.t("about:modal.close"),
+                i18n.t("about:modal.responsibilities"),
+                i18n.t("about:modal.disciplines"),
+                i18n.t("about:modal.technologies"),
+                i18n.t("about:modal.certificates"),
+                i18n.t("about:modal.relatedProjects")
+            ]).toEqual(modal)
+            expect([i18n.t("about:loadError.message"), i18n.t("about:loadError.retry")]).toEqual(
+                error
+            )
+        }
+    )
+
+    it.each([
+        ["pt-BR", "1 tecnologia", "2 tecnologias", "1 item", "2 itens"],
+        ["en", "1 technology", "2 technologies", "1 item", "2 items"],
+        ["es", "1 tecnología", "2 tecnologías", "1 elemento", "2 elementos"]
+    ])(
+        "resolve o plural das contagens de grupo em %s",
+        async (language, stackOne, stackMany, itemOne, itemMany) => {
+            const i18n = await loadPage({ path: `/${language}` })
+
+            expect(i18n.t("about:stack.count", { count: 1 })).toBe(stackOne)
+            expect(i18n.t("about:stack.count", { count: 2 })).toBe(stackMany)
+            expect(i18n.t("about:trajectory.count", { count: 1 })).toBe(itemOne)
+            expect(i18n.t("about:trajectory.count", { count: 2 })).toBe(itemMany)
+        }
+    )
+
+    it.each([
+        [
+            "pt-BR",
+            "Baixar CV (PDF), indisponível no momento",
+            "Atual",
+            "desde 06/2026",
+            "<start>06/2024</start> – <end>05/2026</end>"
+        ],
+        [
+            "en",
+            "Download CV (PDF), currently unavailable",
+            "Current",
+            "since 06/2026",
+            "<start>06/2024</start> – <end>05/2026</end>"
+        ],
+        [
+            "es",
+            "Descargar CV (PDF), no disponible por ahora",
+            "Actual",
+            "desde 06/2026",
+            "<start>06/2024</start> – <end>05/2026</end>"
+        ]
+    ])(
+        "resolve o CV indisponível e o período de common em %s",
+        async (language, unavailable, current, since, range) => {
+            const i18n = await loadPage({ path: `/${language}` })
+
+            expect(i18n.t("common:resume.unavailableName")).toBe(unavailable)
+            expect(i18n.t("common:period.current")).toBe(current)
+            expect(i18n.t("common:period.since", { date: "06/2026" })).toBe(since)
+            expect(i18n.t("common:period.range", { start: "06/2024", end: "05/2026" })).toBe(range)
+        }
+    )
 })
