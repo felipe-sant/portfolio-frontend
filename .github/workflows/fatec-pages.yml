@@ -87,6 +87,17 @@ jobs:
             group: fatec-publish
             cancel-in-progress: false
         steps:
+            - name: Check tag is on main
+              env:
+                  GH_TOKEN: ${{ github.token }}
+                  REPOSITORY: ${{ github.repository }}
+                  TAG: ${{ inputs.tag }}
+              run: |
+                  status=$(gh api "repos/$REPOSITORY/compare/$TAG...main" --jq .status)
+                  if [[ "$status" != "ahead" && "$status" != "identical" ]]; then
+                      echo "A tag $TAG não está na main (status: $status)"
+                      exit 1
+                  fi
             - name: Checkout
               uses: actions/checkout@v7
             - name: Setup Node

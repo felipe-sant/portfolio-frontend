@@ -72,4 +72,19 @@ describe("fatec-pages.yml", () => {
     it("não tem linha de comentário", () => {
         expect(lines.filter((line) => line.trim().startsWith("#"))).toEqual([])
     })
+
+    it("só publica se o commit da tag está na main deste repositório", () => {
+        const guardIndex = publishJob.indexOf("compare/$TAG...main")
+        expect(guardIndex).toBeGreaterThan(-1)
+        expect(publishJob.indexOf("fatec-jacarei-dsm-portfolio")).toBeGreaterThan(guardIndex)
+        expect(publishJob).toContain("repos/$REPOSITORY/compare/$TAG...main")
+        expect(publishJob).toContain("REPOSITORY: ${{ github.repository }}")
+        expect(publishJob).toContain('"$status" != "ahead"')
+    })
+
+    it("usa o token do GitHub só no passo da guarda, com contents read", () => {
+        expect(publishJob).toContain("GH_TOKEN: ${{ github.token }}")
+        expect(workflow.match(/github\.token/g)).toHaveLength(1)
+        expect(workflow).toMatch(/^permissions:\n {4}contents: read$/m)
+    })
 })
