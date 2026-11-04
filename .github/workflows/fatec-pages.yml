@@ -7,6 +7,9 @@ on:
                 type: string
                 required: false
                 default: ""
+        secrets:
+            FATEC_PAGES_TOKEN:
+                required: false
         outputs:
             is-release:
                 description: "true quando a tag informada é v1.x.y"
@@ -20,6 +23,10 @@ on:
 
 permissions:
     contents: read
+
+concurrency:
+    group: fatec-pages-${{ inputs.tag }}
+    cancel-in-progress: false
 
 jobs:
     build:
@@ -70,3 +77,52 @@ jobs:
                   path: dist/
                   include-hidden-files: true
                   if-no-files-found: error
+
+    publish:
+        name: Publish to Fatec
+        needs: build
+        if: needs.build.outputs.is-release == 'true'
+        runs-on: ubuntu-latest
+        concurrency:
+            group: fatec-publish
+            cancel-in-progress: false
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v7
+            - name: Setup Node
+              uses: actions/setup-node@v7
+              with:
+                  node-version-file: ".nvmrc"
+                  cache: npm
+                  cache-dependency-path: package-lock.json
+            - name: Install dependencies
+              run: npm ci
+            - name: Download artifact
+              uses: actions/download-artifact@v7
+              with:
+                  name: fatec-pages
+                  path: fatec-artifact
+            - name: Checkout Fatec repository
+              uses: actions/checkout@v7
+              with:
+                  repository: fatec-jacarei-dsm-portfolio/ra2581392423047
+                  ref: main
+                  token: ${{ secrets.FATEC_PAGES_TOKEN }}
+                  path: fatec-repository
+                  fetch-depth: 1
+            - name: Replace docs
+              run: npm run publish:fatec:docs -- fatec-artifact fatec-repository
+            - name: Commit and push
+              working-directory: fatec-repository
+              env:
+                  TAG: ${{ inputs.tag }}
+              run: |
+                  git config user.name "github-actions[bot]"
+                  git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+                  git add --all docs
+                  if [ -z "$(git status --porcelain)" ]; then
+                      echo "Nada a publicar"
+                      exit 0
+                  fi
+                  git commit -m "Publica a $TAG do portfólio"
+                  git push origin main
