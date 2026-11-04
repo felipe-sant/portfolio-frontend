@@ -301,14 +301,14 @@ test.describe("layout", () => {
 
 test.describe("cartão Agora", () => {
     for (const language of LANGUAGES) {
-        test(`RF-ABOUT-07: em ${language} o cartão é um aside nomeado com cargo, modalidade e links em nova aba`, async ({
+        test(`RF-ABOUT-07: em ${language} o cartão é um grupo nomeado com cargo, modalidade e links em nova aba`, async ({
             page
         }) => {
             await openAbout(page, language)
             const texts = UI_TEXTS[language].aboutPage
             const about = readAbout(language)
 
-            const card = page.getByRole("complementary", { name: texts.nowHeading })
+            const card = page.getByRole("group", { name: texts.nowHeading })
 
             await expect(card).toHaveCount(1)
             await expect(card).toContainText(texts.nowRole)
@@ -331,7 +331,7 @@ test.describe("cartão Agora", () => {
     }) => {
         await openAbout(page, "pt-BR")
         const about = readAbout("pt-BR")
-        const card = page.getByRole("complementary", {
+        const card = page.getByRole("group", {
             name: UI_TEXTS["pt-BR"].aboutPage.nowHeading
         })
         const lastParagraph = page
@@ -349,16 +349,16 @@ test.describe("cartão Agora", () => {
         expect(narrowCard.y).toBeGreaterThanOrEqual(narrowParagraph.y + narrowParagraph.height)
     })
 
-    test("A11Y-G04: o aside do cartão não viola landmark-complementary-is-top-level (bug: aside dentro de section)", async ({
+    test("A11Y-G04: o cartão não é um aside aninhado e landmark-complementary-is-top-level não aponta nada", async ({
         page
     }) => {
-        test.fail(true, "bug: aside dentro da section aria-labelledby, aguardando issue")
         await openAbout(page, "pt-BR")
 
+        await expect(page.getByRole("main").locator("aside")).toHaveCount(0)
+        await expect(page.getByRole("complementary")).toHaveCount(0)
         const { violations } = await new AxeBuilder({ page })
             .withRules(["landmark-complementary-is-top-level"])
             .analyze()
-
         expect(violations.map((violation) => violation.id)).toEqual([])
     })
 })
@@ -522,18 +522,13 @@ test.describe("modal da trajetória", () => {
         }
     })
 
-    test("A11Y-G03, A11Y-G04: sem violação do axe com o modal aberto", async ({
-        page
-    }, testInfo) => {
+    test("A11Y-G03, A11Y-G04: sem violação do axe com o modal aberto", async ({ page }) => {
         await openAbout(page, "pt-BR")
         const { opener } = await getFirstEntryOpener(page, "pt-BR")
         await opener.click()
         await expect(getDialog(page)).toBeVisible()
 
-        const builder = new AxeBuilder({ page })
-        const { violations } = await (
-            testInfo.project.name.endsWith("dark") ? builder.exclude("#about-me-heading") : builder
-        ).analyze()
+        const { violations } = await new AxeBuilder({ page }).analyze()
 
         expect(violations.map((violation) => violation.id)).toEqual([])
     })
@@ -635,10 +630,6 @@ test.describe("carregamento e erro", () => {
     test("RF-ABOUT-26, A11Y-G14: depois do Tentar novamente da trajetória o foco vai para o título", async ({
         page
     }) => {
-        test.fixme(
-            true,
-            "bug intermitente: o foco cai no body em parte das execuções, aguardando issue"
-        )
         const texts = UI_TEXTS["pt-BR"].aboutPage
         const about = readAbout("pt-BR")
         await page.route("**/content/pt-BR/timeline.json", (route) => route.abort())

@@ -212,7 +212,7 @@ test.describe("sem JavaScript, informações", () => {
             for (const paragraph of about.aboutParagraphs) {
                 await expect(main.getByText(paragraph, { exact: true })).toBeVisible()
             }
-            await expect(main.getByRole("complementary", { name: texts.nowHeading })).toBeVisible()
+            await expect(main.getByRole("group", { name: texts.nowHeading })).toBeVisible()
             for (const principle of about.workPrinciples) {
                 await expect(main.getByText(principle, { exact: true })).toBeVisible()
             }
