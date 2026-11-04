@@ -204,7 +204,7 @@ describe("useAbout", () => {
 
         expect(requested.some((url) => url.endsWith("timeline.json"))).toBe(true)
         expect(requested.some((url) => url.endsWith("profile.json"))).toBe(false)
-        await waitFor(() => expect(heading).toHaveFocus())
+        expect(heading).toHaveFocus()
     })
 
     it("refaz só o perfil no retry do perfil e foca o alerta se falhar de novo", async () => {
@@ -228,7 +228,7 @@ describe("useAbout", () => {
 
         expect(requested.some((url) => url.endsWith("profile.json"))).toBe(true)
         expect(requested.some((url) => url.endsWith("timeline.json"))).toBe(false)
-        await waitFor(() => expect(alert).toHaveFocus())
+        expect(alert).toHaveFocus()
     })
 
     it("abre e fecha o item e devolve o foco ao botão guardado, mesmo com o foco no body", async () => {

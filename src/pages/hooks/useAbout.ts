@@ -14,6 +14,10 @@ import sortStackGroups from "@/utils/sortStackGroups"
 
 type RetrySource = "profile" | "timeline"
 
+type RetryRequest = {
+    source: RetrySource
+}
+
 type FocusableName = `${RetrySource}Heading` | `${RetrySource}Alert`
 
 type SelectedItem = {
@@ -40,6 +44,8 @@ function useAbout() {
     const [selected, setSelected] = useState<SelectedItem | null>(null)
     const triggers = useRef(new Map<string, HTMLButtonElement>())
     const itemToFocus = useRef<string | null>(null)
+    const [retryRequest, setRetryRequest] = useState<RetryRequest | null>(null)
+    const handledRetry = useRef<RetryRequest | null>(null)
 
     if (selected && selected.pathname !== pathname) {
         setSelected(null)
@@ -54,11 +60,32 @@ function useAbout() {
         }
     }, [selectedItem])
 
-    async function retry(source: RetrySource) {
-        const result = await (source === "profile" ? profileQuery : timelineQuery).refetch()
-        const target: FocusableName = result.isError ? `${source}Alert` : `${source}Heading`
+    const isProfileError = profileQuery.isError && !profileQuery.isFetching
+    const isTimelineError = timelineQuery.isError && !timelineQuery.isFetching
+    const isProfileFetching = profileQuery.isFetching
+    const isTimelineFetching = timelineQuery.isFetching
 
-        window.setTimeout(() => document.getElementById(FOCUS_IDS[target])?.focus(), 0)
+    useEffect(() => {
+        if (retryRequest === null || retryRequest === handledRetry.current) {
+            return
+        }
+        const { source } = retryRequest
+        const isFetching = source === "profile" ? isProfileFetching : isTimelineFetching
+        if (isFetching) {
+            return
+        }
+        const isError = source === "profile" ? isProfileError : isTimelineError
+        const target: FocusableName = isError ? `${source}Alert` : `${source}Heading`
+        const element = document.getElementById(FOCUS_IDS[target])
+        if (element) {
+            element.focus()
+            handledRetry.current = retryRequest
+        }
+    }, [retryRequest, isProfileFetching, isTimelineFetching, isProfileError, isTimelineError])
+
+    async function retry(source: RetrySource) {
+        await (source === "profile" ? profileQuery : timelineQuery).refetch()
+        setRetryRequest({ source })
     }
 
     function open(item: TimelineItem) {
@@ -87,8 +114,6 @@ function useAbout() {
     )
     const certificates = timeline?.certificates ?? []
     const workPrinciples = profile?.workPrinciples ?? []
-    const isProfileError = profileQuery.isError && !profileQuery.isFetching
-    const isTimelineError = timelineQuery.isError && !timelineQuery.isFetching
     const isProfilePending = profileQuery.isLoading || isProfileError
     const isTimelinePending = timelineQuery.isLoading || isTimelineError
     const showCertificates = isTimelinePending || certificates.length > 0
