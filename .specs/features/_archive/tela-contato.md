@@ -2,7 +2,7 @@
 
 > Status: `implementada`
 > Encerrada em: `2026-11-04`
-> Commits: `5ec5546..8307b26` (inclui o merge de `origin/staging` com a #37) · PR: — · Issue: [#38](https://github.com/felipe-sant/portfolio-frontend/issues/38)
+> Commits: `origin/staging..feat/38-tela-contato` (inclui o merge de `origin/staging` com a #37) · PR: [#108](https://github.com/felipe-sant/portfolio-frontend/pull/108) · Issue: [#38](https://github.com/felipe-sant/portfolio-frontend/issues/38)
 
 ## O que foi pedido
 
