@@ -109,7 +109,7 @@ npm run preview:fatec # servidor Node que imita o Pages (arquivo, <caminho>.html
 npm run check:chunk # depois do build: o chunk MarkdownDocument-*.js (markdown + realce) tem de ficar em até 102400 bytes gzip e nenhum chunk de entrada, Início ou Projetos pode conter o react-markdown (CI, job Build)
 npm run og:image  # regera public/images/og-site.png (Chromium do Playwright, versionado)
 npm run lint:fix  # mesma coisa, aplicando as correções automáticas possíveis (oxlint --fix)
-npm run changeset # cria o changeset do PR em .changeset/ (npm run changeset -- --empty gera o vazio, o único válido até a v1)
+npm run changeset # cria o changeset do PR em .changeset/ (npm run changeset -- --empty gera o vazio, para mudança que não altera a versão)
 npm run format    # prettier --write em **/*.{ts,tsx,css,json,md,yml,html}, conforme .prettierrc e .prettierignore
 npm run test:cov  # vitest run --coverage — suíte inteira + relatório de cobertura
 npm run test:e2e  # Playwright (Chromium) + axe em e2e/ contra o build do Pages; exige npm run build:fatec antes
@@ -741,9 +741,10 @@ Commits são atômicos: uma mudança concluída por commit, nunca várias tarefa
   é a `staging`, então a issue fecha no merge do PR para a `staging`.
 - O título segue o padrão do commit principal (`<Tipo> <ícone> [#<número>] <descrição>`).
 - **Todo PR para a `staging` traz um changeset** (`.changeset/*.md`, `npm run changeset`), commitado
-  no próprio PR; até a v1 é sempre o vazio (`npm run changeset -- --empty`), para nenhuma versão
-  `0.x` ser gerada. O tipo (`major`, `minor`, `patch`) segue a regra de incremento de
-  `docs/product/roadmap.md`. Três workflows tratam do versionamento: `changeset-check.yml` (falha
+  no próprio PR; o vazio (`npm run changeset -- --empty`) vale só para o que não altera a versão
+  (documentação, CI, testes). O tipo (`major`, `minor`, `patch`) segue a regra de incremento de
+  `docs/product/roadmap.md`. A versão parte da `1.0.0` e só sobe quando o PR de versão é mergeado:
+  os changesets acumulam e o maior tipo do lote decide o salto. Três workflows tratam do versionamento: `changeset-check.yml` (falha
   PR sem changeset; ignora `changeset-release/staging` e PR com head `main`), `version.yml` (push
   na `staging`: abre ou atualiza o PR de versão, sem CI) e `release.yml` (push na `main`: tag e
   Release só com versão `>= 1.0.0` e tag inexistente; chama `fatec-pages.yml` na `1.x`). Detalhe em
