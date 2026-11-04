@@ -2,8 +2,9 @@ name: CI
 
 on:
     push:
-        branches: [main, staging]
+        branches: [main, staging, "hotfix/**"]
     pull_request:
+        branches: [staging]
 
 permissions:
     contents: read
