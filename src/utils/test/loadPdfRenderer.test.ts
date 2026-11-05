@@ -1,4 +1,5 @@
 // @vitest-environment node
+import { readFileSync } from "node:fs"
 import { pathToFileURL } from "node:url"
 import { join } from "node:path"
 import { afterEach, describe, expect, it, vi } from "vitest"
@@ -43,10 +44,7 @@ describe("loadPdfRenderer", () => {
 
         expect(GlobalWorkerOptions.workerSrc).toBe("/assets/pdf.worker.min-abc.mjs")
         expect(getDocument).toHaveBeenCalledTimes(1)
-        const options = (getDocument.mock.calls[0] as unknown[])[0] as Record<string, unknown>
-        expect(options.url).toBe("/cv/cv-pt-BR.pdf")
-        expect(options.isEvalSupported).not.toBe(true)
-        expect(options.enableScripting).not.toBe(true)
+        expect(getDocument).toHaveBeenCalledWith({ url: "/cv/cv-pt-BR.pdf" })
     })
 
     it("não avalia o pdfjs ao importar o módulo, só ao carregar", async () => {
@@ -63,4 +61,19 @@ describe("loadPdfRenderer", () => {
         await loadPdfRenderer()
         expect(evaluated).toHaveBeenCalledTimes(1)
     })
+})
+
+describe("build legacy do pdfjs-dist", () => {
+    it.each(["pdf.mjs", "pdf.worker.mjs"])(
+        "%s não usa eval nem new Function, então não há avaliação dinâmica a desligar",
+        (file) => {
+            const source = readFileSync(
+                join(process.cwd(), "node_modules", "pdfjs-dist", "legacy", "build", file),
+                "utf-8"
+            )
+
+            expect(source).not.toMatch(/\beval\s*\(/)
+            expect(source).not.toMatch(/new\s+Function\s*\(/)
+        }
+    )
 })
