@@ -159,7 +159,7 @@ test.describe("canais de contato", () => {
         await expect(main.getByRole("status")).toHaveText(texts.copyFailed)
     })
 
-    test("RF-CONTACT-08: Baixar CV é um botão desabilitado com o nome acessível de indisponível e sem link para o PDF", async ({
+    test("RF-CONTACT-08: Baixar CV é um link para o PDF do idioma com o nome acessível de pré-visualização", async ({
         page
     }) => {
         for (const language of LANGUAGES) {
@@ -167,11 +167,11 @@ test.describe("canais de contato", () => {
             await openContact(page, language)
             const main = page.getByRole("main")
 
-            const resume = main.getByRole("button", { name: texts.resumeUnavailableName })
-            await expect(resume).toBeDisabled()
+            const resume = main.getByRole("link", { name: texts.resumeName })
             await expect(resume).toContainText(texts.resumeButton)
-            await expect(main.getByRole("link", { name: texts.resumeButton })).toHaveCount(0)
-            await expect(main.locator('a[href$=".pdf"]')).toHaveCount(0)
+            await expect(resume).toHaveAttribute("href", `${FATEC_BASE_PATH}cv/cv-${language}.pdf`)
+            await expect(resume).not.toHaveAttribute("download", /.*/)
+            await expect(resume).not.toHaveAttribute("target", /.*/)
         }
     })
 
@@ -195,7 +195,7 @@ test.describe("canais de contato", () => {
 
         await expectMinimumTarget(main.getByRole("button", { name: texts.copyEmail }))
         await expectMinimumTarget(main.getByRole("link", { name: texts.sendEmail }))
-        await expectMinimumTarget(main.getByRole("button", { name: texts.resumeUnavailableName }))
+        await expectMinimumTarget(main.getByRole("link", { name: texts.resumeName }))
     })
 
     test("RF-CONTACT-07, NF-TE-04: localização e resposta ficam lado a lado no desktop e nada estoura a largura de 320px", async ({
@@ -485,9 +485,10 @@ test.describe("sem JavaScript", () => {
                 "href",
                 `mailto:${channels.email}`
             )
-            await expect(
-                main.getByRole("button", { name: texts.resumeUnavailableName })
-            ).toBeDisabled()
+            await expect(main.getByRole("link", { name: texts.resumeName })).toHaveAttribute(
+                "href",
+                `${FATEC_BASE_PATH}cv/cv-${language}.pdf`
+            )
             await expect(page.locator("form")).toHaveCount(0)
             await expect(page.getByRole("textbox")).toHaveCount(0)
         })

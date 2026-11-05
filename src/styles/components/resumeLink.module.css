@@ -1,0 +1,9 @@
+.buttonLink {
+    min-width: var(--hit-min);
+    min-height: var(--hit-min);
+    text-decoration: none;
+}
+
+.buttonLink:hover {
+    text-decoration: none;
+}

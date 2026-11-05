@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next"
 import { useLocation } from "react-router-dom"
 import TIMELINE_KINDS from "@/enum/timelineKinds.enum"
 import useLocalizedPath from "@/hooks/useLocalizedPath"
+import useResume from "@/hooks/useResume"
 import FALLBACK_LANGUAGE from "@/i18n/fallbackLanguage"
 import resolveSupportedLanguage from "@/i18n/resolveSupportedLanguage"
 import ROUTES from "@/routers/paths"
@@ -36,6 +37,7 @@ function useAbout() {
     const { t, i18n } = useTranslation(["about", "common"])
     const language = resolveSupportedLanguage(i18n.resolvedLanguage) ?? FALLBACK_LANGUAGE
     const localizedPath = useLocalizedPath()
+    const resume = useResume()
     const { pathname } = useLocation()
     const profileQuery = profileApi.useGetProfileQuery({ lang: language })
     const timelineQuery = timelineApi.useGetTimelineQuery({ lang: language })
@@ -124,6 +126,7 @@ function useAbout() {
         language,
         jsonLd: buildAboutJsonLd(language, { name: t("common:authorName") }, profile, timeline),
         isLoading: profileQuery.isLoading || timelineQuery.isLoading,
+        resume,
         paths: { contact: localizedPath(ROUTES.contact) },
         ids: FOCUS_IDS,
         profile: {

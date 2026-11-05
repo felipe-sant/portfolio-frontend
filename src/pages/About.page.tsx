@@ -1,7 +1,6 @@
 import { useTranslation } from "react-i18next"
 import AboutNowCard from "@/components/AboutNowCard"
 import AvailabilityBadge from "@/components/AvailabilityBadge"
-import Button from "@/components/Button"
 import ButtonLink from "@/components/ButtonLink"
 import CertificateChip from "@/components/CertificateChip"
 import Chip from "@/components/Chip"
@@ -10,6 +9,8 @@ import JsonLd from "@/components/JsonLd"
 import LoadError from "@/components/LoadError"
 import PageMeta from "@/components/PageMeta"
 import ProfilePhoto from "@/components/ProfilePhoto"
+import ResumeLink from "@/components/ResumeLink"
+import ResumeModal from "@/components/ResumeModal"
 import Reveal from "@/components/Reveal"
 import Skeleton from "@/components/Skeleton"
 import SkeletonSwap from "@/components/SkeletonSwap"
@@ -57,6 +58,7 @@ function AboutPage() {
         jsonLd,
         isLoading,
         paths,
+        resume,
         ids,
         profile,
         timeline,
@@ -155,14 +157,16 @@ function AboutPage() {
                                 {data && <p className={css.summary}>{data.summary}</p>}
                             </SkeletonSwap>
                             <div className={css.actions}>
-                                <Button
+                                <ResumeLink
+                                    href={resume.href}
+                                    onOpen={resume.open}
+                                    variant="primary"
                                     size="lg"
-                                    disabled
-                                    aria-label={t("common:resume.unavailableName")}
+                                    aria-label={t("common:resume.downloadPdf")}
                                 >
                                     <Icon name="download" />
                                     {t("common:resume.download")}
-                                </Button>
+                                </ResumeLink>
                                 <ButtonLink to={paths.contact} variant="secondary" size="lg">
                                     {t("common:footer.contact.cta")}
                                 </ButtonLink>
@@ -328,6 +332,7 @@ function AboutPage() {
                 </Reveal>
             )}
             <TrajectoryModal item={selectedItem} onClose={close} />
+            <ResumeModal isOpen={resume.isOpen} onClose={resume.close} />
         </>
     )
 }

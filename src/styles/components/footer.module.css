@@ -97,19 +97,10 @@
     text-decoration: none;
 }
 
-.textLink:hover {
+.textLink:hover,
+.resume:hover {
     color: var(--text-strong);
     text-decoration: underline;
-}
-
-.resume {
-    padding: 0;
-    border: 0;
-    background: transparent;
-    font: inherit;
-    cursor: not-allowed;
-    opacity: 0.6;
-    text-decoration: line-through;
 }
 
 .bottom {

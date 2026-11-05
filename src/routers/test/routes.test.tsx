@@ -176,7 +176,7 @@ describe("routes", () => {
 
         await waitFor(() => expect(router.state.location.pathname).toBe("/en/about"))
         await waitFor(() => expect(document.documentElement.lang).toBe("en"))
-        expect(await screen.findByRole("button", { name: /Download CV/ })).toBeInTheDocument()
+        expect(await screen.findByRole("link", { name: /Download CV/ })).toBeInTheDocument()
     })
 
     it("mantém a não encontrada em /pt-BR/projects/abc, sem rota de projeto", async () => {

@@ -170,22 +170,22 @@ ativo que, com JavaScript, abre o modal de pré-visualização, onde está o dow
 Os caminhos são os de `D32`, sempre com o prefixo do idioma atual (`/pt-BR`, `/en`,
 `/es`).
 
-| De onde               | Ação                                       | Para onde                                                                                         |
-| --------------------- | ------------------------------------------ | ------------------------------------------------------------------------------------------------- |
-| Qualquer tela         | Gato e nome                                | `/` do idioma atual                                                                               |
-| Qualquer tela         | Início, Projetos, Informações, Contato     | `/`, `/projects`, `/about`, `/contact` do idioma atual                                            |
-| Qualquer tela         | `PT`, `EN`, `ES`                           | A mesma URL no idioma escolhido (`/pt-BR`, `/en`, `/es`)                                          |
-| Qualquer tela         | Alternador de tema                         | Fica na mesma tela                                                                                |
-| Rodapé padrão         | "Entrar em contato"                        | `/contact`                                                                                        |
-| Rodapé padrão         | GitHub, LinkedIn                           | Perfis externos (URL do conteúdo), em nova aba (D36)                                              |
-| Rodapé padrão         | Ícone de e-mail                            | `mailto:` com o e-mail do conteúdo                                                                |
-| Rodapé de `/contact`  | Início, Projetos, Informações              | `/`, `/projects`, `/about` do idioma atual                                                        |
-| Rodapé de `/contact`  | GitHub, LinkedIn                           | Perfis externos, em nova aba (D36)                                                                |
-| Rodapé de `/contact`  | "Currículo em PDF"                         | Modal de pré-visualização do PDF do idioma ativo, sem sair da página; sem JavaScript, o PDF (D52) |
-| Página não encontrada | "Ver projetos", "Voltar para o início"     | `/projects`, `/`                                                                                  |
-| Página de erro        | "Tentar novamente", "Voltar para o início" | A mesma URL (recarrega), `/`                                                                      |
-| URL sem rota          | Abrir                                      | Página não encontrada                                                                             |
-| Erro de renderização  | Abrir                                      | Página de erro                                                                                    |
+| De onde               | Ação                                       | Para onde                                                                                                                                                                                                    |
+| --------------------- | ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Qualquer tela         | Gato e nome                                | `/` do idioma atual                                                                                                                                                                                          |
+| Qualquer tela         | Início, Projetos, Informações, Contato     | `/`, `/projects`, `/about`, `/contact` do idioma atual                                                                                                                                                       |
+| Qualquer tela         | `PT`, `EN`, `ES`                           | A mesma URL no idioma escolhido (`/pt-BR`, `/en`, `/es`)                                                                                                                                                     |
+| Qualquer tela         | Alternador de tema                         | Fica na mesma tela                                                                                                                                                                                           |
+| Rodapé padrão         | "Entrar em contato"                        | `/contact`                                                                                                                                                                                                   |
+| Rodapé padrão         | GitHub, LinkedIn                           | Perfis externos (URL do conteúdo), em nova aba (D36)                                                                                                                                                         |
+| Rodapé padrão         | Ícone de e-mail                            | `mailto:` com o e-mail do conteúdo                                                                                                                                                                           |
+| Rodapé de `/contact`  | Início, Projetos, Informações              | `/`, `/projects`, `/about` do idioma atual                                                                                                                                                                   |
+| Rodapé de `/contact`  | GitHub, LinkedIn                           | Perfis externos, em nova aba (D36)                                                                                                                                                                           |
+| Rodapé de `/contact`  | "Currículo em PDF"                         | Modal de pré-visualização do PDF do idioma ativo (`iframe` no desktop com visualizador; em celular ou sem visualizador, páginas em canvas com `pdfjs-dist`), sem sair da página; sem JavaScript, o PDF (D52) |
+| Página não encontrada | "Ver projetos", "Voltar para o início"     | `/projects`, `/`                                                                                                                                                                                             |
+| Página de erro        | "Tentar novamente", "Voltar para o início" | A mesma URL (recarrega), `/`                                                                                                                                                                                 |
+| URL sem rota          | Abrir                                      | Página não encontrada                                                                                                                                                                                        |
+| Erro de renderização  | Abrir                                      | Página de erro                                                                                                                                                                                               |
 
 A carga em `/` redireciona para `/pt-BR`, `/en` ou `/es` (escolha salva, depois navegador, depois
 `en`; NF-IN-09, #53); nenhuma outra rota redireciona por idioma.

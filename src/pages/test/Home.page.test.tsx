@@ -252,6 +252,27 @@ describe("HomePage", () => {
         expect(resume).not.toHaveAttribute("target")
     })
 
+    it("clicar em Baixar CV abre o modal do PDF sem mudar a rota e devolve o foco ao link", async () => {
+        renderHomePage()
+        await screen.findByRole("link", { name: "Projeto Destaque" })
+        const resume = screen.getByRole("link", {
+            name: "Baixar CV (PDF), abre a pré-visualização"
+        })
+
+        await userEvent.click(resume)
+
+        const dialog = screen.getByRole("dialog", { name: "Currículo" })
+        expect(within(dialog).getByTitle("Currículo em PDF")).toHaveAttribute(
+            "src",
+            "/cv/cv-pt-BR.pdf"
+        )
+
+        await userEvent.click(within(dialog).getByRole("button", { name: "Fechar" }))
+
+        expect(screen.queryByRole("dialog")).not.toBeInTheDocument()
+        expect(resume).toHaveFocus()
+    })
+
     it.each([
         ["en", "Featured projects", "View all projects"],
         ["es", "Proyectos destacados", "Ver todos los proyectos"]

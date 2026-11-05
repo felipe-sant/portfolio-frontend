@@ -107,6 +107,23 @@ Se o workflow não puder rodar (token indisponível, Actions fora do ar), o PO p
 
 O workflow não é removido: fica inerte, porque a classificação `is-release` só aceita tag `v1.x.y` (qualquer outra pula o job `publish`) e a guarda recusa tag fora da `main`. Continua podendo publicar uma correção `v1.x.y` se a Fatec pedir. Remover é um `Chore` opcional quando a entrega da Fatec for encerrada.
 
+## Currículo em PDF
+
+Os PDFs do currículo (`public/cv/cv-pt-BR.pdf`, `cv-en.pdf` e `cv-es.pdf`) são gerados à mão por
+`npm run cv:pdf` a partir dos `cv-<idioma>.md` da mesma pasta (Chromium do Playwright) e
+commitados. O build, o CI e a Vercel não geram PDF nem precisam de Chromium para isso. Quando um
+`.md` muda, rode `npm run cv:pdf` e commite os PDFs: o teste
+`scripts/test/resumePdfsUpToDate.test.ts`, que roda no job de testes do CI, regera o PDF em
+temporário e compara o texto extraído com o do PDF versionado, e falha se estiverem diferentes.
+
+Em celular (ponteiro grosso) ou sem visualizador de PDF no navegador, o modal desenha as páginas em
+`<canvas>` com o `pdfjs-dist` (build `legacy`), importado só nessa hora. O worker
+(`pdf.worker.min-<hash>.mjs`) é emitido em `dist/assets/` com o `base` do build e servido da mesma
+origem, sem CDN: o GitHub Pages e a Vercel o entregam como `text/javascript` pela extensão `.mjs`, e
+o `preview:fatec` mapeia `.mjs` do mesmo jeito. `npm run check:chunk` limita o chunk do `pdfjs` a
+170 KB gzip e o worker a 420 KB gzip e reprova se o `pdfjs` aparecer na entrada, no Início ou em
+Projetos.
+
 ## Versionamento (Changesets)
 
 Três workflows em `.github/workflows/`, descritos aqui porque os arquivos não têm comentários. A regra de incremento e o fluxo estão em [`roadmap.md`](../product/roadmap.md#versionamento).

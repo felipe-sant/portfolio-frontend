@@ -1,6 +1,7 @@
 import type { ReactNode } from "react"
 import { Provider } from "react-redux"
 import { afterEach, describe, expect, it, vi } from "vitest"
+import { MemoryRouter } from "react-router-dom"
 import { act, renderHook, waitFor } from "@testing-library/react"
 import useHome from "@/pages/hooks/useHome"
 import createStore from "@/store/createStore"
@@ -38,7 +39,11 @@ function renderUseHome() {
     const store = createStore()
 
     function Wrapper({ children }: { children: ReactNode }) {
-        return <Provider store={store}>{children}</Provider>
+        return (
+            <Provider store={store}>
+                <MemoryRouter>{children}</MemoryRouter>
+            </Provider>
+        )
     }
 
     return renderHook(() => useHome(), { wrapper: Wrapper })

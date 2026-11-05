@@ -68,7 +68,7 @@
             "heading": "Navegación"
         },
         "resume": "Currículum en PDF",
-        "resumeName": "Currículum en PDF, no disponible por ahora",
+        "resumeName": "Currículum en PDF, abre la vista previa",
         "copyright": "© {{year}} · {{name}}",
         "version": "v{{version}}"
     },
@@ -82,7 +82,18 @@
     "resume": {
         "download": "Descargar CV",
         "downloadPdf": "Descargar CV (PDF), abre la vista previa",
-        "unavailableName": "Descargar CV (PDF), no disponible por ahora"
+        "modal": {
+            "title": "Currículum",
+            "close": "Cerrar",
+            "pdfTitle": "Currículum en PDF",
+            "download": "Descargar PDF",
+            "viewText": "Ver versión en texto (Markdown)",
+            "noViewer": "No se pudo mostrar el currículum aquí. Descarga el PDF o lee la versión en texto.",
+            "loading": "Cargando el currículum",
+            "pagesLabel": "Páginas del currículum",
+            "pageLabel": "Página {{page}} de {{total}} del currículum",
+            "canvasHint": "¿Prefieres leer el texto? Usa la versión en texto de abajo."
+        }
     },
     "projectType": {
         "web": "Web",

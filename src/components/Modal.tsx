@@ -15,6 +15,7 @@ interface ModalProps {
     description?: string
     subtitle?: ReactNode
     wide?: boolean
+    large?: boolean
 }
 
 function Modal({
@@ -26,7 +27,8 @@ function Modal({
     footer,
     description,
     subtitle,
-    wide = false
+    wide = false,
+    large = false
 }: ModalProps) {
     const titleId = useId()
     const boxRef = useRef<HTMLDivElement>(null)
@@ -66,7 +68,9 @@ function Modal({
                 aria-modal="true"
                 aria-labelledby={titleId}
                 aria-describedby={description}
-                className={wide ? `${css.box} ${css.wide}` : css.box}
+                className={[css.box, wide && css.wide, large && css.large]
+                    .filter(Boolean)
+                    .join(" ")}
             >
                 <div className={css.header}>
                     {subtitle ? (

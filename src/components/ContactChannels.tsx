@@ -1,9 +1,11 @@
 import type { ReactNode } from "react"
 import { useTranslation } from "react-i18next"
-import Button from "@/components/Button"
 import CopyEmailButton from "@/components/CopyEmailButton"
 import Icon from "@/components/Icon"
+import ResumeLink from "@/components/ResumeLink"
+import ResumeModal from "@/components/ResumeModal"
 import Skeleton from "@/components/Skeleton"
+import useResume from "@/hooks/useResume"
 import buttonCss from "@/styles/components/button.module.css"
 import css from "@/styles/components/contactChannels.module.css"
 import type Profile from "@/types/profile/Profile.types"
@@ -39,6 +41,7 @@ function ChannelSkeleton() {
 function ContactChannels({ profile }: ContactChannelsProps) {
     const { t } = useTranslation(["contact", "common"])
     const responseTime = profile?.contact.responseTime
+    const resume = useResume()
 
     return (
         <div className={css.channels}>
@@ -93,15 +96,17 @@ function ContactChannels({ profile }: ContactChannelsProps) {
                 )}
             </div>
             <div className={css.resume}>
-                <Button
+                <ResumeLink
+                    href={resume.href}
+                    onOpen={resume.open}
                     variant="secondary"
-                    icon="download"
-                    disabled
-                    aria-label={t("common:resume.unavailableName")}
+                    aria-label={t("common:resume.downloadPdf")}
                 >
+                    <Icon name="download" />
                     {t("common:resume.download")}
-                </Button>
+                </ResumeLink>
             </div>
+            <ResumeModal isOpen={resume.isOpen} onClose={resume.close} />
         </div>
     )
 }
