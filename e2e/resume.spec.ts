@@ -590,7 +590,7 @@ test.describe("RF-HOME-07, CA13, CA16: estados e layout do modal em canvas", () 
         expect(problems).toEqual([])
     })
 
-    test("RF-LAY-27: o modal aberto pelo rodapé de Contato fecha ao trocar de rota mantendo o rodapé montado", async ({
+    test("RF-LAY-27: o modal aberto pelo rodapé de Contato fecha ao trocar de rota", async ({
         page
     }) => {
         await forcePdfViewer(page, false)
