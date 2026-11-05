@@ -163,6 +163,7 @@ for (const point of POINTS) {
             const downloadLink = dialog.getByRole("link", { name: texts.resumeModal.download })
             const textLink = dialog.getByRole("link", { name: texts.resumeModal.viewText })
             await expect(textLink).toHaveAttribute("href", `${FATEC_BASE_PATH}cv/cv-en.md`)
+            await expect(textLink).toHaveAttribute("target", "_blank")
 
             const downloading = page.waitForEvent("download")
             await downloadLink.click()
@@ -238,5 +239,43 @@ test.describe("RF-HOME-07, RF-ABOUT-05, RF-CONTACT-08, RF-LAY-27: sem JavaScript
                 expect(await page.getByRole("dialog").count()).toBe(0)
             })
         }
+    }
+})
+
+test.describe("RF-LAY-27, NF-IA-20: versão em texto do currículo", () => {
+    const EXPECTED_ACCENTS: Record<Language, string> = {
+        "pt-BR": "São José dos Campos",
+        en: "São José dos Campos",
+        es: "São José dos Campos"
+    }
+
+    for (const language of LANGUAGES) {
+        test(`o Markdown de ${language} é servido em UTF-8 e abre acentuado em nova aba`, async ({
+            page
+        }) => {
+            await forcePdfViewer(page, true)
+            const texts = UI_TEXTS[language]
+            const markdownPath = `${FATEC_BASE_PATH}cv/cv-${language}.md`
+            const response = await page.request.get(markdownPath)
+
+            expect(response.status()).toBe(200)
+            expect(response.headers()["content-type"]).toBe("text/markdown; charset=utf-8")
+
+            const link = await openPoint(page, POINTS[0], language)
+            await link.click()
+            const popupOpening = page.waitForEvent("popup")
+            await page
+                .getByRole("dialog")
+                .getByRole("link", { name: texts.resumeModal.viewText })
+                .click()
+            const popup = await popupOpening
+            await popup.waitForLoadState()
+
+            expect(popup.url()).toContain(markdownPath)
+            const body = await popup.locator("body").innerText()
+            expect(body).toContain(EXPECTED_ACCENTS[language])
+            expect(body).not.toContain("�")
+            expect(body).not.toContain("Ã")
+        })
     }
 })
