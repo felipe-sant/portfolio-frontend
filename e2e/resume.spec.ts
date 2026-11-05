@@ -590,7 +590,21 @@ test.describe("RF-HOME-07, CA13, CA16: estados e layout do modal em canvas", () 
         expect(problems).toEqual([])
     })
 
-    test("RF-HOME-07: voltar e avançar no histórico com o modal aberto não gera erro no console", async ({
+    test("RF-LAY-27: o modal aberto pelo rodapé de Contato fecha ao trocar de rota mantendo o rodapé montado", async ({
+        page
+    }) => {
+        await forcePdfViewer(page, false)
+        const link = await openPoint(page, POINTS[3], "pt-BR")
+
+        await link.click()
+        await expect(page.getByRole("dialog")).toHaveCount(1)
+        await navigateClientSide(page, "en/contact")
+
+        await expect(page).toHaveURL(/\/en\/contact$/)
+        await expect(page.getByRole("dialog")).toHaveCount(0)
+    })
+
+    test("RF-HOME-07: voltar e avançar no histórico depois de abrir o modal em Informações deixa o modal fechado e sem erro no console", async ({
         page
     }) => {
         await forcePdfViewer(page, false)
