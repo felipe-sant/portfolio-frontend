@@ -84,6 +84,20 @@ describe("ContactPage", () => {
         expect(screen.queryByText("Sem newsletter e sem cadastro.")).not.toBeInTheDocument()
     })
 
+    it("Baixar CV é link do PDF e o clique abre o modal de pré-visualização", async () => {
+        renderPage()
+        await screen.findByText("contato@example.com")
+        const resume = screen.getByRole("link", {
+            name: "Baixar CV (PDF), abre a pré-visualização"
+        })
+
+        expect(resume).toHaveAttribute("href", "/cv/cv-pt-BR.pdf")
+
+        await userEvent.click(resume)
+
+        expect(screen.getByRole("dialog", { name: "Currículo" })).toBeInTheDocument()
+    })
+
     it("com a flag ligada mostra a abertura do formulário e os canais depois dele", async () => {
         flag.enabled = true
         const { container } = renderPage()

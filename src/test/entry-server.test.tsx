@@ -200,9 +200,35 @@ describe("render", () => {
             expect(html).toContain('href="mailto:contato@example.com"')
             expect(html).toContain("São José dos Campos · SP")
             expect(html).not.toContain("<form")
-            expect(html).toMatch(/<button[^>]*disabled=""[^>]*aria-label="[^"]*CV[^"]*"/)
+            expect(html).toContain(`href="/cv/cv-${file.split("/")[0]}.pdf"`)
+            expect(html).not.toMatch(/<button[^>]*disabled=""[^>]*aria-label="[^"]*CV[^"]*"/)
             expect(html).toContain('"@type":"ContactPage"')
             expect(state).toContain("contato@example.com")
+        }
+    )
+
+    it.each([
+        ["pt-BR.html", "pt-BR"],
+        ["en.html", "en"],
+        ["es.html", "es"],
+        ["pt-BR/about.html", "pt-BR"],
+        ["en/about.html", "en"],
+        ["es/about.html", "es"]
+    ])(
+        "traz o link do currículo em PDF do idioma, sem desativar, em %s",
+        async (file, language) => {
+            const target = targets.find((item) => item.file === file)
+            if (!target) {
+                throw new Error(`Alvo ${file} não encontrado`)
+            }
+
+            const { html } = await render(target)
+            const link = html.match(new RegExp(`<a[^>]*href="/cv/cv-${language}\\.pdf"[^>]*>`))
+
+            expect(link).not.toBeNull()
+            expect(link?.[0]).not.toContain("disabled")
+            expect(link?.[0]).not.toContain("download")
+            expect(link?.[0]).not.toContain("target")
         }
     )
 

@@ -98,14 +98,18 @@ variáveis com prefixo `VITE_` chegam ao código do cliente; ver
 
 Comandos do conteúdo (detalhes em [Dados do conteúdo](#dados-do-conteúdo)):
 
-| Comando                                            | O que faz                                                                                                                                             |
-| -------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `npm run content:id`                               | Imprime um UUID v7 novo; `npm run content:id -- 5` imprime cinco                                                                                      |
-| `npm run content:check`                            | Valida `public/content/` e `public/images/` contra o contrato e aponta arquivo, campo e regra                                                         |
-| `npm run content:template`                         | Regera `content/template/pt-BR/` a partir dos tipos (só quem muda o contrato precisa)                                                                 |
-| `npm run content:placeholders -- profile`          | Gera a foto placeholder do perfil, sem sobrescrever arquivo existente (`--force` sobrescreve)                                                         |
-| `npm run content:placeholders -- project <id> [n]` | Gera de 1 a 5 imagens placeholder do projeto, nos caminhos finais                                                                                     |
-| `npm run og:image`                                 | Regera `public/images/og-site.png` (1200×630, gato e nome) com o Chromium do Playwright; exige `npx playwright install chromium` e o PNG é versionado |
+| Comando                                            | O que faz                                                                                                                                                                                                                                                                               |
+| -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm run content:id`                               | Imprime um UUID v7 novo; `npm run content:id -- 5` imprime cinco                                                                                                                                                                                                                        |
+| `npm run content:check`                            | Valida `public/content/` e `public/images/` contra o contrato e aponta arquivo, campo e regra                                                                                                                                                                                           |
+| `npm run content:template`                         | Regera `content/template/pt-BR/` a partir dos tipos (só quem muda o contrato precisa)                                                                                                                                                                                                   |
+| `npm run content:placeholders -- profile`          | Gera a foto placeholder do perfil, sem sobrescrever arquivo existente (`--force` sobrescreve)                                                                                                                                                                                           |
+| `npm run content:placeholders -- project <id> [n]` | Gera de 1 a 5 imagens placeholder do projeto, nos caminhos finais                                                                                                                                                                                                                       |
+| `npm run cv:pdf`                                   | Regera `public/cv/cv-<idioma>.pdf` a partir dos `cv-<idioma>.md` (Chromium do Playwright, PDF marcado e com o idioma); rode à mão quando um `.md` mudar e commite os PDFs: o teste `scripts/test/resumePdfsUpToDate.test.ts` falha se eles divergirem do Markdown. O build não gera PDF |
+
+O `pdfjs-dist` (build `legacy`) é dependência de runtime, carregado por `import()` só quando o modal do currículo abre em celular ou sem visualizador de PDF: o módulo (até 170 KB gzip) e o worker (até 420 KB gzip, em `dist/assets/`, mesma origem) ficam fora do bundle de entrada, e `npm run check:chunk` confere o orçamento.
+
+| `npm run og:image` | Regera `public/images/og-site.png` (1200×630, gato e nome) com o Chromium do Playwright; exige `npx playwright install chromium` e o PNG é versionado |
 
 ## Estrutura de `src/` e convenções
 

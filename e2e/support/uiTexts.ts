@@ -15,6 +15,24 @@ const UI_TEXTS = {
         noscript:
             "Busca, filtros, troca de idioma e de tema precisam de JavaScript. O conteúdo desta página está disponível sem ele.",
         resumePdf: "Baixar CV (PDF), abre a pré-visualização",
+        footerResumeName: "Currículo em PDF, abre a pré-visualização",
+        footerResumeLabel: "Currículo em PDF",
+        resumeModal: {
+            title: "Currículo",
+            close: "Fechar",
+            pdfTitle: "Currículo em PDF",
+            download: "Baixar PDF",
+            viewText: "Ver versão em texto (Markdown)",
+            noViewer:
+                "Não foi possível exibir o currículo aqui. Baixe o PDF ou leia a versão em texto.",
+            loading: "Carregando o currículo",
+            pagesLabel: "Páginas do currículo",
+            pageLabel: (page: number, total: number) =>
+                "Página {{page}} de {{total}} do currículo"
+                    .replace("{{page}}", String(page))
+                    .replace("{{total}}", String(total)),
+            canvasHint: "Prefere ler o texto? Use a versão em texto abaixo."
+        },
         homeHeading: "Desenvolvedor full stack em TypeScript",
         homeTitle: "Portfólio · Luiz Felipe dos Santos",
         homeDescription:
@@ -61,7 +79,7 @@ const UI_TEXTS = {
             loadErrorMessage: "Não foi possível carregar esta parte da página.",
             retry: "Tentar novamente",
             download: "Baixar CV",
-            unavailable: "Baixar CV (PDF), indisponível no momento",
+            resumeName: "Baixar CV (PDF), abre a pré-visualização",
             current: "Atual",
             since: "desde"
         },
@@ -90,7 +108,7 @@ const UI_TEXTS = {
             emailCopied: "E-mail copiado",
             copyFailed: "Não foi possível copiar",
             resumeButton: "Baixar CV",
-            resumeUnavailableName: "Baixar CV (PDF), indisponível no momento",
+            resumeName: "Baixar CV (PDF), abre a pré-visualização",
             formLabel: "Formulário de contato",
             requiredNote: "Todos os campos são obrigatórios.",
             nameLabel: "Nome",
@@ -213,6 +231,24 @@ const UI_TEXTS = {
         noscript:
             "Search, filters, language and theme switching need JavaScript. The content of this page is available without it.",
         resumePdf: "Download CV (PDF), opens the preview",
+        footerResumeName: "Resume in PDF, opens the preview",
+        footerResumeLabel: "Resume in PDF",
+        resumeModal: {
+            title: "Resume",
+            close: "Close",
+            pdfTitle: "Resume in PDF",
+            download: "Download PDF",
+            viewText: "View text version (Markdown)",
+            noViewer:
+                "The resume could not be shown here. Download the PDF or read the text version.",
+            loading: "Loading the resume",
+            pagesLabel: "Resume pages",
+            pageLabel: (page: number, total: number) =>
+                "Page {{page}} of {{total}} of the resume"
+                    .replace("{{page}}", String(page))
+                    .replace("{{total}}", String(total)),
+            canvasHint: "Prefer to read the text? Use the text version below."
+        },
         homeHeading: "Full stack developer in TypeScript",
         homeTitle: "Portfolio · Luiz Felipe dos Santos",
         homeDescription:
@@ -260,7 +296,7 @@ const UI_TEXTS = {
             loadErrorMessage: "This part of the page could not be loaded.",
             retry: "Try again",
             download: "Download CV",
-            unavailable: "Download CV (PDF), currently unavailable",
+            resumeName: "Download CV (PDF), opens the preview",
             current: "Current",
             since: "since"
         },
@@ -289,7 +325,7 @@ const UI_TEXTS = {
             emailCopied: "Email copied",
             copyFailed: "Could not copy",
             resumeButton: "Download CV",
-            resumeUnavailableName: "Download CV (PDF), currently unavailable",
+            resumeName: "Download CV (PDF), opens the preview",
             formLabel: "Contact form",
             requiredNote: "All fields are required.",
             nameLabel: "Name",
@@ -409,6 +445,24 @@ const UI_TEXTS = {
         noscript:
             "La búsqueda, los filtros y el cambio de idioma y de tema necesitan JavaScript. El contenido de esta página está disponible sin él.",
         resumePdf: "Descargar CV (PDF), abre la vista previa",
+        footerResumeName: "Currículum en PDF, abre la vista previa",
+        footerResumeLabel: "Currículum en PDF",
+        resumeModal: {
+            title: "Currículum",
+            close: "Cerrar",
+            pdfTitle: "Currículum en PDF",
+            download: "Descargar PDF",
+            viewText: "Ver versión en texto (Markdown)",
+            noViewer:
+                "No se pudo mostrar el currículum aquí. Descarga el PDF o lee la versión en texto.",
+            loading: "Cargando el currículum",
+            pagesLabel: "Páginas del currículum",
+            pageLabel: (page: number, total: number) =>
+                "Página {{page}} de {{total}} del currículum"
+                    .replace("{{page}}", String(page))
+                    .replace("{{total}}", String(total)),
+            canvasHint: "¿Prefieres leer el texto? Usa la versión en texto de abajo."
+        },
         homeHeading: "Desarrollador full stack en TypeScript",
         homeTitle: "Portafolio · Luiz Felipe dos Santos",
         homeDescription:
@@ -456,7 +510,7 @@ const UI_TEXTS = {
             loadErrorMessage: "No se pudo cargar esta parte de la página.",
             retry: "Intentar de nuevo",
             download: "Descargar CV",
-            unavailable: "Descargar CV (PDF), no disponible por ahora",
+            resumeName: "Descargar CV (PDF), abre la vista previa",
             current: "Actual",
             since: "desde"
         },
@@ -486,7 +540,7 @@ const UI_TEXTS = {
             emailCopied: "Correo copiado",
             copyFailed: "No se pudo copiar",
             resumeButton: "Descargar CV",
-            resumeUnavailableName: "Descargar CV (PDF), no disponible por ahora",
+            resumeName: "Descargar CV (PDF), abre la vista previa",
             formLabel: "Formulario de contacto",
             requiredNote: "Todos los campos son obligatorios.",
             nameLabel: "Nombre",

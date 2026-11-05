@@ -144,17 +144,17 @@ Vale com a flag ligada.
 
 Todo destino interno leva o prefixo do idioma atual (NF-IN-11).
 
-| De onde               | Ação                                       | Para onde                                                                                       |
-| --------------------- | ------------------------------------------ | ----------------------------------------------------------------------------------------------- |
-| Cabeçalho, menu       | "Contato"                                  | `/contact`                                                                                      |
-| Rodapé padrão         | "Entrar em contato" (RF-LAY-22)            | `/contact`                                                                                      |
-| Informações (#6)      | "Entrar em contato" (mesma chave)          | `/contact`                                                                                      |
-| Contato               | "Enviar e-mail"                            | `mailto:` com o e-mail do conteúdo (cliente de e-mail, D36)                                     |
-| Contato               | "Copiar e-mail"                            | Fica na tela                                                                                    |
-| Contato               | "Baixar CV"                                | Modal de pré-visualização do PDF do idioma ativo, sem sair da tela; sem JavaScript, o PDF (D52) |
-| Contato (flag ligada) | "Enviar mensagem", "Enviar outra mensagem" | Fica na tela                                                                                    |
-| Rodapé de navegação   | Início, Projetos, Informações              | `/`, `/projects`, `/about`                                                                      |
-| Rodapé de navegação   | GitHub, LinkedIn, "Currículo em PDF"       | Perfis em nova aba; pré-visualização do PDF (RF-LAY-26, RF-LAY-27, D52)                         |
+| De onde               | Ação                                       | Para onde                                                                                                                                                                                                  |
+| --------------------- | ------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Cabeçalho, menu       | "Contato"                                  | `/contact`                                                                                                                                                                                                 |
+| Rodapé padrão         | "Entrar em contato" (RF-LAY-22)            | `/contact`                                                                                                                                                                                                 |
+| Informações (#6)      | "Entrar em contato" (mesma chave)          | `/contact`                                                                                                                                                                                                 |
+| Contato               | "Enviar e-mail"                            | `mailto:` com o e-mail do conteúdo (cliente de e-mail, D36)                                                                                                                                                |
+| Contato               | "Copiar e-mail"                            | Fica na tela                                                                                                                                                                                               |
+| Contato               | "Baixar CV"                                | Modal de pré-visualização do PDF do idioma ativo (`iframe` no desktop com visualizador; em celular ou sem visualizador, páginas em canvas com `pdfjs-dist`), sem sair da tela; sem JavaScript, o PDF (D52) |
+| Contato (flag ligada) | "Enviar mensagem", "Enviar outra mensagem" | Fica na tela                                                                                                                                                                                               |
+| Rodapé de navegação   | Início, Projetos, Informações              | `/`, `/projects`, `/about`                                                                                                                                                                                 |
+| Rodapé de navegação   | GitHub, LinkedIn, "Currículo em PDF"       | Perfis em nova aba; pré-visualização do PDF (RF-LAY-26, RF-LAY-27, D52)                                                                                                                                    |
 
 ## Textos fixos e chaves
 

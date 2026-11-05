@@ -68,7 +68,7 @@
             "heading": "Navigation"
         },
         "resume": "Resume in PDF",
-        "resumeName": "Resume in PDF, currently unavailable",
+        "resumeName": "Resume in PDF, opens the preview",
         "copyright": "© {{year}} · {{name}}",
         "version": "v{{version}}"
     },
@@ -82,7 +82,18 @@
     "resume": {
         "download": "Download CV",
         "downloadPdf": "Download CV (PDF), opens the preview",
-        "unavailableName": "Download CV (PDF), currently unavailable"
+        "modal": {
+            "title": "Resume",
+            "close": "Close",
+            "pdfTitle": "Resume in PDF",
+            "download": "Download PDF",
+            "viewText": "View text version (Markdown)",
+            "noViewer": "The resume could not be shown here. Download the PDF or read the text version.",
+            "loading": "Loading the resume",
+            "pagesLabel": "Resume pages",
+            "pageLabel": "Page {{page}} of {{total}} of the resume",
+            "canvasHint": "Prefer to read the text? Use the text version below."
+        }
     },
     "projectType": {
         "web": "Web",

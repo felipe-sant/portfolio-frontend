@@ -209,21 +209,45 @@ describe("Footer de navegação", () => {
         )
     })
 
-    it("mostra Currículo em PDF como botão desabilitado com o estado no nome", async () => {
+    it("em /contact mostra Currículo em PDF como link do PDF com o nome de pré-visualização", async () => {
         stubProfiles()
         renderFooter("navigation")
         await screen.findByRole("link", { name: /GitHub de/ })
 
-        const resume = screen.getByRole("button", {
-            name: "Currículo em PDF, indisponível no momento"
+        const resume = screen.getByRole("link", {
+            name: "Currículo em PDF, abre a pré-visualização"
         })
 
-        expect(resume).toBeDisabled()
-        expect(resume).not.toHaveAttribute("href")
+        expect(resume).toHaveAttribute("href", "/cv/cv-pt-BR.pdf")
         expect(resume).toHaveTextContent("Currículo em PDF↓")
+        expect(resume).not.toHaveAttribute("download")
+        expect(resume).not.toHaveAttribute("target")
+        expect(screen.queryByRole("button", { name: /Currículo/ })).not.toBeInTheDocument()
+    })
+
+    it("clicar em Currículo em PDF abre o modal e fechar devolve o foco ao link", async () => {
+        stubProfiles()
+        renderFooter("navigation")
+        await screen.findByRole("link", { name: /GitHub de/ })
+        const resume = screen.getByRole("link", { name: /Currículo em PDF/ })
+
         await userEvent.click(resume)
-        await userEvent.tab()
-        expect(resume).not.toHaveFocus()
+
+        const dialog = screen.getByRole("dialog", { name: "Currículo" })
+        expect(within(dialog).getByTitle("Currículo em PDF")).toBeInTheDocument()
+
+        await userEvent.click(within(dialog).getByRole("button", { name: "Fechar" }))
+
+        expect(screen.queryByRole("dialog")).not.toBeInTheDocument()
+        expect(resume).toHaveFocus()
+    })
+
+    it("a variante padrão não tem o link do currículo", async () => {
+        stubProfiles()
+        renderFooter()
+        await screen.findByText("Disponível para projetos")
+
+        expect(screen.queryByRole("link", { name: /Currículo/ })).not.toBeInTheDocument()
     })
 
     it("mostra a barra inferior igual", async () => {
@@ -248,16 +272,16 @@ describe("Footer de navegação", () => {
         expect(screen.getByText("Navigation")).toBeInTheDocument()
         expect(screen.getByText("Social")).toBeInTheDocument()
         expect(
-            screen.getByRole("button", { name: "Resume in PDF, currently unavailable" })
-        ).toBeDisabled()
+            screen.getByRole("link", { name: "Resume in PDF, opens the preview" })
+        ).toHaveAttribute("href", "/cv/cv-en.pdf")
 
         await act(() => setLanguage("es"))
 
         expect(screen.getByRole("navigation", { name: "Pie de página" })).toBeInTheDocument()
         expect(screen.getByText("Navegación")).toBeInTheDocument()
         expect(
-            screen.getByRole("button", { name: "Currículum en PDF, no disponible por ahora" })
-        ).toBeDisabled()
+            screen.getByRole("link", { name: "Currículum en PDF, abre la vista previa" })
+        ).toHaveAttribute("href", "/cv/cv-es.pdf")
     })
 
     it("não tem violações de acessibilidade", async () => {

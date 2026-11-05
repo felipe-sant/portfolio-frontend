@@ -6,6 +6,8 @@ import Icon from "@/components/Icon"
 import JsonLd from "@/components/JsonLd"
 import LoadError from "@/components/LoadError"
 import PageMeta from "@/components/PageMeta"
+import ResumeLink from "@/components/ResumeLink"
+import ResumeModal from "@/components/ResumeModal"
 import Skeleton from "@/components/Skeleton"
 import SkeletonSwap from "@/components/SkeletonSwap"
 import Reveal from "@/components/Reveal"
@@ -30,7 +32,7 @@ function FeaturedSkeletonItem({ mirrored }: { mirrored: boolean }) {
 }
 
 function HomePage() {
-    const { t, jsonLd, isLoading, paths, viewTransition, ids, profile, status, featured } =
+    const { t, jsonLd, isLoading, paths, viewTransition, resume, ids, profile, status, featured } =
         useHome()
     const hasStatus = Boolean(status.working || status.studying)
 
@@ -78,16 +80,16 @@ function HomePage() {
                                 {t("home:hero.viewProjects")}
                                 <Icon name="arrowRight" />
                             </ButtonLink>
-                            <ButtonLink
-                                to={paths.resume}
-                                reloadDocument
+                            <ResumeLink
+                                href={resume.href}
+                                onOpen={resume.open}
                                 variant="secondary"
                                 size="lg"
                                 aria-label={t("common:resume.downloadPdf")}
                             >
                                 <Icon name="download" />
                                 {t("common:resume.download")}
-                            </ButtonLink>
+                            </ResumeLink>
                         </div>
                     </div>
                 </section>
@@ -227,6 +229,7 @@ function HomePage() {
                     </Reveal>
                 </div>
             </section>
+            <ResumeModal isOpen={resume.isOpen} onClose={resume.close} />
         </>
     )
 }
