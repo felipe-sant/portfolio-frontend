@@ -24,7 +24,14 @@ const UI_TEXTS = {
             download: "Baixar PDF",
             viewText: "Ver versão em texto (Markdown)",
             noViewer:
-                "Seu navegador não mostra PDF aqui. Baixe o arquivo ou leia a versão em texto."
+                "Não foi possível exibir o currículo aqui. Baixe o PDF ou leia a versão em texto.",
+            loading: "Carregando o currículo",
+            pagesLabel: "Páginas do currículo",
+            pageLabel: (page: number, total: number) =>
+                "Página {{page}} de {{total}} do currículo"
+                    .replace("{{page}}", String(page))
+                    .replace("{{total}}", String(total)),
+            canvasHint: "Prefere ler o texto? Use a versão em texto abaixo."
         },
         homeHeading: "Desenvolvedor full stack em TypeScript",
         homeTitle: "Portfólio · Luiz Felipe dos Santos",
@@ -233,7 +240,14 @@ const UI_TEXTS = {
             download: "Download PDF",
             viewText: "View text version (Markdown)",
             noViewer:
-                "Your browser does not show PDFs here. Download the file or read the text version."
+                "The resume could not be shown here. Download the PDF or read the text version.",
+            loading: "Loading the resume",
+            pagesLabel: "Resume pages",
+            pageLabel: (page: number, total: number) =>
+                "Page {{page}} of {{total}} of the resume"
+                    .replace("{{page}}", String(page))
+                    .replace("{{total}}", String(total)),
+            canvasHint: "Prefer to read the text? Use the text version below."
         },
         homeHeading: "Full stack developer in TypeScript",
         homeTitle: "Portfolio · Luiz Felipe dos Santos",
@@ -440,7 +454,14 @@ const UI_TEXTS = {
             download: "Descargar PDF",
             viewText: "Ver versión en texto (Markdown)",
             noViewer:
-                "Tu navegador no muestra PDF aquí. Descarga el archivo o lee la versión en texto."
+                "No se pudo mostrar el currículum aquí. Descarga el PDF o lee la versión en texto.",
+            loading: "Cargando el currículum",
+            pagesLabel: "Páginas del currículum",
+            pageLabel: (page: number, total: number) =>
+                "Página {{page}} de {{total}} del currículum"
+                    .replace("{{page}}", String(page))
+                    .replace("{{total}}", String(total)),
+            canvasHint: "¿Prefieres leer el texto? Usa la versión en texto de abajo."
         },
         homeHeading: "Desarrollador full stack en TypeScript",
         homeTitle: "Portafolio · Luiz Felipe dos Santos",

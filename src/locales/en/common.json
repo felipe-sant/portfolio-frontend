@@ -88,7 +88,11 @@
             "pdfTitle": "Resume in PDF",
             "download": "Download PDF",
             "viewText": "View text version (Markdown)",
-            "noViewer": "Your browser does not show PDFs here. Download the file or read the text version."
+            "noViewer": "The resume could not be shown here. Download the PDF or read the text version.",
+            "loading": "Loading the resume",
+            "pagesLabel": "Resume pages",
+            "pageLabel": "Page {{page}} of {{total}} of the resume",
+            "canvasHint": "Prefer to read the text? Use the text version below."
         }
     },
     "projectType": {

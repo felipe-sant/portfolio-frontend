@@ -73,7 +73,7 @@ describe("ResumeModal", () => {
         expect(screen.queryByTitle("Currículo em PDF")).not.toBeInTheDocument()
         expect(
             screen.getByText(
-                "Seu navegador não mostra PDF aqui. Baixe o arquivo ou leia a versão em texto."
+                "Não foi possível exibir o currículo aqui. Baixe o PDF ou leia a versão em texto."
             )
         ).toBeInTheDocument()
         expect(screen.getByRole("link", { name: "Baixar PDF" })).toBeInTheDocument()

@@ -88,7 +88,11 @@
             "pdfTitle": "Currículum en PDF",
             "download": "Descargar PDF",
             "viewText": "Ver versión en texto (Markdown)",
-            "noViewer": "Tu navegador no muestra PDF aquí. Descarga el archivo o lee la versión en texto."
+            "noViewer": "No se pudo mostrar el currículum aquí. Descarga el PDF o lee la versión en texto.",
+            "loading": "Cargando el currículum",
+            "pagesLabel": "Páginas del currículum",
+            "pageLabel": "Página {{page}} de {{total}} del currículum",
+            "canvasHint": "¿Prefieres leer el texto? Usa la versión en texto de abajo."
         }
     },
     "projectType": {
