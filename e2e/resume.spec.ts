@@ -1,7 +1,8 @@
-import { expect, test } from "@playwright/test"
+import { devices, expect, test } from "@playwright/test"
 import type { Locator, Page } from "@playwright/test"
 import FATEC_BASE_PATH from "@scripts/fatecBasePath"
 import expectNoAxeViolations from "./support/expectNoAxeViolations"
+import readCanvasPixels from "./support/readCanvasPixels"
 import UI_TEXTS from "./support/uiTexts"
 import waitForHydration from "./support/waitForHydration"
 
@@ -56,6 +57,17 @@ function forcePdfViewer(page: Page, enabled: boolean) {
             configurable: true
         })
     }, enabled)
+}
+
+const TOUCH_VIEWPORT = { width: 390, height: 844 }
+const WORKER_PATTERN = "**/assets/pdf.worker.min-*.mjs"
+
+async function expectPaintedCanvas(dialog: Locator) {
+    const canvas = dialog.locator("canvas").first()
+    await expect(canvas).toBeVisible()
+    await expect
+        .poll(async () => (await readCanvasPixels(canvas)).inkPixels, { timeout: 15000 })
+        .toBeGreaterThan(0)
 }
 
 async function openPoint(page: Page, point: Point, language: Language) {
@@ -172,7 +184,7 @@ for (const point of POINTS) {
             expect(download.suggestedFilename()).toBe("cv-en.pdf")
         })
 
-        test(`${point.id}: sem visualizador de PDF o modal não tem iframe e mantém os dois links`, async ({
+        test(`${point.id}: sem visualizador de PDF o modal mostra o PDF em canvas, sem iframe, e mantém os dois links`, async ({
             page
         }) => {
             await forcePdfViewer(page, false)
@@ -183,7 +195,7 @@ for (const point of POINTS) {
 
             const dialog = page.getByRole("dialog")
             await expect(dialog.locator("iframe")).toHaveCount(0)
-            await expect(dialog.getByText(texts.resumeModal.noViewer)).toBeVisible()
+            await expectPaintedCanvas(dialog)
             await expect(
                 dialog.getByRole("link", { name: texts.resumeModal.download })
             ).toBeVisible()
@@ -197,7 +209,7 @@ for (const point of POINTS) {
             const link = await openPoint(page, point, "pt-BR")
 
             await link.click()
-            await expect(page.getByRole("dialog")).toBeVisible()
+            await expectPaintedCanvas(page.getByRole("dialog"))
 
             await expectNoAxeViolations(page)
         })
@@ -278,4 +290,184 @@ test.describe("RF-LAY-27, NF-IA-20: versão em texto do currículo", () => {
             expect(body).not.toContain("Ã")
         })
     }
+})
+
+test.describe("RF-HOME-07: PDF em canvas em celular", () => {
+    test.use({ hasTouch: true, isMobile: true, viewport: TOUCH_VIEWPORT })
+
+    for (const point of POINTS) {
+        for (const language of LANGUAGES) {
+            test(`${point.id}: em ${language} o celular sem visualizador mostra o PDF em canvas`, async ({
+                page
+            }) => {
+                await forcePdfViewer(page, false)
+                const texts = UI_TEXTS[language]
+                const link = await openPoint(page, point, language)
+
+                await link.click()
+
+                const dialog = page.getByRole("dialog", { name: texts.resumeModal.title })
+                await expect(dialog.locator("iframe")).toHaveCount(0)
+                await expectPaintedCanvas(dialog)
+                await expect(
+                    dialog.getByRole("img", { name: texts.resumeModal.pageLabel(1, 2) })
+                ).toBeVisible()
+                await expect(
+                    dialog.getByRole("link", { name: texts.resumeModal.download })
+                ).toBeVisible()
+                await expect(
+                    dialog.getByRole("link", { name: texts.resumeModal.viewText })
+                ).toBeVisible()
+            })
+        }
+    }
+
+    test("RF-HOME-07: com visualizador declarado mas ponteiro grosso (iOS) também usa canvas", async ({
+        page
+    }) => {
+        await forcePdfViewer(page, true)
+        const link = await openPoint(page, POINTS[0], "pt-BR")
+
+        await link.click()
+
+        const dialog = page.getByRole("dialog")
+        await expect(dialog.locator("iframe")).toHaveCount(0)
+        await expectPaintedCanvas(dialog)
+    })
+
+    test("RF-HOME-07: o worker vem da mesma origem, com MIME de JavaScript, sob o base do Pages", async ({
+        page,
+        baseURL
+    }) => {
+        await forcePdfViewer(page, false)
+        const origin = new URL(baseURL ?? "").origin
+        const foreign: string[] = []
+        page.on("request", (request) => {
+            if (new URL(request.url()).origin !== origin) {
+                foreign.push(request.url())
+            }
+        })
+        const workerResponse = page.waitForResponse((response) =>
+            /\/assets\/pdf\.worker\.min-[\w-]+\.mjs$/.test(response.url())
+        )
+        const link = await openPoint(page, POINTS[0], "pt-BR")
+
+        await link.click()
+        const worker = await workerResponse
+
+        expect(worker.status()).toBe(200)
+        expect(worker.url().startsWith(`${origin}${FATEC_BASE_PATH}assets/`)).toBe(true)
+        expect(worker.headers()["content-type"]).toMatch(/javascript/)
+        await expectPaintedCanvas(page.getByRole("dialog"))
+        expect(foreign).toEqual([])
+    })
+
+    test("RF-HOME-07: a região de páginas entra na ordem de foco e rola pelo teclado", async ({
+        page
+    }) => {
+        await forcePdfViewer(page, false)
+        const texts = UI_TEXTS["pt-BR"]
+        const link = await openPoint(page, POINTS[0], "pt-BR")
+
+        await link.click()
+        const dialog = page.getByRole("dialog")
+        await expectPaintedCanvas(dialog)
+        const region = dialog.getByRole("region", { name: texts.resumeModal.pagesLabel })
+
+        await page.keyboard.press("Tab")
+        await expect(dialog.getByRole("button", { name: texts.resumeModal.close })).toBeFocused()
+        await page.keyboard.press("Tab")
+        await expect(region).toBeFocused()
+
+        const before = await region.evaluate((element) => element.scrollTop)
+        await page.keyboard.press("ArrowDown")
+        await page.keyboard.press("PageDown")
+        await expect
+            .poll(() => region.evaluate((element) => element.scrollTop))
+            .toBeGreaterThan(before)
+
+        await page.keyboard.press("Tab")
+        await expect(dialog.getByRole("link", { name: texts.resumeModal.download })).toBeFocused()
+        await page.keyboard.press("Tab")
+        await expect(dialog.getByRole("link", { name: texts.resumeModal.viewText })).toBeFocused()
+    })
+
+    test("RF-HOME-07: o worker bloqueado cai no texto de falha com os dois links, sem canvas", async ({
+        page
+    }) => {
+        await forcePdfViewer(page, false)
+        await page.route(WORKER_PATTERN, (route) => route.abort())
+        const texts = UI_TEXTS["pt-BR"]
+        const link = await openPoint(page, POINTS[0], "pt-BR")
+
+        await link.click()
+
+        const dialog = page.getByRole("dialog")
+        await expect(dialog.getByText(texts.resumeModal.noViewer)).toBeVisible()
+        await expect(dialog.locator("canvas")).toHaveCount(0)
+        await expect(dialog.getByRole("link", { name: texts.resumeModal.download })).toBeVisible()
+        await expect(dialog.getByRole("link", { name: texts.resumeModal.viewText })).toBeVisible()
+        await expectNoAxeViolations(page)
+    })
+
+    test("RF-HOME-07: o PDF bloqueado cai no texto de falha com os dois links, sem canvas", async ({
+        page
+    }) => {
+        await forcePdfViewer(page, false)
+        await page.route("**/cv/cv-pt-BR.pdf", (route) => route.abort())
+        const texts = UI_TEXTS["pt-BR"]
+        const link = await openPoint(page, POINTS[0], "pt-BR")
+
+        await link.click()
+
+        const dialog = page.getByRole("dialog")
+        await expect(dialog.getByText(texts.resumeModal.noViewer)).toBeVisible()
+        await expect(dialog.locator("canvas")).toHaveCount(0)
+        await expect(dialog.getByRole("link", { name: texts.resumeModal.download })).toBeVisible()
+    })
+})
+
+for (const [name, device] of [
+    ["Pixel 7", devices["Pixel 7"]],
+    ["iPhone 14 Pro", devices["iPhone 14 Pro"]]
+] as const) {
+    test.describe(`RF-HOME-07: emulação de ${name} no Chromium`, () => {
+        test.use({
+            viewport: device.viewport,
+            hasTouch: device.hasTouch,
+            isMobile: device.isMobile,
+            userAgent: device.userAgent
+        })
+
+        test(`RF-HOME-07: ${name} mostra o PDF em canvas e fecha devolvendo o foco`, async ({
+            page
+        }) => {
+            const link = await openPoint(page, POINTS[0], "pt-BR")
+
+            await link.click()
+
+            const dialog = page.getByRole("dialog")
+            await expect(dialog.locator("iframe")).toHaveCount(0)
+            await expectPaintedCanvas(dialog)
+            await page.keyboard.press("Escape")
+            await expect(page.getByRole("dialog")).toHaveCount(0)
+            await expect(link).toBeFocused()
+        })
+    })
+}
+
+test.describe("RF-HOME-07: desktop com visualizador de PDF", () => {
+    test("RF-HOME-07: segue no iframe e não baixa o pdfjs nem o worker", async ({ page }) => {
+        await forcePdfViewer(page, true)
+        const requested: string[] = []
+        page.on("request", (request) => requested.push(request.url()))
+        const link = await openPoint(page, POINTS[0], "pt-BR")
+
+        await link.click()
+
+        const dialog = page.getByRole("dialog")
+        await expect(dialog.locator("iframe")).toHaveCount(1)
+        await expect(dialog.locator("canvas")).toHaveCount(0)
+        expect(requested.filter((url) => /\/assets\/pdf[.-]/.test(url))).toEqual([])
+    })
 })
