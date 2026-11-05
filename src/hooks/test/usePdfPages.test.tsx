@@ -166,4 +166,23 @@ describe("usePdfPages", () => {
         expect(canvas?.width).toBeGreaterThan(widthBefore ?? 0)
         vi.useRealTimers()
     })
+
+    it.each([
+        [1, 300],
+        [2, 600],
+        [5, 900]
+    ])(
+        "com devicePixelRatio %s desenha o canvas com %s pixels de largura para uma região de 300 pixels",
+        async (ratio, expectedWidth) => {
+            vi.stubGlobal("devicePixelRatio", ratio)
+            const fake = createFakePdf({ pages: 1, pageWidth: 600 })
+            vi.mocked(loadPdfRenderer).mockResolvedValue(fake.openDocument)
+
+            const { result } = renderHook(() => usePdfPages("/cv/cv-pt-BR.pdf"))
+            const [canvas] = mountCanvases(result, 1, createRegion(300))
+
+            await waitFor(() => expect(fake.render).toHaveBeenCalledTimes(1))
+            expect(canvas?.width).toBe(expectedWidth)
+        }
+    )
 })
