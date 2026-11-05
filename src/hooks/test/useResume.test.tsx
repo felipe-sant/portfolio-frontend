@@ -63,4 +63,14 @@ describe("useResume", () => {
 
         expect(result.current.resume.isOpen).toBe(false)
     })
+
+    it("continua fechado ao voltar ao caminho em que foi aberto", () => {
+        const { result } = renderResume()
+
+        act(() => result.current.resume.open(document.createElement("a")))
+        act(() => result.current.navigate("/pt-BR/about"))
+        act(() => result.current.navigate(-1))
+
+        expect(result.current.resume.isOpen).toBe(false)
+    })
 })

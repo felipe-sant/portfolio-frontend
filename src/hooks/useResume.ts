@@ -9,9 +9,14 @@ function useResume() {
     const { i18n } = useTranslation()
     const { pathname } = useLocation()
     const language = resolveSupportedLanguage(i18n.resolvedLanguage) ?? FALLBACK_LANGUAGE
-    const [openedAt, setOpenedAt] = useState<string | null>(null)
+    const [isOpen, setIsOpen] = useState(false)
+    const [currentPathname, setCurrentPathname] = useState(pathname)
     const trigger = useRef<HTMLElement | null>(null)
-    const isOpen = openedAt === pathname
+
+    if (currentPathname !== pathname) {
+        setCurrentPathname(pathname)
+        setIsOpen(false)
+    }
 
     useEffect(() => {
         if (!isOpen) {
@@ -22,11 +27,11 @@ function useResume() {
 
     function open(element: HTMLElement) {
         trigger.current = element
-        setOpenedAt(pathname)
+        setIsOpen(true)
     }
 
     function close() {
-        setOpenedAt(null)
+        setIsOpen(false)
     }
 
     return { href: getResumePath(language), isOpen, open, close }
