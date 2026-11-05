@@ -66,6 +66,18 @@ describe("ResumeModal", () => {
         expect(screen.getByTitle("Currículum en PDF")).not.toContainElement(download)
     })
 
+    it("agrupa Baixar PDF e a versão em texto num mesmo contêiner do rodapé", () => {
+        render(<ResumeModal isOpen onClose={vi.fn()} />)
+
+        const download = screen.getByRole("link", { name: "Baixar PDF" })
+        const text = screen.getByRole("link", { name: "Ver versão em texto (Markdown)" })
+        const actions = download.parentElement as HTMLElement
+
+        expect(text.parentElement).toBe(actions)
+        expect(actions.querySelectorAll("a")).toHaveLength(2)
+        expect(actions).not.toBe(screen.getByRole("dialog"))
+    })
+
     it("sem visualizador de PDF não renderiza o iframe e mantém os dois links", () => {
         stubPdfViewer(false)
         render(<ResumeModal isOpen onClose={vi.fn()} />)
