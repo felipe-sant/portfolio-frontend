@@ -3,6 +3,7 @@ import type { Locator, Page, Route } from "@playwright/test"
 import FATEC_BASE_PATH from "@scripts/fatecBasePath"
 import expectNoAxeViolations from "./support/expectNoAxeViolations"
 import collectConsoleProblems from "./support/collectConsoleProblems"
+import navigateClientSide from "./support/navigateClientSide"
 import readCanvasPixels from "./support/readCanvasPixels"
 import UI_TEXTS from "./support/uiTexts"
 import waitForHydration from "./support/waitForHydration"
@@ -494,6 +495,7 @@ test.describe("RF-HOME-07, CA13, CA16: estados e layout do modal em canvas", () 
         await expect(dialog.locator("canvas")).toHaveCount(0)
         await expect(dialog.getByRole("link", { name: texts.resumeModal.download })).toBeVisible()
         await expect(dialog.getByRole("link", { name: texts.resumeModal.viewText })).toBeVisible()
+        await expectNoAxeViolations(page)
         await expect.poll(() => held.length).toBeGreaterThan(0)
         await held[0].continue()
         await expectPaintedCanvas(dialog)
@@ -511,12 +513,28 @@ test.describe("RF-HOME-07, CA13, CA16: estados e layout do modal em canvas", () 
         await expectPaintedCanvas(dialog)
 
         const dialogBox = await dialog.boundingBox()
-        for (const name of [texts.resumeModal.download, texts.resumeModal.viewText]) {
-            const box = await dialog.getByRole("link", { name }).boundingBox()
-            expect(box).not.toBeNull()
-            expect((box?.x ?? -1) >= (dialogBox?.x ?? 0)).toBe(true)
-            expect((box?.x ?? 0) + (box?.width ?? 0)).toBeLessThanOrEqual(
-                (dialogBox?.x ?? 0) + (dialogBox?.width ?? 0) + 1
+        const downloadBox = await dialog
+            .getByRole("link", { name: texts.resumeModal.download })
+            .boundingBox()
+        const textBox = await dialog
+            .getByRole("link", { name: texts.resumeModal.viewText })
+            .boundingBox()
+        expect(dialogBox).not.toBeNull()
+        expect(downloadBox).not.toBeNull()
+        expect(textBox).not.toBeNull()
+        if (!dialogBox || !downloadBox || !textBox) {
+            return
+        }
+        for (const box of [downloadBox, textBox]) {
+            expect(box.x).toBeGreaterThanOrEqual(dialogBox.x)
+            expect(box.x + box.width).toBeLessThanOrEqual(dialogBox.x + dialogBox.width + 1)
+        }
+        const sameRow = Math.abs(downloadBox.y - textBox.y) < 4
+        if (sameRow) {
+            expect(downloadBox.x + downloadBox.width).toBeLessThanOrEqual(textBox.x)
+        } else {
+            expect(Math.abs(downloadBox.y - textBox.y)).toBeGreaterThanOrEqual(
+                Math.min(downloadBox.height, textBox.height)
             )
         }
         const overflow = await page.evaluate(
@@ -577,14 +595,24 @@ test.describe("RF-HOME-07, CA13, CA16: estados e layout do modal em canvas", () 
     }) => {
         await forcePdfViewer(page, false)
         const problems = collectConsoleProblems(page)
-        const link = await openPoint(page, POINTS[0], "pt-BR")
+        await openPoint(page, POINTS[0], "pt-BR")
+        const homeUrl = page.url()
+        await navigateClientSide(page, "pt-BR/about")
+        await expect(page).toHaveURL(/\/pt-BR\/about$/)
+        const aboutUrl = page.url()
+        await expect(page).toHaveTitle(UI_TEXTS["pt-BR"].aboutPage.title)
+        const link = POINTS[1].getLink(page, "pt-BR")
+        await expect(link).toBeVisible()
 
         await link.click()
         await expectPaintedCanvas(page.getByRole("dialog"))
         await page.goBack()
-        await page.goForward()
-        await page.getByRole("heading", { level: 1 }).waitFor()
 
+        await expect(page).toHaveURL(homeUrl)
+        await expect(page.getByRole("dialog")).toHaveCount(0)
+        await page.goForward()
+        await expect(page).toHaveURL(aboutUrl)
+        await expect(page.getByRole("heading", { level: 1 })).toBeVisible()
         await expect(page.getByRole("dialog")).toHaveCount(0)
         expect(problems).toEqual([])
     })
@@ -600,11 +628,11 @@ test.describe("RF-HOME-07, CA13, CA16: estados e layout do modal em canvas", () 
         const dialog = page.getByRole("dialog")
         await expectPaintedCanvas(dialog)
 
-        const widths = await page.evaluate(() => ({
-            page: document.documentElement.scrollWidth - document.documentElement.clientWidth,
-            dialog: (document.querySelector('[role="dialog"]') as HTMLElement).scrollWidth
-        }))
-        expect(widths.page).toBeLessThanOrEqual(0)
-        expect(widths.dialog).toBeLessThanOrEqual(320)
+        const pageOverflow = await page.evaluate(
+            () => document.documentElement.scrollWidth - document.documentElement.clientWidth
+        )
+        const dialogWidth = await dialog.evaluate((element) => element.scrollWidth)
+        expect(pageOverflow).toBeLessThanOrEqual(0)
+        expect(dialogWidth).toBeLessThanOrEqual(320)
     })
 })
