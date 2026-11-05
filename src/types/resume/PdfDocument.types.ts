@@ -1,5 +1,8 @@
-import type { PDFDocumentProxy } from "pdfjs-dist/legacy/build/pdf.mjs"
+import type PdfPage from "@/types/resume/PdfPage.types"
 
-type PdfDocument = Pick<PDFDocumentProxy, "numPages" | "getPage">
+interface PdfDocument {
+    numPages: number
+    getPage(pageNumber: number): Promise<PdfPage>
+}
 
 export default PdfDocument

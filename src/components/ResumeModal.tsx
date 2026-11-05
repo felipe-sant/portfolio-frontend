@@ -1,5 +1,7 @@
 import { useTranslation } from "react-i18next"
 import Modal from "@/components/Modal"
+import ResumePdfPages from "@/components/ResumePdfPages"
+import useResumeViewerMode from "@/hooks/useResumeViewerMode"
 import FALLBACK_LANGUAGE from "@/i18n/fallbackLanguage"
 import resolveSupportedLanguage from "@/i18n/resolveSupportedLanguage"
 import css from "@/styles/components/resumeModal.module.css"
@@ -12,6 +14,7 @@ interface ResumeModalProps {
 
 function ResumeModal({ isOpen, onClose }: ResumeModalProps) {
     const { t, i18n } = useTranslation("common")
+    const viewerMode = useResumeViewerMode()
 
     if (!isOpen) {
         return null
@@ -19,7 +22,6 @@ function ResumeModal({ isOpen, onClose }: ResumeModalProps) {
 
     const language = resolveSupportedLanguage(i18n.resolvedLanguage) ?? FALLBACK_LANGUAGE
     const pdfPath = getResumePath(language)
-    const hasViewer = navigator.pdfViewerEnabled !== false
 
     return (
         <Modal
@@ -44,11 +46,11 @@ function ResumeModal({ isOpen, onClose }: ResumeModalProps) {
                 </div>
             }
         >
-            {hasViewer ? (
+            {viewerMode === "native" ? (
                 // oxlint-disable-next-line react/iframe-missing-sandbox
                 <iframe src={pdfPath} title={t("resume.modal.pdfTitle")} className={css.frame} />
             ) : (
-                <p className={css.fallback}>{t("resume.modal.noViewer")}</p>
+                <ResumePdfPages key={pdfPath} url={pdfPath} />
             )}
         </Modal>
     )

@@ -1,5 +1,9 @@
-import type { PDFPageProxy } from "pdfjs-dist/legacy/build/pdf.mjs"
+import type PdfRenderTask from "@/types/resume/PdfRenderTask.types"
+import type PdfViewport from "@/types/resume/PdfViewport.types"
 
-type PdfPage = Pick<PDFPageProxy, "getViewport" | "render" | "cleanup">
+interface PdfPage {
+    getViewport(options: { scale: number }): PdfViewport
+    render(options: { canvas: HTMLCanvasElement | null; viewport: PdfViewport }): PdfRenderTask
+}
 
 export default PdfPage

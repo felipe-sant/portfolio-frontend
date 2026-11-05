@@ -1,5 +1,5 @@
-import type { PDFDocumentLoadingTask } from "pdfjs-dist/legacy/build/pdf.mjs"
+import type PdfLoadingTask from "@/types/resume/PdfLoadingTask.types"
 
-type PdfOpener = (url: string) => Pick<PDFDocumentLoadingTask, "promise" | "destroy">
+type PdfOpener = (url: string) => PdfLoadingTask
 
 export default PdfOpener
