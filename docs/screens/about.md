@@ -137,16 +137,16 @@ Cada subseção lista os requisitos na ordem dos IDs.
 
 ## Navegação
 
-| De onde                               | Ação                                             | Para onde                                              |
-| ------------------------------------- | ------------------------------------------------ | ------------------------------------------------------ |
-| Cabeçalho, menu, rodapé de `/contact` | "Informações"                                    | `/about` do idioma atual                               |
-| Qualquer link externo ou URL digitada | Abrir `/pt-BR/about`, `/en/about` ou `/es/about` | A tela no idioma do caminho                            |
-| Apresentação                          | "Baixar CV"                                      | Modal de pré-visualização do PDF do idioma ativo (D52) |
-| Apresentação                          | "Entrar em contato"                              | `/contact` do idioma atual                             |
-| Item de trajetória                    | Clique, Enter ou Espaço                          | Modal de detalhe, na mesma URL                         |
-| Modal                                 | "Fechar", fundo ou Esc                           | Fecha; o foco volta ao item                            |
-| Modal, projetos relacionados          | Título do projeto                                | `/projects/:id` do idioma atual                        |
-| Seletor de idioma                     | `PT`, `EN`, `ES`                                 | `/pt-BR/about`, `/en/about`, `/es/about` (D31)         |
+| De onde                               | Ação                                             | Para onde                                                                                                                                                         |
+| ------------------------------------- | ------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Cabeçalho, menu, rodapé de `/contact` | "Informações"                                    | `/about` do idioma atual                                                                                                                                          |
+| Qualquer link externo ou URL digitada | Abrir `/pt-BR/about`, `/en/about` ou `/es/about` | A tela no idioma do caminho                                                                                                                                       |
+| Apresentação                          | "Baixar CV"                                      | Modal de pré-visualização do PDF do idioma ativo (`iframe` no desktop com visualizador; em celular ou sem visualizador, páginas em canvas com `pdfjs-dist`) (D52) |
+| Apresentação                          | "Entrar em contato"                              | `/contact` do idioma atual                                                                                                                                        |
+| Item de trajetória                    | Clique, Enter ou Espaço                          | Modal de detalhe, na mesma URL                                                                                                                                    |
+| Modal                                 | "Fechar", fundo ou Esc                           | Fecha; o foco volta ao item                                                                                                                                       |
+| Modal, projetos relacionados          | Título do projeto                                | `/projects/:id` do idioma atual                                                                                                                                   |
+| Seletor de idioma                     | `PT`, `EN`, `ES`                                 | `/pt-BR/about`, `/en/about`, `/es/about` (D31)                                                                                                                    |
 
 O Início pode ter um link para `/about`; isso é da spec da #3.
 

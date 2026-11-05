@@ -163,17 +163,17 @@ o protótipo, depois o handoff.
 
 Caminhos de D32, sempre com o prefixo do idioma atual (NF-IN-11).
 
-| De onde                               | Ação                                         | Para onde                                                                                         |
-| ------------------------------------- | -------------------------------------------- | ------------------------------------------------------------------------------------------------- |
-| Qualquer tela                         | Gato e nome, "Início" na navegação           | `/` do idioma atual (RF-LAY-02, RF-LAY-03)                                                        |
-| Página não encontrada, página de erro | "Voltar para o início"                       | `/` (RF-LAY-28, RF-LAY-29)                                                                        |
-| Carga em `/`                          | Qualquer                                     | `/pt-BR`, `/en` ou `/es` (NF-IN-09, #53)                                                          |
-| Hero                                  | "Ver projetos"                               | `/projects`                                                                                       |
-| Hero                                  | "Baixar CV"                                  | Modal de pré-visualização do PDF do idioma ativo, sem sair da página; sem JavaScript, o PDF (D52) |
-| Projetos em destaque                  | "Ver todos →"                                | `/projects`                                                                                       |
-| Projetos em destaque                  | Título, imagem ou "Ver projeto →" de um item | `/projects/:id` do projeto                                                                        |
-| Saídas                                | "Ver todos os projetos", "Ler sobre mim"     | `/projects`, `/about`                                                                             |
-| Alerta de erro                        | "Tentar novamente"                           | Fica na tela; refaz a consulta do bloco                                                           |
+| De onde                               | Ação                                         | Para onde                                                                                                                                                                                                    |
+| ------------------------------------- | -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Qualquer tela                         | Gato e nome, "Início" na navegação           | `/` do idioma atual (RF-LAY-02, RF-LAY-03)                                                                                                                                                                   |
+| Página não encontrada, página de erro | "Voltar para o início"                       | `/` (RF-LAY-28, RF-LAY-29)                                                                                                                                                                                   |
+| Carga em `/`                          | Qualquer                                     | `/pt-BR`, `/en` ou `/es` (NF-IN-09, #53)                                                                                                                                                                     |
+| Hero                                  | "Ver projetos"                               | `/projects`                                                                                                                                                                                                  |
+| Hero                                  | "Baixar CV"                                  | Modal de pré-visualização do PDF do idioma ativo (`iframe` no desktop com visualizador; em celular ou sem visualizador, páginas em canvas com `pdfjs-dist`), sem sair da página; sem JavaScript, o PDF (D52) |
+| Projetos em destaque                  | "Ver todos →"                                | `/projects`                                                                                                                                                                                                  |
+| Projetos em destaque                  | Título, imagem ou "Ver projeto →" de um item | `/projects/:id` do projeto                                                                                                                                                                                   |
+| Saídas                                | "Ver todos os projetos", "Ler sobre mim"     | `/projects`, `/about`                                                                                                                                                                                        |
+| Alerta de erro                        | "Tentar novamente"                           | Fica na tela; refaz a consulta do bloco                                                                                                                                                                      |
 
 ## Textos fixos e chaves
 
