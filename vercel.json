@@ -1,4 +1,10 @@
 {
     "cleanUrls": true,
-    "trailingSlash": false
+    "trailingSlash": false,
+    "headers": [
+        {
+            "source": "/cv/(.*)\\.md",
+            "headers": [{ "key": "Content-Type", "value": "text/markdown; charset=utf-8" }]
+        }
+    ]
 }

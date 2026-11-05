@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs"
 import { fileURLToPath } from "node:url"
-import { loadEnv } from "vite"
+import { loadEnv, type Plugin } from "vite"
 import { defineConfig, configDefaults, coverageConfigDefaults } from "vitest/config"
 import react from "@vitejs/plugin-react"
 import resolveBase from "./scripts/resolveBase.ts"
@@ -14,6 +14,18 @@ const serverEntries = {
     prerenderRoutes: fileURLToPath(new URL("./src/prerender/prerenderRoutes.ts", import.meta.url))
 }
 
+const markdownCharset: Plugin = {
+    name: "markdown-charset",
+    configureServer(server) {
+        server.middlewares.use((request, response, next) => {
+            if (request.url?.split("?")[0].endsWith(".md")) {
+                response.setHeader("Content-Type", "text/markdown; charset=utf-8")
+            }
+            next()
+        })
+    }
+}
+
 export default defineConfig(({ command, mode, isSsrBuild }) => {
     if (command === "build") {
         resolveSiteUrl(loadEnv(mode, process.cwd(), "VITE_").VITE_SITE_URL)
@@ -23,7 +35,7 @@ export default defineConfig(({ command, mode, isSsrBuild }) => {
         base: resolveBase(process.env.BASE_PATH),
         build: isSsrBuild ? { rollupOptions: { input: serverEntries } } : {},
         publicDir: isSsrBuild ? false : "public",
-        plugins: [react()],
+        plugins: [react(), markdownCharset],
         define: {
             __BUILD_YEAR__: JSON.stringify(new Date().getFullYear()),
             __APP_VERSION__: JSON.stringify(version)
