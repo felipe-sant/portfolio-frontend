@@ -69,6 +69,8 @@ jobs:
                   cache-dependency-path: package-lock.json
             - name: Install dependencies
               run: npm ci
+            - name: Install Chromium
+              run: npx playwright install --with-deps chromium
             - name: Decide test scope
               id: scope
               env:
