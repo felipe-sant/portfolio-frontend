@@ -1,7 +1,7 @@
 {
   "name": "portfolio-frontend",
   "description": "Portfólio pessoal de Luiz Felipe dos Santos, desenvolvedor full stack.",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "private": true,
   "type": "module",
   "engines": {
