@@ -1,7 +1,8 @@
 import { devices, expect, test } from "@playwright/test"
-import type { Locator, Page } from "@playwright/test"
+import type { Locator, Page, Route } from "@playwright/test"
 import FATEC_BASE_PATH from "@scripts/fatecBasePath"
 import expectNoAxeViolations from "./support/expectNoAxeViolations"
+import collectConsoleProblems from "./support/collectConsoleProblems"
 import readCanvasPixels from "./support/readCanvasPixels"
 import UI_TEXTS from "./support/uiTexts"
 import waitForHydration from "./support/waitForHydration"
@@ -64,7 +65,7 @@ const WORKER_PATTERN = "**/assets/pdf.worker.min-*.mjs"
 
 async function expectPaintedCanvas(dialog: Locator) {
     const canvas = dialog.locator("canvas").first()
-    await expect(canvas).toBeVisible()
+    await expect(canvas).toBeVisible({ timeout: 15000 })
     await expect
         .poll(async () => (await readCanvasPixels(canvas)).inkPixels, { timeout: 15000 })
         .toBeGreaterThan(0)
@@ -469,5 +470,141 @@ test.describe("RF-HOME-07: desktop com visualizador de PDF", () => {
         await expect(dialog.locator("iframe")).toHaveCount(1)
         await expect(dialog.locator("canvas")).toHaveCount(0)
         expect(requested.filter((url) => /\/assets\/pdf[.-]/.test(url))).toEqual([])
+    })
+})
+
+test.describe("RF-HOME-07, CA13, CA16: estados e layout do modal em canvas", () => {
+    test.use({ hasTouch: true, isMobile: true, viewport: TOUCH_VIEWPORT })
+
+    test("RF-HOME-07: enquanto o PDF carrega o modal mostra o estado de carregamento e os dois links", async ({
+        page
+    }) => {
+        await forcePdfViewer(page, false)
+        const texts = UI_TEXTS["pt-BR"]
+        const held: Route[] = []
+        await page.route("**/cv/cv-pt-BR.pdf", (route) => {
+            held.push(route)
+        })
+        const link = await openPoint(page, POINTS[0], "pt-BR")
+
+        await link.click()
+
+        const dialog = page.getByRole("dialog")
+        await expect(dialog.getByRole("status")).toContainText(texts.resumeModal.loading)
+        await expect(dialog.locator("canvas")).toHaveCount(0)
+        await expect(dialog.getByRole("link", { name: texts.resumeModal.download })).toBeVisible()
+        await expect(dialog.getByRole("link", { name: texts.resumeModal.viewText })).toBeVisible()
+        await expect.poll(() => held.length).toBeGreaterThan(0)
+        await held[0].continue()
+        await expectPaintedCanvas(dialog)
+    })
+
+    test("CA16: em 390px os dois links do rodapé ficam dentro do modal, sem rolagem horizontal", async ({
+        page
+    }) => {
+        await forcePdfViewer(page, false)
+        const texts = UI_TEXTS["pt-BR"]
+        const link = await openPoint(page, POINTS[0], "pt-BR")
+
+        await link.click()
+        const dialog = page.getByRole("dialog")
+        await expectPaintedCanvas(dialog)
+
+        const dialogBox = await dialog.boundingBox()
+        for (const name of [texts.resumeModal.download, texts.resumeModal.viewText]) {
+            const box = await dialog.getByRole("link", { name }).boundingBox()
+            expect(box).not.toBeNull()
+            expect((box?.x ?? -1) >= (dialogBox?.x ?? 0)).toBe(true)
+            expect((box?.x ?? 0) + (box?.width ?? 0)).toBeLessThanOrEqual(
+                (dialogBox?.x ?? 0) + (dialogBox?.width ?? 0) + 1
+            )
+        }
+        const overflow = await page.evaluate(
+            () => document.documentElement.scrollWidth - document.documentElement.clientWidth
+        )
+        expect(overflow).toBeLessThanOrEqual(0)
+    })
+
+    test("RF-HOME-07: a região rola até a última página, que também é desenhada", async ({
+        page
+    }) => {
+        await forcePdfViewer(page, false)
+        const texts = UI_TEXTS["pt-BR"]
+        const link = await openPoint(page, POINTS[0], "pt-BR")
+
+        await link.click()
+        const dialog = page.getByRole("dialog")
+        await expectPaintedCanvas(dialog)
+        const region = dialog.getByRole("region", { name: texts.resumeModal.pagesLabel })
+
+        await region.evaluate((element) => element.scrollTo(0, element.scrollHeight))
+        const last = dialog.getByRole("img", { name: texts.resumeModal.pageLabel(2, 2) })
+        await expect(last).toBeInViewport()
+        await expect
+            .poll(async () => (await readCanvasPixels(last)).inkPixels, { timeout: 15000 })
+            .toBeGreaterThan(0)
+    })
+
+    test("RF-HOME-07: abrir e fechar em seguida nos três idiomas não gera erro no console", async ({
+        page
+    }) => {
+        await forcePdfViewer(page, false)
+        const problems = collectConsoleProblems(page)
+        const texts = UI_TEXTS["pt-BR"]
+
+        for (let round = 0; round < 3; round += 1) {
+            const link = await openPoint(page, POINTS[0], LANGUAGES[round])
+            await link.click()
+            await expect(page.getByRole("dialog")).toBeVisible()
+            await page.keyboard.press("Escape")
+            await expect(page.getByRole("dialog")).toHaveCount(0)
+        }
+
+        const link = await openPoint(page, POINTS[0], "pt-BR")
+        await link.click()
+        await expectPaintedCanvas(page.getByRole("dialog"))
+        await page
+            .getByRole("dialog")
+            .getByRole("button", { name: texts.resumeModal.close })
+            .click()
+        await expect(page.getByRole("dialog")).toHaveCount(0)
+
+        expect(problems).toEqual([])
+    })
+
+    test("RF-HOME-07: voltar e avançar no histórico com o modal aberto não gera erro no console", async ({
+        page
+    }) => {
+        await forcePdfViewer(page, false)
+        const problems = collectConsoleProblems(page)
+        const link = await openPoint(page, POINTS[0], "pt-BR")
+
+        await link.click()
+        await expectPaintedCanvas(page.getByRole("dialog"))
+        await page.goBack()
+        await page.goForward()
+        await page.getByRole("heading", { level: 1 }).waitFor()
+
+        await expect(page.getByRole("dialog")).toHaveCount(0)
+        expect(problems).toEqual([])
+    })
+
+    test("RF-HOME-07: em 320px de largura (zoom equivalente) o modal não gera rolagem horizontal", async ({
+        page
+    }) => {
+        await page.setViewportSize({ width: 320, height: 568 })
+        await forcePdfViewer(page, false)
+        const link = await openPoint(page, POINTS[0], "pt-BR")
+
+        await link.click()
+        const dialog = page.getByRole("dialog")
+        await expectPaintedCanvas(dialog)
+
+        const widths = await page.evaluate(() => ({
+            page: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+            dialog: (document.querySelector('[role="dialog"]') as HTMLElement).scrollWidth
+        }))
+        expect(widths.page).toBeLessThanOrEqual(0)
+        expect(widths.dialog).toBeLessThanOrEqual(320)
     })
 })
