@@ -29,14 +29,19 @@ function ResumeModal({ isOpen, onClose }: ResumeModalProps) {
             closeLabel={t("resume.modal.close")}
             onClose={onClose}
             footer={
-                <>
+                <div className={css.actions}>
                     <a href={pdfPath} download className={css.link}>
                         {t("resume.modal.download")}
                     </a>
-                    <a href={getResumePath(language, "md")} className={css.link}>
+                    <a
+                        href={getResumePath(language, "md")}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={css.link}
+                    >
                         {t("resume.modal.viewText")}
                     </a>
-                </>
+                </div>
             }
         >
             {hasViewer ? (

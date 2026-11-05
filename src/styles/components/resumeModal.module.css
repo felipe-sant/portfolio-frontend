@@ -13,7 +13,27 @@
     color: var(--text-body);
 }
 
+.actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: var(--space-1) var(--space-3);
+}
+
 .link {
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius);
+    white-space: nowrap;
     color: var(--text-strong);
     font-weight: var(--weight-semibold);
+    transition:
+        background-color var(--dur-fast) var(--ease),
+        color var(--dur-fast) var(--ease);
+}
+
+@media (hover: hover) {
+    .link:hover {
+        background-color: var(--bg-highlight);
+        color: var(--text-link);
+    }
 }

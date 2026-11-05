@@ -61,6 +61,8 @@ describe("ResumeModal", () => {
         expect(download).toHaveAttribute("href", "/cv/cv-es.pdf")
         expect(download).toHaveAttribute("download")
         expect(text).toHaveAttribute("href", "/cv/cv-es.md")
+        expect(text).toHaveAttribute("target", "_blank")
+        expect(text).toHaveAttribute("rel", "noopener noreferrer")
         expect(screen.getByTitle("Currículum en PDF")).not.toContainElement(download)
     })
 
