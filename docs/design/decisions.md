@@ -184,6 +184,11 @@ fórmula de luminância relativa da WCAG 2.x.
 - **Referência:** o protótipo usa Bricolage 700/800, Plex Sans 400/500/600 e Plex Mono 400/500 nas
   regras que já declara; a lista do código, quando existir, é o que vale. Se o handoff estiver
   acessível na poda, `tokens/typography.css` dele é cruzado com a lista.
+- **Aplicada em 07-11-2026 (#40):** lista final Bricolage Grotesque 600–800 (variável), IBM Plex
+  Sans 400/500/600/700 e IBM Plex Mono 400/500. Nenhum `woff2` saiu (todos em uso); a faixa da
+  Bricolage foi estreitada de 400–800 para 600–800 e dois pesos sem arquivo foram trocados na regra
+  (Plex Sans 800 do menu mobile ativo para 700, Plex Mono 600 da aba ativa de documentos para 500).
+  O Plex Sans 700 segue em uso implícito (`<strong>`, `<th>`).
 
 ## Citação do handoff
 
