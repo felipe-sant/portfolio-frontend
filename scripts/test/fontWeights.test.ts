@@ -135,10 +135,22 @@ describe("pesos de fonte", () => {
         expect([...new Set(missing)]).toEqual([])
     })
 
+    it("nenhuma regra usa font-weight com valor literal", () => {
+        const literals = styleFiles.flatMap((path, index) => {
+            const rules = styleSources[index].replace(/@font-face\s*\{[^}]*\}/g, "")
+            const found = rules.match(/font-weight:(?!\s*var\(--weight-)[^;}]+/g) ?? []
+            return found.map((declaration) => `${path.replace(ROOT, "")}: ${declaration.trim()}`)
+        })
+        expect(literals).toEqual([])
+    })
+
     it("a faixa da Bricolage Grotesque cobre os pesos de --font-heading", () => {
         const headingWeights = weightUsages
             .filter((usage) => usage.family === "Bricolage Grotesque")
-            .map((usage) => weightValueByToken.get(usage.token) as number)
+            .flatMap((usage) => {
+                const value = weightValueByToken.get(usage.token)
+                return value === undefined ? [] : [value]
+            })
         const face = fontFaces.find((fontFace) => fontFace.family === "Bricolage Grotesque")
         expect(face).toBeDefined()
         expect(Math.min(...headingWeights)).toBeGreaterThanOrEqual(face?.minWeight ?? Infinity)
