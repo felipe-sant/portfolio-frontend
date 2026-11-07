@@ -379,6 +379,7 @@ test.describe("RF-HOME-07: PDF em canvas em celular", () => {
         await page.keyboard.press("Tab")
         await expect(dialog.getByRole("button", { name: texts.resumeModal.close })).toBeFocused()
         await page.keyboard.press("Tab")
+        await page.keyboard.press("Tab")
         await expect(region).toBeFocused()
 
         const before = await region.evaluate((element) => element.scrollTop)
