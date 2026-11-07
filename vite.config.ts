@@ -62,6 +62,7 @@ export default defineConfig(({ command, mode, isSsrBuild }) => {
                     "vite.config.ts",
                     "scripts/buildFatec.ts",
                     "scripts/generateOgImage.ts",
+                    "scripts/generateSeoFiles.ts",
                     "scripts/generateResume.ts",
                     "scripts/prerender.ts",
                     "scripts/prepareRelease.ts",

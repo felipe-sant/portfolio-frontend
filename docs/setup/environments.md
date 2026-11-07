@@ -31,7 +31,7 @@ Para conferir o beta, com o bypass de automação (`x-vercel-protection-bypass`)
 
 ## Build
 
-`npm run build` encadeia quatro passos: `npm run typecheck`, `vite build` (cliente, em `dist/`), `npm run build:server` (`vite build --ssr --outDir dist-server`, as entradas de servidor `entry-server`, `routes` e `prerenderRoutes`, sem `public/`) e `npm run prerender` (`scripts/prerender.ts`, que escreve em `dist/` um HTML por rota pré-renderizada e por idioma, mais o `404.html`, e lista no log as rotas do registro que ainda não têm tela). O `dist-server/` é intermediário, fica no `.gitignore` e nunca é publicado. O `BASE_PATH` vale para os dois builds, porque o `base` é resolvido na compilação. Detalhe da forma em [Pré-renderização](../architecture/frontend.md#pré-renderização).
+`npm run build` encadeia cinco passos: `npm run typecheck`, `vite build` (cliente, em `dist/`), `npm run build:server` (`vite build --ssr --outDir dist-server`, as entradas de servidor `entry-server`, `routes` e `prerenderRoutes`, sem `public/`) e `npm run prerender` (`scripts/prerender.ts`, que escreve em `dist/` um HTML por rota pré-renderizada e por idioma, mais o `404.html`, e lista no log as rotas do registro que ainda não têm tela) e `npm run build:seo` (`scripts/generateSeoFiles.ts`, que escreve em `dist/` o `robots.txt`, o `sitemap.xml`, o `llms.txt` e os três `llms-full*.txt`, montando as URLs com `VITE_SITE_URL` e `BASE_PATH`). O `dist-server/` é intermediário, fica no `.gitignore` e nunca é publicado. O `BASE_PATH` vale para os dois builds, porque o `base` é resolvido na compilação. Detalhe da forma em [Pré-renderização](../architecture/frontend.md#pré-renderização).
 
 ## Fatec (GitHub Pages)
 
