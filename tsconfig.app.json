@@ -22,5 +22,9 @@
         },
         "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo"
     },
-    "include": ["src", "scripts/test/listTargets.test.ts"]
+    "include": [
+        "src",
+        "scripts/test/listTargets.test.ts",
+        "scripts/test/listSitemapEntries.test.ts"
+    ]
 }
