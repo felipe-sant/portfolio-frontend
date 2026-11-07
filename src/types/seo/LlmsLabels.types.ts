@@ -2,6 +2,7 @@ type LlmsLabels = {
     languageName: string
     pages: string
     projects: string
+    project: string
     resume: string
     fullText: string
     resumeMarkdown: string
