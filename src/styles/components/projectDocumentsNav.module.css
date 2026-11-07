@@ -38,5 +38,5 @@
 .link[aria-current="page"] {
     background-color: var(--bg-highlight);
     color: var(--text-strong);
-    font-weight: var(--weight-semibold);
+    font-weight: var(--weight-medium);
 }
