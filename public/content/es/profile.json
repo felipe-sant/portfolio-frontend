@@ -33,7 +33,7 @@
     "workPrinciples": [
         "Discuto las reglas con el PO antes de implementar, no solo sigo lo que está escrito en la tarea",
         "Divido las features grandes en partes más pequeñas antes de empezar",
-        "Uso IA en el flujo de desarrollo, con agentes y skills para planificar, implementar y revisar lo que entrego, no solo para escribir código más rápido"
+        "Escribo la prueba antes del código y reviso lo que entrego antes de abrir el PR"
     ],
     "stack": [
         {
@@ -106,6 +106,18 @@
                 },
                 {
                     "name": "Linux"
+                },
+                {
+                    "name": "Git"
+                },
+                {
+                    "name": "GitHub Actions"
+                },
+                {
+                    "name": "Vitest"
+                },
+                {
+                    "name": "Playwright"
                 }
             ]
         }

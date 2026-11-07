@@ -83,7 +83,13 @@ function Modal({
                     )}
                     <IconButton icon="close" label={closeLabel} onClick={onClose} />
                 </div>
-                <div className={css.body}>{children}</div>
+                <div
+                    // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex
+                    tabIndex={0}
+                    className={css.body}
+                >
+                    {children}
+                </div>
                 {footer && <div className={css.footer}>{footer}</div>}
             </div>
         </div>,

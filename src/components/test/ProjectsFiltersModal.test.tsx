@@ -210,6 +210,7 @@ describe("ProjectsFiltersModal", () => {
 
         await user.tab()
         await user.tab()
+        await user.tab()
         expect(screen.getByRole("radio", { name: "Mais antigo" })).toHaveFocus()
 
         await user.tab()
