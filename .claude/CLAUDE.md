@@ -93,9 +93,10 @@ que o simula).
 
 ```bash
 npm run dev      # dev server do Vite (porta padrão 5173)
-npm run build    # typecheck + vite build (cliente) + build:server + prerender: HTML por rota e idioma + 404.html em dist/
+npm run build    # typecheck + vite build (cliente) + build:server + prerender (HTML por rota e idioma + 404.html em dist/) + build:seo
 npm run build:server # build SSR (dist-server/, intermediário e gitignored) das entradas de servidor
 npm run prerender    # scripts/prerender.ts: lê dist-server/ e escreve os HTML pré-renderizados em dist/
+npm run build:seo    # scripts/generateSeoFiles.ts: escreve em dist/ robots.txt, sitemap.xml, llms.txt e llms-full.txt, llms-full.en.txt, llms-full.es.txt (JSONs de public/ + rotas do dist-server/; conferir com curl em <base>robots.txt etc.)
 npm run preview  # serve o conteúdo de dist/ já gerado — depende de um npm run build anterior
 npm test         # Vitest em watch mode (o script é `vitest`, sem `run`)
 npm test -- --run                            # execução one-shot (CI, agente, terminal não-interativo)
