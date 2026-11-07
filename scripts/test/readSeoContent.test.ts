@@ -73,7 +73,10 @@ describe("readSeoContent", () => {
                 project.documents.filter((document) => document.format === "markdown")
             )
 
-            expect(languageContent.authorName).not.toBe("")
+            expect(languageContent.labels.authorName).not.toBe("")
+            expect(languageContent.labels.navigation.projects).not.toBe("")
+            expect(languageContent.labels.projectStatus.inDevelopment).not.toBe("")
+            expect(languageContent.labels.stackCategory.tooling).not.toBe("")
             expect(languageContent.profile.summary).not.toBe("")
             expect(languageContent.projects.length).toBeGreaterThan(0)
             expect(languageContent.timeline.length).toBeGreaterThan(0)

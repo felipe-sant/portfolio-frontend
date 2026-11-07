@@ -7,6 +7,7 @@ import type SupportedLanguage from "@/types/language/SupportedLanguage.types"
 import type Profile from "@/types/profile/Profile.types"
 import type ProjectDocument from "@/types/project/ProjectDocument.types"
 import type ProjectRecord from "@/types/project/ProjectRecord.types"
+import type SeoCommonLabels from "@/types/seo/SeoCommonLabels.types"
 import type SeoContent from "@/types/seo/SeoContent.types"
 import type SeoLanguageContent from "@/types/seo/SeoLanguageContent.types"
 import type SeoProject from "@/types/seo/SeoProject.types"
@@ -62,17 +63,19 @@ function readProjects(contentDirectory: string, language: SupportedLanguage): Se
     }))
 }
 
-function readAuthorName(language: SupportedLanguage): string {
-    const common = readJson<{ authorName: string }>(join("src", "locales", language, "common.json"))
+function readLabels(language: SupportedLanguage): SeoCommonLabels {
+    const { authorName, navigation, projectStatus, stackCategory } = readJson<SeoCommonLabels>(
+        join("src", "locales", language, "common.json")
+    )
 
-    return common.authorName
+    return { authorName, navigation, projectStatus, stackCategory }
 }
 
 function readLanguage(publicDirectory: string, language: SupportedLanguage): SeoLanguageContent {
     const contentDirectory = join(publicDirectory, "content")
 
     return {
-        authorName: readAuthorName(language),
+        labels: readLabels(language),
         profile: readJson<Profile>(join(contentDirectory, language, "profile.json")),
         projects: readProjects(contentDirectory, language),
         timeline: readJson<ListResponse<TimelineItemRecord>>(
