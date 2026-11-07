@@ -17,5 +17,9 @@
         "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo"
     },
     "include": ["vite.config.ts", "scripts"],
-    "exclude": ["scripts/test/listTargets.test.ts"]
+    "exclude": [
+        "scripts/test/listTargets.test.ts",
+        "scripts/test/listSitemapEntries.test.ts",
+        "scripts/test/writeSeoFiles.test.ts"
+    ]
 }
