@@ -374,6 +374,7 @@ test.describe("ordenação no modal", () => {
 
         await page.keyboard.press("Tab")
         await page.keyboard.press("Tab")
+        await page.keyboard.press("Tab")
         await expect(radio(texts.sortRecent)).toBeFocused()
 
         await page.keyboard.press("ArrowDown")
@@ -453,6 +454,7 @@ test.describe("ordenação no modal", () => {
 
         await view.filtersButton.press("Enter")
         await expect(view.dialog).toBeVisible()
+        await page.keyboard.press("Tab")
         await page.keyboard.press("Tab")
         await page.keyboard.press("Tab")
         const focusedRadio = view.dialog.locator('input[type="radio"]:focus')
