@@ -33,7 +33,7 @@
     "workPrinciples": [
         "I discuss the rules with the PO before implementing, instead of just following what is written in the task",
         "I break large features into smaller parts before starting",
-        "I use AI in my development workflow, with agents and skills to plan, implement and review what I deliver, not only to write code faster"
+        "I write the test before the code and put what I deliver through a review before opening the PR"
     ],
     "stack": [
         {
@@ -106,6 +106,18 @@
                 },
                 {
                     "name": "Linux"
+                },
+                {
+                    "name": "Git"
+                },
+                {
+                    "name": "GitHub Actions"
+                },
+                {
+                    "name": "Vitest"
+                },
+                {
+                    "name": "Playwright"
                 }
             ]
         }
