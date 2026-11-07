@@ -1,5 +1,16 @@
 # portfolio-frontend
 
+## 1.2.0
+
+### Minor Changes
+
+- c399b00: O build passa a gerar na raiz do site o `robots.txt`, o `sitemap.xml`, o `llms.txt` e os `llms-full.txt` em português, inglês e espanhol, com o texto completo do portfólio e do currículo para buscadores e IAs.
+
+### Patch Changes
+
+- ff87ae6: Atualiza o perfil e a trajetória com testes automatizados, fluxo com agentes de IA, CI e novas disciplinas da Fatec, nos três idiomas. O corpo dos modais passa a receber foco pelo teclado, para que conteúdo longo possa ser rolado sem mouse.
+- ff2cfd0: Poda os pesos de fonte: a faixa da Bricolage Grotesque passa a 600–800, o item ativo do menu mobile e a aba ativa de documentos usam pesos que têm arquivo, e um teste automatizado impede que fontes, `@font-face`, `preload` e tokens de peso voltem a divergir.
+
 ## 1.1.0
 
 ### Minor Changes

@@ -1,7 +1,7 @@
 {
   "name": "portfolio-frontend",
   "description": "Portfólio pessoal de Luiz Felipe dos Santos, desenvolvedor full stack.",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "private": true,
   "type": "module",
   "engines": {
@@ -25,9 +25,10 @@
   "scripts": {
     "dev": "vite",
     "typecheck": "tsc -b",
-    "build": "npm run typecheck && vite build && npm run build:server && npm run prerender",
+    "build": "npm run typecheck && vite build && npm run build:server && npm run prerender && npm run build:seo",
     "build:server": "vite build --ssr --outDir dist-server",
     "prerender": "tsx --tsconfig tsconfig.node.json scripts/prerender.ts",
+    "build:seo": "tsx --tsconfig tsconfig.node.json scripts/generateSeoFiles.ts",
     "preview": "vite preview",
     "build:fatec": "tsx --tsconfig tsconfig.node.json scripts/buildFatec.ts",
     "publish:fatec:docs": "tsx --tsconfig tsconfig.node.json scripts/publishFatecDocs.ts",

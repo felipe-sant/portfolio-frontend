@@ -7,7 +7,7 @@
             "organization": "InCicle",
             "details": ["Estágio · Híbrido"],
             "start": "2026-05",
-            "summary": "Atuação principalmente em frontend, com incursões no backend, em squad ágil, passando por diferentes módulos de produto dentro de uma arquitetura de micro frontends — da implementação de novas features à evolução de versões já existentes. Desenvolvimento com React, TypeScript e Node.js, integração de APIs REST e trabalho com bancos de dados SQL e NoSQL. Revisão de Pull Requests, testes de QA e resolução de hotfixes em produção.",
+            "summary": "Atuação principalmente em frontend, com incursões no backend, em squad ágil, passando por diferentes módulos de produto dentro de uma arquitetura de micro frontends — da implementação de novas features à evolução de versões já existentes. Desenvolvimento com React, TypeScript e Node.js, integração de APIs REST e trabalho com bancos de dados SQL e NoSQL. Revisão de Pull Requests, testes de QA e resolução de hotfixes em produção. Uso de agentes de IA para planejar, implementar e revisar as entregas, com TDD.",
             "responsibilities": [
                 "Desenvolvimento de features com React, TypeScript e Node.js",
                 "Integração de APIs REST internas e externas",
@@ -15,6 +15,10 @@
                 "Revisão de Pull Requests de colegas de squad",
                 "Execução de testes de QA em tasks próprias e de terceiros",
                 "Resolução de hotfixes urgentes em produção",
+                "Testes end-to-end automatizados com Playwright",
+                "Planejamento, implementação e revisão de entregas com agentes de IA, seguindo TDD",
+                "Configuração de pipelines de CI e atualização automática de dependências",
+                "Preparação e acompanhamento de entregas para produção",
                 "Manutenção de repositórios"
             ],
             "disciplines": [],
@@ -27,7 +31,10 @@
                 "MongoDB",
                 "Redis",
                 "Git",
-                "Docker"
+                "Docker",
+                "Vitest",
+                "Playwright",
+                "GitHub Actions"
             ],
             "certificates": [],
             "projectIds": []
@@ -78,6 +85,9 @@
                 "Banco de Dados",
                 "Computação em Nuvem (Cloud)",
                 "Inteligência Artificial (IA)",
+                "Qualidade e Teste de Software",
+                "Processamento de Linguagem Natural",
+                "Mineração de Dados",
                 "Internet das Coisas (IoT)",
                 "Segurança da Informação",
                 "Experiência do Usuário (UX/CX)",

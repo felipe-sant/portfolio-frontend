@@ -134,7 +134,7 @@
 
 .panelNav .link[aria-current="page"] {
     border-inline-start-color: var(--brand-variant);
-    font-weight: var(--weight-black);
+    font-weight: var(--weight-bold);
 }
 
 .group {

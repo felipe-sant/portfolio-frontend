@@ -168,6 +168,21 @@ describe("Modal", () => {
 
         await expectNoAxeViolations(document.body)
     }, 15000)
+    it("o corpo rolável é alcançável pelo teclado, depois do Fechar e antes do rodapé", async () => {
+        const user = userEvent.setup()
+        renderModal()
+        const body = screen.getByText("Resumo").parentElement
+
+        expect(body).toHaveAttribute("tabindex", "0")
+
+        await user.tab()
+        expect(screen.getByRole("button", { name: "Fechar" })).toHaveFocus()
+        await user.tab()
+        expect(body).toHaveFocus()
+        await user.tab()
+        expect(screen.getByRole("button", { name: "Conteúdo" })).toHaveFocus()
+    })
+
     it("sem subtitle, o cabeçalho tem só o título e o Fechar", () => {
         renderModal()
 

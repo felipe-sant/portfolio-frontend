@@ -110,9 +110,10 @@ O repositório usa o prefixo `--danger-*`, igual ao handoff (o nome antigo `--er
 | `--font-body`    | IBM Plex Sans       | Corpo, botões, campos, legendas                                    |
 | `--font-mono`    | IBM Plex Mono       | Rótulos de seção, chips de tecnologia, valores tabulares, datas    |
 
-Pesos carregados: Bricolage Grotesque 400–800 (variável), IBM Plex Sans 400/500/600/700 e IBM Plex
-Mono 400/500 (`--weight-regular` a `--weight-black`). Os pesos sem uso saem depois da última tela da
-v1, antes da primeira entrega na `main`, pelo método registrado em `decisions.md` (D08).
+Pesos carregados: Bricolage Grotesque 600–800 (variável), IBM Plex Sans 400/500/600/700 e IBM Plex
+Mono 400/500 (`--weight-regular` a `--weight-black`). A poda de pesos (D08) foi aplicada na #40;
+`scripts/test/fontWeights.test.ts` impede que arquivo, `@font-face`, `preload` e `--weight-*`
+voltem a divergir.
 
 ### Escala
 

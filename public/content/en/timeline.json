@@ -7,7 +7,7 @@
             "organization": "InCicle",
             "details": ["Internship · Hybrid"],
             "start": "2026-05",
-            "summary": "Working mainly on the frontend, with incursions into the backend, in an agile squad, going through different product modules within a micro frontend architecture, from implementing new features to evolving existing versions. Development with React, TypeScript and Node.js, REST API integration and work with SQL and NoSQL databases. Pull Request review, QA testing and production hotfixes.",
+            "summary": "Working mainly on the frontend, with incursions into the backend, in an agile squad, going through different product modules within a micro frontend architecture, from implementing new features to evolving existing versions. Development with React, TypeScript and Node.js, REST API integration and work with SQL and NoSQL databases. Pull Request review, QA testing and production hotfixes. Use of AI agents to plan, implement and review deliverables, with TDD.",
             "responsibilities": [
                 "Feature development with React, TypeScript and Node.js",
                 "Integration of internal and external REST APIs",
@@ -15,6 +15,10 @@
                 "Review of squad teammates' Pull Requests",
                 "QA testing of my own and other people's tasks",
                 "Resolution of urgent production hotfixes",
+                "Automated end-to-end tests with Playwright",
+                "Planning, implementation and review of deliverables with AI agents, following TDD",
+                "Setup of CI pipelines and automatic dependency updates",
+                "Preparing and following deliveries to production",
                 "Repository maintenance"
             ],
             "disciplines": [],
@@ -27,7 +31,10 @@
                 "MongoDB",
                 "Redis",
                 "Git",
-                "Docker"
+                "Docker",
+                "Vitest",
+                "Playwright",
+                "GitHub Actions"
             ],
             "certificates": [],
             "projectIds": []
@@ -78,6 +85,9 @@
                 "Databases",
                 "Cloud Computing",
                 "Artificial Intelligence (AI)",
+                "Software Quality and Testing",
+                "Natural Language Processing",
+                "Data Mining",
                 "Internet of Things (IoT)",
                 "Information Security",
                 "User Experience (UX/CX)",
