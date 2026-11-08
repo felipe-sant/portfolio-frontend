@@ -2,6 +2,11 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
 import specClassification from "@scripts/../e2e/support/specClassification"
 
+vi.mock("@playwright/test", () => ({
+    defineConfig: (config: unknown) => config,
+    devices: { "Desktop Chrome": { userAgent: "desktop-chrome" } }
+}))
+
 async function loadConfig(ci: string | undefined) {
     vi.resetModules()
     if (ci === undefined) {
