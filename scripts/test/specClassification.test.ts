@@ -21,7 +21,9 @@ const ENVIRONMENT_KEYWORDS = [
     "emulateMedia",
     "setViewportSize",
     "testInfo",
-    "test.skip("
+    "test.skip(",
+    "viewportSize",
+    "test.fail("
 ]
 
 function listSpecFiles(): string[] {
