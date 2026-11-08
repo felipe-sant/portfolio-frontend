@@ -80,3 +80,36 @@ npm run e2e:rank
 | `contact-form-mobile-dark`   | 41     | 131.1 s      |
 | `contact-form-desktop-light` | 41     | 127.5 s      |
 | `contact-form-desktop-dark`  | 41     | 99.1 s       |
+
+## Paralelismo
+
+`playwright.config.ts` liga `fullyParallel: true` (qualquer ambiente) e fixa `workers` em 4 no CI (o runner `ubuntu-latest` tem 4 vCPU); fora do CI `workers` fica `undefined`, o padrão do Playwright.
+
+### Dependência de ordem
+
+Varredura de `e2e/` (specs e `e2e/support/`) por `describe.serial`, `describe.configure`, `beforeAll`, `afterAll`, variável de módulo mutável (`let` e `var` no topo), `writeFile`/`appendFile` e estado compartilhado:
+
+- Nenhuma ocorrência de `describe.serial`, `describe.configure`, `beforeAll`, `afterAll`, `let`/`var` de módulo nem escrita em arquivo.
+- `localStorage` e `sessionStorage` aparecem só em `contact-form`, `language` e `theme`, sempre dentro do contexto do próprio teste (o Playwright cria um contexto de navegador novo por teste), nunca entre testes.
+- O único estado externo compartilhado é o servidor `preview:fatec` (somente leitura do `dist/`).
+
+Conclusão: nenhum teste depende de ordem, e nenhum spec precisou de correção.
+
+### Medição de `workers`
+
+A escolha de `workers` (3, 4 ou 6, QA2) precisa do runner de 4 vCPU do CI; uma máquina local não reproduz a contenção (a máquina local de 12 núcleos roda com carga de outros processos e dá tempos que não se comparam com o CI). Procedimento, rodado no CI com `CI=1 npm run test:e2e:timings` e o valor trocado em `playwright.config.ts`: registrar a duração do passo e os testes instáveis (`flaky` no JSON) de 3 execuções seguidas por valor e ficar com o menor valor que bate a meta sem teste instável.
+
+| `workers` | Duração do passo `test:e2e` | Instáveis | Escolha |
+| --------- | --------------------------- | --------- | ------- |
+| 3         | pendente (CI)               |           |         |
+| 4         | pendente (CI)               |           |         |
+| 6         | pendente (CI)               |           |         |
+
+Valor provisório no código: 4.
+
+Execução local de verificação (após as tarefas de classificação e de projetos, `CI=1`, `taskset -c 0-3`, 4 workers, `retries: 2` na ocasião, máquina com carga de outros processos): 2180 testes, 2131 passaram, 44 ignorados, 5 instáveis (passaram no retry), 0 falhas, 22m54s. Os instáveis:
+
+- `accessibility.spec.ts`, `/pt-BR` e `/es` em `desktop-light`: `scrollable-region-focusable` na faixa de stack (`StackMarquee`), dependente de tempo.
+- `project-documents.spec.ts`: dois testes de âncora (`mobile-light`, `mobile-dark`) e o axe do documento (`mobile-dark`).
+
+Esses instáveis já podiam existir antes (a linha de base local, sem retries, teve uma falha de outro teste), e a CA6 exige zero teste que passe só por retry: ver a seção "Pendências" no fim.
