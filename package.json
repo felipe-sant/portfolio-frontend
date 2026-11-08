@@ -37,6 +37,8 @@
     "test": "vitest",
     "test:cov": "vitest run --coverage",
     "test:e2e": "playwright test",
+    "test:e2e:timings": "PLAYWRIGHT_JSON_OUTPUT_NAME=e2e-timings/report.json playwright test --reporter=json,list",
+    "e2e:rank": "tsx --tsconfig tsconfig.node.json scripts/e2e/printSlowTestsRanking.ts",
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
     "format": "prettier --write \"**/*.{ts,tsx,css,json,md,yml,html}\"",
