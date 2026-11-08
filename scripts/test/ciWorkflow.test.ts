@@ -3,8 +3,12 @@ import { parse } from "yaml"
 import { describe, expect, it } from "vitest"
 
 type Step = {
+    id?: string
     name?: string
     run?: string
+    uses?: string
+    if?: string
+    with?: Record<string, string>
 }
 
 type Job = {
@@ -67,6 +71,33 @@ describe("ci.yml", () => {
         expect(testScope).toContain("mode=full")
         expect(e2eScope).toContain('if [ "$EVENT_NAME" = "push" ]')
         expect(e2eScope).toContain("mode=full")
+    })
+})
+
+describe("ci.yml, job E2E", () => {
+    const steps = readWorkflow("ci.yml").jobs.e2e?.steps ?? []
+
+    it("guarda o Chromium em cache com chave pela versão do Playwright", () => {
+        const versionStep = steps.find((step) => step.id === "playwright-version")
+        const cacheStep = steps.find((step) => step.uses?.startsWith("actions/cache@"))
+
+        expect(versionStep?.run).toContain("@playwright/test/package.json")
+        expect(cacheStep?.with?.path).toBe("~/.cache/ms-playwright")
+        expect(cacheStep?.with?.key).toContain("steps.playwright-version.outputs.version")
+    })
+
+    it("restaura o cache antes de instalar o Chromium", () => {
+        const names = steps.map((step) => step.name)
+
+        expect(names.indexOf("Cache Chromium")).toBeGreaterThan(-1)
+        expect(names.indexOf("Cache Chromium")).toBeLessThan(names.indexOf("Install Chromium"))
+    })
+
+    it("sobe o relatório do Playwright apenas em falha", () => {
+        const upload = steps.find((step) => step.name === "Upload Playwright report")
+
+        expect(upload?.if).toBe("failure()")
+        expect(upload?.with?.name).toBe("playwright-report")
     })
 })
 

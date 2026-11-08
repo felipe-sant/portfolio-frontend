@@ -53,7 +53,7 @@ export default defineConfig({
     forbidOnly: Boolean(process.env.CI),
     fullyParallel: true,
     workers: process.env.CI ? 4 : undefined,
-    retries: process.env.CI ? 2 : 0,
+    retries: process.env.CI ? 1 : 0,
     reporter: process.env.CI
         ? [["list"], ["html", { open: "never" }]]
         : [["html", { open: "never" }]],

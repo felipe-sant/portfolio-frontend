@@ -72,4 +72,9 @@ describe("playwright.config", () => {
             expect(project.use?.baseURL).toContain("localhost:4174")
         }
     })
+
+    it("usa uma tentativa extra no CI e nenhuma fora dele", async () => {
+        expect((await loadConfig("1")).retries).toBe(1)
+        expect((await loadConfig(undefined)).retries).toBe(0)
+    })
 })

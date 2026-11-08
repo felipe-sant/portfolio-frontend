@@ -153,3 +153,14 @@ Divergências em relação à proposta da QA1: `project` e `keyboard` ficam por 
 `npx playwright test --list`: 2180 testes em 21 arquivos, contra 2504 antes (324 a menos: os 108 testes independentes, que rodavam 4 vezes, rodam 1; cada teste por ambiente continua rodando 4 vezes).
 
 Mutação de verificação: mover `accessibility.spec.ts` para `independentSpecs` faz `specClassification.test.ts` falhar ("não deixa spec que depende do ambiente na lista de independentes" e "coloca todo spec em exatamente uma lista" quando ele sai de uma lista); removê-lo de `perEnvironmentSpecs` falha o teste dos obrigatórios. Mutações desfeitas.
+
+## Ganhos menores no CI
+
+- `retries` do CI vai de 2 para 1 (QA3): o teste instável ainda passa no retry, mas custa metade. Fora do CI continua 0.
+- `actions/cache` guarda `~/.cache/ms-playwright` com a chave `playwright-chromium-<SO>-<versão do @playwright/test>`; o `npx playwright install --with-deps chromium` continua depois, porque instala as dependências do sistema e só baixa o navegador sem cache.
+- Os dois builds (`build:fatec` e `build:fatec:form`) seguem em passos separados: ganho de ~8 s não compensa a complicação do passo.
+
+| Execução     | Passo `Install Chromium` | Observação                                                |
+| ------------ | ------------------------ | --------------------------------------------------------- |
+| Cache frio   | pendente (CI)            | referência anterior: ~22 s                                |
+| Cache quente | pendente (CI)            | se o ganho for menor que 5 s, remover o cache e registrar |
