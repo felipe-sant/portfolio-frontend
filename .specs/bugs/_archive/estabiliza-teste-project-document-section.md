@@ -2,7 +2,7 @@
 
 > Status: `resolvida`
 > Encerrada em: `2026-11-08`
-> Commits: `6bfbba0..HEAD` · PR: `—` · Issue: `#161`
+> Commits: `6bfbba0..691071a` · PR: `—` · Issue: `#161`
 
 ## O que foi pedido
 
@@ -21,3 +21,4 @@ Um teste de `ProjectDocumentSection` estourou o timeout na primeira execução c
 - O `SkipLink.test.tsx` perdeu o `15000` pelo mesmo motivo (global de 30 s); não houve medição separada.
 - Os `timeout` de `findBy`/`waitFor` (5000, 10000) em outros arquivos ficaram como estavam.
 - Na primeira execução completa depois da mudança, `Main.layout.test.tsx` (axe) falhou uma vez e não voltou a falhar em 5 execuções seguintes; a causa não foi capturada.
+- O `tester` fez o teste de axe do layout esperar o e-mail do perfil no rodapé (`findByText`) antes do `axe.run`, com a hipótese de corrida de carregamento do `profileApi`; a hipótese não foi comprovada, porque o flake não reproduziu. Se ele voltar, capturar a saída completa da falha.
