@@ -116,4 +116,4 @@ Erro e carregando forçados: a primeira carga vem hidratada do HTML e não faz `
 - `<noscript>` com JavaScript desligado: `toHaveText` e `getByText` não o enxergam; leia `locator("noscript").innerHTML()`.
 - Clique que o Playwright faz pode rolar a página; para afirmar posição de rolagem, ative por teclado (`focus()` e `Enter`).
 - Link para PDF de CV pode dar 404 até a #54: afirme que o link existe e o `href`, não que o arquivo baixa.
-- Falha só no CI: abra o relatório HTML e o trace (`--trace on`); `retries` é 2 no CI e 0 local, então teste instável aparece local como falha única.
+- Falha só no CI: abra o relatório HTML e o trace (`--trace on`); `retries` é 1 no CI e 0 local, e `failOnFlakyTests` liga no CI: teste que só passou na retry também falha o job.
