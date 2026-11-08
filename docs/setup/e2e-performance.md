@@ -172,9 +172,16 @@ Mutação de verificação: mover `accessibility.spec.ts` para `independentSpecs
 3. `independentSpecs` só para conteúdo, arquivos de máquina e HTML sem JavaScript, que dão o mesmo resultado em qualquer ambiente.
 4. `npm test -- --run scripts/test/specClassification.test.ts` confere.
 
-## Plano B: sharding
+## Sharding
 
-Só entra com autorização do PO e em issue própria (QA5). Matriz `e2e-shard` (`--shard=i/n`) no job do `ci.yml`, cada fatia com o próprio build e Chromium, e um job agregador chamado `E2E` com `needs` na matriz e `if: always()`, para o check obrigatório do ruleset continuar existindo com esse nome. O relatório de cada fatia sobe como artefato em falha e o `merge-reports` junta os blobs.
+Decisão do PO (QA5), na mesma branch: com `workers: 4` o `ubuntu-latest` (4 vCPU) já está no limite e o E2E levou 12m0s num único runner, então a meta só se alcança dividindo a suíte entre runners.
+
+- **N = 4.** Com ~11 min de testes, N=3 deixa ~3,7 min por fatia mais ~1 min de preparação (margem curta, porque o `--shard` divide por contagem de testes, não por duração); N=4 dá ~2,75 + ~1 = ~3,8 min. O custo em minutos de runner é parecido (~14 min contra ~15 min por execução completa); N=5 ou mais piora, porque a preparação de ~1 min por runner passa a dominar. O número está na constante `SHARD_TOTAL` do passo `Decide E2E scope`.
+- **Build por fatia.** Cada fatia faz checkout, `npm ci`, Chromium (em cache) e os dois builds (`build:fatec` e `build:fatec:form`): são ~20 s e evitam artefato compartilhado entre jobs.
+- **Jobs.** `E2E scope` (`name: E2E scope`) mantém a decisão de escopo por diff e emite `mode`, `specs` e `matrix`: `full` gera 4 entradas `{index,total}`, `changed` uma só (`1/1`), `none` nenhuma fatia roda. `E2E shard i/4` (`e2e-shard`, `fail-fast: false`) roda `--shard=i/N` e sobe o blob em `blob-report-i`. `E2E` é o agregador: `needs: [scope, e2e-shard]` e `if: always()`; falha se o escopo não terminou com sucesso ou, fora do `none`, se alguma fatia não terminou com `success`; passa no `none` com as fatias puladas. Só ele se chama `E2E`, o check obrigatório do ruleset.
+- **Relatório.** O reporter do CI é `list` + `blob`. O agregador baixa os blobs, junta com `npx playwright merge-reports --reporter=html ./all-blob-reports` e sobe `playwright-report` quando falha; a duração de cada fatia aparece no nome do job e na tabela do `GITHUB_STEP_SUMMARY` do agregador.
+- **Conferência.** `npm run e2e:check-shards` roda `playwright test --list --reporter=json` sem shard e com cada `--shard=i/4`, e falha se algum teste (projeto, arquivo, linha e título com os `describe`) sumiu ou repetiu. Roda no agregador só no `full` e localmente sem build.
+- **Medir.** Tempo total do check `E2E`: do início da primeira fatia ao fim do agregador. Soma de minutos de runner: fatias + `E2E scope` + agregador, vistos em `gh run view <id> --json jobs` (`startedAt`, `completedAt` de cada job).
 
 ## Pendências (execução no CI)
 
@@ -182,12 +189,12 @@ Dependem de `push` e ficam para depois do PR/branch no remoto:
 
 1. Medir `workers` 3, 4 e 6 (tabela acima), 3 execuções seguidas cada, e fixar o menor valor sem instabilidade.
 2. Tempos do passo `Install Chromium` com cache frio e quente.
-3. 5 execuções de `push` com a média do job `E2E` (meta: até 6 min) e 3 execuções seguidas verdes sem teste instável; se a média passar de 6 min, parar e levantar a QA5 ao PO.
+3. 5 execuções de `push` com a média do check `E2E` (meta: até 6 min) e 3 execuções seguidas verdes sem teste instável; se a média passar de 6 min, parar e levantar ao PO (N=5 ou balanceamento por duração é nova decisão dele).
 
-| Execução | Duração do job `E2E` | Resultado | Instáveis |
-| -------- | -------------------- | --------- | --------- |
-| 1        | pendente             |           |           |
-| 2        | pendente             |           |           |
-| 3        | pendente             |           |           |
-| 4        | pendente             |           |           |
-| 5        | pendente             |           |           |
+| Execução | Duração do check `E2E` | Resultado | Instáveis |
+| -------- | ---------------------- | --------- | --------- |
+| 1        | pendente               |           |           |
+| 2        | pendente               |           |           |
+| 3        | pendente               |           |           |
+| 4        | pendente               |           |           |
+| 5        | pendente               |           |           |

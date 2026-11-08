@@ -23,7 +23,7 @@ Código de produto mudou, rode `build:fatec` de novo: o E2E testa o `dist/`, nã
 
 ## 2. Projetos e configuração
 
-`playwright.config.ts`: `testDir: "e2e"`, Chromium, `baseURL` = `http://localhost:4173/ra2581392423047/`, `fullyParallel` e `workers` fixo no CI. Quatro projetos rodam os specs de `perEnvironmentSpecs`: `mobile-light`, `mobile-dark` (390x844), `desktop-light`, `desktop-dark` (1280x800), todos com `reducedMotion: "reduce"` por padrão; o projeto `independent` (1280x800, tema claro) roda uma vez os de `independentSpecs`.
+`playwright.config.ts`: `testDir: "e2e"`, Chromium, `baseURL` = `http://localhost:4173/ra2581392423047/`, `fullyParallel` e `workers` fixo no CI; no CI o reporter é `list` + `blob` e a suíte roda em 4 fatias (`--shard=i/4`, job `E2E shard i/4`), juntadas pelo job agregador `E2E` (`merge-reports`); `npm run e2e:check-shards` confere que a união das fatias é a lista completa. Quatro projetos rodam os specs de `perEnvironmentSpecs`: `mobile-light`, `mobile-dark` (390x844), `desktop-light`, `desktop-dark` (1280x800), todos com `reducedMotion: "reduce"` por padrão; o projeto `independent` (1280x800, tema claro) roda uma vez os de `independentSpecs`.
 
 **Spec novo entra em exatamente uma lista de `e2e/support/specClassification.ts`**: `independentSpecs` só se não depende de viewport, tema, movimento nem axe; com `expectNoAxeViolations`, `emulateMedia`, `setViewportSize`, `viewportSize`, `testInfo`, `test.skip(` ou `test.fail(` por tamanho, é `perEnvironmentSpecs`. `scripts/test/specClassification.test.ts` falha se faltar. Medir e achar os testes lentos: `npm run test:e2e:timings` e `npm run e2e:rank` (`docs/setup/e2e-performance.md`).
 
@@ -118,4 +118,4 @@ Erro e carregando forçados: a primeira carga vem hidratada do HTML e não faz `
 - `<noscript>` com JavaScript desligado: `toHaveText` e `getByText` não o enxergam; leia `locator("noscript").innerHTML()`.
 - Clique que o Playwright faz pode rolar a página; para afirmar posição de rolagem, ative por teclado (`focus()` e `Enter`).
 - Link para PDF de CV pode dar 404 até a #54: afirme que o link existe e o `href`, não que o arquivo baixa.
-- Falha só no CI: abra o relatório HTML e o trace (`--trace on`); `retries` é 2 no CI e 0 local, então teste instável aparece local como falha única.
+- Falha só no CI: abra o relatório HTML e o trace (`--trace on`); `retries` é 1 no CI e 0 local, então teste instável aparece local como falha única.
