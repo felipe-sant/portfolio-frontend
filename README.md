@@ -9,8 +9,10 @@ suficiente para que quem visita entenda como ele resolve problemas, e não apena
 já usou. O público são recrutadores avaliando o autor para uma vaga e clientes avaliando-o para um
 projeto ou freelance; na v1, também o professor da Fatec, que avalia a entrega.
 
-O design vem de um handoff de design, que define cinco telas; os caminhos são em inglês, iguais nos
-três idiomas (D32):
+O design vem de um handoff de design, que define cinco telas, todas existentes no código. Os
+caminhos são em inglês, iguais nos três idiomas (D32), e ficam sempre sob o prefixo do idioma
+(`/pt-BR`, `/en` ou `/es`, sem barra final); a raiz `/` só redireciona para o idioma. A tabela omite
+o prefixo:
 
 | Rota            | Tela        | Propósito                                                                                                                                                              |
 | --------------- | ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -20,9 +22,8 @@ três idiomas (D32):
 | `/about`        | Informações | Sobre mim, stack, complementos e trajetória                                                                                                                            |
 | `/contact`      | Contato     | Formulário de mensagem (desligado na v1) e canais diretos                                                                                                              |
 
-Hoje o código tem só `/` (Início com o hero mínimo) e a página de rota inexistente; as outras rotas
-entram com as specs de cada tela. O site tem temas claro e escuro e interface em `pt-BR` (língua de
-referência), `en` e `es`. Propósito, público e jornadas, objetivos, escopo e fora de escopo estão
+Além das cinco telas, existem a página de erro e a página não encontrada. O site tem temas claro e
+escuro e interface em `pt-BR` (língua de referência), `en` e `es`. Propósito, público e jornadas, objetivos, escopo e fora de escopo estão
 detalhados em [`docs/product/overview.md`](docs/product/overview.md).
 
 ## Requisitos do projeto
@@ -30,10 +31,10 @@ detalhados em [`docs/product/overview.md`](docs/product/overview.md).
 Decisões do autor, que é ao mesmo tempo cliente, PO e dev do portfólio. Valem para toda feature e
 toda tarefa:
 
-- **R1 — Frontend-only com dados mock no início.** O backend ainda não existe. A aplicação funciona
-  sozinha, com dados mock de projetos, trajetória e demais conteúdo exigido pelo handoff. Os dados
-  virão do backend no futuro, então a infraestrutura de Redux Toolkit, RTK Query e
-  `src/services/http/` fica no projeto.
+- **R1 — Frontend-only, sem backend na v1.** O backend ainda não existe. A aplicação funciona
+  sozinha, com o conteúdo real do portfólio (projetos, trajetória e perfil) em JSON, servido por uma
+  camada de dados local. Os dados virão do backend no futuro, então a infraestrutura de Redux
+  Toolkit, RTK Query e `src/services/http/` fica no projeto.
 - **R2 — Tradução obrigatória em `pt-BR`, `en` e `es`.** Toda feature e toda tarefa que cria ou
   altera texto de UI entrega o texto nos três idiomas; `pt-BR` é a referência. Chave de tradução
   sem uso é removida.
@@ -158,9 +159,8 @@ Página e componente nunca leem esses arquivos: o acesso é pelos endpoints, com
 pedidos com `import.meta.env.BASE_URL` (`src/utils/publicUrl.ts`), então funcionam na
 raiz (`npm run dev`) e no prefixo do GitHub Pages.
 
-O conteúdo é o real do portfólio, escrito em `pt-BR` (#58). `en` e `es` ainda repetem o `pt-BR`,
-com só os títulos das seções do `README.md` de cada projeto no idioma, até a tradução (#59). Para
-alterar ou acrescentar conteúdo, edite os arquivos de `public/content/pt-BR/` (o modelo de
+O conteúdo é o real do portfólio, escrito em `pt-BR` e traduzido para `en` e `es`; o teste de
+conteúdo reprova campo traduzível de `en` ou `es` igual ao `pt-BR`. Para alterar ou acrescentar conteúdo, edite os arquivos de `public/content/pt-BR/` (o modelo de
 `content/template/pt-BR/` e o `content/template/README.md` explicam o passo a passo), gere os ids
 com `npm run content:id` e rode `npm run content:check`: o teste de conteúdo falha com o arquivo, o
 campo e a regra de qualquer desvio do contrato, e o CI roda a suíte inteira quando `public/content/`,
@@ -207,8 +207,12 @@ As fontes do handoff (Bricolage Grotesque, IBM Plex Sans e IBM Plex Mono) são s
 de quem visita (privacidade, LGPD/GDPR), não depender de CDN externa e servir as fontes da mesma
 origem, com `preload`.
 
-O tema escuro é aplicado hoje por `@media (prefers-color-scheme: dark)` em `global.css`. A troca
-por `data-theme` com a escolha persistida, prevista no handoff, entra com a spec de tema.
+O tema escuro vive em `[data-theme="dark"]` no `global.css` (o claro é o `:root`). Sem escolha
+salva, vale o tema do sistema; o botão de tema grava a escolha no `localStorage` (`useTheme`, chave
+`portfolio-frontend:theme`) e um script inline do `index.html` a aplica antes da primeira pintura. O
+controle de movimento segue o mesmo desenho com `data-motion` (`full` ou `reduced`, chave
+`portfolio-frontend:motion`): a escolha vale mais que `prefers-reduced-motion`, e sem escolha o
+sistema decide.
 
 ## Testes e cobertura
 
