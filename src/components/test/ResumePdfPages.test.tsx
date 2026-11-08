@@ -125,5 +125,5 @@ describe("ResumePdfPages", () => {
         const third = render(<ResumePdfPages url="/cv/cv-pt-BR.pdf" />)
         await screen.findByText(/Não foi possível exibir/)
         await expectNoAxeViolations(third.container)
-    }, 15000)
+    })
 })

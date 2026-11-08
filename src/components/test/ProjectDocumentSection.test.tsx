@@ -340,13 +340,13 @@ describe("ProjectDocumentSection", () => {
         await screen.findByRole("heading", { level: 3, name: "Seção" })
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 
     it("não tem violações de acessibilidade em texto", async () => {
         const { container } = renderSection(buildState(LICENSE, { content: "MIT", lang: "en" }))
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 
     it("não tem violações de acessibilidade carregando", async () => {
         const { container } = renderSection(
@@ -354,7 +354,7 @@ describe("ProjectDocumentSection", () => {
         )
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 
     it("não tem violações de acessibilidade com erro", async () => {
         const { container } = renderSection(
@@ -362,5 +362,5 @@ describe("ProjectDocumentSection", () => {
         )
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 })

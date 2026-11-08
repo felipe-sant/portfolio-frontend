@@ -74,5 +74,5 @@ describe("CopyEmailButton", () => {
         const { container } = render(<CopyEmailButton email="contato@example.com" />)
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 })

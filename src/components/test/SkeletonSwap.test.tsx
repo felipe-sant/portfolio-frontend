@@ -105,5 +105,5 @@ describe("SkeletonSwap", () => {
 
         expect(screen.queryByRole("status")).not.toBeInTheDocument()
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 })

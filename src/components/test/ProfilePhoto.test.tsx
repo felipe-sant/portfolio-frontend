@@ -59,5 +59,5 @@ describe("ProfilePhoto", () => {
         await expectNoAxeViolations(withPhoto.container)
         const withoutPhoto = render(<ProfilePhoto />)
         await expectNoAxeViolations(withoutPhoto.container)
-    }, 15000)
+    })
 })

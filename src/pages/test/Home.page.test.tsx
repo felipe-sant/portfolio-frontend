@@ -101,7 +101,7 @@ describe("HomePage", () => {
         const { container } = renderHomePage()
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 
     it("renderiza o título principal", () => {
         renderHomePage()
@@ -410,5 +410,5 @@ describe("HomePage", () => {
         await screen.findByRole("link", { name: "Projeto Destaque" })
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 })

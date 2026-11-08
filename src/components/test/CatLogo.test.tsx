@@ -22,5 +22,5 @@ describe("CatLogo", () => {
         const { container } = render(<CatLogo />)
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 })

@@ -61,5 +61,5 @@ describe("ProjectError", () => {
         const { container } = renderError()
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 })

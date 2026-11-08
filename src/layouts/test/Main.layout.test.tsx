@@ -56,7 +56,7 @@ describe("MainLayout", () => {
         const { container } = await renderLayout()
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 
     it("renderiza header, footer e a rota filha", async () => {
         await renderLayout()

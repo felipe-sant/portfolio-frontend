@@ -34,5 +34,5 @@ describe("GroupCount", () => {
         const { container } = render(<GroupCount count={2} countKey="trajectory.count" />)
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 })

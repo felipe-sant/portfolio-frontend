@@ -43,5 +43,5 @@ describe("IconButton", () => {
         const { container } = render(<IconButton icon="menu" label="Menu" />)
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 })

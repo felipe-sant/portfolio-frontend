@@ -170,5 +170,5 @@ describe("TrajectoryModal", () => {
 
         await expectNoAxeViolations(document.body)
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 })

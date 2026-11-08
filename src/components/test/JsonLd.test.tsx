@@ -22,5 +22,5 @@ describe("JsonLd", () => {
         const { container } = render(<JsonLd data={{ "@type": "WebSite" }} />)
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 })

@@ -479,13 +479,13 @@ describe("ProjectsFiltersModal", () => {
         renderModal()
 
         await expectNoAxeViolations(document.body)
-    }, 15000)
+    })
 
     it("não tem violações de acessibilidade aberto com opções marcadas", async () => {
         renderModal({ applied: withSort({ tech: ["React"], year: ["2025"] }, "title") })
 
         await expectNoAxeViolations(document.body)
-    }, 15000)
+    })
 
     describe("opções sem projeto", () => {
         const withEmpty = [
@@ -618,6 +618,6 @@ describe("ProjectsFiltersModal", () => {
             })
 
             await expectNoAxeViolations(document.body)
-        }, 15000)
+        })
     })
 })

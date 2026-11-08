@@ -61,13 +61,13 @@ describe("LoadError", () => {
         )
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 
     it("não tem violações de acessibilidade", async () => {
         const { container } = renderLoadError()
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
     it("mantém role alert, tabIndex e id quando announce não é passada", () => {
         renderLoadError(vi.fn(), "alert-id")
 
@@ -107,5 +107,5 @@ describe("LoadError", () => {
         )
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 })

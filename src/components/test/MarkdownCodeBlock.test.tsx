@@ -133,7 +133,7 @@ describe("MarkdownCodeBlock", () => {
         )
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 
     it("não tem violações de acessibilidade", async () => {
         const { container } = renderMarkdown(
@@ -141,5 +141,5 @@ describe("MarkdownCodeBlock", () => {
         )
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 })

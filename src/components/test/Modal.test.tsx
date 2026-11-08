@@ -167,7 +167,7 @@ describe("Modal", () => {
         renderModal({ withDescription: true })
 
         await expectNoAxeViolations(document.body)
-    }, 15000)
+    })
     it("o corpo rolável é alcançável pelo teclado, depois do Fechar e antes do rodapé", async () => {
         const user = userEvent.setup()
         renderModal()
@@ -228,5 +228,5 @@ describe("Modal", () => {
         const { container } = renderModal({ subtitle: <p>Empresa · CLT</p> })
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 })

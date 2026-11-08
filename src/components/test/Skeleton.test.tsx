@@ -12,7 +12,7 @@ describe("Skeleton", () => {
         expect(screen.queryByRole("status")).not.toBeInTheDocument()
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 
     it.each(["line", "title", "media", "photo", "card"] as const)(
         "renderiza a forma %s",
@@ -29,7 +29,7 @@ describe("Skeleton", () => {
         expect(screen.getByRole("status")).toHaveTextContent("Carregando...")
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 
     it("traduz o status quando o idioma muda", async () => {
         await setLanguage("en")

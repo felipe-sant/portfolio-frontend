@@ -165,5 +165,5 @@ describe("LanguageSelector", () => {
         await expectNoAxeViolations(container)
         await openList()
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 })

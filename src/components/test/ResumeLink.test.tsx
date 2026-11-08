@@ -67,5 +67,5 @@ describe("ResumeLink", () => {
         await userEvent.tab()
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 })

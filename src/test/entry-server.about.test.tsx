@@ -80,7 +80,7 @@ afterEach(() => {
     window.history.pushState({}, "", "/")
 })
 
-describe("render de Informações", { timeout: 20000 }, () => {
+describe("render de Informações", () => {
     it.each(LANGUAGES)("traz h1, apresentação e as seções principais em %s", async (language) => {
         const result = await render(findTarget(`${language}/about.html`))
 

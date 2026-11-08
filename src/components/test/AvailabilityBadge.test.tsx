@@ -27,5 +27,5 @@ describe("AvailabilityBadge", () => {
         const { container } = render(<AvailabilityBadge label="Disponível" />)
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 })
