@@ -37,6 +37,7 @@ async function activateDocument(page: Page, language: Language, name: string, ti
     await link.focus()
     await page.keyboard.press("Enter")
     await expect(documentTitle(page, name)).toBeFocused()
+    await expect(documentBody(page, name).getByRole("status")).toHaveCount(0)
 }
 
 function isNarrow(page: Page) {
