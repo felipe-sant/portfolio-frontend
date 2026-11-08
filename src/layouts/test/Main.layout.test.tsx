@@ -54,6 +54,7 @@ afterEach(() => {
 describe("MainLayout", () => {
     it("não tem violações de acessibilidade", async () => {
         const { container } = await renderLayout()
+        await within(screen.getByRole("contentinfo")).findByText("contato@example.com")
 
         await expectNoAxeViolations(container)
     })
