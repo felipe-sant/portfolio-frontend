@@ -273,9 +273,31 @@ describe("ci.yml, job E2E agregador", () => {
         const upload = steps.find((step) => step.name === "Upload Playwright report")
 
         expect(download?.with?.pattern).toBe("blob-report-*")
-        expect(merge?.run).toContain("--reporter=html")
+        expect(merge?.run).toContain("--reporter=html,json")
+        expect(merge?.run).toContain("PLAYWRIGHT_JSON_OUTPUT_NAME=merged-report.json")
         expect(upload?.if).toContain("failure()")
         expect(upload?.with?.name).toBe("playwright-report")
+    })
+
+    it("avisa dos testes flaky no resumo, só fora do escopo none e sem falhar o check", () => {
+        const warn = steps.find((step) => step.name === "Warn about flaky tests")
+
+        expect(warn?.if).toContain("needs.scope.outputs.mode != 'none'")
+        expect(warn?.if).toContain("needs.scope.result == 'success'")
+        expect(warn?.run).toContain("npm run e2e:flaky -- merged-report.json")
+        expect(warn?.run).toContain('>> "$GITHUB_STEP_SUMMARY"')
+        expect(warn?.run).not.toContain("exit 1")
+    })
+
+    it("avisa dos flaky depois do merge e antes de avaliar o resultado", () => {
+        const names = steps.map((step) => step.name)
+
+        expect(names.indexOf("Warn about flaky tests")).toBeGreaterThan(
+            names.findIndex((name) => name?.startsWith("Merge"))
+        )
+        expect(names.indexOf("Warn about flaky tests")).toBeLessThan(
+            names.indexOf("Evaluate E2E result")
+        )
     })
 
     it("confere a união das fatias só no modo full", () => {

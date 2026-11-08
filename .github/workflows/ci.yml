@@ -262,7 +262,11 @@ jobs:
                   merge-multiple: true
             - name: Merge reports
               if: ${{ !cancelled() && needs.scope.result == 'success' && needs.scope.outputs.mode != 'none' }}
-              run: npx playwright merge-reports --reporter=html ./all-blob-reports
+              run: PLAYWRIGHT_JSON_OUTPUT_NAME=merged-report.json npx playwright merge-reports --reporter=html,json ./all-blob-reports
+            - name: Warn about flaky tests
+              if: ${{ !cancelled() && needs.scope.result == 'success' && needs.scope.outputs.mode != 'none' }}
+              continue-on-error: true
+              run: npm run e2e:flaky -- merged-report.json >> "$GITHUB_STEP_SUMMARY"
             - name: Check shard union
               if: ${{ !cancelled() && needs.scope.result == 'success' && needs.scope.outputs.mode == 'full' }}
               run: npm run e2e:check-shards
