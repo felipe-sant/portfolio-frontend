@@ -9,8 +9,10 @@ suficiente para que quem visita entenda como ele resolve problemas, e não apena
 já usou. O público são recrutadores avaliando o autor para uma vaga e clientes avaliando-o para um
 projeto ou freelance; na v1, também o professor da Fatec, que avalia a entrega.
 
-O design vem de um handoff de design, que define cinco telas; os caminhos são em inglês, iguais nos
-três idiomas (D32):
+O design vem de um handoff de design, que define cinco telas, todas existentes no código. Os
+caminhos são em inglês, iguais nos três idiomas (D32), e ficam sempre sob o prefixo do idioma
+(`/pt-BR`, `/en` ou `/es`, sem barra final); a raiz `/` só redireciona para o idioma. A tabela omite
+o prefixo:
 
 | Rota            | Tela        | Propósito                                                                                                                                                              |
 | --------------- | ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -20,9 +22,8 @@ três idiomas (D32):
 | `/about`        | Informações | Sobre mim, stack, complementos e trajetória                                                                                                                            |
 | `/contact`      | Contato     | Formulário de mensagem (desligado na v1) e canais diretos                                                                                                              |
 
-Hoje o código tem só `/` (Início com o hero mínimo) e a página de rota inexistente; as outras rotas
-entram com as specs de cada tela. O site tem temas claro e escuro e interface em `pt-BR` (língua de
-referência), `en` e `es`. Propósito, público e jornadas, objetivos, escopo e fora de escopo estão
+Além das cinco telas, existem a página de erro e a página não encontrada. O site tem temas claro e
+escuro e interface em `pt-BR` (língua de referência), `en` e `es`. Propósito, público e jornadas, objetivos, escopo e fora de escopo estão
 detalhados em [`docs/product/overview.md`](docs/product/overview.md).
 
 ## Requisitos do projeto
@@ -30,10 +31,10 @@ detalhados em [`docs/product/overview.md`](docs/product/overview.md).
 Decisões do autor, que é ao mesmo tempo cliente, PO e dev do portfólio. Valem para toda feature e
 toda tarefa:
 
-- **R1 — Frontend-only com dados mock no início.** O backend ainda não existe. A aplicação funciona
-  sozinha, com dados mock de projetos, trajetória e demais conteúdo exigido pelo handoff. Os dados
-  virão do backend no futuro, então a infraestrutura de Redux Toolkit, RTK Query e
-  `src/services/http/` fica no projeto.
+- **R1 — Frontend-only, sem backend na v1.** O backend ainda não existe. A aplicação funciona
+  sozinha, com o conteúdo real do portfólio (projetos, trajetória e perfil) em JSON, servido por uma
+  camada de dados local. Os dados virão do backend no futuro, então a infraestrutura de Redux
+  Toolkit, RTK Query e `src/services/http/` fica no projeto.
 - **R2 — Tradução obrigatória em `pt-BR`, `en` e `es`.** Toda feature e toda tarefa que cria ou
   altera texto de UI entrega o texto nos três idiomas; `pt-BR` é a referência. Chave de tradução
   sem uso é removida.
@@ -53,6 +54,11 @@ toda tarefa:
 - **CSS Modules** — estilo com escopo por arquivo, lendo os tokens de `src/styles/global.css`.
 - **Vitest** e **Testing Library** — testes em ambiente `jsdom`, com cobertura por
   `@vitest/coverage-v8`.
+- **Playwright** e **axe** (`@axe-core/playwright`, `axe-core`) — testes E2E e verificação de
+  acessibilidade.
+- **react-markdown** e **pdfjs-dist** — documentos de projeto em Markdown e visualizador de
+  currículo, carregados sob demanda.
+- **Changesets** — versionamento e `CHANGELOG`.
 - **oxlint**, **Prettier**, **Husky** e **lint-staged** — lint, formatação e hook de `pre-commit`.
 
 ## Requisitos de ambiente
@@ -70,6 +76,11 @@ cp .env.example .env
 npm run dev
 ```
 
+O `npm run build` exige `VITE_SITE_URL`, só a origem (`http(s)://host`, sem caminho nem barra
+final); o `.env.example` já traz o valor local, então o `cp` acima basta, e quem builda sem `.env`
+(como no CI) precisa defini-la. Detalhe em
+[`docs/setup/environments.md`](docs/setup/environments.md).
+
 O dev server sobe em `http://localhost:5173`. Como o backend ainda não existe (R1), `VITE_API_URL`
 pode ficar vazia ou ausente no `.env`: sem ela, `src/services/http/apiUrl.ts` usa string vazia e as
 requisições saem com caminho relativo. O valor do `.env.example` é só um modelo do formato. Só
@@ -86,6 +97,7 @@ variáveis com prefixo `VITE_` chegam ao código do cliente; ver
 | `npm run prerender`          | Escreve em `dist/` os HTML pré-renderizados a partir do `dist-server/`                                                                    |
 | `npm run build:seo`          | Escreve em `dist/` o `robots.txt`, o `sitemap.xml`, o `llms.txt` e os `llms-full*.txt` (já faz parte do `build`)                          |
 | `npm run preview`            | Serve o `dist/` já gerado; depende de um `npm run build` anterior                                                                         |
+| `npm run build:fatec:form`   | O mesmo build do Pages com o formulário de Contato ligado, em `dist-form/` (só para o E2E)                                                |
 | `npm run build:fatec`        | `npm run build` com o base da Fatec (`/ra2581392423047/`), mais `.nojekyll` em `dist/`                                                    |
 | `npm run publish:fatec:docs` | Troca o `docs/` de um clone da Fatec pelo artefato: `-- <artefato> <clone>` (usado pelo workflow)                                         |
 | `npm run preview:fatec`      | Serve esse `dist/` como o Pages (HTML por rota, 404 pelo `404.html`) em `http://localhost:4173/ra2581392423047/`                          |
@@ -93,8 +105,11 @@ variáveis com prefixo `VITE_` chegam ao código do cliente; ver
 | `npm test`                   | Vitest em watch mode                                                                                                                      |
 | `npm test -- --run`          | Execução única da suíte (CI, terminal não interativo)                                                                                     |
 | `npm run test:cov`           | Suíte inteira com relatório de cobertura em `coverage/` e threshold de 80%                                                                |
+| `npm run test:e2e`           | E2E do Playwright (Chromium) com axe em `e2e/`, contra o build do Pages; rode `npm run build:fatec` antes, porque o comando não builda    |
+| `npm run check:chunk`        | Depois do build, confere o orçamento gzip dos chunks do markdown e do `pdfjs-dist` e que a entrada não carrega o `react-markdown`         |
 | `npm run lint`               | oxlint sobre o projeto, com a configuração de `.oxlintrc.json`                                                                            |
 | `npm run lint:fix`           | O mesmo lint, aplicando as correções automáticas possíveis                                                                                |
+| `npm run changeset`          | Cria o changeset do Pull Request em `.changeset/` (`-- --empty` para mudança que não altera a versão)                                     |
 | `npm run format`             | `prettier --write` em `**/*.{ts,tsx,css,json,md,yml,html}`, conforme `.prettierrc`                                                        |
 
 O `npm run build` também deixa na raiz de `dist/`, sob o `base`, os arquivos que buscadores e IAs procuram: `robots.txt`, `sitemap.xml`, `llms.txt`, `llms-full.txt`, `llms-full.en.txt` e `llms-full.es.txt`, gerados por `scripts/generateSeoFiles.ts` a partir dos JSONs de `public/content/`, do CV e das rotas pré-renderizadas, com a origem de `VITE_SITE_URL`. Para conferir, rode `npm run build:fatec`, `npm run preview:fatec` e `curl -s http://localhost:4173/ra2581392423047/llms.txt` (o mesmo vale para os outros cinco). Detalhe em [`docs/architecture/frontend.md`](docs/architecture/frontend.md#arquivos-para-buscadores-e-ia).
@@ -109,10 +124,9 @@ Comandos do conteúdo (detalhes em [Dados do conteúdo](#dados-do-conteúdo)):
 | `npm run content:placeholders -- profile`          | Gera a foto placeholder do perfil, sem sobrescrever arquivo existente (`--force` sobrescreve)                                                                                                                                                                                           |
 | `npm run content:placeholders -- project <id> [n]` | Gera de 1 a 5 imagens placeholder do projeto, nos caminhos finais                                                                                                                                                                                                                       |
 | `npm run cv:pdf`                                   | Regera `public/cv/cv-<idioma>.pdf` a partir dos `cv-<idioma>.md` (Chromium do Playwright, PDF marcado e com o idioma); rode à mão quando um `.md` mudar e commite os PDFs: o teste `scripts/test/resumePdfsUpToDate.test.ts` falha se eles divergirem do Markdown. O build não gera PDF |
+| `npm run og:image`                                 | Regera `public/images/og-site.png` (1200×630, gato e nome) com o Chromium do Playwright; exige `npx playwright install chromium` e o PNG é versionado                                                                                                                                   |
 
 O `pdfjs-dist` (build `legacy`) é dependência de runtime, carregado por `import()` só quando o modal do currículo abre em celular ou sem visualizador de PDF: o módulo (até 170 KB gzip) e o worker (até 420 KB gzip, em `dist/assets/`, mesma origem) ficam fora do bundle de entrada, e `npm run check:chunk` confere o orçamento.
-
-| `npm run og:image` | Regera `public/images/og-site.png` (1200×630, gato e nome) com o Chromium do Playwright; exige `npx playwright install chromium` e o PNG é versionado |
 
 ## Estrutura de `src/` e convenções
 
@@ -158,9 +172,8 @@ Página e componente nunca leem esses arquivos: o acesso é pelos endpoints, com
 pedidos com `import.meta.env.BASE_URL` (`src/utils/publicUrl.ts`), então funcionam na
 raiz (`npm run dev`) e no prefixo do GitHub Pages.
 
-O conteúdo é o real do portfólio, escrito em `pt-BR` (#58). `en` e `es` ainda repetem o `pt-BR`,
-com só os títulos das seções do `README.md` de cada projeto no idioma, até a tradução (#59). Para
-alterar ou acrescentar conteúdo, edite os arquivos de `public/content/pt-BR/` (o modelo de
+O conteúdo é o real do portfólio, escrito em `pt-BR` e traduzido para `en` e `es`; o teste de
+conteúdo reprova campo traduzível de `en` ou `es` igual ao `pt-BR`. Para alterar ou acrescentar conteúdo, edite os arquivos de `public/content/pt-BR/` (o modelo de
 `content/template/pt-BR/` e o `content/template/README.md` explicam o passo a passo), gere os ids
 com `npm run content:id` e rode `npm run content:check`: o teste de conteúdo falha com o arquivo, o
 campo e a regra de qualquer desvio do contrato, e o CI roda a suíte inteira quando `public/content/`,
@@ -207,8 +220,12 @@ As fontes do handoff (Bricolage Grotesque, IBM Plex Sans e IBM Plex Mono) são s
 de quem visita (privacidade, LGPD/GDPR), não depender de CDN externa e servir as fontes da mesma
 origem, com `preload`.
 
-O tema escuro é aplicado hoje por `@media (prefers-color-scheme: dark)` em `global.css`. A troca
-por `data-theme` com a escolha persistida, prevista no handoff, entra com a spec de tema.
+O tema escuro vive em `[data-theme="dark"]` no `global.css` (o claro é o `:root`). Sem escolha
+salva, vale o tema do sistema; o botão de tema grava a escolha no `localStorage` (`useTheme`, chave
+`portfolio-frontend:theme`) e um script inline do `index.html` a aplica antes da primeira pintura. O
+controle de movimento segue o mesmo desenho com `data-motion` (`full` ou `reduced`, chave
+`portfolio-frontend:motion`): a escolha vale mais que `prefers-reduced-motion`, e sem escolha o
+sistema decide.
 
 ## Testes e cobertura
 
@@ -257,11 +274,11 @@ roda `npx lint-staged`, que, conforme `.lintstagedrc.json`, aplica `oxlint --fix
 
 ## Documentação
 
-| Onde                                 | O que é                                                                                                                                                    |
-| ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [`docs/`](docs/README.md)            | Documentação versionada do frontend: produto, glossário, design system, arquitetura, ADRs, diagramas, ambientes e o molde de tela (`screens/_template.md`) |
-| `.specs/`                            | Planejamento local por feature ou bug (`spec.md` e `tasks.md`), gitignored; só o resumo de `_archive/` é versionado                                        |
-| [`CONTRIBUTING.md`](CONTRIBUTING.md) | Padrão de branches, commits e Pull Requests                                                                                                                |
+| Onde                                 | O que é                                                                                                                                                                                                  |
+| ------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`docs/`](docs/README.md)            | Documentação versionada do frontend: produto, glossário, design system, arquitetura, ADRs, diagramas, ambientes e o molde de tela (`screens/_template.md`)                                               |
+| `.specs/`                            | Planejamento por feature ou bug (`spec.md` e `tasks.md`): as pastas de trabalho (`features/<slug>/`, `bugs/<slug>/`) são ignoradas pelo Git; só `_template/` e os resumos de `_archive/` são versionados |
+| [`CONTRIBUTING.md`](CONTRIBUTING.md) | Padrão de branches, commits e Pull Requests                                                                                                                                                              |
 
 O índice completo de `docs/` está em [`docs/README.md`](docs/README.md). Pull Requests seguem
 `.github/PULL_REQUEST_TEMPLATE.md`.
