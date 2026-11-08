@@ -116,33 +116,33 @@ Esses instáveis já podiam existir antes (a linha de base local, sem retries, t
 
 ## Classificação dos specs
 
-Cada `e2e/*.spec.ts` está em exatamente uma lista de `e2e/support/specClassification.ts`. `scripts/test/specClassification.test.ts` falha com spec fora das listas, com arquivo inexistente na lista, com os specs obrigatórios (`accessibility`, `theme`, `motion`, `navigation`, `contact-form`, `resume`, `projects-filters`, `project-gallery`) fora de `perEnvironmentSpecs` e com spec que usa `expectNoAxeViolations`, `emulateMedia`, `setViewportSize`, `testInfo` ou `test.skip(` fora dela.
+Cada `e2e/*.spec.ts` está em exatamente uma lista de `e2e/support/specClassification.ts`. `scripts/test/specClassification.test.ts` falha com spec fora das listas, com arquivo inexistente na lista, com os specs obrigatórios (`accessibility`, `theme`, `motion`, `navigation`, `contact-form`, `resume`, `projects-filters`, `project-gallery`) fora de `perEnvironmentSpecs` e com spec que usa `expectNoAxeViolations`, `emulateMedia`, `setViewportSize`, `viewportSize`, `testInfo`, `test.skip(` ou `test.fail(` fora dela.
 
-| Spec                | Classe       | Motivo                                                                                          |
-| ------------------- | ------------ | ----------------------------------------------------------------------------------------------- |
-| `about`             | por ambiente | `setViewportSize` e `testInfo.project.name` (tema escuro)                                       |
-| `accessibility`     | por ambiente | axe com `color-contrast` nos quatro ambientes                                                   |
-| `contact-form`      | por ambiente | roda nos quatro projetos `contact-form-*` (servidor `dist-form`), tem axe e viewport            |
-| `contact`           | por ambiente | `setViewportSize` e layout por largura                                                          |
-| `footer`            | independente | conteúdo do rodapé, sem viewport, tema, movimento nem axe                                       |
-| `home-flows`        | por ambiente | fluxos que ramificam por largura (menu mobile e desktop)                                        |
-| `home`              | por ambiente | movimento pleno e reduzido, `viewportSize` com asserção por ponto de quebra                     |
-| `keyboard`          | por ambiente | `test.skip` por largura: o menu existe só no mobile, então no projeto desktop tudo seria pulado |
-| `language`          | independente | troca de idioma, `localStorage` e rotas; só usa `viewportSize` para escolher o caminho do menu  |
-| `machine-files`     | independente | `robots.txt`, `sitemap.xml`, `llms*.txt`, sem navegador de layout                               |
-| `motion`            | por ambiente | movimento pleno e reduzido                                                                      |
-| `navigation`        | por ambiente | `setViewportSize`, menu mobile e desktop                                                        |
-| `no-javascript`     | independente | HTML pré-renderizado com `javaScriptEnabled: false`, sem viewport nem tema                      |
-| `not-found`         | independente | conteúdo da página não encontrada; só usa `viewportSize` para escolher o caminho do menu        |
-| `project-documents` | por ambiente | axe do documento, movimento pleno e `setViewportSize`                                           |
-| `project-gallery`   | por ambiente | axe da galeria e da lightbox, movimento                                                         |
-| `project`           | por ambiente | `setViewportSize` (320 px) e ficha por largura                                                  |
-| `projects-filters`  | por ambiente | modal em tela cheia no mobile, axe e movimento                                                  |
-| `projects`          | por ambiente | layout em grade por largura, movimento e axe                                                    |
-| `resume`            | por ambiente | modo canvas em toque e modo nativo em desktop, axe                                              |
-| `theme`             | por ambiente | tema claro e escuro                                                                             |
+| Spec                | Classe       | Motivo                                                                                             |
+| ------------------- | ------------ | -------------------------------------------------------------------------------------------------- |
+| `about`             | por ambiente | `setViewportSize` e `testInfo.project.name` (tema escuro)                                          |
+| `accessibility`     | por ambiente | axe com `color-contrast` nos quatro ambientes                                                      |
+| `contact-form`      | por ambiente | roda nos quatro projetos `contact-form-*` (servidor `dist-form`), tem axe e viewport               |
+| `contact`           | por ambiente | `setViewportSize` e layout por largura                                                             |
+| `footer`            | independente | conteúdo do rodapé, sem viewport, tema, movimento nem axe                                          |
+| `home-flows`        | por ambiente | fluxos que ramificam por largura (menu mobile e desktop)                                           |
+| `home`              | por ambiente | movimento pleno e reduzido, `viewportSize` com asserção por ponto de quebra                        |
+| `keyboard`          | por ambiente | `test.skip` por largura: o menu existe só no mobile, então no projeto desktop tudo seria pulado    |
+| `language`          | por ambiente | `viewportSize` escolhe o caminho do menu e `test.fail(` torna RF-LAY-14 asserção real só no mobile |
+| `machine-files`     | independente | `robots.txt`, `sitemap.xml`, `llms*.txt`, sem navegador de layout                                  |
+| `motion`            | por ambiente | movimento pleno e reduzido                                                                         |
+| `navigation`        | por ambiente | `setViewportSize`, menu mobile e desktop                                                           |
+| `no-javascript`     | independente | HTML pré-renderizado com `javaScriptEnabled: false`, sem viewport nem tema                         |
+| `not-found`         | por ambiente | `clickHomeInNavigation` ramifica entre o menu mobile e a navegação desktop                         |
+| `project-documents` | por ambiente | axe do documento, movimento pleno e `setViewportSize`                                              |
+| `project-gallery`   | por ambiente | axe da galeria e da lightbox, movimento                                                            |
+| `project`           | por ambiente | `setViewportSize` (320 px) e ficha por largura                                                     |
+| `projects-filters`  | por ambiente | modal em tela cheia no mobile, axe e movimento                                                     |
+| `projects`          | por ambiente | layout em grade por largura, movimento e axe                                                       |
+| `resume`            | por ambiente | modo canvas em toque e modo nativo em desktop, axe                                                 |
+| `theme`             | por ambiente | tema claro e escuro                                                                                |
 
-Divergências em relação à proposta da QA1: `project` e `keyboard` ficam por ambiente. `project.spec.ts` chama `setViewportSize({ width: 320 })` e `keyboard.spec.ts` pula todos os testes acima do mobile, então no projeto único (desktop) os testes de teclado do menu nunca rodariam. Independentes ficam cinco specs (`footer`, `language`, `machine-files`, `no-javascript`, `not-found`).
+Divergências em relação à proposta da QA1: `project` e `keyboard` ficam por ambiente. `project.spec.ts` chama `setViewportSize({ width: 320 })` e `keyboard.spec.ts` pula todos os testes acima do mobile, então no projeto único (desktop) os testes de teclado do menu nunca rodariam. `language` e `not-found` também ficam por ambiente: `language.spec.ts` lê `viewportSize()` para escolher o caminho do menu e marca `test.fail(` no desktop (RF-LAY-14 só é asserção real no mobile), e `not-found.spec.ts` tem ramo do menu mobile; no projeto `independent` (1280 px) a cobertura mobile se perderia. Independentes ficam três specs (`footer`, `machine-files`, `no-javascript`).
 
 ## Projetos do Playwright
 
@@ -150,7 +150,7 @@ Divergências em relação à proposta da QA1: `project` e `keyboard` ficam por 
 - `independent` (1280x800, tema claro, `reducedMotion: "reduce"`) roda `independentSpecs` uma vez. O nome do projeto não afeta o ruleset, que exige só o job `E2E`.
 - `contact-form-*` (quatro projetos, porta 4174) seguem iguais.
 
-`npx playwright test --list`: 2180 testes em 21 arquivos, contra 2504 antes (324 a menos: os 108 testes independentes, que rodavam 4 vezes, rodam 1; cada teste por ambiente continua rodando 4 vezes).
+`npx playwright test --list`: 2267 testes em 21 arquivos, contra 2504 antes (237 a menos: os 79 testes independentes, que rodavam 4 vezes, rodam 1; cada teste por ambiente continua rodando 4 vezes).
 
 Mutação de verificação: mover `accessibility.spec.ts` para `independentSpecs` faz `specClassification.test.ts` falhar ("não deixa spec que depende do ambiente na lista de independentes" e "coloca todo spec em exatamente uma lista" quando ele sai de uma lista); removê-lo de `perEnvironmentSpecs` falha o teste dos obrigatórios. Mutações desfeitas.
 
@@ -168,7 +168,7 @@ Mutação de verificação: mover `accessibility.spec.ts` para `independentSpecs
 ## Como classificar um spec novo
 
 1. Crie `e2e/<tema>.spec.ts` e acrescente o nome do arquivo a uma lista de `e2e/support/specClassification.ts`.
-2. `perEnvironmentSpecs` se o spec usa `expectNoAxeViolations`, `emulateMedia`, `setViewportSize`, `testInfo` ou `test.skip(` por tamanho, ou se afirma algo que muda com viewport, tema ou movimento.
+2. `perEnvironmentSpecs` se o spec usa `expectNoAxeViolations`, `emulateMedia`, `setViewportSize`, `viewportSize`, `testInfo`, `test.skip(` ou `test.fail(` por tamanho, ou se afirma algo que muda com viewport, tema ou movimento.
 3. `independentSpecs` só para conteúdo, arquivos de máquina e HTML sem JavaScript, que dão o mesmo resultado em qualquer ambiente.
 4. `npm test -- --run scripts/test/specClassification.test.ts` confere.
 

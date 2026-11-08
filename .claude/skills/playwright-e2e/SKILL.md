@@ -25,7 +25,7 @@ Código de produto mudou, rode `build:fatec` de novo: o E2E testa o `dist/`, nã
 
 `playwright.config.ts`: `testDir: "e2e"`, Chromium, `baseURL` = `http://localhost:4173/ra2581392423047/`, `fullyParallel` e `workers` fixo no CI. Quatro projetos rodam os specs de `perEnvironmentSpecs`: `mobile-light`, `mobile-dark` (390x844), `desktop-light`, `desktop-dark` (1280x800), todos com `reducedMotion: "reduce"` por padrão; o projeto `independent` (1280x800, tema claro) roda uma vez os de `independentSpecs`.
 
-**Spec novo entra em exatamente uma lista de `e2e/support/specClassification.ts`**: `independentSpecs` só se não depende de viewport, tema, movimento nem axe; com `expectNoAxeViolations`, `emulateMedia`, `setViewportSize`, `testInfo` ou `test.skip(` por tamanho, é `perEnvironmentSpecs`. `scripts/test/specClassification.test.ts` falha se faltar. Medir e achar os testes lentos: `npm run test:e2e:timings` e `npm run e2e:rank` (`docs/setup/e2e-performance.md`).
+**Spec novo entra em exatamente uma lista de `e2e/support/specClassification.ts`**: `independentSpecs` só se não depende de viewport, tema, movimento nem axe; com `expectNoAxeViolations`, `emulateMedia`, `setViewportSize`, `viewportSize`, `testInfo`, `test.skip(` ou `test.fail(` por tamanho, é `perEnvironmentSpecs`. `scripts/test/specClassification.test.ts` falha se faltar. Medir e achar os testes lentos: `npm run test:e2e:timings` e `npm run e2e:rank` (`docs/setup/e2e-performance.md`).
 
 - Teste que precisa de movimento pleno usa `test.use({ reducedMotion: "no-preference" })` no `describe`.
 - Teste que só vale num tamanho se pula com `test.skip(condição, "motivo")` (ex.: menu existe só no mobile, largura <= 480).
