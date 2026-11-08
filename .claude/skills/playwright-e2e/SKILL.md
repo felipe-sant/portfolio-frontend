@@ -119,3 +119,7 @@ Erro e carregando forçados: a primeira carga vem hidratada do HTML e não faz `
 - Clique que o Playwright faz pode rolar a página; para afirmar posição de rolagem, ative por teclado (`focus()` e `Enter`).
 - Link para PDF de CV pode dar 404 até a #54: afirme que o link existe e o `href`, não que o arquivo baixa.
 - Falha só no CI: abra o relatório HTML e o trace (`--trace on`); `retries` é 1 no CI e 0 local, então teste instável aparece local como falha única.
+- Teste instável: espere por estado, nunca por tempo (auto-wait, `toBeFocused`, `expect.poll` ou `toPass` com `timeout` e `intervals`); `waitForTimeout`, aumentar `retries`, desligar regra do axe e `test.skip` para esconder são proibidos.
+- A URL mudar não é a rota assentar: depois de navegar, espere o foco do `h1` antes de clicar ou medir; documento carregando tem `role="status"` no esqueleto, espere-o sair antes de medir rolagem; posição lida depois de evento se lê com `expect.poll`.
+- `expectNoAxeViolations` já espera a região rolável ficar focável (o `tabindex` da faixa da stack chega com a hidratação); não o chame antes de a página existir de verdade.
+- Antes do PR, repita o spec alterado com `--repeat-each=30 --retries=0` preso a poucos núcleos (`taskset -c 0,1`), um por vez (cada execução sobe o `preview:fatec` nas portas 4173 e 4174). Com folga de CPU o instável não aparece. O agregador `E2E` avisa no `GITHUB_STEP_SUMMARY` quando um teste passa só por retry (`flaky`); trate o aviso como falha. A lista dos instáveis já corrigidos está em `docs/setup/e2e-performance.md`.
