@@ -755,11 +755,6 @@ Commits são atômicos: uma mudança concluída por commit, nunca várias tarefa
   seções Descrição, Alterações, Decisões técnicas, Como testar, Evidências e Impactos e pontos de
   atenção.
 
-Quando `npm run build`, `npm run lint` e `npm test -- --run` já rodaram localmente (verificação
-que o agente `executor` faz a cada tarefa, ver `.claude/agents/executor.md`) antes do `git push`,
-o push é feito com `git push --no-verify` — a validação manual já cobre o que um hook rodaria de
-novo, então repetir via hook no momento do push seria redundante.
-
 ## Tooling de IA (agents, skills e spec-driven)
 
 - `.claude/agents/` — cinco papéis num fluxo de TDD, `sdd` → `executor` → verificação manual do PO →
