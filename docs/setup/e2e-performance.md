@@ -164,3 +164,30 @@ Mutação de verificação: mover `accessibility.spec.ts` para `independentSpecs
 | ------------ | ------------------------ | --------------------------------------------------------- |
 | Cache frio   | pendente (CI)            | referência anterior: ~22 s                                |
 | Cache quente | pendente (CI)            | se o ganho for menor que 5 s, remover o cache e registrar |
+
+## Como classificar um spec novo
+
+1. Crie `e2e/<tema>.spec.ts` e acrescente o nome do arquivo a uma lista de `e2e/support/specClassification.ts`.
+2. `perEnvironmentSpecs` se o spec usa `expectNoAxeViolations`, `emulateMedia`, `setViewportSize`, `testInfo` ou `test.skip(` por tamanho, ou se afirma algo que muda com viewport, tema ou movimento.
+3. `independentSpecs` só para conteúdo, arquivos de máquina e HTML sem JavaScript, que dão o mesmo resultado em qualquer ambiente.
+4. `npm test -- --run scripts/test/specClassification.test.ts` confere.
+
+## Plano B: sharding
+
+Só entra com autorização do PO e em issue própria (QA5). Matriz `e2e-shard` (`--shard=i/n`) no job do `ci.yml`, cada fatia com o próprio build e Chromium, e um job agregador chamado `E2E` com `needs` na matriz e `if: always()`, para o check obrigatório do ruleset continuar existindo com esse nome. O relatório de cada fatia sobe como artefato em falha e o `merge-reports` junta os blobs.
+
+## Pendências (execução no CI)
+
+Dependem de `push` e ficam para depois do PR/branch no remoto:
+
+1. Medir `workers` 3, 4 e 6 (tabela acima), 3 execuções seguidas cada, e fixar o menor valor sem instabilidade.
+2. Tempos do passo `Install Chromium` com cache frio e quente.
+3. 5 execuções de `push` com a média do job `E2E` (meta: até 6 min) e 3 execuções seguidas verdes sem teste instável; se a média passar de 6 min, parar e levantar a QA5 ao PO.
+
+| Execução | Duração do job `E2E` | Resultado | Instáveis |
+| -------- | -------------------- | --------- | --------- |
+| 1        | pendente             |           |           |
+| 2        | pendente             |           |           |
+| 3        | pendente             |           |           |
+| 4        | pendente             |           |           |
+| 5        | pendente             |           |           |

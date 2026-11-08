@@ -185,9 +185,9 @@ stuba com `vi.stubGlobal`/`vi.stubEnv` restaura no `afterEach` com
 A suíte ponta a ponta fica em `e2e/` (`playwright.config.ts` na raiz, `tsconfig.e2e.json`), com
 sufixo `.spec.ts`, fora do Vitest (`e2e/**` em `test.exclude`) e da cobertura. Roda só em Chromium
 contra `npm run preview:fatec` (`base` `/ra2581392423047/`), que serve o `dist/` já pronto: rode
-`npm run build:fatec` antes, porque `test:e2e` não builda. Os quatro projetos (`mobile-light`,
+`npm run build:fatec` antes, porque `test:e2e` não builda. Os quatro projetos de ambiente (`mobile-light`,
 `mobile-dark`, `desktop-light`, `desktop-dark`: 390 e 1280px, `colorScheme` claro e escuro,
-`reducedMotion`) rodam cada teste. Seletor é `getByRole` com nome em português, rota abre sem barra
+`reducedMotion`) rodam só os specs de `perEnvironmentSpecs`; os de `independentSpecs` rodam uma vez, no projeto `independent` (1280px, tema claro, `reducedMotion`). **Todo spec novo entra em exatamente uma das duas listas de `e2e/support/specClassification.ts`** (`scripts/test/specClassification.test.ts` falha com spec fora delas): `independentSpecs` só para o que não depende de viewport, tema, movimento nem axe (conteúdo, arquivos de máquina, HTML sem JavaScript); spec com `expectNoAxeViolations`, `emulateMedia`, `setViewportSize`, `testInfo` ou `test.skip(` por tamanho é obrigatoriamente por ambiente. O CI roda com `fullyParallel` e `workers` fixo no `playwright.config.ts` e `retries: 1`; medição, ranking dos testes lentos (`npm run test:e2e:timings` e `npm run e2e:rank`) e plano B de sharding em `docs/setup/e2e-performance.md`. Seletor é `getByRole` com nome em português, rota abre sem barra
 inicial (relativa ao `baseURL`). Toda tela nova acrescenta o caminho em `e2e/support/routesUnderTest.ts`
 (o axe, com `color-contrast` ligada, roda em todas) e, se tiver teclado próprio, um roteiro em
 `e2e/<tema>.spec.ts`. Violação do axe se corrige na marcação ou no CSS, nunca desligando regra. Os projetos rodam com `reducedMotion: "reduce"`: roteiro que precisa de movimento pleno usa `test.use({ reducedMotion: "no-preference" })`. Elemento com `useReveal` leva `suppressHydrationWarning` (o `data-reveal` do HTML do servidor difere do primeiro render no navegador).
