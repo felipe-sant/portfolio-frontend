@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest"
 import { createMemoryRouter, MemoryRouter, RouterProvider, useLocation } from "react-router-dom"
 import { act, render, screen, within } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
@@ -81,6 +81,10 @@ function SectionByPath() {
     )
 }
 
+beforeAll(async () => {
+    await loadMarkdownRenderer()
+})
+
 beforeEach(() => {
     vi.mocked(loadMarkdownRenderer).mockClear()
 })
@@ -109,10 +113,8 @@ describe("ProjectDocumentSection", () => {
     it("carrega o renderizador e mostra o markdown renderizado", async () => {
         renderSection(buildState(README))
 
-        expect(
-            await screen.findByRole("heading", { level: 3, name: "Seção" }, { timeout: 10000 })
-        ).toBeInTheDocument()
-    }, 15000)
+        expect(await screen.findByRole("heading", { level: 3, name: "Seção" })).toBeInTheDocument()
+    })
 
     it("mantém o h2 do documento no DOM com o nome e tabIndex -1, depois da nav", () => {
         const { container } = renderSection(buildState(LICENSE, { content: "x" }))
@@ -263,14 +265,10 @@ describe("ProjectDocumentSection", () => {
                 <ProjectDocumentSection project={PROJECT} state={buildState(README)} />
             </MemoryRouter>
         )
-        const target = await screen.findByRole(
-            "heading",
-            { level: 3, name: "Seção" },
-            { timeout: 10000 }
-        )
+        const target = await screen.findByRole("heading", { level: 3, name: "Seção" })
 
         await vi.waitFor(() => expect(scroll.mock.contexts).toContain(target))
-    }, 15000)
+    })
 
     it("rola até a âncora quando o documento já está renderizado", async () => {
         const scroll = vi.spyOn(Element.prototype, "scrollIntoView")
@@ -279,14 +277,10 @@ describe("ProjectDocumentSection", () => {
                 <ProjectDocumentSection project={PROJECT} state={buildState(README)} />
             </MemoryRouter>
         )
-        const target = await screen.findByRole(
-            "heading",
-            { level: 3, name: "Seção" },
-            { timeout: 10000 }
-        )
+        const target = await screen.findByRole("heading", { level: 3, name: "Seção" })
 
         await vi.waitFor(() => expect(scroll.mock.contexts).toContain(target))
-    }, 15000)
+    })
 
     it("não rola até a âncora ao voltar no histórico, para preservar a rolagem restaurada", async () => {
         const scroll = vi.spyOn(Element.prototype, "scrollIntoView")
@@ -297,14 +291,14 @@ describe("ProjectDocumentSection", () => {
         render(<RouterProvider router={router} />)
 
         await act(() => router.navigate(-1))
-        await screen.findByRole("heading", { level: 3, name: "Seção" }, { timeout: 10000 })
+        await screen.findByRole("heading", { level: 3, name: "Seção" })
         await act(async () => {
             await Promise.resolve()
         })
 
         expect(router.state.location.hash).toBe("#seção")
         expect(scroll).not.toHaveBeenCalled()
-    }, 15000)
+    })
 
     it("não rola quando a âncora não existe no documento", async () => {
         const scroll = vi.spyOn(Element.prototype, "scrollIntoView")
@@ -313,10 +307,10 @@ describe("ProjectDocumentSection", () => {
                 <ProjectDocumentSection project={PROJECT} state={buildState(README)} />
             </MemoryRouter>
         )
-        await screen.findByRole("heading", { level: 3, name: "Seção" }, { timeout: 10000 })
+        await screen.findByRole("heading", { level: 3, name: "Seção" })
 
         expect(scroll).not.toHaveBeenCalled()
-    }, 15000)
+    })
 
     it("não move o foco na primeira renderização", () => {
         renderSection(buildState(LICENSE, { content: "x" }))
@@ -341,21 +335,32 @@ describe("ProjectDocumentSection", () => {
         expect(screen.getByText(errorTitle)).toBeInTheDocument()
     })
 
-    it("não tem violações de acessibilidade em markdown, texto, carregando e erro", async () => {
-        const markdown = renderSection(buildState(README))
-        await screen.findByRole("heading", { level: 3, name: "Seção" }, { timeout: 10000 })
-        await expectNoAxeViolations(markdown.container)
-        markdown.unmount()
+    it("não tem violações de acessibilidade em markdown", async () => {
+        const { container } = renderSection(buildState(README))
+        await screen.findByRole("heading", { level: 3, name: "Seção" })
 
-        const text = renderSection(buildState(LICENSE, { content: "MIT", lang: "en" }))
-        await expectNoAxeViolations(text.container)
-        text.unmount()
+        await expectNoAxeViolations(container)
+    }, 15000)
 
-        const loading = renderSection(buildState(README, { status: "loading", content: undefined }))
-        await expectNoAxeViolations(loading.container)
-        loading.unmount()
+    it("não tem violações de acessibilidade em texto", async () => {
+        const { container } = renderSection(buildState(LICENSE, { content: "MIT", lang: "en" }))
 
-        const failed = renderSection(buildState(README, { status: "error", content: undefined }))
-        await expectNoAxeViolations(failed.container)
-    }, 40000)
+        await expectNoAxeViolations(container)
+    }, 15000)
+
+    it("não tem violações de acessibilidade carregando", async () => {
+        const { container } = renderSection(
+            buildState(README, { status: "loading", content: undefined })
+        )
+
+        await expectNoAxeViolations(container)
+    }, 15000)
+
+    it("não tem violações de acessibilidade com erro", async () => {
+        const { container } = renderSection(
+            buildState(README, { status: "error", content: undefined })
+        )
+
+        await expectNoAxeViolations(container)
+    }, 15000)
 })
