@@ -54,9 +54,7 @@ export default defineConfig({
     fullyParallel: true,
     workers: process.env.CI ? 4 : undefined,
     retries: process.env.CI ? 1 : 0,
-    reporter: process.env.CI
-        ? [["list"], ["html", { open: "never" }]]
-        : [["html", { open: "never" }]],
+    reporter: process.env.CI ? [["list"], ["blob"]] : [["html", { open: "never" }]],
     use: { baseURL },
     webServer: [
         {

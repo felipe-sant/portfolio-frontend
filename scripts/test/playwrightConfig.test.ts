@@ -12,6 +12,13 @@ async function loadConfig(ci: string | undefined) {
     return (await import("@scripts/../playwright.config")).default
 }
 
+function reporterNames(reporter: unknown): string[] {
+    if (!Array.isArray(reporter)) {
+        return []
+    }
+    return reporter.map((entry) => (Array.isArray(entry) ? String(entry[0]) : String(entry)))
+}
+
 afterEach(() => {
     vi.unstubAllEnvs()
 })
@@ -76,5 +83,30 @@ describe("playwright.config", () => {
     it("usa uma tentativa extra no CI e nenhuma fora dele", async () => {
         expect((await loadConfig("1")).retries).toBe(1)
         expect((await loadConfig(undefined)).retries).toBe(0)
+    })
+
+    it("usa list e blob no CI, sem html", async () => {
+        const names = reporterNames((await loadConfig("1")).reporter)
+
+        expect(names).toContain("list")
+        expect(names).toContain("blob")
+        expect(names).not.toContain("html")
+    })
+
+    it("usa só html fora do CI", async () => {
+        expect(reporterNames((await loadConfig(undefined)).reporter)).toEqual(["html"])
+    })
+
+    it("mantém workers, fullyParallel e retries do CI", async () => {
+        expect(await loadConfig("1")).toMatchObject({
+            workers: 4,
+            fullyParallel: true,
+            retries: 1
+        })
+    })
+
+    it("não define shard no config", async () => {
+        expect((await loadConfig("1")).shard).toBeUndefined()
+        expect((await loadConfig(undefined)).shard).toBeUndefined()
     })
 })
