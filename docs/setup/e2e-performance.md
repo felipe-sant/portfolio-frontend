@@ -143,3 +143,13 @@ Cada `e2e/*.spec.ts` está em exatamente uma lista de `e2e/support/specClassific
 | `theme`             | por ambiente | tema claro e escuro                                                                             |
 
 Divergências em relação à proposta da QA1: `project` e `keyboard` ficam por ambiente. `project.spec.ts` chama `setViewportSize({ width: 320 })` e `keyboard.spec.ts` pula todos os testes acima do mobile, então no projeto único (desktop) os testes de teclado do menu nunca rodariam. Independentes ficam cinco specs (`footer`, `language`, `machine-files`, `no-javascript`, `not-found`).
+
+## Projetos do Playwright
+
+- `mobile-light`, `mobile-dark`, `desktop-light` e `desktop-dark` rodam só `perEnvironmentSpecs` (sem `contact-form`, que tem os próprios projetos).
+- `independent` (1280x800, tema claro, `reducedMotion: "reduce"`) roda `independentSpecs` uma vez. O nome do projeto não afeta o ruleset, que exige só o job `E2E`.
+- `contact-form-*` (quatro projetos, porta 4174) seguem iguais.
+
+`npx playwright test --list`: 2180 testes em 21 arquivos, contra 2504 antes (324 a menos: os 108 testes independentes, que rodavam 4 vezes, rodam 1; cada teste por ambiente continua rodando 4 vezes).
+
+Mutação de verificação: mover `accessibility.spec.ts` para `independentSpecs` faz `specClassification.test.ts` falhar ("não deixa spec que depende do ambiente na lista de independentes" e "coloca todo spec em exatamente uma lista" quando ele sai de uma lista); removê-lo de `perEnvironmentSpecs` falha o teste dos obrigatórios. Mutações desfeitas.
