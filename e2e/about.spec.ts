@@ -4,6 +4,7 @@ import type { Locator, Page } from "@playwright/test"
 import chooseLanguageInHeader from "./support/chooseLanguageInHeader"
 import holdContent from "./support/holdContent"
 import readAbout from "./support/readAbout"
+import readContentWidth from "./support/readContentWidth"
 import UI_TEXTS from "./support/uiTexts"
 import waitForHydration from "./support/waitForHydration"
 
@@ -191,7 +192,7 @@ test.describe("layout", () => {
         const summary = await getBox(
             page.getByRole("main").getByText(about.summary, { exact: true })
         )
-        const viewportWidth = page.viewportSize()?.width ?? 0
+        const viewportWidth = await readContentWidth(page)
 
         const left = Math.min(photo.x, summary.x)
         const right = Math.max(photo.x + photo.width, summary.x + summary.width)
@@ -534,7 +535,7 @@ test.describe("modal da trajetória", () => {
 
             const rect = await getBox(box)
             if (width < DESKTOP_MIN_WIDTH) {
-                expect(rect.width).toBe(width)
+                expect(rect.width).toBe(await readContentWidth(page))
                 expect(rect.height).toBe(800)
             } else {
                 expect(rect.width).toBeLessThanOrEqual(MODAL_MAX_WIDTH)

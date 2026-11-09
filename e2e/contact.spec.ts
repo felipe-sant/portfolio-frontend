@@ -5,6 +5,7 @@ import chooseLanguageInHeader from "./support/chooseLanguageInHeader"
 import collectConsoleProblems from "./support/collectConsoleProblems"
 import holdContent from "./support/holdContent"
 import readContactChannels from "./support/readContactChannels"
+import readContentWidth from "./support/readContentWidth"
 import UI_TEXTS from "./support/uiTexts"
 import waitForHydration from "./support/waitForHydration"
 
@@ -237,7 +238,7 @@ test.describe("canais de contato", () => {
         const container = page.getByRole("heading", { level: 1 }).locator("xpath=../..")
 
         const box = await container.boundingBox()
-        const viewportWidth = page.viewportSize()?.width ?? 0
+        const viewportWidth = await readContentWidth(page)
         const left = box?.x ?? 0
         const right = viewportWidth - left - (box?.width ?? 0)
 

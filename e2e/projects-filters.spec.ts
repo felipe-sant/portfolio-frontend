@@ -6,6 +6,7 @@ import filterProjects from "./support/filterProjects"
 import getProjectsView from "./support/getProjectsView"
 import holdContent from "./support/holdContent"
 import openProjectsFromHeader from "./support/openProjectsFromHeader"
+import readContentWidth from "./support/readContentWidth"
 import readProfile from "./support/readProfile"
 import readProjects from "./support/readProjects"
 import serveProjectsFixture from "./support/serveProjectsFixture"
@@ -511,15 +512,16 @@ test.describe("geometria e movimento do modal", () => {
         if (!viewport) {
             throw new Error("sem viewport")
         }
+        const contentWidth = await readContentWidth(page)
         const box = await getSettledBox(view.dialog)
 
         if (isDesktop(page)) {
             expect(box.width).toBeLessThanOrEqual(MODAL_MAX_WIDTH + 1)
-            expect(Math.abs(box.x + box.width / 2 - viewport.width / 2)).toBeLessThanOrEqual(2)
+            expect(Math.abs(box.x + box.width / 2 - contentWidth / 2)).toBeLessThanOrEqual(2)
         } else {
             expect(Math.abs(box.x)).toBeLessThanOrEqual(1)
             expect(Math.abs(box.y)).toBeLessThanOrEqual(1)
-            expect(Math.abs(box.width - viewport.width)).toBeLessThanOrEqual(1)
+            expect(Math.abs(box.width - contentWidth)).toBeLessThanOrEqual(1)
             expect(Math.abs(box.height - viewport.height)).toBeLessThanOrEqual(1)
         }
 

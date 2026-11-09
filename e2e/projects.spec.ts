@@ -6,6 +6,7 @@ import filterProjects from "./support/filterProjects"
 import getProjectsView from "./support/getProjectsView"
 import holdContent from "./support/holdContent"
 import openProjectsFromHeader from "./support/openProjectsFromHeader"
+import readContentWidth from "./support/readContentWidth"
 import readProjects from "./support/readProjects"
 import serveProjectsFixture from "./support/serveProjectsFixture"
 import sortProjects from "./support/sortProjects"
@@ -490,7 +491,7 @@ test.describe("filtros de tipo e categoria", () => {
         await openProjects(page, "pt-BR")
         const view = getProjectsView(page, "pt-BR")
         const row = view.typeGroup.locator("xpath=..")
-        const viewportWidth = page.viewportSize()?.width ?? 0
+        const viewportWidth = await readContentWidth(page)
 
         const rowBox = await getBox(row)
         expect(rowBox.x).toBeLessThanOrEqual(1)
