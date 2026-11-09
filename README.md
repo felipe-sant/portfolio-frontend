@@ -41,8 +41,6 @@ São cinco telas (Início, Projetos, Projeto, Informações e Contato), a págin
 encontrada, com tema claro e escuro e interface em `pt-BR` (referência), `en` e `es`. Propósito,
 público, escopo e requisitos estão em [`docs/product/overview.md`](docs/product/overview.md).
 
-O formulário da tela Contato é uma demonstração: o envio é simulado, não chega a ninguém. Por isso ele fica desligado (`VITE_CONTACT_FORM_ENABLED`) em todo ambiente publicado até a #44 e o CI barra um build que o contenha. Detalhe em [`docs/screens/contact.md`](docs/screens/contact.md).
-
 ## Stack
 
 React 19, TypeScript `strict`, Vite, Redux Toolkit com RTK Query, react-router-dom, i18next, CSS Modules, Vitest com Testing Library e Playwright com axe. O detalhe está em [`docs/architecture/frontend.md`](docs/architecture/frontend.md).
