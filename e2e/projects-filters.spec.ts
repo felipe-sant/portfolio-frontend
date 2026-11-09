@@ -10,6 +10,7 @@ import readProfile from "./support/readProfile"
 import readProjects from "./support/readProjects"
 import serveProjectsFixture from "./support/serveProjectsFixture"
 import sortProjects from "./support/sortProjects"
+import waitForHydration from "./support/waitForHydration"
 
 const LANGUAGES = ["pt-BR", "en", "es"] as const
 const DESKTOP_MIN_WIDTH = 640
@@ -28,6 +29,7 @@ function isDesktop(page: Page) {
 async function openProjects(page: Page, language: Language, query = "") {
     await page.goto(`${language}/projects${query}`)
     await page.getByRole("heading", { level: 1 }).waitFor()
+    await waitForHydration(page)
 }
 
 function loadProjects(language: Language) {
@@ -104,6 +106,21 @@ const closePaths = [
         close: (_view: ReturnType<typeof getProjectsView>, page: Page) => page.mouse.click(8, 400)
     }
 ]
+
+test("a busca digitada logo depois de abrir a tela filtra mesmo com a hidratação atrasada", async ({
+    page
+}) => {
+    await page.route(/assets\/.*\.js$/, async (route) => {
+        await new Promise((resolve) => setTimeout(resolve, 1500))
+        await route.continue()
+    })
+    await openProjects(page, "pt-BR")
+    const view = getProjectsView(page, "pt-BR")
+
+    await view.search.fill("blockchain")
+
+    await expect(view.status).toHaveText(view.texts.countNone)
+})
 
 test.describe("botão e modal de filtros", () => {
     for (const language of LANGUAGES) {
