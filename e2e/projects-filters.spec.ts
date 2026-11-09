@@ -46,6 +46,23 @@ async function getBox(target: Locator) {
     return box
 }
 
+async function getSettledBox(target: Locator) {
+    let previous = await getBox(target)
+    await expect
+        .poll(async () => {
+            const current = await getBox(target)
+            const settled =
+                current.x === previous.x &&
+                current.y === previous.y &&
+                current.width === previous.width &&
+                current.height === previous.height
+            previous = current
+            return settled
+        })
+        .toBe(true)
+    return previous
+}
+
 async function openFilters(page: Page, language: Language) {
     const view = getProjectsView(page, language)
     await view.filtersButton.click()
@@ -490,7 +507,7 @@ test.describe("geometria e movimento do modal", () => {
         if (!viewport) {
             throw new Error("sem viewport")
         }
-        const box = await getBox(view.dialog)
+        const box = await getSettledBox(view.dialog)
 
         if (isDesktop(page)) {
             expect(box.width).toBeLessThanOrEqual(MODAL_MAX_WIDTH + 1)
