@@ -66,7 +66,7 @@ O dev server sobe em `http://localhost:5173`. Comandos, build, E2E, CI e git hoo
 4. [`docs/adr/README.md`](docs/adr/README.md): as decisões de arquitetura e os ADRs 0001 a 0004.
 5. [`docs/setup/environments.md`](docs/setup/environments.md): ambientes, variáveis e publicação.
 
-Para rodar e contribuir, veja [`docs/setup/development.md`](docs/setup/development.md) e o [`CONTRIBUTING.md`](CONTRIBUTING.md).
+Para rodar e contribuir, veja [`docs/setup/development.md`](docs/setup/development.md) e o [`CONTRIBUTING.md`](CONTRIBUTING.md) (padrão de branches, commits, PRs e changeset); as regras de código e de agentes estão em [`.claude/CLAUDE.md`](.claude/CLAUDE.md).
 
 ## Licença
 

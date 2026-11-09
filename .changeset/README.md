@@ -1,3 +1,3 @@
 # Changesets
 
-Todo PR para a `staging` traz um changeset (`npm run changeset`). Até a v1, o changeset é vazio (`npm run changeset -- --empty`).
+Todo PR para a `staging` traz um changeset (`npm run changeset`), com o tipo (`major`, `minor` ou `patch`) da regra de incremento de `docs/product/roadmap.md#versionamento`. Quando a mudança não altera a versão (documentação, CI, testes), o changeset é vazio (`npm run changeset -- --empty`). Detalhe em `CONTRIBUTING.md` e `docs/setup/environments.md#versionamento-changesets`.
