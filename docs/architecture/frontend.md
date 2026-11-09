@@ -1,6 +1,6 @@
 # Arquitetura do frontend
 
-Frontend do portfólio pessoal de Luiz Felipe dos Santos: React 19 e TypeScript, com Vite, Redux Toolkit e RTK Query, i18next, CSS Modules e Vitest. As convenções detalhadas de código ficam no `.claude/CLAUDE.md`; este documento descreve a forma geral da aplicação.
+Frontend do portfólio pessoal de Luiz Felipe dos Santos: React 19 e TypeScript, com Vite, Redux Toolkit e RTK Query, i18next, CSS Modules e Vitest. As convenções de código estão resumidas no `.claude/CLAUDE.md` e completas em [`code-structure.md`](code-structure.md#convenções-de-código); este documento descreve a forma geral da aplicação.
 
 ## Camadas
 

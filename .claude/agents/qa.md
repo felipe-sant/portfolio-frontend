@@ -13,7 +13,7 @@ tools: Read, Edit, Write, Grep, Glob, Bash, Skill
 
 ## Fonte da verdade
 
-Leia antes de testar, nesta ordem de precedência: `CLAUDE.md` > `docs/design/decisions.md` > `docs/screens/<tela>.md` (requisitos `RF-*`, estados, textos e chaves) > `docs/product/accessibility.md` (checklist `A11Y-*`) > `docs/product/non-functional-requirements.md` (`NF-*`). Cada verificação que você faz aponta o ID do requisito que ela cobre. Requisito que ninguém pode verificar por teste automático (leitor de tela real, Lighthouse, zoom, cores forçadas) você lista como "manual, fica com o PO", sem fingir que cobriu.
+Leia antes de testar, nesta ordem de precedência: `CLAUDE.md` > `docs/design/decisions.md` > `docs/screens/<tela>.md` (requisitos `RF-*`, estados, textos e chaves; a seção "Implementação" diz como a tela é montada) > `docs/product/accessibility.md` (checklist `A11Y-*`) > `docs/product/non-functional-requirements.md` (`NF-*`). Cada verificação que você faz aponta o ID do requisito que ela cobre. Requisito que ninguém pode verificar por teste automático (leitor de tela real, Lighthouse, zoom, cores forçadas) você lista como "manual, fica com o PO", sem fingir que cobriu.
 
 ## Skills
 

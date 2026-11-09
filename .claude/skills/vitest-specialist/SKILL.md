@@ -5,6 +5,8 @@ description: Como escrever, rodar e depurar teste em `test/` por diretório nest
 
 # Vitest Specialist
 
+Leia antes de agir: `docs/setup/testing.md` (convenção e mecânica de teste de unidade).
+
 Esta skill é dona do **arquivo de teste**. Como escrever a página ou o componente testado está nas skills `react-page-scaffold` e `react-component-scaffold`.
 
 O stack é Vitest + `@testing-library/react` em ambiente `jsdom`, configurado no bloco `test` do `vite.config.ts` da raiz:

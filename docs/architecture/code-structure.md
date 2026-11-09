@@ -21,8 +21,8 @@ Onde cada coisa fica em `src/`, de onde vêm os dados do conteúdo e como o text
 Pastas como `components/` e `hooks/` nascem no primeiro uso. Em resumo: identificadores em inglês,
 import interno pelo alias `@/` (nunca `../`), import nomeado, export no final do arquivo com um
 símbolo por arquivo (`export default`), texto de UI sempre por chave de tradução e código sem
-comentários. As regras completas de código e de agentes, com o que o oxlint verifica sozinho, estão em
-[`.claude/CLAUDE.md`](../../.claude/CLAUDE.md); o padrão de branches, commits, PRs e changeset está em
+comentários. As regras de código estão resumidas em [`.claude/CLAUDE.md`](../../.claude/CLAUDE.md) e completas, com o que o oxlint
+verifica sozinho, em [Convenções de código](#convenções-de-código); o padrão de branches, commits, PRs e changeset está em
 [`CONTRIBUTING.md`](../../CONTRIBUTING.md). A visão de arquitetura está em
 [`frontend.md`](frontend.md).
 

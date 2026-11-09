@@ -7,7 +7,7 @@ description: Roteiro de QA exploratório de uma tela deste projeto no navegador 
 
 ## 1. Preparação
 
-- Leia `docs/screens/<tela>.md` (requisitos `RF-*`, estados, textos), o trecho da tela em `docs/product/accessibility.md` e as decisões `D*` citadas. Anote os requisitos que dependem de comportamento observável.
+- Leia `docs/screens/<tela>.md` (requisitos `RF-*`, estados, textos e a seção "Implementação"), o trecho da tela em `docs/product/accessibility.md` e as decisões `D*` citadas. Anote os requisitos que dependem de comportamento observável.
 - `npm run build:fatec`, depois `npm run preview:fatec` em segundo plano (`http://localhost:4173/ra2581392423047/`). Para ver mudança de código sem build, o `npm run dev` (porta 5173) serve, mas só o build do Pages vale como veredito.
 - Capturas e anotações vão para o scratchpad da sessão, nunca para o repositório.
 
