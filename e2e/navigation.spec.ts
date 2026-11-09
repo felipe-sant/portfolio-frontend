@@ -266,7 +266,7 @@ test.describe("menu mobile", () => {
         await expect(menu).toHaveAttribute("aria-expanded", "true")
     })
 
-    test("RF-LAY-08: ao alargar a janela para 640px o painel fecha", async ({ page }) => {
+    test("RF-LAY-08: ao alargar a janela para 720px o painel fecha", async ({ page }) => {
         const menu = page.getByRole("button", { name: "Menu" })
         await menu.click()
         await expect(menu).toHaveAttribute("aria-expanded", "true")
