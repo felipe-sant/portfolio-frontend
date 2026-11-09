@@ -72,6 +72,8 @@ jobs:
               run: npm run test:cov
             - name: Build Fatec
               run: npm run build:fatec
+            - name: Check contact form is absent
+              run: npm run check:contact-form dist
             - name: Upload artifact
               uses: actions/upload-artifact@v7
               with:

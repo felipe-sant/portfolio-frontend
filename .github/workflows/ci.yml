@@ -34,6 +34,8 @@ jobs:
               run: npm run build
             - name: Check markdown chunk
               run: npm run check:chunk
+            - name: Check contact form is absent
+              run: npm run check:contact-form dist
 
     lint:
         name: Lint
