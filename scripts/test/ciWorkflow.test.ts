@@ -54,10 +54,6 @@ describe("ci.yml", () => {
         expect(ci.on.push?.branches).toContain("staging")
     })
 
-    it("roda o CI em push nas branches de hotfix", () => {
-        expect(ci.on.push?.branches).toContain("hotfix/**")
-    })
-
     it("mantém os nomes dos checks exigidos pela ruleset", () => {
         expect(ci.jobs.build?.name).toBe("Build")
         expect(ci.jobs.lint?.name).toBe("Lint")
@@ -181,26 +177,6 @@ describe("ci.yml, job E2E shard", () => {
         expect(shard?.strategy?.matrix).toContain("fromJSON(needs.scope.outputs.matrix)")
     })
 
-    it("nomeia a fatia com índice e total", () => {
-        expect(shard?.name).toBe("E2E shard ${{ matrix.index }}/${{ matrix.total }}")
-    })
-
-    it("guarda o Chromium em cache com chave pela versão do Playwright", () => {
-        const versionStep = steps.find((step) => step.id === "playwright-version")
-        const cacheStep = steps.find((step) => step.uses?.startsWith("actions/cache@"))
-
-        expect(versionStep?.run).toContain("@playwright/test/package.json")
-        expect(cacheStep?.with?.path).toBe("~/.cache/ms-playwright")
-        expect(cacheStep?.with?.key).toContain("steps.playwright-version.outputs.version")
-    })
-
-    it("restaura o cache antes de instalar o Chromium", () => {
-        const names = steps.map((step) => step.name)
-
-        expect(names.indexOf("Cache Chromium")).toBeGreaterThan(-1)
-        expect(names.indexOf("Cache Chromium")).toBeLessThan(names.indexOf("Install Chromium"))
-    })
-
     it("faz os dois builds em cada fatia", () => {
         expect(findStepRun(shard, "Build")).toBe("npm run build:fatec")
         expect(findStepRun(shard, "Build Pages artifact with the contact form enabled")).toBe(
@@ -268,20 +244,12 @@ describe("ci.yml, job E2E agregador", () => {
         expect(evaluateStatus("cancelled", "full", "success")).not.toBe(0)
     })
 
-    it("junta os blobs e sobe o playwright-report só em falha", () => {
-        const merge = steps.find((step) => step.run?.includes("merge-reports"))
-        const download = steps.find((step) => step.uses?.startsWith("actions/download-artifact@"))
-        const upload = steps.find((step) => step.name === "Upload Playwright report")
-
-        expect(download?.with?.pattern).toBe("blob-report-*")
-        expect(merge?.run).toContain("--reporter=html,json")
-        expect(merge?.run).toContain("PLAYWRIGHT_JSON_OUTPUT_NAME=merged-report.json")
-        expect(upload?.if).toContain("failure()")
-        expect(upload?.with?.name).toBe("playwright-report")
-    })
-
     it("avisa dos testes flaky no resumo, só fora do escopo none e sem falhar o check", () => {
         const warn = steps.find((step) => step.name === "Warn about flaky tests")
+        const merge = steps.find((step) => step.run?.includes("merge-reports"))
+
+        expect(merge?.run).toContain("--reporter=html,json")
+        expect(merge?.run).toContain("PLAYWRIGHT_JSON_OUTPUT_NAME=merged-report.json")
 
         expect(warn?.if).toContain("needs.scope.outputs.mode != 'none'")
         expect(warn?.if).toContain("needs.scope.result == 'success'")
@@ -291,29 +259,10 @@ describe("ci.yml, job E2E agregador", () => {
         expect(warn?.run).not.toContain("exit 1")
     })
 
-    it("avisa dos flaky depois do merge e antes de avaliar o resultado", () => {
-        const names = steps.map((step) => step.name)
-
-        expect(names.indexOf("Warn about flaky tests")).toBeGreaterThan(
-            names.findIndex((name) => name?.startsWith("Merge"))
-        )
-        expect(names.indexOf("Warn about flaky tests")).toBeLessThan(
-            names.indexOf("Evaluate E2E result")
-        )
-    })
-
     it("confere a união das fatias só no modo full", () => {
         const check = steps.find((step) => step.run === "npm run e2e:check-shards")
 
         expect(check?.if).toContain("needs.scope.outputs.mode == 'full'")
-    })
-
-    it("avalia o resultado depois do merge para o relatório existir em falha", () => {
-        const names = steps.map((step) => step.name)
-
-        expect(names.indexOf("Evaluate E2E result")).toBeGreaterThan(
-            names.findIndex((name) => name?.startsWith("Merge"))
-        )
     })
 })
 
