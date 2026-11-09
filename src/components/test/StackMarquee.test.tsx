@@ -11,6 +11,17 @@ const items = [
     { name: "Node.js", isPrimary: false }
 ]
 
+function stubTouchPointer() {
+    vi.stubGlobal(
+        "matchMedia",
+        vi.fn((query: string) => ({
+            matches: query === "(pointer: coarse)",
+            addEventListener: vi.fn(),
+            removeEventListener: vi.fn()
+        }))
+    )
+}
+
 function renderMarquee() {
     return render(<StackMarquee items={items} heading="Stack" />)
 }
@@ -105,25 +116,6 @@ describe("StackMarquee", () => {
         expect(region).not.toHaveAttribute("data-paused")
     })
 
-    it("não define pausa em tela de toque", async () => {
-        vi.stubGlobal(
-            "matchMedia",
-            vi.fn(() => ({
-                matches: true,
-                addEventListener: vi.fn(),
-                removeEventListener: vi.fn()
-            }))
-        )
-        const user = userEvent.setup()
-        renderMarquee()
-        const region = screen.getByRole("region", { name: "Stack" })
-
-        await user.hover(region)
-        await user.tab()
-
-        expect(region).not.toHaveAttribute("data-paused")
-    })
-
     it("não tem violações de acessibilidade com a região pausada", async () => {
         const user = userEvent.setup()
         const { container } = renderMarquee()
@@ -140,19 +132,24 @@ describe("StackMarquee", () => {
         expect(screen.getByRole("region", { name: "Stack" })).toHaveAttribute("tabindex", "0")
     })
 
-    it("torna a região rolável, sem cópia, em tela de toque com movimento pleno", () => {
-        vi.stubGlobal(
-            "matchMedia",
-            vi.fn(() => ({
-                matches: true,
-                addEventListener: vi.fn(),
-                removeEventListener: vi.fn()
-            }))
-        )
+    it("renderiza a cópia do laço em tela de toque com movimento pleno", () => {
+        stubTouchPointer()
+        const { container } = renderMarquee()
+
+        expect(screen.getByRole("region", { name: "Stack" })).toHaveAttribute("tabindex", "0")
+        expect(
+            container.querySelector('ul[aria-hidden="true"]')?.querySelectorAll("li")
+        ).toHaveLength(items.length)
+    })
+
+    it("não renderiza a cópia em tela de toque com movimento reduzido", () => {
+        stubTouchPointer()
+        localStorage.setItem(MOTION_STORAGE_KEY, "reduced")
         const { container } = renderMarquee()
 
         expect(screen.getByRole("region", { name: "Stack" })).toHaveAttribute("tabindex", "0")
         expect(container.querySelector('ul[aria-hidden="true"]')).toBeNull()
+        expect(screen.getAllByRole("listitem")).toHaveLength(items.length)
     })
 
     it("não tem violações de acessibilidade", async () => {

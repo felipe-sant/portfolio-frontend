@@ -1,7 +1,6 @@
 import { useId } from "react"
 import useDragScroll from "@/hooks/useDragScroll"
 import useHoverFocusPause from "@/hooks/useHoverFocusPause"
-import useMediaQuery from "@/hooks/useMediaQuery"
 import useMotion from "@/hooks/useMotion"
 import css from "@/styles/components/stackMarquee.module.css"
 import type StackEntry from "@/types/home/StackEntry.types"
@@ -33,8 +32,7 @@ const regionTabIndex = 0
 function StackMarquee({ items, heading }: StackMarqueeProps) {
     const headingId = useId()
     const { motion } = useMotion()
-    const isCoarsePointer = useMediaQuery("(pointer: coarse)")
-    const isAnimated = motion === "full" && !isCoarsePointer
+    const isAnimated = motion === "full"
     const { ref, dragProps } = useDragScroll<HTMLElement>()
     const { isPaused, pauseProps } = useHoverFocusPause<HTMLElement>()
 
