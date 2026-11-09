@@ -161,6 +161,22 @@ describe("StackMarquee", () => {
         expect(region).not.toHaveAttribute("data-paused")
     })
 
+    it("não volta pausada ao religar o movimento pleno depois de um toque em movimento reduzido", () => {
+        localStorage.setItem(MOTION_STORAGE_KEY, "reduced")
+        renderMarquee()
+        const region = screen.getByRole("region", { name: "Stack" })
+
+        fireEvent.pointerDown(region, { pointerType: "touch" })
+        fireEvent.pointerUp(region, { pointerType: "touch" })
+
+        act(() => {
+            localStorage.removeItem(MOTION_STORAGE_KEY)
+            window.dispatchEvent(new StorageEvent("storage", { key: MOTION_STORAGE_KEY }))
+        })
+
+        expect(region).not.toHaveAttribute("data-paused")
+    })
+
     it("não tem violações de acessibilidade com a região pausada", async () => {
         const user = userEvent.setup()
         const { container } = renderMarquee()

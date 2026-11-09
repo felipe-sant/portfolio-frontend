@@ -50,7 +50,9 @@ function StackMarquee({ items, heading }: StackMarqueeProps) {
 
     function handlePointerUp(event: PointerEvent<HTMLElement>) {
         dragProps.onPointerUp(event)
-        pauseProps.onPointerUp(event)
+        if (isAnimated) {
+            pauseProps.onPointerUp(event)
+        }
     }
 
     return (
