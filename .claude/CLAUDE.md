@@ -109,6 +109,7 @@ npm run publish:fatec:docs -- <artefato> <clone> # troca o docs/ do clone da Fat
 npm run preview:fatec # servidor Node que imita o Pages (arquivo, <caminho>.html, pasta com 301, 404.html) em http://localhost:4173/ra2581392423047/
 npm run check:chunk # depois do build: o chunk MarkdownDocument-*.js (markdown + realce) tem de ficar em até 102400 bytes gzip, o chunk pdf-*.js do pdfjs em até 174080 e o worker pdf.worker.min-*.mjs em até 430080 (scripts/pdfChunk/), e nenhum chunk de entrada, Início ou Projetos pode conter o react-markdown (CI, job Build)
 npm run og:image  # regera public/images/og-site.png (Chromium do Playwright, versionado)
+npm run readme:images # regera docs/design/assets/readme/home-{light,dark}.png do README (Chromium do Playwright, manual; exige npm run build:fatec e npm run preview:fatec no ar; PNG versionados, até 300 KB cada, guardados por scripts/test/readme.test.ts)
 npm run cv:pdf    # regera public/cv/cv-<idioma>.pdf a partir dos cv-<idioma>.md (Chromium do Playwright, manual, fora do build; os PDFs são versionados e scripts/test/resumePdfsUpToDate.test.ts falha se divergirem do .md)
 npm run lint:fix  # mesma coisa, aplicando as correções automáticas possíveis (oxlint --fix)
 npm run changeset # cria o changeset do PR em .changeset/ (npm run changeset -- --empty gera o vazio, para mudança que não altera a versão)
