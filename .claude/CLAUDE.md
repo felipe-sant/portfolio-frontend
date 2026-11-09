@@ -724,8 +724,10 @@ Commits são atômicos: uma mudança concluída por commit.
 ### Pull Requests
 
 - Toda alteração passa por PR para a `staging` (exceção: `hotfix/*`, para a `main`). A promoção é um
-  PR de `staging` para `main`, com título `Chore :see_no_evil: Promove staging para produção` e a
-  lista das issues incluídas, sem repetir `Closes`.
+  PR de `staging` para `main`, gerado e atualizado pelo `promote.yml` (título
+  `Chore :see_no_evil: Promove staging para produção` e lista das issues incluídas, sem `Closes`); o
+  merge é humano, sempre por commit de merge (nunca squash), e fica bloqueado (PR em draft) enquanto
+  houver changeset pendente.
 - O autor se atribui na criação (`gh pr create --assignee @me`) e aplica as labels de área da issue.
 - A descrição referencia a issue (`Closes #<número>`); a branch padrão é a `staging`, então a issue
   fecha no merge do PR para a `staging`. O título segue o padrão do commit principal.
