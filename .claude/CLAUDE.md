@@ -597,93 +597,31 @@ O `<Tipo>` de branch, commit e título de PR vem sempre desta tabela:
 
 ### Issues
 
-Toda issue entra no projeto [Portfolio](https://github.com/users/felipe-sant/projects/16) com
-Status `Backlog` (o PO revisa e move), `Marco` do `docs/product/roadmap.md` (ou `Pessoal`) e um único
-`Tipo` (`FEAT`, `DOC` ou `BUG`). O tipo vive só nesse campo: labels de tipo não são usadas; as labels
-indicam só a área (`frontend`, `backend`, `infra`, uma ou mais). Issue que depende de outra registra
-"blocked by" do GitHub (`POST /repos/{owner}/{repo}/issues/{n}/dependencies/blocked_by`), além da
-linha "Depende de" do corpo.
+Toda issue entra no projeto [Portfolio](https://github.com/users/felipe-sant/projects/16) com Status `Backlog`, `Marco` do `docs/product/roadmap.md` (ou `Pessoal`) e um único `Tipo` (`FEAT`, `DOC` ou `BUG`); as labels indicam só a área (`frontend`, `backend`, `infra`). Dependência entre issues vira "blocked by" do GitHub, além da linha "Depende de" do corpo (detalhe em [`CONTRIBUTING.md`](../CONTRIBUTING.md#issues)).
 
 ### Branches
 
-`<tipo>/<número-da-issue>-<descrição-curta>`, tipo em minúsculas (`feat/<número>-agentes-e-skills`);
-sem issue aberta, o número é omitido (`chore/update-gitignore`). Duas branches de ambiente, nenhuma
-recebe push direto: `staging` (base do desenvolvimento; toda branch nasce de `origin/staging`
-atualizada e volta por PR) e `main` (produção; só recebe PR de `staging` ou de `hotfix/*`). Hotfix
-nasce de `origin/main`, volta por PR para a `main` e depois a `main` volta para a `staging` por PR.
+`<tipo>/<número-da-issue>-<descrição-curta>`, tipo em minúsculas (`feat/<número>-agentes-e-skills`); sem issue aberta, o número é omitido (`chore/update-gitignore`). Nenhuma branch de ambiente recebe push direto: `staging` é a base (toda branch nasce de `origin/staging` atualizada e volta por PR) e `main` é produção (só recebe PR de `staging` ou de `hotfix/*`, que nasce de `origin/main`).
 
 ### Commits
 
-`<Tipo> <ícone> [#<número-da-issue>] <descrição>`, por exemplo
-`Fix :bug: [#<número>] Troca <a href> por <Link> na página NotFound`; sem issue, o `[#...]` é omitido.
-Commits são atômicos: uma mudança concluída por commit.
+`<Tipo> <ícone> [#<número-da-issue>] <descrição>`, por exemplo `Fix :bug: [#<número>] Troca <a href> por <Link> na página NotFound`; sem issue, o `[#...]` é omitido. Commits são atômicos: uma mudança concluída por commit.
 
 ### Pull Requests
 
-- Toda alteração passa por PR para a `staging` (exceção: `hotfix/*`, para a `main`). A promoção é um
-  PR de `staging` para `main`, gerado e atualizado pelo `promote.yml` (título
-  `Chore :see_no_evil: Promove staging para produção` e lista das issues incluídas, sem `Closes`); o
-  merge é humano, sempre por commit de merge (nunca squash), e fica bloqueado (PR em draft) enquanto
-  houver changeset pendente.
-- O autor se atribui na criação (`gh pr create --assignee @me`) e aplica as labels de área da issue.
-- A descrição referencia a issue (`Closes #<número>`); a branch padrão é a `staging`, então a issue
-  fecha no merge do PR para a `staging`. O título segue o padrão do commit principal.
-- **Todo PR para a `staging` traz um changeset** (`.changeset/*.md`, `npm run changeset`), commitado no
-  próprio PR; o vazio (`npm run changeset -- --empty`) vale só para o que não altera a versão
-  (documentação, CI, testes). O tipo segue a regra de incremento de `docs/product/roadmap.md`;
-  `hotfix/*` leva `patch` e roda `npm run changeset:version`. O `changeset-check.yml` falha PR sem
-  changeset; o fluxo de versão e release está em `docs/setup/environments.md`.
-- A descrição segue a estrutura de `.github/PULL_REQUEST_TEMPLATE.md`, não um corpo livre.
+- Toda alteração passa por PR para a `staging` (exceção: `hotfix/*`, para a `main`). A promoção `staging` → `main` é gerada pelo `promote.yml`, com merge humano sempre por commit de merge (nunca squash).
+- O autor se atribui (`gh pr create --assignee @me`), aplica as labels de área e referencia a issue (`Closes #<número>`); o título segue o do commit principal e a descrição, a estrutura de `.github/PULL_REQUEST_TEMPLATE.md`.
+- **Todo PR para a `staging` traz um changeset** (`npm run changeset`; `-- --empty` só para o que não altera a versão); `hotfix/*` leva `patch` e roda `npm run changeset:version`. Regras completas em [`CONTRIBUTING.md`](../CONTRIBUTING.md).
 
 ## Tooling de IA (agents, skills e spec-driven)
 
-- `.claude/agents/` — cinco papéis num fluxo de TDD, `sdd` → `executor` → verificação manual do PO →
-  `reviewer` → `qa` → `reviewer` → `tester` → `reviewer`: `sdd` (só planeja, escreve
-  `spec.md`/`tasks.md` em `.specs/`, nunca toca em `src/`; toda tarefa lista os "Testes" a provar e o
-  "Gate"), `executor` (implementa a feature inteira de um `tasks.md` já aprovado, em branch dedicada,
-  em TDD: teste antes do código, um por vez, vermelho → verde → refatora, gate e tabela de adequação
-  por tarefa, commit atômico com teste e código juntos), `reviewer` (audita contra este arquivo,
-  somente leitura, e revisa o trabalho do estágio anterior, nunca o próprio), `qa` (testa a tela no
-  navegador com Playwright contra `docs/`, escreve os testes de `e2e/` e reporta bugs; só escreve em
-  `e2e/`; só entra se a feature tem tela) e `tester` (valida toda a suíte, audita a adequação dos
-  testes, roda o sensor de discriminação e cria testes de unidade que faltam; só escreve em
-  `src/**/test/` e `src/testUtils/`). Regras do fluxo:
-    - **TDD só para lógica e comportamento** (funções, hooks, store, comportamento de componente e
-      página, textos nos três idiomas, bug com o teste que reproduz primeiro). Aparência (CSS, hover,
-      espaçamento) não entra em TDD.
-    - **Estado vermelho nunca é commitado** nem enviado: ele vive só no working tree entre o teste
-      e o código, e o push só acontece no fim do fluxo, depois do último `reviewer`.
-    - **Feature com tela:** ao fim do `executor`, a sessão principal sobe a aplicação
-      (`npm run dev`), o PO verifica à mão e pede ajustes, e só depois o fluxo segue para o
-      `reviewer`.
-    - **Pedidos de correção:** quem encontra problema devolve por responsável (`executor` para código,
-      `qa` para E2E, `tester` para teste de unidade, `sdd` para spec); a sessão principal orquestra:
-      despacha o responsável, chama o `reviewer` para revisar só a correção e repete até não restar
-      bloqueante. O `executor` não faz push nem abre PR nesse fluxo: o PR abre depois do último
-      `reviewer`.
-- `.claude/skills/` — conhecimento carregável sob demanda. São dez, separadas pela pasta do
-  artefato: `react-page-scaffold` (página em `src/pages/` + CSS Module + registro de rota),
-  `react-component-scaffold` (componente reutilizável em `src/components/` + CSS Module em
-  `src/styles/components/`), `vitest-specialist` (teste em `test/` por diretório com Vitest +
-  Testing Library, `src/setupTests.ts` e o bloco `test` do `vite.config.ts`),
-  `redux-store-scaffold` (slice em `src/store/slices/` + registro no `rootReducer` + hooks tipados),
-  `rtk-query-endpoint-scaffold` (endpoints em `src/store/api/` via `api.injectEndpoints`),
-  `tdd-patterns` (ciclo vermelho, verde, refatora, adequação dos testes e sensor de discriminação;
-  usada por `executor`, `tester` e `reviewer`) e, do agente `qa`, `playwright-e2e` (teste de `e2e/`),
-  `accessibility-audit` (auditoria de acessibilidade contra `docs/product/accessibility.md`),
-  `screen-qa` (roteiro de QA exploratório de uma tela) e `nfr-verification` (requisitos não
-  funcionais de `docs/product/non-functional-requirements.md`).
-- `.specs/` — specs por feature/bug (`.specs/features/<slug>/`, `.specs/bugs/<slug>/`), a partir de
-  `.specs/_template/`. As pastas de trabalho de cada spec são gitignored (planejamento local); só o resumo
-  `_archive/<slug>.md` de cada spec fechada, escrito pelo `executor`, é versionado.
-  O estado vive no campo `**Status:**` do `spec.md` (`rascunho` → `em-revisao` → `aprovada` →
-  `em-andamento` → `implementada`); só humano promove para `aprovada`.
-- `docs/` — documentação versionada **só deste frontend**: visão do produto e glossário
-  (`docs/product/`), design system (`docs/design/`), arquitetura (`docs/architecture/`), ADRs
-  (`docs/adr/`), diagramas de fluxo e entidades (`docs/diagrams/`), ambientes (`docs/setup/`) e o
-  modelo de documentação de tela (`docs/screens/`). O sistema inteiro fica no repositório pai,
-  que reúne backend e frontend como submódulos, e o contrato da API fica no backend. Índice em
-  `docs/README.md`; o `sdd` não escreve lá, só em `.specs/`.
+Papéis em `.claude/agents/`, skills em `.claude/skills/`: descritos em [`.claude/README.md`](README.md). O fluxo de TDD tem cinco papéis, `sdd` → `executor` → verificação manual do PO → `reviewer` → `qa` → `reviewer` → `tester` → `reviewer`. Regras do fluxo:
 
-Ao mudar uma convenção deste arquivo, verifique se algum agente ou skill a repete — eles citam
-este `CLAUDE.md` como fonte da verdade, mas duplicam os pontos que precisam aplicar sozinhos.
+- **TDD só para lógica e comportamento** (funções, hooks, store, comportamento de componente e página, textos nos três idiomas, bug com o teste que reproduz primeiro). Aparência (CSS, hover, espaçamento) não entra em TDD.
+- **Estado vermelho nunca é commitado** nem enviado: ele vive só no working tree entre o teste e o código, e o push só acontece no fim do fluxo, depois do último `reviewer`.
+- **Feature com tela:** ao fim do `executor`, a sessão principal sobe a aplicação (`npm run dev`), o PO verifica à mão e pede ajustes, e só depois o fluxo segue para o `reviewer`.
+- **Pedidos de correção:** quem encontra problema devolve por responsável (`executor` para código, `qa` para E2E, `tester` para teste de unidade, `sdd` para spec); a sessão principal despacha o responsável, chama o `reviewer` para revisar só a correção e repete até não restar bloqueante. O `executor` não faz push nem abre PR nesse fluxo.
+- **`.specs/`:** specs em `.specs/features/<slug>/` e `.specs/bugs/<slug>/`, a partir de `.specs/_template/`; as pastas de trabalho são gitignored e só o resumo `_archive/<slug>.md` é versionado. O estado vive no `**Status:**` do `spec.md` (`rascunho` → `em-revisao` → `aprovada` → `em-andamento` → `implementada`); só humano promove para `aprovada`.
+- **`docs/`:** documentação só deste frontend (índice em `docs/README.md`); o `sdd` não escreve lá, só em `.specs/`.
+
+Ao mudar uma convenção deste arquivo, verifique se algum agente ou skill a repete.
