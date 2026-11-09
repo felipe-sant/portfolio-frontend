@@ -19,3 +19,5 @@ O envio do formulário de Contato é simulado; se a flag `VITE_CONTACT_FORM_ENAB
 ## Notas
 
 - A conferência da flag na Vercel (production e preview) ficou pendente: o MCP da Vercel não estava disponível ao executor. O guard no `deploy.yml` cobre o caso mesmo assim.
+- Conferência na Vercel (CA4, feita em 09/11/2026 pelo MCP da Vercel, só leitura): os projetos `felipe-sant` (domínio `felipe-sant.vercel.app`) e `portfolio` não têm nenhuma variável de ambiente, em `production` ou `preview`, então `VITE_CONTACT_FORM_ENABLED` não está definida e nada foi removido.
+- A premissa do CLAUDE.md de que o chunk do formulário não é referenciado com a flag desligada estava errada quanto ao JS (o `lazy` o referencia nos dois estados); o texto foi corrigido e o guard usa só sinais do HTML pré-renderizado.
