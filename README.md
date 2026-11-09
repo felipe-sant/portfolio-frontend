@@ -1,287 +1,60 @@
 # Portfólio — Luiz Felipe dos Santos
 
-Frontend do portfólio pessoal de Luiz Felipe dos Santos, desenvolvedor full stack em TypeScript.
+Personal portfolio of Luiz Felipe dos Santos, a full stack developer working with TypeScript.
+Five screens in three languages (`pt-BR`, `en` and `es`), with light and dark themes, built with React 19 and Vite.
+It runs on local data, with no backend yet: a data layer answers as the future API will.
+
+[![Status do CI](https://github.com/felipe-sant/portfolio-frontend/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/felipe-sant/portfolio-frontend/actions/workflows/ci.yml)
+[![Versão](https://img.shields.io/github/v/release/felipe-sant/portfolio-frontend)](https://github.com/felipe-sant/portfolio-frontend/releases)
+[![Licença](https://img.shields.io/github/license/felipe-sant/portfolio-frontend)](LICENSE)
+[![Node 24.15 ou superior](https://img.shields.io/badge/node-%3E%3D24.15.0-339933)](.nvmrc)
+
+**[Ver o site](https://felipe-sant.vercel.app)**
+
+Entrega da Fatec: [site no GitHub Pages](https://fatec-jacarei-dsm-portfolio.github.io/ra2581392423047/pt-BR/) e [repositório da Fatec](https://github.com/fatec-jacarei-dsm-portfolio/ra2581392423047).
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/design/assets/readme/home-dark.png">
+  <img src="docs/design/assets/readme/home-light.png" alt="Tela Início do portfólio: status atual, título com a função e os botões Ver projetos e Baixar CV" width="100%">
+</picture>
 
 ## Sobre o projeto
 
 O portfólio existe para converter visita em contato: mostra o trabalho do autor com profundidade
 suficiente para que quem visita entenda como ele resolve problemas, e não apenas quais tecnologias
-já usou. O público são recrutadores avaliando o autor para uma vaga e clientes avaliando-o para um
-projeto ou freelance; na v1, também o professor da Fatec, que avalia a entrega.
+já usou. O público são recrutadores, clientes avaliando um projeto ou freelance e, na v1, o
+professor da Fatec que avalia a entrega.
 
-O design vem de um handoff de design, que define cinco telas, todas existentes no código. Os
-caminhos são em inglês, iguais nos três idiomas (D32), e ficam sempre sob o prefixo do idioma
-(`/pt-BR`, `/en` ou `/es`, sem barra final); a raiz `/` só redireciona para o idioma. A tabela omite
-o prefixo:
-
-| Rota            | Tela        | Propósito                                                                                                                                                              |
-| --------------- | ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `/`             | Início      | Primeira impressão: quem é, status atual, projetos em destaque e faixa de stack                                                                                        |
-| `/projects`     | Projetos    | Encontrar um projeto por busca, tipo, categoria ou tecnologia, com carregamento contínuo                                                                               |
-| `/projects/:id` | Projeto     | Estudo de caso de um projeto: galeria, documentação e ficha técnica; o `README.md` em `/projects/:id` e cada outro documento em `/projects/:id/docs/<name>` (D33, D55) |
-| `/about`        | Informações | Sobre mim, stack, complementos e trajetória                                                                                                                            |
-| `/contact`      | Contato     | Formulário de mensagem (desligado na v1) e canais diretos                                                                                                              |
-
-Além das cinco telas, existem a página de erro e a página não encontrada. O site tem temas claro e
-escuro e interface em `pt-BR` (língua de referência), `en` e `es`. Propósito, público e jornadas, objetivos, escopo e fora de escopo estão
-detalhados em [`docs/product/overview.md`](docs/product/overview.md).
-
-## Requisitos do projeto
-
-Decisões do autor, que é ao mesmo tempo cliente, PO e dev do portfólio. Valem para toda feature e
-toda tarefa:
-
-- **R1 — Frontend-only, sem backend na v1.** O backend ainda não existe. A aplicação funciona
-  sozinha, com o conteúdo real do portfólio (projetos, trajetória e perfil) em JSON, servido por uma
-  camada de dados local. Os dados virão do backend no futuro, então a infraestrutura de Redux
-  Toolkit, RTK Query e `src/services/http/` fica no projeto.
-- **R2 — Tradução obrigatória em `pt-BR`, `en` e `es`.** Toda feature e toda tarefa que cria ou
-  altera texto de UI entrega o texto nos três idiomas; `pt-BR` é a referência. Chave de tradução
-  sem uso é removida.
-- **R3 — O handoff é a fonte de verdade do design.** Tokens, componentes, voz e copy,
-  acessibilidade e responsividade seguem o handoff; as convenções do repositório prevalecem onde
-  divergem (fonte self-hospedada em vez de Google Fonts, CSS Module em vez de classe global
-  `.ds-*`, código sem comentários).
+São cinco telas (Início, Projetos, Projeto, Informações e Contato), a página de erro e a não
+encontrada, com tema claro e escuro e interface em `pt-BR` (referência), `en` e `es`. Propósito,
+público, escopo e requisitos estão em [`docs/product/overview.md`](docs/product/overview.md).
 
 ## Stack
 
-- **React 19** com **TypeScript** em modo `strict`.
-- **Vite** — dev server e build de produção.
-- **react-router-dom** — roteamento client-side com data router e páginas `lazy`.
-- **Redux Toolkit**, **react-redux** e **RTK Query** — estado global e, quando o backend existir,
-  estado de servidor (R1).
-- **i18next** e **react-i18next** — internacionalização.
-- **CSS Modules** — estilo com escopo por arquivo, lendo os tokens de `src/styles/global.css`.
-- **Vitest** e **Testing Library** — testes em ambiente `jsdom`, com cobertura por
-  `@vitest/coverage-v8`.
-- **Playwright** e **axe** (`@axe-core/playwright`, `axe-core`) — testes E2E e verificação de
-  acessibilidade.
-- **react-markdown** e **pdfjs-dist** — documentos de projeto em Markdown e visualizador de
-  currículo, carregados sob demanda.
-- **Changesets** — versionamento e `CHANGELOG`.
-- **oxlint**, **Prettier**, **Husky** e **lint-staged** — lint, formatação e hook de `pre-commit`.
-
-## Requisitos de ambiente
-
-- **Node.js** `>= 24.15.0` (campo `engines` do `package.json`). O `.nvmrc` fixa a versão
-  recomendada, `24.21.0`, a mesma usada no CI; com `nvm`, rode `nvm use` na raiz.
-- **npm.** O repositório versiona o `package-lock.json`; não use `yarn` nem `pnpm`, que gerariam um
-  lockfile divergente.
+React 19, TypeScript `strict`, Vite, Redux Toolkit com RTK Query, react-router-dom, i18next, CSS Modules, Vitest com Testing Library e Playwright com axe. O detalhe está em [`docs/architecture/frontend.md`](docs/architecture/frontend.md).
 
 ## Como rodar
+
+Com Node.js 24.15 ou superior (o `.nvmrc` fixa a versão do CI) e npm:
 
 ```bash
 npm install
 cp .env.example .env
 npm run dev
-```
-
-O `npm run build` exige `VITE_SITE_URL`, só a origem (`http(s)://host`, sem caminho nem barra
-final); o `.env.example` já traz o valor local, então o `cp` acima basta, e quem builda sem `.env`
-(como no CI) precisa defini-la. Detalhe em
-[`docs/setup/environments.md`](docs/setup/environments.md).
-
-O dev server sobe em `http://localhost:5173`. Como o backend ainda não existe (R1), `VITE_API_URL`
-pode ficar vazia ou ausente no `.env`: sem ela, `src/services/http/apiUrl.ts` usa string vazia e as
-requisições saem com caminho relativo. O valor do `.env.example` é só um modelo do formato. Só
-variáveis com prefixo `VITE_` chegam ao código do cliente; ver
-[`docs/setup/environments.md`](docs/setup/environments.md).
-
-## Comandos
-
-| Comando                      | O que faz                                                                                                                                 |
-| ---------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| `npm run dev`                | Dev server do Vite (porta padrão 5173)                                                                                                    |
-| `npm run build`              | `npm run typecheck`, build de produção, pré-renderização (HTML por rota e idioma e `404.html`) e arquivos para buscadores e IA em `dist/` |
-| `npm run build:server`       | Build SSR das entradas de servidor em `dist-server/` (intermediário, não publicado)                                                       |
-| `npm run prerender`          | Escreve em `dist/` os HTML pré-renderizados a partir do `dist-server/`                                                                    |
-| `npm run build:seo`          | Escreve em `dist/` o `robots.txt`, o `sitemap.xml`, o `llms.txt` e os `llms-full*.txt` (já faz parte do `build`)                          |
-| `npm run preview`            | Serve o `dist/` já gerado; depende de um `npm run build` anterior                                                                         |
-| `npm run build:fatec:form`   | O mesmo build do Pages com o formulário de Contato ligado, em `dist-form/` (só para o E2E)                                                |
-| `npm run build:fatec`        | `npm run build` com o base da Fatec (`/ra2581392423047/`), mais `.nojekyll` em `dist/`                                                    |
-| `npm run publish:fatec:docs` | Troca o `docs/` de um clone da Fatec pelo artefato: `-- <artefato> <clone>` (usado pelo workflow)                                         |
-| `npm run preview:fatec`      | Serve esse `dist/` como o Pages (HTML por rota, 404 pelo `404.html`) em `http://localhost:4173/ra2581392423047/`                          |
-| `npm run typecheck`          | Checagem de tipos com `tsc -b` (`src/` e `vite.config.ts`)                                                                                |
-| `npm test`                   | Vitest em watch mode                                                                                                                      |
-| `npm test -- --run`          | Execução única da suíte (CI, terminal não interativo)                                                                                     |
-| `npm run test:cov`           | Suíte inteira com relatório de cobertura em `coverage/` e threshold de 80%                                                                |
-| `npm run test:e2e`           | E2E do Playwright (Chromium) com axe em `e2e/`, contra o build do Pages; rode `npm run build:fatec` antes, porque o comando não builda    |
-| `npm run check:chunk`        | Depois do build, confere o orçamento gzip dos chunks do markdown e do `pdfjs-dist` e que a entrada não carrega o `react-markdown`         |
-| `npm run lint`               | oxlint sobre o projeto, com a configuração de `.oxlintrc.json`                                                                            |
-| `npm run lint:fix`           | O mesmo lint, aplicando as correções automáticas possíveis                                                                                |
-| `npm run changeset`          | Cria o changeset do Pull Request em `.changeset/` (`-- --empty` para mudança que não altera a versão)                                     |
-| `npm run format`             | `prettier --write` em `**/*.{ts,tsx,css,json,md,yml,html}`, conforme `.prettierrc`                                                        |
-
-O `npm run build` também deixa na raiz de `dist/`, sob o `base`, os arquivos que buscadores e IAs procuram: `robots.txt`, `sitemap.xml`, `llms.txt`, `llms-full.txt`, `llms-full.en.txt` e `llms-full.es.txt`, gerados por `scripts/generateSeoFiles.ts` a partir dos JSONs de `public/content/`, do CV e das rotas pré-renderizadas, com a origem de `VITE_SITE_URL`. Para conferir, rode `npm run build:fatec`, `npm run preview:fatec` e `curl -s http://localhost:4173/ra2581392423047/llms.txt` (o mesmo vale para os outros cinco). Detalhe em [`docs/architecture/frontend.md`](docs/architecture/frontend.md#arquivos-para-buscadores-e-ia).
-
-Comandos do conteúdo (detalhes em [Dados do conteúdo](#dados-do-conteúdo)):
-
-| Comando                                            | O que faz                                                                                                                                                                                                                                                                               |
-| -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `npm run content:id`                               | Imprime um UUID v7 novo; `npm run content:id -- 5` imprime cinco                                                                                                                                                                                                                        |
-| `npm run content:check`                            | Valida `public/content/` e `public/images/` contra o contrato e aponta arquivo, campo e regra                                                                                                                                                                                           |
-| `npm run content:template`                         | Regera `content/template/pt-BR/` a partir dos tipos (só quem muda o contrato precisa)                                                                                                                                                                                                   |
-| `npm run content:placeholders -- profile`          | Gera a foto placeholder do perfil, sem sobrescrever arquivo existente (`--force` sobrescreve)                                                                                                                                                                                           |
-| `npm run content:placeholders -- project <id> [n]` | Gera de 1 a 5 imagens placeholder do projeto, nos caminhos finais                                                                                                                                                                                                                       |
-| `npm run cv:pdf`                                   | Regera `public/cv/cv-<idioma>.pdf` a partir dos `cv-<idioma>.md` (Chromium do Playwright, PDF marcado e com o idioma); rode à mão quando um `.md` mudar e commite os PDFs: o teste `scripts/test/resumePdfsUpToDate.test.ts` falha se eles divergirem do Markdown. O build não gera PDF |
-| `npm run og:image`                                 | Regera `public/images/og-site.png` (1200×630, gato e nome) com o Chromium do Playwright; exige `npx playwright install chromium` e o PNG é versionado                                                                                                                                   |
-
-O `pdfjs-dist` (build `legacy`) é dependência de runtime, carregado por `import()` só quando o modal do currículo abre em celular ou sem visualizador de PDF: o módulo (até 170 KB gzip) e o worker (até 420 KB gzip, em `dist/assets/`, mesma origem) ficam fora do bundle de entrada, e `npm run check:chunk` confere o orçamento.
-
-## Estrutura de `src/` e convenções
-
-| Pasta        | O que guarda                                                                                  |
-| ------------ | --------------------------------------------------------------------------------------------- |
-| `pages/`     | Telas ligadas a uma rota (`<Nome>.page.tsx`); lógica de página em `pages/hooks/`              |
-| `layouts/`   | `MainLayout`, com header, footer e o único `<Suspense>` em volta do `<Outlet />`              |
-| `routers/`   | `paths.ts` (`ROUTES`), `routes.tsx` (o data router é criado em `prerender/mountClient.tsx`)   |
-| `prerender/` | Registro das rotas pré-renderizáveis, carregamento de dados do servidor e montagem do cliente |
-| `store/`     | Store do Redux Toolkit, `api.ts` do RTK Query e os endpoints em `store/api/`                  |
-| `services/`  | Cliente HTTP (`http/`) e a camada de dados local da v1 (`content/`)                           |
-| `i18n/`      | Configuração do i18next e a API de idioma (`getLanguage`, `setLanguage`)                      |
-| `locales/`   | Traduções: `<idioma>/<namespace>.json`                                                        |
-| `styles/`    | `global.css` (tokens e reset) e CSS Modules em `styles/pages/` e `styles/components/`         |
-| `types/`     | Tipos compartilhados, um por arquivo (`<dominio>/<NomeDoTipo>.types.ts`), e `*.d.ts`          |
-| `testUtils/` | Utilitários de teste, como `renderWithStore`, `stubContentFetch` e fixtures                   |
-
-Pastas como `components/` e `hooks/` nascem no primeiro uso. Em resumo: identificadores em inglês,
-import interno pelo alias `@/` (nunca `../`), import nomeado, export no final do arquivo com um
-símbolo por arquivo (`export default`), texto de UI sempre por chave de tradução e código sem
-comentários. As regras completas, com o que o oxlint verifica sozinho e o padrão de branches,
-commits e PRs, estão em [`.claude/CLAUDE.md`](.claude/CLAUDE.md). A visão de arquitetura está em
-[`docs/architecture/frontend.md`](docs/architecture/frontend.md).
-
-## Dados do conteúdo
-
-Na v1 não há backend (R1). Os dados vêm de arquivos locais que uma camada de dados responde como a
-API responderia, com os mesmos parâmetros, respostas e erros de
-[`docs/architecture/api-contract.md`](docs/architecture/api-contract.md):
-
-| Onde                                          | O que guarda                                                                             |
-| --------------------------------------------- | ---------------------------------------------------------------------------------------- |
-| `public/content/<idioma>/`                    | `profile.json`, `timeline.json` e `projects.json` de `pt-BR`, `en` e `es`                |
-| `public/content/<idioma>/projects/<id>/docs/` | Documentos traduzidos do projeto (`README.md`, `SETUP.md` ...)                           |
-| `public/content/shared/projects/<id>/docs/`   | Documentos neutros do projeto (`LICENSE`), um arquivo só para os três idiomas            |
-| `public/images/`                              | Imagens dos projetos (`projects/<id>/<n>-large.webp` e `-small.webp`) e a foto do perfil |
-| `content/template/`                           | Modelo em branco do conteúdo, com README de uso (não é publicado)                        |
-| `src/services/content/`                       | A camada local: leitura dos arquivos, busca, ordenação, trajetória e validação           |
-| `src/store/api/`                              | Endpoints do RTK Query (`profile.api.ts`, `timeline.api.ts`, `projects.api.ts`)          |
-
-Página e componente nunca leem esses arquivos: o acesso é pelos endpoints, com `lang` no argumento
-(`projectsApi.useGetProjectsQuery({ lang, sort: "recent" })`). Os arquivos de `public/` são
-pedidos com `import.meta.env.BASE_URL` (`src/utils/publicUrl.ts`), então funcionam na
-raiz (`npm run dev`) e no prefixo do GitHub Pages.
-
-O conteúdo é o real do portfólio, escrito em `pt-BR` e traduzido para `en` e `es`; o teste de
-conteúdo reprova campo traduzível de `en` ou `es` igual ao `pt-BR`. Para alterar ou acrescentar conteúdo, edite os arquivos de `public/content/pt-BR/` (o modelo de
-`content/template/pt-BR/` e o `content/template/README.md` explicam o passo a passo), gere os ids
-com `npm run content:id` e rode `npm run content:check`: o teste de conteúdo falha com o arquivo, o
-campo e a regra de qualquer desvio do contrato, e o CI roda a suíte inteira quando `public/content/`,
-`public/images/` ou `content/` mudam.
-
-As imagens ficam em `public/images/` já em WebP, em duas variantes (`large` e `small`). Para trocar
-uma imagem, coloque o arquivo por cima com o mesmo nome, em WebP, na mesma proporção (16:9 nas
-imagens de projeto, 1:1 na foto) e confira se `width` e `height` do JSON são os do arquivo novo; o
-`npm run content:check` acusa qualquer diferença.
-
-**Trocar pela API (#43):** em cada arquivo de `src/store/api/`, o `queryFn` vira `query` com o mesmo
-argumento e o mesmo tipo de resposta; depois remova `src/services/content/`, defina `VITE_API_URL`
-e mantenha as páginas como estão.
-
-## Internacionalização
-
-Texto de UI não é escrito no código: o componente usa uma chave (`t("heading")` ou `<Trans>`) e o
-valor de cada idioma fica em `src/locales/<idioma>/<namespace>.json`, com os mesmos namespaces e
-chaves em `pt-BR`, `en` e `es`. A configuração fica em `src/i18n/`. As chaves são tipadas a partir
-dos JSON de `pt-BR`: chave inexistente em `t()` ou faltando em `en`/`es` é erro de compilação.
-
-Para adicionar uma chave, escreva-a primeiro em `src/locales/pt-BR/<namespace>.json` e depois em
-`en` e `es`. Para adicionar um namespace, crie o JSON nos três idiomas, registre-o em
-`src/i18n/resources.ts` e inclua o nome no `ns` de `src/i18n/i18n.ts`.
-
-O idioma ativo é o do primeiro segmento do caminho: `/pt-BR`, `/en` ou `/es`. Prefixo
-desconhecido ou ausente (`/fr`, `/pt`, `/projects`) cai na página não encontrada, em inglês, e `?lng=`
-não tem efeito. A raiz `/` só redireciona, nesta ordem: escolha salva, idioma do navegador e, por
-último, `/en` (fallback). A escolha é salva no `localStorage` sob
-`LANGUAGE_STORAGE_KEY = "portfolio-frontend:language"` (`src/i18n/languageStorageKey.ts`) quando o
-código chama `setLanguage`; o idioma do navegador nunca é gravado. `<html lang>` acompanha o idioma
-ativo. Link interno usa `useLocalizedPath()`, que mantém o prefixo do idioma.
-
-## Design system
-
-Os tokens de cor, tipografia, espaçamento, forma e movimento estão em `src/styles/global.css`, com
-os mesmos nomes dos `tokens/` do handoff; CSS Module usa essas custom properties em vez de valor
-hardcoded. O resumo do design system, com as divergências adotadas pelo repositório, está em
-[`docs/design/design-system.md`](docs/design/design-system.md).
-
-As fontes do handoff (Bricolage Grotesque, IBM Plex Sans e IBM Plex Mono) são self-hospedadas:
-`woff2` e licenças OFL em `public/fonts/`, `@font-face` em `src/styles/global.css` e `preload` no
-`index.html`. O Google Fonts do handoff não é usado para não fazer requisição a terceiros com o IP
-de quem visita (privacidade, LGPD/GDPR), não depender de CDN externa e servir as fontes da mesma
-origem, com `preload`.
-
-O tema escuro vive em `[data-theme="dark"]` no `global.css` (o claro é o `:root`). Sem escolha
-salva, vale o tema do sistema; o botão de tema grava a escolha no `localStorage` (`useTheme`, chave
-`portfolio-frontend:theme`) e um script inline do `index.html` a aplica antes da primeira pintura. O
-controle de movimento segue o mesmo desenho com `data-motion` (`full` ou `reduced`, chave
-`portfolio-frontend:motion`): a escolha vale mais que `prefers-reduced-motion`, e sem escolha o
-sistema decide.
-
-## Testes e cobertura
-
-O teste fica em `test/` dentro do diretório do arquivo testado
-(`src/pages/Home.page.tsx` → `src/pages/test/Home.page.test.tsx`), importando o arquivo testado
-pelo alias `@/`. O ambiente é `jsdom`, o setup é `src/setupTests.ts` e todo teste começa em
-`pt-BR`, sem escolha de idioma salva; testes de tela afirmam o texto em português.
-
-```bash
 npm test -- --run
-npm run test:cov
 ```
 
-`npm test -- --run` roda a suíte uma vez (`npm test` sozinho fica em watch mode). `npm run test:cov`
-roda a suíte inteira com `@vitest/coverage-v8`, gera o relatório em `coverage/` (fora do controle
-de versão) e falha se statements, branches, functions ou lines ficarem abaixo de 80%.
+O dev server sobe em `http://localhost:5173`. Comandos, build, E2E, CI e git hooks estão em [`docs/setup/development.md`](docs/setup/development.md).
 
-## CI e git hooks
+## Por onde começar a ler `docs/`
 
-`.github/workflows/ci.yml` roda em todo push para `main` e `staging` e em todo Pull Request, com o
-Node do `.nvmrc` e três jobs: `build` (`npm run build`), `lint` (`npm run lint`) e `test`. O `test`
-roda `npm run test:cov` em push, em PR que mira `main` ou quando o diff altera arquivo que
-afeta a suíte inteira (`package.json`, `package-lock.json`, `vite.config.ts`, `tsconfig*.json`,
-`src/setupTests.ts`, `public/content/`, `public/images/`, `content/`), publicando `coverage/` como
-artifact; nos demais PRs roda só os testes
-afetados pelo diff. O `.github/dependabot.yml` atualiza as dependências de `npm` e
-`github-actions` uma vez por mês.
+1. [`docs/README.md`](docs/README.md): o índice de tudo o que existe em `docs/`.
+2. [`docs/product/overview.md`](docs/product/overview.md): visão do produto, público, escopo e requisitos.
+3. [`docs/architecture/frontend.md`](docs/architecture/frontend.md): camadas, roteamento, estado, estilo e testes.
+4. [`docs/adr/README.md`](docs/adr/README.md): as decisões de arquitetura e os ADRs 0001 a 0004.
+5. [`docs/setup/environments.md`](docs/setup/environments.md): ambientes, variáveis e publicação.
 
-`.github/workflows/deploy.yml` publica na Vercel depois que o CI de um push termina verde: a
-`staging` vai para o ambiente de testes (beta) e a `main` para produção. CI falhando, cancelado ou
-vindo de PR não publica. O fluxo `PR -> staging -> main`, os domínios, as variáveis e os segredos
-estão em [`docs/setup/environments.md`](docs/setup/environments.md).
-
-`.github/workflows/fatec-pages.yml` builda a v1 para o GitHub Pages da Fatec: roda build, lint,
-`test:cov` e `npm run build:fatec` e anexa o `dist/` como artefato `fatec-pages`. Com a entrada `tag`
-no formato `v1.x.y` (disparada à mão em Actions, ou chamada pela release por `workflow_call`), o job
-`publish` confere que a tag está na `main`, troca o `docs/` do repositório da Fatec pelo artefato e
-faz commit em `main` com o secret `FATEC_PAGES_TOKEN`; qualquer outro valor é ensaio e não publica.
-O base vem de `BASE_PATH`. Contrato com a release, credencial e plano B manual em
-[`docs/setup/environments.md`](docs/setup/environments.md#fatec-github-pages).
-
-`npm install` configura o Husky pelo script `prepare`. O hook de `pre-commit` (`.husky/pre-commit`)
-roda `npx lint-staged`, que, conforme `.lintstagedrc.json`, aplica `oxlint --fix` e
-`prettier --write` nos `.ts`/`.tsx` staged e só `prettier --write` nos
-`.css`/`.json`/`.md`/`.yml`/`.html`, bloqueando o commit se sobrar erro de lint não corrigível.
-
-## Documentação
-
-| Onde                                 | O que é                                                                                                                                                                                                  |
-| ------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [`docs/`](docs/README.md)            | Documentação versionada do frontend: produto, glossário, design system, arquitetura, ADRs, diagramas, ambientes e o molde de tela (`screens/_template.md`)                                               |
-| `.specs/`                            | Planejamento por feature ou bug (`spec.md` e `tasks.md`): as pastas de trabalho (`features/<slug>/`, `bugs/<slug>/`) são ignoradas pelo Git; só `_template/` e os resumos de `_archive/` são versionados |
-| [`CONTRIBUTING.md`](CONTRIBUTING.md) | Padrão de branches, commits e Pull Requests                                                                                                                                                              |
-
-O índice completo de `docs/` está em [`docs/README.md`](docs/README.md). Pull Requests seguem
-`.github/PULL_REQUEST_TEMPLATE.md`.
+Para rodar e contribuir, veja [`docs/setup/development.md`](docs/setup/development.md) e o [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
 ## Licença
 

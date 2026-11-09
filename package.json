@@ -2,6 +2,7 @@
   "name": "portfolio-frontend",
   "description": "Portfólio pessoal de Luiz Felipe dos Santos, desenvolvedor full stack.",
   "version": "1.2.0",
+  "homepage": "https://felipe-sant.vercel.app",
   "private": true,
   "type": "module",
   "engines": {
