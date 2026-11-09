@@ -61,5 +61,5 @@ describe("Icon", () => {
         )
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 })

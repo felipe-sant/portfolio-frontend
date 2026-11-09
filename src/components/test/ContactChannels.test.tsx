@@ -164,5 +164,5 @@ describe("ContactChannels", () => {
         rerender(<ContactChannels />)
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 })

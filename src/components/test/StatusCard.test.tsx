@@ -99,5 +99,5 @@ describe("StatusCard", () => {
         )
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 })

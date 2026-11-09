@@ -74,5 +74,5 @@ describe("ButtonLink", () => {
         const { container } = renderButtonLink()
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 })

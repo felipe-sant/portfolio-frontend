@@ -374,7 +374,7 @@ describe("ProjectPage, rota e conteúdo", () => {
         await waitFor(() =>
             expect(screen.getAllByRole("heading", { level: 2 }).length).toBeGreaterThanOrEqual(10)
         )
-    }, 30000)
+    })
 
     it("sem a marca, a barra de volta abre /projects sem query", async () => {
         const user = userEvent.setup()
@@ -399,7 +399,7 @@ describe("ProjectPage, rota e conteúdo", () => {
         await screen.findByRole("region", { name: "LICENSE" }, { timeout: 5000 })
 
         await expectNoAxeViolations(container)
-    }, 40000)
+    })
 })
 
 function startRender(entry: string) {
@@ -447,7 +447,7 @@ describe("ProjectPage, carregando e erro", () => {
         await screen.findByText("Carregando...", {}, { timeout: 5000 })
 
         await expectNoAxeViolations(container)
-    }, 20000)
+    })
 
     it("não tem violações de acessibilidade em erro", async () => {
         const { control, render } = startRender(`/pt-BR/projects/${ID_ONE}`)
@@ -456,7 +456,7 @@ describe("ProjectPage, carregando e erro", () => {
         await screen.findByRole("alert", {}, { timeout: 5000 })
 
         await expectNoAxeViolations(container)
-    }, 20000)
+    })
 
     it("leva o foco ao h1 quando o conteúdo chega, se o visitante não moveu o foco", async () => {
         const { control, router, render } = startRender("/pt-BR/projects")

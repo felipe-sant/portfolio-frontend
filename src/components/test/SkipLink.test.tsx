@@ -39,7 +39,7 @@ describe("SkipLink", () => {
         )
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 
     it("fica fixo na viewport e fora da tela sem foco, sem sair da ordem de foco", () => {
         const styles = readFileSync("src/styles/components/skipLink.module.css", "utf-8")

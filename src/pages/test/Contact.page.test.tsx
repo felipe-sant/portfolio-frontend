@@ -282,5 +282,5 @@ describe("ContactPage", () => {
         await waitFor(() => expect(view.container.querySelector("form")).toBeInTheDocument())
 
         await expectNoAxeViolations(view.container)
-    }, 15000)
+    })
 })

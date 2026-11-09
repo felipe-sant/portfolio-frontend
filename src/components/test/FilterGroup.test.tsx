@@ -99,5 +99,5 @@ describe("FilterGroup", () => {
         const { container } = renderGroup("web")
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 })

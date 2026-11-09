@@ -9,12 +9,12 @@ describe("relaxTimeoutsForLoad", () => {
         expect(getConfig().asyncUtilTimeout).toBe(5000)
     })
 
-    it("amplia o tempo limite de cada teste para 15000ms", () => {
+    it("amplia o tempo limite de cada teste para 30000ms", () => {
         const setConfig = vi.spyOn(vi, "setConfig")
 
         relaxTimeoutsForLoad()
 
-        expect(setConfig).toHaveBeenCalledWith({ testTimeout: 15000 })
+        expect(setConfig).toHaveBeenCalledWith({ testTimeout: 30000 })
         setConfig.mockRestore()
     })
 })

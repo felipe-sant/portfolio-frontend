@@ -356,7 +356,7 @@ describe("AboutPage, carregando", () => {
         const { container } = renderAbout()
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 })
 
 describe("AboutPage, erro por fonte", () => {
@@ -409,7 +409,7 @@ describe("AboutPage, erro por fonte", () => {
         await screen.findByRole("alert")
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 })
 
 describe("AboutPage, vazio", () => {
@@ -427,7 +427,7 @@ describe("AboutPage, vazio", () => {
         expect(screen.queryByRole("heading", { name: "Certificados" })).not.toBeInTheDocument()
         expect(screen.queryByRole("heading", { name: "Como eu trabalho" })).not.toBeInTheDocument()
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 
     it("esconde só a coluna sem dado dentro da faixa", async () => {
         stubContentFetch(buildFiles({ workPrinciples: [] }))
@@ -462,7 +462,7 @@ describe("AboutPage, modal de trajetória", () => {
         expect(screen.queryByRole("dialog")).not.toBeInTheDocument()
         expect(opener).toHaveFocus()
         expect(container).not.toHaveAttribute("inert")
-    }, 15000)
+    })
 
     it("devolve o foco ao item mesmo quando o foco estava no body na abertura", async () => {
         renderAbout()
@@ -571,5 +571,5 @@ describe("AboutPage, acessibilidade", () => {
         await loaded()
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 })

@@ -12,7 +12,7 @@ describe("Spinner", () => {
         expect(container.querySelector("svg")).toHaveAttribute("width", "14")
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 
     it("anuncia o rótulo como status", async () => {
         const { container } = render(<Spinner label="Carregando..." size={20} />)
@@ -21,5 +21,5 @@ describe("Spinner", () => {
         expect(container.querySelector("svg")).toHaveAttribute("width", "20")
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 })

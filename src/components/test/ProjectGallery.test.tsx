@@ -199,5 +199,5 @@ describe("ProjectGallery", () => {
         await user.click(screen.getByRole("button", { name: /Ampliar imagem/ }))
 
         await expectNoAxeViolations(document.body)
-    }, 15000)
+    })
 })

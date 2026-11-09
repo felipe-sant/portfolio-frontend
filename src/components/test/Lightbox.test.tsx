@@ -248,5 +248,5 @@ describe("Lightbox", () => {
         renderLightbox({ images: buildImages(3) })
 
         await expectNoAxeViolations(document.body)
-    }, 15000)
+    })
 })

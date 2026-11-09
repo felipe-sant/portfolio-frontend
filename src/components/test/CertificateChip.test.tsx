@@ -28,5 +28,5 @@ describe("CertificateChip", () => {
         )
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 })

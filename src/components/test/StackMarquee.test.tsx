@@ -83,5 +83,5 @@ describe("StackMarquee", () => {
         const { container } = renderMarquee()
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 })

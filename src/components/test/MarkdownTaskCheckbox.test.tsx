@@ -42,5 +42,5 @@ describe("MarkdownTaskCheckbox", () => {
         const { container } = renderMarkdown(TASKS)
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 })

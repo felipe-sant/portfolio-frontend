@@ -54,9 +54,10 @@ afterEach(() => {
 describe("MainLayout", () => {
     it("não tem violações de acessibilidade", async () => {
         const { container } = await renderLayout()
+        await within(screen.getByRole("contentinfo")).findByText("contato@example.com")
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 
     it("renderiza header, footer e a rota filha", async () => {
         await renderLayout()

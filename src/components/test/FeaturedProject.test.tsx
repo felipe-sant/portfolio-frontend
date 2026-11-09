@@ -90,5 +90,5 @@ describe("FeaturedProject", () => {
         const { container } = renderItem()
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 })

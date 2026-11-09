@@ -16,5 +16,5 @@ describe("ProjectCardSkeleton", () => {
         const { container } = render(<ProjectCardSkeleton />)
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 })

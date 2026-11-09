@@ -115,5 +115,5 @@ describe("Button", () => {
         rerender(<Button loading>Enviar mensagem</Button>)
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 })

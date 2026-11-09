@@ -60,5 +60,5 @@ describe("MarkdownTable", () => {
         const { container } = renderMarkdown(`${TABLE}\n\n${TABLE}`)
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 })

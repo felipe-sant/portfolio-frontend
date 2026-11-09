@@ -58,5 +58,5 @@ describe("AboutNowCard", () => {
         const { container } = render(<AboutNowCard profile={profile} />)
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 })

@@ -24,5 +24,5 @@ describe("Chip", () => {
         )
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 })

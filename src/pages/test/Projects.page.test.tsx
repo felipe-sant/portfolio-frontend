@@ -610,7 +610,7 @@ describe("ProjectsPage", () => {
             expect(router.state.location.search).toBe("?type=web&category=academic&sort=title")
         )
         expect(router.state.historyAction).toBe("REPLACE")
-    }, 20000)
+    })
 
     it("mantém a query ao trocar de idioma pelo seletor e abre no primeiro lote", async () => {
         stubProjects(20)
@@ -629,7 +629,7 @@ describe("ProjectsPage", () => {
         expect(router.state.location.search).toBe("?type=web")
         await screen.findByRole("heading", { level: 1, name: "Projects" }, { timeout: 5000 })
         await waitFor(() => expect(cards()).toHaveLength(9), { timeout: 5000 })
-    }, 20000)
+    })
 
     it("publica o JSON-LD CollectionPage com os 9 projetos do primeiro lote, sem numberOfItems, com ou sem query", async () => {
         stubProjects(20)
@@ -798,7 +798,7 @@ describe("ProjectsPage", () => {
         await act(async () => {
             release()
         })
-    }, 15000)
+    })
 
     it("não tem violações de acessibilidade com a lista", async () => {
         stubProjects(10)
@@ -806,7 +806,7 @@ describe("ProjectsPage", () => {
         await listLoaded()
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 
     it("não tem violações de acessibilidade carregando mais", async () => {
         const fetchMock = stubProjects(20)
@@ -826,7 +826,7 @@ describe("ProjectsPage", () => {
         await act(async () => {
             release()
         })
-    }, 15000)
+    })
 
     it("não tem violações de acessibilidade com erro", async () => {
         stubContentFetch({})
@@ -834,7 +834,7 @@ describe("ProjectsPage", () => {
         await screen.findByRole("alert")
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 
     it("não tem violações de acessibilidade sem resultado", async () => {
         stubProjects(10)
@@ -842,7 +842,7 @@ describe("ProjectsPage", () => {
         await screen.findByRole("heading", { name: "Nenhum projeto encontrado" })
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 
     it("não tem violações de acessibilidade com o conteúdo vazio", async () => {
         stubProjects(0)
@@ -850,7 +850,7 @@ describe("ProjectsPage", () => {
         await screen.findByRole("heading", { name: "Nenhum projeto publicado" })
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 })
 
 const FILTER_STACKS = [
@@ -1138,7 +1138,7 @@ describe("ProjectsPage, filtros por tecnologia e ano", () => {
         await waitFor(() => expect(router.state.location.pathname).toBe("/en/projects"))
         expect(router.state.location.search).toBe("?tech=React&year=2025")
         await screen.findByRole("button", { name: "Filters (2)" }, { timeout: 5000 })
-    }, 20000)
+    })
 
     it.each([
         ["pt-BR", "Filtros", "Tecnologia", "Ano", "Aplicar"],
@@ -1169,7 +1169,7 @@ describe("ProjectsPage, filtros por tecnologia e ano", () => {
         await listLoaded()
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 
     it("não tem violações de acessibilidade com o modal aberto", async () => {
         stubFilterProjects()
@@ -1179,7 +1179,7 @@ describe("ProjectsPage, filtros por tecnologia e ano", () => {
         await user.click(filtersButton("Filtros"))
 
         await expectNoAxeViolations(screen.getByRole("dialog").parentElement as HTMLElement)
-    }, 15000)
+    })
 })
 
 describe("ProjectsPage, ordenação dentro do modal", () => {
@@ -1250,7 +1250,7 @@ describe("ProjectsPage, ordenação dentro do modal", () => {
 
         await waitFor(() => expect(router.state.location.pathname).toBe("/en/projects"))
         expect(router.state.location.search).toBe("?sort=title")
-    }, 20000)
+    })
 
     it("não tem violações de acessibilidade com o modal aberto e a ordenação marcada", async () => {
         stubFilterProjects()
@@ -1260,7 +1260,7 @@ describe("ProjectsPage, ordenação dentro do modal", () => {
         await user.click(filtersButton("Filtros"))
 
         await expectNoAxeViolations(screen.getByRole("dialog").parentElement as HTMLElement)
-    }, 15000)
+    })
 })
 
 function docker() {
@@ -1335,7 +1335,7 @@ describe("ProjectsPage, opções do modal por requisição própria", () => {
 
         await waitFor(() => expect(optionKeys()).toHaveLength(2), { timeout: 5000 })
         expect(optionKeys()).toContain('getProjectFilterOptions({"lang":"en"})')
-    }, 20000)
+    })
 
     it("com a resposta das opções retida o modal abre só com Ordenar, as seções entram depois e a lista não espera", async () => {
         const fetchMock = stubFilterProjects(docker())

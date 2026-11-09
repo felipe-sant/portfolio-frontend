@@ -93,5 +93,5 @@ describe("RelatedProjects", () => {
         const { container } = renderRelated(buildRelated(3))
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 })

@@ -84,5 +84,5 @@ describe("SettingsMenu", () => {
         await expectNoAxeViolations(container)
         await userEvent.click(screen.getByRole("button", { name: "Configurações" }))
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 })

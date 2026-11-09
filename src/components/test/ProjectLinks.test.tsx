@@ -65,5 +65,5 @@ describe("ProjectLinks", () => {
         )
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 })
