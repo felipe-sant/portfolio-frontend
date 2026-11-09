@@ -40,7 +40,7 @@ jobs:
               id: existing
               if: steps.prepare.outputs.promote == 'true' || steps.prepare.outputs.reason == 'pending-version'
               run: |
-                  number=$(gh pr list --base main --head staging --state open --json number --jq '.[0].number')
+                  number=$(gh pr list --base main --head staging --state open --json number --jq '.[0].number // empty')
                   echo "number=$number" >> "$GITHUB_OUTPUT"
             - name: Block promotion
               if: steps.prepare.outputs.reason == 'pending-version' && steps.existing.outputs.number != ''

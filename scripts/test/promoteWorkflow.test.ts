@@ -56,7 +56,7 @@ describe("promote.yml", () => {
 
     it("nunca faz merge, auto-merge nem aprovação", () => {
         scripts.forEach((script) => {
-            expect(script).not.toMatch(/merge|--auto|approve/)
+            expect(script).not.toMatch(/gh pr merge|--auto|approve/)
         })
     })
 
@@ -109,5 +109,19 @@ describe("promote.yml", () => {
 
         expect(script.indexOf("gh pr ready")).toBeGreaterThanOrEqual(0)
         expect(script.indexOf("gh pr ready")).toBeLessThan(script.indexOf("gh pr edit"))
+    })
+
+    it("usa // empty no --jq que lê o número do PR aberto", () => {
+        const find = findStep("gh pr list")[0]
+
+        expect(find?.run).toContain(".[0].number // empty")
+    })
+
+    it("só converte em draft quando o PR ainda não está em draft", () => {
+        const script = findStep("--undo")[0]?.run ?? ""
+
+        expect(script).toContain("--json isDraft")
+        expect(script).toMatch(/if \[ "\$is_draft" = "false" \]/)
+        expect(script.indexOf("if [")).toBeLessThan(script.indexOf("--undo"))
     })
 })
