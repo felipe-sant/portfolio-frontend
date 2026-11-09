@@ -92,130 +92,27 @@ que o simula).
 ## Comandos
 
 ```bash
-npm run dev      # dev server do Vite (porta padrão 5173)
-npm run build    # typecheck + vite build (cliente) + build:server + prerender (HTML por rota e idioma + 404.html em dist/) + build:seo
-npm run build:server # build SSR (dist-server/, intermediário e gitignored) das entradas de servidor
-npm run prerender    # scripts/prerender.ts: lê dist-server/ e escreve os HTML pré-renderizados em dist/
-npm run build:seo    # scripts/generateSeoFiles.ts: escreve em dist/ robots.txt, sitemap.xml, llms.txt e llms-full.txt, llms-full.en.txt, llms-full.es.txt (JSONs de public/ + rotas do dist-server/; conferir com curl em <base>robots.txt etc.)
-npm run preview  # serve o conteúdo de dist/ já gerado — depende de um npm run build anterior
-npm test         # Vitest em watch mode (o script é `vitest`, sem `run`)
-npm test -- --run                            # execução one-shot (CI, agente, terminal não-interativo)
-npm test -- --run src/pages/test/Home.page.test.tsx   # um arquivo específico
-npm run typecheck # checagem de tipos (tsc -b) de src/ e vite.config.ts
-npm run lint      # oxlint sobre o projeto (configuração em .oxlintrc.json)
-npm run build:fatec   # build com BASE_PATH=/ra2581392423047/ + .nojekyll em dist/; falha sem o 404.html pré-renderizado (GitHub Pages da Fatec)
-npm run build:fatec:form # build do Pages com a flag do formulário de Contato ligada, em dist-form/ (só para o E2E)
-npm run publish:fatec:docs -- <artefato> <clone> # troca o docs/ do clone da Fatec pelo artefato (usado pelo job publish de fatec-pages.yml)
-npm run preview:fatec # servidor Node que imita o Pages (arquivo, <caminho>.html, pasta com 301, 404.html) em http://localhost:4173/ra2581392423047/
-npm run check:chunk # depois do build: o chunk MarkdownDocument-*.js (markdown + realce) tem de ficar em até 102400 bytes gzip, o chunk pdf-*.js do pdfjs em até 174080 e o worker pdf.worker.min-*.mjs em até 430080 (scripts/pdfChunk/), e nenhum chunk de entrada, Início ou Projetos pode conter o react-markdown (CI, job Build)
-npm run check:contact-form [dir] # reprova o build (padrão dist/) cujo HTML pré-renderizado traz o formulário de Contato (id="contact-form" ou referência ao chunk ContactForm); roda no job Build do ci.yml, no fatec-pages.yml e no deploy.yml (sobre .vercel/output/static), nunca sobre dist-form/ (o envio é simulado até a #44)
-npm run og:image  # regera public/images/og-site.png (Chromium do Playwright, versionado)
-npm run readme:images # regera docs/design/assets/readme/home-{light,dark}.png do README (Chromium do Playwright, manual; exige npm run build:fatec e npm run preview:fatec no ar; PNG versionados, até 300 KB cada, guardados por scripts/test/readme.test.ts)
-npm run cv:pdf    # regera public/cv/cv-<idioma>.pdf a partir dos cv-<idioma>.md (Chromium do Playwright, manual, fora do build; os PDFs são versionados e scripts/test/resumePdfsUpToDate.test.ts falha se divergirem do .md)
-npm run lint:fix  # mesma coisa, aplicando as correções automáticas possíveis (oxlint --fix)
-npm run changeset # cria o changeset do PR em .changeset/ (npm run changeset -- --empty gera o vazio, para mudança que não altera a versão)
-npm run format    # prettier --write em **/*.{ts,tsx,css,json,md,yml,html}, conforme .prettierrc e .prettierignore
-npm run test:cov  # vitest run --coverage — suíte inteira + relatório de cobertura
-npm run test:e2e  # Playwright (Chromium) + axe em e2e/ contra o build do Pages; exige npm run build:fatec antes
+npm run dev          # dev server do Vite (porta 5173)
+npm run typecheck    # tsc -b
+npm run lint         # oxlint (npm run lint:fix aplica as correções)
+npm test -- --run    # Vitest one-shot (npm test puro entra em watch mode)
+npm run test:cov     # suíte inteira + cobertura mínima de 80%
+npm run build        # typecheck + build + pré-renderização + arquivos de SEO
+npm run test:e2e     # Playwright + axe; exige npm run build:fatec antes
+npm run format       # prettier --write
+npm run changeset    # changeset do PR (-- --empty quando não altera a versão)
 ```
 
-O teste fica em **`test/` dentro do diretório do arquivo testado**:
-`src/pages/Home.page.tsx` -> `src/pages/test/Home.page.test.tsx`, nunca em `__tests__/` nem com
-sufixo `.spec.tsx`. O arquivo testado é importado pelo alias `@/` (`import HomePage from
-"@/pages/Home.page"`), nunca por `../`; `vi.mock`, `vi.doMock` e `import()` dinâmico também usam
-alias. Use `.test.ts` (sem `x`) para o que não renderiza JSX — hook, util, service
-(`src/services/http/test/get.test.ts`). O ambiente é `jsdom` e o setup é
-`src/setupTests.ts`, registrado em `test.setupFiles` do `vite.config.ts` — é ele que importa
-`@testing-library/jest-dom/vitest` (registrando matchers como `toBeInTheDocument()`) e que roda
-`afterEach(cleanup)`, porque sem `globals: true` o Testing Library não liga o cleanup sozinho.
-O mesmo setup roda um `beforeEach` que remove `LANGUAGE_STORAGE_KEY` do `localStorage` e aguarda
-`i18n.changeLanguage("pt-BR")` direto na instância: todo teste começa sem escolha salva e na
-língua de referência, independente do navegador do `jsdom` (que reporta `en-US`). O literal é
-`"pt-BR"`, não `FALLBACK_LANGUAGE`, e o reset não grava nada. Teste de rota abre o caminho com
-prefixo (`createMemoryRouter(routes, { initialEntries: ["/pt-BR"] })`), porque `/` só redireciona e o
-`jsdom` reporta `en-US`. O `beforeEach` também stuba `Element.prototype.scrollIntoView` (o `jsdom` não o implementa) e chama `clearContentCache()` (cache de leitura de `src/services/content/`), e `failFetchAfter`/`holdFetchAfter` o limpam ao criar o stub: stub novo significa memória vazia. Teste de
-tela afirma o texto em português, nunca a chave (o i18next devolve a própria chave quando falta
-tradução), não mocka `react-i18next` e troca de idioma com `setLanguage` dentro do `it`. Para
-simular uma nova carga de página (idioma inicial lido do caminho), prepare a URL, rode
-`vi.resetModules()` e faça `await import("@/i18n/i18n")`, como em
-`src/i18n/test/i18n.test.ts`; restaure URL e stubs no fim, e não combine isso com `routes` já
-importado (a instância nova vira a global do `react-i18next`).
-Teste de componente ou hook que lê a store usa `renderWithStore(ui, { preloadedState })` de
-`src/testUtils/renderWithStore.tsx`, que cria `createStore(preloadedState)` por chamada (estado e
-cache do RTK Query isolados) e devolve o `render` junto da `store`. O teste de store injeta o
-próprio endpoint com `api.injectEndpoints`, stuba o `fetch` com `vi.stubGlobal` e define
-`VITE_API_URL` absoluta com `vi.stubEnv` (o `Request` do Node não aceita URL relativa), com
-`vi.resetModules()` e import dinâmico para a constante ser relida; o endpoint injetado persiste
-enquanto o módulo vive, então o nome é único por arquivo (ver `src/store/test/api.test.ts` e
-`src/testUtils/test/renderWithStore.test.tsx`).
-Todo teste de página, layout e componente tem ao menos um `it` que chama
-`expectNoAxeViolations(container)` de `src/testUtils/expectNoAxeViolations.ts`, com o `container`
-devolvido pelo `render` (ou por `renderWithStore`): roda o `axe-core` no contêiner e rejeita com
-`id` e alvo de cada violação. É função comum, sem `expect.extend` (`vitest-axe` e `jest-axe` não
-entram). A regra `color-contrast` fica desligada porque o `jsdom` não calcula cor; o contraste é
-verificado no navegador real (#55). O `axe.run` é lento no `jsdom`; o `testTimeout` global de 30s (`vite.config.ts`, com `hookTimeout` igual) o cobre, então o `it` que chama o helper não declara timeout próprio. Teste de rota (`App.test.tsx`, `routes.test.tsx`) não chama.
-Cada formato de teste tem seu jeito: página renderizada direto, árvore de rotas em
-`createMemoryRouter` (para verificar a rota `*`, por exemplo), layout com `<Outlet />` preenchido
-por rota-filha, módulo com `fetch` stubado via `vi.stubGlobal`, componente com interação
-(`user-event`), hook com `renderHook` e função pura. A skill `vitest-specialist` traz um trecho de
-cada formato.
+A lista completa, o CI, o Husky e o `.editorconfig` estão em [`docs/setup/development.md`](../docs/setup/development.md); a convenção e a mecânica de teste, em [`docs/setup/testing.md`](../docs/setup/testing.md). Regras de teste:
 
-Ficam sem teste `src/entry-client.tsx`, que só procura o `#root` do `index.html` e chama
-`mountClient` (testado), e a pasta `src/types/`, que só declara tipo e não tem runtime.
-
-O `render` de `src/entry-server.tsx` usa `react-dom/static`, que precisa de `ReadableStream`: no
-`jsdom` o teste faz `vi.stubGlobal("ReadableStream", ReadableStream)` com o de `node:stream/web`. Como o
-`react-dom/server` deixa os contextos do React sujos no processo em que roda, teste que hidrata o HTML
-gerado não chama `render` no mesmo arquivo: pega o resultado em `inject("prerenderFixtures")`, produzido
-por `src/testUtils/prerenderGlobalSetup.ts` (`test.globalSetup`, processo principal do Vitest). Teste que
-precisa de `window` e `document` indefinidos usa `// @vitest-environment node` (o `setupTests` tolera).
-
-`npm run test:cov` roda a suíte inteira com `@vitest/coverage-v8` (bloco `test.coverage` em
-`vite.config.ts`), gerando relatório nos formatos `text`, `json`, `json-summary` e `html` em
-`coverage/` (gitignored) e aplicando um threshold mínimo de 80% em statements, branches, functions
-e lines — abaixo disso o comando termina com erro. `exclude` cobre os arquivos sem runtime
-relevante já citados acima, mais `vite.config.ts`, `src/setupTests.ts`, `src/testUtils/prerenderGlobalSetup.ts`,
-`scripts/prerender.ts` e o glob `src/types/**`.
-
-O bloco `test` usa `pool: "vmThreads"`: o `jsdom` é criado uma vez por worker e cada arquivo roda
-num contexto de VM isolado. Não troque por `isolate: false`, que compartilha o estado entre
-arquivos e faz o resultado depender da ordem de execução. Como o worker é reaproveitado, teste que
-stuba com `vi.stubGlobal`/`vi.stubEnv` restaura no `afterEach` com
-`vi.unstubAllGlobals()`/`vi.unstubAllEnvs()`.
-
-A suíte ponta a ponta fica em `e2e/` (`playwright.config.ts` na raiz, `tsconfig.e2e.json`), com
-sufixo `.spec.ts`, fora do Vitest (`e2e/**` em `test.exclude`) e da cobertura. Roda só em Chromium
-contra `npm run preview:fatec` (`base` `/ra2581392423047/`), que serve o `dist/` já pronto: rode
-`npm run build:fatec` antes, porque `test:e2e` não builda. Os quatro projetos de ambiente (`mobile-light`,
-`mobile-dark`, `desktop-light`, `desktop-dark`: 390 e 1280px, `colorScheme` claro e escuro,
-`reducedMotion`) rodam só os specs de `perEnvironmentSpecs`; os de `independentSpecs` rodam uma vez, no projeto `independent` (1280px, tema claro, `reducedMotion`). **Todo spec novo entra em exatamente uma das duas listas de `e2e/support/specClassification.ts`** (`scripts/test/specClassification.test.ts` falha com spec fora delas): `independentSpecs` só para o que não depende de viewport, tema, movimento nem axe (conteúdo, arquivos de máquina, HTML sem JavaScript); spec com `expectNoAxeViolations`, `emulateMedia`, `setViewportSize`, `viewportSize`, `testInfo`, `test.skip(` ou `test.fail(` por tamanho é obrigatoriamente por ambiente. O CI roda com `fullyParallel` e `workers` fixo no `playwright.config.ts` e `retries: 1`; medição, ranking dos testes lentos (`npm run test:e2e:timings` e `npm run e2e:rank`) e o desenho do sharding em `docs/setup/e2e-performance.md`. Seletor é `getByRole` com nome em português, rota abre sem barra
-inicial (relativa ao `baseURL`). Toda tela nova acrescenta o caminho em `e2e/support/routesUnderTest.ts`
-(o axe, com `color-contrast` ligada, roda em todas) e, se tiver teclado próprio, um roteiro em
-`e2e/<tema>.spec.ts`. Violação do axe se corrige na marcação ou no CSS, nunca desligando regra. Os projetos rodam com `reducedMotion: "reduce"`: roteiro que precisa de movimento pleno usa `test.use({ reducedMotion: "no-preference" })`. Elemento com `useReveal` leva `suppressHydrationWarning` (o `data-reveal` do HTML do servidor difere do primeiro render no navegador). **Teste E2E sem instabilidade:** espera por estado, nunca por tempo (auto-wait, `expect.poll` ou `toPass` com `timeout` e `intervals` delimitados; `waitForTimeout`, mais `retries` e regra do axe desligada são proibidos); depois de navegar espere o foco do `h1` antes de interagir, e o `role="status"` do esqueleto sair antes de medir posição; repita o spec alterado com `--repeat-each=30 --retries=0` preso a poucos núcleos (`taskset -c 0,1`) antes do PR (`docs/setup/e2e-performance.md`, seção "Testes instáveis").
-
-**Toda tela nova entrega os E2E dos próprios fluxos**: clique e navegação, estados de carregamento e erro (forçados por `page.route`) e HTML sem JavaScript (`javaScriptEnabled: false`), com o ID do requisito no título (`"RF-LAY-18: o botão alterna o tema"`) e a prova de que o teste falha quando o comportamento quebra (mutação desfeita). A base são `e2e/theme`, `motion`, `language`, `navigation`, `footer`, `home-flows`, `not-found` e `no-javascript`; o apoio fica em `e2e/support/` (`readContent`, `readProfile`, `readFeaturedProjects`, `readAppVersion`, `readStackOffset`, `openPreferences`, `uiTexts`). O E2E não importa `src/`: o texto de cada idioma de que ele precisa vive em `uiTexts`.
-
-O CI (`.github/workflows/`) roda `npm run build`, `npm run lint`, a suíte de testes e o E2E em três jobs
-(`E2E scope` decide o escopo por diff; `E2E shard i/4`, uma por fatia `--shard`, cada uma com o
-próprio Chromium e os dois builds; `E2E`, o agregador e único check exigido pelo ruleset, que falha
-se o escopo ou alguma fatia falhar, junta os blobs (HTML e JSON), avisa no `GITHUB_STEP_SUMMARY` dos testes `flaky` por `npm run e2e:flaky` (só avisa, não falha) e sobe `playwright-report` em falha;
-`npm run e2e:check-shards` prova que a união das fatias é a lista completa), os mesmos comandos da verificação local, em PR para a `staging` e em push na `main`, na `staging` e em `hotfix/**` (o PR para a `main` reaproveita os checks do push no mesmo SHA, ver `docs/setup/environments.md`). O `deploy.yml` publica na
-Vercel (`staging` = beta, `main` = produção) só depois do CI de push verde; detalhe em
-`docs/setup/environments.md`.
-
-`vite build` sozinho não checa tipos (usa esbuild, que só transpila); por isso o script `build`
-roda `npm run typecheck` (`tsc -b`, que cobre `src/` via `tsconfig.app.json` e `vite.config.ts` via `tsconfig.node.json`) antes.
-
-`npm install` configura automaticamente (script `prepare`, `"prepare": "husky"`) um hook de
-`pre-commit` do Husky que roda `npx lint-staged` a cada commit — sem passo manual extra.
-`lint-staged` (`.lintstagedrc.json`) aplica `oxlint --fix` e depois `prettier --write` nos
-arquivos `.ts`/`.tsx` staged, e só `prettier --write` nos `.css`/`.json`/`.md`/`.yml`/`.html`
-staged (mesmo escopo do script `format`, com `package-lock.json`, `dist/` e `coverage/` fora via
-`.prettierignore`); corrige o que for
-automático e bloqueia o commit se sobrar erro de lint não corrigível sozinho. O `.editorconfig` na
-raiz (`root = true`) padroniza charset, final de linha, quebra de linha final, remoção de trailing
-whitespace e indentação (`indent_size = 4` para todos os tipos, exceto `package.json` e `package-lock.json`, em `2`)
-para editores compatíveis, coerente com o `.prettierrc`.
+- O teste fica em `test/` ao lado do arquivo testado (`src/pages/test/Home.page.test.tsx`), importa o alvo por `@/` e usa `.test.ts` para o que não renderiza JSX. Descrição de `describe`/`it` em português.
+- Teste de tela afirma o texto em português, nunca a chave, não mocka `react-i18next` e troca de idioma com `setLanguage` dentro do `it`. Teste de rota abre o caminho com prefixo (`/pt-BR`).
+- Teste que lê a store usa `renderWithStore` de `src/testUtils/`.
+- Todo teste de página, layout e componente tem ao menos um `it` com `expectNoAxeViolations(container)`; teste de rota não chama.
+- Quem usa `vi.stubGlobal`/`vi.stubEnv` restaura no `afterEach` (`vi.unstubAllGlobals()`/`vi.unstubAllEnvs()`); `pool: "vmThreads"` não vira `isolate: false`.
+- Spec novo de `e2e/` entra em exatamente uma das duas listas de `e2e/support/specClassification.ts`. Toda tela nova entrega os E2E dos próprios fluxos (ID do requisito no título, caminho em `e2e/support/routesUnderTest.ts`), o HTML sem JavaScript e a própria pré-renderização.
+- E2E espera por estado, nunca por tempo; violação do axe se corrige na marcação ou no CSS, nunca desligando regra; elemento com `useReveal` leva `suppressHydrationWarning`.
+- `vite build` não checa tipos: por isso `build` roda `typecheck` antes. Ficam sem teste só `src/entry-client.tsx` e `src/types/`.
 
 ## Onde fica cada coisa
 
