@@ -15,6 +15,8 @@ const LANGUAGES = ["pt-BR", "en", "es"] as const
 const DESKTOP_MIN_WIDTH = 640
 const BATCH = 9
 const TOUCH_TARGET = 44
+const NARROW_VIEWPORT = 320
+const TWO_LINES_MIN_HEIGHT = 40
 const TYPE_ORDER = [
     "web",
     "mobile",
@@ -434,6 +436,38 @@ test.describe("filtros de tipo e categoria", () => {
             expect((await getBox(links.nth(index))).height).toBeGreaterThanOrEqual(TOUCH_TARGET)
         }
     })
+
+    for (const [language, query] of [
+        ["pt-BR", "?q=Namoro"],
+        ["es", "?q=Noviazgo"]
+    ] as const) {
+        test(`RF-PROJECTS-15, A11Y-G08: o alvo de 44px do título de ${language} não muda a altura da linha do título, com uma ou duas linhas`, async ({
+            page
+        }) => {
+            await page.setViewportSize({ width: NARROW_VIEWPORT, height: 800 })
+            await openProjects(page, language, query)
+            const view = getProjectsView(page, language)
+            const heading = view.cards.first().getByRole("heading", { level: 2 })
+            const link = heading.getByRole("link")
+            await expect(link).toBeVisible()
+            const measure = () =>
+                link.evaluate((element) => {
+                    const range = document.createRange()
+                    range.selectNodeContents(element)
+                    const text = range.getBoundingClientRect().height
+                    const title = element.closest("h2")
+                    return { text, heading: title?.getBoundingClientRect().height ?? 0 }
+                })
+
+            await expect
+                .poll(async () => (await measure()).text)
+                .toBeGreaterThan(TWO_LINES_MIN_HEIGHT)
+            const measures = await measure()
+
+            expect(Math.abs(measures.heading - measures.text)).toBeLessThanOrEqual(1)
+            expect((await getBox(link)).height).toBeGreaterThanOrEqual(TOUCH_TARGET)
+        })
+    }
 
     test("RF-PROJECTS-08: há um separador decorativo, escondido do leitor de tela, entre os dois grupos", async ({
         page
