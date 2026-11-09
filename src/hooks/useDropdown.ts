@@ -60,7 +60,7 @@ function useDropdown() {
 
             event.stopPropagation()
             setIsOpen(false)
-            buttonRef.current?.focus()
+            buttonRef.current?.focus({ preventScroll: true })
         }
 
         const container = containerRef.current

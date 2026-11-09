@@ -65,7 +65,7 @@ function LanguageSelector({ variant = "inline" }: LanguageSelectorProps) {
     function select(language: SupportedLanguage) {
         void setLanguage(language)
         close()
-        buttonRef.current?.focus()
+        buttonRef.current?.focus({ preventScroll: true })
     }
 
     return (
