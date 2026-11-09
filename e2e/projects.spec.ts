@@ -65,6 +65,10 @@ async function expectResults(
     await expect(view.cardLinks).toHaveText(ordered.map((project) => project.title))
 }
 
+function sizeOf(locator: ReturnType<Page["locator"]>) {
+    return locator.evaluate((element) => parseFloat(getComputedStyle(element).fontSize))
+}
+
 async function getBox(target: ReturnType<Page["locator"]>) {
     const box = await target.boundingBox()
     if (!box) {
@@ -608,6 +612,26 @@ test.describe("grade", () => {
             expect(await hasOverflow()).toBe(false)
         })
     }
+})
+
+test.describe("tamanho do texto do card", () => {
+    test("RF-PROJECTS-14, NF-RE-04: o ano tem 14px, as etiquetas 12px e a página não rola na horizontal", async ({
+        page
+    }) => {
+        await openProjects(page, "pt-BR")
+        const view = getProjectsView(page, "pt-BR")
+        const card = view.cards.first()
+        const year = await sizeOf(card.locator("time"))
+        const chip = await sizeOf(card.locator("ul li span").first())
+        const scroll = await page.evaluate(() => ({
+            scrollWidth: document.documentElement.scrollWidth,
+            clientWidth: document.documentElement.clientWidth
+        }))
+
+        expect(year).toBeGreaterThanOrEqual(14)
+        expect(chip).toBeGreaterThanOrEqual(12)
+        expect(scroll.scrollWidth).toBeLessThanOrEqual(scroll.clientWidth)
+    })
 })
 
 test.describe("card", () => {
