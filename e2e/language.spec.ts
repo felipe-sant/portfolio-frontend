@@ -179,10 +179,6 @@ test.describe("seletor de idioma", () => {
     test("RF-LAY-14: a troca de idioma por clique preserva a posição de rolagem", async ({
         page
     }) => {
-        test.fail(
-            isDesktop(page),
-            "bug de produto conhecido: o focus() sem preventScroll em LanguageSelector e useDropdown rola a página no desktop; corrigir na issue #100 e então remover este test.fail"
-        )
         await switchToEnglishByClickAfterScrolling(page)
 
         await expectHomeIn(page, "en")
