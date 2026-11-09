@@ -49,6 +49,19 @@ describe("release.yml", () => {
     })
 })
 
+describe(".changeset/config.json", () => {
+    it("gera o CHANGELOG com link de PR e commit pelo repositório do GitHub", () => {
+        const config = JSON.parse(readFileSync(".changeset/config.json", "utf-8")) as {
+            changelog: unknown
+        }
+
+        expect(config.changelog).toEqual([
+            "@changesets/changelog-github",
+            { repo: "felipe-sant/portfolio-frontend" }
+        ])
+    })
+})
+
 describe("changeset-check.yml", () => {
     it("ignora o PR de versão e o PR com head na main", () => {
         const condition = readWorkflow("changeset-check.yml").jobs.changeset?.if
