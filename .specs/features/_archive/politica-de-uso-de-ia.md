@@ -10,11 +10,11 @@ Tornar pública a política de uso de IA do projeto e mostrar onde há revisão 
 
 ## O que foi feito
 
-- Seção "Como este projeto é feito" no README, em primeira pessoa: divisão entre decisão do PO, trabalho da IA e verificações antes do merge, os limites (revisor do mesmo modelo, ruleset com 0 aprovações, PO como único participante) e a manutenção dos trailers de co-autoria.
-- Um exemplo real de revisão, o PR #132, confirmado pelo PO; nenhum outro foi inventado.
+- Seção "Como este projeto é feito" no README, em primeira pessoa: divisão entre decisão do PO, trabalho da IA e verificações antes do merge, os limites (revisor do mesmo modelo, sem segunda pessoa aprovando, PO como único autor) e a manutenção dos trailers de co-autoria.
+- Um exemplo real de revisão (o PR #132, confirmado pelo PO), contado no README sem número de PR; nenhum outro foi inventado.
 - Template de PR com os checks "Revisão humana feita" e, para tela, "rodei localmente".
 - `.claude/README.md` com o papel dos cinco agentes e das dez skills.
-- Números reconferidos em 09/11/2026: 895 commits (806 com trailer), 79 PRs (61 com a assinatura, 14 de corpo vazio), ruleset com 0 aprovações; diferem dos da issue porque o repositório cresceu.
+- Números reconferidos em 09/11/2026 (895 commits, 806 com trailer, 79 PRs, 61 com a assinatura, 14 de corpo vazio, ruleset com 0 aprovações) e depois retirados do README por decisão do PO, para o texto não ficar datado: o README não traz datas, contagens nem links de PR.
 
 ## Notas
 

@@ -20,15 +20,15 @@ Entrega da Fatec: [site no GitHub Pages](https://fatec-jacarei-dsm-portfolio.git
 
 ## Como este projeto é feito
 
-Uso o Claude Code como parceiro de desenvolvimento, de forma declarada. Os trailers `Co-Authored-By` dos commits e a linha "Generated with Claude Code" dos PRs ficam de propósito: são a declaração de autoria assistida. Em 09/11/2026, 806 dos 895 commits da `staging` têm o trailer e 61 dos 79 PRs trazem a assinatura.
+Uso o Claude Code como parceiro de desenvolvimento e deixo isso à vista: os commits levam o trailer `Co-Authored-By` e os PRs, a assinatura da ferramenta.
 
-- **Decisão minha:** escopo, prioridade, aprovação de cada spec e o merge. Sou o único participante do projeto.
-- **Proposta e implementação da IA:** a spec, o código e os testes, em agentes com papéis separados (descritos em [`.claude/README.md`](.claude/README.md)).
-- **Antes do merge:** build, lint, testes e E2E no CI; revisão por um agente; em mudança de tela, rodo a aplicação localmente e confiro à mão; abro o PR e o reviso eu mesmo.
+- **Decisão minha:** escopo, prioridade, aprovação de cada spec e o merge.
+- **Proposta e implementação da IA:** a spec, o código e os testes, por agentes com papéis separados, descritos em [`.claude/README.md`](.claude/README.md).
+- **Antes do merge:** build, lint, testes e E2E no CI; revisão por um agente; em mudança de tela, rodo a aplicação e confiro à mão; e leio cada PR antes de mesclar.
 
-Os limites, sem rodeio: o revisor automático é outro agente do mesmo modelo, e o ruleset do repositório exige 0 aprovações. Não existe revisor humano além de mim, e 14 dos PRs têm o corpo vazio. Para entender o que a IA gerou, reviso cada PR à mão e, em mudança de tela, rodo o resultado localmente; o template de PR agora pede essa revisão humana de forma explícita.
+O projeto tem um único autor, então a revisão automática é feita por um agente do mesmo modelo e não há uma segunda pessoa aprovando. O que sustenta a qualidade é eu ler e testar o que a IA gera, e o template de PR pede esse registro.
 
-**O que eu revisei e corrigi:** no [PR #132](https://github.com/felipe-sant/portfolio-frontend/pull/132), três testes E2E falhavam na `staging` porque o corpo do modal ganhou uma parada de Tab (commit `1acf093`) e os testes esperavam a ordem antiga. Foi um erro do teste, não do produto. A correção, feita por um agente e revisada por mim, atualizou a contagem de Tab sem enfraquecer asserção.
+Um exemplo: três testes E2E falharam porque o corpo de um modal passou a receber o foco do teclado. O agente atualizou os testes para a nova ordem de Tab, e eu conferi que nenhuma asserção foi enfraquecida.
 
 ## Sobre o projeto
 
