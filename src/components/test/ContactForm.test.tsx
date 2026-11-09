@@ -5,14 +5,14 @@ import ContactForm from "@/components/ContactForm"
 import setLanguage from "@/i18n/setLanguage"
 import simulateContactSend from "@/services/content/simulateContactSend"
 import expectNoAxeViolations from "@/testUtils/expectNoAxeViolations"
-import relaxTimeoutsForLoad from "@/testUtils/relaxTimeoutsForLoad"
+import relaxAsyncUtilTimeout from "@/testUtils/relaxAsyncUtilTimeout"
 import renderWithStore from "@/testUtils/renderWithStore"
 
 vi.mock("@/services/content/simulateContactSend", () => ({
     default: vi.fn(() => Promise.resolve())
 }))
 
-relaxTimeoutsForLoad()
+relaxAsyncUtilTimeout()
 
 const MESSAGE = "Preciso de um site para a minha loja."
 

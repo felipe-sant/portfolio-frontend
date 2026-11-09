@@ -3,11 +3,11 @@ import { createBrowserRouter } from "react-router-dom"
 import { render, screen } from "@testing-library/react"
 import App from "@/App"
 import routes from "@/routers/routes"
-import relaxTimeoutsForLoad from "@/testUtils/relaxTimeoutsForLoad"
+import relaxAsyncUtilTimeout from "@/testUtils/relaxAsyncUtilTimeout"
 import createStore from "@/store/createStore"
 import THEME_STORAGE_KEY from "@/utils/themeStorageKey"
 
-relaxTimeoutsForLoad()
+relaxAsyncUtilTimeout()
 
 function renderApp() {
     return render(<App store={createStore()} router={createBrowserRouter(routes)} />)
