@@ -116,7 +116,7 @@ Esses instáveis já podiam existir antes (a linha de base local, sem retries, t
 
 ## Classificação dos specs
 
-Cada `e2e/*.spec.ts` está em exatamente uma lista de `e2e/support/specClassification.ts`. `scripts/test/specClassification.test.ts` falha com spec fora das listas, com arquivo inexistente na lista, com os specs obrigatórios (`accessibility`, `theme`, `motion`, `navigation`, `contact-form`, `resume`, `projects-filters`, `project-gallery`) fora de `perEnvironmentSpecs` e com spec que usa `expectNoAxeViolations`, `emulateMedia`, `setViewportSize`, `viewportSize`, `testInfo`, `test.skip(` ou `test.fail(` fora dela.
+Cada `e2e/*.spec.ts` está em exatamente uma lista de `e2e/support/specClassification.ts`. `scripts/test/specClassification.test.ts` falha com spec fora das listas, com arquivo inexistente na lista, com os specs obrigatórios (`accessibility`, `theme`, `navigation`, `contact-form`, `resume`, `projects-filters`, `project-gallery`) fora de `perEnvironmentSpecs` e com spec que usa `expectNoAxeViolations`, `emulateMedia`, `setViewportSize`, `viewportSize`, `testInfo`, `test.skip(` ou `test.fail(` fora dela.
 
 | Spec                | Classe       | Motivo                                                                                             |
 | ------------------- | ------------ | -------------------------------------------------------------------------------------------------- |
@@ -130,7 +130,7 @@ Cada `e2e/*.spec.ts` está em exatamente uma lista de `e2e/support/specClassific
 | `keyboard`          | por ambiente | `test.skip` por largura: o menu existe só no mobile, então no projeto desktop tudo seria pulado    |
 | `language`          | por ambiente | `viewportSize` escolhe o caminho do menu e `test.fail(` torna RF-LAY-14 asserção real só no mobile |
 | `machine-files`     | independente | `robots.txt`, `sitemap.xml`, `llms*.txt`, sem navegador de layout                                  |
-| `motion`            | por ambiente | movimento pleno e reduzido                                                                         |
+| `motion`            | independente | define o próprio `reducedMotion` por `test.use`, sem axe, viewport nem tema                        |
 | `navigation`        | por ambiente | `setViewportSize`, menu mobile e desktop                                                           |
 | `no-javascript`     | independente | HTML pré-renderizado com `javaScriptEnabled: false`, sem viewport nem tema                         |
 | `not-found`         | por ambiente | `clickHomeInNavigation` ramifica entre o menu mobile e a navegação desktop                         |
@@ -150,7 +150,7 @@ Divergências em relação à proposta inicial da #123: `project` e `keyboard` f
 - `independent` (1280x800, tema claro, `reducedMotion: "reduce"`) roda `independentSpecs` uma vez. O nome do projeto não afeta o ruleset, que exige só o job `E2E`.
 - `contact-form-*` (quatro projetos, porta 4174) seguem iguais.
 
-`npx playwright test --list`: 2267 testes em 21 arquivos, contra 2504 antes (237 a menos: os 79 testes independentes, que rodavam 4 vezes, rodam 1; cada teste por ambiente continua rodando 4 vezes).
+`npx playwright test --list`: 2267 testes em 21 arquivos, contra 2504 antes (237 a menos: os 79 testes independentes, que rodavam 4 vezes, rodam 1; cada teste por ambiente continua rodando 4 vezes). Depois, `motion.spec.ts` também passou a independente (define o próprio `reducedMotion` com `test.use` e não usa axe, viewport, `emulateMedia` nem `testInfo`): a lista caiu para 2254 testes e o spec roda uma vez no projeto `independent`, 0/70 em 10 repetições a 2 núcleos com `--retries=0`.
 
 Mutação de verificação: mover `accessibility.spec.ts` para `independentSpecs` faz `specClassification.test.ts` falhar ("não deixa spec que depende do ambiente na lista de independentes" e "coloca todo spec em exatamente uma lista" quando ele sai de uma lista); removê-lo de `perEnvironmentSpecs` falha o teste dos obrigatórios. Mutações desfeitas.
 

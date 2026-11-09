@@ -8,7 +8,6 @@ const specClassification = {
         "home.spec.ts",
         "keyboard.spec.ts",
         "language.spec.ts",
-        "motion.spec.ts",
         "navigation.spec.ts",
         "not-found.spec.ts",
         "project-documents.spec.ts",
@@ -19,7 +18,12 @@ const specClassification = {
         "resume.spec.ts",
         "theme.spec.ts"
     ],
-    independentSpecs: ["footer.spec.ts", "machine-files.spec.ts", "no-javascript.spec.ts"]
+    independentSpecs: [
+        "footer.spec.ts",
+        "machine-files.spec.ts",
+        "motion.spec.ts",
+        "no-javascript.spec.ts"
+    ]
 }
 
 export default specClassification

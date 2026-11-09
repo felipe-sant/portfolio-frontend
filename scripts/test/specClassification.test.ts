@@ -9,7 +9,6 @@ const E2E_DIRECTORY = "e2e"
 const REQUIRED_PER_ENVIRONMENT = [
     "accessibility.spec.ts",
     "theme.spec.ts",
-    "motion.spec.ts",
     "navigation.spec.ts",
     "contact-form.spec.ts",
     "resume.spec.ts",
