@@ -46,18 +46,22 @@ async function getBox(target: Locator) {
     return box
 }
 
+const SETTLED_READS = 3
+
 async function getSettledBox(target: Locator) {
     let previous = await getBox(target)
+    let equalReads = 0
     await expect
         .poll(async () => {
             const current = await getBox(target)
-            const settled =
+            const isSame =
                 current.x === previous.x &&
                 current.y === previous.y &&
                 current.width === previous.width &&
                 current.height === previous.height
+            equalReads = isSame ? equalReads + 1 : 0
             previous = current
-            return settled
+            return equalReads >= SETTLED_READS
         })
         .toBe(true)
     return previous
@@ -124,7 +128,7 @@ const closePaths = [
     }
 ]
 
-test("a busca digitada logo depois de abrir a tela filtra mesmo com a hidratação atrasada", async ({
+test("RF-PROJECTS-03, RF-PROJECTS-04: a busca digitada logo depois de abrir a tela filtra mesmo com a hidratação atrasada", async ({
     page
 }) => {
     await page.route(/assets\/.*\.js$/, async (route) => {

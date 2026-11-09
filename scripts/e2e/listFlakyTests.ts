@@ -1,8 +1,4 @@
-type FlakyTest = {
-    title: string
-    file: string
-    projectName: string
-}
+import type FlakyTest from "@/types/e2e/FlakyTest.types"
 
 type Collected = { title: string; file: string; test: Record<string, unknown> }
 

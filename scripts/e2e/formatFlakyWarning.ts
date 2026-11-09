@@ -1,8 +1,4 @@
-type FlakyTest = {
-    title: string
-    file: string
-    projectName: string
-}
+import type FlakyTest from "@/types/e2e/FlakyTest.types"
 
 function formatFlakyWarning(flaky: FlakyTest[]): string {
     if (flaky.length === 0) {

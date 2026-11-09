@@ -10,7 +10,7 @@ for (const route of ROUTES_UNDER_TEST) {
     })
 }
 
-test("a faixa da stack rolável fica focável antes do axe, mesmo com a hidratação atrasada", async ({
+test("RF-HOME-15, A11Y-IN07: a faixa da stack rolável fica focável antes do axe, mesmo com a hidratação atrasada", async ({
     page
 }) => {
     await page.route(/assets\/.*\.js$/, async (route) => {
