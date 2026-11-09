@@ -78,4 +78,62 @@ describe("useHoverFocusPause", () => {
         act(() => result.current.pauseProps.onBlur(buildBlurEvent(null, region)))
         expect(result.current.isPaused).toBe(true)
     })
+
+    it("alterna a pausa a cada toque", () => {
+        const { result } = renderHook(() => useHoverFocusPause<HTMLElement>())
+
+        act(() => result.current.pauseProps.onPointerDown(buildPointerEvent("touch")))
+        act(() => result.current.pauseProps.onPointerUp(buildPointerEvent("touch")))
+        expect(result.current.isPaused).toBe(true)
+
+        act(() => result.current.pauseProps.onPointerDown(buildPointerEvent("touch")))
+        act(() => result.current.pauseProps.onPointerUp(buildPointerEvent("touch")))
+        expect(result.current.isPaused).toBe(false)
+    })
+
+    it("ignora o foco que vem logo depois de um toque, para o segundo toque retomar", () => {
+        const { result } = renderHook(() => useHoverFocusPause<HTMLElement>())
+
+        act(() => result.current.pauseProps.onPointerDown(buildPointerEvent("touch")))
+        act(() => result.current.pauseProps.onPointerUp(buildPointerEvent("touch")))
+        act(() => result.current.pauseProps.onFocus())
+        expect(result.current.isPaused).toBe(true)
+
+        act(() => result.current.pauseProps.onPointerDown(buildPointerEvent("touch")))
+        act(() => result.current.pauseProps.onPointerUp(buildPointerEvent("touch")))
+        expect(result.current.isPaused).toBe(false)
+    })
+
+    it("não alterna a pausa com o mouse", () => {
+        const { result } = renderHook(() => useHoverFocusPause<HTMLElement>())
+
+        act(() => result.current.pauseProps.onPointerDown(buildPointerEvent("mouse")))
+        act(() => result.current.pauseProps.onPointerUp(buildPointerEvent("mouse")))
+
+        expect(result.current.isPaused).toBe(false)
+    })
+
+    it("continua pausado pelo mouse enquanto ele está dentro, mesmo com o toque retomado", () => {
+        const { result } = renderHook(() => useHoverFocusPause<HTMLElement>())
+
+        act(() => result.current.pauseProps.onPointerEnter(buildPointerEvent("mouse")))
+        act(() => result.current.pauseProps.onPointerDown(buildPointerEvent("touch")))
+        act(() => result.current.pauseProps.onPointerUp(buildPointerEvent("touch")))
+        act(() => result.current.pauseProps.onPointerDown(buildPointerEvent("touch")))
+        act(() => result.current.pauseProps.onPointerUp(buildPointerEvent("touch")))
+        expect(result.current.isPaused).toBe(true)
+
+        act(() => result.current.pauseProps.onPointerLeave(buildPointerEvent("mouse")))
+        expect(result.current.isPaused).toBe(false)
+    })
+
+    it("solta a pausa por toque ao chamar releaseTouchPause", () => {
+        const { result } = renderHook(() => useHoverFocusPause<HTMLElement>())
+
+        act(() => result.current.pauseProps.onPointerDown(buildPointerEvent("touch")))
+        act(() => result.current.pauseProps.onPointerUp(buildPointerEvent("touch")))
+        act(() => result.current.releaseTouchPause())
+
+        expect(result.current.isPaused).toBe(false)
+    })
 })

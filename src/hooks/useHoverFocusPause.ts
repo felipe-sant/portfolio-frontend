@@ -1,9 +1,17 @@
-import { useState } from "react"
+import { useRef, useState } from "react"
 import type { FocusEvent, PointerEvent } from "react"
+
+const TOUCH_FOCUS_WINDOW_MS = 1000
+
+function isTouchLike(event: PointerEvent<HTMLElement>) {
+    return event.pointerType === "touch" || event.pointerType === "pen"
+}
 
 function useHoverFocusPause<T extends HTMLElement>() {
     const [isPointerInside, setIsPointerInside] = useState(false)
     const [isFocusInside, setIsFocusInside] = useState(false)
+    const [isTouchPaused, setIsTouchPaused] = useState(false)
+    const lastTouchStart = useRef<number | null>(null)
 
     function handlePointerEnter(event: PointerEvent<T>) {
         if (event.pointerType === "mouse") {
@@ -17,8 +25,30 @@ function useHoverFocusPause<T extends HTMLElement>() {
         }
     }
 
+    function handlePointerDown(event: PointerEvent<T>) {
+        if (isTouchLike(event)) {
+            lastTouchStart.current = performance.now()
+        }
+    }
+
+    function handlePointerUp(event: PointerEvent<T>) {
+        if (isTouchLike(event)) {
+            setIsTouchPaused((current) => !current)
+        }
+    }
+
     function handleFocus() {
+        const touchStart = lastTouchStart.current
+
+        if (touchStart !== null && performance.now() - touchStart < TOUCH_FOCUS_WINDOW_MS) {
+            return
+        }
+
         setIsFocusInside(true)
+    }
+
+    function releaseTouchPause() {
+        setIsTouchPaused(false)
     }
 
     function handleBlur(event: FocusEvent<T>) {
@@ -34,11 +64,17 @@ function useHoverFocusPause<T extends HTMLElement>() {
     const pauseProps = {
         onPointerEnter: handlePointerEnter,
         onPointerLeave: handlePointerLeave,
+        onPointerDown: handlePointerDown,
+        onPointerUp: handlePointerUp,
         onFocus: handleFocus,
         onBlur: handleBlur
     }
 
-    return { isPaused: isPointerInside || isFocusInside, pauseProps }
+    return {
+        isPaused: isPointerInside || isFocusInside || isTouchPaused,
+        pauseProps,
+        releaseTouchPause
+    }
 }
 
 export default useHoverFocusPause
