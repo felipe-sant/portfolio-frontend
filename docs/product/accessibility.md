@@ -270,7 +270,7 @@ Cada item tem um ID estável e a forma de verificação entre colchetes: `[teste
 - [ ] `A11Y-G05` — Ordem de foco igual à visual e foco visível em todo elemento focável [teclado]
 - [ ] `A11Y-G06` — Contorno de foco de D27 com 2px, afastado, 3:1 em toda superfície e nunca cortado (2.4.13) [e2e] [medição]
 - [ ] `A11Y-G07` — Todo link tem um nome que diz o destino sozinho (2.4.9) [teste]
-- [ ] `A11Y-G08` — Controles e links isolados com alvo de 44px em todas as larguras (2.5.5) [e2e] [medição]
+- [ ] `A11Y-G08` — Controles e links isolados com alvo de 44px em todas as larguras (2.5.5), inclusive o link de título de cada cartão de projeto [e2e] [medição]
 - [ ] `A11Y-G09` — Texto corrido com até 80 caracteres por linha, entrelinha de pelo menos 1,5 e sem justificar (1.4.8) [navegador]
 - [ ] `A11Y-G10` — Contraste AA nos dois temas e em todos os estados [e2e] [medição]
 - [ ] `A11Y-G11` — Sem rolagem horizontal a 320px e sem perda com texto a 200% [medição]
@@ -288,7 +288,6 @@ Cada item tem um ID estável e a forma de verificação entre colchetes: `[teste
 - [ ] `A11Y-L04` — `aria-current="page"` no item da rota atual [teste]
 - [ ] `A11Y-L05` — Seletor de idioma em grupo nomeado, com um link para a URL equivalente de cada idioma, `hreflang` e `lang` em cada link e `aria-current` no ativo [teste]
 - [ ] `A11Y-L06` — Trocar de idioma navega para a URL equivalente, atualiza `<html lang>` e `<title>` e devolve o foco ao seletor [teste] [e2e]
-- [ ] Os painéis de idioma e de configurações fecham quando o Tab ou o Shift+Tab leva o foco para fora deles, sem mover o foco, e continuam abertos quando o foco se move entre o botão e os itens [teste] [e2e]
 - [ ] `A11Y-L07` — Alternador de tema com nome fixo e `aria-pressed` [teste]
 - [ ] `A11Y-L08` — Botão de menu com `aria-expanded` e `aria-controls` [teste]
 - [ ] `A11Y-L09` — Menu aberto: foco preso, Esc fecha e devolve o foco ao botão, resto da página `inert` [teste] [e2e] [leitor]
@@ -296,6 +295,7 @@ Cada item tem um ID estável e a forma de verificação entre colchetes: `[teste
 - [ ] `A11Y-L11` — "Copiar e-mail" anuncia o resultado [teste]
 - [ ] `A11Y-L12` — O rodapé de Contato é um `nav` com nome próprio [teste]
 - [ ] `A11Y-L13` — O foco nunca fica embaixo do cabeçalho fixo [teclado] [e2e]
+- [ ] `A11Y-L14` — Os painéis de idioma e de configurações fecham quando o Tab ou o Shift+Tab leva o foco para fora deles, sem mover o foco, e continuam abertos quando o foco se move entre o botão e os itens [teste] [e2e]
 
 ### Início
 

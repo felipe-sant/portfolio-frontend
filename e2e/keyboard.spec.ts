@@ -77,7 +77,7 @@ const dropdownTriggers = [
 ]
 
 for (const { name, label } of dropdownTriggers) {
-    test.describe(`A11Y-L*, RF-LAY-13: ${label} e a saída de foco`, () => {
+    test.describe(`A11Y-L14, RF-LAY-12: ${label} e a saída de foco`, () => {
         test.beforeEach(({ page }) => {
             test.skip(
                 (page.viewportSize()?.width ?? 0) < DESKTOP_MIN_WIDTH,
