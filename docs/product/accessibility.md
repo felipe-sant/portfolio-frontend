@@ -288,6 +288,7 @@ Cada item tem um ID estável e a forma de verificação entre colchetes: `[teste
 - [ ] `A11Y-L04` — `aria-current="page"` no item da rota atual [teste]
 - [ ] `A11Y-L05` — Seletor de idioma em grupo nomeado, com um link para a URL equivalente de cada idioma, `hreflang` e `lang` em cada link e `aria-current` no ativo [teste]
 - [ ] `A11Y-L06` — Trocar de idioma navega para a URL equivalente, atualiza `<html lang>` e `<title>` e devolve o foco ao seletor [teste] [e2e]
+- [ ] Os painéis de idioma e de configurações fecham quando o Tab ou o Shift+Tab leva o foco para fora deles, sem mover o foco, e continuam abertos quando o foco se move entre o botão e os itens [teste] [e2e]
 - [ ] `A11Y-L07` — Alternador de tema com nome fixo e `aria-pressed` [teste]
 - [ ] `A11Y-L08` — Botão de menu com `aria-expanded` e `aria-controls` [teste]
 - [ ] `A11Y-L09` — Menu aberto: foco preso, Esc fecha e devolve o foco ao botão, resto da página `inert` [teste] [e2e] [leitor]
