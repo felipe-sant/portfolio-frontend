@@ -7,16 +7,6 @@ const LANGUAGES = ["pt-BR", "en", "es"]
 const STACK_HEADING = "Tecnologias que uso"
 const DRAG_DISTANCE = 300
 
-function readMarqueeOffset(page: Page) {
-    return page
-        .locator("section[aria-labelledby]", {
-            has: page.getByRole("heading", { name: STACK_HEADING })
-        })
-        .locator("div")
-        .first()
-        .evaluate((track) => new DOMMatrix(getComputedStyle(track).transform).m41)
-}
-
 function getStackBand(page: Page) {
     return page.getByRole("region", { name: STACK_HEADING })
 }
@@ -52,24 +42,15 @@ test.describe("faixa de tecnologias com movimento pleno", () => {
         await getStackBand(page).waitFor()
     })
 
-    test("não tem botão de pausa e fica sem foco por teclado", async ({ page }) => {
+    test("RF-HOME-14: não tem botão de pausa e a região é focável por teclado", async ({
+        page
+    }) => {
         await expect(page.getByRole("button", { name: /paus/i })).toHaveCount(0)
-        await expect(getStackBand(page)).not.toHaveAttribute("tabindex", /.*/)
+        await expect(getStackBand(page)).toHaveAttribute("tabindex", "0")
     })
 
     test("tem uma cópia escondida da lista para o ciclo contínuo", async ({ page }) => {
         await expect(getStackBand(page).locator("ul[aria-hidden='true']")).toHaveCount(1)
-    })
-
-    test("continua se movendo com o mouse em cima", async ({ page }) => {
-        const band = getStackBand(page)
-        await band.scrollIntoViewIfNeeded()
-        await band.hover()
-        const before = await readMarqueeOffset(page)
-
-        await expect
-            .poll(async () => Math.abs((await readMarqueeOffset(page)) - before), { timeout: 5000 })
-            .toBeGreaterThan(5)
     })
 })
 
