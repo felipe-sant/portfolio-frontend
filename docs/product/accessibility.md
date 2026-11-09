@@ -295,7 +295,6 @@ Cada item tem um ID estável e a forma de verificação entre colchetes: `[teste
 - [ ] `A11Y-L11` — "Copiar e-mail" anuncia o resultado [teste]
 - [ ] `A11Y-L12` — O rodapé de Contato é um `nav` com nome próprio [teste]
 - [ ] `A11Y-L13` — O foco nunca fica embaixo do cabeçalho fixo [teclado] [e2e]
-- [ ] `A11Y-L14` — Os painéis de idioma e de configurações fecham quando o Tab ou o Shift+Tab leva o foco para fora deles, sem mover o foco, e continuam abertos quando o foco se move entre o botão e os itens [teste] [e2e]
 
 ### Início
 
