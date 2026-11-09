@@ -54,6 +54,10 @@ describe("ci.yml", () => {
         expect(ci.on.push?.branches).toContain("staging")
     })
 
+    it("roda o CI em push nas branches de hotfix", () => {
+        expect(ci.on.push?.branches).toContain("hotfix/**")
+    })
+
     it("mantém os nomes dos checks exigidos pela ruleset", () => {
         expect(ci.jobs.build?.name).toBe("Build")
         expect(ci.jobs.lint?.name).toBe("Lint")
