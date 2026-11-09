@@ -281,7 +281,7 @@ function AboutPage() {
                                         <ul className={css.chips}>
                                             {workPrinciples.map((principle) => (
                                                 <li key={principle}>
-                                                    <Chip>{principle}</Chip>
+                                                    <Chip font={"body"}>{principle}</Chip>
                                                 </li>
                                             ))}
                                         </ul>
