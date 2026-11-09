@@ -19,7 +19,7 @@ flowchart TD
 
 - **Página** (`src/pages/<Nome>.page.tsx`): ligada a uma rota; só chama o hook e renderiza o resultado, com `<title>` e `<meta name="description">` declarados no próprio JSX.
 - **Hook da página** (`src/pages/hooks/use<Nome>.ts`): estado, efeitos e acesso a dados ficam fora do JSX. Hooks reutilizáveis entre telas ficam em `src/hooks/`.
-- **Componente** (`src/components/`): UI reutilizável, sem rota própria, construída a partir dos componentes do design system do handoff.
+- **Componente** (`src/components/`, catálogo em [`components.md`](components.md)): UI reutilizável, sem rota própria, construída a partir dos componentes do design system do handoff.
 - **Layout** (`src/layouts/Main.layout.tsx`): cabeçalho, conteúdo e rodapé comuns às páginas.
 - **Store** (`src/store/`): estado compartilhado em slices e estado de servidor em endpoints do RTK Query.
 - **Service HTTP** (`src/services/http/`): `get` e `post` sobre `fetch`, para chamadas fora do RTK Query.
@@ -31,16 +31,16 @@ Todas as rotas ficam em `src/routers/routes.tsx`, com os paths em `src/routers/p
 
 Link interno é montado por `buildPath(path, language, params?)` ou, em componente, por `useLocalizedPath()`, que usa o idioma ativo. `getEquivalentPath(pathname, language)` devolve a URL equivalente em outro idioma, para o seletor.
 
-| Rota                                 | Tela                  | Situação                   |
-| ------------------------------------ | --------------------- | -------------------------- |
-| `/`                                  | Redireciona           | Existe                     |
-| `/<idioma>`                          | Início                | Existe, com o hero mínimo  |
-| `/<idioma>/*`, `*`                   | Página não encontrada | Existe                     |
-| `/<idioma>/projects`                 | Projetos              | Existe                     |
-| `/<idioma>/projects/:id`             | Projeto               | Prevista (D32), sem página |
-| `/<idioma>/projects/:id/docs/<name>` | Documentos do projeto | Prevista (D55), sem página |
-| `/<idioma>/about`                    | Informações           | Prevista (D32), sem página |
-| `/<idioma>/contact`                  | Contato               | Existe                     |
+| Rota                                 | Tela                  | Situação     |
+| ------------------------------------ | --------------------- | ------------ |
+| `/`                                  | Redireciona           | Existe       |
+| `/<idioma>`                          | Início                | Existe       |
+| `/<idioma>/*`, `*`                   | Página não encontrada | Existe       |
+| `/<idioma>/projects`                 | Projetos              | Existe       |
+| `/<idioma>/projects/:id`             | Projeto               | Existe (D32) |
+| `/<idioma>/projects/:id/docs/<name>` | Documentos do projeto | Existe (D55) |
+| `/<idioma>/about`                    | Informações           | Existe (D32) |
+| `/<idioma>/contact`                  | Contato               | Existe       |
 
 Uma rota só entra em `paths.ts` junto com a página que ela renderiza. Navegação interna usa `<Link>` ou `useNavigate` com o path de `ROUTES`.
 
@@ -146,7 +146,55 @@ Toda feature com texto de UI entrega o texto nos três idiomas, e chave sem uso 
 
 ## Testes
 
+- Convenção e mecânica completas em [`testing.md`](../setup/testing.md).
 - Vitest com Testing Library em `jsdom`; o teste fica em `test/` dentro da pasta do arquivo testado.
 - Teste de página e de componente afirma o texto em português; teste que lê a store usa `renderWithStore`.
 - Teste de hook com `renderHook` e de função pura sem renderizar interface.
 - `npm run test:cov` aplica cobertura mínima de 80% em statements, branches, functions e lines. O CI roda a suíte inteira com cobertura em push, e só os testes afetados nos PRs para a `staging`.
+
+## Detalhe de implementação
+
+Texto movido do `.claude/CLAUDE.md`, por área. As seções acima dão a visão geral; aqui está o mecanismo.
+
+### Estilos e tokens
+
+- **`src/styles/`** — `global.css` guarda as CSS custom properties (cor, tipografia, espaçamento e
+  afins) e o reset. CSS Module usa essas custom properties em vez de valor hardcoded; confira os
+  nomes em `src/styles/global.css` antes de usar, e token global novo entra lá. Os nomes dos
+  tokens seguem os de `tokens/` do handoff de design (ex.: `--danger-surface`/`--danger-ink`,
+  nunca um prefixo próprio como `error`). Estilos de página ficam em
+  `src/styles/pages/<nome>.module.css` e de componente em
+  `src/styles/components/<nome>.module.css` (CSS Modules), importados como `import css from "..."`.
+  A tipagem dos módulos vem de `src/types/declarations.d.ts` (`{ [key: string]: string }`): toda
+  classe usada como `css.<algo>` precisa existir no módulo importado, porque uma classe inexistente
+  vira `undefined` em runtime, sem erro de compilação.
+
+### Tema
+
+- **Tema (claro/escuro)** — `[data-theme="dark"]` em `global.css` (o claro é `:root`), com
+  `color-scheme`. `useTheme()` de `src/hooks/useTheme.ts` (`{ theme, setTheme, toggleTheme }`) é
+  chamado em `App.tsx` e é a única via de escrita da escolha (`saveTheme`, chave
+  `portfolio-frontend:theme` em `themeStorageKey.ts`); leitura, sistema e aplicação ficam em
+  `src/utils/` (`readStoredTheme`, `getSystemTheme`, `applyTheme`). Um segundo script inline do
+  `index.html` aplica `data-theme` e `theme-color` antes da pintura (chave e cores duplicadas;
+  `themeScript.test.ts` compara com os utilitários). `?tema=` não existe. Foco é global
+  (`:focus-visible` com `--focus-ring`; faixa escura usa `data-surface="band"`), e `a` em
+  `global.css` é sublinhado: componente que se apresenta como botão zera no próprio módulo.
+
+### Movimento
+
+- **Movimento** — `useMotion()` de `src/hooks/useMotion.ts` (`{ motion, setMotion, toggleMotion }`,
+  `full` ou `reduced`) espelha o tema: chamado em `App.tsx`, única via de escrita da escolha
+  (`saveMotion`, chave `portfolio-frontend:motion` em `motionStorageKey.ts`), leitura, sistema e
+  aplicação em `src/utils/` (`readStoredMotion`, `getSystemMotion`, `applyMotion`). A escolha vale
+  mais que `prefers-reduced-motion`; sem ela, o sistema decide. `global.css` zera os `--dur-*`,
+  animações e transições com `[data-motion="reduced"]` (e pela media query só enquanto não há
+  `data-motion`); um terceiro script inline do `index.html` aplica `data-motion` antes da pintura
+  (chave duplicada; `motionScript.test.ts` compara com os utilitários). Animação nova usa
+  `--dur-*` e `--ease`, nunca duração fixa, para o botão e o sistema a desligarem. Movimentos
+  extras (D57 a D60): `usePageTransition()` (`src/hooks/`, `true` só com movimento pleno) alimenta a
+  prop `viewTransition` dos `Link` de navegação (o `LanguageSelector` fica sem); `startThemeTransition`
+  (`src/utils/`, chamada por `useTheme.setTheme`) liga `data-theme-transition` no `<html>` durante a
+  troca; `useReveal()` (`src/hooks/`, devolve `ref` e `revealProps`) e o componente `SkeletonSwap`
+  são usados pela Início (destaques, cabeçalho da seção e botões finais pelo componente `Reveal`, e skeletons dos blocos), com `useReveal` escondendo só o que está abaixo da primeira tela depois da hidratação (o HTML pré-renderizado sai visível); Projetos usa `useReveal` nos cards (`ProjectCard`, por `revealIndex`) e `SkeletonSwap` na grade; `useDragScroll` (arrastar com o mouse região rolável), `useMediaQuery` (consulta de mídia por `useSyncExternalStore`), `useDebounce` e `useHasHydrated` (`false` só durante a hidratação, por `useSyncExternalStore`) completam `src/hooks/`; tokens `--dur-page`,
+  `--stagger` e `--press-scale` são neutralizados nos dois blocos de movimento reduzido. O hover de `projectCard.module.css` e `featuredProject.module.css` zera o deslocamento com movimento reduzido por `:global(:root[data-motion="reduced"])` (dentro de `@media (hover: hover)`, sem depender do media de movimento reduzido) e por `:global(:root:not([data-motion]))` (dentro de `@media (hover: hover) and (prefers-reduced-motion: reduce)`), espelhando a lógica do `global.css`; é o único uso de `:global` em CSS Module do projeto, e não usa token como `--hover-lift` porque o `transform` computado precisa ser `none`.

@@ -82,3 +82,15 @@ não tem efeito. A raiz `/` só redireciona, nesta ordem: escolha salva, idioma 
 código chama `setLanguage`; o idioma do navegador nunca é gravado. `<html lang>` acompanha o idioma
 ativo. Link interno usa `useLocalizedPath()`, que mantém o prefixo do idioma. O resumo está em
 [`frontend.md`](frontend.md#internacionalização).
+
+## Alias de import, `public/`, enum e utils
+
+- **Alias de import `@/`** — `@/*` resolve para `src/*`. Configurado em dois lugares que precisam
+  continuar concordando: `paths` no `tsconfig.app.json` (para o `tsc` e o editor) e `resolve.alias` no
+  `vite.config.ts` (para o dev server e o build). Mexer em um sem o outro deixa o `tsc -b`
+  verde e quebra o build, ou vice-versa. O Vitest herda o alias do mesmo `vite.config.ts`.
+- **`public/`** — assets estáticos que o Vite copia como estão para a raiz de `dist/` no build, sem
+  passar pelo bundler, e são referenciados por caminho absoluto (`/favicon.svg`). Arquivo estático
+  novo (imagem, fonte, dado mock) entra aqui. Fonte é self-hospedada: `woff2` e licença em
+  `public/fonts/`, `@font-face` em `src/styles/global.css` e `preload` no `index.html`, nunca
+  CDN ou serviço de fonte de terceiros (Google Fonts e afins).

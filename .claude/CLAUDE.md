@@ -287,71 +287,33 @@ A lista completa, o CI, o Husky e o `.editorconfig` estão em [`docs/setup/devel
   validada por `scripts/resolveSiteUrl.ts`; localhost no dev e nos testes). `serializeJsonLd`
   escapa `<`. A imagem padrão `public/images/og-site.png` vem de `npm run og:image` e é
   versionada. Não encontrada e erro não usam o mecanismo.
-- **Layout compartilhado** — `src/layouts/Main.layout.tsx` monta `SkipLink`, `Header`, o único
-  `<main id="main-content">` (as páginas não renderizam `main`; a de erro, fora do layout, monta a
-  própria moldura com `SkipLink`, `Header`, `main` e `Footer`, sem ler o erro lançado), o `Footer` e
-  `<ScrollRestoration />`. O estado do menu mobile vem de `useMobileMenu`
-  (`src/hooks/`), que o layout repassa ao `Header` e usa para aplicar `inert` em skip link, `main` e
-  rodapé; `useRouteFocus` foca o `h1` na troca de rota (não na primeira carga nem na troca só de
-  idioma). O item ativo vem de `getActiveNavItem` (`src/utils/`) sobre o caminho sem prefixo. Texto
-  do cabeçalho e do rodapé vive em `common`. `Footer` (`variant` `default` ou `navigation`, esta só em
-  `/contact`) lê o perfil por `profileApi`, nunca mostra skeleton nem erro e usa `CopyEmailButton`
-  (hook `useCopyToClipboard`) e `ButtonLink` (`Link` com a aparência do `Button`); o ano do rodapé vem
-  de `getBuildYear` (`src/utils/`), única leitura da constante `__BUILD_YEAR__` do `define` do
-  `vite.config.ts`. A versão do rodapé (`v<versão>`) vem de `getAppVersion` (`src/utils/`), única leitura de `__APP_VERSION__`, que o `define` preenche com o `version` do `package.json`: quem sobe a versão no release atualiza o rodapé sozinho. Página não encontrada e de erro declaram `<meta name="robots" content={"noindex"} />`. `useDropdown` (`src/hooks/`) é o disclosure de `LanguageSelector` e `SettingsMenu` (abrir, fechar com Esc, clique ou foco fora, saída animada antes de desmontar, painel `inert` fechado), com a animação em `dropdownPanel.module.css`; `useNavIndicator` posiciona o indicador da navegação desktop. Teste de layout usa `createMemoryRouter` com os loaders de idioma.
-- **`src/styles/`** — `global.css` guarda as CSS custom properties (cor, tipografia, espaçamento e
-  afins) e o reset. CSS Module usa essas custom properties em vez de valor hardcoded; confira os
-  nomes em `src/styles/global.css` antes de usar, e token global novo entra lá. Os nomes dos
-  tokens seguem os de `tokens/` do handoff de design (ex.: `--danger-surface`/`--danger-ink`,
-  nunca um prefixo próprio como `error`). Estilos de página ficam em
-  `src/styles/pages/<nome>.module.css` e de componente em
-  `src/styles/components/<nome>.module.css` (CSS Modules), importados como `import css from "..."`.
-  A tipagem dos módulos vem de `src/types/declarations.d.ts` (`{ [key: string]: string }`): toda
-  classe usada como `css.<algo>` precisa existir no módulo importado, porque uma classe inexistente
-  vira `undefined` em runtime, sem erro de compilação.
-- **Tema (claro/escuro)** — `[data-theme="dark"]` em `global.css` (o claro é `:root`), com
-  `color-scheme`. `useTheme()` de `src/hooks/useTheme.ts` (`{ theme, setTheme, toggleTheme }`) é
-  chamado em `App.tsx` e é a única via de escrita da escolha (`saveTheme`, chave
-  `portfolio-frontend:theme` em `themeStorageKey.ts`); leitura, sistema e aplicação ficam em
-  `src/utils/` (`readStoredTheme`, `getSystemTheme`, `applyTheme`). Um segundo script inline do
-  `index.html` aplica `data-theme` e `theme-color` antes da pintura (chave e cores duplicadas;
-  `themeScript.test.ts` compara com os utilitários). `?tema=` não existe. Foco é global
-  (`:focus-visible` com `--focus-ring`; faixa escura usa `data-surface="band"`), e `a` em
-  `global.css` é sublinhado: componente que se apresenta como botão zera no próprio módulo.
-- **Movimento** — `useMotion()` de `src/hooks/useMotion.ts` (`{ motion, setMotion, toggleMotion }`,
-  `full` ou `reduced`) espelha o tema: chamado em `App.tsx`, única via de escrita da escolha
-  (`saveMotion`, chave `portfolio-frontend:motion` em `motionStorageKey.ts`), leitura, sistema e
-  aplicação em `src/utils/` (`readStoredMotion`, `getSystemMotion`, `applyMotion`). A escolha vale
-  mais que `prefers-reduced-motion`; sem ela, o sistema decide. `global.css` zera os `--dur-*`,
-  animações e transições com `[data-motion="reduced"]` (e pela media query só enquanto não há
-  `data-motion`); um terceiro script inline do `index.html` aplica `data-motion` antes da pintura
-  (chave duplicada; `motionScript.test.ts` compara com os utilitários). Animação nova usa
-  `--dur-*` e `--ease`, nunca duração fixa, para o botão e o sistema a desligarem. Movimentos
-  extras (D57 a D60): `usePageTransition()` (`src/hooks/`, `true` só com movimento pleno) alimenta a
-  prop `viewTransition` dos `Link` de navegação (o `LanguageSelector` fica sem); `startThemeTransition`
-  (`src/utils/`, chamada por `useTheme.setTheme`) liga `data-theme-transition` no `<html>` durante a
-  troca; `useReveal()` (`src/hooks/`, devolve `ref` e `revealProps`) e o componente `SkeletonSwap`
-  são usados pela Início (destaques, cabeçalho da seção e botões finais pelo componente `Reveal`, e skeletons dos blocos), com `useReveal` escondendo só o que está abaixo da primeira tela depois da hidratação (o HTML pré-renderizado sai visível); Projetos usa `useReveal` nos cards (`ProjectCard`, por `revealIndex`) e `SkeletonSwap` na grade; `useDragScroll` (arrastar com o mouse região rolável), `useMediaQuery` (consulta de mídia por `useSyncExternalStore`), `useDebounce` e `useHasHydrated` (`false` só durante a hidratação, por `useSyncExternalStore`) completam `src/hooks/`; tokens `--dur-page`,
-  `--stagger` e `--press-scale` são neutralizados nos dois blocos de movimento reduzido. O hover de `projectCard.module.css` e `featuredProject.module.css` zera o deslocamento com movimento reduzido por `:global(:root[data-motion="reduced"])` (dentro de `@media (hover: hover)`, sem depender do media de movimento reduzido) e por `:global(:root:not([data-motion]))` (dentro de `@media (hover: hover) and (prefers-reduced-motion: reduce)`), espelhando a lógica do `global.css`; é o único uso de `:global` em CSS Module do projeto, e não usa token como `--hover-lift` porque o `transform` computado precisa ser `none`.
-- **Alias de import `@/`** — `@/*` resolve para `src/*`. Configurado em dois lugares que precisam
-  continuar concordando: `paths` no `tsconfig.app.json` (para o `tsc` e o editor) e `resolve.alias` no
-  `vite.config.ts` (para o dev server e o build). Mexer em um sem o outro deixa o `tsc -b`
-  verde e quebra o build, ou vice-versa. O Vitest herda o alias do mesmo `vite.config.ts`.
-- **`public/`** — assets estáticos que o Vite copia como estão para a raiz de `dist/` no build, sem
-  passar pelo bundler, e são referenciados por caminho absoluto (`/favicon.svg`). Arquivo estático
-  novo (imagem, fonte, dado mock) entra aqui. Fonte é self-hospedada: `woff2` e licença em
-  `public/fonts/`, `@font-face` em `src/styles/global.css` e `preload` no `index.html`, nunca
-  CDN ou serviço de fonte de terceiros (Google Fonts e afins).
-
-**`src/services/http/`** é o cliente HTTP (fetch cru, usado fora do RTK Query), um símbolo
-por arquivo com `export default`: `apiUrl.ts` (a constante da URL da API, a **única** leitura de
-`import.meta.env.VITE_API_URL` no código, vazia quando a variável não existe, para a URL poder ser
-relativa e funcionar com proxy do Vite), `get.ts` e `post.ts` (`get<T>(path, options?)` e
-`post<T>(path, body, options?)`, que chamam `fetch` com `apiUrl + path`, enviam `Accept-Language`
-com `getLanguage()` a cada chamada e aceitam `options.signal` (`AbortSignal`); uma requisição
-cancelada rejeita com o `AbortError` do `fetch`, sem embrulho) e `parseResponse.ts` (resposta
-não-ok vira `Error` literal em português com o status e, quando há, o corpo). O chamador passa só
-o caminho relativo. Timeout próprio não existe: quem quiser usa `AbortSignal.timeout(ms)`.
+- **Layout compartilhado** (`src/layouts/Main.layout.tsx`): monta `SkipLink`, `Header`, o único
+  `<main id="main-content">` (página não renderiza `main`), `Footer` e `<ScrollRestoration />`;
+  detalhe em `docs/screens/layout.md#implementação`.
+- **Estilo** (`src/styles/pages/<nome>.module.css` e `src/styles/components/<nome>.module.css`): CSS
+  Module usa as custom properties de `src/styles/global.css` em vez de valor fixo, com os nomes dos
+  tokens do handoff (`--danger-surface`, nunca `error*`); token global novo entra em `global.css`.
+  Classe usada como `css.x` precisa existir no módulo importado (a tipagem `{ [key: string]: string
+}` transforma a ausente em `undefined`, sem erro). Sem estilo inline nem CSS global de escopo
+  local; `:global` só nos hovers de `projectCard.module.css` e `featuredProject.module.css`. `a` é
+  sublinhado em `global.css`: componente que se apresenta como botão zera no próprio módulo.
+- **Tema e movimento**: a escolha é escrita só por `useTheme()` e `useMotion()` (chamados em
+  `App.tsx`); `?tema=` não existe. Animação nova usa `--dur-*` e `--ease`, nunca duração fixa, para
+  o botão e o sistema a desligarem. Detalhe em `docs/architecture/frontend.md#tema` e `#movimento`.
+- **Alias e `public/`**: `@/*` resolve para `src/*` em dois lugares que precisam concordar, `paths`
+  do `tsconfig.app.json` e `resolve.alias` do `vite.config.ts`. Arquivo estático novo (imagem,
+  fonte, dado mock) entra em `public/`; fonte é self-hospedada (`woff2` e licença em
+  `public/fonts/`, `@font-face` em `global.css`, `preload` no `index.html`), nunca CDN. Detalhe em
+  `docs/architecture/code-structure.md`.
+  **`src/services/http/`** é o cliente HTTP (fetch cru, usado fora do RTK Query), um símbolo
+  por arquivo com `export default`: `apiUrl.ts` (a constante da URL da API, a **única** leitura de
+  `import.meta.env.VITE_API_URL` no código, vazia quando a variável não existe, para a URL poder ser
+  relativa e funcionar com proxy do Vite), `get.ts` e `post.ts` (`get<T>(path, options?)` e
+  `post<T>(path, body, options?)`, que chamam `fetch` com `apiUrl + path`, enviam `Accept-Language`
+  com `getLanguage()` a cada chamada e aceitam `options.signal` (`AbortSignal`); uma requisição
+  cancelada rejeita com o `AbortError` do `fetch`, sem embrulho) e `parseResponse.ts` (resposta
+  não-ok vira `Error` literal em português com o status e, quando há, o corpo). O chamador passa só
+  o caminho relativo. Timeout próprio não existe: quem quiser usa `AbortSignal.timeout(ms)`.
 
 **`src/services/content/`** é a camada de dados local da v1 (R1), usada só pelos `queryFn` de
 `src/store/api/` (e removida na #43): `readJson`/`readText` leem `public/` por `fetch`, os `load*` carregam os
