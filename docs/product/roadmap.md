@@ -108,7 +108,7 @@ Ordem Início → Projetos → Projeto → Informações → Contato: Início ex
 
 | Tela        | Issue         | Decisões                                                                   |
 | ----------- | ------------- | -------------------------------------------------------------------------- |
-| Início      | #34           | D26, D11, D13, D14, D24, D28                                               |
+| Início      | #34           | D26, D11, D13, D14, D24, D68                                               |
 | Projetos    | #35           | D16, D17                                                                   |
 | Projeto     | #36, #61, #62 | D06 (markdown sob demanda, conforme #8), D10, D18, D19, D33, D55, PI1, PI2 |
 | Informações | #37           | D13, D14, D20, PI1                                                         |
@@ -152,7 +152,7 @@ A #15 pode correr a qualquer momento (Vercel escolhida) e é recomendada cedo, p
 | CV em PDF                                   | M6                            | #54           | D14, D52            |
 | CV gerado do Markdown, com pré-visualização | M6                            | #54           | D52                 |
 | Poda de pesos de fonte                      | M6                            | #40           | D08                 |
-| Pausa da faixa de stack                     | M5                            | #34           | D28                 |
+| Pausa da faixa de stack                     | M5                            | #34           | D68                 |
 | Publicação da v1                            | M4 (ensaio) e M7 (publicação) | #45, #63      | —                   |
 | Pré-renderização                            | M4                            | #64, #49      | NF-IA               |
 | Canônica, Open Graph e JSON-LD              | M3                            | #52           | NF-IA               |

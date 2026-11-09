@@ -1,6 +1,7 @@
-import { useId } from "react"
+import { useEffect, useId } from "react"
+import type { PointerEvent } from "react"
 import useDragScroll from "@/hooks/useDragScroll"
-import useMediaQuery from "@/hooks/useMediaQuery"
+import useHoverFocusPause from "@/hooks/useHoverFocusPause"
 import useMotion from "@/hooks/useMotion"
 import css from "@/styles/components/stackMarquee.module.css"
 import type StackEntry from "@/types/home/StackEntry.types"
@@ -27,20 +28,44 @@ function StackList({ items, isHidden }: StackListProps) {
     )
 }
 
+const regionTabIndex = 0
+
 function StackMarquee({ items, heading }: StackMarqueeProps) {
     const headingId = useId()
     const { motion } = useMotion()
-    const isCoarsePointer = useMediaQuery("(pointer: coarse)")
-    const isAnimated = motion === "full" && !isCoarsePointer
+    const isAnimated = motion === "full"
     const { ref, dragProps } = useDragScroll<HTMLElement>()
+    const { isPaused, pauseProps, releaseTouchPause } = useHoverFocusPause<HTMLElement>()
+
+    useEffect(() => {
+        if (!isAnimated) {
+            releaseTouchPause()
+        }
+    }, [isAnimated, releaseTouchPause])
+
+    function handlePointerDown(event: PointerEvent<HTMLElement>) {
+        dragProps.onPointerDown(event)
+        pauseProps.onPointerDown(event)
+    }
+
+    function handlePointerUp(event: PointerEvent<HTMLElement>) {
+        dragProps.onPointerUp(event)
+        if (isAnimated) {
+            pauseProps.onPointerUp(event)
+        }
+    }
 
     return (
         <section
             ref={ref}
             {...dragProps}
+            {...pauseProps}
+            onPointerDown={handlePointerDown}
+            onPointerUp={handlePointerUp}
             className={css.band}
             aria-labelledby={headingId}
-            tabIndex={isAnimated ? undefined : 0}
+            tabIndex={regionTabIndex}
+            data-paused={isAnimated && isPaused ? "true" : undefined}
         >
             <h2 id={headingId} className={css.srOnly}>
                 {heading}

@@ -176,7 +176,7 @@ Discreto e curto: `--ease` (`cubic-bezier(0.2, 0, 0.2, 1)`) com `--dur-fast` (12
 `--dur-base` (180ms, transição de cor, borda, fundo e transform) e `--dur-slow` (320ms). Animações
 contínuas: `--dur-shimmer` (1.4s, skeleton), `--dur-spin` (700ms, spinner) e `--dur-marquee`
 (22s, faixa de stack). Nada de bounce, entrada em escala ou parallax. O botão "Reduzir movimento" do menu da
-engrenagem desliga o movimento da faixa de stack (D28).
+engrenagem desliga o movimento da faixa de stack (D68, que substitui a D28).
 
 Tokens da #84 (D59): `--dur-page` (150ms, transição de página), `--stagger` (60ms, atraso entre
 irmãos na entrada, no máximo 5 degraus por `data-reveal-step`) e `--press-scale` (0.97, escala de
@@ -189,7 +189,7 @@ cards e `SkeletonSwap` na troca (D57). Movimento novo usa `--dur-*` e `--ease`, 
 
 `prefers-reduced-motion: reduce` desliga tudo. No `global.css` isso zera os tokens de duração e
 encurta animação e transição em `*`, `*::before` e `*::after`; a faixa de stack vira lista estática
-(D28). Os keyframes do handoff (`ds-shimmer`, `ds-spin`, `ds-marquee`) ainda não existem no código:
+(D68). Os keyframes do handoff (`ds-shimmer`, `ds-spin`, `ds-marquee`) ainda não existem no código:
 entram no CSS Module do componente que os usar.
 
 ## Estados

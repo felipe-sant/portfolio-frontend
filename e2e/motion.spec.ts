@@ -1,10 +1,11 @@
 import { expect, test } from "@playwright/test"
-import type { Page } from "@playwright/test"
+import type { Locator, Page } from "@playwright/test"
 import openPreferences from "./support/openPreferences"
 import readStackOffset from "./support/readStackOffset"
 
 const STACK_HEADING = "Tecnologias que uso"
 const MOVEMENT_THRESHOLD = 5
+const MAX_TAB_PRESSES = 40
 
 function getStackBand(page: Page) {
     return page.getByRole("region", { name: STACK_HEADING })
@@ -35,8 +36,61 @@ async function expectStackStill(page: Page) {
     await expect(getStackBand(page).locator("div").first()).toHaveCSS("animation-name", "none")
 }
 
+async function tabUntilFocused(page: Page, target: Locator) {
+    for (let attempt = 0; attempt < MAX_TAB_PRESSES; attempt++) {
+        await page.keyboard.press("Tab")
+        if (await target.evaluate((element) => element === document.activeElement)) {
+            return
+        }
+    }
+    await expect(target).toBeFocused()
+}
+
+async function expectStackPaused(page: Page) {
+    await expect(getStackBand(page)).toHaveAttribute("data-paused", "true")
+    await expect(getStackBand(page).locator("div").first()).toHaveCSS(
+        "animation-play-state",
+        "paused"
+    )
+    const first = await readStackOffset(page, STACK_HEADING)
+    const second = await readStackOffset(page, STACK_HEADING)
+    expect(second).toBe(first)
+}
+
 test.describe("movimento com o sistema em movimento pleno", () => {
     test.use({ reducedMotion: "no-preference" })
+
+    test("RF-HOME-12, WCAG 2.2.2: o mouse sobre a faixa a pausa e ao sair ela volta a se mover", async ({
+        page
+    }) => {
+        await openHome(page)
+        const band = getStackBand(page)
+        await band.scrollIntoViewIfNeeded()
+        await expectStackMoving(page)
+
+        await band.hover()
+        await expectStackPaused(page)
+
+        await page.mouse.move(0, 0)
+        await expect(band).not.toHaveAttribute("data-paused")
+        await expectStackMoving(page)
+    })
+
+    test("RF-HOME-12, WCAG 2.2.2: o foco de teclado na faixa a pausa e ao sair ela volta", async ({
+        page
+    }) => {
+        await openHome(page)
+        const band = getStackBand(page)
+        await expectStackMoving(page)
+
+        await tabUntilFocused(page, band)
+        await expectStackPaused(page)
+
+        await page.keyboard.press("Tab")
+        await expect(band).not.toBeFocused()
+        await expect(band).not.toHaveAttribute("data-paused")
+        await expectStackMoving(page)
+    })
 
     test("RF-LAY-35: o botão liga e desliga o data-motion reduzido e o aria-pressed", async ({
         page
@@ -139,6 +193,114 @@ test.describe("movimento com o sistema em movimento reduzido", () => {
         await getStackBand(page).waitFor()
 
         await expect(page.locator("html")).toHaveAttribute("data-motion", "full")
+        await expectStackMoving(page)
+    })
+})
+
+async function expectTouchPointer(page: Page) {
+    expect(await page.evaluate(() => matchMedia("(pointer: coarse)").matches)).toBe(true)
+}
+
+async function readScrollRange(page: Page) {
+    return getStackBand(page).evaluate((band) => band.scrollWidth - band.clientWidth)
+}
+
+async function scrollBandBy(page: Page, distance: number) {
+    return getStackBand(page).evaluate((band, delta) => {
+        band.scrollBy(delta, 0)
+        return band.scrollLeft
+    }, distance)
+}
+
+test.describe("faixa com ponteiro de toque e movimento pleno", () => {
+    test.use({
+        hasTouch: true,
+        isMobile: true,
+        reducedMotion: "no-preference",
+        viewport: { width: 390, height: 844 }
+    })
+
+    test("RF-HOME-13: a faixa anda em laço com a cópia da lista", async ({ page }) => {
+        await openHome(page)
+        await expectTouchPointer(page)
+
+        await expect(getStackBand(page).locator("ul[aria-hidden='true']")).toHaveCount(1)
+        await expect(getStackBand(page).locator("div").first()).not.toHaveCSS(
+            "animation-name",
+            "none"
+        )
+        await expectStackMoving(page)
+    })
+
+    test("RF-HOME-15: a região não tem rolagem lateral manual", async ({ page }) => {
+        await openHome(page)
+        await expectTouchPointer(page)
+
+        await expect(getStackBand(page)).toHaveCSS("overflow-x", "hidden")
+    })
+
+    test("RF-HOME-14: um toque pausa a faixa e o toque seguinte a retoma", async ({ page }) => {
+        await openHome(page)
+        await expectTouchPointer(page)
+        const band = getStackBand(page)
+        await band.scrollIntoViewIfNeeded()
+
+        await band.tap()
+        await expectStackPaused(page)
+
+        await band.tap()
+        await expect(band).not.toHaveAttribute("data-paused")
+        await expectStackMoving(page)
+    })
+
+    test("RF-LAY-35, RF-HOME-15: reduzir o movimento pelo menu para a faixa e a deixa rolável", async ({
+        page
+    }) => {
+        await openHome(page)
+        await expectTouchPointer(page)
+
+        await (await getMotionToggle(page)).click()
+        await expect(page.locator("html")).toHaveAttribute("data-motion", "reduced")
+
+        await expectStackStill(page)
+        await expect(getStackBand(page)).toHaveCSS("overflow-x", "auto")
+        await expect(getStackBand(page)).toHaveAttribute("tabindex", "0")
+        expect(await readScrollRange(page)).toBeGreaterThan(0)
+        expect(await scrollBandBy(page, 150)).toBeGreaterThan(0)
+    })
+})
+
+test.describe("faixa com ponteiro de toque e movimento reduzido do sistema", () => {
+    test.use({
+        hasTouch: true,
+        isMobile: true,
+        reducedMotion: "reduce",
+        viewport: { width: 390, height: 844 }
+    })
+
+    test("RF-HOME-15: a faixa começa parada, rolável e sem a lista duplicada", async ({ page }) => {
+        await openHome(page)
+        await expectTouchPointer(page)
+        await expect(page.locator("html")).toHaveAttribute("data-motion", "reduced")
+
+        await expectStackStill(page)
+        await expect(getStackBand(page)).toHaveCSS("overflow-x", "auto")
+        expect(await scrollBandBy(page, 150)).toBeGreaterThan(0)
+    })
+
+    test("RF-HOME-14, RF-HOME-15: tocar na faixa em movimento reduzido e religar o movimento pleno a deixa andando", async ({
+        page
+    }) => {
+        await openHome(page)
+        await expectTouchPointer(page)
+        const band = getStackBand(page)
+        await band.scrollIntoViewIfNeeded()
+
+        await band.tap()
+        await (await getMotionToggle(page)).click()
+        await expect(page.locator("html")).toHaveAttribute("data-motion", "full")
+
+        await expect(band).not.toHaveAttribute("data-paused")
         await expectStackMoving(page)
     })
 })

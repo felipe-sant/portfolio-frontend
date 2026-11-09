@@ -254,3 +254,39 @@ test.describe("sem JavaScript, informações", () => {
         })
     }
 })
+
+test.describe("sem JavaScript e com movimento reduzido", () => {
+    test.use({ javaScriptEnabled: false, reducedMotion: "reduce" })
+
+    for (const language of LANGUAGES) {
+        test(`NF-CO-03, RF-HOME-12: a faixa em ${language} mostra a lista uma vez`, async ({
+            page
+        }) => {
+            await page.goto(language)
+            const band = page.getByRole("region", { name: UI_TEXTS[language].stackHeading })
+
+            await expect(band.locator("ul[aria-hidden='true']")).toBeHidden()
+            await expect(band.locator("ul:not([aria-hidden='true'])")).toBeVisible()
+        })
+    }
+})
+
+test.describe("sem JavaScript, com toque e movimento pleno", () => {
+    test.use({
+        javaScriptEnabled: false,
+        hasTouch: true,
+        isMobile: true,
+        reducedMotion: "no-preference"
+    })
+
+    test("RF-HOME-13: a faixa anda por CSS com a lista lida uma vez", async ({ page }) => {
+        const profile = readProfile("pt-BR")
+
+        await page.goto("pt-BR")
+        const band = page.getByRole("region", { name: UI_TEXTS["pt-BR"].stackHeading })
+
+        await expect(band.locator("ul[aria-hidden='true']")).toBeVisible()
+        await expect(band.locator("div").first()).not.toHaveCSS("animation-name", "none")
+        await expect(band.getByRole("listitem")).toHaveText(profile.stack)
+    })
+})
