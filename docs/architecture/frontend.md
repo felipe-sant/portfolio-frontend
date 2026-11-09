@@ -374,3 +374,23 @@ comandos `content:*` (rodam com `tsx` e `tsconfig.node.json`); ID novo vem de `n
 `validateTranslation` reprova campo traduzível (`TRANSLATABLE_PATHS`) de `en`/`es` igual ao `pt-BR`
 e documento `.md` traduzido igual: valor igual por natureza (nome próprio, sigla, termo
 idêntico nos idiomas) entra por caminho em `translationExceptions.ts`, nunca frase.
+
+### Contexto e idioma (movido do CLAUDE.md)
+
+Projeto frontend em React 19 e TypeScript (`strict`), com Vite (dev server e build), Redux
+Toolkit com RTK Query (estado global), i18next com react-i18next (internacionalização), CSS
+Modules (estilo) e Vitest com Testing Library (teste). As seções abaixo são as convenções do
+projeto: onde cada coisa fica, como é escrita e como é testada.
+
+O conteúdo de documentação (`README.md`, specs, mensagens de commit, descrição de PR) está em
+**português**. Mantenha esse padrão. **Identificadores no código são em inglês** — ver "Estilo de
+código".
+
+Texto de UI não é escrito no código: é referenciado por chave de tradução (`t("heading")`,
+`<Trans>`), e o valor de cada idioma fica em `src/locales/<idioma>/` (i18next + react-i18next,
+ver "Onde fica cada coisa"). Os idiomas suportados são `pt-BR`, `en` e `es`. **`pt-BR` é a língua de
+referência**: texto novo nasce primeiro em `src/locales/pt-BR/`, os JSON de `pt-BR` são a fonte
+do tipo das chaves e os testes de tela afirmam o texto em português. **O idioma de uma página é
+decidido pelo caminho da URL** (`/pt-BR`, `/en`, `/es`); `en` é o `fallbackLng` do i18next, o destino
+da raiz `/` sem escolha salva nem idioma de navegador suportado e o idioma da página não encontrada
+sem prefixo válido. As duas coisas são independentes.

@@ -117,3 +117,47 @@ Decisões de escopo e de público tomadas pelo PO. Os IDs `DPnn` não colidem co
 ## Roadmap
 
 A v1 é a entrega da faculdade (Fatec), publicada no GitHub Pages de um repositório da organização da Fatec, com o conteúdo real servido localmente e sem backend. As versões V2+ são de uso pessoal. A ordem das entregas e o critério de cada versão estão em [`roadmap.md`](roadmap.md).
+
+## Resumo de produto, rotas e versões (movido do CLAUDE.md)
+
+Texto que o `.claude/CLAUDE.md` trazia antes de ser enxugado; o `CLAUDE.md` mantém a versão curta que o agente aplica.
+
+## Produto
+
+Este repositório é o frontend do **portfólio pessoal de Luiz Felipe dos Santos**, desenvolvedor
+full stack. O usuário é ao mesmo tempo cliente, PO e dev: ele decide escopo e prioridade e aprova
+as specs. Esta seção é um resumo; o detalhe vive em `docs/` e no handoff de design.
+
+**Handoff de design:** `/home/felipe/faculdade/design_handoff_portfolio` é a base do design
+(R3). Reaproveite `tokens/` (nomes e valores dos tokens) e use `components/` como ponto de
+partida dos componentes. Não copie o HTML das telas (`*.dc.html`), `support.js`, `image-slot.js`
+nem os sketches de `assets/` (não são imagens de produção). Onde o handoff diverge das convenções
+deste repositório, as convenções prevalecem: fonte self-hospedada em vez de Google Fonts, CSS
+Module em vez de classe global `.ds-*` e código sem comentários. `docs/design/prototype/` é a
+referência visual validada pelo PO (abre por `npm run dev` em
+`/docs/design/prototype/prototipo-indice.dc.html`).
+
+**Rotas:** cinco telas, todas existentes hoje no código: Início, Projetos (`/projects`), Projeto (`/projects/:id` e `/projects/:id/docs/:name`), Informações (`/about`) e Contato (`/contact`),
+com caminhos em inglês (D32), como os identificadores, sempre sob o prefixo do idioma
+(`/<idioma>`, onde `<idioma>` é `pt-BR`, `en` ou `es`, sem barra final); a raiz `/` só
+redireciona e `/projects` sem prefixo cai em não encontrada. O `:id` é um UUID v7, não slug. Os
+caminhos abaixo omitem o prefixo:
+
+- `/` (Início): primeira impressão, com quem é, o que faz agora, projetos em destaque e stack.
+- `/projects` (Projetos): encontrar um projeto por busca, tipo, categoria ou tecnologia.
+- `/projects/:id` (Projeto): estudo de caso, com galeria, documentação e ficha técnica; o
+  `README.md` abre em `/projects/:id` e cada outro documento do projeto (lista livre, D55) em
+  `/projects/:id/docs/<name>`, pelo nome do arquivo.
+- `/about` (Informações): sobre mim, stack, complementos e trajetória.
+- `/contact` (Contato): formulário de mensagem e canais diretos (formulário desligado na v1,
+  D05).
+
+A interface tem tema claro e escuro.
+
+**Versões:** a v1 é a entrega da faculdade (Fatec), publicada no GitHub Pages de um repositório da
+organização da Fatec, com dados reais em JSON servidos pela camada local (R1) e sem backend, com prazo em 22/11/2026; V2+
+são de uso pessoal (Vercel, depois AWS com backend). Ordem, dependências e critério da v1 em
+`docs/product/roadmap.md`.
+
+**Decisões de design:** as pendências e contradições do handoff estão decididas em
+`docs/design/decisions.md`, com IDs (`D01`–`D56`, `PI1`–`PI5`) que specs e issues citam.
