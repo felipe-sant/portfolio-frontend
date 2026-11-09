@@ -287,4 +287,20 @@ test.describe("faixa com ponteiro de toque e movimento reduzido do sistema", () 
         await expect(getStackBand(page)).toHaveCSS("overflow-x", "auto")
         expect(await scrollBandBy(page, 150)).toBeGreaterThan(0)
     })
+
+    test("RF-HOME-14, RF-HOME-15: tocar na faixa em movimento reduzido e religar o movimento pleno a deixa andando", async ({
+        page
+    }) => {
+        await openHome(page)
+        await expectTouchPointer(page)
+        const band = getStackBand(page)
+        await band.scrollIntoViewIfNeeded()
+
+        await band.tap()
+        await (await getMotionToggle(page)).click()
+        await expect(page.locator("html")).toHaveAttribute("data-motion", "full")
+
+        await expect(band).not.toHaveAttribute("data-paused")
+        await expectStackMoving(page)
+    })
 })
