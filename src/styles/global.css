@@ -428,6 +428,7 @@ p {
 html {
     scrollbar-width: thin;
     scrollbar-color: var(--border-strong) transparent;
+    scrollbar-gutter: stable;
 }
 
 a {

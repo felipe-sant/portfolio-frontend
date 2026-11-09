@@ -11,10 +11,22 @@ function readBlock(selector: string): string {
     return css.slice(start, css.indexOf("\n}", start))
 }
 
+function readAllBlocks(selector: string): string {
+    return css
+        .split(`\n${selector} {`)
+        .slice(1)
+        .map((chunk) => chunk.slice(0, chunk.indexOf("\n}")))
+        .join("\n")
+}
+
 const rootBlock = readBlock(":root")
 const darkBlock = readBlock('[data-theme="dark"]')
 
 describe("global.css", () => {
+    it("reserva a calha da barra de rolagem em html", () => {
+        expect(readAllBlocks("html")).toContain("scrollbar-gutter: stable")
+    })
+
     it("declara os tokens de cromo, código, foco e cabeçalho no tema claro", () => {
         expect(rootBlock).toContain("--surface-chrome: var(--bg-page)")
         expect(rootBlock).toContain("--border-chrome: var(--border-subtle)")
