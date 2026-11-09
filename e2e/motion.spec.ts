@@ -196,3 +196,95 @@ test.describe("movimento com o sistema em movimento reduzido", () => {
         await expectStackMoving(page)
     })
 })
+
+async function expectTouchPointer(page: Page) {
+    expect(await page.evaluate(() => matchMedia("(pointer: coarse)").matches)).toBe(true)
+}
+
+async function readScrollRange(page: Page) {
+    return getStackBand(page).evaluate((band) => band.scrollWidth - band.clientWidth)
+}
+
+async function scrollBandBy(page: Page, distance: number) {
+    return getStackBand(page).evaluate((band, delta) => {
+        band.scrollBy(delta, 0)
+        return band.scrollLeft
+    }, distance)
+}
+
+test.describe("faixa com ponteiro de toque e movimento pleno", () => {
+    test.use({
+        hasTouch: true,
+        isMobile: true,
+        reducedMotion: "no-preference",
+        viewport: { width: 390, height: 844 }
+    })
+
+    test("RF-HOME-13: a faixa anda em laço com a cópia da lista", async ({ page }) => {
+        await openHome(page)
+        await expectTouchPointer(page)
+
+        await expect(getStackBand(page).locator("ul[aria-hidden='true']")).toHaveCount(1)
+        await expect(getStackBand(page).locator("div").first()).not.toHaveCSS(
+            "animation-name",
+            "none"
+        )
+        await expectStackMoving(page)
+    })
+
+    test("RF-HOME-15: a região não tem rolagem lateral manual", async ({ page }) => {
+        await openHome(page)
+        await expectTouchPointer(page)
+
+        await expect(getStackBand(page)).toHaveCSS("overflow-x", "hidden")
+    })
+
+    test("RF-HOME-14: um toque pausa a faixa e o toque seguinte a retoma", async ({ page }) => {
+        await openHome(page)
+        await expectTouchPointer(page)
+        const band = getStackBand(page)
+        await band.scrollIntoViewIfNeeded()
+
+        await band.tap()
+        await expectStackPaused(page)
+
+        await band.tap()
+        await expect(band).not.toHaveAttribute("data-paused")
+        await expectStackMoving(page)
+    })
+
+    test("RF-LAY-35, RF-HOME-15: reduzir o movimento pelo menu para a faixa e a deixa rolável", async ({
+        page
+    }) => {
+        await openHome(page)
+        await expectTouchPointer(page)
+
+        await (await getMotionToggle(page)).click()
+        await expect(page.locator("html")).toHaveAttribute("data-motion", "reduced")
+
+        await expectStackStill(page)
+        await expect(getStackBand(page)).toHaveCSS("overflow-x", "auto")
+        await expect(getStackBand(page)).toHaveAttribute("tabindex", "0")
+        expect(await readScrollRange(page)).toBeGreaterThan(0)
+        expect(await scrollBandBy(page, 150)).toBeGreaterThan(0)
+    })
+})
+
+test.describe("faixa com ponteiro de toque e movimento reduzido do sistema", () => {
+    test.use({
+        hasTouch: true,
+        isMobile: true,
+        reducedMotion: "reduce",
+        viewport: { width: 390, height: 844 }
+    })
+
+    test("RF-HOME-15: a faixa começa parada, rolável e sem a lista duplicada", async ({ page }) => {
+        await openHome(page)
+        await expectTouchPointer(page)
+        await expect(page.locator("html")).toHaveAttribute("data-motion", "reduced")
+
+        await expectStackStill(page)
+        await expect(getStackBand(page)).toHaveCSS("overflow-x", "auto")
+        expect(await scrollBandBy(page, 150)).toBeGreaterThan(0)
+    })
+})
