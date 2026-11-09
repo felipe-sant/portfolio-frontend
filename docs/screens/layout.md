@@ -429,3 +429,20 @@ verificação de lá.
 
 - [ ] `npm run build`, `npm run lint` e `npm test -- --run` passam
 - [ ] Textos novos em `pt-BR`, `en` e `es`, e chaves sem uso removidas (`error:unknown`, `mainLayout:brand`, `mainLayout:copyright`) (R2)
+
+## Implementação
+
+Como o layout compartilhado é montado no código. Os componentes estão catalogados em [`components.md`](../architecture/components.md); a arquitetura geral, em [`frontend.md`](../architecture/frontend.md).
+
+**Layout compartilhado** — `src/layouts/Main.layout.tsx` monta `SkipLink`, `Header`, o único
+`<main id="main-content">` (as páginas não renderizam `main`; a de erro, fora do layout, monta a
+própria moldura com `SkipLink`, `Header`, `main` e `Footer`, sem ler o erro lançado), o `Footer` e
+`<ScrollRestoration />`. O estado do menu mobile vem de `useMobileMenu`
+(`src/hooks/`), que o layout repassa ao `Header` e usa para aplicar `inert` em skip link, `main` e
+rodapé; `useRouteFocus` foca o `h1` na troca de rota (não na primeira carga nem na troca só de
+idioma). O item ativo vem de `getActiveNavItem` (`src/utils/`) sobre o caminho sem prefixo. Texto
+do cabeçalho e do rodapé vive em `common`. `Footer` (`variant` `default` ou `navigation`, esta só em
+`/contact`) lê o perfil por `profileApi`, nunca mostra skeleton nem erro e usa `CopyEmailButton`
+(hook `useCopyToClipboard`) e `ButtonLink` (`Link` com a aparência do `Button`); o ano do rodapé vem
+de `getBuildYear` (`src/utils/`), única leitura da constante `__BUILD_YEAR__` do `define` do
+`vite.config.ts`. A versão do rodapé (`v<versão>`) vem de `getAppVersion` (`src/utils/`), única leitura de `__APP_VERSION__`, que o `define` preenche com o `version` do `package.json`: quem sobe a versão no release atualiza o rodapé sozinho. Página não encontrada e de erro declaram `<meta name="robots" content={"noindex"} />`. `useDropdown` (`src/hooks/`) é o disclosure de `LanguageSelector` e `SettingsMenu` (abrir, fechar com Esc, clique ou foco fora, saída animada antes de desmontar, painel `inert` fechado), com a animação em `dropdownPanel.module.css`; `useNavIndicator` posiciona o indicador da navegação desktop. Teste de layout usa `createMemoryRouter` com os loaders de idioma.

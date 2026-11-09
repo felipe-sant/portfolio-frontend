@@ -1,0 +1,21 @@
+# Componentes
+
+Catálogo dos componentes de `src/components/`: a lista, as props que importam, o comportamento e as armadilhas de cada um. A regra de como escrever um componente novo (arquivo, CSS Module, teste em `test/`) está no `.claude/CLAUDE.md` e na skill `react-component-scaffold`; a forma geral da aplicação está em [`frontend.md`](frontend.md). O que cada tela monta com eles está na seção "Implementação" de [`docs/screens/`](../screens/).
+
+## Componentes base, formulário, modal e filtros
+
+**`src/components/`** — componentes base reutilizáveis (`Button`, `Chip`, `TextField`, `SearchInput`,
+`Skeleton`, `Spinner`, `VisuallyHidden`, `Icon`, `IconButton`, `CatLogo`, `ThemeToggle`,
+`MotionToggle`, `SettingsMenu`, `Flag`, `LanguageSelector`, `Header`, `SkipLink`, `Footer`, `CopyEmailButton`, `ButtonLink`, `AvailabilityBadge`, `LoadError`, `StatusCard`, `StackMarquee`, `FeaturedProject`, `Reveal`, `ProjectCard`, `ProjectCardSkeleton`, `FilterGroup`, `Modal`, `ProjectsFiltersModal`, `ProfilePhoto`, `AboutNowCard`, `CertificateChip`, `GroupCount`, `StackGroupList`, `TrajectoryGroup`, `TrajectoryItem`, `TrajectoryDetail`, `TrajectoryDetailsLine`, `TrajectoryPeriod`, `TrajectoryModal`, `RadioChipGroup`, `ContactChannels`, `ContactForm`). O desenho de cada ícone fica num mapa local de
+`Icon.tsx`, com os nomes em `src/enum/iconNames.enum.ts`. Texto fixo de componente vive em `common`
+(`searchInput.clear`); o resto chega por prop. O `jsx-a11y/prefer-tag-over-role` acusa `role="status"`
+literal: passe `role={"status"}`. Controle de formulário tem borda `--border-control`, nunca
+`--border-subtle`. `LoadError` aceita `description` opcional e `SearchInput` aceita `id` (o hook de Projetos foca o campo por ele). `ProjectCard` recebe `index` (carga e prioridade da imagem) e `revealIndex` (atraso do `useReveal`, recomeça a cada lote de 9) e a página o envolve num `<li>` pelo `ProjectListItem`, local ao arquivo. `FilterGroup` (`role="group"`, `aria-pressed`) é sem estado e o hook decide a regra do clique. `Modal` (portal no `body`, só monta aberto, `role="dialog"`, foco no `h2`, foco preso, `#root` `inert`, trava de rolagem por `data-scroll-locked` no `body`, tela cheia abaixo de 640px) usa `useModalBehavior` (`src/hooks/`) e é genérico; `ProjectsFiltersModal` mantém o rascunho de ordenação, tecnologia e ano e aplica ao fechar por ×, Esc, fundo ou "Aplicar" (`onApply` só se mudou; "Limpar" volta a ordenação a `defaultProjectSort`). A primeira seção é "Ordenar" (`fieldset` de `radio` com o mesmo `name`, sempre presente); Tecnologia e Ano só aparecem com opções, e a opção com `count` 0 fora do rascunho é `disabled` nativo com nome terminando em `filters.modal.noProjects` (a vinda da URL fica marcada e habilitada). O botão "Filtros" nunca fica `aria-disabled`, e o contador "Filtros (N)" conta só tecnologia e ano. `applyModalFilters` de `useProjectsFilters` escreve os três de uma vez. `Button` repassa `aria-disabled`. O ícone `filter` são três traços decrescentes. `TextField` aceita `reserveMessageSpace` (campo com aviso possível) e
+`focusOnError` (hook `useFocusOnError` de `src/hooks/`, só no primeiro campo inválido do envio).
+
+## Componentes por tela
+
+- Projeto: `ProjectFacts`, `ProjectStack`, `ProjectLinks`, `ExternalButtonLink`, `ProjectGallery`, `Lightbox`, `FallbackImage`, `RelatedProjects`, `ProjectDocumentsNav`, `ProjectDocumentSection`, `TextDocument`, `ProjectError`, `ProjectSkeleton` e `MarkdownDocument`: comportamento em [`project.md`](../screens/project.md#implementação).
+- Informações: `AboutNowCard`, `CertificateChip`, `GroupCount`, `StackGroupList`, `TrajectoryGroup`, `TrajectoryItem`, `TrajectoryDetail`, `TrajectoryDetailsLine`, `TrajectoryPeriod` e `TrajectoryModal`: comportamento em [`about.md`](../screens/about.md#implementação).
+- Contato e currículo: `ContactChannels`, `ContactForm`, `ResumeLink` e `ResumeModal`: comportamento em [`contact.md`](../screens/contact.md#implementação).
+- Layout compartilhado: `SkipLink`, `Header`, `Footer`, `CopyEmailButton`, `ButtonLink`, `LanguageSelector`, `SettingsMenu`: comportamento em [`layout.md`](../screens/layout.md#implementação).

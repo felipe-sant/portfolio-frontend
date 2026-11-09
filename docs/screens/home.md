@@ -449,3 +449,7 @@ Lighthouse mobile no build publicado do Pages, como diz aquele documento.
 - [ ] `npm run build`, `npm run lint` e `npm test -- --run` passam
 - [ ] Textos novos de `home` e `common` em `pt-BR`, `en` e `es`; `home:intro` e outras chaves sem uso removidas (R2)
 - [ ] A rota abre e recarrega nos três prefixos (`/pt-BR`, `/en`, `/es`) no build com o `base` do Pages
+
+## Implementação
+
+Como a tela é montada no código: o movimento de entrada e o carregamento usam `Reveal`, `useReveal` e `SkeletonSwap`, descritos em [Movimento](../architecture/frontend.md#movimento); os componentes (`StackMarquee`, `FeaturedProject`, `AvailabilityBadge`, `StatusCard`, `LoadError`) estão catalogados em [`components.md`](../architecture/components.md).
