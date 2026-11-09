@@ -421,6 +421,20 @@ test.describe("filtros de tipo e categoria", () => {
         }
     })
 
+    test("RF-PROJECTS-15, A11Y-G08: o link de título de cada card tem 44px de altura", async ({
+        page
+    }) => {
+        await openProjects(page, "pt-BR")
+        const view = getProjectsView(page, "pt-BR")
+        const links = view.cards.getByRole("heading", { level: 2 }).getByRole("link")
+        const total = await links.count()
+        expect(total).toBeGreaterThan(0)
+
+        for (let index = 0; index < total; index++) {
+            expect((await getBox(links.nth(index))).height).toBeGreaterThanOrEqual(TOUCH_TARGET)
+        }
+    })
+
     test("RF-PROJECTS-08: há um separador decorativo, escondido do leitor de tela, entre os dois grupos", async ({
         page
     }) => {
