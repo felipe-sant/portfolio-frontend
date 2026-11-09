@@ -18,6 +18,18 @@ Entrega da Fatec: [site no GitHub Pages](https://fatec-jacarei-dsm-portfolio.git
   <img src="docs/design/assets/readme/home-light.png" alt="Tela Início do portfólio: status atual, título com a função e os botões Ver projetos e Baixar CV" width="100%">
 </picture>
 
+## Como este projeto é feito
+
+Uso o Claude Code como parceiro de desenvolvimento, de forma declarada. Os trailers `Co-Authored-By` dos commits e a linha "Generated with Claude Code" dos PRs ficam de propósito: são a declaração de autoria assistida. Em 09/11/2026, 806 dos 895 commits da `staging` têm o trailer e 61 dos 79 PRs trazem a assinatura.
+
+- **Decisão minha:** escopo, prioridade, aprovação de cada spec e o merge. Sou o único participante do projeto.
+- **Proposta e implementação da IA:** a spec, o código e os testes, em agentes com papéis separados (descritos em [`.claude/README.md`](.claude/README.md)).
+- **Antes do merge:** build, lint, testes e E2E no CI; revisão por um agente; em mudança de tela, rodo a aplicação localmente e confiro à mão; abro o PR e o reviso eu mesmo.
+
+Os limites, sem rodeio: o revisor automático é outro agente do mesmo modelo, e o ruleset do repositório exige 0 aprovações. Não existe revisor humano além de mim, e 14 dos PRs têm o corpo vazio. Quando o autor precisa entender o que foi gerado, a resposta é a revisão manual de cada PR e, em tela, rodar o resultado localmente; o template de PR agora pede essa revisão humana de forma explícita.
+
+**O que eu revisei e corrigi:** no [PR #132](https://github.com/felipe-sant/portfolio-frontend/pull/132), três testes E2E falhavam na `staging` porque o corpo do modal ganhou uma parada de Tab (commit `1acf093`) e os testes esperavam a ordem antiga. Foi um erro do teste, não do produto, e a correção atualizou a contagem de Tab sem enfraquecer asserção.
+
 ## Sobre o projeto
 
 O portfólio existe para converter visita em contato: mostra o trabalho do autor com profundidade
