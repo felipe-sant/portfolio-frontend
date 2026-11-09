@@ -29,21 +29,18 @@ afterEach(() => {
 })
 
 describe("playwright.config", () => {
-    it("liga fullyParallel em qualquer ambiente", async () => {
-        expect((await loadConfig("1")).fullyParallel).toBe(true)
-        expect((await loadConfig(undefined)).fullyParallel).toBe(true)
+    it("paraleliza sempre, fixa workers e uma tentativa extra só no CI", async () => {
+        expect(await loadConfig("1")).toMatchObject({
+            fullyParallel: true,
+            workers: 4,
+            retries: 1
+        })
+        expect(await loadConfig(undefined)).toMatchObject({
+            fullyParallel: true,
+            workers: undefined,
+            retries: 0
+        })
     })
-
-    it("define workers numérico no CI", async () => {
-        const { workers } = await loadConfig("1")
-
-        expect(typeof workers).toBe("number")
-    })
-
-    it("mantém o padrão do Playwright para workers fora do CI", async () => {
-        expect((await loadConfig(undefined)).workers).toBeUndefined()
-    })
-
     it("limita os quatro projetos de ambiente aos specs por ambiente, sem o formulário", async () => {
         const { projects } = await loadConfig(undefined)
         const environmentProjects = projects?.filter((project) =>
@@ -85,11 +82,6 @@ describe("playwright.config", () => {
         }
     })
 
-    it("usa uma tentativa extra no CI e nenhuma fora dele", async () => {
-        expect((await loadConfig("1")).retries).toBe(1)
-        expect((await loadConfig(undefined)).retries).toBe(0)
-    })
-
     it("usa list e blob no CI, sem html", async () => {
         const names = reporterNames((await loadConfig("1")).reporter)
 
@@ -100,14 +92,6 @@ describe("playwright.config", () => {
 
     it("usa só html fora do CI", async () => {
         expect(reporterNames((await loadConfig(undefined)).reporter)).toEqual(["html"])
-    })
-
-    it("mantém workers, fullyParallel e retries do CI", async () => {
-        expect(await loadConfig("1")).toMatchObject({
-            workers: 4,
-            fullyParallel: true,
-            retries: 1
-        })
     })
 
     it("não define shard no config", async () => {
