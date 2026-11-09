@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
 import { render, screen, within } from "@testing-library/react"
+import userEvent from "@testing-library/user-event"
 import StackMarquee from "@/components/StackMarquee"
 import expectNoAxeViolations from "@/testUtils/expectNoAxeViolations"
 import MOTION_STORAGE_KEY from "@/utils/motionStorageKey"
@@ -57,7 +58,82 @@ describe("StackMarquee", () => {
         expect(screen.getAllByRole("listitem")).toHaveLength(items.length)
     })
 
-    it("torna a região rolável por teclado só com movimento reduzido", () => {
+    it("torna a região focável por teclado também com movimento pleno", () => {
+        renderMarquee()
+
+        expect(screen.getByRole("region", { name: "Stack" })).toHaveAttribute("tabindex", "0")
+    })
+
+    it("pausa com o mouse sobre a região e retoma ao sair", async () => {
+        const user = userEvent.setup()
+        renderMarquee()
+        const region = screen.getByRole("region", { name: "Stack" })
+
+        expect(region).not.toHaveAttribute("data-paused")
+
+        await user.hover(region)
+        expect(region).toHaveAttribute("data-paused", "true")
+
+        await user.unhover(region)
+        expect(region).not.toHaveAttribute("data-paused")
+    })
+
+    it("pausa com o foco de teclado na região e retoma ao sair", async () => {
+        const user = userEvent.setup()
+        renderMarquee()
+        const region = screen.getByRole("region", { name: "Stack" })
+
+        await user.tab()
+        expect(region).toHaveFocus()
+        expect(region).toHaveAttribute("data-paused", "true")
+
+        await user.tab()
+        expect(region).not.toHaveAttribute("data-paused")
+    })
+
+    it("não define pausa com movimento reduzido", async () => {
+        localStorage.setItem(MOTION_STORAGE_KEY, "reduced")
+        const user = userEvent.setup()
+        renderMarquee()
+        const region = screen.getByRole("region", { name: "Stack" })
+
+        await user.hover(region)
+        expect(region).not.toHaveAttribute("data-paused")
+
+        await user.unhover(region)
+        await user.tab()
+        expect(region).not.toHaveAttribute("data-paused")
+    })
+
+    it("não define pausa em tela de toque", async () => {
+        vi.stubGlobal(
+            "matchMedia",
+            vi.fn(() => ({
+                matches: true,
+                addEventListener: vi.fn(),
+                removeEventListener: vi.fn()
+            }))
+        )
+        const user = userEvent.setup()
+        renderMarquee()
+        const region = screen.getByRole("region", { name: "Stack" })
+
+        await user.hover(region)
+        await user.tab()
+
+        expect(region).not.toHaveAttribute("data-paused")
+    })
+
+    it("não tem violações de acessibilidade com a região pausada", async () => {
+        const user = userEvent.setup()
+        const { container } = renderMarquee()
+
+        await user.hover(screen.getByRole("region", { name: "Stack" }))
+
+        await expectNoAxeViolations(container)
+    })
+
+    it("torna a região rolável por teclado com movimento reduzido", () => {
         localStorage.setItem(MOTION_STORAGE_KEY, "reduced")
         renderMarquee()
 

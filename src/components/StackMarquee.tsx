@@ -1,5 +1,6 @@
 import { useId } from "react"
 import useDragScroll from "@/hooks/useDragScroll"
+import useHoverFocusPause from "@/hooks/useHoverFocusPause"
 import useMediaQuery from "@/hooks/useMediaQuery"
 import useMotion from "@/hooks/useMotion"
 import css from "@/styles/components/stackMarquee.module.css"
@@ -27,20 +28,25 @@ function StackList({ items, isHidden }: StackListProps) {
     )
 }
 
+const regionTabIndex = 0
+
 function StackMarquee({ items, heading }: StackMarqueeProps) {
     const headingId = useId()
     const { motion } = useMotion()
     const isCoarsePointer = useMediaQuery("(pointer: coarse)")
     const isAnimated = motion === "full" && !isCoarsePointer
     const { ref, dragProps } = useDragScroll<HTMLElement>()
+    const { isPaused, pauseProps } = useHoverFocusPause<HTMLElement>()
 
     return (
         <section
             ref={ref}
             {...dragProps}
+            {...pauseProps}
             className={css.band}
             aria-labelledby={headingId}
-            tabIndex={isAnimated ? undefined : 0}
+            tabIndex={regionTabIndex}
+            data-paused={isAnimated && isPaused ? "true" : undefined}
         >
             <h2 id={headingId} className={css.srOnly}>
                 {heading}

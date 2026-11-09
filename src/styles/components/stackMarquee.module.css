@@ -25,6 +25,10 @@
     animation: marquee var(--dur-marquee) linear infinite;
 }
 
+.band[data-paused="true"] .track {
+    animation-play-state: paused;
+}
+
 .list {
     display: flex;
     flex: none;
