@@ -270,7 +270,7 @@ Cada item tem um ID estável e a forma de verificação entre colchetes: `[teste
 - [ ] `A11Y-G05` — Ordem de foco igual à visual e foco visível em todo elemento focável [teclado]
 - [ ] `A11Y-G06` — Contorno de foco de D27 com 2px, afastado, 3:1 em toda superfície e nunca cortado (2.4.13) [e2e] [medição]
 - [ ] `A11Y-G07` — Todo link tem um nome que diz o destino sozinho (2.4.9) [teste]
-- [ ] `A11Y-G08` — Controles e links isolados com alvo de 44px em todas as larguras (2.5.5) [e2e] [medição]
+- [ ] `A11Y-G08` — Controles e links isolados com alvo de 44px em todas as larguras (2.5.5), inclusive o link de título de cada cartão de projeto [e2e] [medição]
 - [ ] `A11Y-G09` — Texto corrido com até 80 caracteres por linha, entrelinha de pelo menos 1,5 e sem justificar (1.4.8) [navegador]
 - [ ] `A11Y-G10` — Contraste AA nos dois temas e em todos os estados [e2e] [medição]
 - [ ] `A11Y-G11` — Sem rolagem horizontal a 320px e sem perda com texto a 200% [medição]
