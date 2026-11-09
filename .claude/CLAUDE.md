@@ -185,18 +185,20 @@ stuba com `vi.stubGlobal`/`vi.stubEnv` restaura no `afterEach` com
 A suíte ponta a ponta fica em `e2e/` (`playwright.config.ts` na raiz, `tsconfig.e2e.json`), com
 sufixo `.spec.ts`, fora do Vitest (`e2e/**` em `test.exclude`) e da cobertura. Roda só em Chromium
 contra `npm run preview:fatec` (`base` `/ra2581392423047/`), que serve o `dist/` já pronto: rode
-`npm run build:fatec` antes, porque `test:e2e` não builda. Os quatro projetos (`mobile-light`,
+`npm run build:fatec` antes, porque `test:e2e` não builda. Os quatro projetos de ambiente (`mobile-light`,
 `mobile-dark`, `desktop-light`, `desktop-dark`: 390 e 1280px, `colorScheme` claro e escuro,
-`reducedMotion`) rodam cada teste. Seletor é `getByRole` com nome em português, rota abre sem barra
+`reducedMotion`) rodam só os specs de `perEnvironmentSpecs`; os de `independentSpecs` rodam uma vez, no projeto `independent` (1280px, tema claro, `reducedMotion`). **Todo spec novo entra em exatamente uma das duas listas de `e2e/support/specClassification.ts`** (`scripts/test/specClassification.test.ts` falha com spec fora delas): `independentSpecs` só para o que não depende de viewport, tema, movimento nem axe (conteúdo, arquivos de máquina, HTML sem JavaScript); spec com `expectNoAxeViolations`, `emulateMedia`, `setViewportSize`, `viewportSize`, `testInfo`, `test.skip(` ou `test.fail(` por tamanho é obrigatoriamente por ambiente. O CI roda com `fullyParallel` e `workers` fixo no `playwright.config.ts` e `retries: 1`; medição, ranking dos testes lentos (`npm run test:e2e:timings` e `npm run e2e:rank`) e o desenho do sharding em `docs/setup/e2e-performance.md`. Seletor é `getByRole` com nome em português, rota abre sem barra
 inicial (relativa ao `baseURL`). Toda tela nova acrescenta o caminho em `e2e/support/routesUnderTest.ts`
 (o axe, com `color-contrast` ligada, roda em todas) e, se tiver teclado próprio, um roteiro em
-`e2e/<tema>.spec.ts`. Violação do axe se corrige na marcação ou no CSS, nunca desligando regra. Os projetos rodam com `reducedMotion: "reduce"`: roteiro que precisa de movimento pleno usa `test.use({ reducedMotion: "no-preference" })`. Elemento com `useReveal` leva `suppressHydrationWarning` (o `data-reveal` do HTML do servidor difere do primeiro render no navegador).
+`e2e/<tema>.spec.ts`. Violação do axe se corrige na marcação ou no CSS, nunca desligando regra. Os projetos rodam com `reducedMotion: "reduce"`: roteiro que precisa de movimento pleno usa `test.use({ reducedMotion: "no-preference" })`. Elemento com `useReveal` leva `suppressHydrationWarning` (o `data-reveal` do HTML do servidor difere do primeiro render no navegador). **Teste E2E sem instabilidade:** espera por estado, nunca por tempo (auto-wait, `expect.poll` ou `toPass` com `timeout` e `intervals` delimitados; `waitForTimeout`, mais `retries` e regra do axe desligada são proibidos); depois de navegar espere o foco do `h1` antes de interagir, e o `role="status"` do esqueleto sair antes de medir posição; repita o spec alterado com `--repeat-each=30 --retries=0` preso a poucos núcleos (`taskset -c 0,1`) antes do PR (`docs/setup/e2e-performance.md`, seção "Testes instáveis").
 
 **Toda tela nova entrega os E2E dos próprios fluxos**: clique e navegação, estados de carregamento e erro (forçados por `page.route`) e HTML sem JavaScript (`javaScriptEnabled: false`), com o ID do requisito no título (`"RF-LAY-18: o botão alterna o tema"`) e a prova de que o teste falha quando o comportamento quebra (mutação desfeita). A base são `e2e/theme`, `motion`, `language`, `navigation`, `footer`, `home-flows`, `not-found` e `no-javascript`; o apoio fica em `e2e/support/` (`readContent`, `readProfile`, `readFeaturedProjects`, `readAppVersion`, `readStackOffset`, `openPreferences`, `uiTexts`). O E2E não importa `src/`: o texto de cada idioma de que ele precisa vive em `uiTexts`.
 
-O CI (`.github/workflows/`) roda `npm run build`, `npm run lint`, a suíte de testes e o job `e2e`
-(`E2E`: instala o Chromium, `npm run build:fatec`, `npm run test:e2e`, relatório como artefato em
-falha), os mesmos comandos da verificação local, em PR para a `staging` e em push na `main`, na `staging` e em `hotfix/**` (o PR para a `main` reaproveita os checks do push no mesmo SHA, ver `docs/setup/environments.md`). O `deploy.yml` publica na
+O CI (`.github/workflows/`) roda `npm run build`, `npm run lint`, a suíte de testes e o E2E em três jobs
+(`E2E scope` decide o escopo por diff; `E2E shard i/4`, uma por fatia `--shard`, cada uma com o
+próprio Chromium e os dois builds; `E2E`, o agregador e único check exigido pelo ruleset, que falha
+se o escopo ou alguma fatia falhar, junta os blobs (HTML e JSON), avisa no `GITHUB_STEP_SUMMARY` dos testes `flaky` por `npm run e2e:flaky` (só avisa, não falha) e sobe `playwright-report` em falha;
+`npm run e2e:check-shards` prova que a união das fatias é a lista completa), os mesmos comandos da verificação local, em PR para a `staging` e em push na `main`, na `staging` e em `hotfix/**` (o PR para a `main` reaproveita os checks do push no mesmo SHA, ver `docs/setup/environments.md`). O `deploy.yml` publica na
 Vercel (`staging` = beta, `main` = produção) só depois do CI de push verde; detalhe em
 `docs/setup/environments.md`.
 

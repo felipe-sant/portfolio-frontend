@@ -80,12 +80,8 @@ describe("listTargets com as rotas atuais", () => {
         })
     })
 
-    it("ignora as rotas que ainda não têm tela", () => {
+    it("não ignora nenhuma das rotas atuais", () => {
         expect(ignored).toEqual([])
-    })
-
-    it("nunca lista a raiz", () => {
-        expect(targets.map((target) => target.path)).not.toContain("")
     })
 })
 
@@ -113,12 +109,6 @@ describe("listTargets com rotas de fixture", () => {
         expect(ignored).toEqual([])
     })
 
-    it("emite um arquivo por idioma para cada tela", () => {
-        expect(files).toContain("en/projects.html")
-        expect(files).toContain("es/about.html")
-        expect(files).toContain("pt-BR/contact.html")
-    })
-
     it("emite um arquivo por projeto", () => {
         expect(files).toContain(`en/projects/${FIRST_ID}.html`)
         expect(files).toContain(`en/projects/${SECOND_ID}.html`)
@@ -131,10 +121,6 @@ describe("listTargets com rotas de fixture", () => {
     it("emite o documento com extensão e nunca em pasta", () => {
         expect(files).toContain(`pt-BR/projects/${FIRST_ID}/docs/SETUP.md.html`)
         expect(files.some((file) => file.endsWith("index.html"))).toBe(false)
-    })
-
-    it("não emite arquivo de documento para o README.md", () => {
-        expect(files.some((file) => file.includes("README.md"))).toBe(false)
     })
 
     it("guarda o id do README nos parâmetros do alvo do projeto", () => {

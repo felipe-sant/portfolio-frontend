@@ -37,6 +37,7 @@ async function activateDocument(page: Page, language: Language, name: string, ti
     await link.focus()
     await page.keyboard.press("Enter")
     await expect(documentTitle(page, name)).toBeFocused()
+    await expect(documentBody(page, name).getByRole("status")).toHaveCount(0)
 }
 
 function isNarrow(page: Page) {
@@ -68,6 +69,14 @@ async function scrollTo(page: Page, position: number) {
 
 async function top(locator: ReturnType<Page["locator"]>) {
     return locator.evaluate((element) => element.getBoundingClientRect().top)
+}
+
+async function expectBelowNav(page: Page, target: ReturnType<Page["locator"]>) {
+    const nav = documentsNav(page, "pt-BR")
+
+    await expect
+        .poll(async () => (await top(target)) - (await bottom(nav)))
+        .toBeGreaterThanOrEqual(-POSITION_TOLERANCE)
 }
 
 async function bottom(locator: ReturnType<Page["locator"]>) {
@@ -290,8 +299,7 @@ test.describe("âncoras", () => {
         const target = page.locator("#fluxo-de-dados")
         await expect(target).toHaveText("Fluxo de dados")
         await expect(target).toBeInViewport()
-        const navBottom = await bottom(documentsNav(page, "pt-BR"))
-        expect(await top(target)).toBeGreaterThanOrEqual(navBottom - POSITION_TOLERANCE)
+        await expectBelowNav(page, target)
         expect(await page.evaluate(() => window.scrollY)).toBeGreaterThan(300)
     })
 
@@ -316,9 +324,7 @@ test.describe("âncoras", () => {
         const target = page.locator("#fluxo-de-dados")
         await expect(target).toBeVisible()
         await expect(target).toBeInViewport()
-        expect(await top(target)).toBeGreaterThanOrEqual(
-            (await bottom(documentsNav(page, "pt-BR"))) - POSITION_TOLERANCE
-        )
+        await expectBelowNav(page, target)
     })
 
     test("RF-PROJECT-25, RF-PROJECT-23: o link #âncora do markdown rola até o título abaixo da nav fixa", async ({
@@ -350,9 +356,7 @@ test.describe("âncoras", () => {
 
         const target = page.locator("#fim")
         await expect(target).toBeInViewport()
-        expect(await top(target)).toBeGreaterThanOrEqual(
-            (await bottom(documentsNav(page, "pt-BR"))) - POSITION_TOLERANCE
-        )
+        await expectBelowNav(page, target)
         expect(await page.evaluate(() => window.scrollY)).toBeGreaterThan(300)
     })
 
@@ -366,9 +370,7 @@ test.describe("âncoras", () => {
 
         const target = page.locator("#resultado")
         await expect(target).toBeInViewport()
-        expect(await top(target)).toBeGreaterThanOrEqual(
-            (await bottom(documentsNav(page, "pt-BR"))) - POSITION_TOLERANCE
-        )
+        await expectBelowNav(page, target)
     })
 
     test("RF-PROJECT-23: âncora que não existe é ignorada, a tela abre no topo sem erro", async ({

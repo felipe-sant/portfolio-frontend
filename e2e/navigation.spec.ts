@@ -191,6 +191,7 @@ test.describe("menu mobile", () => {
     test("RF-LAY-08: voltar do navegador com o menu aberto fecha o painel", async ({ page }) => {
         await (await getNavLink(page, "pt-BR", "projects")).click()
         await expect(page).toHaveURL(/\/pt-BR\/projects$/)
+        await expect(page.getByRole("heading", { level: 1 })).toBeFocused()
         const menu = page.getByRole("button", { name: "Menu" })
         await menu.click()
         await expect(menu).toHaveAttribute("aria-expanded", "true")
