@@ -4,6 +4,7 @@ import listTargets from "@scripts/prerender/listTargets"
 import render from "@/entry-server"
 import prerenderRoutes from "@/prerender/prerenderRoutes"
 import routes from "@/routers/routes"
+import composeFinalHtml from "@/testUtils/composeFinalHtml"
 import buildProfile from "@/testUtils/buildProfile"
 import buildProjectRecord from "@/testUtils/buildProjectRecord"
 import stubContentFetch from "@/testUtils/stubContentFetch"
@@ -110,6 +111,20 @@ afterEach(() => {
 })
 
 describe("render de projeto", () => {
+    it.each(
+        LANGUAGES.flatMap((language) => [
+            `${language}/projects/${FULL_ID}.html`,
+            `${language}/projects/${FULL_ID}/docs/SETUP.md.html`,
+            `${language}/projects/${FULL_ID}/docs/LICENSE.html`
+        ])
+    )("deixa um só title e uma só meta description no HTML final de %s", async (file) => {
+        const target = findTarget(file)
+        const page = composeFinalHtml(await render(target), target)
+
+        expect(page.match(/<title>/g)).toHaveLength(1)
+        expect(page.match(/<meta\s+name="description"/g)).toHaveLength(1)
+    })
+
     it("lista o projeto e os documentos além do README como alvos, sem ignorar a rota", () => {
         const { ignored } = listTargets(routes, prerenderRoutes, {
             "pt-BR": buildRecords("pt-BR"),

@@ -4,6 +4,7 @@ import listTargets from "@scripts/prerender/listTargets"
 import render from "@/entry-server"
 import prerenderRoutes from "@/prerender/prerenderRoutes"
 import routes from "@/routers/routes"
+import composeFinalHtml from "@/testUtils/composeFinalHtml"
 import buildProfile from "@/testUtils/buildProfile"
 import buildProjectRecord from "@/testUtils/buildProjectRecord"
 import buildProjectRecords from "@/testUtils/buildProjectRecords"
@@ -133,6 +134,16 @@ afterEach(() => {
 })
 
 describe("render", () => {
+    it.each(targets.map((target) => [target.file, target] as const))(
+        "deixa um só title e uma só meta description no HTML final de %s",
+        async (_file, target) => {
+            const page = composeFinalHtml(await render(target), target)
+
+            expect(page.match(/<title>/g)).toHaveLength(1)
+            expect(page.match(/<meta\s+name="description"/g)).toHaveLength(1)
+        }
+    )
+
     it.each(targets.map((target) => [target.file, target] as const))(
         "renderiza %s com o h1, o conteúdo principal e o rodapé conforme a rota",
         async (file, target) => {
