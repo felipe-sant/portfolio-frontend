@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest"
-import { fireEvent, render, screen, waitFor } from "@testing-library/react"
+import { render, screen, waitFor } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import useDropdown from "@/hooks/useDropdown"
 
@@ -86,54 +86,6 @@ describe("useDropdown", () => {
         await userEvent.tab()
 
         await waitFor(() => expect(screen.queryByText("Item")).not.toBeInTheDocument())
-    })
-
-    it("fecha com Tab no último item mesmo sem evento de foco, sem mover o foco", async () => {
-        render(<Harness />)
-        await userEvent.click(screen.getByText("Alternar"))
-        const item = screen.getByText("Item")
-        item.focus()
-        const focusSpy = vi.spyOn(HTMLElement.prototype, "focus")
-
-        fireEvent.keyDown(item, { key: "Tab" })
-
-        expect(item).toHaveAttribute("data-state", "closed")
-        expect(focusSpy).not.toHaveBeenCalled()
-        focusSpy.mockRestore()
-    })
-
-    it("fecha com Shift+Tab no botão mesmo sem evento de foco, sem mover o foco", async () => {
-        render(<Harness />)
-        await userEvent.click(screen.getByText("Alternar"))
-        const focusSpy = vi.spyOn(HTMLElement.prototype, "focus")
-
-        fireEvent.keyDown(screen.getByText("Alternar"), { key: "Tab", shiftKey: true })
-
-        expect(screen.getByText("Item")).toHaveAttribute("data-state", "closed")
-        expect(focusSpy).not.toHaveBeenCalled()
-        focusSpy.mockRestore()
-    })
-
-    it.each(["ctrlKey", "altKey", "metaKey"])(
-        "ignora Tab com %s no último item, porque o navegador trata o atalho",
-        async (modifier) => {
-            render(<Harness />)
-            await userEvent.click(screen.getByText("Alternar"))
-
-            fireEvent.keyDown(screen.getByText("Item"), { key: "Tab", [modifier]: true })
-
-            expect(screen.getByText("Item")).toHaveAttribute("data-state", "open")
-        }
-    )
-
-    it("mantém aberto com Tab no botão e Shift+Tab no último item", async () => {
-        render(<Harness />)
-        await userEvent.click(screen.getByText("Alternar"))
-
-        fireEvent.keyDown(screen.getByText("Alternar"), { key: "Tab" })
-        fireEvent.keyDown(screen.getByText("Item"), { key: "Tab", shiftKey: true })
-
-        expect(screen.getByText("Item")).toHaveAttribute("data-state", "open")
     })
 
     it("marca o painel como fechado e inerte enquanto sai", async () => {

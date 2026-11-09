@@ -2,7 +2,6 @@ import { useCallback, useEffect, useRef, useState } from "react"
 import type { AnimationEvent } from "react"
 
 const UNMOUNT_FALLBACK_MS = 400
-const FOCUSABLE_SELECTOR = 'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
 
 function useDropdown() {
     const [isOpen, setIsOpen] = useState(false)
@@ -64,35 +63,13 @@ function useDropdown() {
             buttonRef.current?.focus({ preventScroll: true })
         }
 
-        function closeWhenTabLeaves(event: KeyboardEvent) {
-            const hasShortcutModifier = event.ctrlKey || event.altKey || event.metaKey
-
-            if (event.key !== "Tab" || hasShortcutModifier || !containerRef.current) {
-                return
-            }
-
-            const focusable = Array.from(
-                containerRef.current.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR)
-            )
-            const edge = event.shiftKey ? focusable[0] : focusable[focusable.length - 1]
-
-            if (event.target === edge) {
-                setIsOpen(false)
-            }
-        }
-
-        function handleKeyDown(event: KeyboardEvent) {
-            closeOnEscape(event)
-            closeWhenTabLeaves(event)
-        }
-
         const container = containerRef.current
-        container?.addEventListener("keydown", handleKeyDown)
+        container?.addEventListener("keydown", closeOnEscape)
         document.addEventListener("pointerdown", closeWhenOutside)
         document.addEventListener("focusin", closeWhenOutside)
 
         return () => {
-            container?.removeEventListener("keydown", handleKeyDown)
+            container?.removeEventListener("keydown", closeOnEscape)
             document.removeEventListener("pointerdown", closeWhenOutside)
             document.removeEventListener("focusin", closeWhenOutside)
         }
