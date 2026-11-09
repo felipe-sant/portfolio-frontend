@@ -19,7 +19,7 @@ PR -> staging -> (promoção) -> main
 
 1. Toda alteração entra por PR na `staging`. O CI roda no PR (com escopo por diff) e no push na `staging`.
 2. Com o CI de push verde, o `deploy.yml` publica a `staging` no beta.
-3. A promoção é um PR de `staging` para `main`. O CI não roda de novo no PR: os checks são os do push na `staging`, no mesmo commit, e aparecem uma única vez na página do PR. O push na `main` roda o CI e, verde, o `deploy.yml` publica em produção.
+3. A promoção é um PR de `staging` para `main`, aberto e atualizado pelo `promote.yml` (ver "Promoção (`promote.yml`)"); o merge é humano. O CI não roda de novo no PR: os checks são os do push na `staging`, no mesmo commit, e aparecem uma única vez na página do PR. O push na `main` roda o CI e, verde, o `deploy.yml` publica em produção.
 
 O `deploy.yml` dispara por `workflow_run` do CI e só publica quando o CI de um push na `main` ou na `staging` termina com sucesso: CI falhando, cancelado ou vindo de PR não publica. O CI também roda em push em `hotfix/**` para validar o PR `hotfix/*` -> `main` (o PR para a `main` não dispara o CI); esse push não publica, porque o `deploy.yml` só escuta `main` e `staging`. Como o `workflow_run` usa o arquivo de workflow da branch padrão (`staging`), o primeiro deploy de produção só acontece depois da primeira promoção `staging` -> `main`.
 
@@ -133,6 +133,19 @@ Três workflows em `.github/workflows/`, descritos aqui porque os arquivos não 
 - **`release.yml`** (push na `main`, sem `workflow_dispatch`): `scripts/prepareRelease.ts` lê a versão do `package.json`, as tags e o `CHANGELOG.md`. Com versão `>= 1.0.0` e sem a tag `vX.Y.Z`, `gh release create` cria a tag e o Release na `main` com a seção do `CHANGELOG.md`; com `0.x` ou tag existente não faz nada. Para `1.x`, o job `publish-fatec` chama `fatec-pages.yml` com a tag e o `FATEC_PAGES_TOKEN`; `2.0.0` em diante não publica. Tag e Release criados por engano: `gh release delete <tag> --cleanup-tag`.
 - **Hotfix:** o changeset `patch` e o `npm run changeset:version` rodam na `hotfix/*`, antes do PR para a `main`; o push cria a tag normalmente.
 - **CHANGELOG com link:** `.changeset/config.json` usa `@changesets/changelog-github` (`repo` `felipe-sant/portfolio-frontend`), que consulta a API do GitHub para linkar PR, commit e autor em cada entrada. No `version.yml`, o `changesets/action` já exporta o `GITHUB_TOKEN`; fora do CI (o `npm run changeset:version` do hotfix), exporte `GITHUB_TOKEN` (por exemplo `GITHUB_TOKEN=$(gh auth token) npm run changeset:version`) e tenha rede, senão o comando falha. Só as entradas geradas a partir daí têm o formato novo.
+
+## Promoção (`promote.yml`)
+
+Workflow em `.github/workflows/promote.yml`, descrito aqui porque os arquivos não têm comentários. A lógica fica em `scripts/preparePromotion.ts`, que só orquestra `git` e `gh` sobre funções puras (`parseMergedPullNumbers`, `hasPendingChangesets` e `buildPromotionBody`), todas com teste em `scripts/test/`; a estrutura do YAML é guardada por `scripts/test/promoteWorkflow.test.ts`.
+
+- **Gatilhos:** push na `staging` e `workflow_dispatch`, com `concurrency` sem cancelar (o segundo push espera o primeiro). Permissões: `contents: read` e `pull-requests: write`. Exige o mesmo "Allow GitHub Actions to create and approve pull requests" (Settings > Actions > General) do `version.yml`; nada novo a ligar.
+- **PR único:** abre ou atualiza um PR `staging` -> `main`, nunca dois. Título `Chore :see_no_evil: Promove staging para produção`, na criação e na atualização. Assignee é o dono do repositório, sem labels.
+- **Corpo:** as mesmas seções de `.github/PULL_REQUEST_TEMPLATE.md`, com a lista das issues incluídas (cada uma uma vez, com os PRs que a fecharam) e os PRs sem issue numa lista própria, em ordem crescente, itens de "Revisão humana" desmarcados e sem `Closes`. Os números vêm de `git log origin/main..origin/staging` (`Merge pull request #N` ou sufixo `(#N)`) e as issues de `closingIssuesReferences` de `gh pr view`.
+- **Sem diferença:** com `origin/main` já contendo todos os commits da `staging`, o run termina verde sem criar PR.
+- **Bloqueio por versão pendente:** enquanto houver `.changeset/*.md` além do `README.md` (o que mantém aberto o PR `changeset-release/staging`), o workflow não cria nem edita PR, escreve o motivo no resumo do run e termina verde; um PR de promoção aberto vira draft (`gh pr ready --undo`), o que impede o merge. Depois que o PR de versão é mergeado, o push seguinte (ou um `workflow_dispatch`) reavalia: cria o PR, ou tira o existente de draft e atualiza o corpo. O critério é o arquivo no checkout, nunca o PR de versão aberto, que pode estar obsoleto quando os dois workflows rodam em paralelo.
+- **Checks:** o head do PR é a própria `staging`, então ele mostra os checks do push no mesmo commit; o PR criado com `GITHUB_TOKEN` não dispara CI e nenhum workflow de `pull_request` escuta a `main`.
+- **Merge humano, por commit de merge:** o workflow nunca faz merge, auto-merge nem aprovação. Mergear a promoção por squash deixaria a `staging` "à frente" da `main` e o PR reabriria: use sempre commit de merge.
+- **Rollback:** apagar `promote.yml` e fechar o PR gerado.
 
 ## Variáveis
 
