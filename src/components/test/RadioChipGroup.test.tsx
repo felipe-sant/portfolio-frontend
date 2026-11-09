@@ -85,5 +85,5 @@ describe("RadioChipGroup", () => {
         const { container } = render(<Controlled />)
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 })

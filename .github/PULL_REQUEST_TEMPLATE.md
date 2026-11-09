@@ -31,6 +31,13 @@ Opcional. Registre decisões que não são óbvias pelo código:
 
 <!-- Opcional. Adicione screenshots, vídeos, logs ou exemplos de request/response, ou o print da tela alterada. -->
 
+## Revisão humana
+
+<!-- Marque o que foi feito e escreva em uma linha o que li, testei ou corrigi à mão. -->
+
+- [ ] Revisão humana feita: li o diff e o que a IA gerou. O que li, testei ou corrigi à mão:
+- [ ] Mudança de tela: rodei localmente (`npm run dev`) e conferi o resultado no navegador.
+
 ## Impactos e pontos de atenção
 
 <!-- Opcional. Informe possíveis regressões, migrations, feature flags, dependências ou áreas afetadas. -->

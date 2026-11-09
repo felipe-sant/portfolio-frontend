@@ -72,5 +72,5 @@ describe("MotionToggle", () => {
         const { container } = render(<MotionToggle />)
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 })

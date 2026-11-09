@@ -132,7 +132,7 @@ do `h3` para baixo são fixos.
 | `--text-body-sm`  | `0.875rem`                     | `--lh-tight`    |                |
 | `--text-caption`  | `0.8125rem`                    |                 |                |
 | `--text-label-sm` | `0.75rem`                      |                 | `--ls-label`   |
-| `--text-chip`     | `0.6875rem`                    |                 |                |
+| `--text-chip`     | `0.75rem`                      |                 |                |
 
 Títulos levam `letter-spacing` negativo; rótulos em mono, positivo (`--ls-label` 0.08em,
 `--ls-label-wide` 0.1em). Todo parágrafo é limitado a `--measure` (34rem) e usa
@@ -176,7 +176,7 @@ Discreto e curto: `--ease` (`cubic-bezier(0.2, 0, 0.2, 1)`) com `--dur-fast` (12
 `--dur-base` (180ms, transição de cor, borda, fundo e transform) e `--dur-slow` (320ms). Animações
 contínuas: `--dur-shimmer` (1.4s, skeleton), `--dur-spin` (700ms, spinner) e `--dur-marquee`
 (22s, faixa de stack). Nada de bounce, entrada em escala ou parallax. O botão "Reduzir movimento" do menu da
-engrenagem desliga o movimento da faixa de stack (D28).
+engrenagem desliga o movimento da faixa de stack (D68, que substitui a D28).
 
 Tokens da #84 (D59): `--dur-page` (150ms, transição de página), `--stagger` (60ms, atraso entre
 irmãos na entrada, no máximo 5 degraus por `data-reveal-step`) e `--press-scale` (0.97, escala de
@@ -189,7 +189,7 @@ cards e `SkeletonSwap` na troca (D57). Movimento novo usa `--dur-*` e `--ease`, 
 
 `prefers-reduced-motion: reduce` desliga tudo. No `global.css` isso zera os tokens de duração e
 encurta animação e transição em `*`, `*::before` e `*::after`; a faixa de stack vira lista estática
-(D28). Os keyframes do handoff (`ds-shimmer`, `ds-spin`, `ds-marquee`) ainda não existem no código:
+(D68). Os keyframes do handoff (`ds-shimmer`, `ds-spin`, `ds-marquee`) ainda não existem no código:
 entram no CSS Module do componente que os usar.
 
 ## Estados
@@ -311,6 +311,11 @@ As convenções do repositório prevalecem onde divergem do handoff (R3):
 | Tema por `data-theme="dark"` na raiz, com persistência     | Tema por `[data-theme="dark"]` em `global.css`, aplicado por `useTheme` e por script inline, com persistência em `portfolio-frontend:theme` (D22) |
 | `tokens/*.css` e `components/*.jsx` com comentários        | Código sem comentários                                                                                                                            |
 | Componentes React em JSX                                   | Recriados em TypeScript, com texto de UI por chave de tradução nos três idiomas                                                                   |
+
+As fontes (Bricolage Grotesque, IBM Plex Sans e IBM Plex Mono) são self-hospedadas, com `woff2` e
+licenças OFL em `public/fonts/`, para não fazer requisição a terceiros com o IP de quem visita
+(privacidade, LGPD/GDPR), não depender de CDN externa e servir as fontes da mesma origem, com
+`preload`.
 
 ## Decisões de design
 

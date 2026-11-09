@@ -145,5 +145,5 @@ describe("ProjectDocumentsNav", () => {
         const { container } = renderNav(["README.md", "SETUP.md"], "SETUP.md")
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 })

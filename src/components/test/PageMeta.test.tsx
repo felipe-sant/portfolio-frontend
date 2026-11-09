@@ -175,5 +175,5 @@ describe("PageMeta", () => {
         const { container } = await renderPage("/pt-BR/projects")
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 })

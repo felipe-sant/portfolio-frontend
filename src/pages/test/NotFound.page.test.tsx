@@ -43,7 +43,7 @@ describe("NotFoundPage", () => {
         const { container } = renderPage()
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 
     it("renderiza rótulo, título e texto", () => {
         renderPage()

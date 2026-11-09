@@ -161,7 +161,7 @@ describe("Footer padrão", () => {
         await screen.findByText("Disponível para projetos")
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 })
 
 describe("Footer de navegação", () => {
@@ -290,5 +290,5 @@ describe("Footer de navegação", () => {
         await screen.findByRole("link", { name: /GitHub de/ })
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 })

@@ -11,6 +11,18 @@ describe("Chip", () => {
         expect(screen.queryByRole("button")).not.toBeInTheDocument()
     })
 
+    it("aplica a variante do corpo só quando pedida", () => {
+        render(
+            <>
+                <Chip font="body">Reviso o que entrego</Chip>
+                <Chip>TypeScript</Chip>
+            </>
+        )
+
+        expect(screen.getByText("Reviso o que entrego").className).toContain("body")
+        expect(screen.getByText("TypeScript").className).not.toContain("body")
+    })
+
     it("não tem violações de acessibilidade numa lista de chips", async () => {
         const { container } = render(
             <ul>
@@ -24,5 +36,5 @@ describe("Chip", () => {
         )
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 })

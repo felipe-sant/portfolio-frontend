@@ -47,6 +47,8 @@ jobs:
                   VITE_API_URL: ${{ vars.VITE_API_URL }}
                   VITE_SITE_URL: https://felipe-sant.vercel.app
               run: npx vercel@63.1.2 build --prod
+            - name: Check contact form is absent
+              run: npm run check:contact-form .vercel/output/static
             - name: Deploy
               env:
                   VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
@@ -91,6 +93,8 @@ jobs:
                   VITE_API_URL: ${{ vars.VITE_API_URL }}
                   VITE_SITE_URL: https://felipe-sant-beta.vercel.app
               run: npx vercel@63.1.2 build
+            - name: Check contact form is absent
+              run: npm run check:contact-form .vercel/output/static
             - name: Deploy
               id: deploy
               env:

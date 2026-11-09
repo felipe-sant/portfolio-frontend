@@ -215,7 +215,7 @@ describe("ResumeModal", () => {
         await screen.findByRole("region", { name: "Páginas do currículo" })
 
         await expectNoAxeViolations(document.body)
-    }, 15000)
+    })
 
     it("chama onClose pelo botão Fechar, pelo Esc e pelo clique no fundo", async () => {
         const onClose = vi.fn()
@@ -251,5 +251,5 @@ describe("ResumeModal", () => {
 
         await expectNoAxeViolations(document.body)
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 })

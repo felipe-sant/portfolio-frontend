@@ -8,12 +8,12 @@ import ContactPage from "@/pages/Contact.page"
 import buildProfile from "@/testUtils/buildProfile"
 import expectNoAxeViolations from "@/testUtils/expectNoAxeViolations"
 import failFetchAfter from "@/testUtils/failFetchAfter"
-import relaxTimeoutsForLoad from "@/testUtils/relaxTimeoutsForLoad"
+import relaxAsyncUtilTimeout from "@/testUtils/relaxAsyncUtilTimeout"
 import renderWithStore from "@/testUtils/renderWithStore"
 import stubContentFetch from "@/testUtils/stubContentFetch"
 import type Profile from "@/types/profile/Profile.types"
 
-relaxTimeoutsForLoad()
+relaxAsyncUtilTimeout()
 
 const flag = vi.hoisted(() => ({ enabled: false }))
 
@@ -282,5 +282,5 @@ describe("ContactPage", () => {
         await waitFor(() => expect(view.container.querySelector("form")).toBeInTheDocument())
 
         await expectNoAxeViolations(view.container)
-    }, 15000)
+    })
 })

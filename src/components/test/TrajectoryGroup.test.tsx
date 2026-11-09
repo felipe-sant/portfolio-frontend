@@ -81,5 +81,5 @@ describe("TrajectoryGroup", () => {
         const { container } = renderGroup({ kind: "experience", items: [FIRST, SECOND] })
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 })

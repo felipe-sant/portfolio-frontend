@@ -12,11 +12,11 @@ import buildProjectRecord from "@/testUtils/buildProjectRecord"
 import buildTimelineItemRecord from "@/testUtils/buildTimelineItemRecord"
 import expectNoAxeViolations from "@/testUtils/expectNoAxeViolations"
 import holdFetchAfter from "@/testUtils/holdFetchAfter"
-import relaxTimeoutsForLoad from "@/testUtils/relaxTimeoutsForLoad"
+import relaxAsyncUtilTimeout from "@/testUtils/relaxAsyncUtilTimeout"
 import renderWithStore from "@/testUtils/renderWithStore"
 import stubContentFetch from "@/testUtils/stubContentFetch"
 
-relaxTimeoutsForLoad()
+relaxAsyncUtilTimeout()
 
 const SITE_URL = "http://localhost:5173"
 const PROJECT_ID = "0192f1a0-7c3e-7b21-8d4f-2a9e6c1b3f50"
@@ -334,6 +334,7 @@ describe("AboutPage, conteúdo", () => {
                 .getAllByRole("listitem")
                 .map((item) => item.textContent)
         ).toEqual(["Escrevo o teste junto com o código", "Reviso o que entrego"])
+        expect(screen.getByText("Reviso o que entrego").className).toContain("body")
         expect(screen.getAllByText(/Cloud Practitioner/)[0].closest("li")).toHaveTextContent(
             "Cloud Practitioner · AWS"
         )
@@ -356,7 +357,7 @@ describe("AboutPage, carregando", () => {
         const { container } = renderAbout()
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 })
 
 describe("AboutPage, erro por fonte", () => {
@@ -409,7 +410,7 @@ describe("AboutPage, erro por fonte", () => {
         await screen.findByRole("alert")
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 })
 
 describe("AboutPage, vazio", () => {
@@ -427,7 +428,7 @@ describe("AboutPage, vazio", () => {
         expect(screen.queryByRole("heading", { name: "Certificados" })).not.toBeInTheDocument()
         expect(screen.queryByRole("heading", { name: "Como eu trabalho" })).not.toBeInTheDocument()
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 
     it("esconde só a coluna sem dado dentro da faixa", async () => {
         stubContentFetch(buildFiles({ workPrinciples: [] }))
@@ -462,7 +463,7 @@ describe("AboutPage, modal de trajetória", () => {
         expect(screen.queryByRole("dialog")).not.toBeInTheDocument()
         expect(opener).toHaveFocus()
         expect(container).not.toHaveAttribute("inert")
-    }, 15000)
+    })
 
     it("devolve o foco ao item mesmo quando o foco estava no body na abertura", async () => {
         renderAbout()
@@ -571,5 +572,5 @@ describe("AboutPage, acessibilidade", () => {
         await loaded()
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 })

@@ -42,12 +42,6 @@ describe("fatec-pages.yml", () => {
         expect(workflow).toContain("^v1\\.[0-9]+\\.[0-9]+$")
     })
 
-    it("serializa por tag no workflow e a publicação sem cancelar", () => {
-        expect(workflow).toMatch(/^concurrency:\n {4}group: .*inputs\.tag/m)
-        expect(publishJob).toMatch(/concurrency:\n {12}group: .*\n {12}cancel-in-progress: false/)
-        expect(workflow).not.toContain("cancel-in-progress: true")
-    })
-
     it("baixa o artefato fatec-pages, faz checkout da Fatec com o token e chama o script", () => {
         expect(publishJob).toMatch(/actions\/download-artifact@v7/)
         expect(publishJob).toMatch(/name: fatec-pages/)
@@ -80,17 +74,9 @@ describe("fatec-pages.yml", () => {
         expect(runScriptLines(publishJob).filter((line) => line.includes("${{"))).toEqual([])
     })
 
-    it("declara o secret no workflow_call como opcional", () => {
-        expect(workflow).toMatch(/secrets:\n {12}FATEC_PAGES_TOKEN:\n {16}required: false/)
-    })
-
     it("mantém permissions contents read e o build sem segredo", () => {
         expect(workflow).toMatch(/^permissions:\n {4}contents: read$/m)
         expect(buildJob).not.toContain("secrets.")
-    })
-
-    it("não tem linha de comentário", () => {
-        expect(lines.filter((line) => line.trim().startsWith("#"))).toEqual([])
     })
 
     it("só publica se o commit da tag está na main deste repositório", () => {

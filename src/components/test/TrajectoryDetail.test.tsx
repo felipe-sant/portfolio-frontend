@@ -126,5 +126,5 @@ describe("TrajectoryDetail", () => {
 
         expect(new Set(ids).size).toBe(ids.length)
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 })

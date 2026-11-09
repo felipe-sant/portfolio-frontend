@@ -108,7 +108,9 @@ npm run build:fatec:form # build do Pages com a flag do formulário de Contato l
 npm run publish:fatec:docs -- <artefato> <clone> # troca o docs/ do clone da Fatec pelo artefato (usado pelo job publish de fatec-pages.yml)
 npm run preview:fatec # servidor Node que imita o Pages (arquivo, <caminho>.html, pasta com 301, 404.html) em http://localhost:4173/ra2581392423047/
 npm run check:chunk # depois do build: o chunk MarkdownDocument-*.js (markdown + realce) tem de ficar em até 102400 bytes gzip, o chunk pdf-*.js do pdfjs em até 174080 e o worker pdf.worker.min-*.mjs em até 430080 (scripts/pdfChunk/), e nenhum chunk de entrada, Início ou Projetos pode conter o react-markdown (CI, job Build)
+npm run check:contact-form [dir] # reprova o build (padrão dist/) cujo HTML pré-renderizado traz o formulário de Contato (id="contact-form" ou referência ao chunk ContactForm); roda no job Build do ci.yml, no fatec-pages.yml e no deploy.yml (sobre .vercel/output/static), nunca sobre dist-form/ (o envio é simulado até a #44)
 npm run og:image  # regera public/images/og-site.png (Chromium do Playwright, versionado)
+npm run readme:images # regera docs/design/assets/readme/home-{light,dark}.png do README (Chromium do Playwright, manual; exige npm run build:fatec e npm run preview:fatec no ar; PNG versionados, até 300 KB cada, guardados por scripts/test/readme.test.ts)
 npm run cv:pdf    # regera public/cv/cv-<idioma>.pdf a partir dos cv-<idioma>.md (Chromium do Playwright, manual, fora do build; os PDFs são versionados e scripts/test/resumePdfsUpToDate.test.ts falha se divergirem do .md)
 npm run lint:fix  # mesma coisa, aplicando as correções automáticas possíveis (oxlint --fix)
 npm run changeset # cria o changeset do PR em .changeset/ (npm run changeset -- --empty gera o vazio, para mudança que não altera a versão)
@@ -151,8 +153,7 @@ Todo teste de página, layout e componente tem ao menos um `it` que chama
 devolvido pelo `render` (ou por `renderWithStore`): roda o `axe-core` no contêiner e rejeita com
 `id` e alvo de cada violação. É função comum, sem `expect.extend` (`vitest-axe` e `jest-axe` não
 entram). A regra `color-contrast` fica desligada porque o `jsdom` não calcula cor; o contraste é
-verificado no navegador real (#55). O `axe.run` é lento no `jsdom` e estoura o timeout padrão de 5s com a suíte em paralelo: o `it`
-que chama o helper recebe `15000` como terceiro argumento. Teste de rota (`App.test.tsx`, `routes.test.tsx`) não chama.
+verificado no navegador real (#55). O `axe.run` é lento no `jsdom`; o `testTimeout` global de 30s (`vite.config.ts`, com `hookTimeout` igual) o cobre, então o `it` que chama o helper não declara timeout próprio. Teste de rota (`App.test.tsx`, `routes.test.tsx`) não chama.
 Cada formato de teste tem seu jeito: página renderizada direto, árvore de rotas em
 `createMemoryRouter` (para verificar a rota `*`, por exemplo), layout com `<Outlet />` preenchido
 por rota-filha, módulo com `fetch` stubado via `vi.stubGlobal`, componente com interação
@@ -185,18 +186,20 @@ stuba com `vi.stubGlobal`/`vi.stubEnv` restaura no `afterEach` com
 A suíte ponta a ponta fica em `e2e/` (`playwright.config.ts` na raiz, `tsconfig.e2e.json`), com
 sufixo `.spec.ts`, fora do Vitest (`e2e/**` em `test.exclude`) e da cobertura. Roda só em Chromium
 contra `npm run preview:fatec` (`base` `/ra2581392423047/`), que serve o `dist/` já pronto: rode
-`npm run build:fatec` antes, porque `test:e2e` não builda. Os quatro projetos (`mobile-light`,
+`npm run build:fatec` antes, porque `test:e2e` não builda. Os quatro projetos de ambiente (`mobile-light`,
 `mobile-dark`, `desktop-light`, `desktop-dark`: 390 e 1280px, `colorScheme` claro e escuro,
-`reducedMotion`) rodam cada teste. Seletor é `getByRole` com nome em português, rota abre sem barra
+`reducedMotion`) rodam só os specs de `perEnvironmentSpecs`; os de `independentSpecs` rodam uma vez, no projeto `independent` (1280px, tema claro, `reducedMotion`). **Todo spec novo entra em exatamente uma das duas listas de `e2e/support/specClassification.ts`** (`scripts/test/specClassification.test.ts` falha com spec fora delas): `independentSpecs` só para o que não depende de viewport, tema, movimento nem axe (conteúdo, arquivos de máquina, HTML sem JavaScript); spec com `expectNoAxeViolations`, `emulateMedia`, `setViewportSize`, `viewportSize`, `testInfo`, `test.skip(` ou `test.fail(` por tamanho é obrigatoriamente por ambiente. O CI roda com `fullyParallel` e `workers` fixo no `playwright.config.ts` e `retries: 1`; medição, ranking dos testes lentos (`npm run test:e2e:timings` e `npm run e2e:rank`) e o desenho do sharding em `docs/setup/e2e-performance.md`. Seletor é `getByRole` com nome em português, rota abre sem barra
 inicial (relativa ao `baseURL`). Toda tela nova acrescenta o caminho em `e2e/support/routesUnderTest.ts`
 (o axe, com `color-contrast` ligada, roda em todas) e, se tiver teclado próprio, um roteiro em
-`e2e/<tema>.spec.ts`. Violação do axe se corrige na marcação ou no CSS, nunca desligando regra. Os projetos rodam com `reducedMotion: "reduce"`: roteiro que precisa de movimento pleno usa `test.use({ reducedMotion: "no-preference" })`. Elemento com `useReveal` leva `suppressHydrationWarning` (o `data-reveal` do HTML do servidor difere do primeiro render no navegador).
+`e2e/<tema>.spec.ts`. Violação do axe se corrige na marcação ou no CSS, nunca desligando regra. Os projetos rodam com `reducedMotion: "reduce"`: roteiro que precisa de movimento pleno usa `test.use({ reducedMotion: "no-preference" })`. Elemento com `useReveal` leva `suppressHydrationWarning` (o `data-reveal` do HTML do servidor difere do primeiro render no navegador). **Teste E2E sem instabilidade:** espera por estado, nunca por tempo (auto-wait, `expect.poll` ou `toPass` com `timeout` e `intervals` delimitados; `waitForTimeout`, mais `retries` e regra do axe desligada são proibidos); depois de navegar espere o foco do `h1` antes de interagir, e o `role="status"` do esqueleto sair antes de medir posição; repita o spec alterado com `--repeat-each=30 --retries=0` preso a poucos núcleos (`taskset -c 0,1`) antes do PR (`docs/setup/e2e-performance.md`, seção "Testes instáveis").
 
 **Toda tela nova entrega os E2E dos próprios fluxos**: clique e navegação, estados de carregamento e erro (forçados por `page.route`) e HTML sem JavaScript (`javaScriptEnabled: false`), com o ID do requisito no título (`"RF-LAY-18: o botão alterna o tema"`) e a prova de que o teste falha quando o comportamento quebra (mutação desfeita). A base são `e2e/theme`, `motion`, `language`, `navigation`, `footer`, `home-flows`, `not-found` e `no-javascript`; o apoio fica em `e2e/support/` (`readContent`, `readProfile`, `readFeaturedProjects`, `readAppVersion`, `readStackOffset`, `openPreferences`, `uiTexts`). O E2E não importa `src/`: o texto de cada idioma de que ele precisa vive em `uiTexts`.
 
-O CI (`.github/workflows/`) roda `npm run build`, `npm run lint`, a suíte de testes e o job `e2e`
-(`E2E`: instala o Chromium, `npm run build:fatec`, `npm run test:e2e`, relatório como artefato em
-falha), os mesmos comandos da verificação local, em PR para a `staging` e em push na `main`, na `staging` e em `hotfix/**` (o PR para a `main` reaproveita os checks do push no mesmo SHA, ver `docs/setup/environments.md`). O `deploy.yml` publica na
+O CI (`.github/workflows/`) roda `npm run build`, `npm run lint`, a suíte de testes e o E2E em três jobs
+(`E2E scope` decide o escopo por diff; `E2E shard i/4`, uma por fatia `--shard`, cada uma com o
+próprio Chromium e os dois builds; `E2E`, o agregador e único check exigido pelo ruleset, que falha
+se o escopo ou alguma fatia falhar, junta os blobs (HTML e JSON), avisa no `GITHUB_STEP_SUMMARY` dos testes `flaky` por `npm run e2e:flaky` (só avisa, não falha) e sobe `playwright-report` em falha;
+`npm run e2e:check-shards` prova que a união das fatias é a lista completa), os mesmos comandos da verificação local, em PR para a `staging` e em push na `main`, na `staging` e em `hotfix/**` (o PR para a `main` reaproveita os checks do push no mesmo SHA, ver `docs/setup/environments.md`). O `deploy.yml` publica na
 Vercel (`staging` = beta, `main` = produção) só depois do CI de push verde; detalhe em
 `docs/setup/environments.md`.
 
@@ -377,7 +380,7 @@ para editores compatíveis, coerente com o `.prettierrc`.
   `focusOnError` (hook `useFocusOnError` de `src/hooks/`, só no primeiro campo inválido do envio).
 - **Projeto** (`/projects/:id`, `/projects/:id/docs/:name`) — `Project.page.tsx` com uma rota-pai `projects/:id` e filhas `index` e `docs/:name` (`element: null`, para a hidratação não avisar folha sem elemento); o `README.md` abre em `:id` e os outros documentos em `/docs/<name>` (nome em outra caixa vira o exato por `replace`; `/docs/README.md`, documento fora da lista e id inválido caem na não encontrada). Dados por `getProject` e `getProjectDocumentContent` (hooks `useProject`, `useProjectDocument`, `useBackToProjects` em `src/pages/hooks/`); o card da lista de Projetos leva `state: { fromProjects: true }` e a `nav` de documentos soma `documentSteps`, ambos lidos por `readProjectsOrigin`, e "Voltar para Projetos" volta `-(documentSteps + 1)` no histórico. `useRouteFocus` não foca o `h1` na troca de documento do mesmo projeto (`getProjectContext`), mas foca-o quando o conteúdo chega depois do skeleton se o visitante não moveu o foco. Componentes: `ProjectFacts`, `ProjectStack`, `ProjectLinks`, `ExternalButtonLink`, `ProjectGallery`, `Lightbox`, `FallbackImage`, `RelatedProjects`, `ProjectDocumentsNav`, `ProjectDocumentSection`, `TextDocument`, `ProjectError`, `ProjectSkeleton` e `MarkdownDocument` (com as peças `Markdown*`). **Só `MarkdownDocument`, `codeLanguages.ts` e `rehypeHighlightCode.ts` importam `react-markdown`, `remark-gfm`, `lowlight`, `rehype-slug` e `highlight.js`** (`markdownImports.test.ts` guarda), carregados por `lazy(loadMarkdownRenderer)` só na seção de documento `markdown`; o realce é o plugin local `rehypeHighlightCode` (o `rehype-highlight` importa as 37 linguagens `common` e estoura o orçamento), e o orçamento de 100 KB gzip é conferido por `npm run check:chunk`. `rehypeNumberCodeBlocks` (`src/utils/`, usado só no `MarkdownDocument`) numera os blocos de código "Bash 1", "Bash 2" só quando o nome do bloco repete. `useScrollToHash` (`src/hooks/`, usado só por `ProjectDocumentSection`) rola até o título da âncora assim que ele existe no container, observando-o com `MutationObserver`, e a `nav` fixa não o cobre por `scroll-margin-top`; não age na volta do histórico. Documento `text` (`LICENSE` de cada projeto, neutro em `public/content/shared/projects/<id>/docs/`) vai num `<pre>` sem o chunk. Pré-renderização: o registro dá `documentId` do README ao escopo `project`, e `mountClient` (assíncrono) espera `loadMarkdownRenderer` antes de hidratar quando `shouldPreloadMarkdown` diz que o documento aberto é `markdown`.
 - **Informações** (`/about`) — `About.page.tsx` chama só `useAbout` (`src/pages/hooks/`), que lê `getProfile` e `getTimeline` (`{ lang }`, as mesmas consultas da entrada `about` do registro de pré-renderização), isola erro por fonte (`retry` refaz só aquela fonte e foca o título ou o alerta), ordena a stack por `sortStackGroups`, descarta `kind` fora de `TIMELINE_KINDS`, calcula o que some por vazio (`show`) e guarda o item aberto, que fecha quando o caminho muda (sem escrever na URL). `Reveal` envolve Sobre mim, Stack, Complementos e Trajetória, nunca a Apresentação. O erro anuncia `role="alert"` uma vez por fonte: `LoadError` aceita `announce` (padrão `true`) e só a primeira parte afetada anuncia. "Baixar CV" é um `ResumeLink` (ver Contato). Cada item da trajetória é um `TrajectoryItem` (`button` com `aria-haspopup="dialog"`) cujo `<li>` leva o `TrajectoryDetail` num contêiner `hidden` (HTML pré-renderizado e sem JavaScript, D37); o `TrajectoryModal` renderiza o mesmo `TrajectoryDetail` pelo portal do `Modal`, e os dois nunca dividem `id`. `Modal` aceita `subtitle` (linha de metadados no cabeçalho) e `wide` (34rem); `AboutNowCard` é o cartão "Agora" ao lado de Sobre mim (função, modo de trabalho e links de GitHub e LinkedIn do perfil) e a faixa de Complementos usa `--bg-raised`. O foco volta ao item por `registerTrigger` (ref do botão) depois do fechamento, porque o Safari não foca o botão no clique. O período vem de `formatPeriod` (compõe `formatSinceDate`), o destaque e a linha de detalhes de `getTrajectoryLines`, e o JSON-LD `ProfilePage` + `Person` de `buildAboutJsonLd`.
-- **Contato** (`/contact`) — `Contact.page.tsx` chama só `useContact` (`getProfile`, `{ lang }`; erro com `LoadError` no lugar dos canais, `retry` refaz a consulta e foca o `h1` ou o alerta). O formulário fica atrás de `VITE_CONTACT_FORM_ENABLED`, lida só em `src/utils/contactFormEnabled.ts` (só `"true"` liga; desligada por padrão em todo ambiente publicado até a #44): desligada, a tela é uma coluna só com `ContactChannels`; ligada, `ContactForm` entra por `lazy` num `<Suspense fallback={null}>` local (única exceção à regra de página sem `<Suspense>` próprio, para o `lazy` não esconder a página inteira), em duas colunas a partir de 900px por media query. O chunk do formulário é emitido em `dist/` mas não é referenciado nem baixado com a flag desligada, e o `<form id="contact-form">` é o marcador para conferir isso. Testes de página e de formulário trocam a flag com `vi.mock("@/utils/contactFormEnabled", () => ({ get default() { return flag.enabled } }))`, nunca com `vi.resetModules()` (só o teste do próprio módulo usa). O envio é `contactApi.sendContactMessage` (`build.mutation` com `queryFn` sobre `simulateContactSend`, ~1,4 s, sem requisição; a #44 troca por `query`); o estado do formulário vive em `useContactForm` (`validateContactForm` devolve chaves de erro; foco imperativo por `focusRequest`) e os campos usam `TextField` com `inputRef`, `labelAddon` e `announceError={false}` (só o formulário de Contato: resumo e foco é que anunciam). `Button` aceita `ref`. **CV (D52):** os quatro pontos (Início, Informações, Contato e rodapé de `/contact`) usam `ResumeLink` (`<a href>` real para `getResumePath(language)` sob `BASE_URL`, sem `download` nem `target`; clique simples impede a navegação e entrega o link a `onOpen`, com `variant` ele ganha a aparência do `Button`) e `useResume` (`src/hooks/`: `href`, `isOpen`, `open(trigger)`, `close`, fecha na troca de rota e devolve o foco ao link) e renderizam o `ResumeModal` (`Modal` com `large`; `useResumeViewerMode` escolhe `native` (`iframe`) ou `canvas` (`ResumePdfPages` + `usePdfPages`, páginas em `<canvas role="img">` dentro de uma região rolável com `tabindex="0"`): canvas quando `navigator.pdfViewerEnabled === false` ou `(pointer: coarse)`; o desktop com visualizador segue no `iframe` e nunca baixa o `pdfjs`; falha em qualquer etapa mostra `resume.modal.noViewer`; sempre os links "Baixar PDF" e "Ver versão em texto"; o `iframe` leva `oxlint-disable` de `iframe-missing-sandbox` porque o sandbox bloqueia o visualizador). O PDF sai de `npm run cv:pdf` (`scripts/cv/`: `readResumeMarkdown`, `buildResumeHtml` com `react-markdown` + `resume.css`, `generateResumePdfs` com `page.pdf({ tagged: true })`); o `pdfjs-dist` (`dependencies`, build `legacy`) é importado só por `src/utils/loadPdfRenderer.ts` (`import()` dinâmico do módulo e do worker `?url`, self-hospedado em `dist/assets/`; `src/utils/test/pdfjsImports.test.ts` guarda; a v6 não tem `isEvalSupported`/`enableScripting`, então `getDocument` recebe só `{ url }`), carregado só ao abrir o modal no modo canvas, e também lê o PDF nos testes de `scripts/test/`, que rodam em `// @vitest-environment node`. Teste de componente mocka `@/utils/loadPdfRenderer` com `createFakePdf` (`src/testUtils/`). `RadioChipGroup` (genérico, `fieldset` de `radio`) é o assunto do formulário e a ordenação de `ProjectsFiltersModal`; o CSS de chip vive em `radioChipGroup.module.css`. `npm run build:fatec:form` gera `dist-form/` com a flag ligada (segundo artefato do Pages, preservando o `dist/` do `build:fatec`), servido na porta 4174 por `PREVIEW_DIR=dist-form PREVIEW_PORT=4174 npm run preview:fatec` para os projetos Playwright `contact-form-*` (só `e2e/contact-form.spec.ts`; os demais projetos o ignoram).
+- **Contato** (`/contact`) — `Contact.page.tsx` chama só `useContact` (`getProfile`, `{ lang }`; erro com `LoadError` no lugar dos canais, `retry` refaz a consulta e foca o `h1` ou o alerta). O formulário fica atrás de `VITE_CONTACT_FORM_ENABLED`, lida só em `src/utils/contactFormEnabled.ts` (só `"true"` liga; desligada por padrão em todo ambiente publicado até a #44): desligada, a tela é uma coluna só com `ContactChannels`; ligada, `ContactForm` entra por `lazy` num `<Suspense fallback={null}>` local (única exceção à regra de página sem `<Suspense>` próprio, para o `lazy` não esconder a página inteira), em duas colunas a partir de 900px por media query. O chunk do formulário é emitido em `dist/` e referenciado pelo JS da página (o `lazy` existe nos dois estados), mas com a flag desligada nunca é baixado nem aparece no HTML pré-renderizado; o `<form id="contact-form">` e a referência ao CSS `ContactForm-*.css` no HTML são o marcador para conferir isso (`npm run check:contact-form`). Testes de página e de formulário trocam a flag com `vi.mock("@/utils/contactFormEnabled", () => ({ get default() { return flag.enabled } }))`, nunca com `vi.resetModules()` (só o teste do próprio módulo usa). O envio é `contactApi.sendContactMessage` (`build.mutation` com `queryFn` sobre `simulateContactSend`, ~1,4 s, sem requisição; a #44 troca por `query`); o estado do formulário vive em `useContactForm` (`validateContactForm` devolve chaves de erro; foco imperativo por `focusRequest`) e os campos usam `TextField` com `inputRef`, `labelAddon` e `announceError={false}` (só o formulário de Contato: resumo e foco é que anunciam). `Button` aceita `ref`. **CV (D52):** os quatro pontos (Início, Informações, Contato e rodapé de `/contact`) usam `ResumeLink` (`<a href>` real para `getResumePath(language)` sob `BASE_URL`, sem `download` nem `target`; clique simples impede a navegação e entrega o link a `onOpen`, com `variant` ele ganha a aparência do `Button`) e `useResume` (`src/hooks/`: `href`, `isOpen`, `open(trigger)`, `close`, fecha na troca de rota e devolve o foco ao link) e renderizam o `ResumeModal` (`Modal` com `large`; `useResumeViewerMode` escolhe `native` (`iframe`) ou `canvas` (`ResumePdfPages` + `usePdfPages`, páginas em `<canvas role="img">` dentro de uma região rolável com `tabindex="0"`): canvas quando `navigator.pdfViewerEnabled === false` ou `(pointer: coarse)`; o desktop com visualizador segue no `iframe` e nunca baixa o `pdfjs`; falha em qualquer etapa mostra `resume.modal.noViewer`; sempre os links "Baixar PDF" e "Ver versão em texto"; o `iframe` leva `oxlint-disable` de `iframe-missing-sandbox` porque o sandbox bloqueia o visualizador). O PDF sai de `npm run cv:pdf` (`scripts/cv/`: `readResumeMarkdown`, `buildResumeHtml` com `react-markdown` + `resume.css`, `generateResumePdfs` com `page.pdf({ tagged: true })`); o `pdfjs-dist` (`dependencies`, build `legacy`) é importado só por `src/utils/loadPdfRenderer.ts` (`import()` dinâmico do módulo e do worker `?url`, self-hospedado em `dist/assets/`; `src/utils/test/pdfjsImports.test.ts` guarda; a v6 não tem `isEvalSupported`/`enableScripting`, então `getDocument` recebe só `{ url }`), carregado só ao abrir o modal no modo canvas, e também lê o PDF nos testes de `scripts/test/`, que rodam em `// @vitest-environment node`. Teste de componente mocka `@/utils/loadPdfRenderer` com `createFakePdf` (`src/testUtils/`). `RadioChipGroup` (genérico, `fieldset` de `radio`) é o assunto do formulário e a ordenação de `ProjectsFiltersModal`; o CSS de chip vive em `radioChipGroup.module.css`. `npm run build:fatec:form` gera `dist-form/` com a flag ligada (segundo artefato do Pages, preservando o `dist/` do `build:fatec`), servido na porta 4174 por `PREVIEW_DIR=dist-form PREVIEW_PORT=4174 npm run preview:fatec` para os projetos Playwright `contact-form-*` (só `e2e/contact-form.spec.ts`; os demais projetos o ignoram).
 - **SEO por tela** — toda tela pública nova declara `<PageMeta title description path />`
   (`src/components/`: canônica autorreferente, quatro `hreflang` com `x-default` em `en`, Open
   Graph e `twitter:card`; `params` e `image` opcionais) e `<JsonLd data={...} />` com o objeto de
@@ -673,6 +676,10 @@ maior.
 
 ## Padrão de branches, commits e PRs
 
+A fonte, para humanos, é o [`CONTRIBUTING.md`](../CONTRIBUTING.md); esta seção é o resumo que o agente
+aplica sozinho e não pode contradizê-lo (`scripts/test/contributingTypesTable.test.ts` mantém a tabela
+de tipos igual nos dois).
+
 ### Tipos de alteração
 
 O `<Tipo>` de branch, commit e título de PR vem sempre desta tabela:
@@ -693,72 +700,43 @@ O `<Tipo>` de branch, commit e título de PR vem sempre desta tabela:
 
 ### Issues
 
-Toda issue entra no projeto [Portfolio](https://github.com/users/felipe-sant/projects/16), que
-reúne os repositórios do portfólio, com Status `Backlog` (o PO revisa e move), `Marco` do
-`docs/product/roadmap.md` (ou `Pessoal`, para a trilha fora da v1) e um único `Tipo` (`FEAT`, `DOC`
-ou `BUG`). O tipo vive só nesse campo: as labels `enhancement`, `bug` e `documentation` não são
-usadas. Labels indicam só a área (`frontend`, `backend`, `infra`, uma ou mais). Toda issue que
-depende de outra registra a relação como "blocked by" do GitHub
-(`POST /repos/{owner}/{repo}/issues/{n}/dependencies/blocked_by`), além da linha "Depende de" do
-corpo.
+Toda issue entra no projeto [Portfolio](https://github.com/users/felipe-sant/projects/16) com
+Status `Backlog` (o PO revisa e move), `Marco` do `docs/product/roadmap.md` (ou `Pessoal`) e um único
+`Tipo` (`FEAT`, `DOC` ou `BUG`). O tipo vive só nesse campo: labels de tipo não são usadas; as labels
+indicam só a área (`frontend`, `backend`, `infra`, uma ou mais). Issue que depende de outra registra
+"blocked by" do GitHub (`POST /repos/{owner}/{repo}/issues/{n}/dependencies/blocked_by`), além da
+linha "Depende de" do corpo.
 
 ### Branches
 
-```
-<tipo>/<número-da-issue>-<descrição-curta>
-```
-
-Tipo em minúsculas (`feat/<número>-agentes-e-skills`). Sem issue aberta, o número é omitido
-(`chore/update-gitignore`).
-
-Duas branches de ambiente, nenhuma recebe push direto:
-
-- **`staging`** — ambiente de testes e base do desenvolvimento. Toda branch de trabalho nasce de
-  `origin/staging` atualizada e volta para ela por PR.
-- **`main`** — produção. Só recebe PR vindo de `staging` (promoção do que foi validado) ou de
-  `hotfix/*`.
-
-Hotfix é a exceção: nasce de `origin/main`, volta por PR para a `main` e, depois do merge, a `main`
-é levada de volta para a `staging` por PR, para as duas não divergirem.
+`<tipo>/<número-da-issue>-<descrição-curta>`, tipo em minúsculas (`feat/<número>-agentes-e-skills`);
+sem issue aberta, o número é omitido (`chore/update-gitignore`). Duas branches de ambiente, nenhuma
+recebe push direto: `staging` (base do desenvolvimento; toda branch nasce de `origin/staging`
+atualizada e volta por PR) e `main` (produção; só recebe PR de `staging` ou de `hotfix/*`). Hotfix
+nasce de `origin/main`, volta por PR para a `main` e depois a `main` volta para a `staging` por PR.
 
 ### Commits
 
-```
-<Tipo> <ícone> [#<número-da-issue>] <descrição>
-```
-
-Exemplo: `Fix :bug: [#<número>] Troca <a href> por <Link> na página NotFound`. Sem issue
-relacionada, o `[#...]` é omitido (`Chore :see_no_evil: Atualiza .gitignore`).
-
-Commits são atômicos: uma mudança concluída por commit, nunca várias tarefas acumuladas.
+`<Tipo> <ícone> [#<número-da-issue>] <descrição>`, por exemplo
+`Fix :bug: [#<número>] Troca <a href> por <Link> na página NotFound`; sem issue, o `[#...]` é omitido.
+Commits são atômicos: uma mudança concluída por commit.
 
 ### Pull Requests
 
-- Toda alteração passa por PR para a `staging`, sem push direto (exceção: `hotfix/*`, ver
-  "Branches"). A promoção para produção é um PR de `staging` para `main`, com título no padrão de
-  commit (`Chore :see_no_evil: Promove staging para produção`) e a lista das issues incluídas.
-- O autor se atribui já na criação (`gh pr create --assignee @me`) e aplica as labels de área
-  da issue (`frontend`, `backend`, `infra`).
-- A descrição referencia a issue relacionada (`Closes #<número>`). A branch padrão do repositório
-  é a `staging`, então a issue fecha no merge do PR para a `staging`.
-- O título segue o padrão do commit principal (`<Tipo> <ícone> [#<número>] <descrição>`).
-- **Todo PR para a `staging` traz um changeset** (`.changeset/*.md`, `npm run changeset`), commitado
-  no próprio PR; o vazio (`npm run changeset -- --empty`) vale só para o que não altera a versão
-  (documentação, CI, testes). O tipo (`major`, `minor`, `patch`) segue a regra de incremento de
-  `docs/product/roadmap.md`. A versão parte da `1.0.0` e só sobe quando o PR de versão é mergeado:
-  os changesets acumulam e o maior tipo do lote decide o salto. Três workflows tratam do versionamento: `changeset-check.yml` (falha
-  PR sem changeset; ignora `changeset-release/staging` e PR com head `main`), `version.yml` (push
-  na `staging`: abre ou atualiza o PR de versão, sem CI) e `release.yml` (push na `main`: tag e
-  Release só com versão `>= 1.0.0` e tag inexistente; chama `fatec-pages.yml` na `1.x`). Detalhe em
-  `docs/setup/environments.md`.
-- A descrição segue a estrutura de `.github/PULL_REQUEST_TEMPLATE.md`, não um corpo livre, com as
-  seções Descrição, Alterações, Decisões técnicas, Como testar, Evidências e Impactos e pontos de
-  atenção.
-
-Quando `npm run build`, `npm run lint` e `npm test -- --run` já rodaram localmente (verificação
-que o agente `executor` faz a cada tarefa, ver `.claude/agents/executor.md`) antes do `git push`,
-o push é feito com `git push --no-verify` — a validação manual já cobre o que um hook rodaria de
-novo, então repetir via hook no momento do push seria redundante.
+- Toda alteração passa por PR para a `staging` (exceção: `hotfix/*`, para a `main`). A promoção é um
+  PR de `staging` para `main`, gerado e atualizado pelo `promote.yml` (título
+  `Chore :see_no_evil: Promove staging para produção` e lista das issues incluídas, sem `Closes`); o
+  merge é humano, sempre por commit de merge (nunca squash), e fica bloqueado (PR em draft) enquanto
+  houver changeset pendente.
+- O autor se atribui na criação (`gh pr create --assignee @me`) e aplica as labels de área da issue.
+- A descrição referencia a issue (`Closes #<número>`); a branch padrão é a `staging`, então a issue
+  fecha no merge do PR para a `staging`. O título segue o padrão do commit principal.
+- **Todo PR para a `staging` traz um changeset** (`.changeset/*.md`, `npm run changeset`), commitado no
+  próprio PR; o vazio (`npm run changeset -- --empty`) vale só para o que não altera a versão
+  (documentação, CI, testes). O tipo segue a regra de incremento de `docs/product/roadmap.md`;
+  `hotfix/*` leva `patch` e roda `npm run changeset:version`. O `changeset-check.yml` falha PR sem
+  changeset; o fluxo de versão e release está em `docs/setup/environments.md`.
+- A descrição segue a estrutura de `.github/PULL_REQUEST_TEMPLATE.md`, não um corpo livre.
 
 ## Tooling de IA (agents, skills e spec-driven)
 

@@ -6,10 +6,12 @@ import filterProjects from "./support/filterProjects"
 import getProjectsView from "./support/getProjectsView"
 import holdContent from "./support/holdContent"
 import openProjectsFromHeader from "./support/openProjectsFromHeader"
+import readContentWidth from "./support/readContentWidth"
 import readProfile from "./support/readProfile"
 import readProjects from "./support/readProjects"
 import serveProjectsFixture from "./support/serveProjectsFixture"
 import sortProjects from "./support/sortProjects"
+import waitForHydration from "./support/waitForHydration"
 
 const LANGUAGES = ["pt-BR", "en", "es"] as const
 const DESKTOP_MIN_WIDTH = 640
@@ -28,6 +30,7 @@ function isDesktop(page: Page) {
 async function openProjects(page: Page, language: Language, query = "") {
     await page.goto(`${language}/projects${query}`)
     await page.getByRole("heading", { level: 1 }).waitFor()
+    await waitForHydration(page)
 }
 
 function loadProjects(language: Language) {
@@ -42,6 +45,27 @@ async function getBox(target: Locator) {
         throw new Error("o alvo não tem caixa na tela")
     }
     return box
+}
+
+const SETTLED_READS = 3
+
+async function getSettledBox(target: Locator) {
+    let previous = await getBox(target)
+    let equalReads = 0
+    await expect
+        .poll(async () => {
+            const current = await getBox(target)
+            const isSame =
+                current.x === previous.x &&
+                current.y === previous.y &&
+                current.width === previous.width &&
+                current.height === previous.height
+            equalReads = isSame ? equalReads + 1 : 0
+            previous = current
+            return equalReads >= SETTLED_READS
+        })
+        .toBe(true)
+    return previous
 }
 
 async function openFilters(page: Page, language: Language) {
@@ -104,6 +128,21 @@ const closePaths = [
         close: (_view: ReturnType<typeof getProjectsView>, page: Page) => page.mouse.click(8, 400)
     }
 ]
+
+test("RF-PROJECTS-03, RF-PROJECTS-04: a busca digitada logo depois de abrir a tela filtra mesmo com a hidratação atrasada", async ({
+    page
+}) => {
+    await page.route(/assets\/.*\.js$/, async (route) => {
+        await new Promise((resolve) => setTimeout(resolve, 1500))
+        await route.continue()
+    })
+    await openProjects(page, "pt-BR")
+    const view = getProjectsView(page, "pt-BR")
+
+    await view.search.fill("blockchain")
+
+    await expect(view.status).toHaveText(view.texts.countNone)
+})
 
 test.describe("botão e modal de filtros", () => {
     for (const language of LANGUAGES) {
@@ -473,15 +512,16 @@ test.describe("geometria e movimento do modal", () => {
         if (!viewport) {
             throw new Error("sem viewport")
         }
-        const box = await getBox(view.dialog)
+        const contentWidth = await readContentWidth(page)
+        const box = await getSettledBox(view.dialog)
 
         if (isDesktop(page)) {
             expect(box.width).toBeLessThanOrEqual(MODAL_MAX_WIDTH + 1)
-            expect(Math.abs(box.x + box.width / 2 - viewport.width / 2)).toBeLessThanOrEqual(2)
+            expect(Math.abs(box.x + box.width / 2 - contentWidth / 2)).toBeLessThanOrEqual(2)
         } else {
             expect(Math.abs(box.x)).toBeLessThanOrEqual(1)
             expect(Math.abs(box.y)).toBeLessThanOrEqual(1)
-            expect(Math.abs(box.width - viewport.width)).toBeLessThanOrEqual(1)
+            expect(Math.abs(box.width - contentWidth)).toBeLessThanOrEqual(1)
             expect(Math.abs(box.height - viewport.height)).toBeLessThanOrEqual(1)
         }
 

@@ -217,5 +217,5 @@ describe("ProjectCard", () => {
         const { container } = renderCard({ featured: true })
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 })

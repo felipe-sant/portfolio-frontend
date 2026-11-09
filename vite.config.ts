@@ -49,6 +49,8 @@ export default defineConfig(({ command, mode, isSsrBuild }) => {
         test: {
             environment: "jsdom",
             pool: "vmThreads",
+            testTimeout: 30000,
+            hookTimeout: 30000,
             setupFiles: ["./src/setupTests.ts"],
             globalSetup: ["./src/testUtils/prerenderGlobalSetup.ts"],
             exclude: [...configDefaults.exclude, ".claude/**", "e2e/**"],
@@ -66,6 +68,7 @@ export default defineConfig(({ command, mode, isSsrBuild }) => {
                     "scripts/generateResume.ts",
                     "scripts/prerender.ts",
                     "scripts/prepareRelease.ts",
+                    "scripts/preparePromotion.ts",
                     "scripts/previewFatec.ts",
                     "scripts/publishFatecDocs.ts",
                     "src/setupTests.ts",

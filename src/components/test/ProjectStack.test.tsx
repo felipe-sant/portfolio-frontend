@@ -66,5 +66,5 @@ describe("ProjectStack", () => {
         const { container } = render(<ProjectStack stack={STACK} />)
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 })

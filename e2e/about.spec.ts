@@ -4,6 +4,7 @@ import type { Locator, Page } from "@playwright/test"
 import chooseLanguageInHeader from "./support/chooseLanguageInHeader"
 import holdContent from "./support/holdContent"
 import readAbout from "./support/readAbout"
+import readContentWidth from "./support/readContentWidth"
 import UI_TEXTS from "./support/uiTexts"
 import waitForHydration from "./support/waitForHydration"
 
@@ -50,6 +51,13 @@ async function openAboutFromHeader(page: Page, language: Language) {
         .getByRole("link", { name: texts.navigation.about, exact: true })
         .click()
     await expect(page).toHaveURL(new RegExp(`/${language}/about$`))
+}
+
+function styleOf(locator: Locator) {
+    return locator.evaluate((element) => {
+        const style = getComputedStyle(element)
+        return { size: parseFloat(style.fontSize), family: style.fontFamily }
+    })
 }
 
 async function getBox(locator: Locator): Promise<Box> {
@@ -184,7 +192,7 @@ test.describe("layout", () => {
         const summary = await getBox(
             page.getByRole("main").getByText(about.summary, { exact: true })
         )
-        const viewportWidth = page.viewportSize()?.width ?? 0
+        const viewportWidth = await readContentWidth(page)
 
         const left = Math.min(photo.x, summary.x)
         const right = Math.max(photo.x + photo.width, summary.x + summary.width)
@@ -294,6 +302,34 @@ test.describe("layout", () => {
             expect(result.bandLuminance).toBeGreaterThan(0.6)
             expect(result.bandLuminance).toBeLessThan(0.99)
         }
+    })
+})
+
+test.describe("tamanho do texto", () => {
+    test("RF-ABOUT-10: chips a partir de 12px, período e detalhes a partir de 14px, Como eu trabalho na fonte do corpo e sem rolagem horizontal", async ({
+        page
+    }) => {
+        await openAbout(page, "pt-BR")
+        const texts = UI_TEXTS["pt-BR"].aboutPage
+        const band = page.getByRole("region", { name: `${texts.certificates} ${texts.workStyle}` })
+        await band.scrollIntoViewIfNeeded()
+
+        const principle = await styleOf(band.locator("ul li span").last())
+        const certificate = await styleOf(band.locator("ul li span").first())
+        const trajectoryButton = page.locator("button[aria-haspopup='dialog']").first()
+        const period = await styleOf(trajectoryButton.locator("time").first())
+        const details = await styleOf(trajectoryButton.locator("span[class*='details']").first())
+        const scroll = await page.evaluate(() => ({
+            scrollWidth: document.documentElement.scrollWidth,
+            clientWidth: document.documentElement.clientWidth
+        }))
+
+        expect(principle.size).toBeGreaterThanOrEqual(12)
+        expect(principle.family).toContain("Plex Sans")
+        expect(certificate.family).toContain("Plex Mono")
+        expect(period.size).toBeGreaterThanOrEqual(14)
+        expect(details.size).toBeGreaterThanOrEqual(14)
+        expect(scroll.scrollWidth).toBeLessThanOrEqual(scroll.clientWidth)
     })
 })
 
@@ -499,21 +535,18 @@ test.describe("modal da trajetória", () => {
 
             const rect = await getBox(box)
             if (width < DESKTOP_MIN_WIDTH) {
-                expect(rect.width).toBe(width)
+                expect(rect.width).toBe(await readContentWidth(page))
                 expect(rect.height).toBe(800)
             } else {
                 expect(rect.width).toBeLessThanOrEqual(MODAL_MAX_WIDTH)
                 expect(rect.width).toBeLessThan(width)
             }
-            if (width !== DESKTOP_MIN_WIDTH) {
-                expect(
-                    await page.evaluate(
-                        () =>
-                            document.documentElement.scrollWidth <=
-                            document.documentElement.clientWidth
-                    )
-                ).toBe(true)
-            }
+            expect(
+                await page.evaluate(
+                    () =>
+                        document.documentElement.scrollWidth <= document.documentElement.clientWidth
+                )
+            ).toBe(true)
 
             await page.keyboard.press("Escape")
             await expect(box).toHaveCount(0)

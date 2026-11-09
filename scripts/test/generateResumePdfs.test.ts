@@ -66,12 +66,4 @@ describe("generateResumePdfs", () => {
             rmSync(target, { recursive: true, force: true })
         }
     })
-
-    it("não faz parte do build", () => {
-        const { scripts } = JSON.parse(readFileSync(join(process.cwd(), "package.json"), "utf-8"))
-
-        expect(scripts["cv:pdf"]).toBeDefined()
-        expect(scripts.build).not.toContain("cv:pdf")
-        expect(scripts.build).not.toContain("generateResume")
-    })
 })

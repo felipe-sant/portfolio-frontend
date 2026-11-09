@@ -83,5 +83,5 @@ describe("ProjectFacts", () => {
         const { container } = renderFacts()
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 })

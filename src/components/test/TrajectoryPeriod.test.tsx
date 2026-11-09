@@ -39,5 +39,5 @@ describe("TrajectoryPeriod", () => {
         const { container } = render(<TrajectoryPeriod start="2026-06" />)
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 })

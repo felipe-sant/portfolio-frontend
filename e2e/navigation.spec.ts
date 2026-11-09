@@ -3,8 +3,12 @@ import type { Page } from "@playwright/test"
 import FATEC_BASE_PATH from "@scripts/fatecBasePath"
 import UI_TEXTS from "./support/uiTexts"
 
-const DESKTOP_MIN_WIDTH = 640
-const BELOW_DESKTOP_WIDTH = 639
+const DESKTOP_MIN_WIDTH = 720
+const BELOW_DESKTOP_WIDTH = 719
+const SWEEP_WIDTHS = [
+    320, 360, 390, 480, 600, 639, 640, 650, 660, 680, 695, 699, 700, 711, 712, 719, 720, 768, 900,
+    1024, 1280
+]
 const MOBILE_WIDTH = 390
 const VIEWPORT_HEIGHT = 844
 const LANGUAGES = ["pt-BR", "en", "es"] as const
@@ -25,6 +29,12 @@ function isDesktop(page: Page) {
 async function openHome(page: Page, language: Language) {
     await page.goto(language)
     await page.getByRole("heading", { level: 1 }).waitFor()
+}
+
+async function hasHorizontalScroll(page: Page) {
+    return page.evaluate(
+        () => document.documentElement.scrollWidth > document.documentElement.clientWidth
+    )
 }
 
 async function openMenuIfCollapsed(page: Page, language: Language) {
@@ -150,7 +160,7 @@ test.describe("cabeçalho e navegação", () => {
         )
     })
 
-    test("RF-LAY-05: abaixo de 640px só o botão Menu aparece e a partir de 640px só a navegação completa", async ({
+    test("RF-LAY-05: abaixo de 720px só o botão Menu aparece e a partir de 720px só a navegação completa", async ({
         page
     }) => {
         await page.setViewportSize({ width: BELOW_DESKTOP_WIDTH, height: VIEWPORT_HEIGHT })
@@ -168,9 +178,50 @@ test.describe("cabeçalho e navegação", () => {
     })
 })
 
+test.describe("largura do cabeçalho", () => {
+    for (const path of ["pt-BR", "pt-BR/about"]) {
+        test(`NF-RE-03: sem rolagem horizontal de 640px a 720px em /${path}`, async ({ page }) => {
+            for (const width of [640, 650, 695, 700, 712, 719, 720]) {
+                await page.setViewportSize({ width, height: VIEWPORT_HEIGHT })
+                await page.goto(path)
+                await expect(page.getByRole("heading", { level: 1 })).toBeVisible()
+
+                expect(await hasHorizontalScroll(page), `largura ${width}px`).toBe(false)
+            }
+        })
+    }
+
+    for (const language of LANGUAGES) {
+        test(`NF-RE-03, A11Y-G11: sem rolagem horizontal de 320px a 1280px em ${language}`, async ({
+            page
+        }) => {
+            await openHome(page, language)
+
+            for (const width of SWEEP_WIDTHS) {
+                await page.setViewportSize({ width, height: VIEWPORT_HEIGHT })
+
+                expect(await hasHorizontalScroll(page), `largura ${width}px`).toBe(false)
+            }
+        })
+    }
+
+    test("RF-LAY-08: alargar a janela até 720px fecha o painel do menu", async ({ page }) => {
+        await page.setViewportSize({ width: 650, height: VIEWPORT_HEIGHT })
+        await openHome(page, "pt-BR")
+        const menu = page.getByRole("button", { name: "Menu" })
+        await menu.click()
+        await expect(menu).toHaveAttribute("aria-expanded", "true")
+
+        await page.setViewportSize({ width: DESKTOP_MIN_WIDTH, height: VIEWPORT_HEIGHT })
+
+        await expect(page.getByRole("navigation", { name: "Principal" })).toBeVisible()
+        await expect(menu).toHaveCount(0)
+    })
+})
+
 test.describe("menu mobile", () => {
     test.beforeEach(async ({ page }) => {
-        test.skip(isDesktop(page), "o menu mobile existe só abaixo de 640px")
+        test.skip(isDesktop(page), "o menu mobile existe só abaixo de 720px")
         await openHome(page, "pt-BR")
     })
 
@@ -191,6 +242,7 @@ test.describe("menu mobile", () => {
     test("RF-LAY-08: voltar do navegador com o menu aberto fecha o painel", async ({ page }) => {
         await (await getNavLink(page, "pt-BR", "projects")).click()
         await expect(page).toHaveURL(/\/pt-BR\/projects$/)
+        await expect(page.getByRole("heading", { level: 1 })).toBeFocused()
         const menu = page.getByRole("button", { name: "Menu" })
         await menu.click()
         await expect(menu).toHaveAttribute("aria-expanded", "true")
@@ -214,7 +266,7 @@ test.describe("menu mobile", () => {
         await expect(menu).toHaveAttribute("aria-expanded", "true")
     })
 
-    test("RF-LAY-08: ao alargar a janela para 640px o painel fecha", async ({ page }) => {
+    test("RF-LAY-08: ao alargar a janela para 720px o painel fecha", async ({ page }) => {
         const menu = page.getByRole("button", { name: "Menu" })
         await menu.click()
         await expect(menu).toHaveAttribute("aria-expanded", "true")

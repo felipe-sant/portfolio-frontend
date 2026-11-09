@@ -5,14 +5,14 @@ import ContactForm from "@/components/ContactForm"
 import setLanguage from "@/i18n/setLanguage"
 import simulateContactSend from "@/services/content/simulateContactSend"
 import expectNoAxeViolations from "@/testUtils/expectNoAxeViolations"
-import relaxTimeoutsForLoad from "@/testUtils/relaxTimeoutsForLoad"
+import relaxAsyncUtilTimeout from "@/testUtils/relaxAsyncUtilTimeout"
 import renderWithStore from "@/testUtils/renderWithStore"
 
 vi.mock("@/services/content/simulateContactSend", () => ({
     default: vi.fn(() => Promise.resolve())
 }))
 
-relaxTimeoutsForLoad()
+relaxAsyncUtilTimeout()
 
 const MESSAGE = "Preciso de um site para a minha loja."
 
@@ -312,14 +312,14 @@ describe("ContactForm", () => {
         const { container } = renderForm()
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 
     it("não tem violações de acessibilidade com erros e resumo", async () => {
         const { container } = renderForm()
         await submit()
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 
     it("não tem violações de acessibilidade enviando", async () => {
         const gate = Promise.withResolvers<void>()
@@ -331,7 +331,7 @@ describe("ContactForm", () => {
         await expectNoAxeViolations(container)
 
         await act(async () => gate.resolve())
-    }, 15000)
+    })
 
     it("não tem violações de acessibilidade enviado", async () => {
         const { container } = renderForm()
@@ -340,7 +340,7 @@ describe("ContactForm", () => {
         await screen.findByRole("heading", { name: "Mensagem enviada" })
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 
     it("não tem violações de acessibilidade na falha de envio", async () => {
         vi.mocked(simulateContactSend).mockRejectedValueOnce(new Error("falhou"))
@@ -350,5 +350,5 @@ describe("ContactForm", () => {
         await screen.findByRole("alert")
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 })

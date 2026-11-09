@@ -96,5 +96,5 @@ describe("FallbackImage", () => {
         fireEvent.error(screen.getByRole("img"))
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 })

@@ -11,10 +11,22 @@ function readBlock(selector: string): string {
     return css.slice(start, css.indexOf("\n}", start))
 }
 
+function readAllBlocks(selector: string): string {
+    return css
+        .split(`\n${selector} {`)
+        .slice(1)
+        .map((chunk) => chunk.slice(0, chunk.indexOf("\n}")))
+        .join("\n")
+}
+
 const rootBlock = readBlock(":root")
 const darkBlock = readBlock('[data-theme="dark"]')
 
 describe("global.css", () => {
+    it("reserva a calha da barra de rolagem em html", () => {
+        expect(readAllBlocks("html")).toContain("scrollbar-gutter: stable")
+    })
+
     it("declara os tokens de cromo, código, foco e cabeçalho no tema claro", () => {
         expect(rootBlock).toContain("--surface-chrome: var(--bg-page)")
         expect(rootBlock).toContain("--border-chrome: var(--border-subtle)")
@@ -34,6 +46,11 @@ describe("global.css", () => {
             expect(rootBlock).toContain(`${token}:`)
             expect(darkBlock).toContain(`${token}:`)
         }
+    })
+
+    it("declara a escala de texto de etiqueta e de data", () => {
+        expect(rootBlock).toContain("--text-chip: 0.75rem")
+        expect(rootBlock).toContain("--text-body-sm: 0.875rem")
     })
 
     it("declara o tema escuro por data-theme com color-scheme", () => {

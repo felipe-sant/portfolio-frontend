@@ -67,5 +67,5 @@ describe("StackGroupList", () => {
         const { container } = render(<StackGroupList groups={GROUPS} />)
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 })

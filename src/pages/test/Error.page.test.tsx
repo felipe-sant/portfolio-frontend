@@ -55,7 +55,7 @@ describe("ErrorPage", () => {
         const { container } = renderErrorPage()
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 
     it("renderiza banner e main único com id, sem rodapé", async () => {
         renderErrorPage()

@@ -1,0 +1,74 @@
+name: Promote
+
+on:
+    push:
+        branches: [staging]
+    workflow_dispatch:
+
+permissions:
+    contents: read
+    pull-requests: write
+
+concurrency:
+    group: promote
+    cancel-in-progress: false
+
+jobs:
+    promote:
+        name: Promotion PR
+        runs-on: ubuntu-latest
+        env:
+            GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            GH_REPO: ${{ github.repository }}
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v7
+              with:
+                  fetch-depth: 0
+            - name: Setup Node
+              uses: actions/setup-node@v7
+              with:
+                  node-version-file: ".nvmrc"
+                  cache: npm
+                  cache-dependency-path: package-lock.json
+            - name: Install dependencies
+              run: npm ci
+            - name: Prepare promotion
+              id: prepare
+              run: npx tsx --tsconfig tsconfig.node.json scripts/preparePromotion.ts
+            - name: Find open promotion PR
+              id: existing
+              if: steps.prepare.outputs.promote == 'true' || steps.prepare.outputs.reason == 'pending-version'
+              run: |
+                  number=$(gh pr list --base main --head staging --state open --json number --jq '.[0].number // empty')
+                  echo "number=$number" >> "$GITHUB_OUTPUT"
+            - name: Block promotion
+              if: steps.prepare.outputs.reason == 'pending-version' && steps.existing.outputs.number != ''
+              env:
+                  NUMBER: ${{ steps.existing.outputs.number }}
+              run: |
+                  is_draft=$(gh pr view "$NUMBER" --json isDraft --jq '.isDraft')
+                  if [ "$is_draft" = "false" ]; then
+                    gh pr ready "$NUMBER" --undo
+                    echo "PR #$NUMBER convertido em draft: promoção bloqueada." >> "$GITHUB_STEP_SUMMARY"
+                  fi
+            - name: Create promotion PR
+              if: steps.prepare.outputs.promote == 'true' && steps.existing.outputs.number == ''
+              env:
+                  TITLE: "Chore :see_no_evil: Promove staging para produção"
+                  BODY_FILE: ${{ steps.prepare.outputs.body-file }}
+                  OWNER: ${{ github.repository_owner }}
+              run: |
+                  gh pr create --base main --head staging --title "$TITLE" --body-file "$BODY_FILE" --assignee "$OWNER"
+            - name: Update promotion PR
+              if: steps.prepare.outputs.promote == 'true' && steps.existing.outputs.number != ''
+              env:
+                  TITLE: "Chore :see_no_evil: Promove staging para produção"
+                  BODY_FILE: ${{ steps.prepare.outputs.body-file }}
+                  NUMBER: ${{ steps.existing.outputs.number }}
+              run: |
+                  is_draft=$(gh pr view "$NUMBER" --json isDraft --jq '.isDraft')
+                  if [ "$is_draft" = "true" ]; then
+                    gh pr ready "$NUMBER"
+                  fi
+                  gh pr edit "$NUMBER" --title "$TITLE" --body-file "$BODY_FILE"

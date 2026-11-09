@@ -109,5 +109,5 @@ describe("SearchInput", () => {
         )
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 })

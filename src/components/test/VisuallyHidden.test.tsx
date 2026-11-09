@@ -30,5 +30,5 @@ describe("VisuallyHidden", () => {
         const { container } = render(<VisuallyHidden>Texto oculto</VisuallyHidden>)
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 })

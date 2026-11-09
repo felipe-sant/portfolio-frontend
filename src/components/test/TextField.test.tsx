@@ -188,5 +188,5 @@ describe("TextField", () => {
         )
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 })

@@ -83,5 +83,5 @@ describe("ThemeToggle", () => {
         const { container } = render(<ThemeToggle />)
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 })

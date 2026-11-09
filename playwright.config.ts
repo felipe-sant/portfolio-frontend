@@ -1,5 +1,6 @@
 import { defineConfig, devices } from "@playwright/test"
 import FATEC_BASE_PATH from "@scripts/fatecBasePath"
+import specClassification from "./e2e/support/specClassification"
 
 const baseURL = `http://localhost:4173${FATEC_BASE_PATH}`
 const formBaseURL = `http://localhost:4174${FATEC_BASE_PATH}`
@@ -11,6 +12,7 @@ const desktop = { width: 1280, height: 800 }
 function createProject(name: string, viewport: typeof mobile, colorScheme: "light" | "dark") {
     return {
         name,
+        testMatch: specClassification.perEnvironmentSpecs,
         testIgnore: formSpec,
         use: {
             ...devices["Desktop Chrome"],
@@ -18,6 +20,17 @@ function createProject(name: string, viewport: typeof mobile, colorScheme: "ligh
             colorScheme,
             reducedMotion: "reduce" as const
         }
+    }
+}
+
+const independentProject = {
+    name: "independent",
+    testMatch: specClassification.independentSpecs,
+    use: {
+        ...devices["Desktop Chrome"],
+        viewport: desktop,
+        colorScheme: "light" as const,
+        reducedMotion: "reduce" as const
     }
 }
 
@@ -38,10 +51,10 @@ function createFormProject(name: string, viewport: typeof mobile, colorScheme: "
 export default defineConfig({
     testDir: "e2e",
     forbidOnly: Boolean(process.env.CI),
-    retries: process.env.CI ? 2 : 0,
-    reporter: process.env.CI
-        ? [["list"], ["html", { open: "never" }]]
-        : [["html", { open: "never" }]],
+    fullyParallel: true,
+    workers: process.env.CI ? 4 : undefined,
+    retries: process.env.CI ? 1 : 0,
+    reporter: process.env.CI ? [["list"], ["blob"]] : [["html", { open: "never" }]],
     use: { baseURL },
     webServer: [
         {
@@ -61,6 +74,7 @@ export default defineConfig({
         createProject("mobile-dark", mobile, "dark"),
         createProject("desktop-light", desktop, "light"),
         createProject("desktop-dark", desktop, "dark"),
+        independentProject,
         createFormProject("contact-form-mobile-light", mobile, "light"),
         createFormProject("contact-form-mobile-dark", mobile, "dark"),
         createFormProject("contact-form-desktop-light", desktop, "light"),

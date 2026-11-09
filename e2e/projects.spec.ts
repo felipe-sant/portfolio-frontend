@@ -6,6 +6,7 @@ import filterProjects from "./support/filterProjects"
 import getProjectsView from "./support/getProjectsView"
 import holdContent from "./support/holdContent"
 import openProjectsFromHeader from "./support/openProjectsFromHeader"
+import readContentWidth from "./support/readContentWidth"
 import readProjects from "./support/readProjects"
 import serveProjectsFixture from "./support/serveProjectsFixture"
 import sortProjects from "./support/sortProjects"
@@ -15,6 +16,8 @@ const LANGUAGES = ["pt-BR", "en", "es"] as const
 const DESKTOP_MIN_WIDTH = 640
 const BATCH = 9
 const TOUCH_TARGET = 44
+const NARROW_VIEWPORT = 320
+const TWO_LINES_MIN_HEIGHT = 40
 const TYPE_ORDER = [
     "web",
     "mobile",
@@ -63,6 +66,10 @@ async function expectResults(
             : view.texts.count(ordered.length, matches.length)
     )
     await expect(view.cardLinks).toHaveText(ordered.map((project) => project.title))
+}
+
+function sizeOf(locator: ReturnType<Page["locator"]>) {
+    return locator.evaluate((element) => parseFloat(getComputedStyle(element).fontSize))
 }
 
 async function getBox(target: ReturnType<Page["locator"]>) {
@@ -421,6 +428,52 @@ test.describe("filtros de tipo e categoria", () => {
         }
     })
 
+    test("RF-PROJECTS-15, A11Y-G08: o link de título de cada card tem 44px de altura", async ({
+        page
+    }) => {
+        await openProjects(page, "pt-BR")
+        const view = getProjectsView(page, "pt-BR")
+        const links = view.cards.getByRole("heading", { level: 2 }).getByRole("link")
+        const total = await links.count()
+        expect(total).toBeGreaterThan(0)
+
+        for (let index = 0; index < total; index++) {
+            expect((await getBox(links.nth(index))).height).toBeGreaterThanOrEqual(TOUCH_TARGET)
+        }
+    })
+
+    for (const [language, query] of [
+        ["pt-BR", "?q=Namoro"],
+        ["es", "?q=Noviazgo"]
+    ] as const) {
+        test(`RF-PROJECTS-15, A11Y-G08: o alvo de 44px do título de ${language} não muda a altura da linha do título, com uma ou duas linhas`, async ({
+            page
+        }) => {
+            await page.setViewportSize({ width: NARROW_VIEWPORT, height: 800 })
+            await openProjects(page, language, query)
+            const view = getProjectsView(page, language)
+            const heading = view.cards.first().getByRole("heading", { level: 2 })
+            const link = heading.getByRole("link")
+            await expect(link).toBeVisible()
+            const measure = () =>
+                link.evaluate((element) => {
+                    const range = document.createRange()
+                    range.selectNodeContents(element)
+                    const text = range.getBoundingClientRect().height
+                    const title = element.closest("h2")
+                    return { text, heading: title?.getBoundingClientRect().height ?? 0 }
+                })
+
+            await expect
+                .poll(async () => (await measure()).text)
+                .toBeGreaterThan(TWO_LINES_MIN_HEIGHT)
+            const measures = await measure()
+
+            expect(Math.abs(measures.heading - measures.text)).toBeLessThanOrEqual(1)
+            expect((await getBox(link)).height).toBeGreaterThanOrEqual(TOUCH_TARGET)
+        })
+    }
+
     test("RF-PROJECTS-08: há um separador decorativo, escondido do leitor de tela, entre os dois grupos", async ({
         page
     }) => {
@@ -438,7 +491,7 @@ test.describe("filtros de tipo e categoria", () => {
         await openProjects(page, "pt-BR")
         const view = getProjectsView(page, "pt-BR")
         const row = view.typeGroup.locator("xpath=..")
-        const viewportWidth = page.viewportSize()?.width ?? 0
+        const viewportWidth = await readContentWidth(page)
 
         const rowBox = await getBox(row)
         expect(rowBox.x).toBeLessThanOrEqual(1)
@@ -608,6 +661,26 @@ test.describe("grade", () => {
             expect(await hasOverflow()).toBe(false)
         })
     }
+})
+
+test.describe("tamanho do texto do card", () => {
+    test("RF-PROJECTS-14, NF-RE-04: o ano tem 14px, as etiquetas 12px e a página não rola na horizontal", async ({
+        page
+    }) => {
+        await openProjects(page, "pt-BR")
+        const view = getProjectsView(page, "pt-BR")
+        const card = view.cards.first()
+        const year = await sizeOf(card.locator("time"))
+        const chip = await sizeOf(card.locator("ul li span").first())
+        const scroll = await page.evaluate(() => ({
+            scrollWidth: document.documentElement.scrollWidth,
+            clientWidth: document.documentElement.clientWidth
+        }))
+
+        expect(year).toBeGreaterThanOrEqual(14)
+        expect(chip).toBeGreaterThanOrEqual(12)
+        expect(scroll.scrollWidth).toBeLessThanOrEqual(scroll.clientWidth)
+    })
 })
 
 test.describe("card", () => {

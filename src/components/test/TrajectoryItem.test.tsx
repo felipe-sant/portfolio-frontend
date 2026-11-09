@@ -142,5 +142,5 @@ describe("TrajectoryItem", () => {
         const { container } = renderItem()
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 })

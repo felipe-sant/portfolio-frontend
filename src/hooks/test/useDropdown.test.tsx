@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest"
+import { describe, expect, it, vi } from "vitest"
 import { render, screen, waitFor } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import useDropdown from "@/hooks/useDropdown"
@@ -52,6 +52,21 @@ describe("useDropdown", () => {
 
         await waitFor(() => expect(screen.queryByText("Item")).not.toBeInTheDocument())
         expect(screen.getByText("Alternar")).toHaveFocus()
+    })
+
+    it("devolve o foco ao botão com Escape sem rolar a página", async () => {
+        render(<Harness />)
+        await userEvent.click(screen.getByText("Alternar"))
+        const focusSpy = vi.spyOn(HTMLElement.prototype, "focus")
+
+        await userEvent.keyboard("{Escape}")
+
+        const toggle = screen.getByText("Alternar")
+        const toggleCalls = focusSpy.mock.contexts.flatMap((context, index) =>
+            context === toggle ? [focusSpy.mock.calls[index]] : []
+        )
+        expect(toggleCalls).toContainEqual([{ preventScroll: true }])
+        focusSpy.mockRestore()
     })
 
     it("fecha ao clicar fora", async () => {

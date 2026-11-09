@@ -223,7 +223,7 @@ describe("Header", () => {
         const { container } = await renderHeader()
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 
     it("usa View Transition ao navegar por um item do cabeçalho com movimento pleno", async () => {
         const startViewTransition = stubViewTransition()

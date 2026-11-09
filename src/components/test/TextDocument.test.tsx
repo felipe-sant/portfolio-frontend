@@ -54,5 +54,5 @@ describe("TextDocument", () => {
         const { container } = renderText("en")
 
         await expectNoAxeViolations(container)
-    }, 15000)
+    })
 })

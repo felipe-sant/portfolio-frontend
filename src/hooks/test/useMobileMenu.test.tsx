@@ -3,6 +3,8 @@ import { act, render, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { createMemoryRouter, Link, RouterProvider } from "react-router-dom"
 import useMobileMenu from "@/hooks/useMobileMenu"
+import { readFileSync } from "node:fs"
+import { resolve } from "node:path"
 
 function Harness() {
     const { isOpen, panelId, buttonRef, panelRef, toggle } = useMobileMenu()
@@ -129,6 +131,29 @@ describe("useMobileMenu", () => {
         })
 
         expect(screen.getByText("aberto")).toBeInTheDocument()
+    })
+
+    it("consulta a largura de 720px, a mesma do cabeçalho, para a navegação completa", async () => {
+        const matchMedia = vi.fn(() => ({
+            matches: false,
+            addEventListener: vi.fn(),
+            removeEventListener: vi.fn()
+        }))
+        vi.stubGlobal("matchMedia", matchMedia)
+
+        renderHarness()
+        await userEvent.click(screen.getByRole("button", { name: "Alternar" }))
+
+        expect(matchMedia).toHaveBeenCalledWith("(min-width: 720px)")
+    })
+
+    it("usa no CSS do cabeçalho o mesmo limite de largura do hook", () => {
+        const headerCss = readFileSync(
+            resolve(process.cwd(), "src/styles/components/header.module.css"),
+            "utf-8"
+        )
+
+        expect(headerCss).toContain("@media (min-width: 720px)")
     })
 
     it("fecha ao alargar a janela", async () => {

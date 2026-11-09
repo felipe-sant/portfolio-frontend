@@ -25,6 +25,10 @@
     animation: marquee var(--dur-marquee) linear infinite;
 }
 
+.band[data-paused="true"] .track {
+    animation-play-state: paused;
+}
+
 .list {
     display: flex;
     flex: none;
@@ -74,6 +78,10 @@
     :root:not([data-motion]) .list {
         padding: 0 var(--pad-page);
     }
+
+    :root:not([data-motion]) .list[aria-hidden="true"] {
+        display: none;
+    }
 }
 
 :root[data-motion="reduced"] .band {
@@ -91,25 +99,8 @@
     padding: 0 var(--pad-page);
 }
 
-@media (pointer: coarse) {
-    .band {
-        overflow-x: auto;
-        scrollbar-width: thin;
-        scrollbar-color: var(--border-strong) transparent;
-        cursor: grab;
-    }
-
-    .track {
-        animation: none;
-    }
-
-    .list {
-        padding: 0 var(--pad-page);
-    }
-
-    .list[aria-hidden="true"] {
-        display: none;
-    }
+:root[data-motion="reduced"] .list[aria-hidden="true"] {
+    display: none;
 }
 
 .band[data-dragging="true"] {

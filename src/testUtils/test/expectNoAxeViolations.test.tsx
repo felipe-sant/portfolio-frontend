@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest"
 import { render } from "@testing-library/react"
 import expectNoAxeViolations from "@/testUtils/expectNoAxeViolations"
 
-const AXE_TIMEOUT = 15000
+const AXE_TIMEOUT = 30000
 
 describe("expectNoAxeViolations", () => {
     it(

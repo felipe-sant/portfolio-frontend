@@ -4,10 +4,10 @@ import { join } from "node:path"
 import { afterEach, describe, expect, it } from "vitest"
 import validateContent from "@/services/content/validation/validateContent"
 import readContentSnapshot from "@/testUtils/readContentSnapshot"
-import relaxTimeoutsForLoad from "@/testUtils/relaxTimeoutsForLoad"
+import relaxAsyncUtilTimeout from "@/testUtils/relaxAsyncUtilTimeout"
 import type ContentIssue from "@/types/content/ContentIssue.types"
 
-relaxTimeoutsForLoad()
+relaxAsyncUtilTimeout()
 
 const PUBLIC_ROOT = join(process.cwd(), "public")
 let copyRoot = ""
