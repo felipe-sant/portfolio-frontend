@@ -65,7 +65,9 @@ function useDropdown() {
         }
 
         function closeWhenTabLeaves(event: KeyboardEvent) {
-            if (event.key !== "Tab" || !containerRef.current) {
+            const hasShortcutModifier = event.ctrlKey || event.altKey || event.metaKey
+
+            if (event.key !== "Tab" || hasShortcutModifier || !containerRef.current) {
                 return
             }
 

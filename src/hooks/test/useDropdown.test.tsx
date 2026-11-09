@@ -114,6 +114,18 @@ describe("useDropdown", () => {
         focusSpy.mockRestore()
     })
 
+    it.each(["ctrlKey", "altKey", "metaKey"])(
+        "ignora Tab com %s no último item, porque o navegador trata o atalho",
+        async (modifier) => {
+            render(<Harness />)
+            await userEvent.click(screen.getByText("Alternar"))
+
+            fireEvent.keyDown(screen.getByText("Item"), { key: "Tab", [modifier]: true })
+
+            expect(screen.getByText("Item")).toHaveAttribute("data-state", "open")
+        }
+    )
+
     it("mantém aberto com Tab no botão e Shift+Tab no último item", async () => {
         render(<Harness />)
         await userEvent.click(screen.getByText("Alternar"))
