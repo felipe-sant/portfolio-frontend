@@ -11,6 +11,8 @@ const WIDTH = 1280
 const HEIGHT = 800
 const MAX_KILOBYTES = 300
 const THEMES = ["light", "dark"] as const
+const WITHOUT_LOADING_MESSAGE =
+    "Array.from(document.querySelectorAll('[role=\"status\"]')).every((element) => !element.textContent.trim())"
 
 async function assertPreviewIsUp(): Promise<void> {
     try {
@@ -37,11 +39,7 @@ async function captureTheme(
         const page = await context.newPage()
         await page.goto(HOME_URL)
         await page.getByRole("heading", { level: 1 }).waitFor()
-        await page.waitForFunction(() =>
-            Array.from(document.querySelectorAll('[role="status"]')).every(
-                (element) => !element.textContent?.trim()
-            )
-        )
+        await page.waitForFunction(WITHOUT_LOADING_MESSAGE)
         await page.evaluate("document.fonts.ready")
         const output = join(ROOT, readmeScreenshotPath(theme))
         mkdirSync(dirname(output), { recursive: true })
