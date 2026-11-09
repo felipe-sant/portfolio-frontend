@@ -103,9 +103,13 @@ jobs:
                   path: coverage/
                   retention-days: 7
 
-    e2e:
-        name: E2E
+    scope:
+        name: E2E scope
         runs-on: ubuntu-latest
+        outputs:
+            mode: ${{ steps.scope.outputs.mode }}
+            specs: ${{ steps.scope.outputs.specs }}
+            matrix: ${{ steps.scope.outputs.matrix }}
         steps:
             - name: Checkout
               uses: actions/checkout@v7
@@ -118,8 +122,20 @@ jobs:
                   EVENT_NAME: ${{ github.event_name }}
                   BASE_REF: ${{ github.event.pull_request.base.ref }}
               run: |
-                  if [ "$EVENT_NAME" = "push" ]; then
+                  SHARD_TOTAL=4
+                  write_matrix() {
+                    include=""
+                    for index in $(seq 1 "$1"); do
+                      include="$include{\"index\":$index,\"total\":$1},"
+                    done
+                    echo "matrix={\"include\":[${include%,}]}" >> "$GITHUB_OUTPUT"
+                  }
+                  emit_full() {
                     echo "mode=full" >> "$GITHUB_OUTPUT"
+                    write_matrix "$SHARD_TOTAL"
+                  }
+                  if [ "$EVENT_NAME" = "push" ]; then
+                    emit_full
                     exit 0
                   fi
                   CHANGED_FILES=$(git diff --name-only "origin/$BASE_REF...HEAD")
@@ -149,44 +165,141 @@ jobs:
                     esac
                   done <<< "$CHANGED_FILES"
                   if [ "$FULL" = true ]; then
-                    echo "mode=full" >> "$GITHUB_OUTPUT"
+                    emit_full
                   elif [ -z "$SPECS" ]; then
                     echo "mode=none" >> "$GITHUB_OUTPUT"
+                    write_matrix 1
                   else
                     SPECS=$(echo "$SPECS" | tr ' ' '\n' | sort -u | while read -r spec; do [ -f "$spec" ] && echo "$spec"; done | tr '\n' ' ')
                     echo "Specs selecionados: $SPECS"
                     echo "mode=changed" >> "$GITHUB_OUTPUT"
+                    write_matrix 1
                     echo "specs=$SPECS" >> "$GITHUB_OUTPUT"
                   fi
+
+    e2e-shard:
+        name: E2E shard ${{ matrix.index }}/${{ matrix.total }}
+        needs: scope
+        if: needs.scope.outputs.mode != 'none'
+        runs-on: ubuntu-latest
+        strategy:
+            fail-fast: false
+            matrix: ${{ fromJSON(needs.scope.outputs.matrix) }}
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v7
+              with:
+                  fetch-depth: 0
+                  ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
             - name: Setup Node
-              if: steps.scope.outputs.mode != 'none'
               uses: actions/setup-node@v7
               with:
                   node-version-file: ".nvmrc"
                   cache: npm
                   cache-dependency-path: package-lock.json
             - name: Install dependencies
-              if: steps.scope.outputs.mode != 'none'
               run: npm ci
+            - name: Read Playwright version
+              id: playwright-version
+              run: echo "version=$(node -p "require('@playwright/test/package.json').version")" >> "$GITHUB_OUTPUT"
+            - name: Cache Chromium
+              uses: actions/cache@v6
+              with:
+                  path: ~/.cache/ms-playwright
+                  key: playwright-chromium-${{ runner.os }}-${{ steps.playwright-version.outputs.version }}
             - name: Install Chromium
-              if: steps.scope.outputs.mode != 'none'
               run: npx playwright install --with-deps chromium
             - name: Build
-              if: steps.scope.outputs.mode != 'none'
               run: npm run build:fatec
             - name: Build Pages artifact with the contact form enabled
-              if: steps.scope.outputs.mode != 'none'
               run: npm run build:fatec:form
             - name: Run all end-to-end tests
-              if: steps.scope.outputs.mode == 'full'
-              run: npm run test:e2e
+              if: needs.scope.outputs.mode == 'full'
+              run: npx playwright test --shard=${{ matrix.index }}/${{ matrix.total }}
             - name: Run end-to-end tests affected by the diff
-              if: steps.scope.outputs.mode == 'changed'
+              if: needs.scope.outputs.mode == 'changed'
               env:
-                  SPECS: ${{ steps.scope.outputs.specs }}
-              run: npx playwright test $SPECS
+                  SPECS: ${{ needs.scope.outputs.specs }}
+              run: npx playwright test --shard=${{ matrix.index }}/${{ matrix.total }} $SPECS
+            - name: Upload blob report
+              if: ${{ !cancelled() }}
+              uses: actions/upload-artifact@v7
+              with:
+                  name: blob-report-${{ matrix.index }}
+                  path: blob-report/
+                  retention-days: 1
+
+    e2e:
+        name: E2E
+        needs: [scope, e2e-shard]
+        if: always()
+        runs-on: ubuntu-latest
+        permissions:
+            actions: read
+            contents: read
+        steps:
+            - name: Checkout
+              if: ${{ !cancelled() && needs.scope.result == 'success' && needs.scope.outputs.mode != 'none' }}
+              uses: actions/checkout@v7
+              with:
+                  ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+            - name: Setup Node
+              if: ${{ !cancelled() && needs.scope.result == 'success' && needs.scope.outputs.mode != 'none' }}
+              uses: actions/setup-node@v7
+              with:
+                  node-version-file: ".nvmrc"
+                  cache: npm
+                  cache-dependency-path: package-lock.json
+            - name: Install dependencies
+              if: ${{ !cancelled() && needs.scope.result == 'success' && needs.scope.outputs.mode != 'none' }}
+              run: npm ci
+            - name: Download blob reports
+              if: ${{ !cancelled() && needs.scope.result == 'success' && needs.scope.outputs.mode != 'none' }}
+              uses: actions/download-artifact@v8
+              with:
+                  pattern: blob-report-*
+                  path: all-blob-reports
+                  merge-multiple: true
+            - name: Merge reports
+              if: ${{ !cancelled() && needs.scope.result == 'success' && needs.scope.outputs.mode != 'none' }}
+              run: PLAYWRIGHT_JSON_OUTPUT_NAME=merged-report.json npx playwright merge-reports --reporter=html,json ./all-blob-reports
+            - name: Warn about flaky tests
+              if: ${{ !cancelled() && needs.scope.result == 'success' && needs.scope.outputs.mode != 'none' }}
+              continue-on-error: true
+              run: npm run --silent e2e:flaky -- merged-report.json >> "$GITHUB_STEP_SUMMARY"
+            - name: Check shard union
+              if: ${{ !cancelled() && needs.scope.result == 'success' && needs.scope.outputs.mode == 'full' }}
+              run: npm run e2e:check-shards
+            - name: Summarize shard durations
+              if: ${{ !cancelled() && needs.scope.result == 'success' && needs.scope.outputs.mode != 'none' }}
+              continue-on-error: true
+              env:
+                  GH_TOKEN: ${{ github.token }}
+                  REPOSITORY: ${{ github.repository }}
+                  RUN_ID: ${{ github.run_id }}
+              run: |
+                  {
+                    echo "| Fatia | Duração (s) |"
+                    echo "| --- | --- |"
+                    gh api --paginate "repos/$REPOSITORY/actions/runs/$RUN_ID/jobs" --jq '.jobs[] | select(.name | startswith("E2E shard")) | "| \(.name) | \((.completed_at | fromdate) - (.started_at | fromdate)) |"'
+                  } >> "$GITHUB_STEP_SUMMARY"
+            - name: Evaluate E2E result
+              if: always()
+              env:
+                  SCOPE_RESULT: ${{ needs.scope.result }}
+                  SCOPE_MODE: ${{ needs.scope.outputs.mode }}
+                  SHARDS_RESULT: ${{ needs.e2e-shard.result }}
+              run: |
+                  if [ "$SCOPE_RESULT" != "success" ]; then
+                    echo "E2E scope terminou com $SCOPE_RESULT"
+                    exit 1
+                  fi
+                  if [ "$SCOPE_MODE" != "none" ] && [ "$SHARDS_RESULT" != "success" ]; then
+                    echo "As fatias de E2E terminaram com $SHARDS_RESULT"
+                    exit 1
+                  fi
             - name: Upload Playwright report
-              if: failure()
+              if: ${{ failure() && needs.scope.outputs.mode != 'none' }}
               uses: actions/upload-artifact@v7
               with:
                   name: playwright-report
