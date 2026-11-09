@@ -81,7 +81,7 @@ Todo PR para a `staging` traz um changeset, commitado no próprio PR (o job `cha
 
 - `npm run changeset` com o tipo (`major`, `minor` ou `patch`) da regra de incremento de [`docs/product/roadmap.md`](docs/product/roadmap.md);
 - `npm run changeset -- --empty` quando a mudança não altera a versão (documentação, CI, testes);
-- `hotfix/*` leva um changeset `patch` e roda `npm run changeset:version` antes do PR.
+- `hotfix/*` leva um changeset `patch` e roda `npm run changeset:version` antes do PR (com `GITHUB_TOKEN` no ambiente, para o CHANGELOG linkar PR e commit).
 
 Como a versão sobe e o CHANGELOG é gerado: [`docs/setup/environments.md#versionamento-changesets`](docs/setup/environments.md#versionamento-changesets).
 
