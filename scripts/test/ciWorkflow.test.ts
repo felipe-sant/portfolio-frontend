@@ -11,6 +11,7 @@ type Step = {
     run?: string
     uses?: string
     if?: string
+    "continue-on-error"?: boolean
     with?: Record<string, string>
     env?: Record<string, string>
 }
@@ -284,7 +285,8 @@ describe("ci.yml, job E2E agregador", () => {
 
         expect(warn?.if).toContain("needs.scope.outputs.mode != 'none'")
         expect(warn?.if).toContain("needs.scope.result == 'success'")
-        expect(warn?.run).toContain("npm run e2e:flaky -- merged-report.json")
+        expect(warn?.run).toContain("npm run --silent e2e:flaky -- merged-report.json")
+        expect(warn?.["continue-on-error"]).toBe(true)
         expect(warn?.run).toContain('>> "$GITHUB_STEP_SUMMARY"')
         expect(warn?.run).not.toContain("exit 1")
     })

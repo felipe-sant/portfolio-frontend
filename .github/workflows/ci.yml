@@ -266,7 +266,7 @@ jobs:
             - name: Warn about flaky tests
               if: ${{ !cancelled() && needs.scope.result == 'success' && needs.scope.outputs.mode != 'none' }}
               continue-on-error: true
-              run: npm run e2e:flaky -- merged-report.json >> "$GITHUB_STEP_SUMMARY"
+              run: npm run --silent e2e:flaky -- merged-report.json >> "$GITHUB_STEP_SUMMARY"
             - name: Check shard union
               if: ${{ !cancelled() && needs.scope.result == 'success' && needs.scope.outputs.mode == 'full' }}
               run: npm run e2e:check-shards
