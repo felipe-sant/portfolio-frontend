@@ -26,9 +26,9 @@ Uso o Claude Code como parceiro de desenvolvimento, de forma declarada. Os trail
 - **Proposta e implementação da IA:** a spec, o código e os testes, em agentes com papéis separados (descritos em [`.claude/README.md`](.claude/README.md)).
 - **Antes do merge:** build, lint, testes e E2E no CI; revisão por um agente; em mudança de tela, rodo a aplicação localmente e confiro à mão; abro o PR e o reviso eu mesmo.
 
-Os limites, sem rodeio: o revisor automático é outro agente do mesmo modelo, e o ruleset do repositório exige 0 aprovações. Não existe revisor humano além de mim, e 14 dos PRs têm o corpo vazio. Quando o autor precisa entender o que foi gerado, a resposta é a revisão manual de cada PR e, em tela, rodar o resultado localmente; o template de PR agora pede essa revisão humana de forma explícita.
+Os limites, sem rodeio: o revisor automático é outro agente do mesmo modelo, e o ruleset do repositório exige 0 aprovações. Não existe revisor humano além de mim, e 14 dos PRs têm o corpo vazio. Para entender o que a IA gerou, reviso cada PR à mão e, em mudança de tela, rodo o resultado localmente; o template de PR agora pede essa revisão humana de forma explícita.
 
-**O que eu revisei e corrigi:** no [PR #132](https://github.com/felipe-sant/portfolio-frontend/pull/132), três testes E2E falhavam na `staging` porque o corpo do modal ganhou uma parada de Tab (commit `1acf093`) e os testes esperavam a ordem antiga. Foi um erro do teste, não do produto, e a correção atualizou a contagem de Tab sem enfraquecer asserção.
+**O que eu revisei e corrigi:** no [PR #132](https://github.com/felipe-sant/portfolio-frontend/pull/132), três testes E2E falhavam na `staging` porque o corpo do modal ganhou uma parada de Tab (commit `1acf093`) e os testes esperavam a ordem antiga. Foi um erro do teste, não do produto. A correção, feita por um agente e revisada por mim, atualizou a contagem de Tab sem enfraquecer asserção.
 
 ## Sobre o projeto
 
