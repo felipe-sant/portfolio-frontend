@@ -47,6 +47,8 @@ describe("buildPromotionBody", () => {
 
         expect(body).toContain("- PR #9: Chore sem issue")
         expect(body).not.toContain("- #9")
+        expect(body).not.toContain("- PR #30:")
+        expect(body).not.toContain("- PR #31:")
     })
 
     it("ordena issues e PRs de forma crescente", () => {
