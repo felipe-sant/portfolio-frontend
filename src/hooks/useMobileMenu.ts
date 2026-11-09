@@ -3,7 +3,7 @@ import { useLocation } from "react-router-dom"
 import stripLanguagePrefix from "@/i18n/stripLanguagePrefix"
 import type MobileMenu from "@/types/navigation/MobileMenu.types"
 
-const DESKTOP_QUERY = "(min-width: 640px)"
+const DESKTOP_QUERY = "(min-width: 720px)"
 const FOCUSABLE_SELECTOR = "a[href], button:not([disabled])"
 
 function getFocusable(panel: HTMLElement | null): HTMLElement[] {

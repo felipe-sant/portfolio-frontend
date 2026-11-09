@@ -505,15 +505,12 @@ test.describe("modal da trajetória", () => {
                 expect(rect.width).toBeLessThanOrEqual(MODAL_MAX_WIDTH)
                 expect(rect.width).toBeLessThan(width)
             }
-            if (width !== DESKTOP_MIN_WIDTH) {
-                expect(
-                    await page.evaluate(
-                        () =>
-                            document.documentElement.scrollWidth <=
-                            document.documentElement.clientWidth
-                    )
-                ).toBe(true)
-            }
+            expect(
+                await page.evaluate(
+                    () =>
+                        document.documentElement.scrollWidth <= document.documentElement.clientWidth
+                )
+            ).toBe(true)
 
             await page.keyboard.press("Escape")
             await expect(box).toHaveCount(0)

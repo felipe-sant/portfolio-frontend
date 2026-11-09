@@ -151,7 +151,7 @@
     text-transform: uppercase;
 }
 
-@media (min-width: 640px) {
+@media (min-width: 720px) {
     .desktopNav {
         display: flex;
     }
