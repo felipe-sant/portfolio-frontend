@@ -35,8 +35,51 @@ async function expectStackStill(page: Page) {
     await expect(getStackBand(page).locator("div").first()).toHaveCSS("animation-name", "none")
 }
 
+async function expectStackPaused(page: Page) {
+    await expect(getStackBand(page)).toHaveAttribute("data-paused", "true")
+    await expect(getStackBand(page).locator("div").first()).toHaveCSS(
+        "animation-play-state",
+        "paused"
+    )
+    const first = await readStackOffset(page, STACK_HEADING)
+    const second = await readStackOffset(page, STACK_HEADING)
+    expect(second).toBe(first)
+}
+
 test.describe("movimento com o sistema em movimento pleno", () => {
     test.use({ reducedMotion: "no-preference" })
+
+    test("RF-HOME-12, WCAG 2.2.2: o mouse sobre a faixa a pausa e ao sair ela volta a se mover", async ({
+        page
+    }) => {
+        await openHome(page)
+        const band = getStackBand(page)
+        await band.scrollIntoViewIfNeeded()
+        await expectStackMoving(page)
+
+        await band.hover()
+        await expectStackPaused(page)
+
+        await page.mouse.move(0, 0)
+        await expect(band).not.toHaveAttribute("data-paused")
+        await expectStackMoving(page)
+    })
+
+    test("RF-HOME-12, WCAG 2.2.2: o foco de teclado na faixa a pausa e ao sair ela volta", async ({
+        page
+    }) => {
+        await openHome(page)
+        const band = getStackBand(page)
+        await expectStackMoving(page)
+
+        await band.focus()
+        await expect(band).toBeFocused()
+        await expectStackPaused(page)
+
+        await band.blur()
+        await expect(band).not.toHaveAttribute("data-paused")
+        await expectStackMoving(page)
+    })
 
     test("RF-LAY-35: o botão liga e desliga o data-motion reduzido e o aria-pressed", async ({
         page
