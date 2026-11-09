@@ -48,6 +48,7 @@
     "cv:pdf": "tsx --tsconfig tsconfig.node.json scripts/generateResume.ts",
     "og:image": "tsx --tsconfig tsconfig.node.json scripts/generateOgImage.ts",
     "readme:images": "tsx --tsconfig tsconfig.node.json scripts/generateReadmeScreenshots.ts",
+    "check:contact-form": "tsx --tsconfig tsconfig.node.json scripts/checkContactForm.ts",
     "check:chunk": "tsx --tsconfig tsconfig.node.json scripts/checkMarkdownChunk.ts && tsx --tsconfig tsconfig.node.json scripts/checkPdfChunk.ts",
     "content:id": "tsx --tsconfig tsconfig.node.json scripts/newId.ts",
     "content:template": "tsx --tsconfig tsconfig.node.json scripts/generateContentTemplate.ts",
