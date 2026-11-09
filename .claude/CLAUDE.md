@@ -675,6 +675,10 @@ maior.
 
 ## Padrão de branches, commits e PRs
 
+A fonte, para humanos, é o [`CONTRIBUTING.md`](../CONTRIBUTING.md); esta seção é o resumo que o agente
+aplica sozinho e não pode contradizê-lo (`scripts/test/contributingTypesTable.test.ts` mantém a tabela
+de tipos igual nos dois).
+
 ### Tipos de alteração
 
 O `<Tipo>` de branch, commit e título de PR vem sempre desta tabela:
@@ -695,67 +699,41 @@ O `<Tipo>` de branch, commit e título de PR vem sempre desta tabela:
 
 ### Issues
 
-Toda issue entra no projeto [Portfolio](https://github.com/users/felipe-sant/projects/16), que
-reúne os repositórios do portfólio, com Status `Backlog` (o PO revisa e move), `Marco` do
-`docs/product/roadmap.md` (ou `Pessoal`, para a trilha fora da v1) e um único `Tipo` (`FEAT`, `DOC`
-ou `BUG`). O tipo vive só nesse campo: as labels `enhancement`, `bug` e `documentation` não são
-usadas. Labels indicam só a área (`frontend`, `backend`, `infra`, uma ou mais). Toda issue que
-depende de outra registra a relação como "blocked by" do GitHub
-(`POST /repos/{owner}/{repo}/issues/{n}/dependencies/blocked_by`), além da linha "Depende de" do
-corpo.
+Toda issue entra no projeto [Portfolio](https://github.com/users/felipe-sant/projects/16) com
+Status `Backlog` (o PO revisa e move), `Marco` do `docs/product/roadmap.md` (ou `Pessoal`) e um único
+`Tipo` (`FEAT`, `DOC` ou `BUG`). O tipo vive só nesse campo: labels de tipo não são usadas; as labels
+indicam só a área (`frontend`, `backend`, `infra`, uma ou mais). Issue que depende de outra registra
+"blocked by" do GitHub (`POST /repos/{owner}/{repo}/issues/{n}/dependencies/blocked_by`), além da
+linha "Depende de" do corpo.
 
 ### Branches
 
-```
-<tipo>/<número-da-issue>-<descrição-curta>
-```
-
-Tipo em minúsculas (`feat/<número>-agentes-e-skills`). Sem issue aberta, o número é omitido
-(`chore/update-gitignore`).
-
-Duas branches de ambiente, nenhuma recebe push direto:
-
-- **`staging`** — ambiente de testes e base do desenvolvimento. Toda branch de trabalho nasce de
-  `origin/staging` atualizada e volta para ela por PR.
-- **`main`** — produção. Só recebe PR vindo de `staging` (promoção do que foi validado) ou de
-  `hotfix/*`.
-
-Hotfix é a exceção: nasce de `origin/main`, volta por PR para a `main` e, depois do merge, a `main`
-é levada de volta para a `staging` por PR, para as duas não divergirem.
+`<tipo>/<número-da-issue>-<descrição-curta>`, tipo em minúsculas (`feat/<número>-agentes-e-skills`);
+sem issue aberta, o número é omitido (`chore/update-gitignore`). Duas branches de ambiente, nenhuma
+recebe push direto: `staging` (base do desenvolvimento; toda branch nasce de `origin/staging`
+atualizada e volta por PR) e `main` (produção; só recebe PR de `staging` ou de `hotfix/*`). Hotfix
+nasce de `origin/main`, volta por PR para a `main` e depois a `main` volta para a `staging` por PR.
 
 ### Commits
 
-```
-<Tipo> <ícone> [#<número-da-issue>] <descrição>
-```
-
-Exemplo: `Fix :bug: [#<número>] Troca <a href> por <Link> na página NotFound`. Sem issue
-relacionada, o `[#...]` é omitido (`Chore :see_no_evil: Atualiza .gitignore`).
-
-Commits são atômicos: uma mudança concluída por commit, nunca várias tarefas acumuladas.
+`<Tipo> <ícone> [#<número-da-issue>] <descrição>`, por exemplo
+`Fix :bug: [#<número>] Troca <a href> por <Link> na página NotFound`; sem issue, o `[#...]` é omitido.
+Commits são atômicos: uma mudança concluída por commit.
 
 ### Pull Requests
 
-- Toda alteração passa por PR para a `staging`, sem push direto (exceção: `hotfix/*`, ver
-  "Branches"). A promoção para produção é um PR de `staging` para `main`, com título no padrão de
-  commit (`Chore :see_no_evil: Promove staging para produção`) e a lista das issues incluídas.
-- O autor se atribui já na criação (`gh pr create --assignee @me`) e aplica as labels de área
-  da issue (`frontend`, `backend`, `infra`).
-- A descrição referencia a issue relacionada (`Closes #<número>`). A branch padrão do repositório
-  é a `staging`, então a issue fecha no merge do PR para a `staging`.
-- O título segue o padrão do commit principal (`<Tipo> <ícone> [#<número>] <descrição>`).
-- **Todo PR para a `staging` traz um changeset** (`.changeset/*.md`, `npm run changeset`), commitado
-  no próprio PR; o vazio (`npm run changeset -- --empty`) vale só para o que não altera a versão
-  (documentação, CI, testes). O tipo (`major`, `minor`, `patch`) segue a regra de incremento de
-  `docs/product/roadmap.md`. A versão parte da `1.0.0` e só sobe quando o PR de versão é mergeado:
-  os changesets acumulam e o maior tipo do lote decide o salto. Três workflows tratam do versionamento: `changeset-check.yml` (falha
-  PR sem changeset; ignora `changeset-release/staging` e PR com head `main`), `version.yml` (push
-  na `staging`: abre ou atualiza o PR de versão, sem CI) e `release.yml` (push na `main`: tag e
-  Release só com versão `>= 1.0.0` e tag inexistente; chama `fatec-pages.yml` na `1.x`). Detalhe em
-  `docs/setup/environments.md`.
-- A descrição segue a estrutura de `.github/PULL_REQUEST_TEMPLATE.md`, não um corpo livre, com as
-  seções Descrição, Alterações, Decisões técnicas, Como testar, Evidências e Impactos e pontos de
-  atenção.
+- Toda alteração passa por PR para a `staging` (exceção: `hotfix/*`, para a `main`). A promoção é um
+  PR de `staging` para `main`, com título `Chore :see_no_evil: Promove staging para produção` e a
+  lista das issues incluídas, sem repetir `Closes`.
+- O autor se atribui na criação (`gh pr create --assignee @me`) e aplica as labels de área da issue.
+- A descrição referencia a issue (`Closes #<número>`); a branch padrão é a `staging`, então a issue
+  fecha no merge do PR para a `staging`. O título segue o padrão do commit principal.
+- **Todo PR para a `staging` traz um changeset** (`.changeset/*.md`, `npm run changeset`), commitado no
+  próprio PR; o vazio (`npm run changeset -- --empty`) vale só para o que não altera a versão
+  (documentação, CI, testes). O tipo segue a regra de incremento de `docs/product/roadmap.md`;
+  `hotfix/*` leva `patch` e roda `npm run changeset:version`. O `changeset-check.yml` falha PR sem
+  changeset; o fluxo de versão e release está em `docs/setup/environments.md`.
+- A descrição segue a estrutura de `.github/PULL_REQUEST_TEMPLATE.md`, não um corpo livre.
 
 ## Tooling de IA (agents, skills e spec-driven)
 
