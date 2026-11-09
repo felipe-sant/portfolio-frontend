@@ -116,157 +116,38 @@ A lista completa, o CI, o Husky e o `.editorconfig` estão em [`docs/setup/devel
 
 ## Onde fica cada coisa
 
-- **`App.tsx`** recebe `store` e `router` por props, renderiza o `RouterProvider` dentro do `<Provider store={store}>` do react-redux e importa, por efeito colateral, `@/i18n/i18n` (que
-  inicializa a instância do i18next) e o `global.css`; `@/i18n/i18n` está no `allow` de
-  `import/no-unassigned-import` no `.oxlintrc.json`. Metadados (`<title>`, `<meta>`) são
-  declarados por cada página com as tags nativas do React 19, escritas dentro do JSX da própria
-  página, que sobem sozinhas para o `<head>`, sem biblioteca nem wrapper, e com valor vindo de chave:
-  `<title>{t("meta.title")}</title>` e
-  `<meta name="description" content={t("meta.description")} />`.
-- **`src/i18n/`** — configuração de idioma (i18next e react-i18next), um símbolo público por
-  arquivo com `export default`. `i18n.ts` cria a instância com `createInstance()` (import nomeado
-  de `i18next`; `i18next.use(...)` no export default cai em `import/no-named-as-default-member`),
-  registra `initReactI18next` — que torna a instância global, sem provider nem wrapper de render —
-  e inicia de forma síncrona (`initAsync: false`) com `resources` (`resources.ts`),
-  `defaultNS: "common"`, `supportedLngs: SUPPORTED_LANGUAGES` (`supportedLanguages.ts`),
-  `fallbackLng: FALLBACK_LANGUAGE` (`fallbackLanguage.ts`, valor `en`) e
-  `lng: getLanguageFromPath(removeBasePath(window.location.pathname))` (indefinido, sem prefixo
-  válido, vale o `fallbackLng`). Não há detector do i18next, nem `?lng=`: o caminho é a única fonte
-  do idioma e o `loader` de cada rota-pai o troca na navegação. Não existe constante de "idioma
-  padrão" nem de língua de referência: `pt-BR` é referência pelo tipo de `resources.ts`, não pelo
-  runtime.
-    - **Funções de caminho** (puras, sobre o `pathname` relativo ao `basename`):
-      `getLanguageFromPath` (primeiro segmento exatamente igual a um idioma suportado, senão
-      `undefined`), `stripLanguagePrefix`, `addLanguagePrefix` (`/` vira `/en`),
-      `getEquivalentPath(pathname, language)` (URL equivalente em outro idioma; query e hash o
-      chamador anexa) e `getPreferredLanguage()` (escolha salva → `navigator` → `en`, **só usada
-      na raiz `/`**, o único leitor de `navigator`). `resolveSupportedLanguage.ts`: código exato,
-      ou `es-*` → `es`, `en-*` → `en`, `pt`/`pt-*` → `pt-BR`, ou `undefined`.
-    - **`saveLanguage` é o único código que escreve em `LANGUAGE_STORAGE_KEY`**
-      (`languageStorageKey.ts`, único lugar onde o valor da chave aparece), interno à pasta e
-      chamado só por `setLanguage`. Visitar `/en` por link não grava escolha.
-    - **API de idioma:** `getLanguage(): SupportedLanguage` (idioma ativo, função comum, usável fora
-      de React) e `setLanguage(language): Promise<void>` (troca e salva a escolha). Componente e
-      página usam só essas duas, nunca `saveLanguage` nem `localStorage` direto.
-    - Um listener de `languageChanged`, registrado antes do `init()`, mantém
-      `document.documentElement.lang` sincronizado com o idioma ativo. O `lang="pt-BR"` do
-      `index.html` descreve o conteúdo estático daquele arquivo e é corrigido assim que o JS roda.
-    - `SupportedLanguage` vem de `src/types/language/SupportedLanguage.types.ts`, derivado de `SUPPORTED_LANGUAGES`.
-      `src/types/i18next.d.ts` augmenta `CustomTypeOptions` com `defaultNS: "common"` e os recursos
-      de `pt-BR`: chave inexistente em `t()` é erro de compilação, e `en`/`es` são tipados como
-      `typeof` de `pt-BR` em `resources.ts`, então namespace ou chave faltando também não compila.
-- **`src/locales/`** — tradução é dado, separado da configuração em `src/i18n/`:
-  `src/locales/<idioma>/<namespace>.json`, JSON com 4 espaços, os mesmos namespaces e chaves nos
-  três idiomas. Um namespace por dono do texto, com o nome do CSS Module correspondente (ex.:
-  `home`, `notFound`, `error`, `about`); `common` guarda texto compartilhado (`backHome`, `loading`)
-  e texto fixo de componente de `src/components/` (inclusive o do rodapé, `footer.*`). Chave em inglês, lowerCamelCase, hierárquica por
-  papel (`meta.title`, `meta.description`, `heading`, `filters.category.academic`). Página com
-  namespace próprio chama `useTranslation("home")`; quem também usa chave de `common` carrega os
-  dois, `useTranslation(["notFound", "common"])`, e chama `t("common:backHome")`, senão a chave não
-  tipa. Texto com marcação no meio usa `<Trans>` com `t={t}`, `i18nKey` e
-  `components={{ strong: <strong /> }}`, com o `<strong>` escrito no próprio valor do JSON.
-  Namespace novo entra nos três idiomas, em `src/i18n/resources.ts` e no `ns` de
-  `src/i18n/i18n.ts`.
-- **`src/routers/`** — ponto único de registro de rotas. `routes.tsx` tem `routes`
-  (`RouteObject[]`, export default): as páginas ficam em `pageRoutes`, definidas uma vez (Início
-  como `index`, `*` de não encontrada, caminhos relativos), e uma função local gera **três
-  rotas-pai idênticas** (`pt-BR`, `en`, `es`) com `MainLayout`, `errorElement`,
-  `loader: createLanguageLoader(idioma)` (chama `i18n.changeLanguage`, não `setLanguage`) e as
-  mesmas `pageRoutes`. Depois delas, a rota `/` (`redirectRootLoader`: escolha salva → navegador →
-  `en`, preservando query e hash) e a rota `*` sem prefixo, que renderiza a não encontrada em
-  inglês. Os paths vêm de `ROUTES` em `paths.ts` (`root` é a raiz que redireciona, `home` a
-  Início do idioma). O data router é criado em `src/prerender/mountClient.tsx` com
-  `createBrowserRouter(routes, { basename: publicUrl("/"), hydrationData })`, chamado por
-  `src/entry-client.tsx` (a entrada do `index.html`).
-  Toda página nova entra em `pageRoutes`. O teste renderiza `routes` com
-  `createMemoryRouter(routes, { initialEntries })` e `RouterProvider`.
-  As rotas-filhas de `MainLayout` são `lazy` e o único `<Suspense>` fica em volta do `<Outlet />`
-  de `src/layouts/Main.layout.tsx`: página nova não precisa (nem deve) ter o próprio `<Suspense>`.
-  Navegação interna usa `<Link to="...">`/`useNavigate` do `react-router-dom`, nunca
-  `<a href="...">` (âncora crua força reload completo e descarta o estado), e o caminho é montado
-  por `buildPath(path, language, params?)` ou, em componente, por `useLocalizedPath()` de
-  `src/hooks/`, a partir de `ROUTES`: nunca se escreve caminho com prefixo à mão nem se usa
-  `ROUTES.home` cru em `<Link>`. O `index.html` tem um script inline que faz na raiz o mesmo
-  redirecionamento (a chave e o mapa de idiomas estão duplicados nele; `rootRedirect.test.ts`
-  compara com `getPreferredLanguage`).
-- **Pré-renderização** (ADR 0004, `docs/architecture/frontend.md#pré-renderização`) — `npm run build`
-  gera em `dist/` um HTML por rota pública e idioma, mais o `404.html`. `src/entry-server.tsx`
-  (`render(target)`, só `react-dom/static` com `progressiveChunkSize: Infinity`, uma URL por vez),
-  `src/prerender/` (`prerenderRoutes.ts`, o registro das rotas pré-renderizáveis com padrão, escopo dos
-  parâmetros e consultas RTK Query; `loadPrerenderData.ts`; `mountClient.tsx`) e `scripts/prerender.ts`
-  com `scripts/prerender/` (`listTargets`, `getTargetFile`, `composePage`, `installPublicFetch`, que lê
-  `public/` no Node sem tocar em `src/services/`). O servidor nunca importa `App.tsx`. Arquivos: `<idioma>.html`
-  para a Início, `<idioma>/<rota>.html` para as demais e `<nome>.md.html` para documento (nunca pasta com
-  `index.html`, que o Pages redireciona); `/` continua o `index.html`. O `404.html` é a não encontrada em
-  inglês: o cliente só chama `hydrateRoot` quando o caminho é o `prerenderedPath`, senão remove o
-  `title` e a `meta description` do HTML e usa `createRoot` (`shouldHydrate`, `removePrerenderedHead`).
-  **Toda tela nova entrega a própria pré-renderização**: acrescenta a entrada ao registro (rota e
-  consultas) e um teste de `<h1>` e conteúdo principal nos três idiomas (`src/test/entry-server.test.tsx`
-  já percorre o registro existente); rota no registro sem tela em `routes` é ignorada no build. Em
-  `src/i18n/i18n.ts`, `typeof window` e `typeof document` guardam o import no Node. O `vercel.json` usa
-  `cleanUrls` e `trailingSlash: false`, sem reescrita genérica para o `index.html` (URL desconhecida
-  responde 404 com o `404.html`); o `noindex` da `staging` é acrescentado pelo `deploy.yml`.
-- **`src/store/`** — estado global: **Redux Toolkit + react-redux** para estado de cliente e
-  **RTK Query** (`@reduxjs/toolkit/query/react`, sem dependência extra) para estado de servidor.
-  Um símbolo público por arquivo, `export default` no final:
-    - `api.ts`: `createApi` com `reducerPath: "api"`, `baseQuery` com
-      `fetchBaseQuery({ baseUrl: API_URL, prepareHeaders })` (`API_URL` de `@/services/http/apiUrl`,
-      `Accept-Language` com `getLanguage()`), `tagTypes` e `endpoints: () => ({})`; endpoint nunca
-      é declarado em `api.ts`, sempre injetado por domínio. Não importa a store. O RTK Query não usa o
-      `http` como `baseQuery` (o `fetchBaseQuery` já entrega o contrato que ele espera); os dois
-      clientes compartilham `apiUrl.ts` e o idioma.
-    - `api/<dominio>.api.ts`: endpoints de um domínio via `api.injectEndpoints`, com tipos de
-      request/response locais e sem `export`; exporta só a API injetada, e os hooks gerados são
-      consumidos por ela (`<dominio>Api.useGetXQuery`). `tagTypes` é preenchido em `api.ts` quando o
-      projeto precisar de invalidação.
-    - `rootReducer.ts` (`combineReducers` com `[api.reducerPath]: api.reducer`, onde slices entram),
-      `createStore.ts` (`createStore(preloadedState?)`, `configureStore` com `api.middleware`
-      concatenado, store nova a cada chamada) (a store da aplicação é criada em `mountClient`, com o `preloadedState` do HTML quando há).
-    - `useAppDispatch.ts` e `useAppSelector.ts`: `useDispatch.withTypes<AppDispatch>()` e
-      `useSelector.withTypes<RootState>()`; código de aplicação usa só esses, com seletor estreito
-      (`useAppSelector((state) => state.x.y)`), nunca o estado inteiro.
-    - `slices/<nome>.slice.ts`: `createSlice`, export default do próprio slice, `<Nome>State` local.
-    - Tipos em `src/types/store/RootState.types.ts` (`ReturnType<typeof rootReducer>`),
-      `AppStore.types.ts` (`ReturnType<typeof createStore>`) e `AppDispatch.types.ts`
-      (`AppStore["dispatch"]`), um por arquivo, importados com `import type`.
-    - O `<Provider store={store}>` fica em `App.tsx`, em volta do `RouterProvider`. Estado que só uma
-      página usa continua `useState` no hook da página; estado compartilhado vai para um slice;
-      dado do servidor vai para um endpoint do RTK Query. Idioma continua em `src/i18n/`.
-    - Refetch on focus/reconnect (`setupListeners`) segue desligado, o padrão do RTK Query.
-    - **Projetos** usa `getProjectsPages` (`build.infiniteQuery`, `queryFn` sobre `listProjects`, `limit` 9, argumento `ProjectsQueryArgs` sem `offset` nem `limit` como chave de cache) e `getProjectFilterOptions` (`{ lang }`, `queryFn` sobre `listProjectFilterOptions`: `technologies` e `years` como `{ value, count }`, a união da stack do perfil com as tecnologias dos projetos e o intervalo de anos dos projetos, sem busca nem filtros; a tela abre só `getProjectsPages` e `getProjectFilterOptions`, e a entrada `projects` do registro de pré-renderização dispara as mesmas duas; o `ItemList` do JSON-LD vem do primeiro lote da lista mostrada (`pages[0].items`, 9 itens, sem `numberOfItems`), não de uma consulta de índice). `ProjectPage` traz `availableTypes`; `tech` combina por E (texto normalizado), `year` por OU e campos diferentes por E (`listProjects`). `buildProjectsQueryArgs(language, filters)` (`src/utils/`) omite todo valor padrão, de modo que o estado padrão é `{ lang }`; o hook da tela e a entrada `projects` do registro de pré-renderização o usam, e é isso que faz a hidratação achar o cache. A query da tela (`q`, `type`, `category`, `tech`, `year`, `sort`; `tech` e `year` repetidos, até 10, normalizados e ordenados por `normalizeTechnologyFilter` e `normalizeYearFilter`) vive na URL (`parseProjectsSearchParams`/`buildProjectsSearch`, sempre `replace` com `preventScrollReset`), e a quantidade de páginas mostradas vive em `location.state.pages` (`useProjectsPages`), que também restaura a volta do detalhe.
-    - Endpoints de conteúdo (`profile.api.ts`, `timeline.api.ts`, `projects.api.ts`) usam `queryFn`
-      que chama `src/services/content/`, com `lang` no argumento (cache por idioma) e erro no
-      formato do contrato (`toQueryError`); a #43 troca cada `queryFn` por `query`.
-- **`src/pages/`** — convenção de nome `Nome.page.tsx`, componente `function NomePage()` com
-  `export default`. Lógica de estado/efeito específica de uma página (`useState`, `useEffect`,
-  chamada a service) não fica no componente: vive em `src/pages/hooks/use<Nome>.ts`, exportando
-  `use<Nome>()`. O `.page.tsx` correspondente só chama esse hook e renderiza o retorno, sem
-  `useState`/`useEffect` nem chamada a service dentro do componente:
+Regras por área; o mecanismo de cada uma está em `docs/` (tabela "Onde ler mais" no fim da seção).
 
-    ```tsx
-    function useProductList() {
-        const [products, setProducts] = useState<Product[]>([])
-        const [isLoading, setIsLoading] = useState(true)
-
-        useEffect(() => {
-            get<Product[]>("/products").then(setProducts).finally(() => setIsLoading(false))
-        }, [])
-
-        return { products, isLoading }
-    }
-
-    function ProductListPage() {
-        const { t } = useTranslation()
-        const { products, isLoading } = useProductList()
-
-        return isLoading ? <p>{t("loading")}</p> : <ProductTable products={products} />
-    }
-    ```
-
-    Isso é distinto de `src/hooks/`, que é reservado a hooks reutilizáveis entre páginas e
-    componentes, não específicos de uma única página (por exemplo, um `useDebounce` ou `useMediaQuery`).
-    Se `src/pages/hooks/` ou `src/hooks/` não existir, crie a pasta no primeiro uso.
-
+- **Rotas** (`src/routers/`): rota nova entra em `pageRoutes` de `routes.tsx` (gera as três
+  rotas-pai `pt-BR`, `en` e `es`; a raiz `/` só redireciona) e o caminho vem de `ROUTES` em
+  `paths.ts`, montado por `buildPath(path, language, params?)` ou, em componente, por
+  `useLocalizedPath()`: nunca se escreve caminho com prefixo à mão nem se usa `ROUTES.home` cru em
+  `<Link>`. Navegação interna usa `<Link to>`/`useNavigate`, nunca `<a href>` (âncora crua força
+  reload e descarta o estado). As rotas-filhas de `MainLayout` são `lazy` e o único `<Suspense>`
+  fica em volta do `<Outlet />` do layout: página nova não tem o próprio.
+- **i18n** (`src/i18n/`, `src/locales/`): o idioma ativo se lê por `getLanguage()` e se troca por
+  `setLanguage(language)`, que é o único código que grava `LANGUAGE_STORAGE_KEY` (componente nunca
+  usa `saveLanguage` nem `localStorage` direto). Locale em `src/locales/<idioma>/<namespace>.json`,
+  4 espaços, mesmas chaves nos três idiomas; namespace novo entra nos três idiomas, em
+  `src/i18n/resources.ts` e no `ns` de `src/i18n/i18n.ts`. Chave em inglês, lowerCamelCase,
+  hierárquica (`meta.title`); quem usa `common` carrega `useTranslation(["notFound", "common"])` e
+  chama `t("common:backHome")`; texto com marcação no meio usa `<Trans>` com `t={t}`, `i18nKey` e
+  `components`.
+- **Estado** (`src/store/`): endpoint nunca é declarado em `api.ts`, sempre injetado por domínio em
+  `src/store/api/<dominio>.api.ts` (`api.injectEndpoints`); slice em `slices/<nome>.slice.ts`; tipos
+  de store em `src/types/store/`. Código de aplicação usa `useAppDispatch` e `useAppSelector` com
+  seletor estreito, nunca o estado inteiro. Estado de uma tela fica em `useState` no hook da página;
+  compartilhado vai para um slice; dado do servidor, para um endpoint do RTK Query. Dado de conteúdo
+  (R1) vem de `src/services/content/` só pelos `queryFn`: página e componente nunca importam essa
+  pasta nem JSON de `public/`. `src/services/http/` é o cliente fetch fora do RTK Query.
+- **Páginas** (`src/pages/Nome.page.tsx`, `function NomePage()`, `export default`): estado, efeito e
+  chamada a service ficam em `src/pages/hooks/use<Nome>.ts`; o `.page.tsx` só chama o hook e
+  renderiza. `src/hooks/` é só para hook reutilizável entre páginas e componentes. Metadados
+  (`<title>`, `<meta>`) com as tags nativas do React 19 no JSX da própria página, com valor de
+  chave. Página de erro e não encontrada declaram `<meta name="robots" content={"noindex"} />`.
+- **Tela pública nova** entrega a entrada no registro de pré-renderização
+  (`src/prerender/prerenderRoutes.ts`) com teste de `<h1>` e conteúdo principal nos três idiomas, e
+  os E2E dos fluxos. Elemento com `useReveal` leva `suppressHydrationWarning`.
 - **Componentes** (`src/components/Nome.tsx`, PascalCase sem sufixo; CSS Module em
   `src/styles/components/nome.module.css`; teste em `src/components/test/Nome.test.tsx`):
   `<Nome>Props` local, `export default`, sem rota própria, texto fixo em `common` ou por prop. O
@@ -277,16 +158,6 @@ A lista completa, o CI, o Husky e o `.editorconfig` estão em [`docs/setup/devel
   pré-renderização estão descritos em `docs/screens/<tela>.md#implementação`. Toda tela pública
   declara `<PageMeta title description path />` e `<JsonLd data={...} />` (construtor em
   `src/utils/`), além de `<title>` e `description` próprios.
-- **SEO por tela** — toda tela pública nova declara `<PageMeta title description path />`
-  (`src/components/`: canônica autorreferente, quatro `hreflang` com `x-default` em `en`, Open
-  Graph e `twitter:card`; `params` e `image` opcionais) e `<JsonLd data={...} />` com o objeto de
-  um construtor em `src/utils/` (`buildHomeJsonLd`, `buildProjectsJsonLd`; o `@id` da `Person` é
-  `<URL canônica de />#person`), além do `<title>` e da `description` próprios. A URL absoluta vem
-  de `buildAbsoluteUrl(path, language, params?)` (`getSiteUrl()` + `publicUrl` + `buildPath`);
-  `getSiteUrl` é a única leitura de `VITE_SITE_URL` (só a origem, obrigatória no `npm run build`,
-  validada por `scripts/resolveSiteUrl.ts`; localhost no dev e nos testes). `serializeJsonLd`
-  escapa `<`. A imagem padrão `public/images/og-site.png` vem de `npm run og:image` e é
-  versionada. Não encontrada e erro não usam o mecanismo.
 - **Layout compartilhado** (`src/layouts/Main.layout.tsx`): monta `SkipLink`, `Header`, o único
   `<main id="main-content">` (página não renderiza `main`), `Footer` e `<ScrollRestoration />`;
   detalhe em `docs/screens/layout.md#implementação`.
@@ -305,45 +176,27 @@ A lista completa, o CI, o Husky e o `.editorconfig` estão em [`docs/setup/devel
   fonte, dado mock) entra em `public/`; fonte é self-hospedada (`woff2` e licença em
   `public/fonts/`, `@font-face` em `global.css`, `preload` no `index.html`), nunca CDN. Detalhe em
   `docs/architecture/code-structure.md`.
-  **`src/services/http/`** é o cliente HTTP (fetch cru, usado fora do RTK Query), um símbolo
-  por arquivo com `export default`: `apiUrl.ts` (a constante da URL da API, a **única** leitura de
-  `import.meta.env.VITE_API_URL` no código, vazia quando a variável não existe, para a URL poder ser
-  relativa e funcionar com proxy do Vite), `get.ts` e `post.ts` (`get<T>(path, options?)` e
-  `post<T>(path, body, options?)`, que chamam `fetch` com `apiUrl + path`, enviam `Accept-Language`
-  com `getLanguage()` a cada chamada e aceitam `options.signal` (`AbortSignal`); uma requisição
-  cancelada rejeita com o `AbortError` do `fetch`, sem embrulho) e `parseResponse.ts` (resposta
-  não-ok vira `Error` literal em português com o status e, quando há, o corpo). O chamador passa só
-  o caminho relativo. Timeout próprio não existe: quem quiser usa `AbortSignal.timeout(ms)`.
+- **Config e dados:** variável do cliente tem prefixo `VITE_` e se lê com
+  `import.meta.env.VITE_ALGO`, nunca `process.env`; `import.meta.env.BASE_URL`, `VITE_API_URL` e
+  `VITE_SITE_URL` só são lidos em `src/utils/publicUrl.ts`, `src/services/http/apiUrl.ts` e
+  `getSiteUrl`, e `BASE_PATH` só em `vite.config.ts`. Listas fixas de valores ficam em
+  `src/enum/<nome>.enum.ts` (`export default`) e funções puras reutilizáveis sem React em
+  `src/utils/`. Conteúdo em `public/content/<idioma>/`; ID novo vem de `npm run content:id`.
 
-**`src/services/content/`** é a camada de dados local da v1 (R1), usada só pelos `queryFn` de
-`src/store/api/` (e removida na #43): `readJson`/`readText` leem `public/` por `fetch`, os `load*` carregam os
-registros de um idioma, e funções puras montam o que a API calcularia (busca, ordenação, paginação,
-trajetória). `readText` guarda a promessa por caminho em `contentCache` (`projects.json` e `profile.json` são lidos uma vez por carga; falha não fica guardada; `clearContentCache()` esvazia; `readJson` analisa o texto a cada chamada, cada consumidor com objeto próprio). Página e componente nunca importam essa pasta nem JSON de `public/`. **Migração para o backend (#43):** busca, filtros por tipo, categoria, tecnologia e ano, ordenação, paginação, opções e contagens simulados aqui saem do frontend quando a #43 trocar cada `queryFn` por `query`; o servidor passa a receber `q`, `type`, `category`, `tech`, `year`, `sort`, `offset` e `limit`, e o cache de leitura sai com a camada. O conteúdo fica
-em `public/content/<idioma>/` e `public/images/`, o modelo em branco em `content/template/` e a
-validação do conteúdo em `src/services/content/validation/`, executada por
-`src/services/content/test/content.test.ts` (`npm run content:check`). `scripts/` guarda os
-comandos `content:*` (rodam com `tsx` e `tsconfig.node.json`); ID novo vem de `npm run content:id`.
-`validateTranslation` reprova campo traduzível (`TRANSLATABLE_PATHS`) de `en`/`es` igual ao `pt-BR`
-e documento `.md` traduzido igual: valor igual por natureza (nome próprio, sigla, termo
-idêntico nos idiomas) entra por caminho em `translationExceptions.ts`, nunca frase.
+### Onde ler mais
 
-**`src/enum/`** guarda as listas fixas de valores (`PROJECT_TYPES`, `PROJECT_CATEGORIES` etc.), um
-símbolo por arquivo com `export default`, nomeado `<nome>.enum.ts`; os tipos de `src/types/` derivam
-delas. **`src/utils/`** guarda funções puras reutilizáveis sem relação com React, como `publicUrl.ts`,
-a **única** leitura de `import.meta.env.BASE_URL`. Se a pasta não existir, crie no primeiro uso.
-
-A convenção de variáveis de ambiente é a do Vite: só variáveis com prefixo `VITE_`
-são expostas ao código do cliente, e a leitura é `import.meta.env.VITE_ALGO`, nunca
-`process.env.REACT_APP_ALGO`. A convenção é
-materializada em `.env.example` (na raiz, com `VITE_API_URL` como exemplo) e na augmentação de
-`ImportMetaEnv`/`ImportMeta` em `src/vite-env.d.ts`.
-
-`BASE_PATH` (sem prefixo `VITE_`) é lida só em `vite.config.ts`, por `scripts/resolveBase.ts`, e define o `base`
-do Vite (`/` por padrão); o código do cliente só vê `import.meta.env.BASE_URL`. `scripts/` tem o alias
-`@scripts/*` (em `tsconfig.node.json` e `resolve.alias`) para os testes de `scripts/test/`.
-
-A configuração de build fica em `vite.config.ts` na raiz (plugin React + bloco `test` do Vitest),
-e a entrada da aplicação é o `index.html` da raiz, que carrega `/src/entry-client.tsx` como módulo.
+| Área                                                                                    | Leia                                                                   |
+| --------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| Rotas, pré-renderização, estado, i18n, serviços, SEO por tela, estilos, tema, movimento | `docs/architecture/frontend.md`                                        |
+| Pastas, páginas e hooks, alias, `public/`, enum, utils, convenções de código completas  | `docs/architecture/code-structure.md`                                  |
+| Componentes (props, comportamento, armadilhas)                                          | `docs/architecture/components.md`                                      |
+| Cada tela e o layout (requisitos e "Implementação")                                     | `docs/screens/<tela>.md`                                               |
+| Testes de unidade, mecânica, cobertura e E2E                                            | `docs/setup/testing.md`, `docs/setup/e2e-performance.md`               |
+| Comandos, CI, hooks, ambientes e variáveis                                              | `docs/setup/development.md`, `docs/setup/environments.md`              |
+| Produto, glossário, versões, acessibilidade e requisitos não funcionais                 | `docs/product/`                                                        |
+| Design system, decisões (`D01`–`D56`, `PI1`–`PI5`) e protótipo                          | `docs/design/`                                                         |
+| Contrato da API e modelo de dados                                                       | `docs/architecture/api-contract.md`, `docs/architecture/data-model.md` |
+| Fluxo de navegação e entidades                                                          | `docs/diagrams/`                                                       |
 
 ## Estilo de código
 

@@ -94,3 +94,42 @@ ativo. Link interno usa `useLocalizedPath()`, que mantém o prefixo do idioma. O
   novo (imagem, fonte, dado mock) entra aqui. Fonte é self-hospedada: `woff2` e licença em
   `public/fonts/`, `@font-face` em `src/styles/global.css` e `preload` no `index.html`, nunca
   CDN ou serviço de fonte de terceiros (Google Fonts e afins).
+
+## Páginas e hooks
+
+- **`src/pages/`** — convenção de nome `Nome.page.tsx`, componente `function NomePage()` com
+  `export default`. Lógica de estado/efeito específica de uma página (`useState`, `useEffect`,
+  chamada a service) não fica no componente: vive em `src/pages/hooks/use<Nome>.ts`, exportando
+  `use<Nome>()`. O `.page.tsx` correspondente só chama esse hook e renderiza o retorno, sem
+  `useState`/`useEffect` nem chamada a service dentro do componente:
+
+    ```tsx
+    function useProductList() {
+        const [products, setProducts] = useState<Product[]>([])
+        const [isLoading, setIsLoading] = useState(true)
+
+        useEffect(() => {
+            get<Product[]>("/products").then(setProducts).finally(() => setIsLoading(false))
+        }, [])
+
+        return { products, isLoading }
+    }
+
+    function ProductListPage() {
+        const { t } = useTranslation()
+        const { products, isLoading } = useProductList()
+
+        return isLoading ? <p>{t("loading")}</p> : <ProductTable products={products} />
+    }
+    ```
+
+    Isso é distinto de `src/hooks/`, que é reservado a hooks reutilizáveis entre páginas e
+    componentes, não específicos de uma única página (por exemplo, um `useDebounce` ou `useMediaQuery`).
+    Se `src/pages/hooks/` ou `src/hooks/` não existir, crie a pasta no primeiro uso.
+
+## Enum e utils
+
+**`src/enum/`** guarda as listas fixas de valores (`PROJECT_TYPES`, `PROJECT_CATEGORIES` etc.), um
+símbolo por arquivo com `export default`, nomeado `<nome>.enum.ts`; os tipos de `src/types/` derivam
+delas. **`src/utils/`** guarda funções puras reutilizáveis sem relação com React, como `publicUrl.ts`,
+a **única** leitura de `import.meta.env.BASE_URL`. Se a pasta não existir, crie no primeiro uso.
