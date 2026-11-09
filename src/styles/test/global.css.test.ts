@@ -36,6 +36,11 @@ describe("global.css", () => {
         }
     })
 
+    it("declara a escala de texto de etiqueta e de data", () => {
+        expect(rootBlock).toContain("--text-chip: 0.75rem")
+        expect(rootBlock).toContain("--text-body-sm: 0.875rem")
+    })
+
     it("declara o tema escuro por data-theme com color-scheme", () => {
         expect(darkBlock).toContain("color-scheme: dark")
         expect(darkBlock).toContain("--surface-chrome: #141210")

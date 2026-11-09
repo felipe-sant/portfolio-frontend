@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest"
+import { describe, expect, it, vi } from "vitest"
 import { act, render, screen, waitFor } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { createMemoryRouter, Outlet, RouterProvider } from "react-router-dom"
@@ -128,6 +128,21 @@ describe("LanguageSelector", () => {
         expect(localStorage.getItem(LANGUAGE_STORAGE_KEY)).toBe("en")
         await waitFor(() => expect(screen.queryByRole("link")).not.toBeInTheDocument())
         expect(await screen.findByRole("button", { name: "Language: English" })).toHaveFocus()
+    })
+
+    it("devolve o foco ao botão sem rolar a página ao escolher um idioma", async () => {
+        await renderSelector()
+        await openList()
+        const focusSpy = vi.spyOn(HTMLElement.prototype, "focus")
+
+        await userEvent.click(screen.getByRole("link", { name: "English" }))
+
+        const toggle = await screen.findByRole("button", { name: "Language: English" })
+        const toggleCalls = focusSpy.mock.contexts.flatMap((context, index) =>
+            context === toggle ? [focusSpy.mock.calls[index]] : []
+        )
+        expect(toggleCalls).toContainEqual([{ preventScroll: true }])
+        focusSpy.mockRestore()
     })
 
     it("fecha a lista com Escape e foca o botão", async () => {

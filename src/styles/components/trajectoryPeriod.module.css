@@ -8,7 +8,7 @@
 .period {
     color: var(--text-weak);
     font-family: var(--font-mono);
-    font-size: var(--text-caption);
+    font-size: var(--text-body-sm);
     white-space: nowrap;
 }
 

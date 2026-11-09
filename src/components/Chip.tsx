@@ -3,10 +3,13 @@ import css from "@/styles/components/chip.module.css"
 
 interface ChipProps {
     children: ReactNode
+    font?: "mono" | "body"
 }
 
-function Chip({ children }: ChipProps) {
-    return <span className={css.chip}>{children}</span>
+function Chip({ children, font = "mono" }: ChipProps) {
+    const className = font === "body" ? `${css.chip} ${css.body}` : css.chip
+
+    return <span className={className}>{children}</span>
 }
 
 export default Chip

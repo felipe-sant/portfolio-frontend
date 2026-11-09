@@ -1,6 +1,6 @@
 import type { Locator, Page } from "@playwright/test"
 
-const DESKTOP_MIN_WIDTH = 640
+const DESKTOP_MIN_WIDTH = 720
 
 async function openPreferences(page: Page): Promise<Locator> {
     const isDesktop = (page.viewportSize()?.width ?? 0) >= DESKTOP_MIN_WIDTH

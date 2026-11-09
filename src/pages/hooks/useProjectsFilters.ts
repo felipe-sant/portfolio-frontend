@@ -27,8 +27,22 @@ function useProjectsFilters() {
     const [draft, setDraft] = useState(filters.q)
     const debouncedDraft = useDebounce(draft, SEARCH_DELAY)
     const writtenQuery = useRef(filters.q)
+    const pendingFilters = useRef<ProjectsFilters | undefined>(undefined)
+    const seenSearch = useRef(location.search)
+
+    useEffect(() => {
+        if (seenSearch.current !== location.search) {
+            seenSearch.current = location.search
+            pendingFilters.current = undefined
+        }
+    }, [location.search])
+
+    function currentFilters() {
+        return pendingFilters.current ?? filters
+    }
 
     function apply(next: ProjectsFilters) {
+        pendingFilters.current = next
         void navigate(
             { pathname: location.pathname, search: buildProjectsSearch(next), hash: location.hash },
             { replace: true, preventScrollReset: true }
@@ -37,10 +51,11 @@ function useProjectsFilters() {
 
     const applyDraft = useEffectEvent((value: string) => {
         const query = value.trim()
+        const base = currentFilters()
 
-        if (query !== filters.q) {
+        if (query !== base.q) {
             writtenQuery.current = query
-            apply({ ...filters, q: query })
+            apply({ ...base, q: query })
         }
     })
 
@@ -59,32 +74,34 @@ function useProjectsFilters() {
     function clearSearch() {
         setDraft("")
         writtenQuery.current = ""
-        apply({ ...filters, q: "" })
+        apply({ ...currentFilters(), q: "" })
     }
 
     function clearFilters() {
         setDraft("")
         writtenQuery.current = ""
-        apply({ q: "", sort: filters.sort })
+        apply({ q: "", sort: currentFilters().sort })
         document.getElementById(projectsElementIds.search)?.focus()
     }
 
     function setType(value: string) {
         const type = PROJECT_TYPES.find((option) => option === value)
+        const base = currentFilters()
 
-        if (type !== filters.type) {
-            apply({ ...filters, type })
+        if (type !== base.type) {
+            apply({ ...base, type })
         }
     }
 
     function setCategory(value: string) {
         const category = PROJECT_CATEGORIES.find((option) => option === value)
+        const base = currentFilters()
 
-        apply({ ...filters, category: category === filters.category ? undefined : category })
+        apply({ ...base, category: category === base.category ? undefined : category })
     }
 
     function applyModalFilters({ tech, year, sort }: ProjectsAppliedFilters) {
-        apply({ ...filters, tech, year, sort })
+        apply({ ...currentFilters(), tech, year, sort })
     }
 
     return {
