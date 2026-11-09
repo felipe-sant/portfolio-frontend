@@ -142,7 +142,7 @@ Cada `e2e/*.spec.ts` está em exatamente uma lista de `e2e/support/specClassific
 | `resume`            | por ambiente | modo canvas em toque e modo nativo em desktop, axe                                                 |
 | `theme`             | por ambiente | tema claro e escuro                                                                                |
 
-Divergências em relação à proposta inicial da #123: `project` e `keyboard` ficam por ambiente. `project.spec.ts` chama `setViewportSize({ width: 320 })` e `keyboard.spec.ts` pula todos os testes acima do mobile, então no projeto único (desktop) os testes de teclado do menu nunca rodariam. `language` e `not-found` também ficam por ambiente: `language.spec.ts` lê `viewportSize()` para escolher o caminho do menu e marca `test.fail(` no desktop (RF-LAY-14 só é asserção real no mobile), e `not-found.spec.ts` tem ramo do menu mobile; no projeto `independent` (1280 px) a cobertura mobile se perderia. Independentes ficam três specs (`footer`, `machine-files`, `no-javascript`).
+Divergências em relação à proposta inicial da #123: `project` e `keyboard` ficam por ambiente. `project.spec.ts` chama `setViewportSize({ width: 320 })` e `keyboard.spec.ts` pula todos os testes acima do mobile, então no projeto único (desktop) os testes de teclado do menu nunca rodariam. `language` e `not-found` também ficam por ambiente: `language.spec.ts` lê `viewportSize()` para escolher o caminho do menu e marca `test.fail(` no desktop (RF-LAY-14 só é asserção real no mobile), e `not-found.spec.ts` tem ramo do menu mobile; no projeto `independent` (1280 px) a cobertura mobile se perderia. Independentes ficam quatro specs (`footer`, `machine-files`, `motion`, `no-javascript`); `motion` define o próprio `reducedMotion` com `test.use` e não usa axe, viewport, `emulateMedia` nem `testInfo`.
 
 ## Projetos do Playwright
 
@@ -150,7 +150,7 @@ Divergências em relação à proposta inicial da #123: `project` e `keyboard` f
 - `independent` (1280x800, tema claro, `reducedMotion: "reduce"`) roda `independentSpecs` uma vez. O nome do projeto não afeta o ruleset, que exige só o job `E2E`.
 - `contact-form-*` (quatro projetos, porta 4174) seguem iguais.
 
-`npx playwright test --list`: 2267 testes em 21 arquivos, contra 2504 antes (237 a menos: os 79 testes independentes, que rodavam 4 vezes, rodam 1; cada teste por ambiente continua rodando 4 vezes). Depois, `motion.spec.ts` também passou a independente (define o próprio `reducedMotion` com `test.use` e não usa axe, viewport, `emulateMedia` nem `testInfo`): a lista caiu para 2254 testes e o spec roda uma vez no projeto `independent`, 0/70 em 10 repetições a 2 núcleos com `--retries=0`.
+`npx playwright test --list`: 2254 testes, contra 2504 antes da classificação. Os testes dos quatro specs independentes, que rodavam uma vez por projeto de ambiente (4 vezes), rodam uma só no projeto `independent`; cada teste por ambiente continua rodando 4 vezes. O `motion` roda 0/70 em 10 repetições a 2 núcleos com `--retries=0`.
 
 Mutação de verificação: mover `accessibility.spec.ts` para `independentSpecs` faz `specClassification.test.ts` falhar ("não deixa spec que depende do ambiente na lista de independentes" e "coloca todo spec em exatamente uma lista" quando ele sai de uma lista); removê-lo de `perEnvironmentSpecs` falha o teste dos obrigatórios. Mutações desfeitas.
 
