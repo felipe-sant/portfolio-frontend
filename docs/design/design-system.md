@@ -132,7 +132,7 @@ do `h3` para baixo são fixos.
 | `--text-body-sm`  | `0.875rem`                     | `--lh-tight`    |                |
 | `--text-caption`  | `0.8125rem`                    |                 |                |
 | `--text-label-sm` | `0.75rem`                      |                 | `--ls-label`   |
-| `--text-chip`     | `0.6875rem`                    |                 |                |
+| `--text-chip`     | `0.75rem`                      |                 |                |
 
 Títulos levam `letter-spacing` negativo; rótulos em mono, positivo (`--ls-label` 0.08em,
 `--ls-label-wide` 0.1em). Todo parágrafo é limitado a `--measure` (34rem) e usa

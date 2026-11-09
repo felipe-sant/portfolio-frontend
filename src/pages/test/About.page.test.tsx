@@ -334,6 +334,7 @@ describe("AboutPage, conteúdo", () => {
                 .getAllByRole("listitem")
                 .map((item) => item.textContent)
         ).toEqual(["Escrevo o teste junto com o código", "Reviso o que entrego"])
+        expect(screen.getByText("Reviso o que entrego").className).toContain("body")
         expect(screen.getAllByText(/Cloud Practitioner/)[0].closest("li")).toHaveTextContent(
             "Cloud Practitioner · AWS"
         )

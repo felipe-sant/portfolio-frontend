@@ -52,6 +52,13 @@ async function openAboutFromHeader(page: Page, language: Language) {
     await expect(page).toHaveURL(new RegExp(`/${language}/about$`))
 }
 
+function styleOf(locator: Locator) {
+    return locator.evaluate((element) => {
+        const style = getComputedStyle(element)
+        return { size: parseFloat(style.fontSize), family: style.fontFamily }
+    })
+}
+
 async function getBox(locator: Locator): Promise<Box> {
     const box = await locator.boundingBox()
     if (!box) {
@@ -294,6 +301,34 @@ test.describe("layout", () => {
             expect(result.bandLuminance).toBeGreaterThan(0.6)
             expect(result.bandLuminance).toBeLessThan(0.99)
         }
+    })
+})
+
+test.describe("tamanho do texto", () => {
+    test("RF-ABOUT-10: chips a partir de 12px, período e detalhes a partir de 14px, Como eu trabalho na fonte do corpo e sem rolagem horizontal", async ({
+        page
+    }) => {
+        await openAbout(page, "pt-BR")
+        const texts = UI_TEXTS["pt-BR"].aboutPage
+        const band = page.getByRole("region", { name: `${texts.certificates} ${texts.workStyle}` })
+        await band.scrollIntoViewIfNeeded()
+
+        const principle = await styleOf(band.locator("ul li span").last())
+        const certificate = await styleOf(band.locator("ul li span").first())
+        const trajectoryButton = page.locator("button[aria-haspopup='dialog']").first()
+        const period = await styleOf(trajectoryButton.locator("time").first())
+        const details = await styleOf(trajectoryButton.locator("span[class*='details']").first())
+        const scroll = await page.evaluate(() => ({
+            scrollWidth: document.documentElement.scrollWidth,
+            clientWidth: document.documentElement.clientWidth
+        }))
+
+        expect(principle.size).toBeGreaterThanOrEqual(12)
+        expect(principle.family).toContain("Plex Sans")
+        expect(certificate.family).toContain("Plex Mono")
+        expect(period.size).toBeGreaterThanOrEqual(14)
+        expect(details.size).toBeGreaterThanOrEqual(14)
+        expect(scroll.scrollWidth).toBeLessThanOrEqual(scroll.clientWidth)
     })
 })
 
