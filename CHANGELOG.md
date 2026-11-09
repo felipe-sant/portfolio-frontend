@@ -1,5 +1,23 @@
 # portfolio-frontend
 
+## 1.2.1
+
+### Patch Changes
+
+- [#186](https://github.com/felipe-sant/portfolio-frontend/pull/186) [`11cf220`](https://github.com/felipe-sant/portfolio-frontend/commit/11cf220a72809a9e69c5270c9f66a24c40614731) Thanks [@felipe-sant](https://github.com/felipe-sant)! - Corrige a rolagem horizontal do cabeçalho entre 640px e 720px: o botão de menu passa a valer até 719px.
+
+- [#185](https://github.com/felipe-sant/portfolio-frontend/pull/185) [`9b4c76c`](https://github.com/felipe-sant/portfolio-frontend/commit/9b4c76cff90774f208ffe30130dfce3373fae175) Thanks [@felipe-sant](https://github.com/felipe-sant)! - Corrige a busca de Projetos que perdia o termo ou um filtro quando o visitante clicava em filtros logo depois da pausa da digitação.
+
+- [#180](https://github.com/felipe-sant/portfolio-frontend/pull/180) [`c6117f9`](https://github.com/felipe-sant/portfolio-frontend/commit/c6117f982096a0447215763f6dd4afa1e9e3fc25) Thanks [@felipe-sant](https://github.com/felipe-sant)! - Corrige a troca de idioma por clique no seletor, que rolava a página no desktop em vez de preservar a posição.
+
+- [#184](https://github.com/felipe-sant/portfolio-frontend/pull/184) [`f28578c`](https://github.com/felipe-sant/portfolio-frontend/commit/f28578c2d796aabca7d14d1a9c12f4461138f117) Thanks [@felipe-sant](https://github.com/felipe-sant)! - Reserva a calha da barra de rolagem para o cabeçalho não deslocar na troca de página
+
+- [#181](https://github.com/felipe-sant/portfolio-frontend/pull/181) [`3e04c3c`](https://github.com/felipe-sant/portfolio-frontend/commit/3e04c3cd3a5b56c75a2e594d5d4871f98c4b2e8d) Thanks [@felipe-sant](https://github.com/felipe-sant)! - Amplia o link de título dos cartões de Projetos para 44px de altura sem mudar o visual do cartão.
+
+- [#188](https://github.com/felipe-sant/portfolio-frontend/pull/188) [`b6ec437`](https://github.com/felipe-sant/portfolio-frontend/commit/b6ec43752979d7d78c919ae5e77ee12109fa834e) Thanks [@felipe-sant](https://github.com/felipe-sant)! - Faixa de tecnologias da Início: pausa com o mouse sobre ela, o foco do teclado dentro dela ou um toque (o toque seguinte retoma), anda em laço também no celular e só rola na horizontal com "Reduzir movimento" ligado, em qualquer dispositivo (WCAG 2.2.2, D68 substitui a D28)
+
+- [#187](https://github.com/felipe-sant/portfolio-frontend/pull/187) [`fee1c9b`](https://github.com/felipe-sant/portfolio-frontend/commit/fee1c9b848d5ff7db101e73c3e8a969fe6f24e63) Thanks [@felipe-sant](https://github.com/felipe-sant)! - Sobe o tamanho do texto das etiquetas para 12 px, de períodos, anos e cargos para 14 px, e usa a fonte do corpo nos itens de "Como eu trabalho".
+
 ## 1.2.0
 
 ### Minor Changes
