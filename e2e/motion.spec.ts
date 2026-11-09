@@ -1,10 +1,11 @@
 import { expect, test } from "@playwright/test"
-import type { Page } from "@playwright/test"
+import type { Locator, Page } from "@playwright/test"
 import openPreferences from "./support/openPreferences"
 import readStackOffset from "./support/readStackOffset"
 
 const STACK_HEADING = "Tecnologias que uso"
 const MOVEMENT_THRESHOLD = 5
+const MAX_TAB_PRESSES = 40
 
 function getStackBand(page: Page) {
     return page.getByRole("region", { name: STACK_HEADING })
@@ -33,6 +34,16 @@ async function expectStackStill(page: Page) {
     await expect(getStackBand(page).locator("ul[aria-hidden='true']")).toHaveCount(0)
     expect(await readStackOffset(page, STACK_HEADING)).toBe(0)
     await expect(getStackBand(page).locator("div").first()).toHaveCSS("animation-name", "none")
+}
+
+async function tabUntilFocused(page: Page, target: Locator) {
+    for (let attempt = 0; attempt < MAX_TAB_PRESSES; attempt++) {
+        await page.keyboard.press("Tab")
+        if (await target.evaluate((element) => element === document.activeElement)) {
+            return
+        }
+    }
+    await expect(target).toBeFocused()
 }
 
 async function expectStackPaused(page: Page) {
@@ -72,11 +83,11 @@ test.describe("movimento com o sistema em movimento pleno", () => {
         const band = getStackBand(page)
         await expectStackMoving(page)
 
-        await band.focus()
-        await expect(band).toBeFocused()
+        await tabUntilFocused(page, band)
         await expectStackPaused(page)
 
-        await band.blur()
+        await page.keyboard.press("Tab")
+        await expect(band).not.toBeFocused()
         await expect(band).not.toHaveAttribute("data-paused")
         await expectStackMoving(page)
     })
