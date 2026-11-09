@@ -1,4 +1,5 @@
-import { useId } from "react"
+import { useEffect, useId } from "react"
+import type { PointerEvent } from "react"
 import useDragScroll from "@/hooks/useDragScroll"
 import useHoverFocusPause from "@/hooks/useHoverFocusPause"
 import useMotion from "@/hooks/useMotion"
@@ -34,13 +35,31 @@ function StackMarquee({ items, heading }: StackMarqueeProps) {
     const { motion } = useMotion()
     const isAnimated = motion === "full"
     const { ref, dragProps } = useDragScroll<HTMLElement>()
-    const { isPaused, pauseProps } = useHoverFocusPause<HTMLElement>()
+    const { isPaused, pauseProps, releaseTouchPause } = useHoverFocusPause<HTMLElement>()
+
+    useEffect(() => {
+        if (!isAnimated) {
+            releaseTouchPause()
+        }
+    }, [isAnimated, releaseTouchPause])
+
+    function handlePointerDown(event: PointerEvent<HTMLElement>) {
+        dragProps.onPointerDown(event)
+        pauseProps.onPointerDown(event)
+    }
+
+    function handlePointerUp(event: PointerEvent<HTMLElement>) {
+        dragProps.onPointerUp(event)
+        pauseProps.onPointerUp(event)
+    }
 
     return (
         <section
             ref={ref}
             {...dragProps}
             {...pauseProps}
+            onPointerDown={handlePointerDown}
+            onPointerUp={handlePointerUp}
             className={css.band}
             aria-labelledby={headingId}
             tabIndex={regionTabIndex}

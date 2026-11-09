@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { render, screen, within } from "@testing-library/react"
+import { act, fireEvent, render, screen, within } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import StackMarquee from "@/components/StackMarquee"
 import expectNoAxeViolations from "@/testUtils/expectNoAxeViolations"
@@ -113,6 +113,51 @@ describe("StackMarquee", () => {
 
         await user.unhover(region)
         await user.tab()
+        expect(region).not.toHaveAttribute("data-paused")
+    })
+
+    it("pausa com um toque e retoma com o toque seguinte, sem prender a pausa pelo foco", () => {
+        renderMarquee()
+        const region = screen.getByRole("region", { name: "Stack" })
+
+        fireEvent.pointerDown(region, { pointerType: "touch" })
+        fireEvent.pointerUp(region, { pointerType: "touch" })
+        fireEvent.focus(region)
+        expect(region).toHaveAttribute("data-paused", "true")
+
+        fireEvent.pointerDown(region, { pointerType: "touch" })
+        fireEvent.pointerUp(region, { pointerType: "touch" })
+        expect(region).not.toHaveAttribute("data-paused")
+    })
+
+    it("não define pausa por toque com movimento reduzido", () => {
+        localStorage.setItem(MOTION_STORAGE_KEY, "reduced")
+        renderMarquee()
+        const region = screen.getByRole("region", { name: "Stack" })
+
+        fireEvent.pointerDown(region, { pointerType: "touch" })
+        fireEvent.pointerUp(region, { pointerType: "touch" })
+
+        expect(region).not.toHaveAttribute("data-paused")
+    })
+
+    it("solta a pausa por toque quando o movimento passa a reduzido", async () => {
+        renderMarquee()
+        const region = screen.getByRole("region", { name: "Stack" })
+
+        fireEvent.pointerDown(region, { pointerType: "touch" })
+        fireEvent.pointerUp(region, { pointerType: "touch" })
+        expect(region).toHaveAttribute("data-paused", "true")
+
+        act(() => {
+            localStorage.setItem(MOTION_STORAGE_KEY, "reduced")
+            window.dispatchEvent(new StorageEvent("storage", { key: MOTION_STORAGE_KEY }))
+        })
+        act(() => {
+            localStorage.removeItem(MOTION_STORAGE_KEY)
+            window.dispatchEvent(new StorageEvent("storage", { key: MOTION_STORAGE_KEY }))
+        })
+
         expect(region).not.toHaveAttribute("data-paused")
     })
 

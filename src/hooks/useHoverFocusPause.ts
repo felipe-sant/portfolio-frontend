@@ -1,4 +1,4 @@
-import { useRef, useState } from "react"
+import { useCallback, useRef, useState } from "react"
 import type { FocusEvent, PointerEvent } from "react"
 
 const TOUCH_FOCUS_WINDOW_MS = 1000
@@ -47,9 +47,7 @@ function useHoverFocusPause<T extends HTMLElement>() {
         setIsFocusInside(true)
     }
 
-    function releaseTouchPause() {
-        setIsTouchPaused(false)
-    }
+    const releaseTouchPause = useCallback(() => setIsTouchPaused(false), [])
 
     function handleBlur(event: FocusEvent<T>) {
         const next = event.relatedTarget
