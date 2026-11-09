@@ -50,6 +50,7 @@ variáveis com prefixo `VITE_` chegam ao código do cliente; ver [`environments.
 | `npm run e2e:flaky`          | Lista os testes instáveis (`flaky`) de um relatório JSON do Playwright                                                                    |
 | `npm run e2e:check-shards`   | Confere que a união das fatias (`--shard`) do E2E é a lista completa de testes                                                            |
 | `npm run check:chunk`        | Depois do build, confere o orçamento gzip dos chunks do markdown e do `pdfjs-dist` e que a entrada não carrega o `react-markdown`         |
+| `npm run check:contact-form` | Depois do build, falha se o HTML pré-renderizado (`dist/` por padrão) tiver o formulário de Contato, cujo envio é simulado                |
 | `npm run lint`               | oxlint sobre o projeto, com a configuração de `.oxlintrc.json`                                                                            |
 | `npm run lint:fix`           | O mesmo lint, aplicando as correções automáticas possíveis                                                                                |
 | `npm run changeset`          | Cria o changeset do Pull Request em `.changeset/` (`-- --empty` para mudança que não altera a versão)                                     |
