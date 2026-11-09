@@ -164,6 +164,22 @@ describe("useProjectsFilters", () => {
         expect(router.state.location.search).toBe("?type=api&category=personal")
     })
 
+    it("descarta o alvo concluído quando uma navegação externa volta à URL de origem", async () => {
+        const router = renderHook()
+        await flush()
+
+        act(() => latest.setType("web"))
+        await flush()
+        await act(async () => {
+            await router.navigate(PATH)
+        })
+        await flush()
+        act(() => latest.setCategory("personal"))
+        await flush()
+
+        expect(router.state.location.search).toBe("?category=personal")
+    })
+
     it("esvazia campo e q ao limpar a busca", async () => {
         const router = renderHook(`${PATH}?q=react&type=web`)
         await flush()

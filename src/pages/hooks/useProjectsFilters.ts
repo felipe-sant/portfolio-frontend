@@ -27,18 +27,22 @@ function useProjectsFilters() {
     const [draft, setDraft] = useState(filters.q)
     const debouncedDraft = useDebounce(draft, SEARCH_DELAY)
     const writtenQuery = useRef(filters.q)
-    const pendingRequest = useRef<{ filters: ProjectsFilters; fromSearch: string } | undefined>(
-        undefined
-    )
+    const pendingFilters = useRef<ProjectsFilters | undefined>(undefined)
+    const seenSearch = useRef(location.search)
+
+    useEffect(() => {
+        if (seenSearch.current !== location.search) {
+            seenSearch.current = location.search
+            pendingFilters.current = undefined
+        }
+    }, [location.search])
 
     function currentFilters() {
-        const pending = pendingRequest.current
-
-        return pending && pending.fromSearch === location.search ? pending.filters : filters
+        return pendingFilters.current ?? filters
     }
 
     function apply(next: ProjectsFilters) {
-        pendingRequest.current = { filters: next, fromSearch: location.search }
+        pendingFilters.current = next
         void navigate(
             { pathname: location.pathname, search: buildProjectsSearch(next), hash: location.hash },
             { replace: true, preventScrollReset: true }
@@ -91,7 +95,6 @@ function useProjectsFilters() {
 
     function setCategory(value: string) {
         const category = PROJECT_CATEGORIES.find((option) => option === value)
-
         const base = currentFilters()
 
         apply({ ...base, category: category === base.category ? undefined : category })
