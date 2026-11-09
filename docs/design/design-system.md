@@ -312,6 +312,11 @@ As convenções do repositório prevalecem onde divergem do handoff (R3):
 | `tokens/*.css` e `components/*.jsx` com comentários        | Código sem comentários                                                                                                                            |
 | Componentes React em JSX                                   | Recriados em TypeScript, com texto de UI por chave de tradução nos três idiomas                                                                   |
 
+As fontes (Bricolage Grotesque, IBM Plex Sans e IBM Plex Mono) são self-hospedadas, com `woff2` e
+licenças OFL em `public/fonts/`, para não fazer requisição a terceiros com o IP de quem visita
+(privacidade, LGPD/GDPR), não depender de CDN externa e servir as fontes da mesma origem, com
+`preload`.
+
 ## Decisões de design
 
 As pendências e contradições do handoff estão decididas e registradas em
