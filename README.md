@@ -18,6 +18,18 @@ Entrega da Fatec: [site no GitHub Pages](https://fatec-jacarei-dsm-portfolio.git
   <img src="docs/design/assets/readme/home-light.png" alt="Tela Início do portfólio: status atual, título com a função e os botões Ver projetos e Baixar CV" width="100%">
 </picture>
 
+## Como este projeto é feito
+
+Uso o Claude Code como parceiro de desenvolvimento e deixo isso à vista: os commits levam o trailer `Co-Authored-By` e os PRs, a assinatura da ferramenta.
+
+- **Decisão minha:** escopo, prioridade, aprovação de cada spec e o merge.
+- **Proposta e implementação da IA:** a spec, o código e os testes, por agentes com papéis separados, descritos em [`.claude/README.md`](.claude/README.md).
+- **Antes do merge:** build, lint, testes e E2E no CI; revisão por um agente; em mudança de tela, rodo a aplicação e confiro à mão; e leio cada PR antes de mesclar.
+
+O projeto tem um único autor, então a revisão automática é feita por um agente do mesmo modelo e não há uma segunda pessoa aprovando. O que sustenta a qualidade é eu ler e testar o que a IA gera, e o template de PR pede esse registro.
+
+Um exemplo: três testes E2E falharam porque o corpo de um modal passou a receber o foco do teclado. O agente atualizou os testes para a nova ordem de Tab, e eu conferi que nenhuma asserção foi enfraquecida.
+
 ## Sobre o projeto
 
 O portfólio existe para converter visita em contato: mostra o trabalho do autor com profundidade
