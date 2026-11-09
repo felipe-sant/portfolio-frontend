@@ -68,6 +68,7 @@ export default defineConfig(({ command, mode, isSsrBuild }) => {
                     "scripts/generateResume.ts",
                     "scripts/prerender.ts",
                     "scripts/prepareRelease.ts",
+                    "scripts/preparePromotion.ts",
                     "scripts/previewFatec.ts",
                     "scripts/publishFatecDocs.ts",
                     "src/setupTests.ts",
