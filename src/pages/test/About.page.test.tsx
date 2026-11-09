@@ -12,11 +12,11 @@ import buildProjectRecord from "@/testUtils/buildProjectRecord"
 import buildTimelineItemRecord from "@/testUtils/buildTimelineItemRecord"
 import expectNoAxeViolations from "@/testUtils/expectNoAxeViolations"
 import holdFetchAfter from "@/testUtils/holdFetchAfter"
-import relaxTimeoutsForLoad from "@/testUtils/relaxTimeoutsForLoad"
+import relaxAsyncUtilTimeout from "@/testUtils/relaxAsyncUtilTimeout"
 import renderWithStore from "@/testUtils/renderWithStore"
 import stubContentFetch from "@/testUtils/stubContentFetch"
 
-relaxTimeoutsForLoad()
+relaxAsyncUtilTimeout()
 
 const SITE_URL = "http://localhost:5173"
 const PROJECT_ID = "0192f1a0-7c3e-7b21-8d4f-2a9e6c1b3f50"

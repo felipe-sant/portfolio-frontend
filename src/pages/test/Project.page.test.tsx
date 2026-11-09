@@ -9,13 +9,13 @@ import expectNoAxeViolations from "@/testUtils/expectNoAxeViolations"
 import failFetchAfter from "@/testUtils/failFetchAfter"
 import holdFetchAfter from "@/testUtils/holdFetchAfter"
 import parseUntyped from "@/testUtils/parseUntyped"
-import relaxTimeoutsForLoad from "@/testUtils/relaxTimeoutsForLoad"
+import relaxAsyncUtilTimeout from "@/testUtils/relaxAsyncUtilTimeout"
 import renderWithStore from "@/testUtils/renderWithStore"
 import stubContentFetch from "@/testUtils/stubContentFetch"
 import type ProjectDocument from "@/types/project/ProjectDocument.types"
 import type ProjectRecord from "@/types/project/ProjectRecord.types"
 
-relaxTimeoutsForLoad()
+relaxAsyncUtilTimeout()
 
 const LANGUAGES = ["pt-BR", "en", "es"] as const
 const NAMES = { "pt-BR": "Projeto", en: "Project", es: "Proyecto" }
