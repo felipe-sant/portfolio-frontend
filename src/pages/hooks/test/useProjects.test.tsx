@@ -143,6 +143,28 @@ describe("useProjects", () => {
         expect(latest.total).toBe(0)
     })
 
+    it("deriva mainItems e experimentItems de items, na ordem recebida", async () => {
+        stubProjects(buildProjectRecords(4, (index) => ({ experiment: index >= 2 })))
+
+        mount()
+        await settled()
+
+        expect(latest.mainItems.map((item) => item.title)).toEqual(["Projeto 2", "Projeto 1"])
+        expect(latest.experimentItems.map((item) => item.title)).toEqual(["Projeto 4", "Projeto 3"])
+        expect(latest.items).toHaveLength(4)
+        expect(latest.total).toBe(4)
+    })
+
+    it("devolve experimentItems vazio quando nenhum projeto é experimento", async () => {
+        stubProjects(buildProjectRecords(3))
+
+        mount()
+        await settled()
+
+        expect(latest.experimentItems).toEqual([])
+        expect(latest.mainItems).toHaveLength(3)
+    })
+
     it("começa carregando, com a contagem vazia antes do texto de carregando", async () => {
         const fetchMock = stubProjects(buildProjectRecords(10))
         const release = holdFetchAfter(fetchMock, 0)

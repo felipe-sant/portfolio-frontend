@@ -1278,3 +1278,105 @@ describe("ProjectsPage, opções do modal por requisição própria", () => {
         expect(screen.queryByRole("group", { name: "Tecnologia" })).not.toBeInTheDocument()
     })
 })
+
+function stubMixed(experiments = 2, mains = 3) {
+    return stubContentFetch(
+        filesFor(
+            buildProjectRecords(mains + experiments, (index) => ({
+                experiment: index >= mains
+            }))
+        )
+    )
+}
+
+describe("ProjectsPage com experimentos", () => {
+    const TITLES = {
+        "pt-BR": {
+            heading: "Experimentos",
+            description: "Projetos pequenos que fiz para praticar uma ideia."
+        },
+        en: { heading: "Experiments", description: "Small projects I built to practice an idea." },
+        es: {
+            heading: "Experimentos",
+            description: "Proyectos pequeños que hice para practicar una idea."
+        }
+    } as const
+
+    it.each(LANGUAGES)(
+        "mostra a seção em %s com h2, apoio e cards em h3 numa lista própria",
+        async (language) => {
+            stubMixed()
+            await setLanguage(language)
+            renderPage(`/${language}/projects`)
+            await listLoaded()
+
+            const section = screen.getByRole("heading", {
+                level: 2,
+                name: TITLES[language].heading
+            })
+            const lists = screen
+                .getAllByRole("list")
+                .filter((list) => list.querySelector("article"))
+
+            expect(screen.getByText(TITLES[language].description)).toBeInTheDocument()
+            expect(screen.getAllByRole("heading", { level: 3 })).toHaveLength(2)
+            expect(lists).toHaveLength(2)
+            expect(within(lists[0]).getAllByRole("heading", { level: 2 })).toHaveLength(3)
+            expect(within(lists[1]).getAllByRole("heading", { level: 3 })).toHaveLength(2)
+            expect(lists[1].compareDocumentPosition(section)).toBe(Node.DOCUMENT_POSITION_PRECEDING)
+            expect(lists[0].compareDocumentPosition(section)).toBe(Node.DOCUMENT_POSITION_FOLLOWING)
+        }
+    )
+
+    it("não mostra a seção nem o h2 quando a lista não tem experimento", async () => {
+        stubProjects(3)
+        renderPage()
+        await listLoaded()
+
+        expect(screen.queryByRole("heading", { name: "Experimentos" })).not.toBeInTheDocument()
+        expect(screen.queryByText(TITLES["pt-BR"].description)).not.toBeInTheDocument()
+        expect(screen.queryAllByRole("heading", { level: 3 })).toHaveLength(0)
+    })
+
+    it("com a busca casando só um principal, a seção some", async () => {
+        stubMixed()
+        const user = userEvent.setup()
+        renderPage()
+        await listLoaded()
+
+        await user.type(screen.getByRole("searchbox"), "Projeto 1")
+
+        await waitFor(() =>
+            expect(screen.queryByRole("heading", { name: "Experimentos" })).not.toBeInTheDocument()
+        )
+        expect(screen.getByRole("link", { name: "Projeto 1" })).toBeInTheDocument()
+    })
+
+    it("com só experimentos mostra só a seção, sem grade principal", async () => {
+        stubMixed(2, 0)
+        renderPage()
+        await listLoaded()
+
+        const lists = screen.getAllByRole("list").filter((list) => list.querySelector("article"))
+
+        expect(screen.getByRole("heading", { level: 2, name: "Experimentos" })).toBeInTheDocument()
+        expect(lists).toHaveLength(1)
+        expect(screen.getAllByRole("heading", { level: 3 })).toHaveLength(2)
+    })
+
+    it("conta principais e experimentos juntos", async () => {
+        stubMixed()
+        renderPage()
+        await listLoaded()
+
+        expect(screen.getByRole("status")).toHaveTextContent("5 de 5 projetos")
+    })
+
+    it("não tem violação de acessibilidade com a seção", async () => {
+        stubMixed()
+        const { container } = renderPage()
+        await listLoaded()
+
+        await expectNoAxeViolations(container)
+    })
+})
