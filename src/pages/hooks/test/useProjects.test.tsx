@@ -55,13 +55,15 @@ function Probe() {
             <h1 id={projects.ids.heading} tabIndex={-1}>
                 Projetos
             </h1>
-            <ul ref={gridRef}>
-                {projects.items.map((item) => (
-                    <li key={item.id}>
-                        <a href={`#${item.id}`}>{item.title}</a>
-                    </li>
-                ))}
-            </ul>
+            <div ref={gridRef}>
+                <ul>
+                    {projects.items.map((item) => (
+                        <li key={item.id}>
+                            <a href={`#${item.id}`}>{item.title}</a>
+                        </li>
+                    ))}
+                </ul>
+            </div>
             {projects.loadMoreError && <div id={projects.ids.loadMoreAlert} tabIndex={-1} />}
         </>
     )
@@ -399,6 +401,21 @@ describe("useProjects", () => {
         await waitFor(() => expect(latest.shown).toBe(10))
         expect(latest.hasMore).toBe(false)
         await waitFor(() => expect(latest.resultsText).toBe("10 de 10 projetos"))
+    })
+
+    it("pede o próximo lote com offset igual a principais mais experimentos já mostrados", async () => {
+        stubProjects(buildProjectRecords(12, (index) => ({ experiment: index >= 7 })))
+        mount()
+        await settled()
+        vi.mocked(listProjects).mockClear()
+
+        act(() => latest.loadMore())
+
+        await waitFor(() => expect(latest.shown).toBe(12))
+        const offsets = vi.mocked(listProjects).mock.calls.map(([, params]) => params.offset)
+        expect(offsets).toContain(9)
+        expect(latest.mainItems).toHaveLength(7)
+        expect(latest.experimentItems).toHaveLength(5)
     })
 
     it("acrescenta 9 e depois 2 cards com 20 projetos", async () => {

@@ -194,9 +194,9 @@ function ProjectsPage() {
                                 </div>
                             )}
                             {!isError && !isNoResults && (
-                                <>
+                                <div ref={gridRef}>
                                     {(mainItems.length > 0 || experimentItems.length === 0) && (
-                                        <ul ref={gridRef} className={css.grid}>
+                                        <ul className={css.grid}>
                                             {mainItems.map((project, index) => (
                                                 <ProjectListItem
                                                     key={project.id}
@@ -204,7 +204,9 @@ function ProjectsPage() {
                                                     index={index}
                                                 />
                                             ))}
-                                            <SkeletonItems count={skeletonCount} />
+                                            {experimentItems.length === 0 && (
+                                                <SkeletonItems count={skeletonCount} />
+                                            )}
                                         </ul>
                                     )}
                                     {experimentItems.length > 0 && (
@@ -224,10 +226,11 @@ function ProjectsPage() {
                                                         headingLevel={3}
                                                     />
                                                 ))}
+                                                <SkeletonItems count={skeletonCount} />
                                             </ul>
                                         </section>
                                     )}
-                                </>
+                                </div>
                             )}
                         </SkeletonSwap>
                         {loadMoreError && (

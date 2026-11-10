@@ -1379,4 +1379,47 @@ describe("ProjectsPage com experimentos", () => {
 
         await expectNoAxeViolations(container)
     })
+
+    it("foca o link do primeiro card novo quando ele cai na seção Experimentos", async () => {
+        stubMixed(3, 7)
+        const user = userEvent.setup()
+        renderPage()
+        await listLoaded()
+
+        await user.click(screen.getByRole("button", { name: "Carregar mais" }))
+
+        await waitFor(() => expect(screen.getAllByRole("heading", { level: 3 })).toHaveLength(3))
+        expect(screen.getByRole("link", { name: "Projeto 8" })).toHaveFocus()
+    })
+
+    it("foca o link do primeiro card novo quando ele é um principal", async () => {
+        stubMixed(1, 10)
+        const user = userEvent.setup()
+        renderPage()
+        await listLoaded()
+
+        await user.click(screen.getByRole("button", { name: "Carregar mais" }))
+
+        await waitFor(() => expect(screen.getAllByRole("heading", { level: 3 })).toHaveLength(1))
+        expect(screen.getByRole("link", { name: "Projeto 1" })).toHaveFocus()
+    })
+
+    it("mostra os esqueletos do lote novo ao fim da última lista visível", async () => {
+        const fetchMock = stubMixed(12, 8)
+        const user = userEvent.setup()
+        renderPage()
+        await listLoaded()
+        const release = holdFetchAfter(fetchMock, 0)
+
+        await user.click(screen.getByRole("button", { name: "Carregar mais" }))
+
+        const experimentCards = await screen.findAllByRole("heading", { level: 3 })
+        const lastList = experimentCards[0].closest("ul")
+        expect(lastList?.querySelectorAll(':scope > li[aria-hidden="true"]')).toHaveLength(9)
+        const mainList = cards()[0].closest("ul")
+        expect(mainList?.querySelectorAll(':scope > li[aria-hidden="true"]')).toHaveLength(0)
+        await act(async () => {
+            release()
+        })
+    })
 })
