@@ -64,8 +64,8 @@ function countRegion() {
 
 function cardTitles() {
     return screen
-        .getAllByRole("heading", { level: 2 })
-        .map((heading) => heading.querySelector("a")?.textContent)
+        .getAllByRole("article")
+        .map((card) => within(card).getByRole("heading").querySelector("a")?.textContent)
 }
 
 async function settle() {
@@ -243,6 +243,7 @@ describe("mountClient com caminho pré-renderizado", () => {
         expect(screen.getByRole("link", { name: "Maps" })).toBe(link)
         expect(readJsonLdText()).toBe(htmlJsonLd)
         expect(cardTitles()).toHaveLength(6)
+        expect(screen.getByRole("heading", { level: 2, name: "Experimentos" })).toBeInTheDocument()
         expect(consoleSpies.error).not.toHaveBeenCalled()
         expect(hydrationWarnings(consoleSpies.warn)).toEqual([])
     })
