@@ -177,6 +177,22 @@ describe("ContactForm", () => {
         expect(name).toHaveFocus()
     })
 
+    it("com e-mail inválido mostra o erro de endereço incompleto e foca o campo de e-mail", async () => {
+        renderForm()
+        await fillField(screen.getByLabelText(/^Nome/), "Ana")
+        await fillField(screen.getByLabelText(/^E-mail/), "ana@example")
+        await fillField(screen.getByLabelText(/^Mensagem/), MESSAGE)
+
+        await submit()
+
+        const email = screen.getByLabelText(/^E-mail/)
+
+        expect(email).toHaveAttribute("aria-invalid", "true")
+        expect(email).toHaveAccessibleDescription("Esse endereço não parece completo.")
+        expect(email).toHaveFocus()
+        expect(screen.getByLabelText(/^Nome/)).not.toHaveAttribute("aria-invalid")
+    })
+
     it("depois do erro, corrigir limpa a mensagem e o resumo some sem erro", async () => {
         renderForm()
         await submit()

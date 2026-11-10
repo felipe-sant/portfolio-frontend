@@ -89,6 +89,19 @@ describe("FallbackImage", () => {
         expect(placeholder).not.toHaveClass("undefined")
     })
 
+    it("volta a tentar a imagem quando o src muda depois do erro", () => {
+        const { container, rerender } = render(
+            <FallbackImage alt={"Tela inicial do projeto"} src={"/images/a.webp"} />
+        )
+
+        fireEvent.error(screen.getByRole("img"))
+        expect(container.querySelector("img")).not.toBeInTheDocument()
+
+        rerender(<FallbackImage alt={"Tela inicial do projeto"} src={"/images/b.webp"} />)
+
+        expect(container.querySelector("img")).toHaveAttribute("src", "/images/b.webp")
+    })
+
     it("não tem violações de acessibilidade com a imagem nem com o placeholder", async () => {
         const { container } = renderImage()
         await expectNoAxeViolations(container)
