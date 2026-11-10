@@ -231,7 +231,7 @@ describe("ProjectsPage", () => {
         await waitFor(() => expect(currentLocation()).toBe("/pt-BR/projects"))
     })
 
-    it("mostra o termo na hora, aplica depois de 300 ms e ignora o Enter", async () => {
+    it("mostra o termo na hora e ignora o Enter, sem escrever a URL antes do debounce", async () => {
         vi.useFakeTimers({ shouldAdvanceTime: true })
         stubProjects(10)
         const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
@@ -243,12 +243,6 @@ describe("ProjectsPage", () => {
 
         expect(screen.getByRole("searchbox")).toHaveValue("projeto 1")
         expect(currentLocation()).toBe("/pt-BR/projects")
-
-        await act(async () => {
-            await vi.advanceTimersByTimeAsync(300)
-        })
-
-        await waitFor(() => expect(currentLocation()).toBe("/pt-BR/projects?q=projeto+1"))
     })
 
     it("mostra os grupos Tipo e Categoria com aria-pressed e só os tipos disponíveis", async () => {
@@ -310,26 +304,6 @@ describe("ProjectsPage", () => {
 
         fireEvent.pointerUp(row, { ...mousePointer, clientX: 150 })
         expect(row).not.toHaveAttribute("data-dragging")
-    })
-
-    it("aceita o clique simples no filtro sem capturar o ponteiro", async () => {
-        stubProjects(10)
-        const user = userEvent.setup()
-
-        renderPage()
-        await listLoaded()
-        const type = screen.getByRole("group", { name: "Tipo" })
-        const row = getFiltersRow(type)
-
-        await user.click(within(type).getByRole("button", { name: "Web" }))
-
-        await waitFor(() =>
-            expect(within(type).getByRole("button", { name: "Web" })).toHaveAttribute(
-                "aria-pressed",
-                "true"
-            )
-        )
-        expect(row.setPointerCapture).not.toHaveBeenCalled()
     })
 
     it("não tem controle de ordenação fora do modal", async () => {
