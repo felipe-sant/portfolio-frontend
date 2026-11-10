@@ -2,6 +2,7 @@ import { cp, mkdtemp, readFile, rm, writeFile } from "node:fs/promises"
 import { tmpdir } from "node:os"
 import { join } from "node:path"
 import { afterEach, describe, expect, it } from "vitest"
+import SUPPORTED_LANGUAGES from "@/i18n/supportedLanguages"
 import validateContent from "@/services/content/validation/validateContent"
 import readContentSnapshot from "@/testUtils/readContentSnapshot"
 import relaxAsyncUtilTimeout from "@/testUtils/relaxAsyncUtilTimeout"
@@ -28,6 +29,20 @@ describe("conteúdo de public/", () => {
         const issues = validateContent(await readContentSnapshot(PUBLIC_ROOT))
 
         expect(describeIssues(issues)).toEqual([])
+    })
+
+    it.each(SUPPORTED_LANGUAGES)("todo projeto de %s tem ao menos uma imagem", async (lang) => {
+        const snapshot = await readContentSnapshot(PUBLIC_ROOT)
+        const projects = snapshot.languages[lang].projects ?? []
+
+        expect(projects.length).toBeGreaterThan(0)
+        expect(projects.filter((project) => project.images.length < 1)).toEqual([])
+    })
+
+    it.each(SUPPORTED_LANGUAGES)("o perfil de %s tem a foto", async (lang) => {
+        const snapshot = await readContentSnapshot(PUBLIC_ROOT)
+
+        expect(snapshot.languages[lang].profile?.photo).toBeDefined()
     })
 
     it("reprova uma cópia com um JSON quebrado", async () => {
