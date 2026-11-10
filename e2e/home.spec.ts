@@ -230,3 +230,28 @@ test.describe("estrutura da página", () => {
         }
     })
 })
+
+test.describe("imagens dos destaques", () => {
+    for (const language of LANGUAGES) {
+        test(`RF-HOME-21: em ${language} cada destaque mostra a imagem carregada e nenhum placeholder`, async ({
+            page
+        }) => {
+            await page.goto(language)
+            await page.getByRole("heading", { level: 1 }).waitFor()
+            const items = page.getByRole("article")
+            const total = await items.count()
+            expect(total).toBeGreaterThan(0)
+
+            for (let index = 0; index < total; index++) {
+                const item = items.nth(index)
+                const image = item.locator("img")
+                await image.scrollIntoViewIfNeeded()
+                await expect(image).toHaveCount(1)
+                await expect
+                    .poll(() => image.evaluate((element: HTMLImageElement) => element.naturalWidth))
+                    .toBeGreaterThan(0)
+                await expect(item.locator("div[aria-hidden='true']")).toHaveCount(0)
+            }
+        })
+    }
+})

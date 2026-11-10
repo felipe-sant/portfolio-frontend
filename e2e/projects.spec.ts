@@ -1228,3 +1228,28 @@ test.describe("sem JavaScript", () => {
         })
     }
 })
+
+test.describe("capturas dos cards", () => {
+    for (const language of LANGUAGES) {
+        test(`RF-PROJECTS-14: em ${language} todo card tem a imagem decorativa carregada e nenhum placeholder`, async ({
+            page
+        }) => {
+            await openProjects(page, language)
+            const cards = getProjectsView(page, language).cards
+            const total = await cards.count()
+            expect(total).toBeGreaterThan(0)
+
+            for (let index = 0; index < total; index++) {
+                const card = cards.nth(index)
+                const image = card.locator("img")
+                await image.scrollIntoViewIfNeeded()
+                await expect(image).toHaveCount(1)
+                await expect(image).toHaveAttribute("alt", "")
+                await expect
+                    .poll(() => image.evaluate((element: HTMLImageElement) => element.naturalWidth))
+                    .toBeGreaterThan(0)
+                await expect(card.locator("div[aria-hidden='true']")).toHaveCount(0)
+            }
+        })
+    }
+})
