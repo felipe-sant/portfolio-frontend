@@ -23,6 +23,12 @@
     min-height: var(--space-8);
 }
 
+@media (max-width: 21.25rem) {
+    .badgeSlot {
+        min-height: 2.6rem;
+    }
+}
+
 .heading {
     margin: 0;
     font-family: var(--font-heading);

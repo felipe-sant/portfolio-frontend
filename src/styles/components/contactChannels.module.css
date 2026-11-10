@@ -54,21 +54,51 @@
 }
 
 .value {
+    min-height: 1lh;
     margin: 0;
     color: var(--text-strong);
     font-weight: var(--weight-medium);
 }
 
 .detail {
+    min-height: 1lh;
     margin: 0;
     color: var(--text-weak);
     font-size: var(--text-body-sm);
 }
 
-.skeleton {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-2);
+.emailSkeleton {
+    min-height: 1lh;
+}
+
+@media (max-width: 20.625rem) {
+    .emailSkeleton {
+        min-height: 2lh;
+    }
+}
+
+@keyframes actionShimmer {
+    from {
+        background-position: 200% 0;
+    }
+
+    to {
+        background-position: -200% 0;
+    }
+}
+
+.actionSkeleton {
+    border-color: transparent;
+    color: transparent;
+    background-image: linear-gradient(
+        90deg,
+        var(--skeleton-base) 25%,
+        var(--skeleton-sheen) 50%,
+        var(--skeleton-base) 75%
+    );
+    background-size: 200% 100%;
+    animation: actionShimmer var(--dur-shimmer) linear infinite;
+    cursor: default;
 }
 
 .resume {

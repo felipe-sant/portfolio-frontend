@@ -129,6 +129,44 @@ describe("ContactChannels", () => {
         expect(screen.queryByRole("button", { name: "Copiar e-mail" })).not.toBeInTheDocument()
     })
 
+    it("carregando: mostra os mesmos blocos e o botão do CV, na mesma ordem, do conteúdo carregado", () => {
+        const { unmount } = render(<ContactChannels profile={PROFILE} />)
+        const loadedHeadings = screen
+            .getAllByRole("heading", { level: 2 })
+            .map((h) => h.textContent)
+        unmount()
+
+        const { container: loadingContainer } = render(<ContactChannels />)
+        const loadingHeadings = screen
+            .getAllByRole("heading", { level: 2 })
+            .map((heading) => heading.textContent)
+        const resumeLink = within(loadingContainer).getByRole("link", { name: /CV/ })
+
+        expect(loadingHeadings).toEqual(loadedHeadings)
+        expect(screen.getAllByRole("status")).toHaveLength(1)
+        expect(resumeLink).toBeInTheDocument()
+    })
+
+    it("carregando: o skeleton do e-mail reserva a linha do e-mail e uma ação por botão, aria-hidden", () => {
+        const { container } = render(<ContactChannels />)
+        const emailBlock = screen.getByRole("heading", { name: "E-mail direto" }).parentElement
+
+        expect(emailBlock?.querySelectorAll('span[aria-hidden="true"]')).toHaveLength(3)
+        expect(container.querySelectorAll("a[href^='mailto:']")).toHaveLength(0)
+    })
+
+    it("sem responseTime o skeleton mantém o bloco Resposta e o conteúdo carregado o remove sem trocar a ordem dos demais", () => {
+        const { rerender } = render(<ContactChannels />)
+
+        expect(screen.getByRole("heading", { name: "Resposta" })).toBeInTheDocument()
+
+        rerender(<ContactChannels profile={buildProfile({ contact: { email: "a@b.co" } })} />)
+
+        expect(
+            screen.getAllByRole("heading", { level: 2 }).map((heading) => heading.textContent)
+        ).toEqual(["E-mail direto", "Localização"])
+    })
+
     it.each(["en", "es"] as const)("aponta o CV para o PDF de %s", async (language) => {
         render(<ContactChannels profile={PROFILE} />)
 

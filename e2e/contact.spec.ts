@@ -14,6 +14,10 @@ const DESKTOP_MIN_WIDTH = 640
 const TARGET_SIZE = 44
 const NARROW_VIEWPORT = { width: 320, height: 700 }
 const RESET_TIMEOUT = 8000
+const LAYOUT_TOLERANCE = 2
+const MAX_CLS = 0.1
+const MOBILE_VIEWPORT = { width: 412, height: 823 }
+const DESKTOP_VIEWPORT = { width: 1280, height: 800 }
 
 type Language = (typeof LANGUAGES)[number]
 
@@ -44,18 +48,61 @@ async function getContactNavLink(page: Page, language: Language) {
         .getByRole("link", { name: UI_TEXTS[language].navigation.contact, exact: true })
 }
 
-async function openContactFromNotFound(page: Page) {
-    await page.goto("pt-BR/rota-inexistente")
-    await page.getByRole("heading", { level: 1, name: UI_TEXTS["pt-BR"].notFoundHeading }).waitFor()
+async function openContactFromNotFound(page: Page, language: Language = "pt-BR") {
+    await page.goto(`${language}/rota-inexistente`)
+    await page
+        .getByRole("heading", { level: 1, name: UI_TEXTS[language].notFoundHeading })
+        .waitFor()
     await waitForHydration(page)
-    await (await getContactNavLink(page, "pt-BR")).click()
-    await expect(page).toHaveURL(/\/pt-BR\/contact$/)
+    await (await getContactNavLink(page, language)).click()
+    await expect(page).toHaveURL(new RegExp(`/${language}/contact$`))
 }
 
 async function expectMinimumTarget(target: Locator) {
     const box = await target.boundingBox()
     expect(box?.height ?? 0).toBeGreaterThanOrEqual(TARGET_SIZE)
     expect(box?.width ?? 0).toBeGreaterThanOrEqual(TARGET_SIZE)
+}
+
+async function measureContactLayout(page: Page, language: Language) {
+    const texts = UI_TEXTS[language].contact
+    const main = page.getByRole("main")
+    const container = main.getByRole("heading", { level: 1 }).locator("xpath=../..")
+    const channels = main
+        .getByRole("heading", { level: 2, name: texts.emailHeading })
+        .locator("xpath=../..")
+    const [containerBox, channelsBox] = await Promise.all([
+        container.boundingBox(),
+        channels.boundingBox()
+    ])
+
+    return {
+        containerWidth: containerBox?.width ?? 0,
+        containerHeight: containerBox?.height ?? 0,
+        channelsHeight: channelsBox?.height ?? 0
+    }
+}
+
+async function trackLayoutShift(page: Page) {
+    await page.addInitScript(() => {
+        const tracker = { value: 0 }
+        Object.defineProperty(window, "layoutShiftTotal", { get: () => tracker.value })
+        new PerformanceObserver((list) => {
+            for (const entry of list.getEntries()) {
+                const shift = entry as PerformanceEntry & {
+                    hadRecentInput: boolean
+                    value: number
+                }
+                if (!shift.hadRecentInput) {
+                    tracker.value += shift.value
+                }
+            }
+        }).observe({ type: "layout-shift", buffered: true })
+    })
+}
+
+async function readLayoutShiftTotal(page: Page) {
+    return page.evaluate(() => Reflect.get(window, "layoutShiftTotal") as number)
 }
 
 test.describe("canais de contato", () => {
@@ -402,6 +449,63 @@ test.describe("carregando e erro dos canais", () => {
         await expect(main.getByText(channels.email, { exact: true })).toBeVisible()
         await expect(main.getByText(channels.availabilityLabel, { exact: true })).toBeVisible()
         await expect(main.getByText(texts.loading)).toHaveCount(0)
+    })
+
+    for (const language of LANGUAGES) {
+        for (const viewport of [DESKTOP_VIEWPORT, NARROW_VIEWPORT]) {
+            test(`NF-DE-02, NF-DE-16: em ${language} a ${viewport.width}px o bloco de canais mantém a altura e a largura quando o perfil chega`, async ({
+                page
+            }) => {
+                const channels = readContactChannels(language)
+                const release = await holdContent(page, language, "profile")
+                await page.setViewportSize(viewport)
+
+                await openContactFromNotFound(page, language)
+                const main = page.getByRole("main")
+                await expect(main.getByRole("status")).toContainText(UI_TEXTS[language].loading)
+                const before = await measureContactLayout(page, language)
+
+                release()
+                await expect(main.getByText(channels.email, { exact: true })).toBeVisible()
+                const after = await measureContactLayout(page, language)
+
+                expect(Math.abs(after.channelsHeight - before.channelsHeight)).toBeLessThanOrEqual(
+                    LAYOUT_TOLERANCE
+                )
+                expect(
+                    Math.abs(after.containerHeight - before.containerHeight)
+                ).toBeLessThanOrEqual(LAYOUT_TOLERANCE)
+                expect(Math.abs(after.containerWidth - before.containerWidth)).toBeLessThanOrEqual(
+                    LAYOUT_TOLERANCE
+                )
+            })
+        }
+    }
+
+    test("NF-DE-02, NF-DE-16: em 412x823 (viewport do Lighthouse mobile) o CLS de Contato do carregamento até o perfil aparecer fica abaixo de 0,1", async ({
+        page
+    }) => {
+        const channels = readContactChannels("pt-BR")
+        const release = await holdContent(page, "pt-BR", "profile")
+        await page.setViewportSize(MOBILE_VIEWPORT)
+        await trackLayoutShift(page)
+
+        await openContactFromNotFound(page)
+        const main = page.getByRole("main")
+        await expect(main.getByRole("status")).toContainText(UI_TEXTS["pt-BR"].loading)
+        const shiftBeforeProfile = await readLayoutShiftTotal(page)
+
+        release()
+        await expect(main.getByText(channels.email, { exact: true })).toBeVisible()
+        await expect(main.getByText(channels.availabilityLabel, { exact: true })).toBeVisible()
+        await page.evaluate(
+            () =>
+                new Promise<void>((resolve) =>
+                    requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
+                )
+        )
+
+        expect((await readLayoutShiftTotal(page)) - shiftBeforeProfile).toBeLessThan(MAX_CLS)
     })
 
     test("A11Y-G14, RF-CONTACT-25: com o perfil falhando aparece o alerta com Tentar novamente e o retry refaz a consulta sem recarregar e devolve o foco ao título", async ({
