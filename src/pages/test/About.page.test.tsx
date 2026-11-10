@@ -187,18 +187,18 @@ describe("AboutPage, estrutura", () => {
         expect(regions.map((region) => region.querySelector("h1, h2")?.textContent)).toEqual([
             "Luiz Felipe dos Santos",
             "Sobre mim",
+            "Trajetória",
             "Stack",
-            "Certificados",
-            "Trajetória"
+            "Certificados"
         ])
         expect(screen.getAllByRole("heading", { level: 1 })).toHaveLength(1)
         expect(
             screen.getAllByRole("heading", { level: 2 }).map((heading) => heading.textContent)
-        ).toEqual(["Sobre mim", "Stack", "Certificados", "Como eu trabalho", "Trajetória"])
+        ).toEqual(["Sobre mim", "Trajetória", "Stack", "Certificados", "Como eu trabalho"])
         expect(screen.queryByText(/depoimento/i)).not.toBeInTheDocument()
     })
 
-    it("mostra os grupos de stack e de trajetória com h3", async () => {
+    it("mostra os grupos de trajetória e de stack com h3", async () => {
         renderAbout()
         await loaded()
 
@@ -206,12 +206,12 @@ describe("AboutPage, estrutura", () => {
             screen.getAllByRole("heading", { level: 3 }).map((heading) => heading.textContent)
         ).toEqual([
             "Agora",
-            "Frontend",
-            "Backend",
-            "Infra e ferramentas",
             "Experiências profissionais",
             "Formações",
-            "Cursos"
+            "Cursos",
+            "Frontend",
+            "Backend",
+            "Infra e ferramentas"
         ])
         expect(screen.getByText("Selecione um item para ver o detalhe.")).toBeInTheDocument()
     })

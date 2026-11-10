@@ -213,6 +213,45 @@ function AboutPage() {
                     </div>
                 </section>
             </Reveal>
+            {show.trajectory && (
+                <Reveal>
+                    <section className={css.trajectory} aria-labelledby={ids.timelineHeading}>
+                        <div className={css.container}>
+                            <h2
+                                id={ids.timelineHeading}
+                                tabIndex={-1}
+                                className={css.sectionHeading}
+                            >
+                                {t("about:trajectory.heading")}
+                            </h2>
+                            <p className={css.hint}>{t("about:trajectory.hint")}</p>
+                            <SkeletonSwap
+                                isLoading={timeline.isLoading}
+                                skeleton={
+                                    <div className={css.trajectorySkeleton}>
+                                        <Skeleton shape="card" />
+                                        <Skeleton shape="card" />
+                                    </div>
+                                }
+                            >
+                                {timeline.isError && (
+                                    <PartError announce={false} onRetry={timeline.retry} />
+                                )}
+                                <div className={css.groups}>
+                                    {timeline.groups.map((group) => (
+                                        <TrajectoryGroup
+                                            key={group.kind}
+                                            group={group}
+                                            onOpen={open}
+                                            registerTrigger={registerTrigger}
+                                        />
+                                    ))}
+                                </div>
+                            </SkeletonSwap>
+                        </div>
+                    </section>
+                </Reveal>
+            )}
             {show.stack && (
                 <Reveal>
                     <section className={css.stack} aria-labelledby="about-stack-heading">
@@ -288,45 +327,6 @@ function AboutPage() {
                                     </SkeletonSwap>
                                 </div>
                             )}
-                        </div>
-                    </section>
-                </Reveal>
-            )}
-            {show.trajectory && (
-                <Reveal>
-                    <section className={css.trajectory} aria-labelledby={ids.timelineHeading}>
-                        <div className={css.container}>
-                            <h2
-                                id={ids.timelineHeading}
-                                tabIndex={-1}
-                                className={css.sectionHeading}
-                            >
-                                {t("about:trajectory.heading")}
-                            </h2>
-                            <p className={css.hint}>{t("about:trajectory.hint")}</p>
-                            <SkeletonSwap
-                                isLoading={timeline.isLoading}
-                                skeleton={
-                                    <div className={css.trajectorySkeleton}>
-                                        <Skeleton shape="card" />
-                                        <Skeleton shape="card" />
-                                    </div>
-                                }
-                            >
-                                {timeline.isError && (
-                                    <PartError announce={false} onRetry={timeline.retry} />
-                                )}
-                                <div className={css.groups}>
-                                    {timeline.groups.map((group) => (
-                                        <TrajectoryGroup
-                                            key={group.kind}
-                                            group={group}
-                                            onOpen={open}
-                                            registerTrigger={registerTrigger}
-                                        />
-                                    ))}
-                                </div>
-                            </SkeletonSwap>
                         </div>
                     </section>
                 </Reveal>
