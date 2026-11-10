@@ -179,6 +179,21 @@ Variável de uso só do pipeline, no Environment `staging`:
 | --------------- | ----------------------------- | --------------------------------------------------------- |
 | `STAGING_ALIAS` | `felipe-sant-beta.vercel.app` | Domínio que o job `staging` aponta para o deploy de teste |
 
+### Convenção do Vite e configuração de build
+
+A convenção de variáveis de ambiente é a do Vite: só variáveis com prefixo `VITE_`
+são expostas ao código do cliente, e a leitura é `import.meta.env.VITE_ALGO`, nunca
+`process.env.REACT_APP_ALGO`. A convenção é
+materializada em `.env.example` (na raiz, com `VITE_API_URL` como exemplo) e na augmentação de
+`ImportMetaEnv`/`ImportMeta` em `src/vite-env.d.ts`.
+
+`BASE_PATH` (sem prefixo `VITE_`) é lida só em `vite.config.ts`, por `scripts/resolveBase.ts`, e define o `base`
+do Vite (`/` por padrão); o código do cliente só vê `import.meta.env.BASE_URL`. `scripts/` tem o alias
+`@scripts/*` (em `tsconfig.node.json` e `resolve.alias`) para os testes de `scripts/test/`.
+
+A configuração de build fica em `vite.config.ts` na raiz (plugin React + bloco `test` do Vitest),
+e a entrada da aplicação é o `index.html` da raiz, que carrega `/src/entry-client.tsx` como módulo.
+
 ## Segredos
 
 Tudo o que vai no build do frontend é público, então não coloque segredo em variável `VITE_*`. Credenciais de deploy e tokens de pipeline ficam no cofre de segredos do provedor de CI, fora do repositório.

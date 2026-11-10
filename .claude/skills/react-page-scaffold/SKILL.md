@@ -5,6 +5,8 @@ description: Como criar uma página nova neste projeto React, seguindo a conven�
 
 # React Page Scaffold
 
+Leia antes de agir: `docs/architecture/code-structure.md` (seção "Páginas e hooks"), `docs/architecture/frontend.md` (rotas, pré-renderização, SEO por tela) e a seção "Implementação" de `docs/screens/<tela>.md` das telas parecidas.
+
 Toda página deste projeto é composta por **quatro peças que precisam existir juntas**. Estilo e rota faltando produzem falha silenciosa, que o compilador não pega; o namespace é a única peça com rede de segurança, porque a tipagem do i18next transforma namespace ou chave inexistente em erro de `npm run typecheck`.
 
 | Peça                  | Caminho                                                                                            | Se faltar                                                                                  |

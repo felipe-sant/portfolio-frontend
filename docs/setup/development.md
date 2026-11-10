@@ -93,6 +93,8 @@ Os testes de ponta a ponta ficam em `e2e/` (Playwright, Chromium, com axe) e rod
 Pages: `npm run build:fatec` e depois `npm run test:e2e`. A classificação dos specs, a medição e o
 desenho das fatias do CI estão em [`e2e-performance.md`](e2e-performance.md).
 
+A convenção completa de teste (onde fica, `setupTests`, `renderWithStore`, axe, `vmThreads`, regras do E2E) está em [`testing.md`](testing.md).
+
 ## CI e git hooks
 
 `.github/workflows/ci.yml` (nome `CI`) roda em todo push para `main`, `staging` e `hotfix/**` e em
@@ -126,3 +128,59 @@ O versionamento roda por `changeset-check.yml`, `version.yml` e `release.yml`, d
 roda `npx lint-staged`, que, conforme `.lintstagedrc.json`, aplica `oxlint --fix` e
 `prettier --write` nos `.ts`/`.tsx` staged e só `prettier --write` nos
 `.css`/`.json`/`.md`/`.yml`/`.html`, bloqueando o commit se sobrar erro de lint não corrigível.
+
+## Referência de comandos (lista do agente)
+
+Lista dos scripts `npm` com o comentário de cada um, como o agente de IA a consulta. A tabela acima é a versão para humanos; a descrição das convenções de teste está em [`testing.md`](testing.md).
+
+```bash
+npm run dev      # dev server do Vite (porta padrão 5173)
+npm run build    # typecheck + vite build (cliente) + build:server + prerender (HTML por rota e idioma + 404.html em dist/) + build:seo
+npm run build:server # build SSR (dist-server/, intermediário e gitignored) das entradas de servidor
+npm run prerender    # scripts/prerender.ts: lê dist-server/ e escreve os HTML pré-renderizados em dist/
+npm run build:seo    # scripts/generateSeoFiles.ts: escreve em dist/ robots.txt, sitemap.xml, llms.txt e llms-full.txt, llms-full.en.txt, llms-full.es.txt (JSONs de public/ + rotas do dist-server/; conferir com curl em <base>robots.txt etc.)
+npm run preview  # serve o conteúdo de dist/ já gerado — depende de um npm run build anterior
+npm test         # Vitest em watch mode (o script é `vitest`, sem `run`)
+npm test -- --run                            # execução one-shot (CI, agente, terminal não-interativo)
+npm test -- --run src/pages/test/Home.page.test.tsx   # um arquivo específico
+npm run typecheck # checagem de tipos (tsc -b) de src/ e vite.config.ts
+npm run lint      # oxlint sobre o projeto (configuração em .oxlintrc.json)
+npm run build:fatec   # build com BASE_PATH=/ra2581392423047/ + .nojekyll em dist/; falha sem o 404.html pré-renderizado (GitHub Pages da Fatec)
+npm run build:fatec:form # build do Pages com a flag do formulário de Contato ligada, em dist-form/ (só para o E2E)
+npm run publish:fatec:docs -- <artefato> <clone> # troca o docs/ do clone da Fatec pelo artefato (usado pelo job publish de fatec-pages.yml)
+npm run preview:fatec # servidor Node que imita o Pages (arquivo, <caminho>.html, pasta com 301, 404.html) em http://localhost:4173/ra2581392423047/
+npm run check:chunk # depois do build: o chunk MarkdownDocument-*.js (markdown + realce) tem de ficar em até 102400 bytes gzip, o chunk pdf-*.js do pdfjs em até 174080 e o worker pdf.worker.min-*.mjs em até 430080 (scripts/pdfChunk/), e nenhum chunk de entrada, Início ou Projetos pode conter o react-markdown (CI, job Build)
+npm run check:contact-form [dir] # reprova o build (padrão dist/) cujo HTML pré-renderizado traz o formulário de Contato (id="contact-form" ou referência ao chunk ContactForm); roda no job Build do ci.yml, no fatec-pages.yml e no deploy.yml (sobre .vercel/output/static), nunca sobre dist-form/ (o envio é simulado até a #44)
+npm run og:image  # regera public/images/og-site.png (Chromium do Playwright, versionado)
+npm run readme:images # regera docs/design/assets/readme/home-{light,dark}.png do README (Chromium do Playwright, manual; exige npm run build:fatec e npm run preview:fatec no ar; PNG versionados, até 300 KB cada, guardados por scripts/test/readme.test.ts)
+npm run cv:pdf    # regera public/cv/cv-<idioma>.pdf a partir dos cv-<idioma>.md (Chromium do Playwright, manual, fora do build; os PDFs são versionados e scripts/test/resumePdfsUpToDate.test.ts falha se divergirem do .md)
+npm run lint:fix  # mesma coisa, aplicando as correções automáticas possíveis (oxlint --fix)
+npm run changeset # cria o changeset do PR em .changeset/ (npm run changeset -- --empty gera o vazio, para mudança que não altera a versão)
+npm run format    # prettier --write em **/*.{ts,tsx,css,json,md,yml,html}, conforme .prettierrc e .prettierignore
+npm run test:cov  # vitest run --coverage — suíte inteira + relatório de cobertura
+npm run test:e2e  # Playwright (Chromium) + axe em e2e/ contra o build do Pages; exige npm run build:fatec antes
+```
+
+## CI, build e hooks: detalhe
+
+O CI (`.github/workflows/`) roda `npm run build`, `npm run lint`, a suíte de testes e o E2E em três jobs
+(`E2E scope` decide o escopo por diff; `E2E shard i/4`, uma por fatia `--shard`, cada uma com o
+próprio Chromium e os dois builds; `E2E`, o agregador e único check exigido pelo ruleset, que falha
+se o escopo ou alguma fatia falhar, junta os blobs (HTML e JSON), avisa no `GITHUB_STEP_SUMMARY` dos testes `flaky` por `npm run e2e:flaky` (só avisa, não falha) e sobe `playwright-report` em falha;
+`npm run e2e:check-shards` prova que a união das fatias é a lista completa), os mesmos comandos da verificação local, em PR para a `staging` e em push na `main`, na `staging` e em `hotfix/**` (o PR para a `main` reaproveita os checks do push no mesmo SHA, ver `docs/setup/environments.md`). O `deploy.yml` publica na
+Vercel (`staging` = beta, `main` = produção) só depois do CI de push verde; detalhe em
+`docs/setup/environments.md`.
+
+`vite build` sozinho não checa tipos (usa esbuild, que só transpila); por isso o script `build`
+roda `npm run typecheck` (`tsc -b`, que cobre `src/` via `tsconfig.app.json` e `vite.config.ts` via `tsconfig.node.json`) antes.
+
+`npm install` configura automaticamente (script `prepare`, `"prepare": "husky"`) um hook de
+`pre-commit` do Husky que roda `npx lint-staged` a cada commit — sem passo manual extra.
+`lint-staged` (`.lintstagedrc.json`) aplica `oxlint --fix` e depois `prettier --write` nos
+arquivos `.ts`/`.tsx` staged, e só `prettier --write` nos `.css`/`.json`/`.md`/`.yml`/`.html`
+staged (mesmo escopo do script `format`, com `package-lock.json`, `dist/` e `coverage/` fora via
+`.prettierignore`); corrige o que for
+automático e bloqueia o commit se sobrar erro de lint não corrigível sozinho. O `.editorconfig` na
+raiz (`root = true`) padroniza charset, final de linha, quebra de linha final, remoção de trailing
+whitespace e indentação (`indent_size = 4` para todos os tipos, exceto `package.json` e `package-lock.json`, em `2`)
+para editores compatíveis, coerente com o `.prettierrc`.
