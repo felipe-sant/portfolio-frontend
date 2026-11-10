@@ -87,7 +87,7 @@ Regras por área; o mecanismo de cada uma está em `docs/` (tabela "Onde ler mai
   `buildPath(path, language, params?)` ou, em componente, por `useLocalizedPath()`: nunca caminho com prefixo escrito à
   mão nem `ROUTES.home` cru em `<Link>`. Navegação interna usa `<Link to>`/`useNavigate`, nunca `<a href>` (âncora crua
   recarrega e descarta o estado). O único `<Suspense>` fica em volta do `<Outlet />` do layout: página nova não tem o
-  próprio.
+  próprio (exceção: Contato, em `docs/screens/contact.md#implementação`).
 - **i18n** (`src/i18n/`, `src/locales/`): idioma ativo por `getLanguage()` e troca por `setLanguage(language)`, o único
   código que grava `LANGUAGE_STORAGE_KEY` (componente nunca usa `saveLanguage` nem `localStorage`). Namespace novo entra
   nos três idiomas, em `src/i18n/resources.ts` e no `ns` de `src/i18n/i18n.ts`. Chave em inglês, lowerCamelCase,
@@ -106,10 +106,10 @@ Regras por área; o mecanismo de cada uma está em `docs/` (tabela "Onde ler mai
   `src/utils/`), entrega a entrada no registro de pré-renderização (`src/prerender/prerenderRoutes.ts`) com teste de
   `<h1>` e conteúdo nos três idiomas e os E2E dos fluxos; detalhe da tela em `docs/screens/<tela>.md#implementação`.
 - **Componentes** (`src/components/Nome.tsx`, PascalCase sem sufixo; CSS Module em
-  `src/styles/components/nome.module.css`; teste em `src/components/test/Nome.test.tsx`): `<Nome>Props` local,
-  `export default`, sem rota própria, texto fixo em `common` ou por prop. O lint acusa `role="status"` literal: passe
-  `role={"status"}`. Controle de formulário tem borda `--border-control`, nunca `--border-subtle`. Catálogo:
-  `docs/architecture/components.md`.
+  `src/styles/components/nome.module.css`; teste em `src/components/test/Nome.test.tsx`; skill
+  `react-component-scaffold`): `<Nome>Props` local, `export default`, sem rota própria, texto fixo em `common` ou por
+  prop. O lint acusa `role="status"` literal: passe `role={"status"}`. Controle de formulário tem borda
+  `--border-control`, nunca `--border-subtle`. Catálogo (acrescente o componente novo): `docs/architecture/components.md`.
 - **Estilo** (`src/styles/pages/<nome>.module.css`, `src/styles/components/<nome>.module.css`): CSS Module usa as custom
   properties de `src/styles/global.css` (token novo entra lá, com o nome do handoff, como `--danger-surface`, nunca
   `error*`). Classe usada como `css.x` precisa existir no módulo importado (a tipagem a transforma em `undefined`
