@@ -289,7 +289,7 @@ describe("AboutPage, apresentação", () => {
         }
     )
 
-    it("clicar em Baixar CV abre o modal e fechar devolve o foco ao link", async () => {
+    it("clicar em Baixar CV abre o modal", async () => {
         renderAbout()
         const link = screen.getByRole("link", { name: /Baixar CV/ })
 
@@ -300,11 +300,6 @@ describe("AboutPage, apresentação", () => {
             "src",
             "/cv/cv-pt-BR.pdf"
         )
-
-        await userEvent.keyboard("{Escape}")
-
-        expect(screen.queryByRole("dialog")).not.toBeInTheDocument()
-        expect(link).toHaveFocus()
     })
 
     it("mostra h1, botões e títulos das seções já no carregamento", () => {

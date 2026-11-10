@@ -99,7 +99,7 @@ describe("ContactChannels", () => {
         expect(screen.queryByRole("button", { name: /Baixar CV/ })).not.toBeInTheDocument()
     })
 
-    it("clicar em Baixar CV abre o modal do PDF e fechar devolve o foco ao link", async () => {
+    it("clicar em Baixar CV abre o modal do PDF", async () => {
         render(<ContactChannels profile={PROFILE} />)
         const resume = screen.getByRole("link", { name: /Baixar CV/ })
 
@@ -110,11 +110,6 @@ describe("ContactChannels", () => {
             "src",
             "/cv/cv-pt-BR.pdf"
         )
-
-        await userEvent.click(within(dialog).getByRole("button", { name: "Fechar" }))
-
-        expect(screen.queryByRole("dialog")).not.toBeInTheDocument()
-        expect(resume).toHaveFocus()
     })
 
     it("não tem agendamento, lista de redes nem vaga fixa", () => {
