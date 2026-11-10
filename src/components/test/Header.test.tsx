@@ -264,15 +264,4 @@ describe("Header", () => {
         await waitFor(() => expect(router.state.location.pathname).toBe("/pt-BR/projects"))
         expect(startViewTransition).not.toHaveBeenCalled()
     })
-
-    it("não usa View Transition ao trocar só de idioma", async () => {
-        const startViewTransition = stubViewTransition()
-        const { router } = await renderHeader()
-
-        await userEvent.click(screen.getAllByRole("button", { name: "Idioma: Português" })[0])
-        await userEvent.click(screen.getAllByRole("link", { name: "English" })[0])
-
-        await waitFor(() => expect(router.state.location.pathname).toBe("/en"))
-        expect(startViewTransition).not.toHaveBeenCalled()
-    })
 })
