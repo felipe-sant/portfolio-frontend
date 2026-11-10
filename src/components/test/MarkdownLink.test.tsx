@@ -86,18 +86,15 @@ describe("MarkdownLink", () => {
         ["pt-BR", "(abre em nova aba)"],
         ["en", "(opens in a new tab)"],
         ["es", "(se abre en una pestaña nueva)"]
-    ] as const)(
-        "abre https e http em nova aba com rel e aviso oculto em %s",
-        async (language, notice) => {
-            renderLink("https://github.com/felipe-sant")
-            await act(() => setLanguage(language))
-            const link = screen.getByRole("link")
+    ] as const)("abre https em nova aba com rel e aviso oculto em %s", async (language, notice) => {
+        renderLink("https://github.com/felipe-sant")
+        await act(() => setLanguage(language))
+        const link = screen.getByRole("link")
 
-            expect(link).toHaveAttribute("target", "_blank")
-            expect(link).toHaveAttribute("rel", "noopener noreferrer")
-            expect(link).toHaveAccessibleName(`texto do link ${notice}`)
-        }
-    )
+        expect(link).toHaveAttribute("target", "_blank")
+        expect(link).toHaveAttribute("rel", "noopener noreferrer")
+        expect(link).toHaveAccessibleName(`texto do link ${notice}`)
+    })
 
     it("abre http em nova aba", () => {
         renderLink("http://example.com")

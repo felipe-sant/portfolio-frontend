@@ -204,7 +204,7 @@ describe("ProjectsFiltersModal", () => {
         expect(screen.getByRole("radio", { name: "A–Z" })).not.toBeChecked()
     })
 
-    it("Tab entra no radio marcado, Espaço marca o focado e Tab sai para a primeira caixa seguinte", async () => {
+    it("Tab entra no radio marcado e Tab sai para a primeira caixa seguinte", async () => {
         const user = userEvent.setup()
         renderModal({ applied: withSort({ tech: [], year: [] }, "oldest") })
 
