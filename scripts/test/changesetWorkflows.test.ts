@@ -3,8 +3,11 @@ import { parse } from "yaml"
 import { describe, expect, it } from "vitest"
 
 type Step = {
+    id?: string
+    uses?: string
     run?: string
     if?: string
+    env?: Record<string, string>
 }
 
 type Job = {
@@ -30,6 +33,30 @@ describe("version.yml", () => {
     it("não interpola expressões direto em blocos run", () => {
         runScripts(readWorkflow("version.yml")).forEach((script) => {
             expect(script).not.toContain("${{")
+        })
+    })
+
+    describe("passo que troca o texto padrão do PR de versão", () => {
+        const steps = readWorkflow("version.yml").jobs.version?.steps ?? []
+        const actionIndex = steps.findIndex((step) => step.uses?.startsWith("changesets/action"))
+        const replaceIndex = steps.findIndex((step) => step.run?.includes("prepareVersionPrBody"))
+
+        it("roda depois da action e só quando ela devolve pr-number", () => {
+            const action = steps[actionIndex]
+            const replace = steps[replaceIndex]
+
+            expect(action?.id).toBeDefined()
+            expect(replaceIndex).toBeGreaterThan(actionIndex)
+            expect(replace?.if).toBe(`steps.${action?.id}.outputs.pr-number != ''`)
+            expect(replace?.env?.NUMBER).toBe(`\${{ steps.${action?.id}.outputs.pr-number }}`)
+        })
+
+        it("só chama gh pr edit com body-file quando o corpo mudou", () => {
+            const script = steps[replaceIndex]?.run ?? ""
+
+            expect(script).toMatch(/if \[ "\$changed" = "true" \]/)
+            expect(script.indexOf("gh pr edit")).toBeGreaterThan(script.indexOf("$changed"))
+            expect(script).toContain("--body-file")
         })
     })
 })
