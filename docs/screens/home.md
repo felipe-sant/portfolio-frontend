@@ -331,8 +331,8 @@ Lista de necessidades; os nomes de campo, os arquivos e os endpoints estão deci
 
 O `@id` da `Person` é `<URL canônica de />#person`, o mesmo em todas as telas e idiomas (decisão
 transversal do PO de 11-10-2026), e `/about` o reutiliza na `ProfilePage` (#37,
-[`about.md`](about.md)). `sameAs` só tem as redes que existirem no conteúdo. `image` é a foto
-do perfil (D26). `jobTitle` vem da mesma chave do `h1`, para o cargo exibido e o declarado
+[`about.md`](about.md)). `sameAs` só tem as redes que existirem no conteúdo. `image` (a foto do perfil, D26) só
+vai na `Person` de `/about`; a Início não o declara. `jobTitle` vem da mesma chave do `h1`, para o cargo exibido e o declarado
 serem o mesmo dado (NF-IA-09). Sem `noindex`. A pré-renderização (#49) gera `/pt-BR`, `/en` e `/es` com
 tudo isso no HTML.
 
