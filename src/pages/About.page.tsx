@@ -235,7 +235,11 @@ function AboutPage() {
                                 }
                             >
                                 {timeline.isError && (
-                                    <PartError announce={false} onRetry={timeline.retry} />
+                                    <PartError
+                                        announce
+                                        id={ids.timelineAlert}
+                                        onRetry={timeline.retry}
+                                    />
                                 )}
                                 <div className={css.groups}>
                                     {timeline.groups.map((group) => (
@@ -289,11 +293,7 @@ function AboutPage() {
                                         skeleton={<ChipsSkeleton />}
                                     >
                                         {timeline.isError && (
-                                            <PartError
-                                                announce
-                                                id={ids.timelineAlert}
-                                                onRetry={timeline.retry}
-                                            />
+                                            <PartError announce={false} onRetry={timeline.retry} />
                                         )}
                                         <ul className={css.chips}>
                                             {timeline.certificates.map((certificate) => (
