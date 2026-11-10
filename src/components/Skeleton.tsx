@@ -3,7 +3,7 @@ import css from "@/styles/components/skeleton.module.css"
 import VisuallyHidden from "@/components/VisuallyHidden"
 
 interface SkeletonProps {
-    shape?: "line" | "title" | "media" | "photo" | "card"
+    shape?: "line" | "title" | "media" | "photo" | "card" | "fill"
     width?: "full" | "medium" | "short"
     announce?: boolean
 }

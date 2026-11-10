@@ -151,7 +151,7 @@ describe("ContactChannels", () => {
         const { container } = render(<ContactChannels />)
         const emailBlock = screen.getByRole("heading", { name: "E-mail direto" }).parentElement
 
-        expect(emailBlock?.querySelectorAll('span[aria-hidden="true"]')).toHaveLength(3)
+        expect(emailBlock?.querySelectorAll('span[aria-hidden="true"]')).toHaveLength(5)
         expect(container.querySelectorAll("a[href^='mailto:']")).toHaveLength(0)
     })
 

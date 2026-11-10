@@ -56,6 +56,7 @@ function ActionSkeleton({ icon, label }: ActionSkeletonProps) {
         >
             <Icon name={icon} />
             {label}
+            <Skeleton shape="fill" />
         </span>
     )
 }

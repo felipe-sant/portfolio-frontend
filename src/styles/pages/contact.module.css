@@ -25,7 +25,7 @@
 
 @media (max-width: 21.25rem) {
     .badgeSlot {
-        min-height: 2.6rem;
+        min-height: calc(2 * var(--space-1) + 2 * 1.2 * var(--text-body-sm));
     }
 }
 

@@ -77,27 +77,10 @@
     }
 }
 
-@keyframes actionShimmer {
-    from {
-        background-position: 200% 0;
-    }
-
-    to {
-        background-position: -200% 0;
-    }
-}
-
 .actionSkeleton {
+    position: relative;
     border-color: transparent;
     color: transparent;
-    background-image: linear-gradient(
-        90deg,
-        var(--skeleton-base) 25%,
-        var(--skeleton-sheen) 50%,
-        var(--skeleton-base) 75%
-    );
-    background-size: 200% 100%;
-    animation: actionShimmer var(--dur-shimmer) linear infinite;
     cursor: default;
 }
 
