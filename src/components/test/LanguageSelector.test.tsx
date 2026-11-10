@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from "vitest"
+import { afterEach, describe, expect, it, vi } from "vitest"
 import { act, render, screen, waitFor } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { createMemoryRouter, Outlet, RouterProvider } from "react-router-dom"
@@ -6,6 +6,7 @@ import LanguageSelector from "@/components/LanguageSelector"
 import LANGUAGE_STORAGE_KEY from "@/i18n/languageStorageKey"
 import createLanguageLoader from "@/routers/createLanguageLoader"
 import expectNoAxeViolations from "@/testUtils/expectNoAxeViolations"
+import stubViewTransition from "@/testUtils/stubViewTransition"
 import SUPPORTED_LANGUAGES from "@/i18n/supportedLanguages"
 import { useTranslation } from "react-i18next"
 
@@ -39,6 +40,10 @@ async function renderSelector(entry = "/pt-BR/projects?q=a#topo") {
 async function openList() {
     await userEvent.click(screen.getByRole("button", { name: "Idioma: Português" }))
 }
+
+afterEach(() => {
+    Reflect.deleteProperty(document, "startViewTransition")
+})
 
 describe("LanguageSelector", () => {
     it("mostra só o botão com o idioma ativo e a lista fechada", async () => {
@@ -128,6 +133,17 @@ describe("LanguageSelector", () => {
         expect(localStorage.getItem(LANGUAGE_STORAGE_KEY)).toBe("en")
         await waitFor(() => expect(screen.queryByRole("link")).not.toBeInTheDocument())
         expect(await screen.findByRole("button", { name: "Language: English" })).toHaveFocus()
+    })
+
+    it("não usa View Transition ao trocar só de idioma", async () => {
+        const startViewTransition = stubViewTransition()
+        const { router } = await renderSelector()
+        await openList()
+
+        await userEvent.click(screen.getByRole("link", { name: "English" }))
+
+        await waitFor(() => expect(router.state.location.pathname).toBe("/en/projects"))
+        expect(startViewTransition).not.toHaveBeenCalled()
     })
 
     it("devolve o foco ao botão sem rolar a página ao escolher um idioma", async () => {

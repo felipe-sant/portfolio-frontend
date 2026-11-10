@@ -252,7 +252,7 @@ describe("HomePage", () => {
         expect(resume).not.toHaveAttribute("target")
     })
 
-    it("clicar em Baixar CV abre o modal do PDF sem mudar a rota e devolve o foco ao link", async () => {
+    it("clicar em Baixar CV abre o modal do PDF", async () => {
         renderHomePage()
         await screen.findByRole("link", { name: "Projeto Destaque" })
         const resume = screen.getByRole("link", {
@@ -266,11 +266,6 @@ describe("HomePage", () => {
             "src",
             "/cv/cv-pt-BR.pdf"
         )
-
-        await userEvent.click(within(dialog).getByRole("button", { name: "Fechar" }))
-
-        expect(screen.queryByRole("dialog")).not.toBeInTheDocument()
-        expect(resume).toHaveFocus()
     })
 
     it.each([

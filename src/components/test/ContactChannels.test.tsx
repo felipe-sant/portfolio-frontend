@@ -99,7 +99,7 @@ describe("ContactChannels", () => {
         expect(screen.queryByRole("button", { name: /Baixar CV/ })).not.toBeInTheDocument()
     })
 
-    it("clicar em Baixar CV abre o modal do PDF e fechar devolve o foco ao link", async () => {
+    it("clicar em Baixar CV abre o modal do PDF", async () => {
         render(<ContactChannels profile={PROFILE} />)
         const resume = screen.getByRole("link", { name: /Baixar CV/ })
 
@@ -110,11 +110,6 @@ describe("ContactChannels", () => {
             "src",
             "/cv/cv-pt-BR.pdf"
         )
-
-        await userEvent.click(within(dialog).getByRole("button", { name: "Fechar" }))
-
-        expect(screen.queryByRole("dialog")).not.toBeInTheDocument()
-        expect(resume).toHaveFocus()
     })
 
     it("não tem agendamento, lista de redes nem vaga fixa", () => {
@@ -134,25 +129,13 @@ describe("ContactChannels", () => {
         expect(screen.queryByRole("button", { name: "Copiar e-mail" })).not.toBeInTheDocument()
     })
 
-    it.each([
-        ["en", ["Direct email", "Location", "Response", "Send email", "Copy email"]],
-        ["es", ["Correo directo", "Ubicación", "Respuesta", "Enviar correo", "Copiar correo"]]
-    ])("mostra o texto traduzido em %s sem chave", async (language, texts) => {
+    it.each(["en", "es"] as const)("aponta o CV para o PDF de %s", async (language) => {
         render(<ContactChannels profile={PROFILE} />)
 
-        await act(() => setLanguage(language === "en" ? "en" : "es"))
+        await act(() => setLanguage(language))
 
-        texts.forEach((text) => {
-            expect(screen.getByText(text)).toBeInTheDocument()
-        })
-        expect(screen.queryByText(/channels\.|resume\./)).not.toBeInTheDocument()
         expect(
-            screen.getByRole("link", {
-                name:
-                    language === "en"
-                        ? "Download CV (PDF), opens the preview"
-                        : "Descargar CV (PDF), abre la vista previa"
-            })
+            screen.getByRole("link", { name: /^(Download CV|Descargar CV) \(PDF\)/ })
         ).toHaveAttribute("href", `/cv/cv-${language}.pdf`)
     })
 

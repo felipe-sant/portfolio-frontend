@@ -231,7 +231,7 @@ describe("ProjectsPage", () => {
         await waitFor(() => expect(currentLocation()).toBe("/pt-BR/projects"))
     })
 
-    it("mostra o termo na hora, aplica depois de 300 ms e ignora o Enter", async () => {
+    it("mostra o termo na hora e ignora o Enter, sem escrever a URL antes do debounce", async () => {
         vi.useFakeTimers({ shouldAdvanceTime: true })
         stubProjects(10)
         const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
@@ -243,12 +243,6 @@ describe("ProjectsPage", () => {
 
         expect(screen.getByRole("searchbox")).toHaveValue("projeto 1")
         expect(currentLocation()).toBe("/pt-BR/projects")
-
-        await act(async () => {
-            await vi.advanceTimersByTimeAsync(300)
-        })
-
-        await waitFor(() => expect(currentLocation()).toBe("/pt-BR/projects?q=projeto+1"))
     })
 
     it("mostra os grupos Tipo e Categoria com aria-pressed e só os tipos disponíveis", async () => {
@@ -310,26 +304,6 @@ describe("ProjectsPage", () => {
 
         fireEvent.pointerUp(row, { ...mousePointer, clientX: 150 })
         expect(row).not.toHaveAttribute("data-dragging")
-    })
-
-    it("aceita o clique simples no filtro sem capturar o ponteiro", async () => {
-        stubProjects(10)
-        const user = userEvent.setup()
-
-        renderPage()
-        await listLoaded()
-        const type = screen.getByRole("group", { name: "Tipo" })
-        const row = getFiltersRow(type)
-
-        await user.click(within(type).getByRole("button", { name: "Web" }))
-
-        await waitFor(() =>
-            expect(within(type).getByRole("button", { name: "Web" })).toHaveAttribute(
-                "aria-pressed",
-                "true"
-            )
-        )
-        expect(row.setPointerCapture).not.toHaveBeenCalled()
     })
 
     it("não tem controle de ordenação fora do modal", async () => {
@@ -686,63 +660,6 @@ describe("ProjectsPage", () => {
         )
         expect(document.head.querySelector('meta[name="robots"]')).not.toBeInTheDocument()
     })
-
-    it.each([
-        [
-            "pt-BR",
-            "Buscar projeto",
-            "Tipo",
-            "Todos",
-            "Categoria",
-            "Carregar mais",
-            "9 de 10 projetos"
-        ],
-        ["en", "Search projects", "Type", "All", "Category", "Load more", "9 of 10 projects"],
-        ["es", "Buscar proyecto", "Tipo", "Todos", "Categoría", "Cargar más", "9 de 10 proyectos"]
-    ] as const)(
-        "mostra os textos em %s sem chave no lugar do texto",
-        async (language, search, type, all, category, more, count) => {
-            stubProjects(10)
-            await setLanguage(language)
-
-            renderPage(`/${language}/projects`)
-            await listLoaded()
-
-            expect(screen.getByRole("searchbox", { name: search })).toBeVisible()
-            expect(screen.getByRole("group", { name: type })).toBeVisible()
-            expect(screen.getByRole("button", { name: all })).toBeVisible()
-            expect(screen.getByRole("group", { name: category })).toBeVisible()
-            expect(screen.getByRole("button", { name: more })).toBeVisible()
-            expect(screen.getByRole("status")).toHaveTextContent(count)
-            expect(document.body.textContent).not.toMatch(
-                /\b(results|filters|noResults|loadMore|search|sort|empty)\.[a-zA-Z]+/
-            )
-        }
-    )
-
-    it.each([
-        ["pt-BR", "Filtros", "Ordenar", ["Mais recente", "Mais antigo", "A–Z"]],
-        ["en", "Filters", "Sort", ["Most recent", "Oldest", "A–Z"]],
-        ["es", "Filtros", "Ordenar", ["Más reciente", "Más antiguo", "A–Z"]]
-    ] as const)(
-        "mostra a seção de ordenação do modal em %s sem chave no lugar do texto",
-        async (language, open, legend, labels) => {
-            stubProjects(10)
-            await setLanguage(language)
-            const user = userEvent.setup()
-            renderPage(`/${language}/projects`)
-            await listLoaded()
-
-            await user.click(screen.getByRole("button", { name: open }))
-
-            expect(
-                within(screen.getByRole("group", { name: legend }))
-                    .getAllByRole("radio")
-                    .map((radio) => radio.closest("label")?.textContent)
-            ).toEqual(labels)
-            expect(document.body.textContent).not.toMatch(/\bsort\.[a-zA-Z]+/)
-        }
-    )
 
     it.each([
         [
@@ -1139,29 +1056,6 @@ describe("ProjectsPage, filtros por tecnologia e ano", () => {
         expect(router.state.location.search).toBe("?tech=React&year=2025")
         await screen.findByRole("button", { name: "Filters (2)" }, { timeout: 5000 })
     })
-
-    it.each([
-        ["pt-BR", "Filtros", "Tecnologia", "Ano", "Aplicar"],
-        ["en", "Filters", "Technology", "Year", "Apply"],
-        ["es", "Filtros", "Tecnología", "Año", "Aplicar"]
-    ] as const)(
-        "mostra o botão e o modal em %s sem chave no lugar do texto",
-        async (language, open, technology, year, apply) => {
-            stubFilterProjects()
-            await setLanguage(language)
-            const user = userEvent.setup()
-            renderPage(`/${language}/projects`)
-            await listLoaded()
-
-            await user.click(filtersButton(open))
-
-            expect(screen.getByRole("dialog", { name: open })).toBeVisible()
-            expect(screen.getByRole("group", { name: technology })).toBeVisible()
-            expect(screen.getByRole("group", { name: year })).toBeVisible()
-            expect(screen.getByRole("button", { name: apply })).toBeVisible()
-            expect(document.body.textContent).not.toMatch(/\bfilters\.[a-zA-Z.]+/)
-        }
-    )
 
     it("não tem violações de acessibilidade com o modal fechado", async () => {
         stubFilterProjects()

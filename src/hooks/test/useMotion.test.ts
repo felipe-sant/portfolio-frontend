@@ -92,5 +92,6 @@ describe("useMotion", () => {
         act(() => result.current.setMotion("reduced"))
 
         expect(result.current.motion).toBe("reduced")
+        expect(localStorage.getItem(MOTION_STORAGE_KEY)).toBe("reduced")
     })
 })

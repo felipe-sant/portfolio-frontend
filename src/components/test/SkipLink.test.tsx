@@ -1,4 +1,3 @@
-import { readFileSync } from "node:fs"
 import { describe, expect, it } from "vitest"
 import { render, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
@@ -39,13 +38,5 @@ describe("SkipLink", () => {
         )
 
         await expectNoAxeViolations(container)
-    })
-
-    it("fica fixo na viewport e fora da tela sem foco, sem sair da ordem de foco", () => {
-        const styles = readFileSync("src/styles/components/skipLink.module.css", "utf-8")
-
-        expect(styles).toMatch(/\.skipLink\s*{[^}]*position:\s*fixed/)
-        expect(styles).toMatch(/\.skipLink\s*{[^}]*transform:\s*translateY\(-200%\)/)
-        expect(styles).not.toMatch(/display:\s*none|visibility:\s*hidden/)
     })
 })

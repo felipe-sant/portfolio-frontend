@@ -103,7 +103,7 @@ describe("ProjectDocumentSection", () => {
         expect(loadMarkdownRenderer).not.toHaveBeenCalled()
     })
 
-    it("trata formato desconhecido como text", () => {
+    it("renderiza documento de formato text em pre com o conteúdo literal", () => {
         renderSection(buildState(SETUP, { format: "text", content: "# literal" }))
 
         expect(screen.getByRole("region", { name: "SETUP.md" }).tagName).toBe("PRE")

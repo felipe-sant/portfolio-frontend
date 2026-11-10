@@ -225,6 +225,15 @@ describe("Header", () => {
         await expectNoAxeViolations(container)
     })
 
+    it("não tem violações de acessibilidade com o menu aberto", async () => {
+        const { container } = await renderHeader()
+
+        await userEvent.click(screen.getByRole("button", { name: "Menu" }))
+        screen.getAllByRole("navigation", { name: "Principal", hidden: true })[0].hidden = true
+
+        await expectNoAxeViolations(container)
+    })
+
     it("usa View Transition ao navegar por um item do cabeçalho com movimento pleno", async () => {
         const startViewTransition = stubViewTransition()
         await renderHeader()
@@ -253,17 +262,6 @@ describe("Header", () => {
         await userEvent.click(within(nav).getByRole("link", { name: "Projetos" }))
 
         await waitFor(() => expect(router.state.location.pathname).toBe("/pt-BR/projects"))
-        expect(startViewTransition).not.toHaveBeenCalled()
-    })
-
-    it("não usa View Transition ao trocar só de idioma", async () => {
-        const startViewTransition = stubViewTransition()
-        const { router } = await renderHeader()
-
-        await userEvent.click(screen.getAllByRole("button", { name: "Idioma: Português" })[0])
-        await userEvent.click(screen.getAllByRole("link", { name: "English" })[0])
-
-        await waitFor(() => expect(router.state.location.pathname).toBe("/en"))
         expect(startViewTransition).not.toHaveBeenCalled()
     })
 })

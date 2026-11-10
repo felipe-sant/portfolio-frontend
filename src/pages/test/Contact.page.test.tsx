@@ -233,29 +233,20 @@ describe("ContactPage", () => {
         expect(container.querySelector("main")).toBeNull()
     })
 
-    it.each([
-        [
-            "en",
-            "Contact",
-            "Direct email",
-            "Tell me the scope, the deadline and what already exists."
-        ],
-        ["es", "Contacto", "Correo directo", "Cuéntame el alcance, el plazo y lo que ya existe."]
-    ] as const)(
-        "traduz a tela, os metadados e o lang em %s sem chave",
-        async (language, heading, channel, lede) => {
+    it.each(["en", "es"] as const)(
+        "mantém o lang e a canônica no idioma do caminho em %s",
+        async (language) => {
             flag.enabled = true
             await setLanguage(language)
-            const { container } = renderPage()
+            renderPage()
+            await waitFor(() =>
+                expect(document.head.querySelector('link[rel="canonical"]')).toBeInTheDocument()
+            )
 
-            expect(screen.getByRole("heading", { level: 1, name: heading })).toBeInTheDocument()
-            expect(screen.getByText(lede)).toBeInTheDocument()
-            expect(await screen.findByText(channel)).toBeInTheDocument()
             expect(document.documentElement.lang).toBe(language)
             expect(document.head.querySelector('link[rel="canonical"]')?.getAttribute("href")).toBe(
                 `${SITE_URL}/${language}/contact`
             )
-            expect(container).not.toHaveTextContent(/contact:|channels\.|lede\./)
         }
     )
 

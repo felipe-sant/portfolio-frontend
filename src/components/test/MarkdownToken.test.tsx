@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest"
 import { render } from "@testing-library/react"
 import MarkdownToken from "@/components/MarkdownToken"
 import css from "@/styles/components/markdownCodeBlock.module.css"
+import expectNoAxeViolations from "@/testUtils/expectNoAxeViolations"
 
 function renderToken(className?: string) {
     const { container } = render(<MarkdownToken className={className}>valor</MarkdownToken>)
@@ -28,6 +29,17 @@ describe("MarkdownToken", () => {
         expect(css[key]).toBeDefined()
         expect(span).toHaveClass(css[key])
         expect(span).toHaveTextContent("valor")
+    })
+
+    it("não tem violações de acessibilidade", async () => {
+        const { container } = render(
+            <code>
+                <MarkdownToken className={"hljs-keyword"}>const</MarkdownToken>
+                <MarkdownToken className={"hljs-string"}>valor</MarkdownToken>
+            </code>
+        )
+
+        await expectNoAxeViolations(container)
     })
 
     it("trata hljs-title com class_ como tipo, não como função", () => {

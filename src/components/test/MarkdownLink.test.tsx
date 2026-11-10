@@ -4,6 +4,7 @@ import { act, render, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import MarkdownLink from "@/components/MarkdownLink"
 import setLanguage from "@/i18n/setLanguage"
+import expectNoAxeViolations from "@/testUtils/expectNoAxeViolations"
 
 const ID = "01a131df-93ee-72f3-8c7a-f67501e47a7a"
 
@@ -86,18 +87,26 @@ describe("MarkdownLink", () => {
         ["pt-BR", "(abre em nova aba)"],
         ["en", "(opens in a new tab)"],
         ["es", "(se abre en una pestaña nueva)"]
-    ] as const)(
-        "abre https e http em nova aba com rel e aviso oculto em %s",
-        async (language, notice) => {
-            renderLink("https://github.com/felipe-sant")
-            await act(() => setLanguage(language))
-            const link = screen.getByRole("link")
+    ] as const)("abre https em nova aba com rel e aviso oculto em %s", async (language, notice) => {
+        renderLink("https://github.com/felipe-sant")
+        await act(() => setLanguage(language))
+        const link = screen.getByRole("link")
 
-            expect(link).toHaveAttribute("target", "_blank")
-            expect(link).toHaveAttribute("rel", "noopener noreferrer")
-            expect(link).toHaveAccessibleName(`texto do link ${notice}`)
-        }
-    )
+        expect(link).toHaveAttribute("target", "_blank")
+        expect(link).toHaveAttribute("rel", "noopener noreferrer")
+        expect(link).toHaveAccessibleName(`texto do link ${notice}`)
+    })
+
+    it("não tem violações de acessibilidade nos links interno e externo", async () => {
+        const { container } = render(
+            <MemoryRouter>
+                <MarkdownLink href={`project:${ID}`}>projeto</MarkdownLink>
+                <MarkdownLink href={"https://github.com/felipe-sant"}>repositório</MarkdownLink>
+            </MemoryRouter>
+        )
+
+        await expectNoAxeViolations(container)
+    })
 
     it("abre http em nova aba", () => {
         renderLink("http://example.com")

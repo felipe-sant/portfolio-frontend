@@ -19,7 +19,7 @@ test.describe("movimento pleno", () => {
         await page.getByRole("heading", { level: 1 }).waitFor()
     })
 
-    test("os links principais têm alvo de 44px", async ({ page }) => {
+    test("RF-HOME-06, RF-HOME-22: os links principais têm alvo de 44px", async ({ page }) => {
         const targets = [
             page.getByRole("link", { name: /Ver projetos/ }),
             page.getByRole("link", { name: "Baixar CV (PDF), abre a pré-visualização" }),
@@ -49,7 +49,9 @@ test.describe("faixa de tecnologias com movimento pleno", () => {
         await expect(getStackBand(page)).toHaveAttribute("tabindex", "0")
     })
 
-    test("tem uma cópia escondida da lista para o ciclo contínuo", async ({ page }) => {
+    test("RF-HOME-12, RF-HOME-14: tem uma cópia escondida da lista para o ciclo contínuo", async ({
+        page
+    }) => {
         await expect(getStackBand(page).locator("ul[aria-hidden='true']")).toHaveCount(1)
     })
 })
@@ -62,11 +64,11 @@ test.describe("faixa de tecnologias com movimento reduzido", () => {
         await expect(getStackBand(page)).toHaveAttribute("tabindex", "0")
     })
 
-    test("não tem cópia escondida da lista", async ({ page }) => {
+    test("RF-HOME-15: não tem cópia escondida da lista", async ({ page }) => {
         await expect(getStackBand(page).locator("[aria-hidden='true']")).toHaveCount(0)
     })
 
-    test("rola na horizontal ao arrastar com o mouse", async ({ page }) => {
+    test("RF-HOME-15: rola na horizontal ao arrastar com o mouse", async ({ page }) => {
         const band = getStackBand(page)
         await band.scrollIntoViewIfNeeded()
 
@@ -86,7 +88,7 @@ test.describe("faixa de tecnologias com movimento reduzido", () => {
             .toBeGreaterThan(0)
     })
 
-    test("rola na horizontal com as setas quando focada", async ({ page }) => {
+    test("RF-HOME-15: rola na horizontal com as setas quando focada", async ({ page }) => {
         const band = getStackBand(page)
         await band.scrollIntoViewIfNeeded()
         await band.focus()
@@ -103,7 +105,7 @@ test.describe("entrada dos destaques ao rolar", () => {
     test.describe("com movimento reduzido", () => {
         test.use({ reducedMotion: "reduce" })
 
-        test("todos já aparecem visíveis", async ({ page }) => {
+        test("RF-HOME-22: todos já aparecem visíveis", async ({ page }) => {
             await page.goto("pt-BR")
             await page.getByRole("article").first().waitFor()
 
@@ -120,7 +122,7 @@ test.describe("entrada dos destaques ao rolar", () => {
     test.describe("com movimento pleno", () => {
         test.use({ reducedMotion: "no-preference" })
 
-        test("o destaque fora da tela começa escondido e aparece ao rolar até ele", async ({
+        test("RF-HOME-22: o destaque fora da tela começa escondido e aparece ao rolar até ele", async ({
             page
         }) => {
             await page.goto("pt-BR")
@@ -136,7 +138,9 @@ test.describe("entrada dos destaques ao rolar", () => {
 })
 
 test.describe("menu de configurações", () => {
-    test("separa preferências e acessibilidade em grupos com nome", async ({ page }) => {
+    test("RF-LAY-18, RF-LAY-35: separa preferências e acessibilidade em grupos com nome", async ({
+        page
+    }) => {
         test.skip(
             (page.viewportSize()?.width ?? 0) < BREAKPOINT_WIDTH,
             "o menu existe só no desktop"
@@ -155,7 +159,7 @@ test.describe("menu de configurações", () => {
 
 test.describe("carga da página", () => {
     for (const language of LANGUAGES) {
-        test(`não registra erro no console em ${language}`, async ({ page }) => {
+        test(`RF-HOME-01: não registra erro no console em ${language}`, async ({ page }) => {
             const problems: string[] = []
             page.on("console", (message) => {
                 if (message.type() === "error" || message.type() === "warning") {
@@ -180,7 +184,7 @@ test.describe("estrutura da página", () => {
         await page.getByRole("heading", { level: 1 }).waitFor()
     })
 
-    test("os destaques alternam a imagem a partir de 640px", async ({ page }) => {
+    test("RF-HOME-20: os destaques alternam a imagem a partir de 640px", async ({ page }) => {
         const items = page.getByRole("article")
         await expect(items.first()).toBeVisible()
         const count = await items.count()
@@ -206,7 +210,7 @@ test.describe("estrutura da página", () => {
         }
     })
 
-    test("cada destaque tem um único link, no título", async ({ page }) => {
+    test("RF-HOME-19: cada destaque tem um único link, no título", async ({ page }) => {
         const items = page.getByRole("article")
         await expect(items.first()).toBeVisible()
 
@@ -215,7 +219,9 @@ test.describe("estrutura da página", () => {
         }
     })
 
-    test("os links de saída e do cabeçalho da seção têm alvo de 44px", async ({ page }) => {
+    test("RF-HOME-16, RF-HOME-22: os links de saída e do cabeçalho da seção têm alvo de 44px", async ({
+        page
+    }) => {
         const links = page.getByRole("link", { name: "Ver todos os projetos" })
 
         for (let index = 0; index < (await links.count()); index++) {

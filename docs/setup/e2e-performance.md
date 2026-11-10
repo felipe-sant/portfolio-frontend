@@ -81,6 +81,23 @@ npm run e2e:rank
 | `contact-form-desktop-light` | 41     | 127.5 s      |
 | `contact-form-desktop-dark`  | 41     | 99.1 s       |
 
+## Medição da #171 (enxugar testes)
+
+A #171 reduziu a suíte do Vitest; o E2E ficou como estava (a redução dos specs de E2E ficou fora do escopo por decisão do PO). Máquina local de 12 núcleos, com carga alta e variável de outros processos (`load average` entre 8 e 15 durante as medições finais), então o tempo de parede vale como ordem de grandeza e a contagem de testes é o resultado confiável.
+
+| Medida                    | Antes     | Depois    |
+| ------------------------- | --------- | --------- |
+| Vitest, arquivos de teste | 318       | 310       |
+| Vitest, testes            | 2802      | 2704      |
+| Cobertura, statements     | 98,97     | 98,94     |
+| Cobertura, branches       | 94,92     | 94,88     |
+| Cobertura, functions      | 99,32     | 99,23     |
+| Cobertura, lines          | 98,95     | 98,92     |
+| E2E, testes (`--list`)    | 2306      | 2306      |
+| E2E, passaram e ignorados | 2262 e 44 | 2262 e 44 |
+
+O E2E levou 13m43s na linha de base e 16m30s na medição final, com a mesma lista de testes: a diferença é a carga da máquina, não a suíte. Os IDs de requisito dos títulos de `home`, `keyboard` e `resume` mudaram e os testes passaram.
+
 ## Paralelismo
 
 `playwright.config.ts` liga `fullyParallel: true` (qualquer ambiente) e fixa `workers` em 4 no CI (o runner `ubuntu-latest` tem 4 vCPU); fora do CI `workers` fica `undefined`, o padrão do Playwright.
