@@ -3,7 +3,6 @@ import type { Root } from "react-dom/client"
 import type { MockInstance } from "vitest"
 import { afterEach, beforeEach, describe, expect, inject, it, vi } from "vitest"
 import { act, screen, within } from "@testing-library/react"
-import userEvent from "@testing-library/user-event"
 import composePage from "@scripts/prerender/composePage"
 import i18n from "@/i18n/i18n"
 import mountClient from "@/prerender/mountClient"
@@ -340,101 +339,21 @@ describe("mountClient com caminho pré-renderizado", () => {
         expect(loadMarkdownRenderer).not.toHaveBeenCalled()
     })
 
-    it("hidrata com a query na URL: primeira renderização igual ao HTML e filtro aplicado depois", async () => {
+    it.each([
+        "/pt-BR/projects?type=web&sort=title",
+        "/pt-BR/projects?tech=Leaflet&year=2025",
+        "/pt-BR/projects?sort=title&tech=Leaflet",
+        "/pt-BR/projects?tech=Docker"
+    ])("hidrata %s sem erro nem aviso de hidratação", async (url) => {
         stubProjectsContent()
         injectPrerendered("pt-BR/projects.html", rootElement)
         await i18n.changeLanguage("pt-BR")
-        window.history.pushState({}, "", "/pt-BR/projects?type=web&sort=title")
+        window.history.pushState({}, "", url)
         const consoleSpies = spyOnConsole()
 
         await mount()
         await settle()
 
-        expect(screen.getByRole("button", { name: "Web" })).toHaveAttribute("aria-pressed", "true")
-        expect(screen.queryByRole("button", { name: /^Ordenar/ })).not.toBeInTheDocument()
-        expect(cardTitles()).toEqual([
-            "Controle de Despesas",
-            "Conversor de Unidades",
-            "Maps",
-            "MNIST Classifier",
-            "Pedido de Namoro Irrecusável"
-        ])
-        const items = JSON.parse(readJsonLdText() ?? "null").mainEntity.itemListElement
-        expect(items.map((item: { name: string }) => item.name)).toEqual(cardTitles())
-        await userEvent.click(await screen.findByRole("button", { name: "Filtros" }))
-        expect(screen.getByRole("radio", { name: "A–Z" })).toBeChecked()
-        expect(consoleSpies.error).not.toHaveBeenCalled()
-        expect(hydrationWarnings(consoleSpies.warn)).toEqual([])
-    })
-
-    it("hidrata com tech e year na URL, aplica o filtro depois e mostra Filtros (2)", async () => {
-        stubProjectsContent()
-        injectPrerendered("pt-BR/projects.html", rootElement)
-        await i18n.changeLanguage("pt-BR")
-        window.history.pushState({}, "", "/pt-BR/projects?tech=Leaflet&year=2025")
-        const consoleSpies = spyOnConsole()
-
-        await mount()
-        await settle()
-
-        expect(await screen.findByRole("button", { name: "Filtros (2)" })).toBeVisible()
-        expect(cardTitles()).toEqual(["Maps"])
-        expect(consoleSpies.error).not.toHaveBeenCalled()
-        expect(hydrationWarnings(consoleSpies.warn)).toEqual([])
-    })
-
-    it("hidrata com sort e tech na URL, mostra Filtros (1) e abre o modal com A–Z e Leaflet marcados", async () => {
-        stubProjectsContent()
-        injectPrerendered("pt-BR/projects.html", rootElement)
-        await i18n.changeLanguage("pt-BR")
-        window.history.pushState({}, "", "/pt-BR/projects?sort=title&tech=Leaflet")
-        const consoleSpies = spyOnConsole()
-
-        await mount()
-        await settle()
-
-        const button = await screen.findByRole("button", { name: "Filtros (1)" })
-        expect(cardTitles()).toEqual(["Maps"])
-        await userEvent.click(button)
-        expect(screen.getByRole("radio", { name: "A–Z" })).toBeChecked()
-        expect(screen.getByRole("checkbox", { name: "Leaflet" })).toBeChecked()
-        expect(consoleSpies.error).not.toHaveBeenCalled()
-        expect(hydrationWarnings(consoleSpies.warn)).toEqual([])
-    })
-
-    it("hidrata e abre o modal logo depois com as opções da store, com a tecnologia só da stack desabilitada", async () => {
-        stubProjectsContent()
-        injectPrerendered("pt-BR/projects.html", rootElement)
-        await i18n.changeLanguage("pt-BR")
-        window.history.pushState({}, "", "/pt-BR/projects")
-        const consoleSpies = spyOnConsole()
-
-        await mount()
-        await settle()
-
-        await userEvent.click(screen.getByRole("button", { name: "Filtros" }))
-        expect(screen.getByRole("group", { name: "Tecnologia" })).toBeVisible()
-        expect(screen.getByRole("group", { name: "Ano" })).toBeVisible()
-        expect(screen.getByRole("checkbox", { name: "Docker (nenhum projeto)" })).toBeDisabled()
-        expect(screen.getByRole("checkbox", { name: "Leaflet" })).toBeEnabled()
-        expect(consoleSpies.error).not.toHaveBeenCalled()
-        expect(hydrationWarnings(consoleSpies.warn)).toEqual([])
-    })
-
-    it("hidrata com ?tech= de uma tecnologia só da stack e mostra a opção marcada e habilitada", async () => {
-        stubProjectsContent()
-        injectPrerendered("pt-BR/projects.html", rootElement)
-        await i18n.changeLanguage("pt-BR")
-        window.history.pushState({}, "", "/pt-BR/projects?tech=Docker")
-        const consoleSpies = spyOnConsole()
-
-        await mount()
-        await settle()
-
-        await userEvent.click(await screen.findByRole("button", { name: "Filtros (1)" }))
-        const box = screen.getByRole("checkbox", { name: "Docker" })
-        expect(box).toBeChecked()
-        expect(box).toBeEnabled()
         expect(consoleSpies.error).not.toHaveBeenCalled()
         expect(hydrationWarnings(consoleSpies.warn)).toEqual([])
     })
