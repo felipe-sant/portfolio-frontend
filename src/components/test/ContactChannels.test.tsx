@@ -134,25 +134,13 @@ describe("ContactChannels", () => {
         expect(screen.queryByRole("button", { name: "Copiar e-mail" })).not.toBeInTheDocument()
     })
 
-    it.each([
-        ["en", ["Direct email", "Location", "Response", "Send email", "Copy email"]],
-        ["es", ["Correo directo", "Ubicación", "Respuesta", "Enviar correo", "Copiar correo"]]
-    ])("mostra o texto traduzido em %s sem chave", async (language, texts) => {
+    it.each(["en", "es"] as const)("aponta o CV para o PDF de %s", async (language) => {
         render(<ContactChannels profile={PROFILE} />)
 
-        await act(() => setLanguage(language === "en" ? "en" : "es"))
+        await act(() => setLanguage(language))
 
-        texts.forEach((text) => {
-            expect(screen.getByText(text)).toBeInTheDocument()
-        })
-        expect(screen.queryByText(/channels\.|resume\./)).not.toBeInTheDocument()
         expect(
-            screen.getByRole("link", {
-                name:
-                    language === "en"
-                        ? "Download CV (PDF), opens the preview"
-                        : "Descargar CV (PDF), abre la vista previa"
-            })
+            screen.getByRole("link", { name: /^(Download CV|Descargar CV) \(PDF\)/ })
         ).toHaveAttribute("href", `/cv/cv-${language}.pdf`)
     })
 

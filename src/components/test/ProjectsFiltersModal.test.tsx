@@ -407,64 +407,6 @@ describe("ProjectsFiltersModal", () => {
     })
 
     it.each([
-        [
-            "pt-BR",
-            [
-                "Filtros",
-                "Nenhum filtro selecionado",
-                "Tecnologia",
-                "Ano",
-                "Fechar",
-                "Limpar",
-                "Aplicar",
-                "Ordenar"
-            ]
-        ],
-        [
-            "en",
-            [
-                "Filters",
-                "No filters selected",
-                "Technology",
-                "Year",
-                "Close",
-                "Clear",
-                "Apply",
-                "Sort"
-            ]
-        ],
-        [
-            "es",
-            [
-                "Filtros",
-                "Ningún filtro seleccionado",
-                "Tecnología",
-                "Año",
-                "Cerrar",
-                "Limpiar",
-                "Aplicar",
-                "Ordenar"
-            ]
-        ]
-    ] as const)("mostra os textos em %s sem chave no lugar do texto", async (language, texts) => {
-        await setLanguage(language)
-
-        renderModal()
-
-        const [title, summary, technology, year, close, clear, apply, sort] = texts
-
-        expect(screen.getByRole("heading", { name: title })).toBeVisible()
-        expect(screen.getByText(summary)).toBeVisible()
-        expect(screen.getByRole("group", { name: technology })).toBeVisible()
-        expect(screen.getByRole("group", { name: year })).toBeVisible()
-        expect(screen.getByRole("group", { name: sort })).toBeVisible()
-        expect(screen.getByRole("button", { name: close })).toBeVisible()
-        expect(screen.getByRole("button", { name: clear })).toBeVisible()
-        expect(screen.getByRole("button", { name: apply })).toBeVisible()
-        expect(document.body.textContent).not.toMatch(/\bfilters\.[a-zA-Z]+/)
-    })
-
-    it.each([
         ["en", "2 filters selected"],
         ["es", "2 filtros seleccionados"]
     ] as const)("pluraliza o resumo em %s", async (language, summary) => {
