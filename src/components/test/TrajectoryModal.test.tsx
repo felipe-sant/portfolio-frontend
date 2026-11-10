@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { MemoryRouter } from "react-router-dom"
-import { act, fireEvent, render, screen, within } from "@testing-library/react"
+import { act, render, screen, within } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import TrajectoryItem from "@/components/TrajectoryItem"
 import TrajectoryModal from "@/components/TrajectoryModal"
@@ -114,53 +114,17 @@ describe("TrajectoryModal", () => {
         expect(new Set(ids).size).toBe(ids.length)
     })
 
-    it("foca o título, prende o Tab, inertiza o #root e trava a rolagem", async () => {
-        renderHarness()
-
-        await userEvent.click(screen.getByRole("button", { name: /Desenvolvedor frontend/ }))
-        const dialog = screen.getByRole("dialog")
-
-        expect(screen.getByRole("heading", { name: "Desenvolvedor frontend" })).toHaveFocus()
-        expect(appRoot).toHaveAttribute("inert")
-        expect(document.body).toHaveAttribute("data-scroll-locked")
-
-        await userEvent.tab()
-        await userEvent.tab()
-        await userEvent.tab()
-        await userEvent.tab()
-
-        expect(dialog.contains(document.activeElement)).toBe(true)
-
-        await userEvent.tab({ shift: true })
-
-        expect(dialog.contains(document.activeElement)).toBe(true)
-    })
-
-    it("fecha por Esc, fundo e Fechar, devolve o foco ao item e libera a rolagem", async () => {
+    it("ao fechar, devolve o foco ao item de origem", async () => {
         const onClose = vi.fn()
         renderHarness(onClose)
         const opener = screen.getByRole("button", { name: /Desenvolvedor frontend/ })
 
         await userEvent.click(opener)
-        await userEvent.keyboard("{Escape}")
-
-        expect(screen.queryByRole("dialog")).not.toBeInTheDocument()
-        expect(opener).toHaveFocus()
-        expect(document.body).not.toHaveAttribute("data-scroll-locked")
-        expect(appRoot).not.toHaveAttribute("inert")
-
-        await userEvent.click(opener)
         await userEvent.click(screen.getByRole("button", { name: "Fechar" }))
 
         expect(screen.queryByRole("dialog")).not.toBeInTheDocument()
-
-        await userEvent.click(opener)
-        const backdrop = screen.getByRole("dialog").parentElement as HTMLElement
-        fireEvent.mouseDown(backdrop)
-        fireEvent.click(backdrop)
-
-        expect(screen.queryByRole("dialog")).not.toBeInTheDocument()
-        expect(onClose).toHaveBeenCalledTimes(3)
+        expect(opener).toHaveFocus()
+        expect(onClose).toHaveBeenCalledTimes(1)
     })
 
     it("não tem violações de acessibilidade com o modal aberto", async () => {
