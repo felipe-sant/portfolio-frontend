@@ -388,12 +388,8 @@ describe("AboutPage, erro por fonte", () => {
         renderAbout()
 
         const alert = await screen.findByRole("alert")
-        const trajectory = document
-            .getElementById("about-trajectory-heading")
-            ?.closest("section") as HTMLElement
-        const certificates = screen
-            .getByRole("heading", { level: 2, name: "Certificados" })
-            .closest("div") as HTMLElement
+        const trajectory = screen.getByRole("region", { name: "Trajetória" })
+        const certificates = screen.getByRole("region", { name: /Certificados/ })
 
         expect(screen.getAllByRole("alert")).toHaveLength(1)
         expect(within(trajectory).getByRole("alert")).toBe(alert)
