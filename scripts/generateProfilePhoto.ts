@@ -1,6 +1,7 @@
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs"
 import { join } from "node:path"
 import { chromium } from "@playwright/test"
+import decodeWebpDataUrl from "@scripts/decodeWebpDataUrl"
 import profilePhotoTargets from "@scripts/profilePhotoTargets"
 
 const OUTPUT_DIR = join(process.cwd(), "public", "images", "profile")
@@ -43,7 +44,7 @@ async function generateProfilePhoto(): Promise<void> {
 
             mkdirSync(OUTPUT_DIR, { recursive: true })
             const target = join(OUTPUT_DIR, file)
-            writeFileSync(target, Buffer.from(webp.split(",")[1], "base64"))
+            writeFileSync(target, decodeWebpDataUrl(webp))
             console.log(`Gerado: ${target}`)
         }
     } finally {
