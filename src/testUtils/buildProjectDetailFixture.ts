@@ -9,6 +9,7 @@ function buildProjectDetailFixture(overrides: Partial<ProjectDetail> = {}): Proj
         types: ["web"],
         category: "personal",
         featured: false,
+        experiment: false,
         technologies: ["React", "TypeScript"],
         cardTechnologies: ["React"],
         role: "Full stack",

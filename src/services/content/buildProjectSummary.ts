@@ -11,6 +11,7 @@ function buildProjectSummary(record: ProjectRecord): ProjectSummary {
         types: record.types,
         category: record.category,
         featured: record.featured,
+        experiment: record.experiment,
         technologies: getProjectTechnologies(record.stack),
         cardTechnologies: record.cardTechnologies
     }

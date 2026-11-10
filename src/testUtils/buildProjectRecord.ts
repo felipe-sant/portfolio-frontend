@@ -9,6 +9,7 @@ function buildProjectRecord(overrides: Partial<ProjectRecord> = {}): ProjectReco
         types: ["web"],
         category: "personal",
         featured: false,
+        experiment: false,
         cardTechnologies: ["React"],
         role: "Full stack",
         duration: "4 meses",

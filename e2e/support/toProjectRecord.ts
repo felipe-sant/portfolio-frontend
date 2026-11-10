@@ -36,6 +36,7 @@ function toProjectRecord(item: Record<string, unknown>) {
         types: readTextList(item.types),
         category: readText(item, "category"),
         featured: item.featured === true,
+        experiment: item.experiment === true,
         technologies: readStackNames(item.stack),
         cardTechnologies: readTextList(item.cardTechnologies)
     }
