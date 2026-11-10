@@ -463,7 +463,7 @@ test.describe("carregando e erro dos canais", () => {
     })
 
     for (const language of LANGUAGES) {
-        for (const viewport of [DESKTOP_VIEWPORT, NARROW_VIEWPORT]) {
+        for (const viewport of [DESKTOP_VIEWPORT, NARROW_VIEWPORT, MOBILE_VIEWPORT]) {
             test(`NF-DE-02, NF-DE-16: em ${language} a ${viewport.width}px o bloco de canais mantém a altura e a largura quando o perfil chega`, async ({
                 page
             }) => {
