@@ -151,6 +151,8 @@ const UI_TEXTS = {
             description:
                 "Projetos de Luiz Felipe dos Santos, com busca por tipo, categoria e tecnologia.",
             intro: "Tudo o que construí e posso mostrar: trabalho profissional, projetos da faculdade e o que fiz por conta própria.",
+            experimentsHeading: "Experimentos",
+            experimentsDescription: "Projetos pequenos que fiz para praticar uma ideia.",
             searchLabel: "Buscar projeto",
             searchPlaceholder: "Busque por nome ou tecnologia",
             searchClear: "Limpar busca",
@@ -365,6 +367,8 @@ const UI_TEXTS = {
             description:
                 "Projects by Luiz Felipe dos Santos, with search by type, category and technology.",
             intro: "Everything I built and can show: professional work, college projects and what I made on my own.",
+            experimentsHeading: "Experiments",
+            experimentsDescription: "Small projects I built to practice an idea.",
             searchLabel: "Search projects",
             searchPlaceholder: "Search by name or technology",
             searchClear: "Clear search",
@@ -585,6 +589,8 @@ const UI_TEXTS = {
             description:
                 "Proyectos de Luiz Felipe dos Santos, con búsqueda por tipo, categoría y tecnología.",
             intro: "Todo lo que construí y puedo mostrar: trabajo profesional, proyectos de la facultad y lo que hice por mi cuenta.",
+            experimentsHeading: "Experimentos",
+            experimentsDescription: "Proyectos pequeños que hice para practicar una idea.",
             searchLabel: "Buscar proyecto",
             searchPlaceholder: "Busca por nombre o tecnología",
             searchClear: "Borrar búsqueda",

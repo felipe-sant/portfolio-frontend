@@ -31,6 +31,7 @@ function toProjectRecord(item: Record<string, unknown>) {
     return {
         id: readText(item, "id"),
         title: readText(item, "title"),
+        summary: readText(item, "summary"),
         date,
         year: date.slice(0, 4),
         types: readTextList(item.types),
