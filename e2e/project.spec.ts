@@ -612,3 +612,21 @@ test.describe("links e layout", () => {
         }
     })
 })
+
+test.describe("captura do projeto", () => {
+    for (const language of LANGUAGES) {
+        test(`RF-PROJECT-05: em ${language} a captura aparece como imagem com o alt do dado, carregada e sem placeholder`, async ({
+            page
+        }) => {
+            const project = await openProject(page, language, MNIST)
+            const gallery = page.getByRole("region", { name: PROJECT_TEXTS[language].gallery })
+            const image = gallery.getByRole("img", { name: project.images[0].alt })
+
+            await expect(image).toBeVisible()
+            await expect
+                .poll(() => image.evaluate((element: HTMLImageElement) => element.naturalWidth))
+                .toBeGreaterThan(0)
+            await expect(gallery.locator("div[aria-hidden='true']")).toHaveCount(0)
+        })
+    }
+})

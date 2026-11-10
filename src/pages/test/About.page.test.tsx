@@ -247,6 +247,17 @@ describe("AboutPage, apresentação", () => {
         ).toBeInTheDocument()
     })
 
+    it.each([
+        ["pt-BR", "Foto de Luiz Felipe dos Santos"],
+        ["en", "Photo of Luiz Felipe dos Santos"],
+        ["es", "Foto de Luiz Felipe dos Santos"]
+    ] as const)("nomeia a foto pelo nome do autor em %s", async (language, name) => {
+        await act(() => setLanguage(language))
+        renderAbout()
+
+        expect(await screen.findByRole("img", { name })).toBeInTheDocument()
+    })
+
     it("sem disponibilidade não mostra o selo e mantém a localização", async () => {
         stubContentFetch(
             buildFiles({ availability: { isAvailable: false, label: "Procurando novos projetos" } })

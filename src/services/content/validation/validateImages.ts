@@ -1,5 +1,6 @@
 import SUPPORTED_LANGUAGES from "@/i18n/supportedLanguages"
 import readImageSize from "@/services/content/readImageSize"
+import readWebpChunks from "@/services/content/readWebpChunks"
 import checkObjectKeys from "@/services/content/validation/checkObjectKeys"
 import isNonEmptyString from "@/services/content/validation/isNonEmptyString"
 import requireList from "@/services/content/validation/requireList"
@@ -15,6 +16,7 @@ const MAX_SMALL_BYTES = 80 * 1024
 const RATIO_TOLERANCE = 0.01
 const WIDESCREEN = 16 / 9
 const SQUARE = 1
+const METADATA_CHUNKS = ["EXIF", "XMP "]
 
 type Variant = "large" | "small"
 
@@ -70,6 +72,13 @@ function checkFile(
             issues.push({
                 path: `${path}.width`,
                 message: `width e height declarados (${String(asset.width)}x${String(asset.height)}) diferem do arquivo (${actual.width}x${actual.height})`
+            })
+        }
+        const metadata = readWebpChunks(bytes).filter((chunk) => METADATA_CHUNKS.includes(chunk))
+        if (metadata.length > 0) {
+            issues.push({
+                path: `${path}.src`,
+                message: `${src} carrega metadados (${metadata.map((chunk) => chunk.trim()).join(", ")}); remova EXIF e XMP antes de publicar`
             })
         }
     } catch (error) {

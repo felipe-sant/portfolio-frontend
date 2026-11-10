@@ -729,3 +729,20 @@ test.describe("movimento reduzido", () => {
         }
     })
 })
+
+test.describe("foto", () => {
+    for (const language of LANGUAGES) {
+        test(`RF-ABOUT-02: em ${language} a foto aparece como imagem com o nome da foto e carregada`, async ({
+            page
+        }) => {
+            await openAbout(page, language)
+            const photo = page.getByRole("img", { name: UI_TEXTS[language].aboutPage.photoAlt })
+
+            await expect(photo).toBeVisible()
+            await expect(photo).toHaveJSProperty("tagName", "IMG")
+            await expect
+                .poll(() => photo.evaluate((element: HTMLImageElement) => element.naturalWidth))
+                .toBeGreaterThan(0)
+        })
+    }
+})

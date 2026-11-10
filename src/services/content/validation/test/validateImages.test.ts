@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest"
 import createSolidWebp from "@/services/content/createSolidWebp"
 import validateImages from "@/services/content/validation/validateImages"
+import appendWebpChunk from "@/testUtils/appendWebpChunk"
 import buildContentSnapshot from "@/testUtils/buildContentSnapshot"
 import profileOf from "@/testUtils/profileOf"
 import projectsOf from "@/testUtils/projectsOf"
@@ -136,5 +137,60 @@ describe("validateImages", () => {
         })
 
         expect(issues.some((issue) => issue.includes("no máximo 1600px"))).toBe(true)
+    })
+
+    it("reprova WebP com bloco EXIF e informa o caminho do arquivo", () => {
+        const path = `images/projects/${FIRST}/1-small.webp`
+        const issues = issuesAfter((snapshot) => {
+            snapshot.files[path] = appendWebpChunk(snapshot.files[path], "EXIF")
+        })
+
+        expect(issues).toHaveLength(3)
+        expect(issues[0]).toContain(path)
+        expect(issues[0]).toContain("EXIF")
+    })
+
+    it("reprova WebP com bloco XMP", () => {
+        const issues = issuesAfter((snapshot) => {
+            const path = `images/projects/${FIRST}/1-large.webp`
+            snapshot.files[path] = appendWebpChunk(snapshot.files[path], "XMP ")
+        })
+
+        expect(issues).toHaveLength(3)
+        expect(issues[0]).toContain("XMP")
+    })
+
+    it("reprova a foto do perfil com metadados", () => {
+        const issues = issuesAfter((snapshot) => {
+            const photo = profileOf(snapshot, "pt-BR").photo
+            if (photo) {
+                snapshot.files[photo.small.src] = appendWebpChunk(
+                    snapshot.files[photo.small.src],
+                    "EXIF"
+                )
+            }
+        })
+
+        expect(issues.some((issue) => issue.includes("EXIF"))).toBe(true)
+    })
+
+    it("aceita WebP com bloco ICCP e o WebP simples sem blocos de metadados", () => {
+        const issues = issuesAfter((snapshot) => {
+            const path = `images/projects/${FIRST}/1-small.webp`
+            snapshot.files[path] = appendWebpChunk(snapshot.files[path], "ICCP")
+        })
+
+        expect(issues).toEqual([])
+    })
+
+    it("gera issue, sem lançar exceção, para WebP com bloco truncado", () => {
+        const path = `images/projects/${FIRST}/1-small.webp`
+        const issues = issuesAfter((snapshot) => {
+            const bytes = appendWebpChunk(snapshot.files[path], "ICCP", 10)
+            snapshot.files[path] = bytes.slice(0, bytes.length - 4)
+        })
+
+        expect(issues).toHaveLength(3)
+        expect(issues[0]).toContain("Imagem WebP inválida")
     })
 })

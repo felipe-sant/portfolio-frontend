@@ -46,6 +46,7 @@
     "lint:fix": "oxlint --fix",
     "format": "prettier --write \"**/*.{ts,tsx,css,json,md,yml,html}\"",
     "cv:pdf": "tsx --tsconfig tsconfig.node.json scripts/generateResume.ts",
+    "profile:photo": "tsx --tsconfig tsconfig.node.json scripts/generateProfilePhoto.ts",
     "og:image": "tsx --tsconfig tsconfig.node.json scripts/generateOgImage.ts",
     "readme:images": "tsx --tsconfig tsconfig.node.json scripts/generateReadmeScreenshots.ts",
     "check:contact-form": "tsx --tsconfig tsconfig.node.json scripts/checkContactForm.ts",
