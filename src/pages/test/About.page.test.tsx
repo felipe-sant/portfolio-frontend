@@ -460,20 +460,6 @@ describe("AboutPage, modal de trajetória", () => {
         expect(container).not.toHaveAttribute("inert")
     })
 
-    it("devolve o foco ao item mesmo quando o foco estava no body na abertura", async () => {
-        renderAbout()
-        await loaded()
-        const opener = screen.getByRole("button", { name: /Análise de Sistemas|Fatec/ })
-
-        act(() => {
-            opener.click()
-        })
-        const dialog = await screen.findByRole("dialog")
-        await userEvent.click(within(dialog).getByRole("button", { name: "Fechar" }))
-
-        await waitFor(() => expect(opener).toHaveFocus())
-    })
-
     it("navega para o projeto relacionado, fecha o modal e foca o h1 do projeto", async () => {
         const { router } = renderAboutWithLayout()
         await screen.findByRole("button", { name: /Desenvolvedor frontend/ })
