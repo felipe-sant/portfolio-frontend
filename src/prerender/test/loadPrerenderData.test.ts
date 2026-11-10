@@ -8,6 +8,7 @@ import type PrerenderRoute from "@/types/prerender/PrerenderRoute.types"
 const homeRoute: PrerenderRoute = { pattern: "", scope: "none", queries: () => [] }
 
 afterEach(() => {
+    vi.useRealTimers()
     vi.unstubAllGlobals()
 })
 
@@ -23,11 +24,12 @@ describe("loadPrerenderData", () => {
     })
 
     it("não deixa assinatura ativa ao final", async () => {
+        vi.useFakeTimers()
         stubContentFetch({ "content/en/profile.json": buildProfile() })
         const store = createStore()
 
         await loadPrerenderData(store, homeRoute, {}, "en")
-        await new Promise((resolve) => setTimeout(resolve, 600))
+        await vi.advanceTimersByTimeAsync(600)
 
         expect(store.getState().api.subscriptions).toEqual({
             'getProfile({"lang":"en"})': {}
