@@ -712,7 +712,7 @@ test.describe("idioma", () => {
 test.describe("revelar ao rolar com movimento pleno", () => {
     test.use({ reducedMotion: "no-preference" })
 
-    test("RF-ABOUT-01, A11Y-G12: os Complementos começam escondidos e entra ao rolar", async ({
+    test("RF-ABOUT-01, A11Y-G12: os Complementos, abaixo da dobra, começam escondidos e entram ao rolar", async ({
         page
     }) => {
         await openAbout(page, "pt-BR")
@@ -721,6 +721,9 @@ test.describe("revelar ao rolar com movimento pleno", () => {
             name: UI_TEXTS["pt-BR"].aboutPage.certificates
         })
         const wrapper = page.locator("[data-reveal]").filter({ has: heading })
+        const viewportHeight = page.viewportSize()?.height ?? 0
+        const headingTop = (await heading.boundingBox())?.y ?? 0
+        expect(headingTop).toBeGreaterThan(viewportHeight)
         await expect(wrapper).toHaveAttribute("data-reveal", "hidden")
 
         await heading.scrollIntoViewIfNeeded()
