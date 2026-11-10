@@ -8,7 +8,7 @@ test.beforeEach(async ({ page }) => {
     await page.getByRole("heading", { level: 1 }).waitFor()
 })
 
-test("pular para o conteúdo leva o foco ao main", async ({ page }) => {
+test("RF-LAY-31, A11Y-L01: pular para o conteúdo leva o foco ao main", async ({ page }) => {
     await page.keyboard.press("Tab")
     const skipLink = page.getByRole("link", { name: "Pular para o conteúdo" })
     await expect(skipLink).toBeFocused()
@@ -17,7 +17,7 @@ test("pular para o conteúdo leva o foco ao main", async ({ page }) => {
     await expect(page.getByRole("main")).toBeFocused()
 })
 
-test("menu mobile abre, prende o foco, fecha com Esc e devolve o foco ao botão", async ({
+test("RF-LAY-07, RF-LAY-08, A11Y-L09: menu mobile abre, prende o foco, fecha com Esc e devolve o foco ao botão", async ({
     page
 }) => {
     test.skip((page.viewportSize()?.width ?? 0) > MOBILE_MAX_WIDTH, "menu existe só no mobile")
@@ -48,7 +48,7 @@ test("menu mobile abre, prende o foco, fecha com Esc e devolve o foco ao botão"
     await expect(button).toBeFocused()
 })
 
-test("o foco nunca fica sob o cabeçalho", async ({ page }) => {
+test("RF-LAY-01, A11Y-L13: o foco nunca fica sob o cabeçalho", async ({ page }) => {
     const headerBottom = async () =>
         page.locator("header").evaluate((element) => element.getBoundingClientRect().bottom)
 
