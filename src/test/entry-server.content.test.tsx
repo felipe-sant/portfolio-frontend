@@ -100,11 +100,13 @@ describe("pré-renderização do conteúdo real dos projetos", { timeout: 60000 
     })
 
     it("renderiza a licença de cada projeto que a declara num pre com lang=en e sem puxar o chunk do markdown", async () => {
+        let rendered = 0
         for (const { language, record } of projectCases()) {
             const license = record.documents.find((document) => document.name === "LICENSE")
             if (!license) {
                 continue
             }
+            rendered += 1
             vi.mocked(loadMarkdownRenderer).mockClear()
 
             const { html } = await render(
@@ -114,9 +116,12 @@ describe("pré-renderização do conteúdo real dos projetos", { timeout: 60000 
             expect(html).toMatch(/<pre[^>]*lang="en"/)
             expect(loadMarkdownRenderer).not.toHaveBeenCalled()
         }
+
+        expect(rendered).toBeGreaterThan(0)
     })
 
     it("mostra a seção de relacionados só nos projetos que declaram relacionados, com o título de cada um", async () => {
+        let withRelated = 0
         for (const { language, record } of projectCases()) {
             const { html } = await render(findTarget(`${language}/projects/${record.id}.html`))
             const heading = i18n.getFixedT(language, "project")("related.heading")
@@ -128,6 +133,7 @@ describe("pré-renderização do conteúdo real dos projetos", { timeout: 60000 
             })
 
             if (relatedTitles.length > 0) {
+                withRelated += 1
                 expect(html).toContain(`>${heading}</h2>`)
                 for (const title of relatedTitles) {
                     expect(html).toContain(escapeHtml(title))
@@ -136,5 +142,7 @@ describe("pré-renderização do conteúdo real dos projetos", { timeout: 60000 
                 expect(html).not.toContain(heading)
             }
         }
+
+        expect(withRelated).toBeGreaterThan(0)
     })
 })

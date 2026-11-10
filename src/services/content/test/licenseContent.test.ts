@@ -37,8 +37,10 @@ async function listProjectsWithLicense(): Promise<string[]> {
 describe.each(SUPPORTED_LANGUAGES)("LICENSE dos projetos em %s", (language) => {
     it("declara o LICENSE de todo projeto que tem o arquivo, como texto neutro em inglês, depois dos outros documentos", async () => {
         const projects = await readProjects(language)
+        const withLicense = await listProjectsWithLicense()
 
-        for (const project of await listProjectsWithLicense()) {
+        expect(withLicense.length).toBeGreaterThan(0)
+        for (const project of withLicense) {
             const record = projects.find((item) => item.id === project)
 
             expect(record?.documents[0]?.name, project).toBe("README.md")
@@ -56,6 +58,11 @@ describe("LICENSE dos projetos", () => {
     it("todo LICENSE declarado em um projeto tem arquivo não vazio em shared", async () => {
         const projects = await readProjects("pt-BR")
 
+        expect(
+            projects.filter((record) =>
+                record.documents.some((document) => document.name === "LICENSE")
+            ).length
+        ).toBeGreaterThan(0)
         for (const record of projects) {
             if (record.documents.some((document) => document.name === "LICENSE")) {
                 const content = await readFile(
