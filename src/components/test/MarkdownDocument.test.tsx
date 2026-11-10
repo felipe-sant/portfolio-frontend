@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest"
 import { MemoryRouter } from "react-router-dom"
 import { render, screen } from "@testing-library/react"
 import MarkdownDocument from "@/components/MarkdownDocument"
+import expectNoAxeViolations from "@/testUtils/expectNoAxeViolations"
 
 function renderMarkdown(content: string) {
     return render(
@@ -10,6 +11,28 @@ function renderMarkdown(content: string) {
         </MemoryRouter>
     )
 }
+
+describe("MarkdownDocument, acessibilidade", () => {
+    it("não tem violações com título, link, bloco de código e tabela", async () => {
+        const { container } = renderMarkdown(
+            [
+                "## Instalação",
+                "",
+                "Veja [o site](https://example.com) para detalhes.",
+                "",
+                "```bash",
+                "npm install",
+                "```",
+                "",
+                "| Nome | Valor |",
+                "| --- | --- |",
+                "| a | 1 |"
+            ].join("\n")
+        )
+
+        await expectNoAxeViolations(container)
+    })
+})
 
 describe("MarkdownDocument, segurança", () => {
     it("não renderiza HTML embutido como elemento", () => {

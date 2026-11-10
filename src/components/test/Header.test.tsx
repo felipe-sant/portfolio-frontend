@@ -225,6 +225,15 @@ describe("Header", () => {
         await expectNoAxeViolations(container)
     })
 
+    it("não tem violações de acessibilidade com o menu aberto", async () => {
+        const { container } = await renderHeader()
+
+        await userEvent.click(screen.getByRole("button", { name: "Menu" }))
+        screen.getAllByRole("navigation", { name: "Principal", hidden: true })[0].hidden = true
+
+        await expectNoAxeViolations(container)
+    })
+
     it("usa View Transition ao navegar por um item do cabeçalho com movimento pleno", async () => {
         const startViewTransition = stubViewTransition()
         await renderHeader()

@@ -4,6 +4,7 @@ import { act, render, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import MarkdownLink from "@/components/MarkdownLink"
 import setLanguage from "@/i18n/setLanguage"
+import expectNoAxeViolations from "@/testUtils/expectNoAxeViolations"
 
 const ID = "01a131df-93ee-72f3-8c7a-f67501e47a7a"
 
@@ -94,6 +95,17 @@ describe("MarkdownLink", () => {
         expect(link).toHaveAttribute("target", "_blank")
         expect(link).toHaveAttribute("rel", "noopener noreferrer")
         expect(link).toHaveAccessibleName(`texto do link ${notice}`)
+    })
+
+    it("não tem violações de acessibilidade nos links interno e externo", async () => {
+        const { container } = render(
+            <MemoryRouter>
+                <MarkdownLink href={`project:${ID}`}>projeto</MarkdownLink>
+                <MarkdownLink href={"https://github.com/felipe-sant"}>repositório</MarkdownLink>
+            </MemoryRouter>
+        )
+
+        await expectNoAxeViolations(container)
     })
 
     it("abre http em nova aba", () => {
