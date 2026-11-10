@@ -86,23 +86,34 @@ async function measureContactLayout(page: Page, language: Language) {
 async function trackLayoutShift(page: Page) {
     await page.addInitScript(() => {
         const tracker = { value: 0 }
-        Object.defineProperty(window, "layoutShiftTotal", { get: () => tracker.value })
-        new PerformanceObserver((list) => {
-            for (const entry of list.getEntries()) {
-                const shift = entry as PerformanceEntry & {
-                    hadRecentInput: boolean
-                    value: number
-                }
-                if (!shift.hadRecentInput) {
-                    tracker.value += shift.value
+        function accumulate(entries: PerformanceEntryList) {
+            for (const entry of entries) {
+                if (
+                    "hadRecentInput" in entry &&
+                    entry.hadRecentInput === false &&
+                    "value" in entry &&
+                    typeof entry.value === "number"
+                ) {
+                    tracker.value += entry.value
                 }
             }
-        }).observe({ type: "layout-shift", buffered: true })
+        }
+        const observer = new PerformanceObserver((list) => accumulate(list.getEntries()))
+        observer.observe({ type: "layout-shift", buffered: true })
+        Object.defineProperty(window, "layoutShiftTotal", {
+            get: () => {
+                accumulate(observer.takeRecords())
+                return tracker.value
+            }
+        })
     })
 }
 
 async function readLayoutShiftTotal(page: Page) {
-    return page.evaluate(() => Reflect.get(window, "layoutShiftTotal") as number)
+    return page.evaluate((): number => {
+        const total: unknown = Reflect.get(window, "layoutShiftTotal")
+        return typeof total === "number" ? total : 0
+    })
 }
 
 test.describe("canais de contato", () => {
@@ -482,7 +493,7 @@ test.describe("carregando e erro dos canais", () => {
         }
     }
 
-    test("NF-DE-02, NF-DE-16: em 412x823 (viewport do Lighthouse mobile) o CLS de Contato do carregamento até o perfil aparecer fica abaixo de 0,1", async ({
+    test("NF-DE-02, NF-DE-16: verificação complementar (não discrimina o código anterior, a regressão determinística é a de altura) em 412x823 o CLS de Contato do carregamento até o perfil aparecer fica abaixo de 0,1", async ({
         page
     }) => {
         const channels = readContactChannels("pt-BR")
