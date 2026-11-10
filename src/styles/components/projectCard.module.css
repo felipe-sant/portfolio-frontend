@@ -98,15 +98,10 @@
 }
 
 .summary {
-    display: -webkit-box;
-    overflow: hidden;
     margin: 0;
     font-size: var(--text-body-md);
     line-height: var(--lh-tight);
     text-wrap: pretty;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
 }
 
 .chips {
