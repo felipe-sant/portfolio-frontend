@@ -22,11 +22,11 @@ ao mesmo tempo cliente, PO e dev: ele decide escopo e prioridade e aprova as spe
 `docs/product/overview.md`.
 
 **Handoff de design:** a pasta `design_handoff_portfolio`, fora do repositório (só na máquina do autor), é a base do
-design (R3); os tokens dela já estão em `src/styles/global.css` e o resumo em `docs/design/design-system.md`. Reaproveite `tokens/`
-e use `components/` como ponto de partida; não copie o HTML das telas (`*.dc.html`), `support.js`, `image-slot.js` nem
-os sketches de `assets/`. Onde o handoff diverge das convenções deste repositório, as convenções prevalecem (fonte
-self-hospedada, CSS Module em vez de `.ds-*`, código sem comentários). Referência visual validada pelo PO:
-`docs/design/prototype/` (`npm run dev`, em `/docs/design/prototype/prototipo-indice.dc.html`).
+design (R3); os tokens dela já estão em `src/styles/global.css` e o resumo em `docs/design/design-system.md`.
+Reaproveite `tokens/` e use `components/` como ponto de partida; não copie o HTML das telas (`*.dc.html`),
+`support.js`, `image-slot.js` nem os sketches de `assets/`. Onde o handoff diverge das convenções deste repositório,
+as convenções prevalecem (fonte self-hospedada, CSS Module em vez de `.ds-*`, código sem comentários). Referência
+visual validada pelo PO: `docs/design/prototype/` (`npm run dev`, em `/docs/design/prototype/prototipo-indice.dc.html`).
 
 **Rotas:** cinco telas, com caminhos em inglês (D32) sob o prefixo do idioma (`/<idioma>`, sem barra final): Início,
 Projetos (`/projects`), Projeto (`/projects/:id` e `/projects/:id/docs/:name`, `:id` é UUID v7), Informações (`/about`)
