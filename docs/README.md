@@ -12,11 +12,11 @@ Esta pasta guarda a documentação versionada **só do frontend do portfólio** 
 
 ## `docs/` vs `.specs/`
 
-|            | `docs/`                              | `.specs/`                          |
-| ---------- | ------------------------------------ | ---------------------------------- |
-| Descreve   | O frontend como ele é                | Uma mudança planejada              |
-| Versionada | Sim, revisada em PR                  | Só o resumo em `_archive/`         |
-| Vida       | Longa, atualizada junto com o código | Descartável depois de implementada |
+|            | `docs/`                              | `.specs/`                    |
+| ---------- | ------------------------------------ | ---------------------------- |
+| Descreve   | O frontend como ele é                | Uma mudança planejada        |
+| Versionada | Sim, revisada em PR                  | Sim, na branch da feature    |
+| Vida       | Longa, atualizada junto com o código | Removida ao ser implementada |
 
 Uma decisão que sobrevive à mudança que a motivou vira um ADR em [`adr/`](adr/README.md).
 

@@ -245,6 +245,7 @@ Papéis e skills: [`.claude/README.md`](README.md). Fluxo de TDD: `sdd` → `exe
 - **Pedidos de correção:** quem encontra problema devolve por responsável (`executor` para código, `qa` para E2E,
   `tester` para teste de unidade, `sdd` para spec); a sessão principal despacha o responsável, chama o `reviewer` para
   revisar só a correção e repete até não restar bloqueante. O `executor` não faz push nem abre PR nesse fluxo.
-- **`.specs/`:** specs em `.specs/features/<slug>/` e `.specs/bugs/<slug>/`, a partir de `.specs/_template/`; só o
-  resumo `_archive/<slug>.md` é versionado. O estado vive no `**Status:**` do `spec.md` (`rascunho` → `em-revisao` →
+- **`.specs/`:** specs em `.specs/features/<slug>/` e `.specs/bugs/<slug>/`, a partir de `.specs/_template/`; a
+  spec nasce na branch da feature, criada pelo `sdd` e commitada nela, e viaja com o PR; ao chegar em `implementada`,
+  o `executor` remove a pasta com `git rm -r`, em commit `Docs` próprio, antes do PR. O estado vive no `**Status:**` do `spec.md` (`rascunho` → `em-revisao` →
   `aprovada` → `em-andamento` → `implementada`); só humano promove para `aprovada`.
