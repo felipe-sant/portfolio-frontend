@@ -89,12 +89,12 @@ noindex` ao fim de `headers` sem descartar nenhuma regra; aplicada ao `vercel.js
 
 **#194 — cache**
 
-- [ ] CA-02 (NF-HO-07): a regra de `source` `/assets/(.*)` define `Cache-Control: public, max-age=31536000, immutable`.
-- [ ] CA-03 (NF-HO-07): a regra de `source` `/fonts/(.*)` define `Cache-Control: public, max-age=31536000, immutable`
+- [x] CA-02 (NF-HO-07): a regra de `source` `/assets/(.*)` define `Cache-Control: public, max-age=31536000, immutable`.
+- [x] CA-03 (NF-HO-07): a regra de `source` `/fonts/(.*)` define `Cache-Control: public, max-age=31536000, immutable`
       (ver Q-1).
-- [ ] CA-04 (NF-HO-07): a regra de `source` `/images/(.*)` define `Cache-Control: public, max-age=2592000`, sem
+- [x] CA-04 (NF-HO-07): a regra de `source` `/images/(.*)` define `Cache-Control: public, max-age=2592000`, sem
       `immutable` (ver Q-2).
-- [ ] CA-05 (NF-HO-07): só essas três regras definem `Cache-Control`; nenhuma outra regra do `vercel.json` (inclusive
+- [x] CA-05 (NF-HO-07): só essas três regras definem `Cache-Control`; nenhuma outra regra do `vercel.json` (inclusive
       a de `/(.*)` dos headers de segurança) define `Cache-Control`, então HTML, `sitemap.xml`, `robots.txt`, `llms.txt`,
       `llms-full*.txt`, `/content/*` e `/cv/*` ficam no padrão da Vercel. Teste de CA-02 a CA-05:
       `scripts/test/vercelConfig.test.ts`.

@@ -3,11 +3,13 @@ import { readFileSync } from "node:fs"
 import { describe, expect, it } from "vitest"
 
 type VercelRewrite = { source: string; destination: string }
+type VercelHeader = { key: string; value: string }
+type VercelHeaderRule = { source: string; headers: VercelHeader[] }
 type VercelConfig = {
     cleanUrls?: boolean
     trailingSlash?: boolean
     rewrites?: VercelRewrite[]
-    headers?: unknown[]
+    headers?: VercelHeaderRule[]
 }
 
 const config: VercelConfig = JSON.parse(readFileSync("vercel.json", "utf-8"))
@@ -29,6 +31,14 @@ function applyStagingExpression(input: string): VercelConfig {
     expect(merged.error).toBeUndefined()
     expect(merged.status).toBe(0)
     return JSON.parse(merged.stdout)
+}
+
+const LONG_IMMUTABLE_CACHE = "public, max-age=31536000, immutable"
+
+function headerValue(source: string, key: string): string | undefined {
+    const rule = (config.headers ?? []).find((candidate) => candidate.source === source)
+
+    return rule?.headers.find((header) => header.key.toLowerCase() === key.toLowerCase())?.value
 }
 
 describe("vercel.json", () => {
@@ -60,5 +70,30 @@ describe("vercel.json", () => {
         const staging = applyStagingExpression(JSON.stringify({ cleanUrls: true }))
 
         expect(staging.headers).toEqual([NOINDEX_RULE])
+    })
+
+    it("só as regras de /assets, /fonts e /images definem Cache-Control", () => {
+        const sourcesWithCache = (config.headers ?? [])
+            .filter((rule) =>
+                rule.headers.some((header) => header.key.toLowerCase() === "cache-control")
+            )
+            .map((rule) => rule.source)
+
+        expect(sourcesWithCache).toEqual(["/assets/(.*)", "/fonts/(.*)", "/images/(.*)"])
+    })
+
+    it("guarda por um ano e como imutável os arquivos de /assets", () => {
+        expect(headerValue("/assets/(.*)", "Cache-Control")).toBe(LONG_IMMUTABLE_CACHE)
+    })
+
+    it("guarda por um ano e como imutáveis as fontes de /fonts", () => {
+        expect(headerValue("/fonts/(.*)", "Cache-Control")).toBe(LONG_IMMUTABLE_CACHE)
+    })
+
+    it("guarda por 30 dias, sem immutable, as imagens de /images", () => {
+        const value = headerValue("/images/(.*)", "Cache-Control")
+
+        expect(value).toBe("public, max-age=2592000")
+        expect(value).not.toContain("immutable")
     })
 })

@@ -43,7 +43,7 @@ o script de dados das páginas pré-renderizadas).
       `scripts/test/vercelConfig.test.ts:55` `expect(staging.headers).toEqual([...(config.headers ?? []), NOINDEX_RULE])`
       e `:53-54` `cleanUrls`/`trailingSlash`; borda sem `headers`: `:62` `expect(staging.headers).toEqual([NOINDEX_RULE])`.
 
-- [ ] T2 — Regras de `Cache-Control` para `/assets`, `/fonts` e `/images` no `vercel.json`
+- [x] T2 — Regras de `Cache-Control` para `/assets`, `/fonts` e `/images` no `vercel.json`
     - **Arquivo(s):** `vercel.json`, `scripts/test/vercelConfig.test.ts`
     - **Depende de:** T1
     - **Testes (escritos antes, RED):**
@@ -57,7 +57,11 @@ o script de dados das páginas pré-renderizadas).
           valor da Q-2) — `scripts/test/vercelConfig.test.ts`
     - **Gate:** `npm run typecheck && npm run lint && npm test -- --run scripts/test/vercelConfig.test.ts`
     - **Feito quando:** o gate passa; a regra de `/cv/(.*)\\.md` continua igual
-    - **Evidência:**
+    - **Evidência:** RED visto (4 falhas, sem regra de cache); gate verde (8 testes). CA-05:
+      `scripts/test/vercelConfig.test.ts:82` `expect(sourcesWithCache).toEqual(["/assets/(.*)", "/fonts/(.*)", "/images/(.*)"])`;
+      CA-02: `:86` `expect(headerValue("/assets/(.*)", "Cache-Control")).toBe(LONG_IMMUTABLE_CACHE)`; CA-03: `:90` idem
+      para `/fonts/(.*)`; CA-04: `:96` `expect(value).toBe("public, max-age=2592000")` e `:97`
+      `expect(value).not.toContain("immutable")`.
 
 - [ ] T3 — Travar o 404 de caminho inexistente e corrigir o ADR 0003
     - **Arquivo(s):** `scripts/test/vercelConfig.test.ts`, `scripts/test/resolvePagesFile.test.ts`,
