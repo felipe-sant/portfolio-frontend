@@ -1,7 +1,7 @@
 # Design system
 
 Resumo do design system do portfólio, para consulta rápida durante o desenvolvimento. O ponto de
-partida é o handoff de design em `/home/felipe/faculdade/design_handoff_portfolio` (requisito R3), e
+partida é o handoff de design, a pasta `design_handoff_portfolio`, que fica fora do repositório (requisito R3), e
 a referência visual validada pelo PO é o [protótipo navegável](prototype/README.md), com as sete
 telas, os estados e os dois temas.
 
