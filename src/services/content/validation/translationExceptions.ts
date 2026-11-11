@@ -12,7 +12,7 @@ const TRANSLATION_EXCEPTIONS: Record<string, string[]> = {
     "items[].organization": [
         "InCicle",
         "Poliedro Educação",
-        "Fatec – Faculdade de Tecnologia do Estado de São Paulo (Jacareí)",
+        "Fatec Jacareí",
         "Etec – Escola Técnica Estadual Professora Ilza Nascimento Pintus (São José dos Campos)",
         "Expro",
         "Microcamp São José dos Campos"

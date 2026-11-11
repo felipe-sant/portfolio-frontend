@@ -78,6 +78,19 @@ describe("cargo Júnior no conteúdo", () => {
     )
 
     it.each(SUPPORTED_LANGUAGES)(
+        "a formação em curso de %s usa a instituição curta Fatec Jacareí e mantém o curso",
+        async (lang) => {
+            const snapshot = await readContentSnapshot(PUBLIC_ROOT)
+            const education = (snapshot.languages[lang].timeline ?? []).find(
+                (item) => item.kind === "education" && item.end === undefined
+            )
+
+            expect(education?.organization).toBe("Fatec Jacareí")
+            expect(education?.title).toMatch(/Multiplataforma|Multiplatform/)
+        }
+    )
+
+    it.each(SUPPORTED_LANGUAGES)(
         "o currículo %s não fala de estágio e declara o cargo",
         async (lang) => {
             const resume = await readFile(join(PUBLIC_ROOT, "cv", `cv-${lang}.md`), "utf-8")
