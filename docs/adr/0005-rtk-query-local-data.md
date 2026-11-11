@@ -8,7 +8,7 @@
 
 O [ADR 0001](0001-state-management.md) manteve Redux Toolkit, RTK Query e `src/services/http/` para o backend futuro e começou a aplicação sem backend (R1). Na v1 o site é estático no GitHub Pages e o conteúdo vem de JSON e Markdown em `public/content/`. Visto de fora, a camada de dados parece arquitetura de backend aplicada a um site estático: o `baseQuery` com `fetchBaseQuery` de `src/store/api.ts` nunca é chamado, porque todo endpoint usa `queryFn`; `src/services/http/get.ts` e `post.ts` só são importados pelos testes, e `parseResponse.ts` só por eles; e há dois caches, o de leitura (`readText`, em `src/services/content/`) e o do RTK Query.
 
-A revisão de código de 08-11-2026 (achado C-02) apontou isso. O PO decidiu manter tudo até a [#43](https://github.com/felipe-sant/portfolio-frontend/issues/43), que troca a fonte local pela API, e registrar o porquê aqui.
+A revisão de código de 08-11-2026 apontou isso como camada de dados com cara de backend aplicada a um site estático, registrada na [#159](https://github.com/felipe-sant/portfolio-frontend/issues/159). O PO decidiu manter tudo até a [#43](https://github.com/felipe-sant/portfolio-frontend/issues/43), que troca a fonte local pela API, e registrar o porquê aqui.
 
 ## Decisão
 
