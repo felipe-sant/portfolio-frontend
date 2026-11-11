@@ -34,7 +34,7 @@ Fase 1 (sequencial)  →  Fase 2 (T2 [P] T3 [P] T4 [P] T5 [P] T6 [P])  →  Fase
     - **Depende de:** T1
     - **Testes (escritos antes, RED):** não se aplica. Verificação dos CA2, CA4 e CA5.
     - **Gate:** `grep -nE "switch -c|_archive|gitignored|planejamento local" .claude/agents/executor.md` sai vazio; `npm run lint`
-    - **Feito quando:** a linha 10 diz que o `executor` muda para a branch da spec (`git switch <branch>`, a que o `sdd` criou) e, se ela não existir, para e avisa em vez de criar; a linha 65 deixa de exigir resumo e a regra "nunca commite as pastas de spec" sai, e no lugar entra o fechamento aprovado em Questões em aberto 1 (ao chegar em `implementada`, `git rm -r` da pasta da spec em commit `Docs` próprio, antes do PR); o parágrafo sobre o `**Status:**` `implementada` continua
+    - **Feito quando:** a linha 10 diz que o `executor` muda para a branch da spec (`git switch <branch>`, a que o `sdd` criou) e, se ela não existir, para e avisa em vez de criar; a linha 65 deixa de exigir resumo e a regra "nunca commite as pastas de spec" sai, e no lugar entra o fechamento aprovado em Questões em aberto 1 (ao chegar em `implementada`, o `executor` só marca o Status e a pasta da spec permanece versionada como contexto); o parágrafo sobre o `**Status:**` `implementada` continua
     - **Evidência:** (preenchida pelo `executor`)
 
 - [x] T4 [P] — `reviewer.md`: deixar de bloquear spec commitada
@@ -42,7 +42,7 @@ Fase 1 (sequencial)  →  Fase 2 (T2 [P] T3 [P] T4 [P] T5 [P] T6 [P])  →  Fase
     - **Depende de:** T1
     - **Testes (escritos antes, RED):** não se aplica. Verificação do CA4.
     - **Gate:** `grep -nE "planejamento local|não devem ser commitadas|_archive" .claude/agents/reviewer.md` sai vazio; `npm run lint`
-    - **Feito quando:** a linha 37 foi removida (ou trocada por: spec commitada em `.specs/` na branch é esperada e não bloqueia; spec `implementada` ainda presente na árvore quando o PR é aberto é apontada conforme a decisão da Questão 1) e a linha 33 segue valendo
+    - **Feito quando:** a linha 37 foi removida (ou trocada por: spec commitada em `.specs/` na branch é esperada e não bloqueia, inclusive `implementada`, conforme a decisão da Questão 1) e a linha 33 segue valendo
     - **Evidência:** (preenchida pelo `executor`)
 
 - [x] T5 [P] — Documentação do fluxo: `.claude/CLAUDE.md`, `.claude/README.md`, `docs/README.md`
@@ -50,7 +50,7 @@ Fase 1 (sequencial)  →  Fase 2 (T2 [P] T3 [P] T4 [P] T5 [P] T6 [P])  →  Fase
     - **Depende de:** T1
     - **Testes (escritos antes, RED):** não se aplica. Verificação dos CA4, CA5 e CA6.
     - **Gate:** `grep -rnE "gitignored|planejamento local|só o resumo" .claude/CLAUDE.md .claude/README.md docs/README.md` sai vazio; `npm test -- --run scripts/test/contributingTypesTable.test.ts`; `npm run lint`
-    - **Feito quando:** os três arquivos dizem que a spec nasce na branch da feature, criada pelo `sdd`, é versionada com ela e removida ao concluir (conforme Questão 1), sem passo de resumo; a linha "Versionada" de `docs/README.md` e a linha "Vida" ficam coerentes (spec versionada enquanto a feature está em andamento); o papel do `sdd` na tabela do README cita a criação da branch e o commit da spec; a tabela de tipos de `.claude/CLAUDE.md` não foi alterada (o teste prova)
+    - **Feito quando:** os três arquivos dizem que a spec nasce na branch da feature, criada pelo `sdd`, é versionada com ela e permanece versionada depois de concluída, como contexto (conforme Questão 1), sem passo de resumo; a linha "Versionada" de `docs/README.md` e a linha "Vida" ficam coerentes (spec versionada, também depois de concluída); o papel do `sdd` na tabela do README cita a criação da branch e o commit da spec; a tabela de tipos de `.claude/CLAUDE.md` não foi alterada (o teste prova)
     - **Evidência:** (preenchida pelo `executor`)
 
 - [x] T6 [P] — Remover os modelos `_archive/_TEMPLATE.md` (decisão recomendada, Questão 2)
@@ -74,5 +74,5 @@ Fase 1 (sequencial)  →  Fase 2 (T2 [P] T3 [P] T4 [P] T5 [P] T6 [P])  →  Fase
     - **Depende de:** T7
     - **Testes (escritos antes, RED):** não se aplica.
     - **Gate:** `npm run typecheck && npm run lint && npm test -- --run` (suíte completa, só aqui)
-    - **Feito quando:** o gate passa; `**Status:**` do `spec.md` é `implementada` e, conforme Questão 1, a pasta da spec é removida em commit `Docs` próprio; sem push nem PR (o orquestrador decide)
+    - **Feito quando:** o gate passa; `**Status:**` do `spec.md` é `implementada` e, conforme Questão 1, a pasta da spec permanece versionada; sem push nem PR (o orquestrador decide)
     - **Evidência:** (preenchida pelo `executor`)

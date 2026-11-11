@@ -17,7 +17,7 @@ A spec nasce na branch da feature, é commitada nela e viaja com o PR. Ao fim, o
 
 1. O `sdd` cria a branch da feature a partir de `origin/staging` atualizada, com o nome `<tipo>/<número-da-issue>-<descrição-curta>` (seção "Branches" do `CLAUDE.md`), escreve `spec.md` e `tasks.md` e os commita nela (commit `Docs`, formato do `CLAUDE.md`).
 2. O `executor` só muda para essa branch (`git switch <branch>`); nunca cria branch.
-3. Spec de feature em andamento é versionada; spec concluída deixa de existir na árvore e fica só no histórico e nos resumos `_archive/<slug>.md` que já existem (intactos).
+3. A spec é versionada e permanece na árvore depois de concluída (`**Status:** implementada`), como contexto para tarefas futuras; os resumos `_archive/<slug>.md` que já existem ficam intactos.
 4. Sai do fluxo a regra "nunca commitar a spec" e o `reviewer` deixa de tratar spec commitada como bloqueante.
 5. O passo "escrever o resumo em `_archive/`" sai do fluxo e dos modelos.
 
@@ -57,7 +57,7 @@ Os cinco primeiros espelham a issue #217; o sexto cobre a documentação.
 
 ## Questões em aberto
 
-1. **Spec concluída (decisão b):** quando a spec chega a `implementada`, ela fica na árvore após o merge ou é removida no PR? Recomendação: o `executor` remove a pasta da spec (`git rm -r`, commit `Docs` próprio, antes de abrir o PR) depois de `implementada`; o histórico da branch preserva o texto e a árvore não acumula specs mortas, o que satisfaz o critério "concluídas só pelos resumos existentes" da issue. Esta spec é escrita assumindo a recomendação (tarefa T3 e T4); se o PO preferir manter a pasta, remover essa linha do `executor.md`.
+1. **Spec concluída (decisão b), resolvida pelo PO:** a pasta da spec não é removida ao concluir. Spec `implementada` permanece versionada em `.specs/features/<slug>/` e `.specs/bugs/<slug>/` (`spec.md` e `tasks.md`) como contexto para tarefas futuras; o `executor` só marca o `**Status:**` `implementada`, e o `sdd` pode consultar specs concluídas parecidas antes de planejar.
 2. **Modelos `_archive/_TEMPLATE.md` (features e bugs):** recomendação: remover os dois, pois o arquivamento deixa de existir e um modelo sem uso induz a escrever resumo; os 52 resumos ficam intactos. Alternativa: marcá-los como legado. A tarefa T6 assume a remoção.
 3. **Quais specs locais são "ativas"** e entram no repositório: decisão e ação do PO depois do PR, fora do `executor`.
 4. **Permissão do `sdd` e tamanho do commit:** o `sdd.md` não tem como o sistema impedir `git add` fora de `.specs/`; a restrição é por regra escrita no agente (`git add .specs/...` explícito, nunca `git add -A`), e o `reviewer` confere o diff. Aceitável?
