@@ -147,7 +147,9 @@ describe("mountClient sem caminho pré-renderizado", () => {
 
         await screen.findByRole("heading", { name: "Desenvolvedor full stack Júnior" })
         expect(document.head.querySelectorAll("title")).toHaveLength(1)
-        expect(document.title).toBe("Portfólio · Luiz Felipe dos Santos")
+        expect(document.title).toBe(
+            "Luiz Felipe dos Santos · Desenvolvedor full stack Júnior · React, TypeScript e Node.js"
+        )
         expect(document.head.querySelectorAll("meta[name='description']")).toHaveLength(1)
     })
 })

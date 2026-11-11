@@ -296,19 +296,22 @@ Regras:
 Os namespaces das telas que ainda não existem são previstos e podem mudar de nome na spec da tela,
 que também revisa o texto sem mudar a chave:
 
-| Rota                        | Namespace             | `meta.title` (`pt-BR`)                                                                    | `meta.description` (`pt-BR`)                                                                                                                   |
-| --------------------------- | --------------------- | ----------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| `/`                         | `home` (existe)       | Portfólio · Luiz Felipe dos Santos (`pt-BR`), Portfolio · … (`en`), Portafolio · … (`es`) | Portfólio de Luiz Felipe dos Santos, desenvolvedor full stack Júnior com React, TypeScript e Node.js: projetos, trajetória e contato. (existe) |
-| `/projects`                 | `projects` (previsto) | Projetos · Luiz Felipe dos Santos                                                         | Projetos de Luiz Felipe dos Santos, com busca por tipo, categoria e tecnologia.                                                                |
-| `/projects/:id`             | `project` (previsto)  | `{{project}}` · Luiz Felipe dos Santos                                                    | Resumo do projeto, do conteúdo (#10, #58), sem chave                                                                                           |
-| `/projects/:id/docs/<name>` | `project` (previsto)  | `{{document}}` · `{{project}}` · Luiz Felipe dos Santos (`meta.documentTitle`)            | Resumo do projeto, do conteúdo                                                                                                                 |
-| `/about`                    | `about` (previsto)    | Informações · Luiz Felipe dos Santos                                                      | Quem é Luiz Felipe dos Santos: sobre mim, stack, trajetória e formação.                                                                        |
-| `/contact`                  | `contact` (previsto)  | Contato · Luiz Felipe dos Santos                                                          | Como falar com Luiz Felipe dos Santos: e-mail e currículo.                                                                                     |
-| Página não encontrada       | `notFound` (existe)   | Página não encontrada · Luiz Felipe dos Santos (existe)                                   | O endereço acessado não existe neste portfólio. (existe)                                                                                       |
-| Página de erro              | `error` (existe)      | Erro inesperado · Luiz Felipe dos Santos (existe)                                         | Algo deu errado ao carregar esta página. (existe)                                                                                              |
+| Rota                        | Namespace             | `meta.title` (`pt-BR`)                                                                 | `meta.description` (`pt-BR`)                                                                                                                   |
+| --------------------------- | --------------------- | -------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/`                         | `home` (existe)       | Luiz Felipe dos Santos · Desenvolvedor full stack Júnior · React, TypeScript e Node.js | Portfólio de Luiz Felipe dos Santos, desenvolvedor full stack Júnior com React, TypeScript e Node.js: projetos, trajetória e contato. (existe) |
+| `/projects`                 | `projects` (previsto) | Projetos · Luiz Felipe dos Santos                                                      | Projetos de Luiz Felipe dos Santos, com busca por tipo, categoria e tecnologia.                                                                |
+| `/projects/:id`             | `project` (previsto)  | `{{project}}` · Luiz Felipe dos Santos                                                 | Resumo do projeto, do conteúdo (#10, #58), sem chave                                                                                           |
+| `/projects/:id/docs/<name>` | `project` (previsto)  | `{{document}}` · `{{project}}` · Luiz Felipe dos Santos (`meta.documentTitle`)         | Resumo do projeto, do conteúdo                                                                                                                 |
+| `/about`                    | `about` (previsto)    | Informações · Luiz Felipe dos Santos                                                   | Quem é Luiz Felipe dos Santos: sobre mim, stack, trajetória e formação.                                                                        |
+| `/contact`                  | `contact` (previsto)  | Contato · Luiz Felipe dos Santos                                                       | Como falar com Luiz Felipe dos Santos: e-mail e currículo.                                                                                     |
+| Página não encontrada       | `notFound` (existe)   | Página não encontrada · Luiz Felipe dos Santos (existe)                                | O endereço acessado não existe neste portfólio. (existe)                                                                                       |
+| Página de erro              | `error` (existe)      | Erro inesperado · Luiz Felipe dos Santos (existe)                                      | Algo deu errado ao carregar esta página. (existe)                                                                                              |
 
-O `meta.title` de `home` é "Portfólio · Luiz Felipe dos Santos" em `pt-BR`, "Portfolio · …" em `en` e
-"Portafolio · …" em `es`, decisão do PO (a raiz é a exceção ao formato `<Tela> · Luiz Felipe dos Santos`). `{{document}}` é o nome do
+O `meta.title` de `home` é "Luiz Felipe dos Santos · Desenvolvedor full stack Júnior · React, TypeScript e
+Node.js" em `pt-BR`, "Luiz Felipe dos Santos · Junior full stack developer · React, TypeScript and Node.js" em
+`en` e "Luiz Felipe dos Santos · Desarrollador full stack junior · React, TypeScript y Node.js" em `es`, decisão
+do PO (#198: nome, cargo e stack; a raiz é a exceção ao formato `<Tela> · Luiz Felipe dos Santos`). O
+`<title>` estático do `index.html` repete o valor `pt-BR`. `{{document}}` é o nome do
 documento (`SETUP.md`, `LICENSE`, D55), igual nos três idiomas. Na página de
 projeto, o `<title>` só existe depois que o conteúdo do projeto chega; na pré-renderização (#49) ele
 já está no HTML.

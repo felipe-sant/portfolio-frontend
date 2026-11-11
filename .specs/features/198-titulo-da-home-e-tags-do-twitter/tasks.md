@@ -20,7 +20,7 @@ O título usa a opção A da spec. Se o PO escolher B ao aprovar, troque só a s
 
 ## Tarefas
 
-- [ ] T1: título da Início com nome, cargo e stack nos três idiomas
+- [x] T1: título da Início com nome, cargo e stack nos três idiomas
     - **Arquivo(s):**
         - textos: `src/locales/pt-BR/home.json`, `src/locales/en/home.json` e `src/locales/es/home.json` (só
           `meta.title`);
@@ -50,9 +50,9 @@ O título usa a opção A da spec. Se o PO escolher B ao aprovar, troque só a s
         - o gate passa;
         - `grep -rn "Portf[oó]lio · Luiz\|Portafolio · Luiz" src e2e scripts index.html` não retorna nada;
         - a `description` e o `heading` de `home.json` não mudaram.
-    - **Evidência:**
+    - **Evidência:** typecheck e lint verdes; 5 arquivos do gate, 140 testes verdes; o grep não acha o título antigo; o teste do `index.html` compara o `<title>` sem os espaços da quebra de linha do Prettier.
 
-- [ ] T2: documentação do título
+- [x] T2: documentação do título
     - **Arquivo(s):** `docs/screens/home.md` (tabela de chaves, linha ~199, e "Metadados e dados estruturados", linha
       ~302) e `docs/screens/layout.md` (tabela de rotas, linha ~301, e o parágrafo das linhas ~310–311)
     - **Depende de:** T1
@@ -62,7 +62,7 @@ O título usa a opção A da spec. Se o PO escolher B ao aprovar, troque só a s
         - os dois documentos citam o título novo nos três idiomas e dizem que `twitter:title` é igual a ele;
         - a regra "a raiz é a exceção ao formato `<Tela> · Luiz Felipe dos Santos`" continua;
         - T1 e T2 saem juntas no commit `Feat :sparkles: [#198] Inclui função e stack no título da página inicial`.
-    - **Evidência:**
+    - **Evidência:** `home.md` e `layout.md` com o título novo nos três idiomas; a menção a `twitter:title` fica para a T4, que cria a tag.
 
 - [ ] T3: `PageMeta` emite `twitter:title`, `twitter:description`, `twitter:image` e `twitter:image:alt`
     - **Arquivo(s):** `src/components/PageMeta.tsx`, `src/components/test/PageMeta.test.tsx` e

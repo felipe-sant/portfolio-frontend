@@ -161,7 +161,9 @@ describe("HomePage", () => {
     it("define título e meta description da página no head", () => {
         renderHomePage()
 
-        expect(document.title).toBe("Portfólio · Luiz Felipe dos Santos")
+        expect(document.title).toBe(
+            "Luiz Felipe dos Santos · Desenvolvedor full stack Júnior · React, TypeScript e Node.js"
+        )
         expect(document.querySelector('meta[name="description"]')?.getAttribute("content")).toBe(
             "Portfólio de Luiz Felipe dos Santos, desenvolvedor full stack Júnior com React, TypeScript e Node.js: projetos, trajetória e contato."
         )
@@ -172,7 +174,9 @@ describe("HomePage", () => {
 
         renderHomePage()
 
-        expect(document.title).toBe("Portfolio · Luiz Felipe dos Santos")
+        expect(document.title).toBe(
+            "Luiz Felipe dos Santos · Junior full stack developer · React, TypeScript and Node.js"
+        )
         expect(document.querySelector('meta[name="description"]')?.getAttribute("content")).toBe(
             "Portfolio of Luiz Felipe dos Santos, junior full stack developer with React, TypeScript and Node.js: projects, background and contact."
         )
@@ -183,8 +187,23 @@ describe("HomePage", () => {
 
         renderHomePage()
 
-        expect(document.title).toBe("Portafolio · Luiz Felipe dos Santos")
+        expect(document.title).toBe(
+            "Luiz Felipe dos Santos · Desarrollador full stack junior · React, TypeScript y Node.js"
+        )
     })
+
+    it.each(["pt-BR", "en", "es"] as const)(
+        "usa o mesmo valor do title em og:title em %s",
+        async (language) => {
+            await setLanguage(language)
+
+            renderHomePage()
+
+            expect(
+                document.querySelector('meta[property="og:title"]')?.getAttribute("content")
+            ).toBe(document.title)
+        }
+    )
 
     it("atualiza texto, metadados e lang do html ao trocar o idioma com a página aberta", async () => {
         renderHomePage()
@@ -197,7 +216,9 @@ describe("HomePage", () => {
         expect(
             screen.getByRole("heading", { name: "Desarrollador full stack junior" })
         ).toBeInTheDocument()
-        expect(document.title).toBe("Portafolio · Luiz Felipe dos Santos")
+        expect(document.title).toBe(
+            "Luiz Felipe dos Santos · Desarrollador full stack junior · React, TypeScript y Node.js"
+        )
         expect(document.querySelector('meta[name="description"]')?.getAttribute("content")).toBe(
             "Portafolio de Luiz Felipe dos Santos, desarrollador full stack junior con React, TypeScript y Node.js: proyectos, trayectoria y contacto."
         )
