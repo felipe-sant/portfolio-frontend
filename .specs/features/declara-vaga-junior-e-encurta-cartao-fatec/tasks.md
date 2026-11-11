@@ -87,7 +87,7 @@ T5 (README e `index.html`), T6 (docs) e T7 (CV e PDFs) editam arquivos diferente
     - **Feito quando:** CA12 vale por leitura e por `grep` (`grep -rn "full stack em TypeScript" docs --include=*.md` só retorna `adr/0004` e o protótipo); `decisions.md`, `data-model.md` e `api-contract.md` não foram tocados; nenhum ID reaproveitado
     - **Evidência:** ...
 
-- [ ] T7 [P] — CV: cargo Júnior nos três `.md` e PDFs regerados no mesmo commit
+- [x] T7 [P] — CV: cargo Júnior nos três `.md` e PDFs regerados no mesmo commit
     - **Arquivo(s):** `public/cv/cv-{pt-BR,en,es}.md` (linha 14: "InCicle — Desenvolvedor Full Stack Júnior (05/2026 – atual)" e equivalentes em `en` e `es`; reconferir o resumo e as demais linhas contra "estagiário"), `public/cv/cv-{pt-BR,en,es}.pdf` (`npm run cv:pdf`, Chromium do Playwright)
     - **Depende de:** T2
     - **Testes (escritos antes, RED):**
@@ -95,7 +95,7 @@ T5 (README e `index.html`), T6 (docs) e T7 (CV e PDFs) editam arquivos diferente
         - os PDFs batem com os `.md` (CA10) em `scripts/test/resumePdfsUpToDate.test.ts`
     - **Gate:** `npm run typecheck && npm run lint && npm test -- --run scripts/test/resumePdfsUpToDate.test.ts scripts/test/readResumeMarkdown.test.ts`
     - **Feito quando:** o gate passa e os `.md` e os `.pdf` entram no mesmo commit; sem Chromium disponível, a tarefa para e anota o bloqueio (o `.md` sem o PDF quebraria o teste)
-    - **Evidência:** ...
+    - **Evidência:** gate verde (26 testes). CA8 `src/services/content/test/content.test.ts` "o currículo %s não fala de estágio e declara o cargo" (`not.toMatch` dos termos e `toContain("incicle — <role>")`, no `content.test.ts` por ser o que lê o `profile.json` real); CA10 `scripts/test/resumePdfsUpToDate.test.ts` verde com os PDFs regerados por `npm run cv:pdf` (Chromium disponível). Os três `.md` ganharam o cargo no título da experiência e "Júnior/Junior/junior" no resumo; as demais linhas conferidas contra estágio (só "internacionalização" casa de longe, fora do termo).
 
 - [ ] T8 — Verificação completa e changeset
     - **Arquivo(s):** `.changeset/*.md` (um arquivo, `"portfolio-frontend": patch`, texto sem jargão: "Declara na Início o cargo de desenvolvedor full stack Júnior com React, TypeScript e Node.js, troca estagiário por Júnior no site e no currículo e deixa o cartão da Fatec mais baixo no celular, para os projetos em destaque aparecerem mais cedo.")

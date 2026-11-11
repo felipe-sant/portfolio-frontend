@@ -78,6 +78,19 @@ describe("cargo Júnior no conteúdo", () => {
     )
 
     it.each(SUPPORTED_LANGUAGES)(
+        "o currículo %s não fala de estágio e declara o cargo",
+        async (lang) => {
+            const resume = await readFile(join(PUBLIC_ROOT, "cv", `cv-${lang}.md`), "utf-8")
+            const role = JSON.parse(
+                await readFile(join(PUBLIC_ROOT, "content", lang, "profile.json"), "utf-8")
+            ).role
+
+            expect(resume).not.toMatch(INTERNSHIP_TERMS)
+            expect(resume.toLowerCase()).toContain(`incicle — ${role.toLowerCase()}`)
+        }
+    )
+
+    it.each(SUPPORTED_LANGUAGES)(
         "o heading da Início, o role do perfil e o título da experiência atual de %s são iguais",
         async (lang) => {
             const snapshot = await readContentSnapshot(PUBLIC_ROOT)
