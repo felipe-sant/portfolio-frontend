@@ -253,7 +253,7 @@ Sempre `<Link to="/rota">` ou `useNavigate()` do `react-router-dom`. Nunca `<a h
 - [ ] Navegação interna usando `<Link>`, não `<a href>`
 - [ ] Metadados declarados com `t("meta.title")`/`t("meta.description")` se a página precisar substituir os placeholders do `index.html`
 - [ ] Valores de cor/fonte vindos das custom properties de `global.css`
-- [ ] `npm run typecheck`, `npm run build` e `npm test -- --run src/i18n/test/resources.test.ts` passando
+- [ ] `npm run typecheck`, `npm run lint` e `npm test -- --run` do arquivo de teste alterado e de `src/i18n/test/resources.test.ts` passando (`build` e `test:cov` rodam só no fim da feature, ver `executor`)
 - [ ] A rota foi aberta no navegador e renderiza a página certa (o build passar não prova isso)
 
 ## Ao remover ou renomear uma página

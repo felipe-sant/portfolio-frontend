@@ -6,13 +6,13 @@ Esta pasta guarda como o Claude Code trabalha neste repositório. As regras e co
 
 Ficam em `agents/` e rodam nesta ordem, cada um revisando o trabalho do anterior e nunca o próprio:
 
-| Agente     | Papel                                                                                            |
-| ---------- | ------------------------------------------------------------------------------------------------ |
-| `sdd`      | Planeja: escreve `spec.md` e `tasks.md` em `.specs/` e nunca toca em `src/`.                     |
-| `executor` | Implementa as tarefas de um `tasks.md` aprovado, em branch dedicada, com TDD e commits atômicos. |
-| `reviewer` | Revisa o diff contra o `CLAUDE.md`, somente leitura, depois de cada estágio.                     |
-| `qa`       | Testa a tela no navegador com Playwright, reporta bugs e escreve os testes de `e2e/`.            |
-| `tester`   | Valida a suíte inteira, audita a adequação dos testes e cria os testes de unidade que faltam.    |
+| Agente     | Papel                                                                                                       |
+| ---------- | ----------------------------------------------------------------------------------------------------------- |
+| `sdd`      | Cria a branch da feature, escreve `spec.md` e `tasks.md` em `.specs/`, commita a spec e não toca em `src/`. |
+| `executor` | Implementa as tarefas de um `tasks.md` aprovado, na branch criada pelo `sdd`, com TDD e commits atômicos.   |
+| `reviewer` | Revisa o diff contra o `CLAUDE.md`, somente leitura, depois de cada estágio.                                |
+| `qa`       | Testa a tela no navegador com Playwright, reporta bugs e escreve os testes de `e2e/`.                       |
+| `tester`   | Valida a suíte inteira, audita a adequação dos testes e cria os testes de unidade que faltam.               |
 
 ## Skills
 
@@ -38,10 +38,10 @@ Ficam em `skills/<nome>/SKILL.md` e são carregadas sob demanda pelo agente que 
 ## Detalhe de agentes, skills, specs e docs
 
 - `.claude/agents/` — cinco papéis num fluxo de TDD, `sdd` → `executor` → verificação manual do PO →
-  `reviewer` → `qa` → `reviewer` → `tester` → `reviewer`: `sdd` (só planeja, escreve
-  `spec.md`/`tasks.md` em `.specs/`, nunca toca em `src/`; toda tarefa lista os "Testes" a provar e o
-  "Gate"), `executor` (implementa a feature inteira de um `tasks.md` já aprovado, em branch dedicada,
-  em TDD: teste antes do código, um por vez, vermelho → verde → refatora, gate e tabela de adequação
+  `reviewer` → `qa` → `reviewer` → `tester` → `reviewer`: `sdd` (só planeja, cria a branch da feature,
+  escreve e commita `spec.md`/`tasks.md` em `.specs/`, nunca toca em `src/`; toda tarefa lista os "Testes" a provar e o
+  "Gate"), `executor` (implementa a feature inteira de um `tasks.md` já aprovado, na branch criada
+  pelo `sdd`, em TDD: teste antes do código, um por vez, vermelho → verde → refatora, gate e tabela de adequação
   por tarefa, commit atômico com teste e código juntos), `reviewer` (audita contra o `CLAUDE.md`,
   somente leitura, e revisa o trabalho do estágio anterior, nunca o próprio), `qa` (testa a tela no
   navegador com Playwright contra `docs/`, escreve os testes de `e2e/` e reporta bugs; só escreve em
@@ -61,8 +61,8 @@ Ficam em `skills/<nome>/SKILL.md` e são carregadas sob demanda pelo agente que 
   `screen-qa` (roteiro de QA exploratório de uma tela) e `nfr-verification` (requisitos não
   funcionais de `docs/product/non-functional-requirements.md`).
 - `.specs/` — specs por feature/bug (`.specs/features/<slug>/`, `.specs/bugs/<slug>/`), a partir de
-  `.specs/_template/`. As pastas de trabalho de cada spec são gitignored (planejamento local); só o resumo
-  `_archive/<slug>.md` de cada spec fechada, escrito pelo `executor`, é versionado.
+  `.specs/_template/`. A spec nasce na branch da feature, criada pelo `sdd`, é versionada com ela e permanece
+  versionada depois de `implementada`, como contexto para tarefas futuras.
   O estado vive no campo `**Status:**` do `spec.md` (`rascunho` → `em-revisao` → `aprovada` →
   `em-andamento` → `implementada`); só humano promove para `aprovada`.
 - `docs/` — documentação versionada **só deste frontend**: visão do produto e glossário

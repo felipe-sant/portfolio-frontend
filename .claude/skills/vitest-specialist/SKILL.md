@@ -452,8 +452,8 @@ test("Esc fecha o menu e devolve o foco ao botão", async ({ page }) => {
 - [ ] URL (`pushState`) e stubs de `navigator` restaurados no `afterEach` de quem os alterou
 - [ ] `user-event` na API v14 (`setup()` e `await`)
 - [ ] Sem comentário no código; nome de identificador em inglês, descrição do `it` em português
-- [ ] `npm test -- --run` passa, e a contagem de arquivos cresceu com o arquivo novo
-- [ ] `npm run typecheck` passa
+- [ ] `npm test -- --run <arquivo de teste alterado>` passa
+- [ ] `npm run typecheck` e `npm run lint` passam (`build` e `test:cov` rodam só no fim da feature, ver `executor`)
 
 ## Ao remover ou renomear o arquivo testado
 
