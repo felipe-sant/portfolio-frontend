@@ -35,7 +35,7 @@ Regras para o `executor`: nenhum comentário em código (nem `//`, `/* */`, JSDo
 
         Veredito: necessários e suficientes.
 
-- [ ] T2 — Criar `LazyResumeModal`, que importa o `ResumeModal` só na primeira abertura
+- [x] T2 — Criar `LazyResumeModal`, que importa o `ResumeModal` só na primeira abertura
     - **Arquivo(s):** `src/components/LazyResumeModal.tsx`, `src/components/test/LazyResumeModal.test.tsx`
     - **Depende de:** T1
     - **Testes (escritos antes, RED):**
@@ -46,7 +46,17 @@ Regras para o `executor`: nenhum comentário em código (nem `//`, `/* */`, JSDo
         - Acessibilidade: `expectNoAxeViolations(container)` com o modal aberto. Arquivo: `src/components/test/LazyResumeModal.test.tsx`
     - **Gate:** `npm run typecheck && npm run lint && npm test -- --run src/components/test/LazyResumeModal.test.tsx`
     - **Feito quando:** o gate passa. As props são `LazyResumeModalProps` (`isOpen`, `onClose`), o `lazy` e o `<Suspense fallback={null}>` ficam dentro do componente, "já aberto" fica em estado atualizado no render (sem `useEffect`), com `export default` no fim.
-    - **Evidência:**
+    - **Evidência:** gate verde (typecheck, lint, 5 testes). RED visto: `Failed to resolve import "@/components/LazyResumeModal"`. Sensor: sem o `<Suspense>` local, o teste de PERF-140-04 falha.
+
+        | Critério                                                           | `arquivo:linha` e asserção                                                                                                                                                             | Coberto? |
+        | ------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- |
+        | PERF-140-03 (borda): fechado não renderiza nem importa             | `src/components/test/LazyResumeModal.test.tsx:33` `expect(screen.queryByRole("dialog")).not.toBeInTheDocument()`; `:34` `expect(moduleState.evaluations).toBe(0)`                      | sim      |
+        | PERF-140-03: `isOpen` para `true` mostra o diálogo                 | `src/components/test/LazyResumeModal.test.tsx:57` `expect(await screen.findByRole("dialog", { name: "Currículo" })).toBeInTheDocument()`                                               | sim      |
+        | PERF-140-03: abrir, fechar, abrir importa uma vez e some ao fechar | `src/components/test/LazyResumeModal.test.tsx:67` `expect(screen.queryByRole("dialog")).not.toBeInTheDocument()`; `:71` `expect(moduleState.evaluations).toBe(1)`                      | sim      |
+        | PERF-140-04: irmão visível durante a carga                         | `src/components/test/LazyResumeModal.test.tsx:40` `expect(screen.getByText("Conteúdo da página")).toBeVisible()`; `:41` `expect(screen.queryByRole("dialog")).not.toBeInTheDocument()` | sim      |
+        | Acessibilidade com o modal aberto                                  | `src/components/test/LazyResumeModal.test.tsx:78` `await expectNoAxeViolations(container)`                                                                                             | sim      |
+
+        Veredito: necessários e suficientes.
 
 - [ ] T3 — Trocar `ResumeModal` por `LazyResumeModal` nos quatro pontos de uso
     - **Arquivo(s):** `src/components/Footer.tsx`, `src/components/ContactChannels.tsx`, `src/pages/Home.page.tsx`, `src/pages/About.page.tsx`. Testes que abrem o modal e talvez precisem passar a esperar por estado (`findBy*` no lugar de `getBy*` logo após o clique): `src/components/test/Footer.test.tsx`, `src/components/test/ContactChannels.test.tsx`, `src/components/test/ResumeLink.test.tsx`, `src/pages/test/Home.page.test.tsx`, `src/pages/test/About.page.test.tsx`
