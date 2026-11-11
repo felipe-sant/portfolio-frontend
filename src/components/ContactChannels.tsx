@@ -5,6 +5,7 @@ import Icon from "@/components/Icon"
 import ResumeLink from "@/components/ResumeLink"
 import ResumeModal from "@/components/ResumeModal"
 import Skeleton from "@/components/Skeleton"
+import VisuallyHidden from "@/components/VisuallyHidden"
 import useResume from "@/hooks/useResume"
 import buttonCss from "@/styles/components/button.module.css"
 import css from "@/styles/components/contactChannels.module.css"
@@ -31,10 +32,48 @@ function ChannelBlock({ heading, children }: ChannelBlockProps) {
 
 function ChannelSkeleton() {
     return (
-        <div className={css.skeleton}>
-            <Skeleton width="medium" />
-            <Skeleton width="short" />
-        </div>
+        <>
+            <p className={css.value}>
+                <Skeleton width="medium" />
+            </p>
+            <p className={css.detail}>
+                <Skeleton width="short" />
+            </p>
+        </>
+    )
+}
+
+interface ActionSkeletonProps {
+    icon: "copy" | "mail"
+    label: string
+}
+
+function ActionSkeleton({ icon, label }: ActionSkeletonProps) {
+    return (
+        <span
+            className={`${buttonCss.button} ${buttonCss.md} ${css.actionSkeleton}`}
+            aria-hidden="true"
+        >
+            <Icon name={icon} />
+            {label}
+            <Skeleton shape="fill" />
+        </span>
+    )
+}
+
+function EmailSkeleton() {
+    const { t } = useTranslation(["contact", "common"])
+
+    return (
+        <>
+            <p className={`${css.email} ${css.emailSkeleton}`}>
+                <Skeleton width="medium" />
+            </p>
+            <div className={css.actions}>
+                <ActionSkeleton icon="copy" label={t("common:footer.copyEmail.idle")} />
+                <ActionSkeleton icon="mail" label={t("channels.email.send")} />
+            </div>
+        </>
     )
 }
 
@@ -62,8 +101,8 @@ function ContactChannels({ profile }: ContactChannelsProps) {
                     </>
                 ) : (
                     <>
-                        <Skeleton announce />
-                        <ChannelSkeleton />
+                        <VisuallyHidden role={"status"}>{t("common:loading")}</VisuallyHidden>
+                        <EmailSkeleton />
                     </>
                 )}
             </ChannelBlock>
