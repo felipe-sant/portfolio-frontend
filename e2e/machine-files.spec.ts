@@ -74,6 +74,17 @@ test.describe("arquivos para buscadores e IA", () => {
         }
     })
 
+    test("NF-IA-12: robots.txt declara a política de IA com Content-Signal em cada grupo", async ({
+        request
+    }) => {
+        const body = await (await request.get("robots.txt")).text()
+        const signal = "Content-Signal: search=yes, ai-input=yes, ai-train=yes\n"
+        for (const agent of ["*", ...AI_CRAWLERS]) {
+            expect(body).toContain(`User-agent: ${agent}\nAllow: /\n${signal}`)
+        }
+        expect(body.match(/^Content-Signal: /gm)).toHaveLength(AI_CRAWLERS.length + 1)
+    })
+
     test("NF-IA-15: sitemap.xml é servido como XML", async ({ request }) => {
         const response = await request.get("sitemap.xml")
         expect(response.status()).toBe(200)

@@ -157,4 +157,21 @@ describe("writeSeoFiles", () => {
             )
         )
     })
+
+    it("o robots.txt gerado declara a política de IA em cada um dos 12 grupos", async () => {
+        const targets = await listRealTargets()
+
+        writeSeoFiles({
+            publicDirectory: "public",
+            outputDirectory: output,
+            origin: FATEC_SITE_URL,
+            base: FATEC_BASE_PATH,
+            targets
+        })
+        const robots = readFileSync(join(output, "robots.txt"), "utf-8")
+
+        expect(
+            robots.match(/^Content-Signal: search=yes, ai-input=yes, ai-train=yes$/gm)
+        ).toHaveLength(12)
+    })
 })

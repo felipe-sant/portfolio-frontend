@@ -117,8 +117,8 @@ E-mail (#212, NF-IA-06)
 
 `robots.txt` (#210, NF-IA-12)
 
-- [ ] **CA13** — Cada um dos 12 grupos (`*` e os 11 de `AI_CRAWLERS`) é `User-agent: <agente>`, depois `Allow: /`, depois `Content-Signal: search=yes, ai-input=yes, ai-train=yes`, cada linha terminada em `\n`. A linha aparece exatamente 12 vezes, e o arquivo continua sem `Disallow` e terminando em `Sitemap: <URL absoluta>\n`.
-- [ ] **CA14** — A assinatura `buildRobotsTxt(sitemapUrl)` não muda, e a política fica numa constante em `scripts/seo/`.
+- [x] **CA13** — Cada um dos 12 grupos (`*` e os 11 de `AI_CRAWLERS`) é `User-agent: <agente>`, depois `Allow: /`, depois `Content-Signal: search=yes, ai-input=yes, ai-train=yes`, cada linha terminada em `\n`. A linha aparece exatamente 12 vezes, e o arquivo continua sem `Disallow` e terminando em `Sitemap: <URL absoluta>\n`.
+- [x] **CA14** — A assinatura `buildRobotsTxt(sitemapUrl)` não muda, e a política fica numa constante em `scripts/seo/`.
 
 Build, E2E e docs
 
