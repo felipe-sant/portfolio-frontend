@@ -21,7 +21,7 @@ Fase 1 (sequencial)  →  Fase 2 (T2 [P] T3 [P] T4 [P] T5 [P] T6 [P])  →  Fase
     - **Feito quando:** o gate passa e há um commit `Chore :see_no_evil: [#217] Versiona as especificações junto da branch` com o `.gitignore` e a pasta desta spec (a spec entra neste commit, que é o bootstrap); as quatro linhas (`.specs/bugs/*/`, `.specs/features/*/` e as duas exceções `_archive`) saíram
     - **Evidência:** (preenchida pelo `executor`)
 
-- [ ] T2 [P] — `sdd.md`: criar a branch da feature, commitar a spec e ajustar o escopo do Bash
+- [x] T2 [P] — `sdd.md`: criar a branch da feature, commitar a spec e ajustar o escopo do Bash
     - **Arquivo(s):** `.claude/agents/sdd.md`
     - **Depende de:** T1
     - **Testes (escritos antes, RED):** não se aplica. Verificação do CA1.
@@ -29,7 +29,7 @@ Fase 1 (sequencial)  →  Fase 2 (T2 [P] T3 [P] T4 [P] T5 [P] T6 [P])  →  Fase
     - **Feito quando:** o texto (a) troca o passo "checkout staging + pull" por `git fetch origin` e `git switch -c <tipo>/<issue>-<descrição> origin/staging` (mantendo parar em árvore suja, mudar para a branch quando ela já existe e a exceção de branch pedida pelo PO), (b) manda commitar `spec.md` e `tasks.md` na branch com `git add .specs/...` explícito e commit `Docs :bulb: [#issue] ...` no formato do `CLAUDE.md`, (c) amplia o `Bash` para `git fetch`, `git switch`, `git add` e `git commit` só de arquivos em `.specs/` e continua proibindo editar código, build e testes, (d) remove a frase de que `.specs` é gitignored; fica dito que o `sdd` não faz push nem abre PR
     - **Evidência:** (preenchida pelo `executor`)
 
-- [ ] T3 [P] — `executor.md`: só mudar para a branch da spec e remover o resumo de arquivamento
+- [x] T3 [P] — `executor.md`: só mudar para a branch da spec e remover o resumo de arquivamento
     - **Arquivo(s):** `.claude/agents/executor.md`
     - **Depende de:** T1
     - **Testes (escritos antes, RED):** não se aplica. Verificação dos CA2, CA4 e CA5.
@@ -37,7 +37,7 @@ Fase 1 (sequencial)  →  Fase 2 (T2 [P] T3 [P] T4 [P] T5 [P] T6 [P])  →  Fase
     - **Feito quando:** a linha 10 diz que o `executor` muda para a branch da spec (`git switch <branch>`, a que o `sdd` criou) e, se ela não existir, para e avisa em vez de criar; a linha 65 deixa de exigir resumo e a regra "nunca commite as pastas de spec" sai, e no lugar entra o fechamento aprovado em Questões em aberto 1 (ao chegar em `implementada`, `git rm -r` da pasta da spec em commit `Docs` próprio, antes do PR); o parágrafo sobre o `**Status:**` `implementada` continua
     - **Evidência:** (preenchida pelo `executor`)
 
-- [ ] T4 [P] — `reviewer.md`: deixar de bloquear spec commitada
+- [x] T4 [P] — `reviewer.md`: deixar de bloquear spec commitada
     - **Arquivo(s):** `.claude/agents/reviewer.md`
     - **Depende de:** T1
     - **Testes (escritos antes, RED):** não se aplica. Verificação do CA4.
@@ -45,7 +45,7 @@ Fase 1 (sequencial)  →  Fase 2 (T2 [P] T3 [P] T4 [P] T5 [P] T6 [P])  →  Fase
     - **Feito quando:** a linha 37 foi removida (ou trocada por: spec commitada em `.specs/` na branch é esperada e não bloqueia; spec `implementada` ainda presente na árvore quando o PR é aberto é apontada conforme a decisão da Questão 1) e a linha 33 segue valendo
     - **Evidência:** (preenchida pelo `executor`)
 
-- [ ] T5 [P] — Documentação do fluxo: `.claude/CLAUDE.md`, `.claude/README.md`, `docs/README.md`
+- [x] T5 [P] — Documentação do fluxo: `.claude/CLAUDE.md`, `.claude/README.md`, `docs/README.md`
     - **Arquivo(s):** `.claude/CLAUDE.md` (bloco `.specs/` da seção "Tooling de IA", linhas 248-250), `.claude/README.md` (linhas 11, 42 e 63-65), `docs/README.md` (tabela "`docs/` vs `.specs/`", linhas 13-19)
     - **Depende de:** T1
     - **Testes (escritos antes, RED):** não se aplica. Verificação dos CA4, CA5 e CA6.
@@ -53,7 +53,7 @@ Fase 1 (sequencial)  →  Fase 2 (T2 [P] T3 [P] T4 [P] T5 [P] T6 [P])  →  Fase
     - **Feito quando:** os três arquivos dizem que a spec nasce na branch da feature, criada pelo `sdd`, é versionada com ela e removida ao concluir (conforme Questão 1), sem passo de resumo; a linha "Versionada" de `docs/README.md` e a linha "Vida" ficam coerentes (spec versionada enquanto a feature está em andamento); o papel do `sdd` na tabela do README cita a criação da branch e o commit da spec; a tabela de tipos de `.claude/CLAUDE.md` não foi alterada (o teste prova)
     - **Evidência:** (preenchida pelo `executor`)
 
-- [ ] T6 [P] — Remover os modelos `_archive/_TEMPLATE.md` (decisão recomendada, Questão 2)
+- [x] T6 [P] — Remover os modelos `_archive/_TEMPLATE.md` (decisão recomendada, Questão 2)
     - **Arquivo(s):** `.specs/features/_archive/_TEMPLATE.md`, `.specs/bugs/_archive/_TEMPLATE.md`
     - **Depende de:** T3 (o `executor.md` deixa de citar o modelo antes de ele sair)
     - **Testes (escritos antes, RED):** não se aplica. Verificação do CA3.
@@ -61,7 +61,7 @@ Fase 1 (sequencial)  →  Fase 2 (T2 [P] T3 [P] T4 [P] T5 [P] T6 [P])  →  Fase
     - **Feito quando:** só os dois `_TEMPLATE.md` foram removidos (`git rm`) e os 52 resumos seguem intactos; se o PO escolher "legado" em vez de remover, trocar por um aviso no topo de cada modelo e este "Feito quando" por esse critério
     - **Evidência:** (preenchida pelo `executor`)
 
-- [ ] T7 — Varredura final de menções e do commit
+- [x] T7 — Varredura final de menções e do commit
     - **Arquivo(s):** `.claude/`, `docs/`, `CONTRIBUTING.md`, `.gitignore`
     - **Depende de:** T2, T3, T4, T5, T6
     - **Testes (escritos antes, RED):** não se aplica.
@@ -69,7 +69,7 @@ Fase 1 (sequencial)  →  Fase 2 (T2 [P] T3 [P] T4 [P] T5 [P] T6 [P])  →  Fase
     - **Feito quando:** o gate passa e cada critério CA1 a CA5 tem a verificação correspondente registrada na "Evidência"; commits atômicos feitos (`Docs :bulb: [#217] ...` por área) e changeset vazio criado e commitado com `npm run changeset -- --empty`
     - **Evidência:** (preenchida pelo `executor`)
 
-- [ ] T8 — Fechamento da feature: gate completo
+- [x] T8 — Fechamento da feature: gate completo
     - **Arquivo(s):** nenhum
     - **Depende de:** T7
     - **Testes (escritos antes, RED):** não se aplica.

@@ -1,7 +1,7 @@
 # Spec: versiona-specs-na-branch
 
 > **Tipo:** `feature` (Chore, branch `chore/217-versiona-specs-na-branch`) <br />
-> **Status:** `aprovada` (aprovada pelo Felipe em 11/11/2026) <br />
+> **Status:** `implementada` <br />
 > **Issue:** `#217` <br />
 > **Criado em:** `11-11-2026`
 
@@ -34,12 +34,12 @@ Nesta própria issue (bootstrap): a branch `chore/217-versiona-specs-na-branch` 
 
 Os cinco primeiros espelham a issue #217; o sexto cobre a documentação.
 
-- [ ] CA1: `.claude/agents/sdd.md` manda criar a branch da feature a partir de `origin/staging` atualizada (nome pelo padrão do `CLAUDE.md`; se a branch já existir, apenas mudar para ela), escrever a spec nela e commitá-la num commit `Docs`; o `Bash` do `sdd` passa a permitir `git fetch`, `git switch`, `git add` e `git commit` restritos a arquivos de `.specs/`.
-- [ ] CA2: `.claude/agents/executor.md` só muda para a branch da spec e nunca cria branch; não resta o trecho `git switch -c`.
-- [ ] CA3: `git check-ignore .specs/features/x/spec.md .specs/bugs/x/spec.md` sai vazio; `.gitignore` não tem as quatro linhas de `.specs`; os resumos em `_archive/` continuam como estão (`git diff --stat` sem alterações neles, exceto a decisão sobre os `_TEMPLATE.md`).
-- [ ] CA4: nenhum arquivo de `.claude/` ou `docs/` diz que spec é "gitignored", "planejamento local" ou "nunca commite"; `reviewer.md` não tem mais o bloqueante de spec commitada.
-- [ ] CA5: `.claude/CLAUDE.md` (bloco `.specs/`), `.claude/README.md` (bloco `.specs/` e papel do `sdd`) e `docs/README.md` (linha "Versionada") descrevem o novo processo, sem o passo de arquivar resumo.
-- [ ] CA6: `npm run typecheck`, `npm run lint` e `npm test -- --run scripts/test/contributingTypesTable.test.ts` passam; a suíte completa passa na última tarefa.
+- [x] CA1: `.claude/agents/sdd.md` manda criar a branch da feature a partir de `origin/staging` atualizada (nome pelo padrão do `CLAUDE.md`; se a branch já existir, apenas mudar para ela), escrever a spec nela e commitá-la num commit `Docs`; o `Bash` do `sdd` passa a permitir `git fetch`, `git switch`, `git add` e `git commit` restritos a arquivos de `.specs/`.
+- [x] CA2: `.claude/agents/executor.md` só muda para a branch da spec e nunca cria branch; não resta o trecho `git switch -c`.
+- [x] CA3: `git check-ignore .specs/features/x/spec.md .specs/bugs/x/spec.md` sai vazio; `.gitignore` não tem as quatro linhas de `.specs`; os resumos em `_archive/` continuam como estão (`git diff --stat` sem alterações neles, exceto a decisão sobre os `_TEMPLATE.md`).
+- [x] CA4: nenhum arquivo de `.claude/` ou `docs/` diz que spec é "gitignored", "planejamento local" ou "nunca commite"; `reviewer.md` não tem mais o bloqueante de spec commitada.
+- [x] CA5: `.claude/CLAUDE.md` (bloco `.specs/`), `.claude/README.md` (bloco `.specs/` e papel do `sdd`) e `docs/README.md` (linha "Versionada") descrevem o novo processo, sem o passo de arquivar resumo.
+- [x] CA6: `npm run typecheck`, `npm run lint` e `npm test -- --run scripts/test/contributingTypesTable.test.ts` passam; a suíte completa passa na última tarefa.
 
 ## Casos de borda
 
