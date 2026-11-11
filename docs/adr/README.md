@@ -22,12 +22,13 @@ Evidência longa (spike, medição, roteiro testado) não entra no ADR: fica em 
 
 ## Índice
 
-| Número                           | Título                     | Status |
-| -------------------------------- | -------------------------- | ------ |
-| [0000](0000-template.md)         | Molde de ADR               | molde  |
-| [0001](0001-state-management.md) | Gerenciamento de estado    | aceita |
-| [0002](0002-language-in-path.md) | Idioma no caminho da URL   | aceita |
-| [0003](0003-hosting-vercel.md)   | Hospedagem na Vercel       | aceita |
-| [0004](0004-prerendering.md)     | Pré-renderização das rotas | aceita |
+| Número                               | Título                                     | Status |
+| ------------------------------------ | ------------------------------------------ | ------ |
+| [0000](0000-template.md)             | Molde de ADR                               | molde  |
+| [0001](0001-state-management.md)     | Gerenciamento de estado                    | aceita |
+| [0002](0002-language-in-path.md)     | Idioma no caminho da URL                   | aceita |
+| [0003](0003-hosting-vercel.md)       | Hospedagem na Vercel                       | aceita |
+| [0004](0004-prerendering.md)         | Pré-renderização das rotas                 | aceita |
+| [0005](0005-rtk-query-local-data.md) | RTK Query com `queryFn` sobre dados locais | aceita |
 
 Relatório: [`reports/0004-prerendering-spike.md`](reports/0004-prerendering-spike.md), do spike que sustenta o ADR 0004.
