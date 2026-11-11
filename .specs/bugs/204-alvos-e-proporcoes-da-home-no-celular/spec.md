@@ -1,7 +1,7 @@
 # Spec: alvos e proporções da home no celular
 
 > **Tipo:** `bug` <br />
-> **Status:** `em-revisao` <br />
+> **Status:** `aprovada` <br />
 > **Issue:** `#204, #205` <br />
 > **Criado em:** `11-11-2026`
 
@@ -61,8 +61,9 @@ nos dois temas).
 
 ### #204, alvo do link de título da home
 
-- [ ] **CA1** (`RF-HOME-19`, `A11Y-G08`) — Em 320, 375 e 768 px, e nos projetos de 390 e 1280 px, o link de título de cada
-      destaque da Início tem `boundingBox().height ≥ 44`.
+- [ ] **CA1** (`RF-HOME-19`, `A11Y-G08`) — Em 320, 375 e 768 px, e nos projetos de 390 e 1280 px, a caixa do próprio `<a>` de
+      título de cada destaque da Início (não a área do `::after`) tem `boundingBox().height ≥ 44`; hoje mede 28 px no
+      celular e 36 px no desktop.
 - [ ] **CA2** (`RF-HOME-19`, `A11Y-G08`) — Em 320 px, para cada destaque, a altura do `h3` difere em no máximo 1 px da altura
       do texto do link (medida por `Range` sobre o conteúdo do link, como em `e2e/projects.spec.ts`, teste
       "o alvo de 44px do título ... não muda a altura da linha do título"). O caso de duas linhas é previsto no destaque "Player
