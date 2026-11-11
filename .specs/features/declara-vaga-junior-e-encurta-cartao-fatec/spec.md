@@ -1,7 +1,7 @@
 # Spec: declara-vaga-junior-e-encurta-cartao-fatec
 
 > **Tipo:** `feature` (Feat na branch e no commit) <br />
-> **Status:** `aprovada` <br />
+> **Status:** `em-andamento` <br />
 > **Issue:** `#134` <br />
 > **Criado em:** `11-11-2026`
 
