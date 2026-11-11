@@ -61,8 +61,8 @@ Ficam em `skills/<nome>/SKILL.md` e são carregadas sob demanda pelo agente que 
   `screen-qa` (roteiro de QA exploratório de uma tela) e `nfr-verification` (requisitos não
   funcionais de `docs/product/non-functional-requirements.md`).
 - `.specs/` — specs por feature/bug (`.specs/features/<slug>/`, `.specs/bugs/<slug>/`), a partir de
-  `.specs/_template/`. A spec nasce na branch da feature, criada pelo `sdd`, é versionada com ela e removida pelo
-  `executor` (`git rm -r`, commit `Docs` próprio) ao chegar em `implementada`, antes do PR.
+  `.specs/_template/`. A spec nasce na branch da feature, criada pelo `sdd`, é versionada com ela e permanece
+  versionada depois de `implementada`, como contexto para tarefas futuras.
   O estado vive no campo `**Status:**` do `spec.md` (`rascunho` → `em-revisao` → `aprovada` →
   `em-andamento` → `implementada`); só humano promove para `aprovada`.
 - `docs/` — documentação versionada **só deste frontend**: visão do produto e glossário
