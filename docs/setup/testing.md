@@ -52,7 +52,7 @@ O `render` de `src/entry-server.tsx` usa `react-dom/static`, que precisa de `Rea
 `jsdom` o teste faz `vi.stubGlobal("ReadableStream", ReadableStream)` com o de `node:stream/web`. Como o
 `react-dom/server` deixa os contextos do React sujos no processo em que roda, teste que hidrata o HTML
 gerado não chama `render` no mesmo arquivo: pega o resultado em `inject("prerenderFixtures")`, produzido
-por `src/testUtils/prerenderGlobalSetup.ts` (`test.globalSetup`, processo principal do Vitest). Teste que
+por `src/testUtils/prerenderGlobalSetup.ts` (`globalSetup` só no projeto `prerender`, processo principal do Vitest; `inject("prerenderFixtures")` fora dele devolve `undefined`). Teste que
 precisa de `window` e `document` indefinidos usa `// @vitest-environment node` (o `setupTests` tolera).
 
 `npm run test:cov` roda a suíte inteira com `@vitest/coverage-v8` (bloco `test.coverage` em
@@ -62,7 +62,21 @@ e lines — abaixo disso o comando termina com erro. `exclude` cobre os arquivos
 relevante já citados acima, mais `vite.config.ts`, `src/setupTests.ts`, `src/testUtils/prerenderGlobalSetup.ts`,
 `scripts/prerender.ts` e o glob `src/types/**`.
 
-O bloco `test` usa `pool: "vmThreads"`: o `jsdom` é criado uma vez por worker e cada arquivo roda
+O bloco `test` de `vite.config.ts` se divide em três projetos (`test.projects`, todos com `extends: true`, que herda
+plugins, `resolve.alias` e `define` da raiz), para que cada teste pague só o custo de que precisa:
+
+| Projeto     | Ambiente | Arquivos                                  | `globalSetup`          |
+| ----------- | -------- | ----------------------------------------- | ---------------------- |
+| `scripts`   | `node`   | `scripts/test/**/*.test.ts`               | não                    |
+| `ui`        | `jsdom`  | `src/**/*.test.{ts,tsx}`, exceto o abaixo | não                    |
+| `prerender` | `jsdom`  | `src/prerender/test/mountClient.test.tsx` | `prerenderGlobalSetup` |
+
+Só o `prerender` renderiza os alvos de pré-renderização antes dos testes, porque só `mountClient.test.tsx` consome o
+resultado. `coverage`, seus `exclude` e `thresholds` e o `exclude` de `.claude/**` e `e2e/**` ficam na raiz, e o
+relatório agrega os três projetos. Para rodar um projeto: `npx vitest run --project ui`; para listar o que cada um
+coleta: `npx vitest list --filesOnly --project scripts`. Rodar um arquivo por caminho já cai no projeto certo.
+
+Cada projeto usa `pool: "vmThreads"`: o `jsdom` é criado uma vez por worker e cada arquivo roda
 num contexto de VM isolado. Não troque por `isolate: false`, que compartilha o estado entre
 arquivos e faz o resultado depender da ordem de execução. Como o worker é reaproveitado, teste que
 stuba com `vi.stubGlobal`/`vi.stubEnv` restaura no `afterEach` com

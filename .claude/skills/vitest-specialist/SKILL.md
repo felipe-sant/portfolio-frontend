@@ -13,11 +13,15 @@ O stack é Vitest + `@testing-library/react` em ambiente `jsdom`, configurado no
 
 ```ts
 test: {
-    environment: "jsdom",
-    pool: "vmThreads",
-    setupFiles: ["./src/setupTests.ts"]
+    projects: [
+        { extends: true, test: { name: "scripts", environment: "node", include: ["scripts/test/**/*.test.ts"] } },
+        { extends: true, test: { name: "ui", environment: "jsdom", include: ["src/**/*.test.{ts,tsx}"] } },
+        { extends: true, test: { name: "prerender", environment: "jsdom", globalSetup: ["./src/testUtils/prerenderGlobalSetup.ts"] } }
+    ]
 }
 ```
+
+Os três projetos usam `pool: "vmThreads"` e `setupFiles: ["./src/setupTests.ts"]` (resumo acima; a config real está em `vite.config.ts`). Só `src/prerender/test/mountClient.test.tsx` roda em `prerender`, o único projeto com `globalSetup`: `inject("prerenderFixtures")` só funciona nele e devolve `undefined` nos outros. `loadPrerenderData` e `prerenderRoutes` ficam em `ui`.
 
 O `pool: "vmThreads"` reaproveita o `jsdom` por worker mantendo um contexto de VM por arquivo; mesmo assim, teste que usa `vi.stubGlobal` ou `vi.stubEnv` restaura no `afterEach` com `vi.unstubAllGlobals()` e `vi.unstubAllEnvs()`.
 
@@ -25,13 +29,14 @@ Não há `globals: true` e não há `passWithNoTests` — as duas ausências tê
 
 ## 1. Como rodar
 
-| Comando                                               | O que faz                                                                                   |
-| ----------------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| `npm test`                                            | **watch mode** (o script é `vitest`, sem `run`). Não termina.                               |
-| `npm test -- --run`                                   | execução one-shot. **É esta que você usa** num agente, em CI ou em terminal não-interativo. |
-| `npm test -- --run src/pages/test/Home.page.test.tsx` | um arquivo só, one-shot.                                                                    |
-| `npm run typecheck`                                   | checagem de tipos isolada, inclusive dos arquivos de teste.                                 |
-| `npm run build`                                       | `typecheck` + build de produção. Não roda teste.                                            |
+| Comando                                               | O que faz                                                                                    |
+| ----------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| `npm test`                                            | **watch mode** (o script é `vitest`, sem `run`). Não termina.                                |
+| `npm test -- --run`                                   | execução one-shot. **É esta que você usa** num agente, em CI ou em terminal não-interativo.  |
+| `npm test -- --run src/pages/test/Home.page.test.tsx` | um arquivo só, one-shot.                                                                     |
+| `npx vitest run --project ui`                         | só um projeto (`scripts`, `ui` ou `prerender`); arquivo por caminho já cai no projeto certo. |
+| `npm run typecheck`                                   | checagem de tipos isolada, inclusive dos arquivos de teste.                                  |
+| `npm run build`                                       | `typecheck` + build de produção. Não roda teste.                                             |
 
 Rodar `npm test` puro dentro de um agente trava a sessão até o timeout: o processo fica esperando input que nunca vem. Sempre `-- --run`.
 
