@@ -212,9 +212,10 @@ HydrationState }`), `src/prerender/mountClient.tsx`, `src/prerender/test/mountCl
       `module` com `src` e os 3 `<script>` do molde (no Pages o primeiro hash difere pelo `base`, sem efeito: sem header);
       E2E sobre o `build:fatec` (`no-javascript`, `home`, `project-documents`, `not-found`, `projects`,
       `project-gallery`, `resume`, `projects-filters`, `navigation`, `language`): 1489 passaram, 36 pulados, 2 falhas
-      de `projects.spec.ts` (`:394` e `:275`) que passaram 24/24 com `--repeat-each=3`; `npm run test:cov` com a máquina
-      em carga ~20 (outros agentes) teve 2 a 5 falhas por tempo de espera em `mountClient` e `Project.page`, que passam
-      isoladas (68/68) e na suíte sem cobertura.
+      de `projects.spec.ts` (`:394` e `:275`) que passaram 24/24 com `--repeat-each=3`; `npm run test:cov -- --maxWorkers=4`
+      verde (325 arquivos, 2929 testes, cobertura 98,84% de linhas); com todos os workers e a máquina em carga ~20
+      (outros agentes) a mesma suíte teve falhas por tempo de espera em `mountClient` e `Project.page`, que passam
+      isoladas (68/68), na suíte sem cobertura e na rodada com 4 workers.
 
 ## Depois do merge na `staging` (ensaio do `qa`, não é tarefa do `executor`)
 
