@@ -102,7 +102,7 @@ Regras para o `executor`: nenhum comentário em código (nem `//`, `/* */`, JSDo
 
         Veredito: necessários e suficientes.
 
-- [ ] T5 — Trocar o carregamento: `i18n.ts` sem recursos, idioma carregado antes de trocar (`createLanguageLoader`, `setLanguage`) e antes de montar (`mountClient`), recursos estáticos no servidor e pré-carga nos testes
+- [x] T5 — Trocar o carregamento: `i18n.ts` sem recursos, idioma carregado antes de trocar (`createLanguageLoader`, `setLanguage`) e antes de montar (`mountClient`), recursos estáticos no servidor e pré-carga nos testes
     - **Arquivo(s):** `src/i18n/i18n.ts`, `src/entry-server.tsx`, `src/setupTests.ts`, `src/routers/createLanguageLoader.ts`, `src/i18n/setLanguage.ts`, `src/prerender/mountClient.tsx`, `src/routers/test/createLanguageLoader.test.ts`, `src/i18n/test/setLanguage.test.ts`, `src/i18n/test/i18n.server.test.ts`, `src/i18n/test/i18n.test.ts`, `src/prerender/test/mountClient.test.tsx`. Tudo num commit só: separar estas mudanças deixaria o app mostrando chaves entre um commit e outro.
     - **Depende de:** T4
     - **Testes (escritos antes, RED):**
@@ -119,13 +119,13 @@ Regras para o `executor`: nenhum comentário em código (nem `//`, `/* */`, JSDo
     - **Feito quando:** o gate passa, `i18n.ts` não importa `resources` nem JSON de `src/locales/`, todo `i18n.changeLanguage` do código de aplicação vem depois de `await loadLanguage(...)`, e `entry-server.tsx` adiciona `resources` estaticamente antes do primeiro render.
     - **Evidência:** gate verde (typecheck, lint e suíte inteira com `--maxWorkers=2`: 327 arquivos, 2925 testes). `i18n.ts` inicia com `resources: {}` e `partialBundledLanguages: true`, sem o `structuredClone` de T4. Os recursos estáticos entram por `src/i18n/addStaticResources.ts`, chamado só no `entry-server.tsx` e no `beforeEach` do `setupTests.ts`. `createLanguageLoader`, `setLanguage` e `mountClient` (`loadInitialLanguage`, pelo prefixo do caminho ou `en`) esperam `loadLanguage` antes do `changeLanguage`. Acréscimo ao plano: `src/i18n/test/loadLanguage.test.ts` lê os fontes de `src/` e afirma que só o servidor, o `setupTests.ts` e os próprios pacotes importam os textos de forma estática. Em `i18n.server.test.ts` a asserção passou de `resolvedLanguage` para `language` e `getLanguage()`, porque sem recursos o i18next não resolve idioma.
 
-- [ ] T6 — Atualizar as regras e a documentação de i18n e do modal do currículo
+- [x] T6 — Atualizar as regras e a documentação de i18n e do modal do currículo
     - **Arquivo(s):** `.claude/CLAUDE.md` (bullet **i18n** de "Onde fica cada coisa"), `docs/architecture/frontend.md` (seções "Módulo `src/i18n/`", "Módulo `src/locales/`", a entrada de servidor e o parágrafo do `mountClient`), `docs/architecture/components.md` (catálogo: `LazyResumeModal`), `docs/screens/contact.md#implementação` (parágrafo "CV (D52)": os quatro pontos renderizam `LazyResumeModal`)
     - **Depende de:** T5
     - **Testes (escritos antes, RED):** não se aplica
     - **Gate:** `npm test -- --run scripts/test/contributingTypesTable.test.ts && npx prettier --check .claude/CLAUDE.md docs/architecture/frontend.md docs/architecture/components.md docs/screens/contact.md`
     - **Feito quando:** a regra do `.claude/CLAUDE.md` diz que namespace novo entra nos três idiomas, no `languageBundles/<idioma>.ts` de cada idioma e no `ns` de `src/i18n/i18n.ts`, e que o código de cliente não importa `resources` nem JSON de `src/locales/` (só o servidor e os testes). `frontend.md` descreve `loadLanguage`, o carregamento em `mountClient`, `createLanguageLoader` e `setLanguage`, os recursos estáticos no `entry-server.tsx` e a hidratação em `startTransition`. Nenhum texto contradiz o `CONTRIBUTING.md`.
-    - **Evidência:**
+    - **Evidência:** gate verde (`contributingTypesTable.test.ts` 3/3 e `prettier --check` nos quatro arquivos). O bullet **i18n** do `.claude/CLAUDE.md` aponta `languageBundles/<idioma>.ts` e `namespaces.ts` e proíbe importar `resources` ou JSON de `src/locales/` no cliente; `frontend.md` descreve `loadLanguage`, `loadInitialLanguage`, `createLanguageLoader`, `setLanguage`, `addStaticResources` no `entry-server.tsx` e a hidratação em `startTransition`; `components.md` cataloga o `LazyResumeModal`; `contact.md` diz que os quatro pontos renderizam o `LazyResumeModal`.
 
 - [ ] T7 — Escrever o relatório do pacote de entrada
     - **Arquivo(s):** `docs/setup/entry-bundle-performance.md`, `docs/setup/development.md` (link na lista de documentos ou junto do `check:chunk`)
