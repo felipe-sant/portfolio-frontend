@@ -134,7 +134,7 @@ HydrationState }`), `src/prerender/mountClient.tsx`, `src/prerender/test/mountCl
       `expect(screen.getByRole("heading", ...)).toBe(heading)` com o bloco injetado (e os demais casos de hidratação),
       `:230` 404.html em outra URL, `:167` `expect(...).not.toBe(serverHeading)` sem bloco.
 
-- [ ] T5 — Headers de segurança e CSP em `Report-Only` com hash dos scripts inline
+- [x] T5 — Headers de segurança e CSP em `Report-Only` com hash dos scripts inline
     - **Arquivo(s):** `vercel.json`, `scripts/test/vercelConfig.test.ts`
     - **Depende de:** T4 (ou T3, se a Q-3 for recusada)
     - **Testes (escritos antes, RED):**
@@ -161,7 +161,15 @@ HydrationState }`), `src/prerender/mountClient.tsx`, `src/prerender/test/mountCl
     - **Gate:** `npm run typecheck && npm run lint && npm test -- --run scripts/test/vercelConfig.test.ts`
     - **Feito quando:** o gate passa; os hashes no `vercel.json` batem com os de "Notas / decisões" da spec (se não
       baterem, o `index.html` mudou e vale o teste)
-    - **Evidência:**
+    - **Evidência:** RED visto (3 falhas sem a regra `/(.*)`); gate verde (12 testes); os 3 hashes batem com os de "Notas
+      / decisões"; um espaço acrescentado temporariamente ao primeiro script inline do `index.html` derruba os 2 testes
+      de CSP (desfeito antes do commit). Linhas de `scripts/test/vercelConfig.test.ts` neste commit (as das tarefas
+      anteriores mudaram de posição): CA-13 `:117-123` `expect(headerValue("/(.*)", "X-Frame-Options")).toBe("SAMEORIGIN")`
+      e `expect(headerValue("/(.*)", "Content-Security-Policy")).toBe("frame-ancestors 'self'")`, mais `nosniff`,
+      `Referrer-Policy` e `Permissions-Policy`; CA-14 `:129` `expect(Object.fromEntries(directives)).toEqual({...})` com
+      as 10 diretivas, `:141-142` `not.toContain("'unsafe-inline'")`/`not.toContain("'unsafe-eval'")`; CA-15 `:150`
+      `expect(new Set(hashes)).toEqual(new Set(inlineScriptHashes))` e `:155` `expect(inlineScriptHashes).toHaveLength(3)`;
+      CA-05 continua em `:98` e CA-01 em `:81`.
 
 - [ ] T6 — Documentar cache, headers, CSP e o bloco `prerender-data`
     - **Arquivo(s):** `docs/setup/environments.md`, `docs/adr/0003-hosting-vercel.md`, `docs/architecture/frontend.md`,

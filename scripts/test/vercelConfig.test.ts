@@ -1,4 +1,5 @@
 import { spawnSync } from "node:child_process"
+import { createHash } from "node:crypto"
 import { readFileSync } from "node:fs"
 import { describe, expect, it } from "vitest"
 
@@ -37,6 +38,26 @@ function headerValue(source: string, key: string): string | undefined {
     const rule = (config.headers ?? []).find((candidate) => candidate.source === source)
 
     return rule?.headers.find((header) => header.key.toLowerCase() === key.toLowerCase())?.value
+}
+
+const INLINE_SCRIPT = /<script>([\s\S]*?)<\/script>/g
+
+const inlineScriptHashes = Array.from(
+    readFileSync("index.html", "utf-8").matchAll(INLINE_SCRIPT),
+    ([, content]) =>
+        `'sha256-${createHash("sha256").update(content.replaceAll("%BASE_URL%", "/")).digest("base64")}'`
+)
+
+function cspDirectives(): Map<string, string[]> {
+    const policy = headerValue("/(.*)", "Content-Security-Policy-Report-Only") ?? ""
+
+    return new Map(
+        policy
+            .split(";")
+            .map((directive) => directive.trim().split(/\s+/))
+            .filter(([name]) => name !== "")
+            .map(([name, ...sources]) => [name, sources])
+    )
 }
 
 describe("vercel.json", () => {
@@ -90,5 +111,47 @@ describe("vercel.json", () => {
 
         expect(value).toBe("public, max-age=2592000")
         expect(value).not.toContain("immutable")
+    })
+
+    it("define em todo caminho os headers de segurança sem risco", () => {
+        expect(headerValue("/(.*)", "X-Content-Type-Options")).toBe("nosniff")
+        expect(headerValue("/(.*)", "Referrer-Policy")).toBe("strict-origin-when-cross-origin")
+        expect(headerValue("/(.*)", "Permissions-Policy")).toBe(
+            "camera=(), microphone=(), geolocation=(), payment=(), usb=(), browsing-topics=()"
+        )
+        expect(headerValue("/(.*)", "X-Frame-Options")).toBe("SAMEORIGIN")
+        expect(headerValue("/(.*)", "Content-Security-Policy")).toBe("frame-ancestors 'self'")
+    })
+
+    it("define a CSP completa em Report-Only", () => {
+        const directives = cspDirectives()
+
+        expect(Object.fromEntries(directives)).toEqual({
+            "default-src": ["'self'"],
+            "script-src": ["'self'", ...inlineScriptHashes],
+            "style-src": ["'self'", "'unsafe-inline'"],
+            "img-src": ["'self'", "data:", "blob:"],
+            "font-src": ["'self'"],
+            "connect-src": ["'self'"],
+            "worker-src": ["'self'"],
+            "object-src": ["'none'"],
+            "base-uri": ["'self'"],
+            "form-action": ["'self'"]
+        })
+        expect(directives.get("script-src")).not.toContain("'unsafe-inline'")
+        expect(directives.get("script-src")).not.toContain("'unsafe-eval'")
+    })
+
+    it("lista em script-src exatamente o hash de cada script inline do index.html", () => {
+        const hashes = (cspDirectives().get("script-src") ?? []).filter((source) =>
+            source.startsWith("'sha256-")
+        )
+
+        expect(new Set(hashes)).toEqual(new Set(inlineScriptHashes))
+        expect(hashes).toHaveLength(inlineScriptHashes.length)
+    })
+
+    it("encontra os 3 scripts inline do index.html", () => {
+        expect(inlineScriptHashes).toHaveLength(3)
     })
 })

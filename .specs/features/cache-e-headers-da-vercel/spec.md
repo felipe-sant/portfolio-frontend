@@ -127,16 +127,16 @@ noindex` ao fim de `headers` sem descartar nenhuma regra; aplicada ao `vercel.js
 
 **#163 — headers e CSP**
 
-- [ ] CA-13 (NF-HO-08): uma regra de `source` `/(.*)` define `X-Content-Type-Options: nosniff`,
+- [x] CA-13 (NF-HO-08): uma regra de `source` `/(.*)` define `X-Content-Type-Options: nosniff`,
       `Referrer-Policy: strict-origin-when-cross-origin`,
       `Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), browsing-topics=()`,
       `X-Frame-Options: SAMEORIGIN` e `Content-Security-Policy: frame-ancestors 'self'` (obrigatória: `frame-ancestors`
       é ignorado dentro de `Report-Only`). `SAMEORIGIN`/`'self'`, e não `DENY`/`'none'`, porque o modal do CV
       (`src/components/ResumeModal.tsx`) abre o PDF da própria origem num `<iframe>`.
-- [ ] CA-14 (NF-HO-08): a mesma regra define `Content-Security-Policy-Report-Only` com
+- [x] CA-14 (NF-HO-08): a mesma regra define `Content-Security-Policy-Report-Only` com
       `default-src 'self'; script-src 'self' <hashes>; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:;
 font-src 'self'; connect-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'`.
-- [ ] CA-15 (NF-HO-08): os `<hashes>` de `script-src` são exatamente os `sha256-<base64>` do conteúdo de cada
+- [x] CA-15 (NF-HO-08): os `<hashes>` de `script-src` são exatamente os `sha256-<base64>` do conteúdo de cada
       `<script>` inline sem `type` do `index.html`, com `%BASE_URL%` trocado por `/` (o `base` da Vercel). Um script
       inline acrescentado, removido ou reformatado no `index.html` sem atualizar o `vercel.json` falha o teste.
       Teste de CA-13 a CA-15: `scripts/test/vercelConfig.test.ts`.
