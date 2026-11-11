@@ -95,7 +95,7 @@ describe("ContactPage", () => {
 
         await userEvent.click(resume)
 
-        expect(screen.getByRole("dialog", { name: "Currículo" })).toBeInTheDocument()
+        expect(await screen.findByRole("dialog", { name: "Currículo" })).toBeInTheDocument()
     })
 
     it("com a flag ligada mostra a abertura do formulário e os canais depois dele", async () => {
