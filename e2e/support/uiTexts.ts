@@ -33,10 +33,11 @@ const UI_TEXTS = {
                     .replace("{{total}}", String(total)),
             canvasHint: "Prefere ler o texto? Use a versão em texto abaixo."
         },
-        homeHeading: "Desenvolvedor full stack em TypeScript",
+        homeHeading: "Desenvolvedor full stack Júnior",
+        homeStack: "React, TypeScript e Node.js",
         homeTitle: "Portfólio · Luiz Felipe dos Santos",
         homeDescription:
-            "Portfólio de Luiz Felipe dos Santos, desenvolvedor full stack em TypeScript: projetos, trajetória e contato.",
+            "Portfólio de Luiz Felipe dos Santos, desenvolvedor full stack Júnior com React, TypeScript e Node.js: projetos, trajetória e contato.",
         heroViewProjects: "Ver projetos",
         exitAbout: "Ler sobre mim",
         exitAllProjects: "Ver todos os projetos",
@@ -249,10 +250,11 @@ const UI_TEXTS = {
                     .replace("{{total}}", String(total)),
             canvasHint: "Prefer to read the text? Use the text version below."
         },
-        homeHeading: "Full stack developer in TypeScript",
+        homeHeading: "Junior full stack developer",
+        homeStack: "React, TypeScript and Node.js",
         homeTitle: "Portfolio · Luiz Felipe dos Santos",
         homeDescription:
-            "Portfolio of Luiz Felipe dos Santos, full stack developer in TypeScript: projects, background and contact.",
+            "Portfolio of Luiz Felipe dos Santos, junior full stack developer with React, TypeScript and Node.js: projects, background and contact.",
         heroViewProjects: "View projects",
         exitAbout: "Read about me",
         exitAllProjects: "View all projects",
@@ -463,10 +465,11 @@ const UI_TEXTS = {
                     .replace("{{total}}", String(total)),
             canvasHint: "¿Prefieres leer el texto? Usa la versión en texto de abajo."
         },
-        homeHeading: "Desarrollador full stack en TypeScript",
+        homeHeading: "Desarrollador full stack junior",
+        homeStack: "React, TypeScript y Node.js",
         homeTitle: "Portafolio · Luiz Felipe dos Santos",
         homeDescription:
-            "Portafolio de Luiz Felipe dos Santos, desarrollador full stack en TypeScript: proyectos, trayectoria y contacto.",
+            "Portafolio de Luiz Felipe dos Santos, desarrollador full stack junior con React, TypeScript y Node.js: proyectos, trayectoria y contacto.",
         heroViewProjects: "Ver proyectos",
         exitAbout: "Leer sobre mí",
         exitAllProjects: "Ver todos los proyectos",

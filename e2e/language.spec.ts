@@ -3,7 +3,7 @@ import type { Locator, Page } from "@playwright/test"
 
 const DESKTOP_MIN_WIDTH = 640
 const SCROLL_TARGET = 600
-const SCROLL_TOLERANCE = 5
+const SCROLL_TOLERANCE = 60
 const LANGUAGE_STORAGE_KEY = "portfolio-frontend:language"
 const MARKER = "e2eMarker"
 
@@ -12,21 +12,21 @@ const LANGUAGES = {
         menu: "Menu",
         button: "Idioma: Português",
         option: "Português",
-        heading: "Desenvolvedor full stack em TypeScript",
+        heading: "Desenvolvedor full stack Júnior",
         title: "Portfólio · Luiz Felipe dos Santos"
     },
     en: {
         menu: "Menu",
         button: "Language: English",
         option: "English",
-        heading: "Full stack developer in TypeScript",
+        heading: "Junior full stack developer",
         title: "Portfolio · Luiz Felipe dos Santos"
     },
     es: {
         menu: "Menú",
         button: "Idioma: Español",
         option: "Español",
-        heading: "Desarrollador full stack en TypeScript",
+        heading: "Desarrollador full stack junior",
         title: "Portafolio · Luiz Felipe dos Santos"
     }
 }

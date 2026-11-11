@@ -1,9 +1,10 @@
 import { expect, test } from "@playwright/test"
 import type { Page } from "@playwright/test"
+import UI_TEXTS from "./support/uiTexts"
 
 const HIT_MIN = 44
 const BREAKPOINT_WIDTH = 640
-const LANGUAGES = ["pt-BR", "en", "es"]
+const LANGUAGES = ["pt-BR", "en", "es"] as const
 const STACK_HEADING = "Tecnologias que uso"
 const DRAG_DISTANCE = 300
 
@@ -252,6 +253,59 @@ test.describe("imagens dos destaques", () => {
                     .toBeGreaterThan(0)
                 await expect(item.locator("div[aria-hidden='true']")).toHaveCount(0)
             }
+        })
+    }
+})
+
+test.describe("cargo declarado", () => {
+    for (const language of LANGUAGES) {
+        const texts = UI_TEXTS[language]
+
+        test(`RF-HOME-26, RF-HOME-27: em ${language} o h1 é o cargo e a linha da stack vem logo abaixo`, async ({
+            page
+        }) => {
+            await page.goto(language)
+
+            const heading = page.getByRole("heading", { level: 1 })
+            await expect(heading).toHaveText(texts.homeHeading)
+            await expect(heading.locator("xpath=following-sibling::p[1]")).toHaveText(
+                texts.homeStack
+            )
+        })
+
+        test(`RF-HOME-26: em ${language} o title e a description da Início usam o cargo`, async ({
+            page
+        }) => {
+            await page.goto(language)
+            await page.getByRole("heading", { level: 1 }).waitFor()
+
+            await expect(page).toHaveTitle(texts.homeTitle)
+            await expect(page.locator('meta[name="description"]')).toHaveAttribute(
+                "content",
+                texts.homeDescription
+            )
+            await expect(page.locator('meta[property="og:description"]')).toHaveAttribute(
+                "content",
+                texts.homeDescription
+            )
+        })
+
+        test(`RF-HOME-26: em ${language} o jobTitle do JSON-LD da Início é igual ao de Informações`, async ({
+            page
+        }) => {
+            await page.goto(language)
+            await page.getByRole("heading", { level: 1 }).waitFor()
+            const home = JSON.parse(
+                (await page.locator('script[type="application/ld+json"]').textContent()) ?? "null"
+            )
+            await page.goto(`${language}/about`)
+            await page.getByRole("heading", { level: 1 }).waitFor()
+            const about = JSON.parse(
+                (await page.locator('script[type="application/ld+json"]').textContent()) ?? "null"
+            )
+
+            expect(home["@graph"][1].jobTitle).toBe(texts.homeHeading)
+            expect(about.mainEntity.jobTitle).toBe(home["@graph"][1].jobTitle)
         })
     }
 })
