@@ -21,7 +21,7 @@ Não confundir com a `D05` de `docs/design/decisions.md` (formulário de contato
 
 1. Declarar na Início, nos três idiomas, o cargo "Desenvolvedor full stack Júnior" no `h1` e, logo abaixo, uma linha só com a stack: "React, TypeScript e Node.js".
 2. Fazer o cargo ser o mesmo texto onde ele aparece: `h1`, `jobTitle` da Início, `profile.role` (`jobTitle` de Informações e cartão "Agora"), título da experiência atual (cartão "Trabalhando como") e metadados.
-3. No celular (375 e 390px), o cartão "Cursando" ocupa menos altura (no máximo duas linhas de destaque) e "Projetos em destaque" começa mais acima do que hoje.
+3. No celular (375 e 390px), o cartão "Cursando" ocupa menos altura (no máximo três linhas de destaque) e "Projetos em destaque" começa mais acima do que hoje.
 4. Nada no conteúdo, no código vivo, na documentação viva e no CV diz que o cargo atual é de estagiário.
 
 ## Fora de escopo
@@ -107,10 +107,10 @@ Legenda: [teste] Vitest, [E2E] Playwright, [manual] verificação do PO ou do `q
 
 - [x] **CA1** (issue 1) [teste] [E2E]: a Início em `pt-BR`, `en` e `es` tem `h1` igual a "Desenvolvedor full stack Júnior", "Junior full stack developer" e "Desarrollador full stack junior", sem ponto (D24), e logo abaixo o `<p>` "React, TypeScript e Node.js" / "React, TypeScript and Node.js" / "React, TypeScript y Node.js", sem chave no lugar do texto (RF-HOME-26, RF-HOME-27).
 - [x] **CA2** (issue 1, 4) [E2E] [teste]: sem JavaScript, o HTML pré-renderizado de `/pt-BR`, `/en` e `/es` já traz o `h1` e a linha da stack (`no-javascript.spec.ts`, `entry-server.test.tsx`).
-- [x] **CA3** (issue 2) [teste] [E2E]: `<title>`, `<meta name="description">`, `og:description` e `twitter:description` da Início usam a descrição nova nos três idiomas, e `<title>` e descrição de `index.html` batem com a de `pt-BR`.
+- [x] **CA3** (issue 2) [teste] [E2E]: `<title>`, `<meta name="description">`, `og:description` da Início (o `PageMeta` não emite `twitter:description`) usam a descrição nova nos três idiomas, e `<title>` e descrição de `index.html` batem com a de `pt-BR`.
 - [x] **CA4** (issue 2) [teste]: o resumo do `README.md` diz "Junior full stack developer" com React, TypeScript e Node.js, `npm test -- --run scripts/test/readme.test.ts` segue verde e as capturas `home-{light,dark}.png` mostram o título novo (ou a pendência fica anotada, Q8).
-- [ ] **CA5** (issue 3, decisão do PO) [E2E]: a 375px e a 390px, nos três idiomas, o destaque de cada cartão de status tem no máximo duas linhas (altura ≤ 2 × `line-height` calculado, mais 1px) e a página não rola na horizontal (RF-HOME-28, NF-RE-03). Sujeito ao risco da seção Desenho b): se duas linhas não for alcançável só com CSS, o executor devolve ao PO com as medidas.
-- [ ] **CA6** (issue 3) [E2E] [manual]: a 375px e 390px, o topo do `h2` "Projetos em destaque" fica em posição menor ou igual à da linha de base medida em `staging` (mesmo com a linha nova do hero), e a 640px e acima a aparência do cartão não mudou.
+- [x] **CA5** (issue 3, decisão do PO) [E2E]: a 375px e a 390px, nos três idiomas, o destaque de cada cartão de status tem no máximo três linhas, com o destaque em 14px (altura ≤ 3 × `line-height` calculado, mais 1px) e a página não rola na horizontal (RF-HOME-28, NF-RE-03). Revisto pelo PO depois da medição (ver "Decisões do PO").
+- [x] **CA6** (issue 3) [E2E] [manual]: a 375px e 390px, o topo do `h2` "Projetos em destaque" fica em posição menor ou igual à da linha de base medida em `staging` (mesmo com a linha nova do hero), e a 640px e acima a aparência do cartão não mudou.
 - [x] **CA7** (decisão do PO) [teste]: nos três idiomas, `home:heading`, `profile.role` e o `title` da experiência atual são a mesma string, e o `jobTitle` do JSON-LD da Início é igual ao de Informações (`Home.page.test.tsx`, `content.test.ts`).
 - [x] **CA8** (decisão do PO) [teste]: `profile.json` e `timeline.json` dos três idiomas não contêm "estagiário", "estágio", "intern", "internship", "pasante" ou "pasantía" (caixa ignorada), e a validação do conteúdo real (inclusive de tradução) passa; os três `cv-*.md` também não contêm esses termos.
 - [x] **CA9** (decisão do PO) [teste]: o cartão "Trabalhando como" mostra o cargo Júnior, a InCicle e "desde 05/2026", e o `worksFor` do JSON-LD de Informações segue `InCicle`.
@@ -146,6 +146,7 @@ Respostas às questões levantadas na revisão da spec, repassadas pelo coordena
 
 - **Q1 (linha do hero):** a linha sob o `h1` é só a stack, "React, TypeScript e Node.js" (en "React, TypeScript and Node.js", es "React, TypeScript y Node.js"), sem intenção de vaga. Chave `home:hero.stack`.
 - **Q2 (cartão "Cursando"):** aceitar duas linhas; não criar `cardTitle`, não mudar o contrato nem o texto; só CSS do `StatusCard` no celular. O "cabe em uma linha" da issue passa a "no máximo duas linhas de destaque".
+- **Revisão do PO sobre Q2 (11-11-2026, depois da medição):** duas linhas não era alcançável só com CSS (medido: 4 a 5 linhas). O PO decidiu usar a instituição curta "Fatec Jacareí" nos três idiomas no dado da formação (`timeline.json`, mantidos curso e semestre), e o CSS do cartão abaixo de 640px (padding `--space-4`, destaque `--text-body-sm`). A meta passa a ser no máximo três linhas a 375 e 390px. Medido depois: destaque do "Cursando" com 3 linhas em pt-BR e 2 em en e es; `y` do h2 "Projetos em destaque" 966/1000/1000 (375px) e 966/971/1000 (390px) contra 1093/1120/1091 na linha de base. O nome longo da Fatec não fica em lugar nenhum do conteúdo vivo (`alumniOf` do JSON-LD usa o dado da formação, agora "Fatec Jacareí"); o currículo mantém o nome formal da instituição.
 - **Q3 (CV):** entram os três `cv-*.md` e os PDFs regerados com `npm run cv:pdf`, no mesmo commit.
 - **Q4 (`details`):** só "Híbrido" (en "Hybrid"), com exceção em `translationExceptions.ts` para a igualdade entre pt-BR e es.
 - **Q5 (trajetória):** editar a entrada no lugar; cartão "Júnior desde 05/2026".

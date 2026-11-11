@@ -309,3 +309,69 @@ test.describe("cargo declarado", () => {
         })
     }
 })
+
+const STAGING_FEATURED_Y = { "pt-BR": 1093, en: 1120, es: 1091 } as const
+const MAX_HIGHLIGHT_LINES = 3
+const CARD_BREAKPOINT = 640
+
+test.describe("cartões de status no celular", () => {
+    for (const width of [375, 390]) {
+        for (const language of LANGUAGES) {
+            test(`RF-HOME-28, NF-RE-03: a ${width}px em ${language} o destaque de cada cartão tem no máximo ${MAX_HIGHLIGHT_LINES} linhas, a página não rola na horizontal e Projetos em destaque não desce`, async ({
+                page
+            }) => {
+                await page.setViewportSize({ width, height: 800 })
+                await page.goto(language)
+                await page.getByRole("article").last().waitFor()
+
+                const measures = await page.evaluate(() =>
+                    [...document.querySelectorAll("time")].map((time) => {
+                        const highlight = time.closest("div")?.querySelectorAll("p")[1]
+                        const style = highlight ? getComputedStyle(highlight) : null
+
+                        return {
+                            height: highlight?.getBoundingClientRect().height ?? 0,
+                            lineHeight: Number.parseFloat(style?.lineHeight ?? "0"),
+                            fontSize: style?.fontSize
+                        }
+                    })
+                )
+                const featured = await page
+                    .getByRole("heading", { level: 2, name: UI_TEXTS[language].featuredHeading })
+                    .evaluate((heading) => heading.getBoundingClientRect().top + window.scrollY)
+                const overflow = await page.evaluate(
+                    () =>
+                        document.documentElement.scrollWidth > document.documentElement.clientWidth
+                )
+
+                expect(measures.length).toBeGreaterThan(0)
+                for (const measure of measures) {
+                    expect(measure.fontSize).toBe("14px")
+                    expect(measure.height).toBeLessThanOrEqual(
+                        MAX_HIGHLIGHT_LINES * measure.lineHeight + 1
+                    )
+                }
+                expect(overflow).toBe(false)
+                expect(featured).toBeLessThanOrEqual(STAGING_FEATURED_Y[language])
+            })
+        }
+    }
+
+    test("RF-HOME-28: a 640px o cartão mantém o padding e o destaque de 18px", async ({ page }) => {
+        await page.setViewportSize({ width: CARD_BREAKPOINT, height: 800 })
+        await page.goto("pt-BR")
+        await page.getByRole("article").last().waitFor()
+
+        const style = await page.evaluate(() => {
+            const card = document.querySelector("time")?.closest("div")
+            const highlight = card?.querySelectorAll("p")[1]
+
+            return {
+                padding: card ? getComputedStyle(card).paddingTop : null,
+                fontSize: highlight ? getComputedStyle(highlight).fontSize : null
+            }
+        })
+
+        expect(style).toEqual({ padding: "20px", fontSize: "18px" })
+    })
+})
