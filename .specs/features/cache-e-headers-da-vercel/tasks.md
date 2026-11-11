@@ -25,7 +25,7 @@ o script de dados das páginas pré-renderizadas).
 
 ## Tarefas
 
-- [ ] T1 — Acrescentar o `noindex` da `staging` ao fim de `headers` sem descartar as regras do `vercel.json`
+- [x] T1 — Acrescentar o `noindex` da `staging` ao fim de `headers` sem descartar as regras do `vercel.json`
     - **Arquivo(s):** `.github/workflows/deploy.yml` (passo "Block indexing" do job `staging`),
       `scripts/test/vercelConfig.test.ts`
     - **Depende de:** nenhuma
@@ -39,7 +39,9 @@ o script de dados das páginas pré-renderizadas).
     - **Gate:** `npm run typecheck && npm run lint && npm test -- --run scripts/test/vercelConfig.test.ts`
     - **Feito quando:** o gate passa com `jq` instalado e o `deploy.yml` usa `.headers += [...]` (ou equivalente que
       acrescente)
-    - **Evidência:**
+    - **Evidência:** RED visto (`headers` vinha só com o `noindex`); gate verde (4 testes). CA-01:
+      `scripts/test/vercelConfig.test.ts:55` `expect(staging.headers).toEqual([...(config.headers ?? []), NOINDEX_RULE])`
+      e `:53-54` `cleanUrls`/`trailingSlash`; borda sem `headers`: `:62` `expect(staging.headers).toEqual([NOINDEX_RULE])`.
 
 - [ ] T2 — Regras de `Cache-Control` para `/assets`, `/fonts` e `/images` no `vercel.json`
     - **Arquivo(s):** `vercel.json`, `scripts/test/vercelConfig.test.ts`

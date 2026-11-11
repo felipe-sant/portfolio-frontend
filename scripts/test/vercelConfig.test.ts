@@ -15,7 +15,21 @@ const deployWorkflow = readFileSync(".github/workflows/deploy.yml", "utf-8")
 
 const hasJq = spawnSync("jq", ["--version"]).error === undefined
 
-const NOINDEX_HEADERS = [{ source: "/(.*)", headers: [{ key: "X-Robots-Tag", value: "noindex" }] }]
+const NOINDEX_RULE = { source: "/(.*)", headers: [{ key: "X-Robots-Tag", value: "noindex" }] }
+
+const stagingExpression = /jq '([^']+)' vercel\.json > vercel\.staging\.json/.exec(
+    deployWorkflow
+)?.[1]
+
+function applyStagingExpression(input: string): VercelConfig {
+    expect(stagingExpression).toBeDefined()
+
+    const merged = spawnSync("jq", [stagingExpression ?? ""], { input, encoding: "utf-8" })
+
+    expect(merged.error).toBeUndefined()
+    expect(merged.status).toBe(0)
+    return JSON.parse(merged.stdout)
+}
 
 describe("vercel.json", () => {
     it("serve os HTML por rota sem extensão e sem barra final", () => {
@@ -31,20 +45,20 @@ describe("vercel.json", () => {
         expect(catchAll).toEqual([])
     })
 
-    it.skipIf(!hasJq)("mantém as chaves quando o deploy da staging acrescenta o noindex", () => {
-        const expression = /jq '(\. \+ \{headers:.*\})' vercel\.json/.exec(deployWorkflow)?.[1]
+    it.skipIf(!hasJq)(
+        "acrescenta o noindex da staging ao fim dos headers sem descartar nenhuma regra",
+        () => {
+            const staging = applyStagingExpression(readFileSync("vercel.json", "utf-8"))
 
-        expect(expression).toBeDefined()
+            expect(staging.cleanUrls).toBe(true)
+            expect(staging.trailingSlash).toBe(false)
+            expect(staging.headers).toEqual([...(config.headers ?? []), NOINDEX_RULE])
+        }
+    )
 
-        const merged = spawnSync("jq", [expression ?? ""], {
-            input: readFileSync("vercel.json", "utf-8"),
-            encoding: "utf-8"
-        })
+    it.skipIf(!hasJq)("devolve só a regra de noindex quando o vercel.json não tem headers", () => {
+        const staging = applyStagingExpression(JSON.stringify({ cleanUrls: true }))
 
-        expect(merged.error).toBeUndefined()
-        const staging: VercelConfig = JSON.parse(merged.stdout)
-        expect(staging.cleanUrls).toBe(true)
-        expect(staging.trailingSlash).toBe(false)
-        expect(staging.headers).toEqual(NOINDEX_HEADERS)
+        expect(staging.headers).toEqual([NOINDEX_RULE])
     })
 })

@@ -1,7 +1,7 @@
 # Spec: cache e headers da Vercel
 
 > **Tipo:** `feature` <br />
-> **Status:** `aprovada` <br />
+> **Status:** `em-andamento` <br />
 > **Issue:** `#194`, `#197`, `#163` <br />
 > **Criado em:** `11-11-2026`
 
@@ -82,7 +82,7 @@ IDs novos propostos para `docs/product/non-functional-requirements.md`: **NF-HO-
 
 **Staging (pré-requisito das três)**
 
-- [ ] CA-01 (NF-HO-07, NF-HO-08): a expressão `jq` do job `staging` do `deploy.yml` acrescenta o `X-Robots-Tag:
+- [x] CA-01 (NF-HO-07, NF-HO-08): a expressão `jq` do job `staging` do `deploy.yml` acrescenta o `X-Robots-Tag:
 noindex` ao fim de `headers` sem descartar nenhuma regra; aplicada ao `vercel.json`, o resultado mantém
       `cleanUrls`, `trailingSlash` e todas as regras de `headers` do arquivo, na mesma ordem, mais a regra de `noindex`.
       Teste: `scripts/test/vercelConfig.test.ts`.
