@@ -106,7 +106,7 @@ idioma>"/>` e `twitter:image` com a mesma URL do `og:image`, como o React serial
         - T3 e T4 saem juntas no commit `Feat :sparkles: [#138] Completa as tags de compartilhamento do Twitter`.
     - **Evidência:** `frontend.md` (Metadados e SEO por tela), `layout.md` (regras e checklist NF-IA-10) e NF-IA-10 citam as quatro `twitter:*` iguais às `og:*`.
 
-- [ ] T5: lista de páginas com imagem e caminho da imagem
+- [x] T5: lista de páginas com imagem e caminho da imagem
     - **Arquivo(s):**
         - lista e tipo: `src/enum/sharePages.enum.ts` (`SHARE_PAGES = ["home", "projects", "about", "contact"] as
 const`) e `src/types/seo/SharePage.types.ts` (tipo derivado do enum);
@@ -119,9 +119,9 @@ const`) e `src/types/seo/SharePage.types.ts` (tipo derivado do enum);
           (`buildShareImagePath.test.ts`).
     - **Gate:** `npm run typecheck && npm run lint && npm test -- --run src/utils/test/buildShareImagePath.test.ts`
     - **Feito quando:** o gate passa, e o enum, o tipo e a função têm um `export default` cada um.
-    - **Evidência:**
+    - **Evidência:** RED por falta dos módulos; depois 2 testes verdes; enum, tipo e função com um `export default` cada.
 
-- [ ] T6: o gerador produz as 12 imagens com as cores dos tokens, com o teste do formato antes
+- [x] T6: o gerador produz as 12 imagens com as cores dos tokens, com o teste do formato antes
     - **Arquivo(s):**
         - função de cores: `scripts/readColorTokens.ts` (pura, lê `--neutral-050`, `--neutral-500`, `--neutral-900` e
           `--brand-primary` do texto de `src/styles/global.css`) e o teste `scripts/test/readColorTokens.test.ts`;
@@ -148,16 +148,16 @@ const`) e `src/types/seo/SharePage.types.ts` (tipo derivado do enum);
         - os hex fixos saem do script;
         - **o `executor` para e pede ao PO a aprovação do desenho das 12 imagens (Q-B), sem commitar nada**. A sessão
           principal mostra as imagens ao PO e só segue para T7 com a aprovação.
-    - **Evidência:**
+    - **Evidência:** `readColorTokens` lê o primeiro `:root` e falha em português com o nome do token; `npm run og:image` gerou o `og-site.png` idêntico ao versionado e as 12 imagens (27 a 47 KB); 17 testes verdes nos três arquivos do gate.
 
-- [ ] T7: aprovação do PO sobre as imagens (Q-B)
+- [x] T7: aprovação do PO sobre as imagens (Q-B)
     - **Arquivo(s):** `scripts/generateOgImage.ts` e `public/images/share/**`, só se o PO pedir ajuste
     - **Depende de:** T6
     - **Testes (escritos antes, RED):** não se aplica (aparência; o formato já é provado pelo teste da T6)
     - **Gate:** `npm run typecheck && npm run lint && npm test -- --run scripts/test/ogImage.test.ts`
     - **Feito quando:** o PO aprovou o desenho das 12 imagens. Se ele pediu ajuste, o gerador foi alterado, as imagens
       foram regeneradas com `npm run og:image` e o gate continua verde.
-    - **Evidência:**
+    - **Evidência:** o PO aprovou o desenho das 12 imagens e os quatro alts nos três idiomas em 11/11/2026, sem ajuste.
 
 - [ ] T8: as quatro telas declaram a própria imagem, e Projeto usa a de Projetos como reserva
     - **Arquivo(s):**
