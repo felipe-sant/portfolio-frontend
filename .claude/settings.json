@@ -6,7 +6,7 @@
                 "hooks": [
                     {
                         "type": "command",
-                        "command": "cd \"$CLAUDE_PROJECT_DIR\" && npx tsx --tsconfig tsconfig.node.json \"$CLAUDE_PROJECT_DIR/.claude/hooks/guardBash.ts\""
+                        "command": "cd \"$CLAUDE_PROJECT_DIR\" && npx tsx --tsconfig tsconfig.node.json .claude/hooks/guardBash.ts"
                     }
                 ]
             }
@@ -17,7 +17,7 @@
                 "hooks": [
                     {
                         "type": "command",
-                        "command": "cd \"$CLAUDE_PROJECT_DIR\" && npx tsx --tsconfig tsconfig.node.json \"$CLAUDE_PROJECT_DIR/.claude/hooks/formatFile.ts\""
+                        "command": "cd \"$CLAUDE_PROJECT_DIR\" && npx tsx --tsconfig tsconfig.node.json .claude/hooks/formatFile.ts"
                     }
                 ]
             }
