@@ -1,7 +1,8 @@
 # Spec: 140-divide-javascript-por-pagina
 
 > **Tipo:** `feature` (Perf na branch e no commit) <br />
-> **Status:** `em-revisao` <br />
+> **Status:** `aprovada` <br />
+> **Aprovada por:** Felipe, em 11-11-2026 (registrada pelo Orc) <br />
 > **Issue:** `#140` <br />
 > **Criado em:** `11-11-2026`
 
