@@ -64,7 +64,7 @@ O título usa a opção A da spec. Se o PO escolher B ao aprovar, troque só a s
         - T1 e T2 saem juntas no commit `Feat :sparkles: [#198] Inclui função e stack no título da página inicial`.
     - **Evidência:** `home.md` e `layout.md` com o título novo nos três idiomas; a menção a `twitter:title` fica para a T4, que cria a tag.
 
-- [ ] T3: `PageMeta` emite `twitter:title`, `twitter:description`, `twitter:image` e `twitter:image:alt`
+- [x] T3: `PageMeta` emite `twitter:title`, `twitter:description`, `twitter:image` e `twitter:image:alt`
     - **Arquivo(s):** `src/components/PageMeta.tsx`, `src/components/test/PageMeta.test.tsx` e
       `src/test/entry-server.test.tsx`
     - **Depende de:** T2 (commit 1 fechado)
@@ -90,9 +90,9 @@ idioma>"/>` e `twitter:image` com a mesma URL do `og:image`, como o React serial
         - `PageMeta.tsx` emite exatamente quatro tags `twitter:*` novas, todas com valor derivado das mesmas
           variáveis que alimentam as `og:*` (`title`, `description`, `imageUrl` e o alt resolvido), sem duplicar a
           lógica do alt.
-    - **Evidência:**
+    - **Evidência:** RED com 9 testes falhando antes do código; depois typecheck, lint e 97 testes verdes nos dois arquivos do gate; o alt é resolvido uma vez (`resolvedImageAlt`) e alimenta `og:image:alt` e `twitter:image:alt`.
 
-- [ ] T4: documentação das tags do Twitter
+- [x] T4: documentação das tags do Twitter
     - **Arquivo(s):** `docs/architecture/frontend.md` (linhas ~62 e ~345), `docs/screens/layout.md` (linhas ~289 e
       ~423) e `docs/product/non-functional-requirements.md` (NF-IA-10, linha ~260)
     - **Depende de:** T3
@@ -102,7 +102,7 @@ idioma>"/>` e `twitter:image` com a mesma URL do `og:image`, como o React serial
         - os três documentos citam `twitter:title`, `twitter:description`, `twitter:image` e `twitter:image:alt`
           iguais às `og:*`, ao lado de `twitter:card`;
         - T3 e T4 saem juntas no commit `Feat :sparkles: [#138] Completa as tags de compartilhamento do Twitter`.
-    - **Evidência:**
+    - **Evidência:** `frontend.md` (Metadados e SEO por tela), `layout.md` (regras e checklist NF-IA-10) e NF-IA-10 citam as quatro `twitter:*` iguais às `og:*`.
 
 - [ ] T5: lista de páginas com imagem e caminho da imagem
     - **Arquivo(s):**

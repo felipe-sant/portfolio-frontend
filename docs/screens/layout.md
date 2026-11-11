@@ -286,7 +286,7 @@ Regras:
   `hreflang` recíproco para `pt-BR`, `en`, `es` e `x-default` (`en`), `og:title` e
   `og:description` iguais ao título e à descrição, `og:type`, `og:url` igual à canônica,
   `og:image` (a do site, 1200×630, ou a captura 16:9 do projeto quando houver, D26), `og:locale`
-  do idioma com os outros dois em `og:locale:alternate`, e `twitter:card` `summary_large_image`.
+  do idioma com os outros dois em `og:locale:alternate`, `twitter:card` `summary_large_image` e `twitter:title`, `twitter:description`, `twitter:image` e `twitter:image:alt` iguais a `og:title`, `og:description`, `og:image` e `og:image:alt` (#138).
   JSON-LD por tipo de página (NF-IA-08) é das telas #34 a #38, com o mecanismo de #52.
 - Página não encontrada e página de erro: `<title>` e descrição próprios,
   `<meta name="robots" content="noindex">`, sem canônica, sem `hreflang`, sem Open Graph e sem
@@ -423,7 +423,7 @@ verificação de lá.
 - [ ] `NF-RE-04` — Decisão de layout por largura do menu (D01) [#33, #34 a #38; #41]
 - [ ] `NF-MO-01` — `prefers-reduced-motion: reduce` desliga animação e transição [#41]
 - [ ] `NF-IA-01` — Cabeçalho e rodapé no HTML pré-renderizado de cada rota e idioma, legíveis sem JavaScript [CI; #49; #41]
-- [ ] `NF-IA-10` — `<title>`, descrição, Open Graph e `twitter:card` por página e idioma [CI; #52; #41]
+- [ ] `NF-IA-10` — `<title>`, descrição, Open Graph e tags do Twitter por página e idioma [CI; #52; #41]
 - [ ] `NF-IA-11` — Canônica autorreferente e `hreflang` recíproco com `x-default` [CI; #52; #41]
 - [ ] `NF-IA-16` — HTML semântico, com o conteúdo principal dentro do `main` [CI; #33, #34 a #38]
 - [ ] `NF-CO-03` — Sem JavaScript, o layout é legível; menu, tema e idioma salvo precisam de JavaScript [#41]
