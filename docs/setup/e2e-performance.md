@@ -174,7 +174,7 @@ Mutação de verificação: mover `accessibility.spec.ts` para `independentSpecs
 ## Ganhos menores no CI
 
 - `retries` do CI vai de 2 para 1: o teste instável ainda passa no retry, mas custa metade. Fora do CI continua 0.
-- `actions/cache` guarda `~/.cache/ms-playwright` com a chave `playwright-chromium-<SO>-<versão do @playwright/test>`; o `npx playwright install --with-deps chromium` continua depois, porque instala as dependências do sistema e só baixa o navegador sem cache.
+- `actions/cache` guarda `~/.cache/ms-playwright` com a chave `playwright-chromium-<SO>-<versão do @playwright/test>`; o `npm run playwright:install` (`scripts/installChromium.ts`) continua depois, porque instala as dependências do sistema e só baixa o navegador sem cache. Ele roda `npx playwright install --with-deps chromium` com até 3 tentativas, esperando 30 s e depois 90 s entre elas, só quando a instalação falha (qualquer código de saída diferente de 0); o código da última falha reprova o passo. Só a instalação passa por ele: o acréscimo de uma falha permanente é de no máximo 2 minutos e uma queda de rede de 10 minutos inteira continua não coberta.
 - Os dois builds (`build:fatec` e `build:fatec:form`) seguem em passos separados: ganho de ~8 s não compensa a complicação do passo.
 
 | Execução     | Passo `Install Chromium` | Observação                                                |
