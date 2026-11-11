@@ -69,7 +69,7 @@ T5 (README e `index.html`), T6 (docs) e T7 (CV e PDFs) editam arquivos diferente
     - **Feito quando:** o gate passa; a Evidência traz a posição do `h2` e as alturas antes e depois a 375 e 390px, e uma captura; verificação manual (aparência, tela Início, 375/390/640/1280px, três idiomas, dois temas) anotada; o desktop não mudou
     - **Evidência:** ...
 
-- [ ] T5 [P] — README (resumo e capturas) e `index.html`
+- [x] T5 [P] — README (resumo e capturas) e `index.html`
     - **Arquivo(s):** `README.md` (linha 3: "Personal portfolio of Luiz Felipe dos Santos, a Junior full stack developer working with React, TypeScript and Node.js."), `index.html` (`<title>` "Luiz Felipe dos Santos · Desenvolvedor full stack Júnior" e `<meta name="description">` igual a `home.meta.description` de `pt-BR`), `docs/design/assets/readme/home-light.png` e `home-dark.png` (`npm run readme:images`, até 300 KB cada; exige `build:fatec` e `preview:fatec`), `scripts/test/readme.test.ts` (afirma o resumo), teste que compara `index.html` com `src/locales/pt-BR/home.json` ao lado dos testes de `index.html` já existentes
     - **Depende de:** T3
     - **Testes (escritos antes, RED):**
@@ -77,7 +77,7 @@ T5 (README e `index.html`), T6 (docs) e T7 (CV e PDFs) editam arquivos diferente
         - o resumo do README em inglês diz "Junior full stack developer", React, TypeScript e Node.js, e as regras de `readme.test.ts` (ordem, até 100 linhas, capturas) seguem verdes (CA4)
     - **Gate:** `npm run typecheck && npm run lint && npm test -- --run scripts/test/readme.test.ts scripts/test/readmeScreenshotPath.test.ts scripts/test/prepareFatecArtifact.test.ts`
     - **Feito quando:** o gate passa; as capturas mostram o título novo; se a máquina não aguentar regerar, a pendência fica anotada na Evidência (Q8)
-    - **Evidência:** ...
+    - **Evidência:** gate verde (63 testes em `readme`, `readmeScreenshotPath`, `prepareFatecArtifact`, `indexHtmlMeta`, `fontWeights`). CA3 `scripts/test/indexHtmlMeta.test.ts` (`toBe` da description de `pt-BR` e do `<title>`); CA4 `scripts/test/readme.test.ts` "resume o perfil como Junior full stack developer..." (`toContain`). Capturas regeneradas com `npm run readme:images` (69 KB e 68 KB), conferidas por leitura da imagem: mostram "Desenvolvedor full stack Júnior", a linha da stack e o novo `homeIntro`; o cartão "Cursando" ainda aparece com o texto longo (esperado, T4 só altera o celular).
 
 - [ ] T6 [P] — Documentação viva: requisitos, textos, JSON-LD e decisão (só `home.md` e `about.md`)
     - **Arquivo(s):** `docs/screens/home.md` (riscar `RF-HOME-04` e `A11Y-IN01`; acrescentar `RF-HOME-26`, `RF-HOME-27`, `RF-HOME-28`; linhas 37, 85, 147, 197, 198, 353 e 397; tabela de chaves com `hero.stack`; JSON-LD com `jobTitle` `home:heading`; tabela de divergências; registro da decisão do cargo Júnior), `docs/screens/about.md` (tabela de `role`/`jobTitle` e JSON-LD: nota do cargo Júnior e a decisão), `docs/product/accessibility.md` (linha 300 e o novo ID, o próximo livre depois de `A11Y-IN07`), `docs/design/design-system.md:223`, `docs/screens/layout.md:301`, `docs/product/overview.md` (linha 3)
