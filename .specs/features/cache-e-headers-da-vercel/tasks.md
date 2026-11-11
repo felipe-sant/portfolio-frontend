@@ -171,7 +171,7 @@ HydrationState }`), `src/prerender/mountClient.tsx`, `src/prerender/test/mountCl
       `expect(new Set(hashes)).toEqual(new Set(inlineScriptHashes))` e `:155` `expect(inlineScriptHashes).toHaveLength(3)`;
       CA-05 continua em `:98` e CA-01 em `:81`.
 
-- [ ] T6 — Documentar cache, headers, CSP e o bloco `prerender-data`
+- [x] T6 — Documentar cache, headers, CSP e o bloco `prerender-data`
     - **Arquivo(s):** `docs/setup/environments.md`, `docs/adr/0003-hosting-vercel.md`, `docs/architecture/frontend.md`,
       `docs/adr/0004-prerendering.md`, `docs/product/non-functional-requirements.md`
     - **Depende de:** T5
@@ -191,7 +191,11 @@ HydrationState }`), `src/prerender/mountClient.tsx`, `src/prerender/test/mountCl
           e ensaio na `staging`, #163), cada uma dizendo que o Pages não recebe (NF-HO-04);
         - nenhuma menção restante a `window.preloadedState` como global em `docs/` (as de `renderWithStore` e
           `createStore(preloadedState)` ficam)
-    - **Evidência:**
+    - **Evidência:** `npm run lint` verde. `environments.md` ("Fluxo de publicação": mescla que acrescenta, cache, headers,
+      CSP sem endpoint, como atualizar o hash, roteiro de `curl -sI` e console, Fatec fora); ADR 0003 (consequência de
+      cache e headers só na Vercel); `frontend.md` ("Composição", "Cliente", bullet "Cache e headers na Vercel" e
+      "Pré-renderização: detalhe"); ADR 0004 ("Decisão", item 5, item 8 e plano); `non-functional-requirements.md`
+      (NF-HO-07 e NF-HO-08). `grep -rn "window.preloadedState\|prerenderedPath" docs` sem resultado.
 
 - [ ] T7 — Verificação completa
     - **Arquivo(s):** nenhum (só verificação)

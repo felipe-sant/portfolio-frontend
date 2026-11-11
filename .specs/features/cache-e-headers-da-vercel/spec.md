@@ -148,7 +148,7 @@ font-src 'self'; connect-src 'self'; worker-src 'self'; object-src 'none'; base-
 
 **Nas três — documentação**
 
-- [ ] CA-17 (NF-HO-04): `docs/setup/environments.md`, `docs/adr/0003-hosting-vercel.md`,
+- [x] CA-17 (NF-HO-04): `docs/setup/environments.md`, `docs/adr/0003-hosting-vercel.md`,
       `docs/architecture/frontend.md` e `docs/product/non-functional-requirements.md` dizem que cache, headers de
       segurança e CSP vêm do `vercel.json`, valem só na Vercel e não chegam ao build da Fatec (GitHub Pages não lê
       `vercel.json` nem permite header próprio); `docs/adr/0004-prerendering.md` e `docs/architecture/frontend.md`
