@@ -1,7 +1,7 @@
 # Spec: executor-so-gate-leve
 
 > **Tipo:** `feature` (Perf na branch e no commit) <br />
-> **Status:** `aprovada` <br />
+> **Status:** `implementada` <br />
 > **Issue:** `#218` <br />
 > **Criado em:** `11-11-2026`
 
@@ -33,13 +33,13 @@ Deixar explícita, nas instruções do agente, a ordem de verificação:
 
 ## Critérios de aceite
 
-- [ ] CA1 (issue 1): a seção "Verificação" de `.claude/agents/executor.md` lista por tarefa apenas `npm run typecheck`, `npm run lint` e `npm test -- --run <arquivo de teste alterado>`, e proíbe `npm run build` e a suíte completa por tarefa.
-- [ ] CA2 (issue 2): a mesma seção tem um bloco "No fim da feature" com `npm run build` e `npm run test:cov`, rodados uma vez, depois da última tarefa e antes do `reviewer` ou do fechamento, e diz o que fazer se falharem.
-- [ ] CA3 (issue 3): a linha "rode o Gate" do item "Implemente em TDD" e o texto de "Fluxo" do `executor.md` são coerentes com CA1 e CA2 (o Gate é o gate leve; a verificação completa roda uma vez no fim).
-- [ ] CA4: `grep -n "npm run build\|test:cov" .claude/agents/executor.md` retorna apenas linhas do bloco "No fim da feature" (ou da proibição por tarefa).
-- [ ] CA5: as listas de conferência das skills de scaffold (`react-component-scaffold`, `react-page-scaffold`, `redux-store-scaffold`, `rtk-query-endpoint-scaffold`, `vitest-specialist`) não mandam rodar `npm run build` nem a suíte completa por tarefa.
-- [ ] CA6: o `.specs/_template/tasks.md` e o `sdd.md` deixam o executor chegar à verificação completa: o template traz uma tarefa final de exemplo "Verificação completa" com `npm run build` e `npm run test:cov`, e o `sdd.md` manda incluí-la como última tarefa de toda feature.
-- [ ] CA7: `npm run lint` e `npm run typecheck` passam e `npm test -- --run scripts/test/contributingTypesTable.test.ts` continua verde (nenhum arquivo versionado quebra).
+- [x] CA1 (issue 1): a seção "Verificação" de `.claude/agents/executor.md` lista por tarefa apenas `npm run typecheck`, `npm run lint` e `npm test -- --run <arquivo de teste alterado>`, e proíbe `npm run build` e a suíte completa por tarefa.
+- [x] CA2 (issue 2): a mesma seção tem um bloco "No fim da feature" com `npm run build` e `npm run test:cov`, rodados uma vez, depois da última tarefa e antes do `reviewer` ou do fechamento, e diz o que fazer se falharem.
+- [x] CA3 (issue 3): a linha "rode o Gate" do item "Implemente em TDD" e o texto de "Fluxo" do `executor.md` são coerentes com CA1 e CA2 (o Gate é o gate leve; a verificação completa roda uma vez no fim).
+- [x] CA4: `grep -n "npm run build\|test:cov" .claude/agents/executor.md` retorna apenas linhas do bloco "No fim da feature" (ou da proibição por tarefa).
+- [x] CA5: as listas de conferência das skills de scaffold (`react-component-scaffold`, `react-page-scaffold`, `redux-store-scaffold`, `rtk-query-endpoint-scaffold`, `vitest-specialist`) não mandam rodar `npm run build` nem a suíte completa por tarefa.
+- [x] CA6: o `.specs/_template/tasks.md` e o `sdd.md` deixam o executor chegar à verificação completa: o template traz uma tarefa final de exemplo "Verificação completa" com `npm run build` e `npm run test:cov`, e o `sdd.md` manda incluí-la como última tarefa de toda feature.
+- [x] CA7: `npm run lint` e `npm run typecheck` passam e `npm test -- --run scripts/test/contributingTypesTable.test.ts` continua verde (nenhum arquivo versionado quebra).
 
 ## Estratégia de validação
 
