@@ -297,7 +297,7 @@ Cada item tem um ID estável e a forma de verificação entre colchetes: `[teste
 
 ### Início
 
-- [ ] `A11Y-IN01` — `h1` "Desenvolvedor full stack em TypeScript" (D24) [teste]
+- [ ] ~~`A11Y-IN01` — `h1` "Desenvolvedor full stack em TypeScript" (D24) [teste]~~ (substituído por `A11Y-IN09`)
 - [ ] `A11Y-IN02` — Cada seção tem heading [teste]
 - [ ] `A11Y-IN03` — Cards de destaque em lista, com um link por card, nome do link com o nome do projeto e imagem com `alt=""` [teste]
 - [ ] `A11Y-IN04` — "Ver todos" tem o nome "Ver todos os projetos" (2.4.9) [teste]
@@ -305,6 +305,7 @@ Cada item tem um ID estável e a forma de verificação entre colchetes: `[teste
 - [ ] `A11Y-IN06` — O botão "Reduzir movimento" da engrenagem desliga o movimento da faixa, com `aria-pressed` e rótulo nos três idiomas (D28, D68) [teste] [e2e]
 - [ ] `A11Y-IN07` — Faixa estática, quebrando linha, com movimento reduzido [navegador]
 - [ ] `A11Y-IN08` — "Baixar CV (PDF)" no nome do link [teste]
+- [ ] `A11Y-IN09` — `h1` com o cargo "Desenvolvedor full stack Júnior" (D24), seguido da linha da stack em `<p>` fora do `h1` [teste]
 
 ### Projetos
 

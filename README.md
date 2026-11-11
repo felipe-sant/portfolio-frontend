@@ -1,6 +1,6 @@
 # Portfólio — Luiz Felipe dos Santos
 
-Personal portfolio of Luiz Felipe dos Santos, a full stack developer working with TypeScript.
+Personal portfolio of Luiz Felipe dos Santos, a Junior full stack developer working with React, TypeScript and Node.js.
 Five screens in three languages (`pt-BR`, `en` and `es`), with light and dark themes, built with React 19 and Vite.
 It runs on local data, with no backend yet: a data layer answers as the future API will.
 

@@ -33,7 +33,7 @@ test.describe("sem JavaScript", () => {
     for (const language of LANGUAGES) {
         const texts = UI_TEXTS[language]
 
-        test(`NF-CO-03, NF-IA-01, RF-HOME-17: a Início em ${language} traz o título, a apresentação e os destaques do conteúdo`, async ({
+        test(`NF-CO-03, NF-IA-01, RF-HOME-17, RF-HOME-26, RF-HOME-27: a Início em ${language} traz o título, a linha da stack, a apresentação e os destaques do conteúdo`, async ({
             page
         }) => {
             const profile = readProfile(language)
@@ -43,6 +43,9 @@ test.describe("sem JavaScript", () => {
             await page.goto(language)
 
             await expect(page.getByRole("heading", { level: 1 })).toHaveText(texts.homeHeading)
+            await expect(
+                page.getByRole("main").getByText(texts.homeStack, { exact: true })
+            ).toBeVisible()
             await expect(page.getByRole("main")).toContainText(profile.homeIntro)
             await expect(
                 page.getByRole("heading", { level: 2, name: texts.featuredHeading })

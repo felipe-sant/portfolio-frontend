@@ -1,7 +1,7 @@
 {
-    "role": "Pasante de Desarrollo Frontend",
-    "homeIntro": "Estudiante de Desarrollo de Software Multiplataforma y pasante de desarrollo frontend, construyendo productos reales con React, TypeScript y Node.js.",
-    "summary": "Soy Luiz Felipe dos Santos, desarrollador full stack, con actuación principal en frontend, y estudiante de Desarrollo de Software Multiplataforma en la Fatec. Trabajo con React, TypeScript y Node.js en el desarrollo de aplicaciones web, con experiencia en integración de APIs REST, bases de datos SQL/NoSQL y metodologías ágiles. Aquí encontrarás mi trayectoria, proyectos y habilidades técnicas.",
+    "role": "Desarrollador full stack junior",
+    "homeIntro": "Estudiante de Desarrollo de Software Multiplataforma y desarrollador en InCicle, construyendo productos reales con foco en el frontend.",
+    "summary": "Soy Luiz Felipe dos Santos, desarrollador full stack junior, con actuación principal en frontend, y estudiante de Desarrollo de Software Multiplataforma en la Fatec. Trabajo con React, TypeScript y Node.js en el desarrollo de aplicaciones web, con experiencia en integración de APIs REST, bases de datos SQL/NoSQL y metodologías ágiles. Aquí encontrarás mi trayectoria, proyectos y habilidades técnicas.",
     "location": {
         "city": "São José dos Campos",
         "region": "SP",
@@ -25,8 +25,8 @@
         }
     },
     "aboutParagraphs": [
-        "Soy desarrollador full stack, con foco principal en frontend, y pasante de desarrollo en InCicle, donde trabajo en módulos de producto de una arquitectura de micro frontends, desde la implementación de nuevas features hasta la evolución de versiones de módulos existentes. Uso React, TypeScript y Node.js en el ciclo completo, desde el relevamiento de reglas con el equipo de producto hasta el despliegue en producción. Estudio Desarrollo de Software Multiplataforma en la Fatec, en el 6.º semestre; fue en la Etec donde tuve mi primer contacto con la programación.",
-        "Me gusta entender el contexto de cada entrega antes de implementar y discutir las reglas de negocio con quien define el producto. Uso herramientas de Inteligencia Artificial en el flujo de desarrollo para mantener la calidad y la organización de lo que entrego. Busco una posición junior y aprendo haciendo, en proyectos dentro y fuera del trabajo."
+        "Soy desarrollador full stack junior, con foco principal en frontend, en InCicle, donde trabajo en módulos de producto de una arquitectura de micro frontends, desde la implementación de nuevas features hasta la evolución de versiones de módulos existentes. Uso React, TypeScript y Node.js en el ciclo completo, desde el relevamiento de reglas con el equipo de producto hasta el despliegue en producción. Estudio Desarrollo de Software Multiplataforma en la Fatec, en el 6.º semestre; fue en la Etec donde tuve mi primer contacto con la programación.",
+        "Me gusta entender el contexto de cada entrega antes de implementar y discutir las reglas de negocio con quien define el producto. Uso herramientas de Inteligencia Artificial en el flujo de desarrollo para mantener la calidad y la organización de lo que entrego. Aprendo haciendo, en proyectos dentro y fuera del trabajo."
     ],
     "workPrinciples": [
         "Discuto las reglas con el PO antes de implementar, no solo sigo lo que está escrito en la tarea",

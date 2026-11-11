@@ -132,6 +132,14 @@ describe("README.md", () => {
         expect(match?.[1]).toBe(packageJson.homepage)
     })
 
+    it("resume o perfil como Junior full stack developer com React, TypeScript e Node.js", () => {
+        const summary = readme.split("\n")[2]
+
+        expect(summary).toContain(
+            "a Junior full stack developer working with React, TypeScript and Node.js"
+        )
+    })
+
     it("cita o site e o repositório da Fatec", () => {
         expect(readme).toContain(`](${FATEC_SITE})`)
         expect(readme).toContain(`](${FATEC_REPOSITORY})`)

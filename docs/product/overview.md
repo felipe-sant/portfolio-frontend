@@ -1,6 +1,6 @@
 # Visão do produto
 
-Portfólio pessoal de Luiz Felipe dos Santos, desenvolvedor full stack em TypeScript. Este repositório é o frontend do portfólio; o design vem do handoff em `/home/felipe/faculdade/design_handoff_portfolio`.
+Portfólio pessoal de Luiz Felipe dos Santos, desenvolvedor full stack Júnior com React, TypeScript e Node.js. Este repositório é o frontend do portfólio; o design vem do handoff em `/home/felipe/faculdade/design_handoff_portfolio`.
 
 ## Propósito
 

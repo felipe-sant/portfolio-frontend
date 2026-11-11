@@ -131,7 +131,7 @@ describe("mountClient sem caminho pré-renderizado", () => {
         await mount()
 
         expect(
-            await screen.findByRole("heading", { name: "Full stack developer in TypeScript" })
+            await screen.findByRole("heading", { name: "Junior full stack developer" })
         ).toBeInTheDocument()
     })
 
@@ -142,7 +142,7 @@ describe("mountClient sem caminho pré-renderizado", () => {
 
         await mount()
 
-        await screen.findByRole("heading", { name: "Desenvolvedor full stack em TypeScript" })
+        await screen.findByRole("heading", { name: "Desenvolvedor full stack Júnior" })
         expect(document.head.querySelectorAll("title")).toHaveLength(1)
         expect(document.title).toBe("Portfólio · Luiz Felipe dos Santos")
         expect(document.head.querySelectorAll("meta[name='description']")).toHaveLength(1)
@@ -154,7 +154,7 @@ describe("mountClient com caminho pré-renderizado", () => {
         injectPrerendered("en.html", rootElement)
         await i18n.changeLanguage("en")
         window.history.pushState({}, "", "/en")
-        const heading = screen.getByRole("heading", { name: "Full stack developer in TypeScript" })
+        const heading = screen.getByRole("heading", { name: "Junior full stack developer" })
         const consoleSpies = spyOnConsole()
         const errorListener = vi.fn()
         window.addEventListener("error", errorListener)
@@ -163,9 +163,7 @@ describe("mountClient com caminho pré-renderizado", () => {
         await settle()
 
         window.removeEventListener("error", errorListener)
-        expect(screen.getByRole("heading", { name: "Full stack developer in TypeScript" })).toBe(
-            heading
-        )
+        expect(screen.getByRole("heading", { name: "Junior full stack developer" })).toBe(heading)
         expect(consoleSpies.error).not.toHaveBeenCalled()
         expect(hydrationWarnings(consoleSpies.warn)).toEqual([])
         expect(errorListener).not.toHaveBeenCalled()

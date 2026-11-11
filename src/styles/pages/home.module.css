@@ -40,6 +40,14 @@
     text-wrap: balance;
 }
 
+.stack {
+    width: 100%;
+    max-width: var(--measure);
+    font-size: var(--text-body-lg);
+    line-height: var(--lh-body);
+    color: var(--text-strong);
+}
+
 .intro {
     width: 100%;
     max-width: var(--measure);

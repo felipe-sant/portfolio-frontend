@@ -1,9 +1,10 @@
 import { expect, test } from "@playwright/test"
 import type { Page } from "@playwright/test"
+import UI_TEXTS from "./support/uiTexts"
 
 const HIT_MIN = 44
 const BREAKPOINT_WIDTH = 640
-const LANGUAGES = ["pt-BR", "en", "es"]
+const LANGUAGES = ["pt-BR", "en", "es"] as const
 const STACK_HEADING = "Tecnologias que uso"
 const DRAG_DISTANCE = 300
 
@@ -254,4 +255,123 @@ test.describe("imagens dos destaques", () => {
             }
         })
     }
+})
+
+test.describe("cargo declarado", () => {
+    for (const language of LANGUAGES) {
+        const texts = UI_TEXTS[language]
+
+        test(`RF-HOME-26, RF-HOME-27: em ${language} o h1 é o cargo e a linha da stack vem logo abaixo`, async ({
+            page
+        }) => {
+            await page.goto(language)
+
+            const heading = page.getByRole("heading", { level: 1 })
+            await expect(heading).toHaveText(texts.homeHeading)
+            await expect(heading.locator("xpath=following-sibling::p[1]")).toHaveText(
+                texts.homeStack
+            )
+        })
+
+        test(`RF-HOME-26: em ${language} o title e a description da Início usam o cargo`, async ({
+            page
+        }) => {
+            await page.goto(language)
+            await page.getByRole("heading", { level: 1 }).waitFor()
+
+            await expect(page).toHaveTitle(texts.homeTitle)
+            await expect(page.locator('meta[name="description"]')).toHaveAttribute(
+                "content",
+                texts.homeDescription
+            )
+            await expect(page.locator('meta[property="og:description"]')).toHaveAttribute(
+                "content",
+                texts.homeDescription
+            )
+        })
+
+        test(`RF-HOME-26: em ${language} o jobTitle do JSON-LD da Início é igual ao de Informações`, async ({
+            page
+        }) => {
+            await page.goto(language)
+            await page.getByRole("heading", { level: 1 }).waitFor()
+            const home = JSON.parse(
+                (await page.locator('script[type="application/ld+json"]').textContent()) ?? "null"
+            )
+            await page.goto(`${language}/about`)
+            await page.getByRole("heading", { level: 1 }).waitFor()
+            const about = JSON.parse(
+                (await page.locator('script[type="application/ld+json"]').textContent()) ?? "null"
+            )
+
+            expect(home["@graph"][1].jobTitle).toBe(texts.homeHeading)
+            expect(about.mainEntity.jobTitle).toBe(home["@graph"][1].jobTitle)
+        })
+    }
+})
+
+const STAGING_FEATURED_Y = { "pt-BR": 1093, en: 1120, es: 1091 } as const
+const MAX_HIGHLIGHT_LINES = 3
+const CARD_BREAKPOINT = 640
+
+test.describe("cartões de status no celular", () => {
+    for (const width of [375, 390]) {
+        for (const language of LANGUAGES) {
+            test(`RF-HOME-28, NF-RE-03: a ${width}px em ${language} o destaque de cada cartão tem no máximo ${MAX_HIGHLIGHT_LINES} linhas, a página não rola na horizontal e Projetos em destaque não desce`, async ({
+                page
+            }) => {
+                await page.setViewportSize({ width, height: 800 })
+                await page.goto(language)
+                await page.getByRole("article").last().waitFor()
+
+                const measures = await page.evaluate(() =>
+                    [...document.querySelectorAll("time")].map((time) => {
+                        const highlight = time.closest("div")?.querySelectorAll("p")[1]
+                        const style = highlight ? getComputedStyle(highlight) : null
+
+                        return {
+                            height: highlight?.getBoundingClientRect().height ?? 0,
+                            lineHeight: Number.parseFloat(style?.lineHeight ?? "0"),
+                            fontSize: style?.fontSize
+                        }
+                    })
+                )
+                const featured = await page
+                    .getByRole("heading", { level: 2, name: UI_TEXTS[language].featuredHeading })
+                    .evaluate((heading) => heading.getBoundingClientRect().top + window.scrollY)
+                const overflow = await page.evaluate(
+                    () =>
+                        document.documentElement.scrollWidth > document.documentElement.clientWidth
+                )
+
+                expect(measures.length).toBeGreaterThan(0)
+                for (const measure of measures) {
+                    expect(measure.fontSize).toBe("14px")
+                    expect(measure.height).toBeLessThanOrEqual(
+                        MAX_HIGHLIGHT_LINES * measure.lineHeight + 1
+                    )
+                }
+                expect(overflow).toBe(false)
+                expect(featured).toBeLessThanOrEqual(STAGING_FEATURED_Y[language])
+            })
+        }
+    }
+
+    test("RF-HOME-28: a 640px o cartão mantém o padding e o destaque de 18px", async ({ page }) => {
+        await page.setViewportSize({ width: CARD_BREAKPOINT, height: 800 })
+        await page.goto("pt-BR")
+        await page.getByRole("article").last().waitFor()
+
+        const style = await page.evaluate(() => {
+            const card = document.querySelector("time")?.closest("div")
+            const highlight = card?.querySelectorAll("p")[1]
+
+            return {
+                padding: card ? getComputedStyle(card).paddingTop : null,
+                fontSize: highlight ? getComputedStyle(highlight).fontSize : null
+            }
+        })
+
+        expect(style).toEqual({ padding: "20px", fontSize: "18px" })
+    })
 })

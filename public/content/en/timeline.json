@@ -3,9 +3,9 @@
         {
             "id": "01a13157-51e9-72f2-bf6d-68dd797d4b8c",
             "kind": "experience",
-            "title": "Frontend Development Intern",
+            "title": "Junior full stack developer",
             "organization": "InCicle",
-            "details": ["Internship · Hybrid"],
+            "details": ["Hybrid"],
             "start": "2026-05",
             "summary": "Working mainly on the frontend, with incursions into the backend, in an agile squad, going through different product modules within a micro frontend architecture, from implementing new features to evolving existing versions. Development with React, TypeScript and Node.js, REST API integration and work with SQL and NoSQL databases. Pull Request review, QA testing and production hotfixes. Use of AI agents to plan, implement and review deliverables, with TDD.",
             "responsibilities": [
@@ -63,7 +63,7 @@
             "id": "01a1315e-6dfb-7822-88a2-13dfaf7252a5",
             "kind": "education",
             "title": "Technologist Degree in Multiplatform Software Development",
-            "organization": "Fatec – Faculdade de Tecnologia do Estado de São Paulo (Jacareí)",
+            "organization": "Fatec Jacareí",
             "stage": "6th semester",
             "details": ["Expected completion in 2027"],
             "start": "2023-02",

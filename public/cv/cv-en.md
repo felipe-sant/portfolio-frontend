@@ -7,11 +7,11 @@ linkedin.com/in/lfelipesant
 
 ## Summary
 
-Full stack developer, working mainly on the frontend (React, TypeScript) with backend knowledge, covering the full cycle of web applications. 6th-semester student of Multiplatform Software Development at Fatec Jacareí. I have hands-on experience with microservices and micro frontend architectures (Module Federation), REST API integration and consumption, version control with Git, containers with Docker, automated testing and CI/CD pipelines. I am proactive in identifying and solving problems beyond the scope of the tasks assigned to me, with a consistent record of approved deliveries without rework.
+Junior full stack developer, working mainly on the frontend (React, TypeScript) with backend knowledge, covering the full cycle of web applications. 6th-semester student of Multiplatform Software Development at Fatec Jacareí. I have hands-on experience with microservices and micro frontend architectures (Module Federation), REST API integration and consumption, version control with Git, containers with Docker, automated testing and CI/CD pipelines. I am proactive in identifying and solving problems beyond the scope of the tasks assigned to me, with a consistent record of approved deliveries without rework.
 
 ## Experience
 
-### InCicle — Development Intern (05/2026 – present)
+### InCicle — Junior Full Stack Developer (05/2026 – present)
 
 Frontend development of multiple product modules (OKR, Hiring/Onboarding, DISC, Agenda, Thermometer, among others), working in a micro frontend architecture.
 
