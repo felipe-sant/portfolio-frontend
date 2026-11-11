@@ -2,6 +2,7 @@
 
 - **Status:** `<proposta | aceita | substituída por 000N>`
 - **Data:** `<dd-mm-aaaa>`
+- **Issues:** `<[#N](https://github.com/felipe-sant/portfolio-frontend/issues/N), uma por issue de origem ou relacionada>`
 
 ## Contexto
 

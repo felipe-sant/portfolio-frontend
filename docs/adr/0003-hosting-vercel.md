@@ -2,16 +2,17 @@
 
 - **Status:** `aceita`
 - **Data:** `11-10-2026`
+- **Issues:** [#15](https://github.com/felipe-sant/portfolio-frontend/issues/15)
 
 ## Contexto
 
-A aplicação só tinha CI: não havia hospedagem nem pipeline de publicação. A v1 da Fatec tem trilha própria, no GitHub Pages de um repositório da organização da Fatec (#45, #63). O PO quer, em paralelo e fora do critério da v1, um ambiente de testes e uma produção pessoal publicados a cada push, sem depender do repositório da faculdade. Backend e AWS só chegam na V2+ (#46).
+A aplicação só tinha CI: não havia hospedagem nem pipeline de publicação. A v1 da Fatec tem trilha própria, no GitHub Pages de um repositório da organização da Fatec ([#45](https://github.com/felipe-sant/portfolio-frontend/issues/45), [#63](https://github.com/felipe-sant/portfolio-frontend/issues/63)). O PO quer, em paralelo e fora do critério da v1, um ambiente de testes e uma produção pessoal publicados a cada push, sem depender do repositório da faculdade. Backend e AWS só chegam na V2+ ([#46](https://github.com/felipe-sant/portfolio-frontend/issues/46)).
 
 ## Decisão
 
 - Hospedar na Vercel, num projeto só: a `main` é o deployment de produção (`felipe-sant.vercel.app`) e a `staging` é um deployment de teste (preview) com alias (`felipe-sant-beta.vercel.app`), protegido por Vercel Authentication e marcado com `X-Robots-Tag: noindex`.
 - Publicar por GitHub Actions com a Vercel CLI (`.github/workflows/deploy.yml`), disparado por `workflow_run` do CI concluído com sucesso em push na `main` ou na `staging`. A integração Git nativa da Vercel fica desligada.
-- Migrar para AWS na V2+, quando houver backend, por ADR própria na migração (#46).
+- Migrar para AWS na V2+, quando houver backend, por ADR própria na migração ([#46](https://github.com/felipe-sant/portfolio-frontend/issues/46)).
 
 ## Consequências
 
