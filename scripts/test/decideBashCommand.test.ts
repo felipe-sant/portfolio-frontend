@@ -1,9 +1,17 @@
 import { describe, expect, it } from "vitest"
 import decideBashCommand from "@scripts/claudeHooks/decideBashCommand"
 
-function decide(command: unknown, branch = "feat/x", branches: Record<string, string> = {}) {
-    return decideBashCommand(command, (directory) =>
-        directory !== undefined && directory in branches ? branches[directory] : branch
+function decide(
+    command: unknown,
+    branch = "feat/x",
+    branches: Record<string, string> = {},
+    cwd?: string
+) {
+    return decideBashCommand(
+        command,
+        (directory) =>
+            directory !== undefined && directory in branches ? branches[directory] : branch,
+        cwd
     )
 }
 
@@ -46,6 +54,28 @@ describe("decideBashCommand", () => {
             expect(decide("git -C /repo/work commit -m x", "main", branches).blocked).toBe(false)
         })
 
+        it("resolve git -C relativo contra o cwd do hook", () => {
+            const branches = { "/repo/main-copy": "main", "/repo/work": "feat/x" }
+            expect(
+                decide("git -C ../main-copy commit -m x", "feat/x", branches, "/repo/work").blocked
+            ).toBe(true)
+            expect(
+                decide("git -C ../work commit -m x", "main", branches, "/repo/main-copy").blocked
+            ).toBe(false)
+        })
+
+        it("bloqueia git -c k=v commit em staging", () => {
+            expect(decide("git -c core.editor=vim commit -m x", "staging").blocked).toBe(true)
+        })
+
+        it("bloqueia commit com substituição de comando na mensagem em staging", () => {
+            expect(decide('git commit -m "$(date)"', "staging").blocked).toBe(true)
+        })
+
+        it("não bloqueia commit com substituição de comando em branch de trabalho", () => {
+            expect(decide('git commit -m "$(cat msg.txt)"', "feat/x").blocked).toBe(false)
+        })
+
         it("bloqueia commit dentro de comando composto", () => {
             expect(decide("cd x && git commit -m y", "staging").blocked).toBe(true)
         })
@@ -62,6 +92,16 @@ describe("decideBashCommand", () => {
             "git push origin feat/x:staging",
             "git push origin HEAD:refs/heads/main",
             "git push origin refs/heads/staging"
+        ])("bloqueia %s", (command) => {
+            expect(decide(command, "feat/x").blocked).toBe(true)
+        })
+
+        it.each([
+            "env VAR=x git push origin main",
+            "sudo git push origin main",
+            "git push --delete origin main",
+            "git push origin :main",
+            "git push origin +main"
         ])("bloqueia %s", (command) => {
             expect(decide(command, "feat/x").blocked).toBe(true)
         })
@@ -127,6 +167,10 @@ describe("decideBashCommand", () => {
             const decision = decide(command)
             expect(decision.blocked).toBe(true)
             expect(decision.message).toContain("rm")
+        })
+
+        it("não trata o que vem depois de -- como flag", () => {
+            expect(decide("rm -- -r").blocked).toBe(false)
         })
 
         it.each(["rm a.txt", "rm -f a.txt", 'rm "meu arquivo.txt"'])("permite %s", (command) => {

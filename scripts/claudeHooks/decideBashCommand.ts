@@ -1,3 +1,5 @@
+import { resolve } from "node:path"
+
 type Token = { text: string; quoted: boolean }
 
 type Decision = { blocked: boolean; message: string }
@@ -91,13 +93,13 @@ function destinationBranch(refspec: string) {
     return destination.replace(/^refs\/heads\//, "")
 }
 
-function decideGit(tokens: Token[], readBranch: ReadBranch): Decision {
+function decideGit(tokens: Token[], readBranch: ReadBranch, cwd?: string): Decision {
     let directory: string | undefined
     let cursor = 1
     while (cursor < tokens.length && isFlag(tokens[cursor])) {
         const flag = tokens[cursor].text
         if (flag === "-C" && cursor + 1 < tokens.length) {
-            directory = tokens[cursor + 1].text
+            directory = cwd ? resolve(cwd, tokens[cursor + 1].text) : tokens[cursor + 1].text
             cursor += 1
         } else if (flag === "-c") {
             cursor += 1
@@ -166,11 +168,11 @@ function decideRm(tokens: Token[]): Decision {
     return ALLOWED
 }
 
-function decideSegment(segment: Token[], readBranch: ReadBranch): Decision {
+function decideSegment(segment: Token[], readBranch: ReadBranch, cwd?: string): Decision {
     const tokens = segment.slice(findCommandStart(segment))
     const name = tokens[0]?.text.split("/").pop()
     if (name === "git") {
-        return decideGit(tokens, readBranch)
+        return decideGit(tokens, readBranch, cwd)
     }
     if (name === "rm") {
         return decideRm(tokens)
@@ -178,12 +180,12 @@ function decideSegment(segment: Token[], readBranch: ReadBranch): Decision {
     return ALLOWED
 }
 
-function decideBashCommand(command: unknown, readBranch: ReadBranch): Decision {
+function decideBashCommand(command: unknown, readBranch: ReadBranch, cwd?: string): Decision {
     if (typeof command !== "string" || command.trim() === "") {
         return ALLOWED
     }
     for (const segment of splitSegments(command)) {
-        const decision = decideSegment(segment, readBranch)
+        const decision = decideSegment(segment, readBranch, cwd)
         if (decision.blocked) {
             return decision
         }

@@ -31,7 +31,7 @@ function main() {
         }
     }
 
-    const decision = decideBashCommand(input.command, readBranch)
+    const decision = decideBashCommand(input.command, readBranch, baseDirectory)
     if (decision.blocked) {
         console.error(decision.message)
         return BLOCK_EXIT_CODE
