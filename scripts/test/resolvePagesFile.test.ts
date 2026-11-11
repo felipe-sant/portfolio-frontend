@@ -94,6 +94,20 @@ describe("resolvePagesFile", () => {
         })
     })
 
+    it("responde 404 com o 404.html para /.well-known/rsl.xml", () => {
+        expect(resolvePagesFile(directory, ".well-known/rsl.xml")).toEqual({
+            status: 404,
+            file: join(directory, "404.html")
+        })
+    })
+
+    it("responde 404 com o 404.html para um arquivo com extensão desconhecida", () => {
+        expect(resolvePagesFile(directory, "xyz.xml")).toEqual({
+            status: 404,
+            file: join(directory, "404.html")
+        })
+    })
+
     it("não trata uma pasta sem index.html como arquivo exato", () => {
         expect(resolvePagesFile(directory, "assets").status).toBe(404)
     })

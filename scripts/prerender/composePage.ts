@@ -1,5 +1,6 @@
 import type PrerenderResult from "@/types/prerender/PrerenderResult.types"
 import type PrerenderTarget from "@/types/prerender/PrerenderTarget.types"
+import PRERENDER_DATA_ID from "@/utils/prerenderDataId"
 
 const HOISTED_HEAD =
     /^(?:<title>[^<]*<\/title>|<meta\b[^>]*>|<link\b[^>]*>|<script type="application\/ld\+json">[\s\S]*?<\/script>)*/
@@ -36,7 +37,8 @@ function composePage(
 
     const head = HOISTED_HEAD.exec(result.html)?.[0] ?? ""
     const body = result.html.slice(head.length)
-    const scripts = `<script>window.prerenderedPath=${escapeScriptJson(JSON.stringify(`${base}${target.path}`))};window.preloadedState=${result.state};window.routerData=${result.routerData}</script>`
+    const data = `{"path":${JSON.stringify(`${base}${target.path}`)},"state":${result.state},"routerData":${result.routerData}}`
+    const dataBlock = `<script type="application/json" id="${PRERENDER_DATA_ID}">${escapeScriptJson(data)}</script>`
 
     const stylesheetLinks = stylesheets
         .filter((href) => !template.includes(`href="${href}"`))
@@ -52,7 +54,7 @@ function composePage(
             () => `<noscript>${escapeText(noscriptText)}</noscript>`
         )
         .replace("</head>", () => `${head}${stylesheetLinks}</head>`)
-        .replace(ROOT_PLACEHOLDER, () => `<div id="root">${body}</div>${scripts}`)
+        .replace(ROOT_PLACEHOLDER, () => `<div id="root">${body}</div>${dataBlock}`)
 }
 
 export default composePage

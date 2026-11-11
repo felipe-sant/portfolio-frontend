@@ -6,16 +6,20 @@ import routes from "@/routers/routes"
 import createStore from "@/store/createStore"
 import loadMarkdownRenderer from "@/utils/loadMarkdownRenderer"
 import publicUrl from "@/utils/publicUrl"
+import readPrerenderData from "@/utils/readPrerenderData"
 import removePrerenderedHead from "@/utils/removePrerenderedHead"
 import shouldHydrate from "@/utils/shouldHydrate"
 import shouldPreloadMarkdown from "@/utils/shouldPreloadMarkdown"
 
 async function mountClient(rootElement: HTMLElement) {
-    const hydrate = shouldHydrate(window.prerenderedPath, window.location.pathname)
-    const store = createStore(hydrate ? window.preloadedState : undefined)
+    const prerenderData = readPrerenderData(document)
+    const hydrationSource = shouldHydrate(prerenderData?.path, window.location.pathname)
+        ? prerenderData
+        : undefined
+    const store = createStore(hydrationSource?.state)
     const router = createBrowserRouter(routes, {
         basename: publicUrl("/"),
-        hydrationData: hydrate ? window.routerData : undefined
+        hydrationData: hydrationSource?.routerData
     })
     const app = (
         <StrictMode>
@@ -23,8 +27,8 @@ async function mountClient(rootElement: HTMLElement) {
         </StrictMode>
     )
 
-    if (hydrate) {
-        if (shouldPreloadMarkdown(window.location.pathname, window.preloadedState)) {
+    if (hydrationSource) {
+        if (shouldPreloadMarkdown(window.location.pathname, hydrationSource.state)) {
             await loadMarkdownRenderer()
         }
 
