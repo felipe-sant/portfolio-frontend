@@ -49,6 +49,13 @@
     overflow-x: auto;
     scroll-padding-inline: var(--pad-page);
     scrollbar-width: none;
+    mask-image: linear-gradient(
+        to right,
+        transparent,
+        #000 calc(var(--pad-page) - var(--space-1)),
+        #000 calc(100% - (var(--pad-page) - var(--space-1))),
+        transparent
+    );
 }
 
 .filters::-webkit-scrollbar {
@@ -169,5 +176,6 @@
         margin-inline: 0;
         padding-inline: 0;
         overflow-x: visible;
+        mask-image: none;
     }
 }
