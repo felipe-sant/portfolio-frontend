@@ -35,6 +35,23 @@ Ficam em `skills/<nome>/SKILL.md` e são carregadas sob demanda pelo agente que 
 
 `sdd` planeja, o PO aprova a spec, `executor` implementa, o PO confere a tela quando há uma, `reviewer` revisa, `qa` e `tester` validam e o PO revisa o PR antes do merge. Detalhe em "Tooling de IA" no [`CLAUDE.md`](CLAUDE.md).
 
+## Hooks do Claude Code
+
+`.claude/settings.json` é versionado e liga dois hooks, com os scripts em `.claude/hooks/` (a lógica
+testável fica em `scripts/claudeHooks/`, coberta por `scripts/test/`):
+
+- **`PreToolUse` em `Bash` (`guardBash.ts`)** bloqueia, com mensagem em português, `git commit` e `git push` quando a
+  branch atual é `staging` ou `main`, `git push` com destino `staging` ou `main` (`origin main`,
+  `HEAD:main`, `refs/heads/main`), `git push --force`/`-f` em qualquer branch (`--force-with-lease`
+  continua permitido) e `rm` recursivo (`-r`, `-R`, `--recursive`).
+- **`PostToolUse` em `Edit|Write|MultiEdit` (`formatFile.ts`)** roda `prettier --write` e, em
+  `.ts`/`.tsx`, `oxlint` só no arquivo editado; erro do `oxlint` volta ao agente.
+
+Nenhum hook roda teste (`vitest`, `npm test`, `playwright`). Em dúvida (entrada ilegível, falha ao ler
+a branch) o hook deixa passar. A proteção é uma guarda contra acidente, não contra adversário: `bash -c` e
+scripts externos escapam dela. Para contornar, o PO desativa ou sobrescreve o hook em
+`.claude/settings.local.json` (ignorado pelo git); o agente nunca edita `settings.json` para se liberar.
+
 ## Detalhe de agentes, skills, specs e docs
 
 - `.claude/agents/` — cinco papéis num fluxo de TDD, `sdd` → `executor` → verificação manual do PO →
