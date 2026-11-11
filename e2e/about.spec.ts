@@ -104,10 +104,10 @@ test.describe("estrutura e apresentação", () => {
             await expect(page.getByRole("main")).toHaveCount(1)
             await expect(page.getByRole("main").getByRole("heading", { level: 2 })).toHaveText([
                 texts.aboutMe,
+                texts.trajectory,
                 texts.stack,
                 texts.certificates,
-                texts.workStyle,
-                texts.trajectory
+                texts.workStyle
             ])
         })
 
@@ -220,12 +220,27 @@ test.describe("layout", () => {
         expect(wideLocation.y).toBeGreaterThanOrEqual(widePhoto.y + widePhoto.height - 1)
     })
 
+    for (const language of LANGUAGES) {
+        test(`RF-ABOUT-07: em ${language} o conteúdo publicado de Sobre mim tem dois parágrafos`, async ({
+            page
+        }) => {
+            await openAbout(page, language)
+            const about = readAbout(language)
+            expect(about.aboutParagraphs).toHaveLength(2)
+            const main = page.getByRole("main")
+
+            for (const paragraph of about.aboutParagraphs) {
+                await expect(main.getByText(paragraph, { exact: true })).toBeVisible()
+            }
+        })
+    }
+
     test("RF-ABOUT-07: Sobre mim é uma coluna única, sem divisórias entre os parágrafos", async ({
         page
     }) => {
         await openAbout(page, "pt-BR")
         const about = readAbout("pt-BR")
-        expect(about.aboutParagraphs.length).toBeGreaterThan(1)
+        expect(about.aboutParagraphs).toHaveLength(2)
         const main = page.getByRole("main")
 
         const boxes: Box[] = []
@@ -697,15 +712,18 @@ test.describe("idioma", () => {
 test.describe("revelar ao rolar com movimento pleno", () => {
     test.use({ reducedMotion: "no-preference" })
 
-    test("RF-ABOUT-01, A11Y-G12: a Trajetória começa escondida e entra ao rolar", async ({
+    test("RF-ABOUT-01, A11Y-G12: os Complementos, abaixo da dobra, começam escondidos e entram ao rolar", async ({
         page
     }) => {
         await openAbout(page, "pt-BR")
         const heading = page.getByRole("heading", {
             level: 2,
-            name: UI_TEXTS["pt-BR"].aboutPage.trajectory
+            name: UI_TEXTS["pt-BR"].aboutPage.certificates
         })
         const wrapper = page.locator("[data-reveal]").filter({ has: heading })
+        const viewportHeight = page.viewportSize()?.height ?? 0
+        const headingTop = (await heading.boundingBox())?.y ?? 0
+        expect(headingTop).toBeGreaterThan(viewportHeight)
         await expect(wrapper).toHaveAttribute("data-reveal", "hidden")
 
         await heading.scrollIntoViewIfNeeded()
