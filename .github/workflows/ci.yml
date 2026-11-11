@@ -72,7 +72,7 @@ jobs:
             - name: Install dependencies
               run: npm ci
             - name: Install Chromium
-              run: npx playwright install --with-deps chromium
+              run: npm run playwright:install
             - name: Decide test scope
               id: scope
               env:
@@ -210,7 +210,7 @@ jobs:
                   path: ~/.cache/ms-playwright
                   key: playwright-chromium-${{ runner.os }}-${{ steps.playwright-version.outputs.version }}
             - name: Install Chromium
-              run: npx playwright install --with-deps chromium
+              run: npm run playwright:install
             - name: Build
               run: npm run build:fatec
             - name: Build Pages artifact with the contact form enabled
