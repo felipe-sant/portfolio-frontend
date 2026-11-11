@@ -1,7 +1,7 @@
 # Spec: alvos e proporções da home no celular
 
 > **Tipo:** `bug` <br />
-> **Status:** `aprovada` <br />
+> **Status:** `em-andamento` <br />
 > **Issue:** `#204, #205` <br />
 > **Criado em:** `11-11-2026`
 

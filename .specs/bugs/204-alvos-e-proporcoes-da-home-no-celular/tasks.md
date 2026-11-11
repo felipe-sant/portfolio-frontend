@@ -16,7 +16,7 @@ executor: Fase 1          Fase 2              Fase 3   |  PO: T6  |  qa: T7 [P] 
 
 ## Tarefas
 
-- [ ] T1 [P] — Alvo de 44 px no link de título do destaque da Início (#204)
+- [x] T1 [P] — Alvo de 44 px no link de título do destaque da Início (#204)
     - **Arquivo(s):** `src/styles/components/featuredProject.module.css`
     - **Depende de:** nenhuma
     - **Testes (escritos antes, RED):** não se aplica (CSS; coberto pelos E2E de T7)
@@ -26,9 +26,9 @@ executor: Fase 1          Fase 2              Fase 3   |  PO: T6  |  qa: T7 [P] 
       `outline-offset: 0.25rem`. `.title` e o componente `FeaturedProject.tsx` não mudam.
     - **Gate:** `npm run typecheck && npm run lint`
     - **Feito quando:** o gate passa e a regra está no estado descrito; aparência conferida em T6.
-    - **Evidência:** ...
+    - **Evidência:** `2f995d8`; `featuredProject.module.css` `.link` com `inline-flex`, `padding-block`/`margin-block` de `(var(--hit-min) - 1lh) / ±2` e `.link:focus-visible` em `outline-offset: 0.25rem`; `typecheck` e `lint` verdes.
 
-- [ ] T2 [P] — Esmaecimento nas bordas da linha de filtros de Projetos abaixo de 640 px (#205, `D70`)
+- [x] T2 [P] — Esmaecimento nas bordas da linha de filtros de Projetos abaixo de 640 px (#205, `D70`)
     - **Arquivo(s):** `src/styles/pages/projects.module.css`
     - **Depende de:** nenhuma
     - **Testes (escritos antes, RED):** não se aplica (CSS; coberto pelos E2E de T8)
@@ -38,9 +38,9 @@ executor: Fase 1          Fase 2              Fase 3   |  PO: T6  |  qa: T7 [P] 
       inline ou CSS global.
     - **Gate:** `npm run typecheck && npm run lint`
     - **Feito quando:** o gate passa e a regra está no estado descrito; aparência conferida em T6.
-    - **Evidência:** ...
+    - **Evidência:** `678007c`; `.filters` com `mask-image: linear-gradient(...)` de `calc(var(--pad-page) - var(--space-1))` e `mask-image: none` no `@media (min-width: 640px)`; `typecheck` e `lint` verdes.
 
-- [ ] T3 [P] — Documentar o alvo do título do destaque
+- [x] T3 [P] — Documentar o alvo do título do destaque
     - **Arquivo(s):** `docs/screens/home.md`, `docs/product/accessibility.md`
     - **Depende de:** T1
     - **Testes (escritos antes, RED):** não se aplica
@@ -50,9 +50,9 @@ executor: Fase 1          Fase 2              Fase 3   |  PO: T6  |  qa: T7 [P] 
       cada cartão de projeto" por redação que inclua também o link de título de cada destaque da Início.
     - **Gate:** nenhum comando (documentação)
     - **Feito quando:** as três passagens citam o alvo de 44 px do título do destaque.
-    - **Evidência:** ...
+    - **Evidência:** `35516d7`; `RF-HOME-19` na tabela (com `A11Y-G08` na origem) e no checklist de `home.md`, e `A11Y-G08` de `accessibility.md`, citam o alvo de 44px do título do destaque.
 
-- [ ] T4 [P] — Registrar `D70` e atualizar `RF-PROJECTS-08`
+- [x] T4 [P] — Registrar `D70` e atualizar `RF-PROJECTS-08`
     - **Arquivo(s):** `docs/design/decisions.md`, `docs/screens/projects.md`
     - **Depende de:** T2
     - **Testes (escritos antes, RED):** não se aplica
@@ -63,15 +63,15 @@ executor: Fase 1          Fase 2              Fase 3   |  PO: T6  |  qa: T7 [P] 
       coluna de origem.
     - **Gate:** nenhum comando (documentação)
     - **Feito quando:** `D70` existe em `decisions.md` e `RF-PROJECTS-08` cita o esmaecimento e `D70` na tabela e no checklist.
-    - **Evidência:** ...
+    - **Evidência:** `aebbdca`; linha `D70` em `decisions.md` (e item em "Divergências do protótipo e do handoff"); `RF-PROJECTS-08` cita o esmaecimento e `D70` na tabela e no checklist de `projects.md`.
 
-- [ ] T5 — Verificação completa
+- [x] T5 — Verificação completa
     - **Arquivo(s):** nenhum (só verificação)
     - **Depende de:** T1, T2, T3, T4
     - **Testes (escritos antes, RED):** não se aplica
     - **Gate:** `npm run build && npm run test:cov` (única rodada pesada; não roda Playwright)
     - **Feito quando:** o gate passa
-    - **Evidência:** ...
+    - **Evidência:** `npm run typecheck` e `npm run lint` verdes; `npm run build` verde com `VITE_SITE_URL=https://felipe-sant.vercel.app` (sem a variável o build falha por desenho, `scripts/resolveSiteUrl.ts`), e o CSS de `dist/assets/` traz o `mask-image` e o `padding-block` do alvo; `npm test -- --run` com 2904 de 2905 testes verdes e uma falha intermitente de tempo em `src/prerender/test/mountClient.test.tsx` ("renderiza no cliente usando o BASE_URL como basename") com a máquina sob carga 16 a 19, que passa 19/19 em três rodadas isoladas e não toca arquivo desta spec; `test:cov` trocado pela suíte completa pedida pelo Orc.
 
 - [ ] T6 — Verificação manual do PO (CA4, CA9, CA10)
     - **Arquivo(s):** nenhum
