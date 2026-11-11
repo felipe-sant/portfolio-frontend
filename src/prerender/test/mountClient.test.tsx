@@ -1,5 +1,7 @@
 import { readFileSync } from "node:fs"
+import { startTransition } from "react"
 import type { Root } from "react-dom/client"
+import { hydrateRoot } from "react-dom/client"
 import type { MockInstance } from "vitest"
 import { afterEach, beforeEach, describe, expect, inject, it, vi } from "vitest"
 import { act, screen, within } from "@testing-library/react"
@@ -21,6 +23,37 @@ vi.mock("@/utils/loadMarkdownRenderer", async (importOriginal) => {
     const original = await importOriginal<typeof import("@/utils/loadMarkdownRenderer")>()
 
     return { default: vi.fn(original.default) }
+})
+
+const transitionState = vi.hoisted(() => ({ active: false, hydratedInTransition: [] as boolean[] }))
+
+vi.mock("react", async (importOriginal) => {
+    const original = await importOriginal<typeof import("react")>()
+
+    return {
+        ...original,
+        startTransition: vi.fn<typeof original.startTransition>((callback) => {
+            transitionState.active = true
+            try {
+                original.startTransition(callback)
+            } finally {
+                transitionState.active = false
+            }
+        })
+    }
+})
+
+vi.mock("react-dom/client", async (importOriginal) => {
+    const original = await importOriginal<typeof import("react-dom/client")>()
+
+    return {
+        ...original,
+        hydrateRoot: vi.fn<typeof original.hydrateRoot>((...args) => {
+            transitionState.hydratedInTransition.push(transitionState.active)
+
+            return original.hydrateRoot(...args)
+        })
+    }
 })
 
 const PROJECT_ID = "01a131df-93ee-72f3-8c7a-f67501e47a7a"
@@ -102,6 +135,9 @@ async function mount() {
 }
 
 beforeEach(() => {
+    vi.mocked(startTransition).mockClear()
+    vi.mocked(hydrateRoot).mockClear()
+    transitionState.hydratedInTransition = []
     rootElement = document.createElement("div")
     document.body.appendChild(rootElement)
     stubContentFetch({
@@ -138,6 +174,16 @@ describe("mountClient sem caminho pré-renderizado", () => {
         ).toBeInTheDocument()
     })
 
+    it("não usa startTransition ao renderizar com createRoot", async () => {
+        window.history.pushState({}, "", "/pt-BR")
+
+        await mount()
+
+        await screen.findByRole("heading", { name: "Desenvolvedor full stack Júnior" })
+        expect(startTransition).not.toHaveBeenCalled()
+        expect(hydrateRoot).not.toHaveBeenCalled()
+    })
+
     it("remove o title e a meta description do index.html e deixa só os da página", async () => {
         document.head.innerHTML =
             '<title>Estático</title><meta name="description" content="Estática" />'
@@ -170,6 +216,19 @@ describe("mountClient com HTML pré-renderizado sem bloco de dados", () => {
 })
 
 describe("mountClient com caminho pré-renderizado", () => {
+    it("hidrata dentro de startTransition e devolve o Root da hidratação", async () => {
+        injectPrerendered("en.html", rootElement)
+        await i18n.changeLanguage("en")
+        window.history.pushState({}, "", "/en")
+
+        await mount()
+        await settle()
+
+        expect(startTransition).toHaveBeenCalledTimes(1)
+        expect(transitionState.hydratedInTransition).toEqual([true])
+        expect(mountedRoots).toEqual([vi.mocked(hydrateRoot).mock.results[0]?.value])
+    })
+
     it("hidrata o HTML gerado sem erro nem aviso e mantém o h1 do servidor", async () => {
         injectPrerendered("en.html", rootElement)
         await i18n.changeLanguage("en")

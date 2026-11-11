@@ -1,4 +1,6 @@
-import { StrictMode } from "react"
+import type { ReactNode } from "react"
+import { startTransition, StrictMode } from "react"
+import type { Root } from "react-dom/client"
 import { createRoot, hydrateRoot } from "react-dom/client"
 import { createBrowserRouter } from "react-router-dom"
 import App from "@/App"
@@ -10,6 +12,20 @@ import readPrerenderData from "@/utils/readPrerenderData"
 import removePrerenderedHead from "@/utils/removePrerenderedHead"
 import shouldHydrate from "@/utils/shouldHydrate"
 import shouldPreloadMarkdown from "@/utils/shouldPreloadMarkdown"
+
+function hydrateInTransition(rootElement: HTMLElement, app: ReactNode): Root {
+    let root: Root | undefined
+
+    startTransition(() => {
+        root = hydrateRoot(rootElement, app)
+    })
+
+    if (!root) {
+        throw new Error("A hidratação não criou a raiz do React.")
+    }
+
+    return root
+}
 
 async function mountClient(rootElement: HTMLElement) {
     const prerenderData = readPrerenderData(document)
@@ -32,7 +48,7 @@ async function mountClient(rootElement: HTMLElement) {
             await loadMarkdownRenderer()
         }
 
-        return hydrateRoot(rootElement, app)
+        return hydrateInTransition(rootElement, app)
     }
 
     removePrerenderedHead(document.head)

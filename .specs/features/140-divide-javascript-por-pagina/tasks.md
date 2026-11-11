@@ -14,7 +14,7 @@ Regras para o `executor`: nenhum comentário em código (nem `//`, `/* */`, JSDo
 
 ## Tarefas
 
-- [ ] T1 — Hidratar dentro de `startTransition` em `mountClient`
+- [x] T1 — Hidratar dentro de `startTransition` em `mountClient`
     - **Arquivo(s):** `src/prerender/mountClient.tsx`, `src/prerender/test/mountClient.test.tsx`
     - **Depende de:** nenhuma
     - **Testes (escritos antes, RED):**
@@ -24,7 +24,16 @@ Regras para o `executor`: nenhum comentário em código (nem `//`, `/* */`, JSDo
         - PERF-140-02: os testes existentes de hidratação sem divergência e sem `console.error` continuam passando sem mudar a expectativa. Arquivo: `src/prerender/test/mountClient.test.tsx`
     - **Gate:** `npm run typecheck && npm run lint && npm test -- --run --project prerender`
     - **Feito quando:** o gate passa, e a ramificação `createRoot` não mudou.
-    - **Evidência:**
+    - **Evidência:** gate verde (typecheck, lint, projeto `prerender` com 21 testes). RED visto: `expected "vi.fn()" to be called 1 times, but got 0 times`.
+
+        | Critério                                                           | `arquivo:linha` e asserção                                                                                                                                              | Coberto? |
+        | ------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- |
+        | PERF-140-01: `hydrateRoot` dentro do callback de `startTransition` | `src/prerender/test/mountClient.test.tsx:207` `expect(startTransition).toHaveBeenCalledTimes(1)`; `:208` `expect(transitionState.hydratedInTransition).toEqual([true])` | sim      |
+        | PERF-140-01: devolve o `Root` da hidratação                        | `src/prerender/test/mountClient.test.tsx:209` `expect(mountedRoots).toEqual([vi.mocked(hydrateRoot).mock.results[0]?.value])`                                           | sim      |
+        | PERF-140-01 (borda): `createRoot` sem `startTransition`            | `src/prerender/test/mountClient.test.tsx:180` `expect(startTransition).not.toHaveBeenCalled()`                                                                          | sim      |
+        | PERF-140-02: hidratação sem erro nem aviso                         | testes existentes do arquivo, sem mudança de expectativa (`expect(consoleSpies.error).not.toHaveBeenCalled()`)                                                          | sim      |
+
+        Veredito: necessários e suficientes.
 
 - [ ] T2 — Criar `LazyResumeModal`, que importa o `ResumeModal` só na primeira abertura
     - **Arquivo(s):** `src/components/LazyResumeModal.tsx`, `src/components/test/LazyResumeModal.test.tsx`
