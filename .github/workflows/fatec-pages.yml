@@ -67,7 +67,7 @@ jobs:
             - name: Lint
               run: npm run lint
             - name: Install Chromium
-              run: npx playwright install --with-deps chromium
+              run: npm run playwright:install
             - name: Test
               run: npm run test:cov
             - name: Build Fatec
