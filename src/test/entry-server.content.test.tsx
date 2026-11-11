@@ -1,3 +1,5 @@
+import { readFile } from "node:fs/promises"
+import { join } from "node:path"
 import { ReadableStream } from "node:stream/web"
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vitest"
 import installPublicFetch from "@scripts/prerender/installPublicFetch"
@@ -9,6 +11,8 @@ import SUPPORTED_LANGUAGES from "@/i18n/supportedLanguages"
 import prerenderRoutes from "@/prerender/prerenderRoutes"
 import routes from "@/routers/routes"
 import clearContentCache from "@/services/content/clearContentCache"
+import parseUntyped from "@/testUtils/parseUntyped"
+import buildPersonId from "@/utils/buildPersonId"
 import loadMarkdownRenderer from "@/utils/loadMarkdownRenderer"
 import type SupportedLanguage from "@/types/language/SupportedLanguage.types"
 import type ProjectRecord from "@/types/project/ProjectRecord.types"
@@ -52,6 +56,31 @@ function findTarget(file: string) {
     }
 
     return target
+}
+
+function readJsonLd(html: string) {
+    const json = /<script type="application\/ld\+json">([\s\S]*?)<\/script>/.exec(html)?.[1]
+
+    if (!json) {
+        throw new Error("JSON-LD ausente no HTML")
+    }
+
+    return parseUntyped(json)
+}
+
+async function readCurrentEmployer(language: SupportedLanguage): Promise<string> {
+    const timeline = parseUntyped(
+        await readFile(join(process.cwd(), "public", "content", language, "timeline.json"), "utf8")
+    )
+    const current = timeline.items.find(
+        (item: { kind: string; end?: string }) => item.kind === "experience" && !item.end
+    )
+
+    if (!current?.organization) {
+        throw new Error(`Experiência em curso ausente em ${language}`)
+    }
+
+    return current.organization
 }
 
 beforeAll(async () => {
@@ -145,4 +174,29 @@ describe("pré-renderização do conteúdo real dos projetos", { timeout: 60000 
 
         expect(withRelated).toBeGreaterThan(0)
     })
+})
+
+describe("pré-renderização da Person em Início e Informações", { timeout: 60000 }, () => {
+    it.each(SUPPORTED_LANGUAGES)(
+        "declara o mesmo cargo, sem estágio, e o mesmo @id em Início e Informações em %s",
+        async (language) => {
+            const home = readJsonLd((await render(findTarget(`${language}.html`))).html)
+            const about = readJsonLd((await render(findTarget(`${language}/about.html`))).html)
+            const homePerson = home["@graph"][1]
+            const aboutPerson = about.mainEntity
+            const heading = i18n.getFixedT(language, "home")("heading")
+
+            expect(homePerson.jobTitle).toBe(aboutPerson.jobTitle)
+            expect(homePerson.jobTitle).toBe(heading)
+            expect(homePerson.jobTitle).not.toMatch(
+                /estagi|internship|\bintern\b|pasante|pasant[ií]a/i
+            )
+            expect(homePerson["@id"]).toBe(aboutPerson["@id"])
+            expect(homePerson["@id"]).toBe(buildPersonId())
+            expect(aboutPerson.worksFor).toContainEqual({
+                "@type": "Organization",
+                name: await readCurrentEmployer(language)
+            })
+        }
+    )
 })

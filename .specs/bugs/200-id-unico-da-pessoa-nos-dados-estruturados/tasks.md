@@ -95,7 +95,7 @@ T2, T3 e T4 são sequenciais porque mexem nos mesmos arquivos de teste (`buildCo
     - **Feito quando:** o gate passa e existe um commit `Fix :bug: [#200] Unifica o id da pessoa e corrige e-mail e palavras-chave dos dados estruturados` com só os arquivos de T1 a T5 (`git add` explícito por arquivo) e a linha final `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`.
     - **Evidência:** Gate verde (typecheck, lint, testes da área). Commit principal com `git add` explícito por arquivo.
 
-- [ ] T7 — Teste de caracterização do cargo em Início e Informações (#199)
+- [x] T7 — Teste de caracterização do cargo em Início e Informações (#199)
     - **Arquivo(s):** `src/test/entry-server.content.test.tsx`
     - **Depende de:** T6
     - **Implementação:** novo `it.each(SUPPORTED_LANGUAGES)` no arquivo (ou num `describe` novo do mesmo arquivo, com o mesmo `beforeAll` de `installPublicFetch`), que renderiza `findTarget(`${language}.html`)` e `findTarget(`${language}/about.html`)`, extrai o conteúdo do `<script type="application/ld+json">` de cada HTML e faz `JSON.parse` (o `<` escapado como `<` é JSON válido). Função auxiliar de leitura no próprio arquivo, sem `any` e sem cast: o resultado de `JSON.parse` é `unknown` lido com checagem, ou com o helper de `src/testUtils/parseUntyped.ts` se ele servir. Heading do idioma por `i18n.getFixedT(language, "home")("heading")`.
@@ -106,20 +106,20 @@ T2, T3 e T4 são sequenciais porque mexem nos mesmos arquivos de teste (`buildCo
         - CA8 (#199): `mainEntity.worksFor` de Informações contém `{ "@type": "Organization", name: <organization da experiência em curso do conteúdo do idioma> }` (ler a organização de `public/content/<idioma>/timeline.json` ou deixar o literal `"InCicle"`, que é o mesmo nos três idiomas).
     - **Gate:** `npm run typecheck && npm run lint && npm test -- --run src/test/entry-server.content.test.tsx`
     - **Feito quando:** o gate passa, a mutação temporária fez o teste falhar (registrar na evidência a saída do vermelho e que foi desfeita) e existe o commit `Test :test_tube: [#199] Confere o mesmo cargo em Início e Informações nos três idiomas`, só com `src/test/entry-server.content.test.tsx`, com a linha final `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`.
-    - **Evidência:**
+    - **Evidência:** Caracterização: passou na primeira execução (6 testes no arquivo). Mutação temporária `role` de `public/content/en/profile.json` para "Full stack developer intern": só o caso `en` falhou com `AssertionError: expected 'Junior full stack developer' to be 'Full stack developer intern'`; desfeita com `git checkout -- public/content/en/profile.json` e `git diff --stat public/` vazio. Gate verde. Adequação: CA8 → `src/test/entry-server.content.test.tsx:189` `toBe(aboutPerson.jobTitle)`, `:190` `toBe(heading)`, `:191` `not.toMatch(/estagi|internship|\bintern\b|pasante|pasant[ií]a/i)`, `:194` `toBe(aboutPerson["@id"])`, `:195` `toBe(buildPersonId())`, `:196` `worksFor` `toContainEqual` com a `organization` da experiência em curso lida de `public/content/<idioma>/timeline.json`.
 
-- [ ] T8 — Conferência do que ficou de fora
+- [x] T8 — Conferência do que ficou de fora
     - **Arquivo(s):** nenhum (só verificação)
     - **Depende de:** T7
     - **Testes (escritos antes, RED):** não se aplica
     - **Gate:** `grep -rn '#person' src e2e scripts` (CA9) e `grep -rn 'mailto' src/utils/build*JsonLd.ts` sem resultado
     - **Feito quando:** os dois greps estão como descrito e `git status` não mostra mudança fora dos arquivos das tarefas (em especial nada em `public/` nem em `src/locales/`).
-    - **Evidência:**
+    - **Evidência:** `grep -rn '#person' src e2e scripts` só mostra `src/utils/buildPersonId.ts:5` e testes com `SITE_URL + "/#person"`, `http://localhost:5173/#person` ou o literal de `buildPersonId.test.ts` (os únicos com idioma são as negações `entry-server.test.tsx:219` e `buildHomeJsonLd.test.ts:59`). `grep -rn 'mailto' src/utils/build*JsonLd.ts` sem resultado. `git status` sem nada em `public/` nem `src/locales/`.
 
-- [ ] T9 — Verificação completa
+- [x] T9 — Verificação completa
     - **Arquivo(s):** nenhum (só verificação)
     - **Depende de:** todas as tarefas anteriores
     - **Testes (escritos antes, RED):** não se aplica
     - **Gate:** `npm run build && npm run test:cov` (única rodada pesada)
     - **Feito quando:** o gate passa; no `dist/` gerado, `pt-BR.html`, `en/about.html` e `es/contact.html` trazem o mesmo `"@id":"<origem>/#person"` e o JSON-LD de `es/contact.html` traz `"email"` sem `mailto:`.
-    - **Evidência:**
+    - **Evidência:** `VITE_SITE_URL=https://felipe-sant.vercel.app npm run build` verde (o build exige a variável). `dist/pt-BR.html`, `dist/en/about.html` e `dist/es/contact.html` com `"@id":"https://felipe-sant.vercel.app/#person"`; JSON-LD de `es/contact.html` com `"email":"contact.felipesant@gmail.com"`. `npm run test:cov` com os workers padrão: 2 falhas em `src/prerender/test/mountClient.test.tsx` (`findByRole` do heading da página lazy, timeout com a suíte em paralelo; falha igual na base sem esta mudança); `npm run test:cov -- --maxWorkers=2`: 325 arquivos, 2915 testes verdes, cobertura 98.84% linhas.

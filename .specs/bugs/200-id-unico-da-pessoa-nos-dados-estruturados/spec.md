@@ -1,7 +1,7 @@
 # Spec: 200-id-unico-da-pessoa-nos-dados-estruturados
 
 > **Tipo:** `bug` (Fix na branch e no commit principal) <br />
-> **Status:** `em-andamento` <br />
+> **Status:** `implementada` <br />
 > **Issue:** `#200` (com `#199`) <br />
 > **Criado em:** `11-11-2026`
 
@@ -53,7 +53,7 @@ Requisitos: NF-IA-08 e NF-IA-09 (`docs/product/non-functional-requirements.md`),
 - [x] **CA5 (NF-IA-08, Projetos):** em Projetos, `author["@id"]` é `buildPersonId()`.
 - [x] **CA6 (NF-IA-08, Projeto):** no projeto e no documento (`TechArticle`), `author["@id"]` é `buildPersonId()`.
 - [x] **CA7 (NF-IA-08, Projeto):** com repositório e linguagem marcada, `keywords` não contém nenhum nome de `programmingLanguage` (fixture com React e TypeScript: `keywords` `["React"]`, `programmingLanguage` `["TypeScript"]`); sem repositório, `keywords` traz toda a stack (`["React", "TypeScript"]`); nome repetido entre grupos aparece uma vez em cada lista; stack só de linguagens com repositório omite `keywords`.
-- [ ] **CA8 (RF-HOME-26, RF-ABOUT-29, #199):** com o conteúdo real, nos três idiomas, o `jobTitle` do JSON-LD pré-renderizado da Início é igual ao de Informações e a `home:heading` do idioma, não tem termo de estágio (`/estagi|internship|\bintern\b|pasante|pasant[ií]a/i`), o `@id` da `Person` é o mesmo nas duas páginas e igual a `buildPersonId()`, e `worksFor` de Informações traz o empregador atual (a `organization` da experiência em curso).
+- [x] **CA8 (RF-HOME-26, RF-ABOUT-29, #199):** com o conteúdo real, nos três idiomas, o `jobTitle` do JSON-LD pré-renderizado da Início é igual ao de Informações e a `home:heading` do idioma, não tem termo de estágio (`/estagi|internship|\bintern\b|pasante|pasant[ií]a/i`), o `@id` da `Person` é o mesmo nas duas páginas e igual a `buildPersonId()`, e `worksFor` de Informações traz o empregador atual (a `organization` da experiência em curso).
 - [x] **CA9 (NF-IA-08):** nenhum teste nem código em `src/` monta mais o id com o prefixo de idioma (`grep -rn '#person' src e2e scripts` só mostra `buildPersonId.ts` e testes que usam `buildPersonId()` ou o literal `<origem>/#person`).
 - [x] **CA10:** `docs/screens/home.md`, `about.md`, `contact.md`, `projects.md`, `project.md` e `docs/architecture/frontend.md` descrevem o id como a raiz do site com o `base` e sem idioma (`<origem><base>/#person`, por `buildPersonId()`), o exemplo de Contato traz `email` sem `mailto:` e `project.md` diz que `keywords` exclui as linguagens de `programmingLanguage`.
 
