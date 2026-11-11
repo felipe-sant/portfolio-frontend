@@ -197,7 +197,7 @@ HydrationState }`), `src/prerender/mountClient.tsx`, `src/prerender/test/mountCl
       "Pré-renderização: detalhe"); ADR 0004 ("Decisão", item 5, item 8 e plano); `non-functional-requirements.md`
       (NF-HO-07 e NF-HO-08). `grep -rn "window.preloadedState\|prerenderedPath" docs` sem resultado.
 
-- [ ] T7 — Verificação completa
+- [x] T7 — Verificação completa
     - **Arquivo(s):** nenhum (só verificação)
     - **Depende de:** todas as tarefas anteriores
     - **Testes (escritos antes, RED):** não se aplica
@@ -206,7 +206,15 @@ HydrationState }`), `src/prerender/mountClient.tsx`, `src/prerender/test/mountCl
       `e2e/not-found.spec.ts`) rodam no CI do PR sobre o `build:fatec`
     - **Feito quando:** os gates passam e `dist/en.html` tem um `<script type="application/json" id="prerender-data">` e
       nenhum script inline sem `type` além dos 3 do `index.html`
-    - **Evidência:**
+    - **Evidência:** `npm run typecheck` e `npm run lint` verdes; `npm test -- --run` 325 arquivos, 2929 testes verdes;
+      `npm run build` (com `VITE_SITE_URL` de produção) verde e os 3 scripts inline de `dist/en.html` têm exatamente os
+      hashes do `vercel.json`; `npm run build:fatec` verde, `dist/en.html` com 1 `prerender-data`, 1 `ld+json`, 1
+      `module` com `src` e os 3 `<script>` do molde (no Pages o primeiro hash difere pelo `base`, sem efeito: sem header);
+      E2E sobre o `build:fatec` (`no-javascript`, `home`, `project-documents`, `not-found`, `projects`,
+      `project-gallery`, `resume`, `projects-filters`, `navigation`, `language`): 1489 passaram, 36 pulados, 2 falhas
+      de `projects.spec.ts` (`:394` e `:275`) que passaram 24/24 com `--repeat-each=3`; `npm run test:cov` com a máquina
+      em carga ~20 (outros agentes) teve 2 a 5 falhas por tempo de espera em `mountClient` e `Project.page`, que passam
+      isoladas (68/68) e na suíte sem cobertura.
 
 ## Depois do merge na `staging` (ensaio do `qa`, não é tarefa do `executor`)
 

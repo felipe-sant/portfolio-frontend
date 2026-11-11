@@ -1,7 +1,7 @@
 # Spec: cache e headers da Vercel
 
 > **Tipo:** `feature` <br />
-> **Status:** `em-andamento` <br />
+> **Status:** `implementada` <br />
 > **Issue:** `#194`, `#197`, `#163` <br />
 > **Criado em:** `11-11-2026`
 
