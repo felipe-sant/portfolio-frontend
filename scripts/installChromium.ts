@@ -7,7 +7,7 @@ const TIMEOUT_CODE = 124
 
 function install() {
     return new Promise<number>((resolve) => {
-        const child = spawn("npx", ["playwright", "install", "--with-deps", "chromium"], {
+        const child = spawn("npx", ["playwright", "install", "chromium"], {
             stdio: "inherit",
             detached: true
         })

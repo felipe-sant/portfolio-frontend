@@ -97,6 +97,12 @@ describe("ci.yml, preparação do navegador", () => {
         expect(findStepRun(ci.jobs[jobKey], "Install Chromium")).toBe("npm run playwright:install")
     })
 
+    it.each(["test", "e2e-shard"])("nenhum passo do job %s usa --with-deps", (jobKey) => {
+        for (const step of ci.jobs[jobKey]?.steps ?? []) {
+            expect(step.run ?? "").not.toContain("--with-deps")
+        }
+    })
+
     it.each(["test", "e2e-shard"])("nenhum passo de teste do job %s passa por playwright:install", (jobKey) => {
         const testSteps = (ci.jobs[jobKey]?.steps ?? []).filter((step) =>
             /test:cov|vitest|playwright test/.test(step.run ?? "")

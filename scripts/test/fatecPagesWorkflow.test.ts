@@ -103,5 +103,6 @@ describe("fatec-pages.yml", () => {
     it("prepara o Chromium do job de build por npm run playwright:install", () => {
         expect(buildJob).toMatch(/- name: Install Chromium\n\s+run: npm run playwright:install\n/)
         expect(buildJob).not.toContain("npx playwright install")
+        expect(buildJob).not.toContain("--with-deps")
     })
 })
