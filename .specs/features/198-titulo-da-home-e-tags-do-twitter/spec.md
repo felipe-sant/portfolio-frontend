@@ -1,7 +1,7 @@
 # Spec: título da home, tags do Twitter e imagem de compartilhamento por página
 
 > **Tipo:** `feature` <br />
-> **Status:** `em-revisao` <!-- rascunho -> em-revisao -> aprovada -> em-andamento -> implementada --> <br />
+> **Status:** `aprovada` <!-- rascunho -> em-revisao -> aprovada -> em-andamento -> implementada --> <br />
 > **Issue:** `#198` e `#138` (um só PR, `Closes #198` e `Closes #138`) <br />
 > **Criado em:** `11-11-2026`
 
@@ -118,15 +118,17 @@ Cada critério tem um ID desta spec, o requisito de `docs/` entre colchetes e o 
 
 ## Questões em aberto
 
-- **Q-A (bloqueia a aprovação):** opção A ou B do título.
+- **Q-A (decidida em 11/11/2026):** opção A, nome · cargo · stack, nos três idiomas.
 - **Q-B (bloqueia o commit das imagens, T7):** aprovação do desenho das 12 imagens. A proposta é a mesma composição do
   `og-site.png` (faixa amarela no topo, gato, nome), com o nome da página abaixo do nome. Na Início, o texto abaixo
   do nome é o cargo e a stack.
-- **Q-C (não bloqueia):** incluir a foto de perfil (`public/images/profile/photo-large.webp`) na imagem da Início ou
+- **Q-C (decidida em 11/11/2026: sem foto):** incluir a foto de perfil (`public/images/profile/photo-large.webp`) na imagem da Início ou
   de Informações. A proposta é **não incluir**: fica mais simples e não depende de aprovar um recorte. Se o PO quiser,
   entra só na imagem de Informações.
 
 ## Notas / decisões
+
+- Aprovada pelo PO em 11/11/2026. Entrega em dois PRs: PR1 com o título (#198) e as tags de texto do Twitter (#138), `Closes #198` e `Refs #138`; PR2 com as 12 imagens de compartilhamento por página, em branch separada a partir do PR1, `Closes #138`.
 
 Decisões aplicadas: D-05 (cargo) e a reversão da D-12 (imagem por página), ambas do dispatch da Onda 1 e decididas
 pelo PO em 11/11/2026. Elas não são as `D05`/`D12` de `docs/design/decisions.md`. De `decisions.md` valem D24 (sem
