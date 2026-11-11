@@ -47,13 +47,52 @@ export default defineConfig(({ command, mode, isSsrBuild }) => {
             }
         },
         test: {
-            environment: "jsdom",
-            pool: "vmThreads",
-            testTimeout: 30000,
-            hookTimeout: 30000,
-            setupFiles: ["./src/setupTests.ts"],
-            globalSetup: ["./src/testUtils/prerenderGlobalSetup.ts"],
             exclude: [...configDefaults.exclude, ".claude/**", "e2e/**"],
+            projects: [
+                {
+                    extends: true,
+                    test: {
+                        name: "scripts",
+                        environment: "node",
+                        include: ["scripts/test/**/*.test.ts"],
+                        pool: "vmThreads",
+                        testTimeout: 30000,
+                        hookTimeout: 30000,
+                        setupFiles: ["./src/setupTests.ts"]
+                    }
+                },
+                {
+                    extends: true,
+                    test: {
+                        name: "ui",
+                        environment: "jsdom",
+                        include: ["src/**/*.test.{ts,tsx}"],
+                        exclude: [
+                            ...configDefaults.exclude,
+                            ".claude/**",
+                            "e2e/**",
+                            "src/prerender/test/mountClient.test.tsx"
+                        ],
+                        pool: "vmThreads",
+                        testTimeout: 30000,
+                        hookTimeout: 30000,
+                        setupFiles: ["./src/setupTests.ts"]
+                    }
+                },
+                {
+                    extends: true,
+                    test: {
+                        name: "prerender",
+                        environment: "jsdom",
+                        include: ["src/prerender/test/mountClient.test.tsx"],
+                        pool: "vmThreads",
+                        testTimeout: 30000,
+                        hookTimeout: 30000,
+                        setupFiles: ["./src/setupTests.ts"],
+                        globalSetup: ["./src/testUtils/prerenderGlobalSetup.ts"]
+                    }
+                }
+            ],
             coverage: {
                 provider: "v8",
                 reporter: ["text", "json", "json-summary", "html"],
