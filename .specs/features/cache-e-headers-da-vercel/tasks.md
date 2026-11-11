@@ -88,7 +88,7 @@ o script de dados das páginas pré-renderizadas).
       `expect(resolvePagesFile(directory, ".well-known/rsl.xml")).toEqual({ status: 404, file: join(directory, "404.html") })`
       e `:105` o mesmo para `"xyz.xml"`; CA-08: `docs/adr/0003-hosting-vercel.md`, item de "Consequências" reescrito.
 
-- [ ] T4 — Dados da pré-renderização num bloco `application/json` lido pelo cliente
+- [x] T4 — Dados da pré-renderização num bloco `application/json` lido pelo cliente
     - **Arquivo(s):** `scripts/prerender/composePage.ts`, `scripts/test/composePage.test.ts`,
       `src/utils/readPrerenderData.ts` (novo), `src/utils/test/readPrerenderData.test.ts` (novo),
       `src/types/prerender/PrerenderData.types.ts` (novo, `{ path: string; state: Partial<RootState>; routerData:
@@ -120,7 +120,19 @@ HydrationState }`), `src/prerender/mountClient.tsx`, `src/prerender/test/mountCl
       predicate `isPrerenderData(value: unknown): value is PrerenderData` (objeto não nulo com `path` `string`, `state` e
       `routerData` objetos), o mesmo nível de confiança dos globais tipados de hoje; com JSON inválido ou forma errada,
       `readPrerenderData` devolve `undefined` (acrescente esse caso de borda ao teste de CA-11)
-    - **Evidência:**
+    - **Evidência:** RED visto em cada arquivo (composePage: 3 falhas; readPrerenderData: módulo inexistente;
+      mountClient: 8 hidratações caindo em `createRoot`); gate verde (49 testes); o `grep` dos globais não acha nada e
+      `src/types/prerender.d.ts` foi apagado. O id `prerender-data` virou a constante `src/utils/prerenderDataId.ts`,
+      usada por `composePage`, `readPrerenderData` e o teste de `mountClient`. Os testes de `composePage` leem o HTML por
+      regex porque o projeto `scripts` do Vitest roda em `node`, sem `DOMParser`. CA-10:
+      `scripts/test/composePage.test.ts:139` `expect(executableInlineScripts(page)).toEqual(["window.fromTemplate=1"])`,
+      `:145` `expect(page.match(/id="prerender-data"/g)).toHaveLength(1)`, `:146` bloco logo depois de `#root`, `:149`
+      `expect(JSON.parse(readDataBlock(page) ?? "")).toEqual({ path: "/ra2581392423047/en", state, routerData })`,
+      `:161` `expect(block).not.toContain("<")`; CA-11: `src/utils/test/readPrerenderData.test.ts:18` (sem bloco),
+      `:24` (vazio), `:35` `expect(readPrerenderData(document)).toEqual(data)`, `:41` (JSON inválido), `:54` e `:60`
+      (forma errada) `toBeUndefined()`; CA-12: `src/prerender/test/mountClient.test.tsx:186`
+      `expect(screen.getByRole("heading", ...)).toBe(heading)` com o bloco injetado (e os demais casos de hidratação),
+      `:230` 404.html em outra URL, `:167` `expect(...).not.toBe(serverHeading)` sem bloco.
 
 - [ ] T5 — Headers de segurança e CSP em `Report-Only` com hash dos scripts inline
     - **Arquivo(s):** `vercel.json`, `scripts/test/vercelConfig.test.ts`

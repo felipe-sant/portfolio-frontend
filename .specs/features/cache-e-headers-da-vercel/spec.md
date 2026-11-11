@@ -113,14 +113,14 @@ noindex` ao fim de `headers` sem descartar nenhuma regra; aplicada ao `vercel.js
 
 **#163 — dados da pré-renderização fora de script executável**
 
-- [ ] CA-10 (NF-HO-08, NF-IA-03): a página que `composePage` monta não tem nenhum `<script>` inline executável (sem
+- [x] CA-10 (NF-HO-08, NF-IA-03): a página que `composePage` monta não tem nenhum `<script>` inline executável (sem
       `src` e sem `type`, ou com `type` de JavaScript) além dos que já estão no molde; os dados da página
       (`path`, `state`, `routerData`) vão num único `<script type="application/json" id="prerender-data">` depois de
       `#root`, com `<` escapado como `<`. Teste: `scripts/test/composePage.test.ts`.
-- [ ] CA-11 (NF-IA-03): uma função pura lê esse bloco do `document` e devolve `path`, `state` e `routerData`; devolve
+- [x] CA-11 (NF-IA-03): uma função pura lê esse bloco do `document` e devolve `path`, `state` e `routerData`; devolve
       `undefined` quando o bloco não existe ou está vazio (raiz `/`, que serve o `index.html` sem bloco). Teste:
       `src/utils/test/readPrerenderData.test.ts`.
-- [ ] CA-12 (NF-IA-03): o cliente hidrata com o estado e os dados do roteador lidos do bloco quando o caminho aberto é o
+- [x] CA-12 (NF-IA-03): o cliente hidrata com o estado e os dados do roteador lidos do bloco quando o caminho aberto é o
       `path` do bloco, e usa `createRoot` sem estado quando não é ou quando não há bloco, como hoje com
       `window.prerenderedPath`. Os globais `window.prerenderedPath`, `window.preloadedState` e `window.routerData` deixam
       de existir. Teste: `src/prerender/test/mountClient.test.tsx`.
