@@ -190,7 +190,7 @@ Teste de um endpoint injetado só no próprio teste (sem arquivo de domínio) us
 - [ ] Consumo por hook de página em `src/pages/hooks/`, com `isLoading` e erro tratados
 - [ ] Teste em `test/` com `fetch` stubado, `VITE_API_URL` absoluta e `renderWithStore`
 - [ ] Sem comentário no código; identificadores em inglês; texto de UI por chave
-- [ ] `npm run lint`, `npm run build` e `npm test -- --run` passando
+- [ ] `npm run typecheck`, `npm run lint` e `npm test -- --run <arquivo de teste alterado>` passando (`build` e `test:cov` rodam só no fim da feature, ver `executor`)
 
 ## Ao remover ou renomear um endpoint
 

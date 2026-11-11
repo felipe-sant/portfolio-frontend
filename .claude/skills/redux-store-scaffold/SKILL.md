@@ -157,7 +157,7 @@ describe("CounterButton", () => {
 - [ ] Componente lê com `useAppSelector` (seletor estreito) e escreve com `useAppDispatch`; nenhum `useSelector`/`useDispatch` direto
 - [ ] Teste do slice e do consumo em `test/`, com `renderWithStore` e `preloadedState`
 - [ ] Sem comentário no código; identificadores em inglês; texto de UI por chave
-- [ ] `npm run lint`, `npm run build` e `npm test -- --run` passando
+- [ ] `npm run typecheck`, `npm run lint` e `npm test -- --run <arquivo de teste alterado>` passando (`build` e `test:cov` rodam só no fim da feature, ver `executor`)
 
 ## Ao remover ou renomear um slice
 
