@@ -6,6 +6,7 @@ import type Timeline from "@/types/timeline/Timeline.types"
 import type TimelineItem from "@/types/timeline/TimelineItem.types"
 import type TimelineKind from "@/types/timeline/TimelineKind.types"
 import buildAbsoluteUrl from "@/utils/buildAbsoluteUrl"
+import buildPersonId from "@/utils/buildPersonId"
 import getSiteUrl from "@/utils/getSiteUrl"
 import publicUrl from "@/utils/publicUrl"
 
@@ -55,7 +56,7 @@ function buildAboutJsonLd(
         inLanguage: language,
         mainEntity: {
             "@type": "Person",
-            "@id": `${homeUrl}#person`,
+            "@id": buildPersonId(),
             name: labels.name,
             jobTitle: profile?.role,
             description: profile?.summary,

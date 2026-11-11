@@ -220,9 +220,7 @@ describe("ContactPage", () => {
         ).toBeTruthy()
         expect(readJsonLd()["@type"]).toBe("ContactPage")
         await screen.findByText("contato@example.com")
-        await waitFor(() =>
-            expect(readJsonLd().mainEntity.email).toBe("mailto:contato@example.com")
-        )
+        await waitFor(() => expect(readJsonLd().mainEntity.email).toBe("contato@example.com"))
     })
 
     it("tem um h1 e nenhum main próprio", async () => {

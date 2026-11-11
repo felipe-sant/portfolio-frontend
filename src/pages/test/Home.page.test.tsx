@@ -220,7 +220,7 @@ describe("HomePage", () => {
             const [website, person] = readJsonLd()["@graph"]
             expect(website["@type"]).toBe("WebSite")
             expect(website.inLanguage).toBe(language)
-            expect(person["@id"]).toBe(`${SITE_URL}/${language}#person`)
+            expect(person["@id"]).toBe(`${SITE_URL}/#person`)
             expect(website.publisher["@id"]).toBe(person["@id"])
         }
     )

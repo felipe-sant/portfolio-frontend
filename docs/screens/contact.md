@@ -291,16 +291,18 @@ validação do cliente.
     "inLanguage": "pt-BR",
     "mainEntity": {
         "@type": "Person",
-        "@id": "<URL canônica de />#person",
+        "@id": "<origem><base>/#person",
         "name": "Luiz Felipe dos Santos",
-        "email": "mailto:<e-mail do conteúdo>",
+        "email": "<e-mail do conteúdo>",
         "sameAs": ["<URL do GitHub>", "<URL do LinkedIn>"]
     }
 }
 ```
 
-A `Person` tem o `@id` `<URL canônica de />#person`, o mesmo em todas as telas (decisão
-transversal do PO de 11-10-2026); rede sem URL sai de `sameAs`.
+A `Person` tem o `@id` `<origem><base>/#person`, a raiz do site com o `base` do Vite e sem prefixo
+de idioma, montado por `buildPersonId()`, o mesmo em todas as telas e idiomas (decisão transversal
+do PO de 11-10-2026); rede sem URL sai de `sameAs`. O `email` do JSON-LD é o endereço puro, sem
+`mailto:` (o `href` do link "Enviar e-mail" continua em `mailto:`).
 
 ## Critérios de aceite
 

@@ -4,6 +4,7 @@ import type ProjectDetail from "@/types/project/ProjectDetail.types"
 import type ProjectDocument from "@/types/project/ProjectDocument.types"
 import type JsonLdNode from "@/types/seo/JsonLdNode.types"
 import buildAbsoluteUrl from "@/utils/buildAbsoluteUrl"
+import buildPersonId from "@/utils/buildPersonId"
 
 function buildDocumentJsonLd(
     language: SupportedLanguage,
@@ -21,7 +22,7 @@ function buildDocumentJsonLd(
             name: document.name
         }),
         inLanguage: document.translated ? language : (document.contentLanguage ?? language),
-        author: { "@id": `${buildAbsoluteUrl(ROUTES.home, language)}#person` },
+        author: { "@id": buildPersonId() },
         dateModified: document.updatedAt,
         about: { "@id": `${projectUrl}#project` }
     }
