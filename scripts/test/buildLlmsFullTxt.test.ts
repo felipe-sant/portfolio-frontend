@@ -167,4 +167,21 @@ describe("buildLlmsFullTxt", () => {
 
         expect(build("es", withResume("es", `${resume}\n`))).toContain(`\n\n${resume}\n`)
     })
+
+    it("embute o currículo sem mudança quando o perfil não tem e-mail", () => {
+        const resume = "# CV\n\nSem endereço aqui."
+        const source: SeoContent = {
+            ...content,
+            "pt-BR": {
+                ...content["pt-BR"],
+                resume: `${resume}\n`,
+                profile: {
+                    ...content["pt-BR"].profile,
+                    contact: { ...content["pt-BR"].profile.contact, email: "" }
+                }
+            }
+        }
+
+        expect(build("pt-BR", source)).toContain(`\n\n${resume}\n`)
+    })
 })

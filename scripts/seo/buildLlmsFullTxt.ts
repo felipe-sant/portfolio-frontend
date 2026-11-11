@@ -109,7 +109,9 @@ function buildResume(
         `${labels.resumePdf}: ${buildSeoUrl(origin, base, `cv/cv-${language}.pdf`)}`
     ])
 
-    const resume = content.resume.trimEnd().replaceAll(content.profile.contact.email, contactUrl)
+    const { email } = content.profile.contact
+    const trimmedResume = content.resume.trimEnd()
+    const resume = email === "" ? trimmedResume : trimmedResume.replaceAll(email, contactUrl)
 
     return [`## ${labels.resume}`, links, resume].join("\n\n")
 }
