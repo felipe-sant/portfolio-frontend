@@ -1,6 +1,6 @@
 # Visão do produto
 
-Portfólio pessoal de Luiz Felipe dos Santos, desenvolvedor full stack Júnior com React, TypeScript e Node.js. Este repositório é o frontend do portfólio; o design vem do handoff em `/home/felipe/faculdade/design_handoff_portfolio`.
+Portfólio pessoal de Luiz Felipe dos Santos, desenvolvedor full stack Júnior com React, TypeScript e Node.js. Este repositório é o frontend do portfólio; o design vem do handoff de design, que fica fora do repositório (resumo em [`docs/design/design-system.md`](../design/design-system.md)).
 
 ## Propósito
 
@@ -128,8 +128,8 @@ Este repositório é o frontend do **portfólio pessoal de Luiz Felipe dos Santo
 full stack. O usuário é ao mesmo tempo cliente, PO e dev: ele decide escopo e prioridade e aprova
 as specs. Esta seção é um resumo; o detalhe vive em `docs/` e no handoff de design.
 
-**Handoff de design:** `/home/felipe/faculdade/design_handoff_portfolio` é a base do design
-(R3). Reaproveite `tokens/` (nomes e valores dos tokens) e use `components/` como ponto de
+**Handoff de design:** a pasta `design_handoff_portfolio`, fora do repositório, é a base do design;
+os tokens dela já estão em `src/styles/global.css` (R3). Reaproveite `tokens/` (nomes e valores dos tokens) e use `components/` como ponto de
 partida dos componentes. Não copie o HTML das telas (`*.dc.html`), `support.js`, `image-slot.js`
 nem os sketches de `assets/` (não são imagens de produção). Onde o handoff diverge das convenções
 deste repositório, as convenções prevalecem: fonte self-hospedada em vez de Google Fonts, CSS

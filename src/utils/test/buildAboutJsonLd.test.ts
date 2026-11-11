@@ -23,7 +23,7 @@ describe("buildAboutJsonLd", () => {
             inLanguage: "pt-BR",
             mainEntity: {
                 "@type": "Person",
-                "@id": `${SITE_URL}/pt-BR#person`,
+                "@id": `${SITE_URL}/#person`,
                 name: "Luiz Felipe dos Santos",
                 url: `${SITE_URL}/pt-BR`
             }
@@ -36,7 +36,7 @@ describe("buildAboutJsonLd", () => {
 
         expect(node.url).toBe(`${SITE_URL}/en/about`)
         expect(node.inLanguage).toBe("en")
-        expect(person["@id"]).toBe(`${SITE_URL}/en#person`)
+        expect(person["@id"]).toBe(`${SITE_URL}/#person`)
         expect(person.url).toBe(`${SITE_URL}/en`)
         expect(person.jobTitle).toBe("Desenvolvedor full stack")
         expect(person.description).toBe("Desenvolvedor full stack em TypeScript.")

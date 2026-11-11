@@ -25,7 +25,7 @@ Este documento é a fonte, para humanos, do fluxo de trabalho deste repositório
 Toda issue entra no projeto [Portfolio](https://github.com/users/felipe-sant/projects/16), que reúne os repositórios do portfólio, com:
 
 - **Status** `Backlog` (o PO revisa e move);
-- **Marco** do [`docs/product/roadmap.md`](docs/product/roadmap.md), ou `Pessoal` para a trilha fora da v1;
+- **Versão** `v1` (a entrega da Fatec) ou `v2` (AWS, banco e backend);
 - um único **Tipo**: `FEAT`, `DOC` ou `BUG`.
 
 Labels de tipo não são usadas; as labels indicam só a área: `frontend`, `backend`, `infra`, uma ou mais. Toda issue que depende de outra registra a relação como "blocked by" do GitHub, além da linha "Depende de" do corpo.

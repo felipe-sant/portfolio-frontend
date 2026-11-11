@@ -318,11 +318,11 @@ Lista de necessidades; os nomes de campo, os arquivos e os endpoints estão deci
             "name": "<common:authorName>",
             "url": "<canônica de / no idioma>",
             "inLanguage": "<pt-BR, en ou es>",
-            "publisher": { "@id": "<URL canônica de />#person" }
+            "publisher": { "@id": "<origem><base>/#person" }
         },
         {
             "@type": "Person",
-            "@id": "<URL canônica de />#person",
+            "@id": "<origem><base>/#person",
             "name": "<common:authorName>",
             "jobTitle": "<home:heading>",
             "url": "<canônica de / no idioma>",
@@ -333,8 +333,10 @@ Lista de necessidades; os nomes de campo, os arquivos e os endpoints estão deci
 }
 ```
 
-O `@id` da `Person` é `<URL canônica de />#person`, o mesmo em todas as telas e idiomas (decisão
-transversal do PO de 11-10-2026), e `/about` o reutiliza na `ProfilePage` (#37,
+O `@id` da `Person` é `<origem><base>/#person`, a raiz do site com o `base` do Vite e sem prefixo de
+idioma, montado por `buildPersonId()` (`src/utils/`), o mesmo em todas as telas e idiomas (decisão
+transversal do PO de 11-10-2026); o `publisher` do `WebSite` aponta esse id, e `WebSite.url` e
+`Person.url` seguem a canônica da Início no idioma. `/about` o reutiliza na `ProfilePage` (#37,
 [`about.md`](about.md)). `sameAs` só tem as redes que existirem no conteúdo. `image` (a foto do perfil, D26) só
 vai na `Person` de `/about`; a Início não o declara. `jobTitle` vem da mesma chave do `h1`, para o cargo exibido e o declarado
 serem o mesmo dado (NF-IA-09). Sem `noindex`. A pré-renderização (#49) gera `/pt-BR`, `/en` e `/es` com

@@ -619,7 +619,7 @@ describe("ProjectsPage", () => {
         expect(plain.name).toBe("Projetos · Luiz Felipe dos Santos")
         expect(plain.url).toBe(`${SITE_URL}/pt-BR/projects`)
         expect(plain.inLanguage).toBe("pt-BR")
-        expect(plain.author).toEqual({ "@id": `${SITE_URL}/pt-BR#person` })
+        expect(plain.author).toEqual({ "@id": `${SITE_URL}/#person` })
         expect(plain.mainEntity["@type"]).toBe("ItemList")
         expect(plain.mainEntity.itemListElement).toHaveLength(9)
         expect(plain.mainEntity).not.toHaveProperty("numberOfItems")

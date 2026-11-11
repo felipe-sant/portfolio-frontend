@@ -3,6 +3,7 @@ import type SupportedLanguage from "@/types/language/SupportedLanguage.types"
 import type Profile from "@/types/profile/Profile.types"
 import type JsonLdNode from "@/types/seo/JsonLdNode.types"
 import buildAbsoluteUrl from "@/utils/buildAbsoluteUrl"
+import buildPersonId from "@/utils/buildPersonId"
 
 type HomeJsonLdLabels = {
     name: string
@@ -15,7 +16,7 @@ function buildHomeJsonLd(
     profile?: Profile
 ): JsonLdNode {
     const url = buildAbsoluteUrl(ROUTES.home, language)
-    const personId = `${url}#person`
+    const personId = buildPersonId()
     const sameAs = [profile?.links.github, profile?.links.linkedin].filter((link): link is string =>
         Boolean(link)
     )

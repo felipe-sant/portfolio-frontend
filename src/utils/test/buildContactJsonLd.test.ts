@@ -1,8 +1,6 @@
 import { describe, expect, it } from "vitest"
 import buildProfile from "@/testUtils/buildProfile"
-import buildAbsoluteUrl from "@/utils/buildAbsoluteUrl"
 import buildContactJsonLd from "@/utils/buildContactJsonLd"
-import ROUTES from "@/routers/paths"
 
 const LABELS = {
     title: "Contato · Luiz Felipe dos Santos",
@@ -25,16 +23,17 @@ describe("buildContactJsonLd", () => {
         })
     })
 
-    it("usa o mesmo @id da Person da Início e o e-mail em mailto", () => {
+    it("usa o @id único da Person e o e-mail sem mailto", () => {
         const profile = buildProfile()
         const jsonLd = buildContactJsonLd("en", LABELS, profile)
 
         expect(jsonLd.mainEntity).toMatchObject({
             "@type": "Person",
-            "@id": `${buildAbsoluteUrl(ROUTES.home, "en")}#person`,
+            "@id": `${SITE_URL}/#person`,
             name: LABELS.name,
-            email: `mailto:${profile.contact.email}`
+            email: profile.contact.email
         })
+        expect(JSON.stringify(jsonLd.mainEntity)).not.toContain("mailto:")
     })
 
     it("lista em sameAs só as redes presentes", () => {
@@ -50,9 +49,9 @@ describe("buildContactJsonLd", () => {
 
         expect(jsonLd.mainEntity).toEqual({
             "@type": "Person",
-            "@id": `${SITE_URL}/pt-BR#person`,
+            "@id": `${SITE_URL}/#person`,
             name: LABELS.name,
-            email: `mailto:${profile.contact.email}`
+            email: profile.contact.email
         })
     })
 
@@ -61,7 +60,7 @@ describe("buildContactJsonLd", () => {
 
         expect(jsonLd.mainEntity).toEqual({
             "@type": "Person",
-            "@id": `${SITE_URL}/pt-BR#person`,
+            "@id": `${SITE_URL}/#person`,
             name: LABELS.name
         })
     })

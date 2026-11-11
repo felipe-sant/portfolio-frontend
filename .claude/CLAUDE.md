@@ -21,11 +21,12 @@ Este repositório é o frontend do **portfólio pessoal de Luiz Felipe dos Santo
 ao mesmo tempo cliente, PO e dev: ele decide escopo e prioridade e aprova as specs. Visão, público e escopo em
 `docs/product/overview.md`.
 
-**Handoff de design:** `/home/felipe/faculdade/design_handoff_portfolio` é a base do design (R3). Reaproveite `tokens/`
-e use `components/` como ponto de partida; não copie o HTML das telas (`*.dc.html`), `support.js`, `image-slot.js` nem
-os sketches de `assets/`. Onde o handoff diverge das convenções deste repositório, as convenções prevalecem (fonte
-self-hospedada, CSS Module em vez de `.ds-*`, código sem comentários). Referência visual validada pelo PO:
-`docs/design/prototype/` (`npm run dev`, em `/docs/design/prototype/prototipo-indice.dc.html`).
+**Handoff de design:** a pasta `design_handoff_portfolio`, fora do repositório (só na máquina do autor), é a base do
+design (R3); os tokens dela já estão em `src/styles/global.css` e o resumo em `docs/design/design-system.md`.
+Reaproveite `tokens/` e use `components/` como ponto de partida; não copie o HTML das telas (`*.dc.html`),
+`support.js`, `image-slot.js` nem os sketches de `assets/`. Onde o handoff diverge das convenções deste repositório,
+as convenções prevalecem (fonte self-hospedada, CSS Module em vez de `.ds-*`, código sem comentários). Referência
+visual validada pelo PO: `docs/design/prototype/` (`npm run dev`, em `/docs/design/prototype/prototipo-indice.dc.html`).
 
 **Rotas:** cinco telas, com caminhos em inglês (D32) sob o prefixo do idioma (`/<idioma>`, sem barra final): Início,
 Projetos (`/projects`), Projeto (`/projects/:id` e `/projects/:id/docs/:name`, `:id` é UUID v7), Informações (`/about`)
@@ -204,9 +205,10 @@ O `<Tipo>` de branch, commit e título de PR vem sempre desta tabela:
 
 ### Issues
 
-Toda issue entra no projeto [Portfolio](https://github.com/users/felipe-sant/projects/16) com Status `Backlog`, `Marco`
-do `docs/product/roadmap.md` (ou `Pessoal`), um único `Tipo` (`FEAT`, `DOC` ou `BUG`) e labels só de área (`frontend`,
-`backend`, `infra`); dependência vira "blocked by" do GitHub ([`CONTRIBUTING.md`](../CONTRIBUTING.md#issues)).
+Toda issue entra no projeto [Portfolio](https://github.com/users/felipe-sant/projects/16) com Status `Backlog`, `Versão`
+(`v1`, a entrega da Fatec, ou `v2`, AWS, banco e backend), um único `Tipo` (`FEAT`, `DOC` ou `BUG`) e labels só de área
+(`frontend`, `backend`, `infra`); dependência vira "blocked by" do GitHub
+([`CONTRIBUTING.md`](../CONTRIBUTING.md#issues)).
 
 ### Branches
 

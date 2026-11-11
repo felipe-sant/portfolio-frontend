@@ -62,7 +62,7 @@ Decidida no [ADR 0004](../adr/0004-prerendering.md) (opção 1, script próprio,
 
 Cada tela pública declara, além de `<title>` e `<meta name="description">`, o mecanismo de #52: `<PageMeta title description path params? type? image? />` (`src/components/PageMeta.tsx`) emite `<link rel="canonical">` autorreferente, quatro `<link rel="alternate" hreflang>` (`pt-BR`, `en`, `es` e `x-default` para `en`), Open Graph (`og:title`, `og:description`, `og:type`, `og:url`, `og:image` com 1200×630 e `og:image:alt`, `og:locale` e `og:locale:alternate`) e `twitter:card` `summary_large_image`; `<JsonLd data={...} />` (`src/components/JsonLd.tsx`) emite o `<script type="application/ld+json">`, serializado por `serializeJsonLd` com todo `<` escapado como `\u003c` (NF-IA-09). As duas usam as tags nativas do React 19, sem biblioteca, e acompanham a troca de idioma sem recarregar. Query e hash nunca entram nas URLs. A canônica de `/projects` não leva a query (D45).
 
-A URL absoluta vem de `buildAbsoluteUrl(path, language, params?)` (`src/utils/`): `getSiteUrl()` (única leitura de `VITE_SITE_URL`, só a origem) mais o `base` do Vite (`publicUrl`, uma vez só) mais o caminho com prefixo de idioma (`buildPath`). `VITE_SITE_URL` é validada no `npm run build` por `scripts/resolveSiteUrl.ts` e vale em canônica, Open Graph e sitemap (NF-HO-06); valores por ambiente em [`environments.md`](../setup/environments.md#variáveis). A imagem padrão `public/images/og-site.png` (gato e nome) é gerada por `npm run og:image` e versionada. Os dados do JSON-LD de cada tela vêm de construtores em `src/utils/` (`buildHomeJsonLd`, `buildProjectsJsonLd`), com o `@id` único da `Person` em `<URL canônica de />#person`. No HTML pré-renderizado o `<link>` e o `<meta>` sobem para o `<head>`; o `<script>` do JSON-LD fica no corpo, o que o Google aceita. A não encontrada e a de erro não usam o mecanismo (`noindex`).
+A URL absoluta vem de `buildAbsoluteUrl(path, language, params?)` (`src/utils/`): `getSiteUrl()` (única leitura de `VITE_SITE_URL`, só a origem) mais o `base` do Vite (`publicUrl`, uma vez só) mais o caminho com prefixo de idioma (`buildPath`). `VITE_SITE_URL` é validada no `npm run build` por `scripts/resolveSiteUrl.ts` e vale em canônica, Open Graph e sitemap (NF-HO-06); valores por ambiente em [`environments.md`](../setup/environments.md#variáveis). A imagem padrão `public/images/og-site.png` (gato e nome) é gerada por `npm run og:image` e versionada. Os dados do JSON-LD de cada tela vêm de construtores em `src/utils/` (`buildHomeJsonLd`, `buildProjectsJsonLd`), com o `@id` único da `Person` em `<origem><base>/#person` (raiz do site com o `base` do Vite, sem prefixo de idioma), montado por `buildPersonId()` (`src/utils/`). No HTML pré-renderizado o `<link>` e o `<meta>` sobem para o `<head>`; o `<script>` do JSON-LD fica no corpo, o que o Google aceita. A não encontrada e a de erro não usam o mecanismo (`noindex`).
 
 ## Arquivos para buscadores e IA
 
@@ -93,9 +93,13 @@ Hoje a store não tem slice: `src/store/api.ts` declara o `createApi` sem endpoi
 
 ## Camada de dados local (v1)
 
+Por que RTK Query com `queryFn` sobre dados locais, o que a #43 troca e quais arquivos ficam sem uso até lá: [ADR 0005](../adr/0005-rtk-query-local-data.md).
+
 Fluxo de uma leitura: a página chama o hook gerado do endpoint (`projectsApi.useGetProjectsQuery`),
 o `queryFn` valida o argumento, a camada local carrega os arquivos de `public/` e monta a resposta
 com funções puras, e o resultado volta como `{ data }` ou `{ error }` no formato do contrato.
+
+**Sem uso até a #43, de propósito** ([ADR 0005](../adr/0005-rtk-query-local-data.md#arquivos-sem-uso-até-a-43)): o `baseQuery` (`fetchBaseQuery` com `prepareHeaders`) de `src/store/api.ts`, que nenhum endpoint chama enquanto todos usam `queryFn`, e `src/services/http/get.ts` e `post.ts`, importados só pelos testes, com o `parseResponse.ts` que só eles usam. Não são código morto a remover.
 
 ```mermaid
 flowchart LR
@@ -345,7 +349,7 @@ Texto movido do `.claude/CLAUDE.md`, por área. As seções acima dão a visão 
   (`src/components/`: canônica autorreferente, quatro `hreflang` com `x-default` em `en`, Open
   Graph e `twitter:card`; `params` e `image` opcionais) e `<JsonLd data={...} />` com o objeto de
   um construtor em `src/utils/` (`buildHomeJsonLd`, `buildProjectsJsonLd`; o `@id` da `Person` é
-  `<URL canônica de />#person`), além do `<title>` e da `description` próprios. A URL absoluta vem
+  `<origem><base>/#person`, por `buildPersonId()`), além do `<title>` e da `description` próprios. A URL absoluta vem
   de `buildAbsoluteUrl(path, language, params?)` (`getSiteUrl()` + `publicUrl` + `buildPath`);
   `getSiteUrl` é a única leitura de `VITE_SITE_URL` (só a origem, obrigatória no `npm run build`,
   validada por `scripts/resolveSiteUrl.ts`; localhost no dev e nos testes). `serializeJsonLd`
