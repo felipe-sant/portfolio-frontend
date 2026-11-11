@@ -98,7 +98,7 @@ Fluxo de uma leitura: a página chama o hook gerado do endpoint (`projectsApi.us
 o `queryFn` valida o argumento, a camada local carrega os arquivos de `public/` e monta a resposta
 com funções puras, e o resultado volta como `{ data }` ou `{ error }` no formato do contrato.
 
-**Sem uso até a #43, de propósito** ([ADR 0005](../adr/0005-rtk-query-local-data.md#arquivos-sem-uso-até-a-43)): o `baseQuery` (`fetchBaseQuery` com `prepareHeaders`) de `src/store/api.ts`, que nenhum endpoint chama enquanto todos usam `queryFn`, e `src/services/http/get.ts`, `post.ts` e `parseResponse.ts`, importados só pelos testes. Não são código morto a remover.
+**Sem uso até a #43, de propósito** ([ADR 0005](../adr/0005-rtk-query-local-data.md#arquivos-sem-uso-até-a-43)): o `baseQuery` (`fetchBaseQuery` com `prepareHeaders`) de `src/store/api.ts`, que nenhum endpoint chama enquanto todos usam `queryFn`, e `src/services/http/get.ts` e `post.ts`, importados só pelos testes, com o `parseResponse.ts` que só eles usam. Não são código morto a remover.
 
 ```mermaid
 flowchart LR
