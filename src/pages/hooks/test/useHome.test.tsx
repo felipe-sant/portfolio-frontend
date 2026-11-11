@@ -120,6 +120,8 @@ describe("useHome", () => {
         const { result } = renderUseHome()
 
         expect(result.current.language).toBe("pt-BR")
-        expect(JSON.stringify(result.current.jsonLd)).toContain("Desenvolvedor full stack")
+        expect(JSON.stringify(result.current.jsonLd)).toContain(
+            '"jobTitle":"Desenvolvedor full stack Júnior"'
+        )
     })
 })

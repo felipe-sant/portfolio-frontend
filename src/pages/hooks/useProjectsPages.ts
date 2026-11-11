@@ -5,6 +5,8 @@ import type ProjectsQueryArgs from "@/types/project/ProjectsQueryArgs.types"
 import getProjectsSkeletonCount from "@/utils/getProjectsSkeletonCount"
 import projectsElementIds from "@/utils/projectsElementIds"
 
+const CARD_ITEMS_SELECTOR = ":scope > ul > li, :scope > section > ul > li"
+
 function readPages(state: unknown): number | undefined {
     if (
         typeof state === "object" &&
@@ -23,7 +25,7 @@ function readPages(state: unknown): number | undefined {
 function useProjectsPages(args: ProjectsQueryArgs) {
     const location = useLocation()
     const navigate = useNavigate()
-    const gridRef = useRef<HTMLUListElement>(null)
+    const gridRef = useRef<HTMLDivElement>(null)
     const focusIndex = useRef<number | null>(null)
     const query = projectsApi.useGetProjectsPagesInfiniteQuery(args)
     const { hasNextPage, isFetching, isFetchNextPageError, fetchNextPage } = query
@@ -63,7 +65,8 @@ function useProjectsPages(args: ProjectsQueryArgs) {
 
         if (index !== null && shown > index) {
             focusIndex.current = null
-            gridRef.current?.children[index]?.querySelector("a")?.focus()
+            const cardItems = gridRef.current?.querySelectorAll(CARD_ITEMS_SELECTOR)
+            cardItems?.item(index)?.querySelector("a")?.focus()
         }
     }, [shown])
 

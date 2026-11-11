@@ -7,11 +7,11 @@ linkedin.com/in/lfelipesant
 
 ## Resumen
 
-Desarrollador full stack, con actuación principal en frontend (React, TypeScript) y conocimiento de backend, trabajando en el ciclo completo de aplicaciones web. Estudiante del 6.º semestre de Desarrollo de Software Multiplataforma en la Fatec de Jacareí. Tengo experiencia práctica en arquitecturas de microservicios y micro frontends (Module Federation), integración y consumo de APIs REST, control de versiones con Git, contenedores con Docker, pruebas automatizadas y pipelines de CI/CD. Soy proactivo en la identificación y resolución de problemas más allá del alcance de las tareas asignadas, con un historial consistente de entregas aprobadas sin retrabajo.
+Desarrollador full stack junior, con actuación principal en frontend (React, TypeScript) y conocimiento de backend, trabajando en el ciclo completo de aplicaciones web. Estudiante del 6.º semestre de Desarrollo de Software Multiplataforma en la Fatec de Jacareí. Tengo experiencia práctica en arquitecturas de microservicios y micro frontends (Module Federation), integración y consumo de APIs REST, control de versiones con Git, contenedores con Docker, pruebas automatizadas y pipelines de CI/CD. Soy proactivo en la identificación y resolución de problemas más allá del alcance de las tareas asignadas, con un historial consistente de entregas aprobadas sin retrabajo.
 
 ## Experiencia
 
-### InCicle — Pasante de Desarrollo (05/2026 – actual)
+### InCicle — Desarrollador Full Stack Junior (05/2026 – actual)
 
 Actuación en el desarrollo frontend de múltiples módulos de producto (OKR, Hiring/Admisión, DISC, Agenda, Termómetro, entre otros), trabajando en una arquitectura de micro frontends.
 

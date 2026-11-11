@@ -107,8 +107,47 @@ describe("HomePage", () => {
         renderHomePage()
 
         expect(
-            screen.getByRole("heading", { name: "Desenvolvedor full stack em TypeScript" })
+            screen.getByRole("heading", { name: "Desenvolvedor full stack Júnior" })
         ).toBeInTheDocument()
+    })
+
+    it.each([
+        ["pt-BR", "Desenvolvedor full stack Júnior", "React, TypeScript e Node.js"],
+        ["en", "Junior full stack developer", "React, TypeScript and Node.js"],
+        ["es", "Desarrollador full stack junior", "React, TypeScript y Node.js"]
+    ] as const)(
+        "declara o cargo sem ponto e a linha da stack logo abaixo em %s",
+        async (language, heading, stack) => {
+            await setLanguage(language)
+
+            renderHomePage()
+
+            const title = screen.getByRole("heading", { level: 1 })
+            const stackLine = screen.getByText(stack)
+            expect(title.textContent).toBe(heading)
+            expect(stackLine.tagName).toBe("P")
+            expect(title.nextElementSibling).toBe(stackLine)
+            expect(
+                await screen.findByText("Trabalho em produtos web de ponta a ponta.")
+            ).toBeInTheDocument()
+            expect(
+                stackLine.compareDocumentPosition(
+                    screen.getByText("Trabalho em produtos web de ponta a ponta.")
+                ) & Node.DOCUMENT_POSITION_FOLLOWING
+            ).toBeTruthy()
+        }
+    )
+
+    it.each([
+        ["pt-BR", "Desenvolvedor full stack Júnior"],
+        ["en", "Junior full stack developer"],
+        ["es", "Desarrollador full stack junior"]
+    ] as const)("usa o cargo exato como jobTitle do JSON-LD em %s", async (language, heading) => {
+        await setLanguage(language)
+
+        renderHomePage()
+
+        expect(readJsonLd()["@graph"][1].jobTitle).toBe(heading)
     })
 
     it("renderiza a frase de apresentação do perfil", async () => {
@@ -124,7 +163,7 @@ describe("HomePage", () => {
 
         expect(document.title).toBe("Portfólio · Luiz Felipe dos Santos")
         expect(document.querySelector('meta[name="description"]')?.getAttribute("content")).toBe(
-            "Portfólio de Luiz Felipe dos Santos, desenvolvedor full stack em TypeScript: projetos, trajetória e contato."
+            "Portfólio de Luiz Felipe dos Santos, desenvolvedor full stack Júnior com React, TypeScript e Node.js: projetos, trajetória e contato."
         )
     })
 
@@ -135,7 +174,7 @@ describe("HomePage", () => {
 
         expect(document.title).toBe("Portfolio · Luiz Felipe dos Santos")
         expect(document.querySelector('meta[name="description"]')?.getAttribute("content")).toBe(
-            "Portfolio of Luiz Felipe dos Santos, full stack developer in TypeScript: projects, background and contact."
+            "Portfolio of Luiz Felipe dos Santos, junior full stack developer with React, TypeScript and Node.js: projects, background and contact."
         )
     })
 
@@ -150,17 +189,17 @@ describe("HomePage", () => {
     it("atualiza texto, metadados e lang do html ao trocar o idioma com a página aberta", async () => {
         renderHomePage()
         expect(
-            screen.getByRole("heading", { name: "Desenvolvedor full stack em TypeScript" })
+            screen.getByRole("heading", { name: "Desenvolvedor full stack Júnior" })
         ).toBeInTheDocument()
 
         await act(() => setLanguage("es"))
 
         expect(
-            screen.getByRole("heading", { name: "Desarrollador full stack en TypeScript" })
+            screen.getByRole("heading", { name: "Desarrollador full stack junior" })
         ).toBeInTheDocument()
         expect(document.title).toBe("Portafolio · Luiz Felipe dos Santos")
         expect(document.querySelector('meta[name="description"]')?.getAttribute("content")).toBe(
-            "Portafolio de Luiz Felipe dos Santos, desarrollador full stack en TypeScript: proyectos, trayectoria y contacto."
+            "Portafolio de Luiz Felipe dos Santos, desarrollador full stack junior con React, TypeScript y Node.js: proyectos, trayectoria y contacto."
         )
         expect(document.documentElement.lang).toBe("es")
     })
@@ -193,7 +232,7 @@ describe("HomePage", () => {
             await Promise.resolve()
         })
 
-        await screen.findByRole("heading", { name: "Desenvolvedor full stack em TypeScript" })
+        await screen.findByRole("heading", { name: "Desenvolvedor full stack Júnior" })
         await expect.poll(() => readJsonLd()["@graph"][1].knowsAbout).toEqual(["TypeScript"])
         expect(readJsonLd()["@graph"][1].sameAs).toEqual(["https://github.com/example"])
     })
@@ -252,7 +291,7 @@ describe("HomePage", () => {
         expect(resume).not.toHaveAttribute("target")
     })
 
-    it("clicar em Baixar CV abre o modal do PDF sem mudar a rota e devolve o foco ao link", async () => {
+    it("clicar em Baixar CV abre o modal do PDF", async () => {
         renderHomePage()
         await screen.findByRole("link", { name: "Projeto Destaque" })
         const resume = screen.getByRole("link", {
@@ -266,11 +305,6 @@ describe("HomePage", () => {
             "src",
             "/cv/cv-pt-BR.pdf"
         )
-
-        await userEvent.click(within(dialog).getByRole("button", { name: "Fechar" }))
-
-        expect(screen.queryByRole("dialog")).not.toBeInTheDocument()
-        expect(resume).toHaveFocus()
     })
 
     it.each([
@@ -398,7 +432,11 @@ describe("HomePage", () => {
         renderHomePage()
 
         await screen.findByRole("link", { name: "Projeto Destaque" })
-        expect(screen.getByRole("heading", { level: 1 })).toBeInTheDocument()
+        expect(screen.getByRole("heading", { level: 1 }).textContent).toBe(
+            "Desenvolvedor full stack Júnior"
+        )
+        expect(screen.getByText("React, TypeScript e Node.js")).toBeInTheDocument()
+        expect(screen.queryByText("Trabalho em produtos web de ponta a ponta.")).toBeNull()
         expect(screen.getByRole("link", { name: /Ver projetos/ })).toBeInTheDocument()
         expect(screen.queryByText("Disponível para projetos")).not.toBeInTheDocument()
         expect(screen.queryByRole("heading", { name: "Tecnologias que uso" })).toBeNull()

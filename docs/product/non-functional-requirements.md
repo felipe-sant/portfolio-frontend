@@ -185,7 +185,7 @@ de código"); `D32` estende o inglês ao caminho da URL. Opções para "Informa�
 
 | Caminho    | Avaliação                                                                                                          | Decisão         |
 | ---------- | ------------------------------------------------------------------------------------------------------------------ | --------------- |
-| `/about`   | Convenção de portfólio que recrutador, IA e buscador reconhecem; cobre sobre mim, stack, complementos e trajetória | **Recomendada** |
+| `/about`   | Convenção de portfólio que recrutador, IA e buscador reconhecem; cobre sobre mim, trajetória, stack e complementos | **Recomendada** |
 | `/profile` | Sugere conta ou área logada, que está fora do produto (`DP03`)                                                     | Descartada      |
 | `/resume`  | Confunde com o CV em PDF e Markdown de `D52`, que é outro artefato                                                 | Descartada      |
 | `/info`    | Genérico, não diz o que a página tem                                                                               | Descartada      |
@@ -295,7 +295,7 @@ interface. A escolha do método é da #54; as opções abaixo, avaliadas quando 
 | NF-PR-02 | Sem cookie. `localStorage` só guarda o idioma (`portfolio-frontend:language`) e o tema (`portfolio-frontend:theme`)                                                                                          | DevTools, aba Application                                                 | #41         |
 | NF-PR-03 | **v1 sem analytics** (`DP02`). V2+: analytics sem cookie (Vercel Web Analytics ou Plausible), escolhido em issue ou ADR da V2, que registra a exceção a NF-PR-01; sem cookie, não há banner de consentimento | Review; NF-PR-01                                                          | V2+         |
 | NF-PR-04 | Nada incorporado de terceiros (vídeo, mapa, widget social); o vídeo de demonstração (#48) é link, não embed                                                                                                  | Review                                                                    | Review      |
-| NF-PR-05 | Imagens publicadas sem metadado EXIF ou de localização                                                                                                                                                       | `exiftool` ou inspeção equivalente nos arquivos de #42                    | #42         |
+| NF-PR-05 | Imagens publicadas sem metadado EXIF ou de localização                                                                                                                                                       | `npm run content:check` (reprova EXIF e XMP em `public/images/`)          | #42         |
 | NF-PR-06 | Sem página de política de privacidade na v1: o site não coleta dado pessoal (formulário desligado, D05). O formulário real (#44) traz o aviso de tratamento de dados (LGPD) junto                            | Review de #44                                                             | #44         |
 
 ## Compatibilidade de navegadores (`NF-CO`)

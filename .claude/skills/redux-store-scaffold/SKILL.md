@@ -5,6 +5,8 @@ description: Como criar estado de cliente (slice) neste projeto React com Redux 
 
 # Redux Store Scaffold
 
+Leia antes de agir: `docs/architecture/frontend.md` (seções "Estado" e "Módulo `src/store/`") e `docs/adr/0001-state-management.md`.
+
 Estado de cliente compartilhado entre telas vive num **slice** em `src/store/slices/<nome>.slice.ts`. Estado que só uma página usa continua `useState` no hook da página; dado do servidor não é slice, é endpoint do RTK Query (skill `rtk-query-endpoint-scaffold`). Os trechos abaixo usam um `counter` hipotético para ilustrar o formato.
 
 A infraestrutura da store fica em `src/store/rootReducer.ts` (com `api.reducer`), `src/store/createStore.ts`, `useAppDispatch`, `useAppSelector` e no `Provider` de `src/App.tsx` (a store é criada em `src/prerender/mountClient.tsx`); slice novo só se registra nela, sem recriá-la.
@@ -155,7 +157,7 @@ describe("CounterButton", () => {
 - [ ] Componente lê com `useAppSelector` (seletor estreito) e escreve com `useAppDispatch`; nenhum `useSelector`/`useDispatch` direto
 - [ ] Teste do slice e do consumo em `test/`, com `renderWithStore` e `preloadedState`
 - [ ] Sem comentário no código; identificadores em inglês; texto de UI por chave
-- [ ] `npm run lint`, `npm run build` e `npm test -- --run` passando
+- [ ] `npm run typecheck`, `npm run lint` e `npm test -- --run <arquivo de teste alterado>` passando (`build` e `test:cov` rodam só no fim da feature, ver `executor`)
 
 ## Ao remover ou renomear um slice
 

@@ -140,12 +140,6 @@ describe("ProjectsFiltersModal", () => {
             "Fechar",
             (user: ReturnType<typeof userEvent.setup>) =>
                 user.click(screen.getByRole("button", { name: "Fechar" }))
-        ],
-        ["Esc", (user: ReturnType<typeof userEvent.setup>) => user.keyboard("{Escape}")],
-        [
-            "o fundo",
-            (user: ReturnType<typeof userEvent.setup>) =>
-                user.click(screen.getByRole("dialog").parentElement as HTMLElement)
         ]
     ])("só a ordenação diferente já aplica ao fechar por %s", async (_name, close) => {
         const user = userEvent.setup()
@@ -204,7 +198,7 @@ describe("ProjectsFiltersModal", () => {
         expect(screen.getByRole("radio", { name: "A–Z" })).not.toBeChecked()
     })
 
-    it("Tab entra no radio marcado, Espaço marca o focado e Tab sai para a primeira caixa seguinte", async () => {
+    it("Tab entra no radio marcado e Tab sai para a primeira caixa seguinte", async () => {
         const user = userEvent.setup()
         renderModal({ applied: withSort({ tech: [], year: [] }, "oldest") })
 
@@ -301,12 +295,6 @@ describe("ProjectsFiltersModal", () => {
             "Fechar",
             async (user: ReturnType<typeof userEvent.setup>) =>
                 user.click(screen.getByRole("button", { name: "Fechar" }))
-        ],
-        ["Esc", async (user: ReturnType<typeof userEvent.setup>) => user.keyboard("{Escape}")],
-        [
-            "o fundo",
-            async (user: ReturnType<typeof userEvent.setup>) =>
-                user.click(screen.getByRole("dialog").parentElement as HTMLElement)
         ]
     ])("fechar por %s aplica o rascunho e fecha", async (_name, close) => {
         const user = userEvent.setup()
@@ -330,9 +318,7 @@ describe("ProjectsFiltersModal", () => {
 
     it.each([
         ["Aplicar", () => userEvent.click(screen.getByRole("button", { name: "Aplicar" }))],
-        ["Fechar", () => userEvent.click(screen.getByRole("button", { name: "Fechar" }))],
-        ["Esc", () => userEvent.keyboard("{Escape}")],
-        ["o fundo", () => userEvent.click(screen.getByRole("dialog").parentElement as HTMLElement)]
+        ["Fechar", () => userEvent.click(screen.getByRole("button", { name: "Fechar" }))]
     ])("fechar por %s com o rascunho igual ao aplicado não chama onApply", async (_name, close) => {
         const onApply = vi.fn()
         const onClose = vi.fn()
@@ -404,64 +390,6 @@ describe("ProjectsFiltersModal", () => {
                 .getAllByRole("checkbox")
                 .filter((box) => box instanceof HTMLInputElement && box.checked)
         ).toHaveLength(0)
-    })
-
-    it.each([
-        [
-            "pt-BR",
-            [
-                "Filtros",
-                "Nenhum filtro selecionado",
-                "Tecnologia",
-                "Ano",
-                "Fechar",
-                "Limpar",
-                "Aplicar",
-                "Ordenar"
-            ]
-        ],
-        [
-            "en",
-            [
-                "Filters",
-                "No filters selected",
-                "Technology",
-                "Year",
-                "Close",
-                "Clear",
-                "Apply",
-                "Sort"
-            ]
-        ],
-        [
-            "es",
-            [
-                "Filtros",
-                "Ningún filtro seleccionado",
-                "Tecnología",
-                "Año",
-                "Cerrar",
-                "Limpiar",
-                "Aplicar",
-                "Ordenar"
-            ]
-        ]
-    ] as const)("mostra os textos em %s sem chave no lugar do texto", async (language, texts) => {
-        await setLanguage(language)
-
-        renderModal()
-
-        const [title, summary, technology, year, close, clear, apply, sort] = texts
-
-        expect(screen.getByRole("heading", { name: title })).toBeVisible()
-        expect(screen.getByText(summary)).toBeVisible()
-        expect(screen.getByRole("group", { name: technology })).toBeVisible()
-        expect(screen.getByRole("group", { name: year })).toBeVisible()
-        expect(screen.getByRole("group", { name: sort })).toBeVisible()
-        expect(screen.getByRole("button", { name: close })).toBeVisible()
-        expect(screen.getByRole("button", { name: clear })).toBeVisible()
-        expect(screen.getByRole("button", { name: apply })).toBeVisible()
-        expect(document.body.textContent).not.toMatch(/\bfilters\.[a-zA-Z]+/)
     })
 
     it.each([

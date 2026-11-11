@@ -3,9 +3,9 @@
         {
             "id": "01a13157-51e9-72f2-bf6d-68dd797d4b8c",
             "kind": "experience",
-            "title": "Estagiário de Desenvolvimento Frontend",
+            "title": "Desenvolvedor full stack Júnior",
             "organization": "InCicle",
-            "details": ["Estágio · Híbrido"],
+            "details": ["Híbrido"],
             "start": "2026-05",
             "summary": "Atuação principalmente em frontend, com incursões no backend, em squad ágil, passando por diferentes módulos de produto dentro de uma arquitetura de micro frontends — da implementação de novas features à evolução de versões já existentes. Desenvolvimento com React, TypeScript e Node.js, integração de APIs REST e trabalho com bancos de dados SQL e NoSQL. Revisão de Pull Requests, testes de QA e resolução de hotfixes em produção. Uso de agentes de IA para planejar, implementar e revisar as entregas, com TDD.",
             "responsibilities": [
@@ -63,7 +63,7 @@
             "id": "01a1315e-6dfb-7822-88a2-13dfaf7252a5",
             "kind": "education",
             "title": "Tecnólogo em Desenvolvimento de Software Multiplataforma",
-            "organization": "Fatec – Faculdade de Tecnologia do Estado de São Paulo (Jacareí)",
+            "organization": "Fatec Jacareí",
             "stage": "6º semestre",
             "details": ["Conclusão prevista em 2027"],
             "start": "2023-02",

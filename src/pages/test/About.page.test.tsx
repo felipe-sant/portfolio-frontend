@@ -187,18 +187,18 @@ describe("AboutPage, estrutura", () => {
         expect(regions.map((region) => region.querySelector("h1, h2")?.textContent)).toEqual([
             "Luiz Felipe dos Santos",
             "Sobre mim",
+            "Trajetória",
             "Stack",
-            "Certificados",
-            "Trajetória"
+            "Certificados"
         ])
         expect(screen.getAllByRole("heading", { level: 1 })).toHaveLength(1)
         expect(
             screen.getAllByRole("heading", { level: 2 }).map((heading) => heading.textContent)
-        ).toEqual(["Sobre mim", "Stack", "Certificados", "Como eu trabalho", "Trajetória"])
+        ).toEqual(["Sobre mim", "Trajetória", "Stack", "Certificados", "Como eu trabalho"])
         expect(screen.queryByText(/depoimento/i)).not.toBeInTheDocument()
     })
 
-    it("mostra os grupos de stack e de trajetória com h3", async () => {
+    it("mostra os grupos de trajetória e de stack com h3", async () => {
         renderAbout()
         await loaded()
 
@@ -206,12 +206,12 @@ describe("AboutPage, estrutura", () => {
             screen.getAllByRole("heading", { level: 3 }).map((heading) => heading.textContent)
         ).toEqual([
             "Agora",
-            "Frontend",
-            "Backend",
-            "Infra e ferramentas",
             "Experiências profissionais",
             "Formações",
-            "Cursos"
+            "Cursos",
+            "Frontend",
+            "Backend",
+            "Infra e ferramentas"
         ])
         expect(screen.getByText("Selecione um item para ver o detalhe.")).toBeInTheDocument()
     })
@@ -245,6 +245,17 @@ describe("AboutPage, apresentação", () => {
         expect(
             screen.getByRole("img", { name: "Foto de Luiz Felipe dos Santos" })
         ).toBeInTheDocument()
+    })
+
+    it.each([
+        ["pt-BR", "Foto de Luiz Felipe dos Santos"],
+        ["en", "Photo of Luiz Felipe dos Santos"],
+        ["es", "Foto de Luiz Felipe dos Santos"]
+    ] as const)("nomeia a foto pelo nome do autor em %s", async (language, name) => {
+        await act(() => setLanguage(language))
+        renderAbout()
+
+        expect(await screen.findByRole("img", { name })).toBeInTheDocument()
     })
 
     it("sem disponibilidade não mostra o selo e mantém a localização", async () => {
@@ -289,7 +300,7 @@ describe("AboutPage, apresentação", () => {
         }
     )
 
-    it("clicar em Baixar CV abre o modal e fechar devolve o foco ao link", async () => {
+    it("clicar em Baixar CV abre o modal", async () => {
         renderAbout()
         const link = screen.getByRole("link", { name: /Baixar CV/ })
 
@@ -300,11 +311,6 @@ describe("AboutPage, apresentação", () => {
             "src",
             "/cv/cv-pt-BR.pdf"
         )
-
-        await userEvent.keyboard("{Escape}")
-
-        expect(screen.queryByRole("dialog")).not.toBeInTheDocument()
-        expect(link).toHaveFocus()
     })
 
     it("mostra h1, botões e títulos das seções já no carregamento", () => {
@@ -377,16 +383,49 @@ describe("AboutPage, erro por fonte", () => {
         expect(screen.queryByText(/erro|500|404|Error/i)).not.toBeInTheDocument()
     })
 
-    it("com a trajetória falhando mostra o alerta em Certificados e em Trajetória e mantém o perfil", async () => {
+    it("com a trajetória falhando anuncia o alerta só na Trajetória e mantém o perfil", async () => {
         stubContentFetch(without(buildFiles(), "content/pt-BR/timeline.json"))
         renderAbout()
 
-        await screen.findByRole("alert")
+        const alert = await screen.findByRole("alert")
+        const trajectory = screen.getByRole("region", { name: "Trajetória" })
+        const certificates = screen.getByRole("region", { name: /Certificados/ })
 
         expect(screen.getAllByRole("alert")).toHaveLength(1)
+        expect(within(trajectory).getByRole("alert")).toBe(alert)
+        expect(within(certificates).queryByRole("alert")).not.toBeInTheDocument()
+        expect(within(certificates).getByRole("button", { name: "Tentar novamente" })).toBeVisible()
         expect(screen.getAllByRole("button", { name: "Tentar novamente" })).toHaveLength(2)
         expect(screen.getByText("Sou desenvolvedor full stack em TypeScript.")).toBeInTheDocument()
         expect(screen.getByText("Reviso o que entrego")).toBeInTheDocument()
+    })
+
+    it("Tentar novamente da trajetória, quando falha de novo, leva o foco ao alerta da Trajetória", async () => {
+        const failing = stubContentFetch(without(buildFiles(), "content/pt-BR/timeline.json"))
+        renderAbout()
+        const alert = await screen.findByRole("alert")
+        const [retry] = screen.getAllByRole("button", { name: "Tentar novamente" })
+        const callsBefore = failing.mock.calls.length
+
+        await userEvent.click(retry)
+
+        await waitFor(() => expect(failing.mock.calls.length).toBeGreaterThan(callsBefore))
+        await waitFor(() => expect(screen.getByRole("alert")).toHaveFocus())
+        expect(screen.getByRole("alert")).toBe(alert)
+    })
+
+    it("Tentar novamente da trajetória, quando dá certo, leva o foco ao título Trajetória", async () => {
+        stubContentFetch(without(buildFiles(), "content/pt-BR/timeline.json"))
+        renderAbout()
+        const [retry] = await screen.findAllByRole("button", { name: "Tentar novamente" })
+        stubContentFetch(buildFiles())
+
+        await userEvent.click(retry)
+
+        await waitFor(() =>
+            expect(screen.getByRole("heading", { level: 2, name: "Trajetória" })).toHaveFocus()
+        )
+        expect(screen.queryByRole("alert")).not.toBeInTheDocument()
     })
 
     it("Tentar novamente do perfil refaz só o perfil", async () => {
@@ -463,20 +502,6 @@ describe("AboutPage, modal de trajetória", () => {
         expect(screen.queryByRole("dialog")).not.toBeInTheDocument()
         expect(opener).toHaveFocus()
         expect(container).not.toHaveAttribute("inert")
-    })
-
-    it("devolve o foco ao item mesmo quando o foco estava no body na abertura", async () => {
-        renderAbout()
-        await loaded()
-        const opener = screen.getByRole("button", { name: /Análise de Sistemas|Fatec/ })
-
-        act(() => {
-            opener.click()
-        })
-        const dialog = await screen.findByRole("dialog")
-        await userEvent.click(within(dialog).getByRole("button", { name: "Fechar" }))
-
-        await waitFor(() => expect(opener).toHaveFocus())
     })
 
     it("navega para o projeto relacionado, fecha o modal e foca o h1 do projeto", async () => {

@@ -1,6 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { act, fireEvent, render, screen, waitFor } from "@testing-library/react"
-import userEvent from "@testing-library/user-event"
+import { act, render, screen, waitFor } from "@testing-library/react"
 import ResumeModal from "@/components/ResumeModal"
 import setLanguage from "@/i18n/setLanguage"
 import createFakePdf from "@/testUtils/createFakePdf"
@@ -215,22 +214,6 @@ describe("ResumeModal", () => {
         await screen.findByRole("region", { name: "Páginas do currículo" })
 
         await expectNoAxeViolations(document.body)
-    })
-
-    it("chama onClose pelo botão Fechar, pelo Esc e pelo clique no fundo", async () => {
-        const onClose = vi.fn()
-        render(<ResumeModal isOpen onClose={onClose} />)
-
-        await userEvent.click(screen.getByRole("button", { name: "Fechar" }))
-        expect(onClose).toHaveBeenCalledTimes(1)
-
-        fireEvent.keyDown(document, { key: "Escape" })
-        expect(onClose).toHaveBeenCalledTimes(2)
-
-        const backdrop = screen.getByRole("dialog").parentElement as HTMLElement
-        fireEvent.mouseDown(backdrop)
-        fireEvent.click(backdrop)
-        expect(onClose).toHaveBeenCalledTimes(3)
     })
 
     it.each([

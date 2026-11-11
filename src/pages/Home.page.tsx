@@ -61,6 +61,7 @@ function HomePage() {
                             </SkeletonSwap>
                         </div>
                         <h1 className={css.heading}>{t("home:heading")}</h1>
+                        <p className={css.stack}>{t("home:hero.stack")}</p>
                         <div className={css.intro}>
                             <SkeletonSwap
                                 isLoading={profile.isLoading}

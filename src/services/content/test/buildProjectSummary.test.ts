@@ -27,6 +27,13 @@ describe("buildProjectSummary", () => {
         expect(Object.keys(summary)).not.toContain("images")
     })
 
+    it("copia experiment do registro", () => {
+        expect(buildProjectSummary(buildProjectRecord({ experiment: true })).experiment).toBe(true)
+        expect(buildProjectSummary(buildProjectRecord({ experiment: false })).experiment).toBe(
+            false
+        )
+    })
+
     it("monta a capa de images[0] sem alt", () => {
         const summary = buildProjectSummary(buildProjectRecord({ images: [image] }))
 

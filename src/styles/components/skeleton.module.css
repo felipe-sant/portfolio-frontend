@@ -29,6 +29,12 @@
     height: var(--space-8);
 }
 
+.fill {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+}
+
 .media {
     aspect-ratio: var(--ratio-media);
 }

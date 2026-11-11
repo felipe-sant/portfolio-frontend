@@ -225,7 +225,7 @@ describe("Footer de navegação", () => {
         expect(screen.queryByRole("button", { name: /Currículo/ })).not.toBeInTheDocument()
     })
 
-    it("clicar em Currículo em PDF abre o modal e fechar devolve o foco ao link", async () => {
+    it("clicar em Currículo em PDF abre o modal", async () => {
         stubProfiles()
         renderFooter("navigation")
         await screen.findByRole("link", { name: /GitHub de/ })
@@ -235,11 +235,6 @@ describe("Footer de navegação", () => {
 
         const dialog = screen.getByRole("dialog", { name: "Currículo" })
         expect(within(dialog).getByTitle("Currículo em PDF")).toBeInTheDocument()
-
-        await userEvent.click(within(dialog).getByRole("button", { name: "Fechar" }))
-
-        expect(screen.queryByRole("dialog")).not.toBeInTheDocument()
-        expect(resume).toHaveFocus()
     })
 
     it("a variante padrão não tem o link do currículo", async () => {

@@ -3,9 +3,9 @@
         {
             "id": "01a13157-51e9-72f2-bf6d-68dd797d4b8c",
             "kind": "experience",
-            "title": "Pasante de Desarrollo Frontend",
+            "title": "Desarrollador full stack junior",
             "organization": "InCicle",
-            "details": ["Pasantía · Híbrido"],
+            "details": ["Híbrido"],
             "start": "2026-05",
             "summary": "Actuación principalmente en frontend, con incursiones en el backend, en un squad ágil, pasando por distintos módulos de producto dentro de una arquitectura de micro frontends, desde la implementación de nuevas features hasta la evolución de versiones ya existentes. Desarrollo con React, TypeScript y Node.js, integración de APIs REST y trabajo con bases de datos SQL y NoSQL. Revisión de Pull Requests, pruebas de QA y resolución de hotfixes en producción. Uso de agentes de IA para planificar, implementar y revisar las entregas, con TDD.",
             "responsibilities": [
@@ -63,7 +63,7 @@
             "id": "01a1315e-6dfb-7822-88a2-13dfaf7252a5",
             "kind": "education",
             "title": "Tecnólogo en Desarrollo de Software Multiplataforma",
-            "organization": "Fatec – Faculdade de Tecnologia do Estado de São Paulo (Jacareí)",
+            "organization": "Fatec Jacareí",
             "stage": "6.º semestre",
             "details": ["Finalización prevista en 2027"],
             "start": "2023-02",

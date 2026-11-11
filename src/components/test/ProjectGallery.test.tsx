@@ -28,6 +28,7 @@ beforeEach(() => {
 })
 
 afterEach(() => {
+    vi.useRealTimers()
     appRoot.remove()
 })
 
@@ -99,7 +100,6 @@ describe("ProjectGallery", () => {
         })
 
         expect(screen.getByText("1 de 3")).toBeInTheDocument()
-        vi.useRealTimers()
     })
 
     it("carrega a principal com prioridade alta e as miniaturas pela variante pequena e carga tardia", () => {

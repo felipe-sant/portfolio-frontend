@@ -264,7 +264,7 @@ test.describe("RF-LAY-27, NF-IA-20: versão em texto do currículo", () => {
     }
 
     for (const language of LANGUAGES) {
-        test(`o Markdown de ${language} é servido em UTF-8 e abre acentuado em nova aba`, async ({
+        test(`RF-LAY-27: o Markdown de ${language} é servido em UTF-8 e abre acentuado em nova aba`, async ({
             page
         }) => {
             await forcePdfViewer(page, true)
@@ -502,7 +502,7 @@ test.describe("RF-HOME-07, CA13, CA16: estados e layout do modal em canvas", () 
         await expectPaintedCanvas(dialog)
     })
 
-    test("CA16: em 390px os dois links do rodapé ficam dentro do modal, sem rolagem horizontal", async ({
+    test("RF-HOME-07, CA16: em 390px os dois links do rodapé ficam dentro do modal, sem rolagem horizontal", async ({
         page
     }) => {
         await forcePdfViewer(page, false)

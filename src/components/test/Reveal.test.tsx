@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
 import { act, render, screen } from "@testing-library/react"
 import Reveal from "@/components/Reveal"
+import expectNoAxeViolations from "@/testUtils/expectNoAxeViolations"
 import MOTION_STORAGE_KEY from "@/utils/motionStorageKey"
 
 type ObserverCallback = (entries: { isIntersecting: boolean }[]) => void
@@ -48,6 +49,18 @@ describe("Reveal", () => {
         act(() => callbacks[0]([{ isIntersecting: true }]))
 
         expect(wrapper).toHaveAttribute("data-reveal", "visible")
+    })
+
+    it("não tem violações de acessibilidade", async () => {
+        stubObserver()
+
+        const { container } = render(
+            <Reveal>
+                <p>Conteúdo</p>
+            </Reveal>
+        )
+
+        await expectNoAxeViolations(container)
     })
 
     it("mantém o conteúdo visível com movimento reduzido", () => {

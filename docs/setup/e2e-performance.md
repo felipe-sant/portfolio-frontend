@@ -81,6 +81,23 @@ npm run e2e:rank
 | `contact-form-desktop-light` | 41     | 127.5 s      |
 | `contact-form-desktop-dark`  | 41     | 99.1 s       |
 
+## Medição da #171 (enxugar testes)
+
+A #171 reduziu a suíte do Vitest; o E2E ficou como estava (a redução dos specs de E2E ficou fora do escopo por decisão do PO). Máquina local de 12 núcleos, com carga alta e variável de outros processos (`load average` entre 8 e 15 durante as medições finais), então o tempo de parede vale como ordem de grandeza e a contagem de testes é o resultado confiável.
+
+| Medida                    | Antes     | Depois    |
+| ------------------------- | --------- | --------- |
+| Vitest, arquivos de teste | 318       | 310       |
+| Vitest, testes            | 2802      | 2704      |
+| Cobertura, statements     | 98,97     | 98,94     |
+| Cobertura, branches       | 94,92     | 94,88     |
+| Cobertura, functions      | 99,32     | 99,23     |
+| Cobertura, lines          | 98,95     | 98,92     |
+| E2E, testes (`--list`)    | 2306      | 2306      |
+| E2E, passaram e ignorados | 2262 e 44 | 2262 e 44 |
+
+O E2E levou 13m43s na linha de base e 16m30s na medição final, com a mesma lista de testes: a diferença é a carga da máquina, não a suíte. Os IDs de requisito dos títulos de `home`, `keyboard` e `resume` mudaram e os testes passaram.
+
 ## Paralelismo
 
 `playwright.config.ts` liga `fullyParallel: true` (qualquer ambiente) e fixa `workers` em 4 no CI (o runner `ubuntu-latest` tem 4 vCPU); fora do CI `workers` fica `undefined`, o padrão do Playwright.
@@ -157,7 +174,7 @@ Mutação de verificação: mover `accessibility.spec.ts` para `independentSpecs
 ## Ganhos menores no CI
 
 - `retries` do CI vai de 2 para 1: o teste instável ainda passa no retry, mas custa metade. Fora do CI continua 0.
-- `actions/cache` guarda `~/.cache/ms-playwright` com a chave `playwright-chromium-<SO>-<versão do @playwright/test>`; o `npx playwright install --with-deps chromium` continua depois, porque instala as dependências do sistema e só baixa o navegador sem cache.
+- `actions/cache` guarda `~/.cache/ms-playwright` com a chave `playwright-chromium-<SO>-<versão do @playwright/test>`; o `npm run playwright:install` (`scripts/installChromium.ts`) continua depois e só baixa o navegador sem cache. Ele roda `npx playwright install chromium`, sem `--with-deps`: no log da falha de 11/11/2026 o `apt` só tentava baixar fontes (`fonts-*`, `xfonts-*`), as bibliotecas do navegador já vinham na imagem `ubuntu-26.04` e era o `--with-deps` que dependia do espelho do Ubuntu. Se alguma biblioteca de sistema faltar no runner, o sintoma é o navegador não abrir; a saída é voltar ao `--with-deps` ou fixar a imagem do runner. Sem o `--with-deps` também saem do runner as fontes extras (CJK, tailandesas e X11); isso só mudaria glifos desses alfabetos em imagens ou PDF gerados no CI, e o site é em pt-BR, en e es, então não afeta. São até 3 tentativas, esperando 30 s e depois 90 s entre elas, só quando a instalação falha (qualquer código de saída diferente de 0); o código da última falha reprova o passo. Cada tentativa tem limite de 4 minutos, que agora protege só o download do navegador: ao estourar, o grupo de processos do `npx` é encerrado, o log avisa o tempo excedido, a tentativa conta como falha com o código 124 e a próxima começa. As esperas somam 2 minutos e o pior caso de uma falha real continua 3 × 4 min + 30 s + 90 s = 14 minutos. Só a instalação passa por ele; uma queda de rede de 10 minutos inteira continua não coberta.
 - Os dois builds (`build:fatec` e `build:fatec:form`) seguem em passos separados: ganho de ~8 s não compensa a complicação do passo.
 
 | Execução     | Passo `Install Chromium` | Observação                                                |

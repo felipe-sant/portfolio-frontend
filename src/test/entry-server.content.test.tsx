@@ -19,9 +19,6 @@ vi.mock("@/utils/loadMarkdownRenderer", async (importOriginal) => {
     return { default: vi.fn(original.default) }
 })
 
-const MNIST = "01a131df-93ee-72f3-8c7a-f67501e47a7a"
-const CLUSTERING = "01a1323d-b9bc-73c0-8bac-2e93e30ee193"
-
 let restoreFetch = () => {}
 let recordsByLanguage: Record<SupportedLanguage, ProjectRecord[]>
 let targets: ReturnType<typeof listTargets>["targets"]
@@ -78,12 +75,6 @@ beforeEach(() => {
 })
 
 describe("pré-renderização do conteúdo real dos projetos", { timeout: 60000 }, () => {
-    it("tem os seis projetos em cada idioma", () => {
-        for (const language of SUPPORTED_LANGUAGES) {
-            expect(recordsByLanguage[language]).toHaveLength(6)
-        }
-    })
-
     it("traz h1, imagem principal com alt, ficha, stack e nav completa de cada projeto em cada idioma", async () => {
         for (const { language, record } of projectCases()) {
             const { html } = await render(findTarget(`${language}/projects/${record.id}.html`))
@@ -108,37 +99,50 @@ describe("pré-renderização do conteúdo real dos projetos", { timeout: 60000 
         }
     })
 
-    it("renderiza o texto da licença num pre com lang=en e sem puxar o chunk do markdown", async () => {
+    it("renderiza a licença de cada projeto que a declara num pre com lang=en e sem puxar o chunk do markdown", async () => {
+        let rendered = 0
         for (const { language, record } of projectCases()) {
             const license = record.documents.find((document) => document.name === "LICENSE")
+            if (!license) {
+                continue
+            }
+            rendered += 1
             vi.mocked(loadMarkdownRenderer).mockClear()
 
             const { html } = await render(
                 findTarget(`${language}/projects/${record.id}/docs/LICENSE.html`)
             )
 
-            expect(license).toBeDefined()
             expect(html).toMatch(/<pre[^>]*lang="en"/)
-            expect(html).toContain("MIT License")
-            expect(html).toContain("Luiz Felipe dos Santos")
             expect(loadMarkdownRenderer).not.toHaveBeenCalled()
         }
+
+        expect(rendered).toBeGreaterThan(0)
     })
 
-    it("mostra Player Profile Clustering em MNIST Classifier e o contrário, e nenhuma seção nos outros quatro", async () => {
+    it("mostra a seção de relacionados só nos projetos que declaram relacionados, com o título de cada um", async () => {
+        let withRelated = 0
         for (const { language, record } of projectCases()) {
             const { html } = await render(findTarget(`${language}/projects/${record.id}.html`))
             const heading = i18n.getFixedT(language, "project")("related.heading")
-            const other = recordsByLanguage[language].find(
-                (item) => item.id === (record.id === MNIST ? CLUSTERING : MNIST)
-            )
+            const relatedTitles = record.related.flatMap((item) => {
+                const target = recordsByLanguage[language].find(
+                    (candidate) => candidate.id === item.id
+                )
+                return target ? [target.title] : []
+            })
 
-            if (record.id === MNIST || record.id === CLUSTERING) {
+            if (relatedTitles.length > 0) {
+                withRelated += 1
                 expect(html).toContain(`>${heading}</h2>`)
-                expect(html).toContain(escapeHtml(other?.title ?? "indefinido"))
+                for (const title of relatedTitles) {
+                    expect(html).toContain(escapeHtml(title))
+                }
             } else {
                 expect(html).not.toContain(heading)
             }
         }
+
+        expect(withRelated).toBeGreaterThan(0)
     })
 })

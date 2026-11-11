@@ -2,6 +2,7 @@ type Sortable = {
     id: string
     title: string
     date: string
+    experiment: boolean
 }
 
 type SortName = "recent" | "oldest" | "title"
@@ -18,7 +19,14 @@ function sortProjects<Project extends Sortable>(
     const byDate = (first: Project, second: Project) =>
         first.date < second.date ? -1 : Number(first.date > second.date)
 
+    const byExperiment = (first: Project, second: Project) =>
+        Number(first.experiment) - Number(second.experiment)
+
     return projects.toSorted((first, second) => {
+        const experimentOrder = byExperiment(first, second)
+        if (experimentOrder !== 0) {
+            return experimentOrder
+        }
         if (sort === "title") {
             return byTitle(first, second) || -byDate(first, second) || byId(first, second)
         }

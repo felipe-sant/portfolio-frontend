@@ -1,5 +1,25 @@
 # portfolio-frontend
 
+## 1.3.0
+
+### Minor Changes
+
+- [#231](https://github.com/felipe-sant/portfolio-frontend/pull/231) [`2fc7290`](https://github.com/felipe-sant/portfolio-frontend/commit/2fc7290aeafe8c6c510987444052ecbc584a5a54) Thanks [@felipe-sant](https://github.com/felipe-sant)! - Separa os projetos pequenos numa seção "Experimentos" em Projetos, depois dos principais, com o campo `experiment` no conteúdo. O resumo do card aparece inteiro, sem corte em duas linhas, e as capturas de Maps, MNIST Classifier, Pedido de Namoro Irrecusável, Conversor de Unidades e Controle de Despesas são recortadas na parte útil pelo script `content:crop-captures`.
+
+### Patch Changes
+
+- [#232](https://github.com/felipe-sant/portfolio-frontend/pull/232) [`f0bb67d`](https://github.com/felipe-sant/portfolio-frontend/commit/f0bb67deb98aad11872d21a9109c58819933fdd6) Thanks [@felipe-sant](https://github.com/felipe-sant)! - Declara na Início o cargo de desenvolvedor full stack Júnior com React, TypeScript e Node.js, troca estagiário por Júnior no site e no currículo e deixa o cartão da Fatec mais baixo no celular, para os projetos em destaque aparecerem mais cedo.
+
+- [#229](https://github.com/felipe-sant/portfolio-frontend/pull/229) [`f43fb6e`](https://github.com/felipe-sant/portfolio-frontend/commit/f43fb6e174379dbd17f7db2dff15101cd0d72e21) Thanks [@felipe-sant](https://github.com/felipe-sant)! - Informações mostra a Trajetória antes da Stack e reduz "Sobre mim" a dois parágrafos nos três idiomas.
+
+- [#228](https://github.com/felipe-sant/portfolio-frontend/pull/228) [`d5f5976`](https://github.com/felipe-sant/portfolio-frontend/commit/d5f59760d8663d4298e56f50616d383ee2798ed2) Thanks [@felipe-sant](https://github.com/felipe-sant)! - Recomprime as capturas do Maps (a grande cai de 164 KB para 96 KB) e reserva a altura do bloco de canais de Contato enquanto o perfil carrega, para a tela não saltar quando o conteúdo chega.
+
+## 1.2.2
+
+### Patch Changes
+
+- [#213](https://github.com/felipe-sant/portfolio-frontend/pull/213) [`2155d85`](https://github.com/felipe-sant/portfolio-frontend/commit/2155d85952afd0ad42fbb852c5248d4f4af1dbf6) Thanks [@felipe-sant](https://github.com/felipe-sant)! - Troca a foto de perfil pela foto real, gerada pelo script `profile:photo`, e passa a reprovar EXIF e XMP nas imagens publicadas. O conteúdo exige ao menos uma captura por projeto e a foto do perfil nos três idiomas.
+
 ## 1.2.1
 
 ### Patch Changes

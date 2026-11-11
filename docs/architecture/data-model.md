@@ -196,19 +196,19 @@ formato é texto puro.
 O perfil do autor, um por idioma. Resposta de `GET /profile`. Guardado no conteúdo como está;
 nada é montado.
 
-| Campo             | Tipo              | Obrigatório | Por idioma | Regra                                                                                          | Fonte                                       |
-| ----------------- | ----------------- | ----------- | ---------- | ---------------------------------------------------------------------------------------------- | ------------------------------------------- |
-| `role`            | `string`          | Sim         | Sim        | Cargo, texto curto                                                                             | `about.md` (JSON-LD `jobTitle` de `/about`) |
-| `homeIntro`       | `string`          | Sim         | Sim        | Parágrafo do hero do Início, até cerca de 300 caracteres                                       | RF-HOME-05                                  |
-| `summary`         | `string`          | Sim         | Sim        | Parágrafo de apresentação de Informações; também `description` do JSON-LD                      | RF-ABOUT-04                                 |
-| `location`        | `Location`        | Sim         | Em parte   | Ver [`Location`](#location)                                                                    | RF-ABOUT-03, RF-CONTACT-05, RF-LAY-21       |
-| `availability`    | `Availability`    | Sim         | Em parte   | Ver [`Availability`](#availability)                                                            | D44                                         |
-| `photo`           | `ResponsiveImage` | Não         | Não        | Foto 1:1; ausente até a #42 entregar (D26). O `alt` é chave (`about:hero.photoAlt`), não campo | D26, RF-ABOUT-02                            |
-| `aboutParagraphs` | `string[]`        | Sim         | Sim        | Parágrafos de "Sobre mim", pelo menos um, na ordem do conteúdo                                 | RF-ABOUT-07                                 |
-| `workPrinciples`  | `string[]`        | Sim         | Sim        | Frases curtas de "Como eu trabalho", na ordem do conteúdo; pode ser `[]` (a coluna some)       | RF-ABOUT-12                                 |
-| `stack`           | `StackGroup[]`    | Sim         | Não        | Stack do site; ver [`StackGroup`](#stackgroup). Pode ser `[]` (a faixa e a seção somem)        | RF-HOME-13, RF-ABOUT-08                     |
-| `contact`         | `ContactChannels` | Sim         | Em parte   | Ver [`ContactChannels`](#contactchannels)                                                      | RF-CONTACT-04 a RF-CONTACT-07               |
-| `links`           | `SocialLinks`     | Sim         | Não        | Ver [`SocialLinks`](#sociallinks)                                                              | RF-LAY-24, RF-LAY-26                        |
+| Campo             | Tipo              | Obrigatório | Por idioma | Regra                                                                                                            | Fonte                                       |
+| ----------------- | ----------------- | ----------- | ---------- | ---------------------------------------------------------------------------------------------------------------- | ------------------------------------------- |
+| `role`            | `string`          | Sim         | Sim        | Cargo, texto curto                                                                                               | `about.md` (JSON-LD `jobTitle` de `/about`) |
+| `homeIntro`       | `string`          | Sim         | Sim        | Parágrafo do hero do Início, até cerca de 300 caracteres                                                         | RF-HOME-05                                  |
+| `summary`         | `string`          | Sim         | Sim        | Parágrafo de apresentação de Informações; também `description` do JSON-LD                                        | RF-ABOUT-04                                 |
+| `location`        | `Location`        | Sim         | Em parte   | Ver [`Location`](#location)                                                                                      | RF-ABOUT-03, RF-CONTACT-05, RF-LAY-21       |
+| `availability`    | `Availability`    | Sim         | Em parte   | Ver [`Availability`](#availability)                                                                              | D44                                         |
+| `photo`           | `ResponsiveImage` | Não         | Não        | Foto 1:1 (D26); o conteúdo publicado a traz nos três idiomas. O `alt` é chave (`about:hero.photoAlt`), não campo | D26, RF-ABOUT-02                            |
+| `aboutParagraphs` | `string[]`        | Sim         | Sim        | Parágrafos de "Sobre mim", pelo menos um, na ordem do conteúdo                                                   | RF-ABOUT-07                                 |
+| `workPrinciples`  | `string[]`        | Sim         | Sim        | Frases curtas de "Como eu trabalho", na ordem do conteúdo; pode ser `[]` (a coluna some)                         | RF-ABOUT-12                                 |
+| `stack`           | `StackGroup[]`    | Sim         | Não        | Stack do site; ver [`StackGroup`](#stackgroup). Pode ser `[]` (a faixa e a seção somem)                          | RF-HOME-13, RF-ABOUT-08                     |
+| `contact`         | `ContactChannels` | Sim         | Em parte   | Ver [`ContactChannels`](#contactchannels)                                                                        | RF-CONTACT-04 a RF-CONTACT-07               |
+| `links`           | `SocialLinks`     | Sim         | Não        | Ver [`SocialLinks`](#sociallinks)                                                                                | RF-LAY-24, RF-LAY-26                        |
 
 Não há campo de idiomas falados, de montagem do CV nem de visibilidade por destino: o CV é um
 arquivo próprio (D52). O status atual do Início não é campo do perfil: vem de
@@ -343,18 +343,19 @@ O projeto como aparece em listas (Projetos, destaques do Início, relacionados).
 `ProjectDetail`: `technologies` e `cover` são montados a partir de `stack` e de `images`, e os
 outros campos são os mesmos.
 
-| Campo              | Tipo              | Obrigatório | Por idioma | Regra                                                                                                                  | Fonte                         |
-| ------------------ | ----------------- | ----------- | ---------- | ---------------------------------------------------------------------------------------------------------------------- | ----------------------------- |
-| `id`               | `string`          | Sim         | Não        | UUID v7, único entre os projetos; rota `/projects/:id`                                                                 | D32, NF-DA-07                 |
-| `title`            | `string`          | Sim         | Sim        | Texto curto; `h1`, card, busca, ordenação A–Z, JSON-LD                                                                 | RF-PROJECTS-14, RF-PROJECT-02 |
-| `summary`          | `string`          | Sim         | Sim        | Uma ou duas frases, até cerca de 160 caracteres; também a descrição da página do projeto                               | RF-PROJECTS-14, `project.md`  |
-| `date`             | `string`          | Sim         | Não        | `AAAA-MM`; a tela mostra o ano e as listas ordenam por ela                                                             | `projects.md`, D43            |
-| `types`            | `ProjectType[]`   | Sim         | Não        | Pelo menos um código, sem repetição, na ordem do conteúdo; não existe `fullstack` (web com backend é `["web", "api"]`) | RF-PROJECTS-05                |
-| `category`         | `ProjectCategory` | Sim         | Não        | Um valor                                                                                                               | RF-PROJECTS-06                |
-| `featured`         | `boolean`         | Sim         | Não        | Marcação de destaque; no máximo quatro projetos com `true` (D43)                                                       | D43, RF-PROJECTS-16           |
-| `technologies`     | `string[]`        | Sim         | Não        | Montado: os `name` de `stack`, achatados na ordem dos grupos e dos itens; usado na busca                               | RF-PROJECTS-03                |
-| `cardTechnologies` | `string[]`        | Sim         | Não        | De um a três nomes, todos contidos em `technologies`, na ordem de exibição dos chips                                   | RF-PROJECTS-14, RF-HOME-18    |
-| `cover`            | `ResponsiveImage` | Não         | Não        | Montado: `large` e `small` de `images[0]`, sem `alt` (o card usa `alt=""`); ausente quando `images` é `[]`             | D26, RF-PROJECTS-14           |
+| Campo              | Tipo              | Obrigatório | Por idioma | Regra                                                                                                                              | Fonte                         |
+| ------------------ | ----------------- | ----------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------- | ----------------------------- |
+| `id`               | `string`          | Sim         | Não        | UUID v7, único entre os projetos; rota `/projects/:id`                                                                             | D32, NF-DA-07                 |
+| `title`            | `string`          | Sim         | Sim        | Texto curto; `h1`, card, busca, ordenação A–Z, JSON-LD                                                                             | RF-PROJECTS-14, RF-PROJECT-02 |
+| `summary`          | `string`          | Sim         | Sim        | Uma ou duas frases, até cerca de 160 caracteres; também a descrição da página do projeto                                           | RF-PROJECTS-14, `project.md`  |
+| `date`             | `string`          | Sim         | Não        | `AAAA-MM`; a tela mostra o ano e as listas ordenam por ela                                                                         | `projects.md`, D43            |
+| `types`            | `ProjectType[]`   | Sim         | Não        | Pelo menos um código, sem repetição, na ordem do conteúdo; não existe `fullstack` (web com backend é `["web", "api"]`)             | RF-PROJECTS-05                |
+| `category`         | `ProjectCategory` | Sim         | Não        | Um valor                                                                                                                           | RF-PROJECTS-06                |
+| `featured`         | `boolean`         | Sim         | Não        | Marcação de destaque; no máximo quatro projetos com `true` (D43)                                                                   | D43, RF-PROJECTS-16           |
+| `experiment`       | `boolean`         | Sim         | Não        | Marca o projeto pequeno que a tela mostra na seção "Experimentos", depois dos principais; não se combina com `featured` (D43, D69) | D69, RF-PROJECTS-32           |
+| `technologies`     | `string[]`        | Sim         | Não        | Montado: os `name` de `stack`, achatados na ordem dos grupos e dos itens; usado na busca                                           | RF-PROJECTS-03                |
+| `cardTechnologies` | `string[]`        | Sim         | Não        | De um a três nomes, todos contidos em `technologies`, na ordem de exibição dos chips                                               | RF-PROJECTS-14, RF-HOME-18    |
+| `cover`            | `ResponsiveImage` | Não         | Não        | Montado: `large` e `small` de `images[0]`, sem `alt` (o card usa `alt=""`); ausente quando `images` é `[]`                         | D26, RF-PROJECTS-14           |
 
 ### `ProjectDetail`
 
@@ -371,7 +372,7 @@ resposta, `related` é expandido (montado), e `technologies` e `cover` são mont
 | `stack`         | `StackGroup[]`      | Sim         | Não        | Pelo menos um grupo com pelo menos um item; `technologies` sai daqui                                                                                                                                                                                                              | RF-PROJECT-13                     |
 | `demoUrl`       | `string`            | Não         | Não        | URL `https:` absoluta; ausente, "Ver projeto ao vivo" não aparece                                                                                                                                                                                                                 | RF-PROJECT-14                     |
 | `repositoryUrl` | `string`            | Não         | Não        | URL `https://github.com/...` pública; ausente, "Ver código no GitHub" não aparece e o JSON-LD é `CreativeWork`                                                                                                                                                                    | RF-PROJECT-14, `project.md`       |
-| `images`        | `ProjectImage[]`    | Sim         | Em parte   | De zero a cinco, ordenadas, todas 16:9; a primeira é a capa (`cover`) e a imagem principal                                                                                                                                                                                        | D48, RF-PROJECT-05                |
+| `images`        | `ProjectImage[]`    | Sim         | Em parte   | De uma a cinco no conteúdo publicado (o componente aceita zero), ordenadas, todas 16:9; a primeira é a capa (`cover`) e a imagem principal                                                                                                                                        | D48, RF-PROJECT-05                |
 | `documents`     | `ProjectDocument[]` | Sim         | Não        | Lista de documentos do projeto (D55): `README.md` primeiro, os outros na ordem do conteúdo; a mesma lista nos três idiomas. Vem embutida para a navegação entre documentos não depender de outro pedido; o conteúdo de cada um vem de `GET /projects/{id}/documents/{documentId}` | D55, RF-PROJECT-15, RF-PROJECT-20 |
 | `related`       | `RelatedProject[]`  | Sim         | Em parte   | Até três, na ordem do conteúdo, cada um com id de outro projeto existente, sem repetição; pode ser `[]` (a seção some). No conteúdo, `{ id }`                                                                                                                                     | RF-PROJECT-28                     |
 | `updatedAt`     | `string`            | Não         | Não        | `AAAA-MM-DD`; `dateModified` do JSON-LD e `lastmod` do `sitemap.xml`                                                                                                                                                                                                              | NF-IA-15, `project.md`            |
@@ -866,7 +867,7 @@ Quando o backend existir, ele aplica as mesmas regras na escrita.
   não anterior a `start`.
 - **Enums:** todo valor de `types`, `category`, `status`, `kind`, `StackGroup.category` e
   `ProjectDocument.format` está no enum; `types` com pelo menos um código e sem repetição.
-- **Projeto:** no máximo quatro com `featured` (D43); `cardTechnologies` com um a três nomes, todos
+- **Projeto:** `experiment` booleano obrigatório, e `featured` e `experiment` não se combinam no mesmo projeto (D43, D69); no máximo quatro com `featured` (D43); `cardTechnologies` com um a três nomes, todos
   em `technologies`; `stack` com pelo menos um item, sem categoria repetida e na ordem do enum;
   `summary` com até cerca de 160 caracteres; `related` com até três; `demoUrl` e `repositoryUrl`
   `https:` absolutas.

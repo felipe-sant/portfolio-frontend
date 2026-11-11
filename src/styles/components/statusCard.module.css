@@ -38,3 +38,13 @@
     color: var(--text-weak);
     font-size: var(--text-caption);
 }
+
+@media (max-width: 639px) {
+    .card {
+        padding: var(--space-4);
+    }
+
+    .highlight {
+        font-size: var(--text-body-sm);
+    }
+}

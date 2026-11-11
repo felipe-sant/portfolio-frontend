@@ -5,6 +5,8 @@ description: Como criar endpoints de API neste projeto React com RTK Query, segu
 
 # RTK Query Endpoint Scaffold
 
+Leia antes de agir: `docs/architecture/frontend.md` (seções "Estado", "Camada de dados local (v1)" e "Módulo `src/store/`") e `docs/architecture/api-contract.md`.
+
 Dado vindo do servidor é **estado de servidor**: vive no cache do RTK Query, não em `useState` nem em slice. A base fica em `src/store/api.ts` (`createApi` com `reducerPath: "api"`, `baseUrl` de `@/services/http/apiUrl`, `Accept-Language` no `prepareHeaders`, `tagTypes` e `endpoints: () => ({})`, sem endpoint próprio) e é registrada no `rootReducer` e no middleware da store; endpoint entra por `api.injectEndpoints`, nunca direto em `api.ts`. Os trechos abaixo usam um domínio `items` hipotético para ilustrar o formato. O `get`/`post` de `src/services/http/` é `fetch` cru para o que não passa pelo RTK Query; o RTK Query não o usa como `baseQuery`.
 
 | Peça                        | Caminho                                       | Se faltar                                    |
@@ -188,7 +190,7 @@ Teste de um endpoint injetado só no próprio teste (sem arquivo de domínio) us
 - [ ] Consumo por hook de página em `src/pages/hooks/`, com `isLoading` e erro tratados
 - [ ] Teste em `test/` com `fetch` stubado, `VITE_API_URL` absoluta e `renderWithStore`
 - [ ] Sem comentário no código; identificadores em inglês; texto de UI por chave
-- [ ] `npm run lint`, `npm run build` e `npm test -- --run` passando
+- [ ] `npm run typecheck`, `npm run lint` e `npm test -- --run <arquivo de teste alterado>` passando (`build` e `test:cov` rodam só no fim da feature, ver `executor`)
 
 ## Ao remover ou renomear um endpoint
 

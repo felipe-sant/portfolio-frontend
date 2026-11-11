@@ -13,19 +13,25 @@ import stubContentFetch from "@/testUtils/stubContentFetch"
 
 const FEATURED_TITLE = "Projeto Destaque Pré-renderizado"
 
-const EXPECTED_BY_FILE: Record<string, { heading: string; content: string; language: string }> = {
+const EXPECTED_BY_FILE: Record<
+    string,
+    { heading: string; content: string; language: string; stack?: string }
+> = {
     "pt-BR.html": {
-        heading: "Desenvolvedor full stack em TypeScript",
+        heading: "Desenvolvedor full stack Júnior",
+        stack: "React, TypeScript e Node.js",
         content: "Trabalho em produtos web de ponta a ponta.",
         language: "pt-BR"
     },
     "en.html": {
-        heading: "Full stack developer in TypeScript",
+        heading: "Junior full stack developer",
+        stack: "React, TypeScript and Node.js",
         content: "Trabalho em produtos web de ponta a ponta.",
         language: "en"
     },
     "es.html": {
-        heading: "Desarrollador full stack en TypeScript",
+        heading: "Desarrollador full stack junior",
+        stack: "React, TypeScript y Node.js",
         content: "Trabalho em produtos web de ponta a ponta.",
         language: "es"
     },
@@ -104,6 +110,18 @@ function buildHomeFiles() {
     return files
 }
 
+function stubProjectsWithExperiments() {
+    const files = buildHomeFiles()
+
+    for (const language of ["pt-BR", "en", "es"]) {
+        files[`content/${language}/projects.json`] = {
+            items: buildProjectRecords(5, (index) => ({ experiment: index >= 3 }))
+        }
+    }
+
+    stubContentFetch(files)
+}
+
 function stubTenProjects() {
     const files = buildHomeFiles()
 
@@ -153,6 +171,9 @@ describe("render", () => {
 
             expect(result.html).toMatch(new RegExp(`<h1[^>]*>${expected.heading}</h1>`))
             expect(result.html).toContain(expected.content)
+            if (expected.stack) {
+                expect(result.html).toMatch(new RegExp(`</h1><p[^>]*>${expected.stack}</p>`))
+            }
             if (file === "404.html") {
                 expect(result.html).not.toContain("contato@example.com")
             } else {
@@ -263,6 +284,21 @@ describe("render", () => {
                 expect(html).toMatch(/Carregar mais|Load more|Cargar más/)
             }
         )
+
+        it.each([
+            ["pt-BR/projects.html", "Experimentos"],
+            ["en/projects.html", "Experiments"],
+            ["es/projects.html", "Experimentos"]
+        ])("traz o h2 da seção e os cards experimentais em %s", async (file, heading) => {
+            stubProjectsWithExperiments()
+
+            const { html } = await renderProjects(file)
+
+            expect(html).toMatch(new RegExp(`<h2[^>]*>${heading}</h2>`))
+            expect(html.indexOf(`>${heading}</h2>`)).toBeGreaterThan(html.indexOf("Projeto 3"))
+            expect(html).toMatch(/<h3[^>]*><a[^>]*>Projeto 5<\/a>/)
+            expect(html).toMatch(/<h3[^>]*><a[^>]*>Projeto 4<\/a>/)
+        })
 
         it.each([
             ["pt-BR/projects.html", "9 de 10 projetos"],

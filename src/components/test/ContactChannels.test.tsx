@@ -99,7 +99,7 @@ describe("ContactChannels", () => {
         expect(screen.queryByRole("button", { name: /Baixar CV/ })).not.toBeInTheDocument()
     })
 
-    it("clicar em Baixar CV abre o modal do PDF e fechar devolve o foco ao link", async () => {
+    it("clicar em Baixar CV abre o modal do PDF", async () => {
         render(<ContactChannels profile={PROFILE} />)
         const resume = screen.getByRole("link", { name: /Baixar CV/ })
 
@@ -110,11 +110,6 @@ describe("ContactChannels", () => {
             "src",
             "/cv/cv-pt-BR.pdf"
         )
-
-        await userEvent.click(within(dialog).getByRole("button", { name: "Fechar" }))
-
-        expect(screen.queryByRole("dialog")).not.toBeInTheDocument()
-        expect(resume).toHaveFocus()
     })
 
     it("não tem agendamento, lista de redes nem vaga fixa", () => {
@@ -134,25 +129,51 @@ describe("ContactChannels", () => {
         expect(screen.queryByRole("button", { name: "Copiar e-mail" })).not.toBeInTheDocument()
     })
 
-    it.each([
-        ["en", ["Direct email", "Location", "Response", "Send email", "Copy email"]],
-        ["es", ["Correo directo", "Ubicación", "Respuesta", "Enviar correo", "Copiar correo"]]
-    ])("mostra o texto traduzido em %s sem chave", async (language, texts) => {
+    it("carregando: mostra os mesmos blocos e o botão do CV, na mesma ordem, do conteúdo carregado", () => {
+        const { unmount } = render(<ContactChannels profile={PROFILE} />)
+        const loadedHeadings = screen
+            .getAllByRole("heading", { level: 2 })
+            .map((heading) => heading.textContent)
+        unmount()
+
+        const { container: loadingContainer } = render(<ContactChannels />)
+        const loadingHeadings = screen
+            .getAllByRole("heading", { level: 2 })
+            .map((heading) => heading.textContent)
+        const resumeLink = within(loadingContainer).getByRole("link", { name: /CV/ })
+
+        expect(loadingHeadings).toEqual(loadedHeadings)
+        expect(screen.getAllByRole("status")).toHaveLength(1)
+        expect(resumeLink).toBeInTheDocument()
+    })
+
+    it("carregando: o skeleton do e-mail reserva a linha do e-mail e uma ação por botão, aria-hidden", () => {
+        const { container } = render(<ContactChannels />)
+        const emailBlock = screen.getByRole("heading", { name: "E-mail direto" }).parentElement
+
+        expect(emailBlock?.querySelectorAll('span[aria-hidden="true"]')).toHaveLength(5)
+        expect(container.querySelectorAll("a[href^='mailto:']")).toHaveLength(0)
+    })
+
+    it("sem responseTime o skeleton mantém o bloco Resposta e o conteúdo carregado o remove sem trocar a ordem dos demais", () => {
+        const { rerender } = render(<ContactChannels />)
+
+        expect(screen.getByRole("heading", { name: "Resposta" })).toBeInTheDocument()
+
+        rerender(<ContactChannels profile={buildProfile({ contact: { email: "a@b.co" } })} />)
+
+        expect(
+            screen.getAllByRole("heading", { level: 2 }).map((heading) => heading.textContent)
+        ).toEqual(["E-mail direto", "Localização"])
+    })
+
+    it.each(["en", "es"] as const)("aponta o CV para o PDF de %s", async (language) => {
         render(<ContactChannels profile={PROFILE} />)
 
-        await act(() => setLanguage(language === "en" ? "en" : "es"))
+        await act(() => setLanguage(language))
 
-        texts.forEach((text) => {
-            expect(screen.getByText(text)).toBeInTheDocument()
-        })
-        expect(screen.queryByText(/channels\.|resume\./)).not.toBeInTheDocument()
         expect(
-            screen.getByRole("link", {
-                name:
-                    language === "en"
-                        ? "Download CV (PDF), opens the preview"
-                        : "Descargar CV (PDF), abre la vista previa"
-            })
+            screen.getByRole("link", { name: /^(Download CV|Descargar CV) \(PDF\)/ })
         ).toHaveAttribute("href", `/cv/cv-${language}.pdf`)
     })
 

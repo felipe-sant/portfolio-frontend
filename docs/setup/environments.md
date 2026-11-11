@@ -129,7 +129,7 @@ Projetos.
 Três workflows em `.github/workflows/`, descritos aqui porque os arquivos não têm comentários. A regra de incremento e o fluxo estão em [`roadmap.md`](../product/roadmap.md#versionamento).
 
 - **`changeset-check.yml`** (`pull_request` para a `staging`): roda `npx changeset status --since=origin/staging` e falha sem changeset. O job é pulado quando o head é `changeset-release/staging` (PR de versão) ou `main` (retorno depois de hotfix, cujo changeset já foi consumido; conflito em `CHANGELOG.md` e `package.json` nesse retorno se resolve à mão).
-- **`version.yml`** (push na `staging` e `workflow_dispatch`): `changesets/action@v2` com `version-script: npm run changeset:version`, que aplica `changeset version` e sincroniza o `package-lock.json`. Abre ou atualiza o PR `changeset-release/staging` → `staging` com título e commit `Chore :see_no_evil: Atualiza versão e CHANGELOG`. Com só changesets vazios, a versão não muda. O PR aberto com `GITHUB_TOKEN` não dispara CI; a validação completa acontece no push na `staging` depois do merge. Exige "Allow GitHub Actions to create and approve pull requests" ligado em Settings > Actions > General.
+- **`version.yml`** (push na `staging` e `workflow_dispatch`): `changesets/action@v2` com `version-script: npm run changeset:version`, que aplica `changeset version` e sincroniza o `package-lock.json`. Abre ou atualiza o PR `changeset-release/staging` → `staging` com título e commit `Chore :see_no_evil: Atualiza versão e CHANGELOG`. Com só changesets vazios, a versão não muda. O PR aberto com `GITHUB_TOKEN` não dispara CI; a validação completa acontece no push na `staging` depois do merge. Exige "Allow GitHub Actions to create and approve pull requests" ligado em Settings > Actions > General. Como a action não permite trocar o texto padrão do corpo do PR (que fala em publicar no npm), um passo seguinte, quando ela devolve `pr-number`, lê o corpo, o corrige com `scripts/replaceVersionPrBoilerplate.ts` (via `scripts/prepareVersionPrBody.ts`) e só chama `gh pr edit` se o corpo mudou; a seção `# Releases` fica intacta.
 - **`release.yml`** (push na `main`, sem `workflow_dispatch`): `scripts/prepareRelease.ts` lê a versão do `package.json`, as tags e o `CHANGELOG.md`. Com versão `>= 1.0.0` e sem a tag `vX.Y.Z`, `gh release create` cria a tag e o Release na `main` com a seção do `CHANGELOG.md`; com `0.x` ou tag existente não faz nada. Para `1.x`, o job `publish-fatec` chama `fatec-pages.yml` com a tag e o `FATEC_PAGES_TOKEN`; `2.0.0` em diante não publica. Tag e Release criados por engano: `gh release delete <tag> --cleanup-tag`.
 - **Hotfix:** o changeset `patch` e o `npm run changeset:version` rodam na `hotfix/*`, antes do PR para a `main`; o push cria a tag normalmente.
 - **CHANGELOG com link:** `.changeset/config.json` usa `@changesets/changelog-github` (`repo` `felipe-sant/portfolio-frontend`), que consulta a API do GitHub para linkar PR, commit e autor em cada entrada. No `version.yml`, o `changesets/action` já exporta o `GITHUB_TOKEN`; fora do CI (o `npm run changeset:version` do hotfix), exporte `GITHUB_TOKEN` (por exemplo `GITHUB_TOKEN=$(gh auth token) npm run changeset:version`) e tenha rede, senão o comando falha. Só as entradas geradas a partir daí têm o formato novo.
@@ -178,6 +178,21 @@ Variável de uso só do pipeline, no Environment `staging`:
 | Variável        | Valor                         | Para que serve                                            |
 | --------------- | ----------------------------- | --------------------------------------------------------- |
 | `STAGING_ALIAS` | `felipe-sant-beta.vercel.app` | Domínio que o job `staging` aponta para o deploy de teste |
+
+### Convenção do Vite e configuração de build
+
+A convenção de variáveis de ambiente é a do Vite: só variáveis com prefixo `VITE_`
+são expostas ao código do cliente, e a leitura é `import.meta.env.VITE_ALGO`, nunca
+`process.env.REACT_APP_ALGO`. A convenção é
+materializada em `.env.example` (na raiz, com `VITE_API_URL` como exemplo) e na augmentação de
+`ImportMetaEnv`/`ImportMeta` em `src/vite-env.d.ts`.
+
+`BASE_PATH` (sem prefixo `VITE_`) é lida só em `vite.config.ts`, por `scripts/resolveBase.ts`, e define o `base`
+do Vite (`/` por padrão); o código do cliente só vê `import.meta.env.BASE_URL`. `scripts/` tem o alias
+`@scripts/*` (em `tsconfig.node.json` e `resolve.alias`) para os testes de `scripts/test/`.
+
+A configuração de build fica em `vite.config.ts` na raiz (plugin React + bloco `test` do Vitest),
+e a entrada da aplicação é o `index.html` da raiz, que carrega `/src/entry-client.tsx` como módulo.
 
 ## Segredos
 

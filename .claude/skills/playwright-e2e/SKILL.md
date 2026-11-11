@@ -5,6 +5,8 @@ description: Como escrever, rodar e depurar teste E2E neste projeto com Playwrig
 
 # Playwright E2E
 
+Leia antes de agir: `docs/setup/testing.md` (regras do E2E: listas de spec, `uiTexts`, instabilidade) e `docs/setup/e2e-performance.md`.
+
 Esta skill é dona dos arquivos de `e2e/`. Teste de unidade e de componente (Vitest, jsdom) está na skill `vitest-specialist`.
 
 ## 1. Como rodar

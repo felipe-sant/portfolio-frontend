@@ -53,6 +53,34 @@ describe("sortProjects", () => {
         expect(ids("title")).toEqual(["a", "f", "c", "b", "d", "e"])
     })
 
+    describe("com experimentos", () => {
+        const newestExperiment = buildProjectRecord({
+            id: "0192f1a0-0000-7000-8000-000000000010",
+            title: "Aaa",
+            date: "2026-12",
+            experiment: true
+        })
+        const oldestExperiment = buildProjectRecord({
+            id: "0192f1a0-0000-7000-8000-000000000011",
+            title: "Zzz",
+            date: "2020-01",
+            experiment: true
+        })
+        const mixed = [oldestExperiment, old, newestExperiment, alpha, accent]
+
+        it("põe os experimentos depois dos principais em recent, com data decrescente em cada grupo", () => {
+            expect(ids("recent", mixed)).toEqual(["a", "c", "d", "0", "1"])
+        })
+
+        it("põe os experimentos depois dos principais em oldest, com data crescente em cada grupo", () => {
+            expect(ids("oldest", mixed)).toEqual(["d", "c", "a", "1", "0"])
+        })
+
+        it("põe os experimentos depois dos principais em title, com título em cada grupo", () => {
+            expect(ids("title", mixed)).toEqual(["a", "c", "d", "0", "1"])
+        })
+    })
+
     it("não altera a lista original", () => {
         const list = [bravo, alpha]
 

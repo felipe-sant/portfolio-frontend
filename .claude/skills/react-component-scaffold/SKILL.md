@@ -5,6 +5,8 @@ description: Como criar um componente reutilizável neste projeto React, seguind
 
 # React Component Scaffold
 
+Leia antes de agir: `docs/architecture/components.md` (catálogo, props e armadilhas dos componentes existentes) e a regra de componente em "Onde fica cada coisa" do `.claude/CLAUDE.md`.
+
 **Tem rota própria → é página** (use a skill `react-page-scaffold`). **É reaproveitado dentro de outras telas e não tem rota → é componente**, e esta skill é a certa. Estrutura de página compartilhada (header/footer em volta de um `<Outlet />`) é `src/layouts/`, que não é assunto desta skill.
 
 Um componente é composto por **duas peças que precisam existir juntas** — mais o teste, que é obrigatório e está na terceira linha da tabela. O estilo **não** fica ao lado do componente; o teste fica em `src/components/test/`.
@@ -198,7 +200,7 @@ Componente reutilizável recebe dado por prop. Quando precisar ler a store, use 
 - [ ] Elemento semântico correto, com nome acessível traduzido (`aria-label={t(...)}` em controle só com ícone, `alt` em imagem)
 - [ ] `src/components/test/<Nome>.test.tsx` criado, cobrindo render e interação e afirmando o texto em `pt-BR` (ver `vitest-specialist`)
 - [ ] Sem comentário no código, import interno com `@/` e nunca `../`
-- [ ] `npm run typecheck`, `npm run lint`, `npm test -- --run` e `npm run build` passando
+- [ ] `npm run typecheck`, `npm run lint` e `npm test -- --run <arquivo de teste alterado>` passando (`build` e `test:cov` rodam só no fim da feature, ver `executor`)
 - [ ] O componente foi visto renderizado (`npm run dev`) — o build passar não prova que o estilo foi aplicado
 
 ## Ao remover ou renomear um componente

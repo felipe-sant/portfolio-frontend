@@ -116,16 +116,15 @@ Conferido na `staging` em `afa717b`:
 
 Com a issue dona (resumo no [roadmap](roadmap.md#issues-de-implementação)):
 
-| O que falta                                                                              | Issue                   |
-| ---------------------------------------------------------------------------------------- | ----------------------- |
-| Foco visível global                                                                      | #31                     |
-| Link "Pular para o conteúdo", `main` único como alvo e foco no `h1` a cada troca de rota | #33                     |
-| Foco preso e devolvido no menu (PI1), na lightbox e no modal de trajetória               | #33, #61, #37           |
-| `aria-live` da busca e dos filtros, do "Copiar e-mail" e do formulário                   | #35; #60 e #38; #38     |
-| Teste automático com `axe-core`                                                          | #50                     |
-| Teste ponta a ponta no navegador                                                         | #55                     |
-| Movimento da faixa de stack desligado pela engrenagem (D28, D68)                         | #34                     |
-| Texto alternativo das capturas e da foto                                                 | #42, com o campo da #10 |
+| O que falta                                                                              | Issue               |
+| ---------------------------------------------------------------------------------------- | ------------------- |
+| Foco visível global                                                                      | #31                 |
+| Link "Pular para o conteúdo", `main` único como alvo e foco no `h1` a cada troca de rota | #33                 |
+| Foco preso e devolvido no menu (PI1), na lightbox e no modal de trajetória               | #33, #61, #37       |
+| `aria-live` da busca e dos filtros, do "Copiar e-mail" e do formulário                   | #35; #60 e #38; #38 |
+| Teste automático com `axe-core`                                                          | #50                 |
+| Teste ponta a ponta no navegador                                                         | #55                 |
+| Movimento da faixa de stack desligado pela engrenagem (D28, D68)                         | #34                 |
 
 ### Achados
 
@@ -146,7 +145,7 @@ Pontos do protótipo e do design que viram falha se forem copiados como estão. 
 | O painel do menu é `role="dialog"` com `aria-modal`, mas o botão que fecha fica fora dele                     | 4.1.2, 2.1.2   | Painel como disclosure (`aria-expanded` no botão), resto da página `inert` enquanto aberto, foco circulando entre botão e painel, Esc devolve ao botão       | #33       |
 | O botão "Ampliar imagem" tem o mesmo nome para toda imagem                                                    | 2.4.6          | Nome com a posição e o texto alternativo da imagem                                                                                                           | #61       |
 | Rótulos de seção escritos em caixa alta no texto ("PROJETOS EM DESTAQUE")                                     | 1.3.1          | Texto em caixa normal no JSON; caixa alta por `text-transform`                                                                                               | #33 a #38 |
-| Placeholder de foto com `role="img"` e "(placeholder)" no nome                                                | 1.1.1          | Com D26 a foto é real; o placeholder de projeto sem captura é decorativo (`aria-hidden`)                                                                     | #37, #42  |
+| Placeholder de foto com `role="img"` e "(placeholder)" no nome                                                | 1.1.1          | Com D26 a foto é real; o placeholder de projeto sem captura é decorativo (`aria-hidden`)                                                                     | #37       |
 
 O menu vira disclosure com `inert`, e não diálogo com `aria-modal`, porque o botão que fecha fica no cabeçalho, fora do painel, e `aria-modal` o esconderia do leitor de tela.
 
@@ -217,7 +216,7 @@ A região de anúncio existe no DOM desde a primeira renderização, vazia, para
 | Logo (D02) e ícones (D15)                       | `aria-hidden`; o nome vem do link ou do `aria-label` do botão                                                                                                     |
 | Imagem ampliada (lightbox)                      | O mesmo `alt` da captura                                                                                                                                          |
 
-Exigência para a #10: cada imagem do modelo de dados tem `alt` (e legenda, se houver) traduzido por idioma. A #58 e a #59 preenchem, e a #42 confere.
+Exigência para a #10: cada imagem do modelo de dados tem `alt` (e legenda, se houver) traduzido por idioma. A #58 e a #59 preenchem, e a #42 conferiu.
 
 ## Movimento
 
@@ -298,7 +297,7 @@ Cada item tem um ID estável e a forma de verificação entre colchetes: `[teste
 
 ### Início
 
-- [ ] `A11Y-IN01` — `h1` "Desenvolvedor full stack em TypeScript" (D24) [teste]
+- [ ] ~~`A11Y-IN01` — `h1` "Desenvolvedor full stack em TypeScript" (D24) [teste]~~ (substituído por `A11Y-IN09`)
 - [ ] `A11Y-IN02` — Cada seção tem heading [teste]
 - [ ] `A11Y-IN03` — Cards de destaque em lista, com um link por card, nome do link com o nome do projeto e imagem com `alt=""` [teste]
 - [ ] `A11Y-IN04` — "Ver todos" tem o nome "Ver todos os projetos" (2.4.9) [teste]
@@ -306,6 +305,7 @@ Cada item tem um ID estável e a forma de verificação entre colchetes: `[teste
 - [ ] `A11Y-IN06` — O botão "Reduzir movimento" da engrenagem desliga o movimento da faixa, com `aria-pressed` e rótulo nos três idiomas (D28, D68) [teste] [e2e]
 - [ ] `A11Y-IN07` — Faixa estática, quebrando linha, com movimento reduzido [navegador]
 - [ ] `A11Y-IN08` — "Baixar CV (PDF)" no nome do link [teste]
+- [ ] `A11Y-IN09` — `h1` com o cargo "Desenvolvedor full stack Júnior" (D24), seguido da linha da stack em `<p>` fora do `h1` [teste]
 
 ### Projetos
 

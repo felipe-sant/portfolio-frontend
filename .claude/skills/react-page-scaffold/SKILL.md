@@ -5,6 +5,8 @@ description: Como criar uma página nova neste projeto React, seguindo a conven�
 
 # React Page Scaffold
 
+Leia antes de agir: `docs/architecture/code-structure.md` (seção "Páginas e hooks"), `docs/architecture/frontend.md` (rotas, pré-renderização, SEO por tela) e a seção "Implementação" de `docs/screens/<tela>.md` das telas parecidas.
+
 Toda página deste projeto é composta por **quatro peças que precisam existir juntas**. Estilo e rota faltando produzem falha silenciosa, que o compilador não pega; o namespace é a única peça com rede de segurança, porque a tipagem do i18next transforma namespace ou chave inexistente em erro de `npm run typecheck`.
 
 | Peça                  | Caminho                                                                                            | Se faltar                                                                                  |
@@ -251,7 +253,7 @@ Sempre `<Link to="/rota">` ou `useNavigate()` do `react-router-dom`. Nunca `<a h
 - [ ] Navegação interna usando `<Link>`, não `<a href>`
 - [ ] Metadados declarados com `t("meta.title")`/`t("meta.description")` se a página precisar substituir os placeholders do `index.html`
 - [ ] Valores de cor/fonte vindos das custom properties de `global.css`
-- [ ] `npm run typecheck`, `npm run build` e `npm test -- --run src/i18n/test/resources.test.ts` passando
+- [ ] `npm run typecheck`, `npm run lint` e `npm test -- --run` do arquivo de teste alterado e de `src/i18n/test/resources.test.ts` passando (`build` e `test:cov` rodam só no fim da feature, ver `executor`)
 - [ ] A rota foi aberta no navegador e renderiza a página certa (o build passar não prova isso)
 
 ## Ao remover ou renomear uma página

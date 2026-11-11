@@ -220,7 +220,7 @@ seguem as mesmas regras (requisito R2).
   `--font-mono` com `--ls-label`/`--ls-label-wide`. Nome de tecnologia mantém a grafia oficial
   (`TypeScript`).
 - **Títulos:** substantivos curtos, sem verbo e sem ponto final ("Projetos", "Sobre mim"). A única
-  frase completa em corpo grande é a chamada do Início, "Desenvolvedor full stack em TypeScript",
+  frase completa em corpo grande é a chamada do Início, "Desenvolvedor full stack Júnior",
   também sem ponto (D24).
 - **Botões:** verbo no infinitivo + objeto ("Ver projetos", "Baixar CV"); nunca "Clique aqui" nem
   "Saiba mais".
