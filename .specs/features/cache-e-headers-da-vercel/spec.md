@@ -1,7 +1,7 @@
 # Spec: cache e headers da Vercel
 
 > **Tipo:** `feature` <br />
-> **Status:** `em-revisao` <br />
+> **Status:** `aprovada` <br />
 > **Issue:** `#194`, `#197`, `#163` <br />
 > **Criado em:** `11-11-2026`
 
@@ -83,7 +83,7 @@ IDs novos propostos para `docs/product/non-functional-requirements.md`: **NF-HO-
 **Staging (pré-requisito das três)**
 
 - [ ] CA-01 (NF-HO-07, NF-HO-08): a expressão `jq` do job `staging` do `deploy.yml` acrescenta o `X-Robots-Tag:
-    noindex` ao fim de `headers` sem descartar nenhuma regra; aplicada ao `vercel.json`, o resultado mantém
+noindex` ao fim de `headers` sem descartar nenhuma regra; aplicada ao `vercel.json`, o resultado mantém
       `cleanUrls`, `trailingSlash` e todas as regras de `headers` do arquivo, na mesma ordem, mais a regra de `noindex`.
       Teste: `scripts/test/vercelConfig.test.ts`.
 
@@ -135,7 +135,7 @@ IDs novos propostos para `docs/product/non-functional-requirements.md`: **NF-HO-
       (`src/components/ResumeModal.tsx`) abre o PDF da própria origem num `<iframe>`.
 - [ ] CA-14 (NF-HO-08): a mesma regra define `Content-Security-Policy-Report-Only` com
       `default-src 'self'; script-src 'self' <hashes>; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:;
-    font-src 'self'; connect-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'`.
+font-src 'self'; connect-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'`.
 - [ ] CA-15 (NF-HO-08): os `<hashes>` de `script-src` são exatamente os `sha256-<base64>` do conteúdo de cada
       `<script>` inline sem `type` do `index.html`, com `%BASE_URL%` trocado por `/` (o `base` da Vercel). Um script
       inline acrescentado, removido ou reformatado no `index.html` sem atualizar o `vercel.json` falha o teste.
@@ -196,6 +196,10 @@ IDs novos propostos para `docs/product/non-functional-requirements.md`: **NF-HO-
 - **Prettier no `index.html`:** reformatar um script inline muda o hash; o teste de CA-15 pega isso no CI.
 
 ## Questões em aberto
+
+**Respondidas pelo PO em 11-11-2026 (registradas pelo Orc), com a spec aprovada:** Q-1 sim (`immutable` nas fontes); Q-2
+sim (30 dias em `/images`); Q-3 sim (T4 entra e o changeset é `patch`); Q-4 sim (`Test :test_tube: [#197]`); Q-5 fora
+desta spec, em issue própria aberta pelo PO.
 
 - **Q-1 (PO): fontes sem hash com `immutable` por um ano?** Recomendação: sim, como a #194 pede, com a regra
   documentada "fonte trocada muda de nome" (as fontes vêm do Fontsource e mudam raramente). Alternativa: tratar
