@@ -2,6 +2,7 @@ import { createInstance } from "i18next"
 import { initReactI18next } from "react-i18next"
 import FALLBACK_LANGUAGE from "@/i18n/fallbackLanguage"
 import getLanguageFromPath from "@/i18n/getLanguageFromPath"
+import NAMESPACES from "@/i18n/namespaces"
 import resources from "@/i18n/resources"
 import SUPPORTED_LANGUAGES from "@/i18n/supportedLanguages"
 import removeBasePath from "@/utils/removeBasePath"
@@ -15,7 +16,7 @@ if (typeof document !== "undefined") {
 }
 
 void i18n.init({
-    resources,
+    resources: structuredClone(resources),
     lng:
         typeof window === "undefined"
             ? undefined
@@ -23,7 +24,7 @@ void i18n.init({
     supportedLngs: SUPPORTED_LANGUAGES,
     fallbackLng: FALLBACK_LANGUAGE,
     defaultNS: "common",
-    ns: ["common", "home", "notFound", "error", "projects", "project", "about", "contact"],
+    ns: [...NAMESPACES],
     initAsync: false,
     interpolation: {
         escapeValue: false

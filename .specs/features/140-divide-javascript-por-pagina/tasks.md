@@ -77,7 +77,7 @@ Regras para o `executor`: nenhum comentário em código (nem `//`, `/* */`, JSDo
 
         Veredito: necessários e suficientes.
 
-- [ ] T4 — Separar os textos por idioma e criar `loadLanguage` (só acréscimo, sem trocar o carregamento ainda)
+- [x] T4 — Separar os textos por idioma e criar `loadLanguage` (só acréscimo, sem trocar o carregamento ainda)
     - **Arquivo(s):** `src/i18n/languageBundles/ptBR.ts`, `src/i18n/languageBundles/en.ts`, `src/i18n/languageBundles/es.ts`, `src/i18n/resources.ts`, `src/i18n/loadLanguage.ts`, `src/i18n/test/loadLanguage.test.ts`, `src/i18n/test/resources.test.ts`, e o tipo do conjunto de um idioma em `src/types/i18n/LanguageResources.types.ts` se mais de um arquivo precisar dele
     - **Depende de:** T3
     - **Testes (escritos antes, RED):**
@@ -89,7 +89,18 @@ Regras para o `executor`: nenhum comentário em código (nem `//`, `/* */`, JSDo
         - PERF-140-12: `src/i18n/test/resumeModalTexts.test.ts` continua passando, ajustado só no import se for preciso. Arquivo: o próprio
     - **Gate:** `npm run typecheck && npm run lint && npm test -- --run src/i18n && npm test -- --run --project prerender`
     - **Feito quando:** o gate passa. `i18n.ts` continua com `resources` nesta tarefa (a troca é em T5), então o app segue funcionando igual e o commit não fica vermelho.
-    - **Evidência:**
+    - **Evidência:** gate verde (typecheck, lint, 136 testes de `src/i18n`, 21 do projeto `prerender`). RED visto: `Failed to resolve import "@/i18n/languageBundleImporters"`; depois, `expected [] to deeply equal [ 'common', ... ]` revelou que o `i18n.init({ resources })` guardava a referência dos objetos dos idiomas e o `removeResourceBundle` os mutava, então `i18n.ts` passou a iniciar com `structuredClone(resources)` nesta tarefa (some em T5). A lista de namespaces virou `src/i18n/namespaces.ts`, passada ao `ns` como cópia (`[...NAMESPACES]`), porque o i18next tira o namespace removido do array `ns` por `splice`. Desvio do plano: em vez de `vi.doMock` do módulo do idioma, as importações ficam num objeto próprio (`src/i18n/languageBundleImporters.ts`, um `import()` explícito por idioma, para o Vite gerar um chunk por idioma), e o teste conta e falha a importação com `vi.spyOn` nele, restaurado no `afterEach`. O teste de composição de `resources` foi escrito depois da recomposição e não ficou vermelho.
+
+        | Critério                                                                    | `arquivo:linha` e asserção                                                                                                                                                             | Coberto? |
+        | --------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- |
+        | PERF-140-06 (borda): oito namespaces de `es` depois de removidos            | `src/i18n/test/loadLanguage.test.ts:31` `expect(spanishNamespacesLoaded()).toEqual(NAMESPACES)`; `:32` `expect(NAMESPACES).toHaveLength(8)`                                            | sim      |
+        | PERF-140-06: mesma promessa, uma importação                                 | `src/i18n/test/loadLanguage.test.ts:43` `expect(second).toBe(first)`; `:44` `expect(importer).toHaveBeenCalledTimes(1)`                                                                | sim      |
+        | PERF-140-06: idioma presente não é importado                                | `src/i18n/test/loadLanguage.test.ts:52` `expect(importer).not.toHaveBeenCalled()`                                                                                                      | sim      |
+        | Borda: falha rejeita e a chamada seguinte tenta de novo                     | `src/i18n/test/loadLanguage.test.ts:61` `await expect(loadLanguage("es")).rejects.toThrow("rede")`; `:64` `expect(importer).toHaveBeenCalledTimes(2)`                                  | sim      |
+        | PERF-140-09: `resources` com os três idiomas compostos de `languageBundles` | `src/i18n/test/resources.test.ts:32` `expect(resources).toEqual({ "pt-BR": ptBR, en, es })`; `:33` `expect(Object.keys(resources["pt-BR"]).toSorted()).toEqual(NAMESPACES.toSorted())` | sim      |
+        | PERF-140-12: chaves iguais nos três idiomas                                 | `src/i18n/test/resources.test.ts:43` `expect(collectPaths(namespaces)).toEqual(collectPaths(resources["pt-BR"]))`; `resumeModalTexts.test.ts` sem mudança                              | sim      |
+
+        Veredito: necessários e suficientes.
 
 - [ ] T5 — Trocar o carregamento: `i18n.ts` sem recursos, idioma carregado antes de trocar (`createLanguageLoader`, `setLanguage`) e antes de montar (`mountClient`), recursos estáticos no servidor e pré-carga nos testes
     - **Arquivo(s):** `src/i18n/i18n.ts`, `src/entry-server.tsx`, `src/setupTests.ts`, `src/routers/createLanguageLoader.ts`, `src/i18n/setLanguage.ts`, `src/prerender/mountClient.tsx`, `src/routers/test/createLanguageLoader.test.ts`, `src/i18n/test/setLanguage.test.ts`, `src/i18n/test/i18n.server.test.ts`, `src/i18n/test/i18n.test.ts`, `src/prerender/test/mountClient.test.tsx`. Tudo num commit só: separar estas mudanças deixaria o app mostrando chaves entre um commit e outro.
