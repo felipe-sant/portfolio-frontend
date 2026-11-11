@@ -131,6 +131,18 @@ roda `npx lint-staged`, que, conforme `.lintstagedrc.json`, aplica `oxlint --fix
 `prettier --write` nos `.ts`/`.tsx` staged e só `prettier --write` nos
 `.css`/`.json`/`.md`/`.yml`/`.html`, bloqueando o commit se sobrar erro de lint não corrigível.
 
+### Proteções de IA (hooks do Claude Code)
+
+Além do Husky, `.claude/settings.json` liga hooks que valem só para sessões do Claude Code (não rodam
+no CI nem no Git). `.claude/hooks/guardBash.ts` (`PreToolUse` em `Bash`) bloqueia `git commit` e
+`git push` com a branch `staging` ou `main` ativa, `git push` com destino `staging` ou `main`,
+`git push --force`/`-f` em qualquer branch (`--force-with-lease` é permitido) e `rm` recursivo.
+`.claude/hooks/formatFile.ts` (`PostToolUse` em `Edit|Write|MultiEdit`) roda `prettier --write` e, em
+`.ts`/`.tsx`, `oxlint` só no arquivo editado. Nenhum hook roda teste automatizado. Os scripts rodam
+com `tsx` (`npx tsx --tsconfig tsconfig.node.json`) e a lógica fica em `scripts/claudeHooks/`, testada
+em `scripts/test/`. Para contornar, o PO desativa o hook em `.claude/settings.local.json`; o agente não
+altera `settings.json` para se liberar. Detalhe em [`.claude/README.md`](../../.claude/README.md).
+
 ## Referência de comandos (lista do agente)
 
 Lista dos scripts `npm` com o comentário de cada um, como o agente de IA a consulta. A tabela acima é a versão para humanos; a descrição das convenções de teste está em [`testing.md`](testing.md).

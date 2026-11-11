@@ -16,7 +16,7 @@
         },
         "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo"
     },
-    "include": ["vite.config.ts", "scripts"],
+    "include": ["vite.config.ts", "scripts", ".claude/hooks"],
     "exclude": [
         "scripts/test/listTargets.test.ts",
         "scripts/test/listSitemapEntries.test.ts",
