@@ -99,4 +99,9 @@ describe("fatec-pages.yml", () => {
         expect(checkout).toContain("ref: refs/tags/${{ inputs.tag }}")
         expect(checkout).toContain("persist-credentials: false")
     })
+
+    it("prepara o Chromium do job de build por npm run playwright:install", () => {
+        expect(buildJob).toMatch(/- name: Install Chromium\n\s+run: npm run playwright:install\n/)
+        expect(buildJob).not.toContain("npx playwright install")
+    })
 })
