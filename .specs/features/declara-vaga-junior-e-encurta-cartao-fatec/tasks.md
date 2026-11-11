@@ -67,7 +67,17 @@ T5 (README e `index.html`), T6 (docs) e T7 (CV e PDFs) editam arquivos diferente
         - se duas linhas não for alcançável só com CSS (risco da spec, Desenho b)), parar, anotar as medidas e devolver ao PO; não mudar texto nem contrato
     - **Gate:** `npm run typecheck && npm run lint && npm test -- --run scripts/test/specClassification.test.ts` e, com `build:fatec` feito, `npx playwright test e2e/home.spec.ts --project=mobile-light`
     - **Feito quando:** o gate passa; a Evidência traz a posição do `h2` e as alturas antes e depois a 375 e 390px, e uma captura; verificação manual (aparência, tela Início, 375/390/640/1280px, três idiomas, dois temas) anotada; o desktop não mudou
-    - **Evidência:** ...
+    - **Evidência (BLOQUEADA, aguardando o PO; nenhum CSS alterado):** linha de base medida em `origin/staging` (build `build:fatec` isolado, Chromium, `prefers-reduced-motion: reduce`, altura 800px; 375 e 390px dão o mesmo resultado porque o padding da página é `clamp(1.25rem, 4vw, 3rem)` e fica no mínimo nos dois). Altura do destaque (`line-height` 29.7px a 18px) e `y` do `h2` "Projetos em destaque":
+
+| Idioma | Cartão "Trabalhando como" (destaque) | Cartão "Cursando" (destaque, altura do cartão) | `y` do h2 |
+| ------ | ------------------------------------ | ---------------------------------------------- | --------- |
+| pt-BR | 59.4px (2 linhas), cartão 155px | 118.8px (4 linhas), cartão 214px | 1093 |
+| en | 29.7px (1 linha), cartão 125px | 148.4px (5 linhas), cartão 244px | 1120 |
+| es | 29.7px (1 linha), cartão 125px | 118.8px (4 linhas), cartão 214px | 1091 |
+
+A 640px: cartão "Cursando" 273px em pt-BR e en e 244px em es; `y` do h2 885, 885 e 862. A 1280px: 184px nos três, `y` 955.
+
+Teste de viabilidade em cima do build atual (T1 a T3, com a linha da stack no hero; `y` atual 1038/1125/1096), injetando CSS no celular: com padding `--space-4` e destaque `--text-body-md` (16px) o "Cursando" fica com 4 linhas em pt-BR e es (105.6px) e 5 em en (132px); com `--text-body-sm` (14px) fica com 4 linhas nos três idiomas (92.4px, linha de 23.1px) e o `y` do h2 vai a 1021/1079/1079. Nenhuma das duas chega a duas linhas; só uma fonte bem menor que `--text-body-sm` chegaria perto, o que a spec proíbe, e mudar texto ou contrato também não é autorizado. CA5 (no máximo duas linhas) não é atingível só com CSS. Tarefa parada e devolvida ao PO.
 
 - [x] T5 [P] — README (resumo e capturas) e `index.html`
     - **Arquivo(s):** `README.md` (linha 3: "Personal portfolio of Luiz Felipe dos Santos, a Junior full stack developer working with React, TypeScript and Node.js."), `index.html` (`<title>` "Luiz Felipe dos Santos · Desenvolvedor full stack Júnior" e `<meta name="description">` igual a `home.meta.description` de `pt-BR`), `docs/design/assets/readme/home-light.png` e `home-dark.png` (`npm run readme:images`, até 300 KB cada; exige `build:fatec` e `preview:fatec`), `scripts/test/readme.test.ts` (afirma o resumo), teste que compara `index.html` com `src/locales/pt-BR/home.json` ao lado dos testes de `index.html` já existentes
