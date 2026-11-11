@@ -1,9 +1,27 @@
+import { readdirSync, readFileSync } from "node:fs"
+import { join, relative } from "node:path"
 import { afterEach, describe, expect, it, vi } from "vitest"
 import i18n from "@/i18n/i18n"
 import LANGUAGE_BUNDLE_IMPORTERS from "@/i18n/languageBundleImporters"
 import loadLanguage from "@/i18n/loadLanguage"
 import NAMESPACES from "@/i18n/namespaces"
 import resources from "@/i18n/resources"
+
+const SOURCE_ROOT = join(process.cwd(), "src")
+const STATIC_TEXT_IMPORT =
+    /^import (?!type )[^"]*from "(@\/i18n\/resources|@\/i18n\/addStaticResources|@\/i18n\/languageBundles\/|@\/locales\/)/m
+
+function listSources(directory: string): string[] {
+    return readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
+        const path = join(directory, entry.name)
+
+        if (entry.isDirectory()) {
+            return entry.name === "test" ? [] : listSources(path)
+        }
+
+        return /\.tsx?$/.test(entry.name) ? [path] : []
+    })
+}
 
 function removeSpanish() {
     for (const namespace of NAMESPACES) {
@@ -63,5 +81,22 @@ describe("loadLanguage", () => {
 
         expect(importer).toHaveBeenCalledTimes(2)
         expect(spanishNamespacesLoaded()).toEqual(NAMESPACES)
+    })
+
+    it("só o servidor, os testes e os próprios pacotes importam os textos de forma estática", () => {
+        const importers = listSources(SOURCE_ROOT)
+            .filter((path) => STATIC_TEXT_IMPORT.test(readFileSync(path, "utf-8")))
+            .map((path) => relative(SOURCE_ROOT, path))
+            .toSorted()
+
+        expect(importers).toEqual([
+            "entry-server.tsx",
+            "i18n/addStaticResources.ts",
+            "i18n/languageBundles/en.ts",
+            "i18n/languageBundles/es.ts",
+            "i18n/languageBundles/ptBR.ts",
+            "i18n/resources.ts",
+            "setupTests.ts"
+        ])
     })
 })

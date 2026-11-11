@@ -3,7 +3,6 @@ import { initReactI18next } from "react-i18next"
 import FALLBACK_LANGUAGE from "@/i18n/fallbackLanguage"
 import getLanguageFromPath from "@/i18n/getLanguageFromPath"
 import NAMESPACES from "@/i18n/namespaces"
-import resources from "@/i18n/resources"
 import SUPPORTED_LANGUAGES from "@/i18n/supportedLanguages"
 import removeBasePath from "@/utils/removeBasePath"
 
@@ -16,7 +15,8 @@ if (typeof document !== "undefined") {
 }
 
 void i18n.init({
-    resources: structuredClone(resources),
+    resources: {},
+    partialBundledLanguages: true,
     lng:
         typeof window === "undefined"
             ? undefined

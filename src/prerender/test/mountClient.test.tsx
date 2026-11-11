@@ -7,6 +7,7 @@ import { afterEach, beforeEach, describe, expect, inject, it, vi } from "vitest"
 import { act, screen, within } from "@testing-library/react"
 import composePage from "@scripts/prerender/composePage"
 import i18n from "@/i18n/i18n"
+import NAMESPACES from "@/i18n/namespaces"
 import mountClient from "@/prerender/mountClient"
 import buildProfile from "@/testUtils/buildProfile"
 import parseUntyped from "@/testUtils/parseUntyped"
@@ -25,7 +26,11 @@ vi.mock("@/utils/loadMarkdownRenderer", async (importOriginal) => {
     return { default: vi.fn(original.default) }
 })
 
-const transitionState = vi.hoisted(() => ({ active: false, hydratedInTransition: [] as boolean[] }))
+const transitionState = vi.hoisted(() => ({
+    active: false,
+    hydratedInTransition: [] as boolean[],
+    languageAtRender: [] as (string | undefined)[]
+}))
 
 vi.mock("react", async (importOriginal) => {
     const original = await importOriginal<typeof import("react")>()
@@ -45,13 +50,20 @@ vi.mock("react", async (importOriginal) => {
 
 vi.mock("react-dom/client", async (importOriginal) => {
     const original = await importOriginal<typeof import("react-dom/client")>()
+    const { default: i18nInstance } = await import("@/i18n/i18n")
 
     return {
         ...original,
         hydrateRoot: vi.fn<typeof original.hydrateRoot>((...args) => {
             transitionState.hydratedInTransition.push(transitionState.active)
+            transitionState.languageAtRender.push(i18nInstance.resolvedLanguage)
 
             return original.hydrateRoot(...args)
+        }),
+        createRoot: vi.fn<typeof original.createRoot>((...args) => {
+            transitionState.languageAtRender.push(i18nInstance.resolvedLanguage)
+
+            return original.createRoot(...args)
         })
     }
 })
@@ -125,6 +137,14 @@ function hydrationWarnings(spy: MockInstance<typeof console.warn>) {
     )
 }
 
+function removeLanguagesOtherThanPtBR() {
+    for (const language of ["en", "es"]) {
+        for (const namespace of NAMESPACES) {
+            i18n.removeResourceBundle(language, namespace)
+        }
+    }
+}
+
 let rootElement: HTMLElement
 let mountedRoots: Root[] = []
 
@@ -138,6 +158,7 @@ beforeEach(() => {
     vi.mocked(startTransition).mockClear()
     vi.mocked(hydrateRoot).mockClear()
     transitionState.hydratedInTransition = []
+    transitionState.languageAtRender = []
     rootElement = document.createElement("div")
     document.body.appendChild(rootElement)
     stubContentFetch({
@@ -172,6 +193,17 @@ describe("mountClient sem caminho pré-renderizado", () => {
         expect(
             await screen.findByRole("heading", { name: "Junior full stack developer" })
         ).toBeInTheDocument()
+    })
+
+    it("carrega en antes do createRoot quando o caminho não tem prefixo válido", async () => {
+        removeLanguagesOtherThanPtBR()
+        window.history.pushState({}, "", "/fr")
+
+        await mount()
+        await settle()
+
+        expect(transitionState.languageAtRender).toEqual(["en"])
+        expect(document.documentElement.lang).toBe("en")
     })
 
     it("não usa startTransition ao renderizar com createRoot", async () => {
@@ -216,6 +248,22 @@ describe("mountClient com HTML pré-renderizado sem bloco de dados", () => {
 })
 
 describe("mountClient com caminho pré-renderizado", () => {
+    it("carrega o idioma do caminho antes de hidratar quando ele não estava na instância", async () => {
+        removeLanguagesOtherThanPtBR()
+        injectPrerendered("en.html", rootElement)
+        window.history.pushState({}, "", "/en")
+        const heading = screen.getByRole("heading", { name: "Junior full stack developer" })
+        const consoleSpies = spyOnConsole()
+
+        await mount()
+        await settle()
+
+        expect(transitionState.languageAtRender).toEqual(["en"])
+        expect(screen.getByRole("heading", { name: "Junior full stack developer" })).toBe(heading)
+        expect(consoleSpies.error).not.toHaveBeenCalled()
+        expect(hydrationWarnings(consoleSpies.warn)).toEqual([])
+    })
+
     it("hidrata dentro de startTransition e devolve o Root da hidratação", async () => {
         injectPrerendered("en.html", rootElement)
         await i18n.changeLanguage("en")
