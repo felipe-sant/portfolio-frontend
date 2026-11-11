@@ -108,6 +108,7 @@ export default defineConfig(({ command, mode, isSsrBuild }) => {
                     "scripts/prerender.ts",
                     "scripts/prepareRelease.ts",
                     "scripts/preparePromotion.ts",
+                    "scripts/installChromium.ts",
                     "scripts/previewFatec.ts",
                     "scripts/publishFatecDocs.ts",
                     "src/setupTests.ts",
