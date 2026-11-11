@@ -136,13 +136,13 @@ Regras para o `executor`: nenhum comentário em código (nem `//`, `/* */`, JSDo
     - **Feito quando:** o relatório tem (1) a tabela "antes" da análise de 11/11/2026 (`index` 68,0 KB, `api` 31,5 KB, `paths` 27,6 KB, `resolveSupportedLanguage` 17,1 KB, cerca de 145 KB brotli no total, com o conteúdo de cada um e a nota de que os nomes vêm do primeiro módulo); (2) a tabela "depois" medida neste build com o mesmo método (brotli do `zlib` do Node em qualidade padrão sobre os chunks de entrada de `dist/assets/`), mostrando o chunk do modal e os três chunks de idioma fora da entrada (CA4); (3) o que saiu e o que ficou, com o motivo; (4) a fonte Bricolage (77 KB, pré-carregada no `index.html`, `font-display: swap` em `src/styles/global.css`, sem efeito no TBT, subset do eixo `opsz` como recomendação); (5) a causa do TBT (hidratação) e a mudança para `startTransition`; (6) o método de medição do TBT da spec (CA2), incluindo a nota do WSL sobre subir o Chromium à parte com `--remote-debugging-port` e passar `--port` ao Lighthouse, e a exigência de máquina ociosa; (7) um espaço para o resultado do QA (antes e depois, mediana de pelo menos 5 rodadas alternadas).
     - **Evidência:** gate verde (`build:fatec`, `check:chunk` com markdown 66.938, `pdfjs` 151.023 e worker 395.650 bytes gzip, e `prettier --check`). A linha de base foi remedida em `6c10b34` com o mesmo método e reproduz a análise (145,0 KB brotli, KB de 1.000 bytes); nesta branch a entrada tem 136,9 KB, sem texto de nenhum idioma nem o `ResumeModal` (CA4), com `ptBR` 3,4, `en` 3,0, `es` 3,4 e `ResumeModal` 1,7 KB fora dela. Link em `docs/setup/development.md`, junto do parágrafo do `check:chunk`. A tabela do TBT fica para o `qa` (CA2).
 
-- [ ] T8 — Verificação completa
+- [x] T8 — Verificação completa
     - **Arquivo(s):** nenhum (só verificação)
     - **Depende de:** todas as tarefas anteriores
     - **Testes (escritos antes, RED):** não se aplica
     - **Gate:** `npm run build && npm run check:chunk && npm run test:cov` (única rodada pesada da feature)
     - **Feito quando:** o gate passa (CA3, CA5, CA6 na parte de unidade).
-    - **Evidência:**
+    - **Evidência:** `npm run build:fatec` (roda o `npm run build` com a base do Pages) verde, `check:chunk` verde (markdown 66.938, `pdfjs` 151.023 e worker 395.650 bytes gzip, sem `react-markdown` na entrada), `typecheck` e `lint` verdes, `test:cov -- --maxWorkers=2` com 327 arquivos e 2925 testes passando e cobertura de 98,8% em linhas e 94,9% em ramos.
 
 ## Fora do `executor`
 
