@@ -110,10 +110,10 @@ De onde vem cada texto (nada escrito à mão no construtor):
 
 E-mail (#212, NF-IA-06)
 
-- [ ] **CA9** — Nenhum dos quatro `llms*.txt` contém `profile.contact.email` de nenhum idioma, nem qualquer texto no formato de endereço de e-mail.
-- [ ] **CA10** — No perfil de cada `llms-full*.txt`, a linha do e-mail vira `- <common:navigation.contact do idioma>: <URL /<idioma>/contact>` ("Contato", "Contact", "Contacto"). A chave `email` sai de `LlmsLabels` e de `LLMS_LABELS`, porque fica sem uso (R2).
-- [ ] **CA11** — No currículo embutido em cada `llms-full*.txt`, toda ocorrência de `profile.contact.email` do idioma vira a URL de Contato do mesmo idioma. O resto do currículo fica igual ao `.md`, e o endereço vem do dado, nunca escrito no gerador.
-- [ ] **CA12** — `public/cv/cv-*.md`, `profile.json` e a página de Contato não mudam.
+- [x] **CA9** — Nenhum dos quatro `llms*.txt` contém `profile.contact.email` de nenhum idioma, nem qualquer texto no formato de endereço de e-mail.
+- [x] **CA10** — No perfil de cada `llms-full*.txt`, a linha do e-mail vira `- <common:navigation.contact do idioma>: <URL /<idioma>/contact>` ("Contato", "Contact", "Contacto"). A chave `email` sai de `LlmsLabels` e de `LLMS_LABELS`, porque fica sem uso (R2).
+- [x] **CA11** — No currículo embutido em cada `llms-full*.txt`, toda ocorrência de `profile.contact.email` do idioma vira a URL de Contato do mesmo idioma. O resto do currículo fica igual ao `.md`, e o endereço vem do dado, nunca escrito no gerador.
+- [x] **CA12** — `public/cv/cv-*.md`, `profile.json` e a página de Contato não mudam.
 
 `robots.txt` (#210, NF-IA-12)
 

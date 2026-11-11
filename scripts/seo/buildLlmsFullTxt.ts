@@ -1,5 +1,7 @@
+import buildPageUrl from "@scripts/seo/buildPageUrl"
 import buildSeoUrl from "@scripts/seo/buildSeoUrl"
 import LLMS_LABELS from "@scripts/seo/llmsLabels"
+import ROUTES from "@/routers/paths"
 import type SupportedLanguage from "@/types/language/SupportedLanguage.types"
 import type LlmsLabels from "@/types/seo/LlmsLabels.types"
 import type SeoContent from "@/types/seo/SeoContent.types"
@@ -15,7 +17,11 @@ function buildBlock(heading: string, lines: string[]): string[] {
     return lines.length === 0 ? [] : [`${heading}\n\n${lines.join("\n")}`]
 }
 
-function buildProfile(language: SeoLanguageContent, labels: LlmsLabels): string {
+function buildProfile(
+    language: SeoLanguageContent,
+    labels: LlmsLabels,
+    contactUrl: string
+): string {
     const { profile } = language
     const location = [profile.location.city, profile.location.region, profile.location.detail]
         .filter((part) => part !== undefined && part !== "")
@@ -23,7 +29,7 @@ function buildProfile(language: SeoLanguageContent, labels: LlmsLabels): string 
     const facts = [
         `${labels.location}: ${location}`,
         `${labels.availability}: ${profile.availability.label}`,
-        `${labels.email}: ${profile.contact.email}`,
+        `${language.labels.navigation.contact}: ${contactUrl}`,
         ...(profile.contact.responseTime
             ? [`${labels.responseTime}: ${profile.contact.responseTime.label}`]
             : []),
@@ -95,14 +101,17 @@ function buildResume(
     content: SeoLanguageContent,
     labels: LlmsLabels,
     origin: string,
-    base: string
+    base: string,
+    contactUrl: string
 ): string {
     const links = buildList([
         `${labels.resumeMarkdown}: ${buildSeoUrl(origin, base, `cv/cv-${language}.md`)}`,
         `${labels.resumePdf}: ${buildSeoUrl(origin, base, `cv/cv-${language}.pdf`)}`
     ])
 
-    return [`## ${labels.resume}`, links, content.resume.trimEnd()].join("\n\n")
+    const resume = content.resume.trimEnd().replaceAll(content.profile.contact.email, contactUrl)
+
+    return [`## ${labels.resume}`, links, resume].join("\n\n")
 }
 
 function buildProject(
@@ -159,12 +168,13 @@ function buildLlmsFullTxt(
 ): string {
     const languageContent = content[language]
     const labels = LLMS_LABELS[language]
+    const contactUrl = buildPageUrl(origin, base, ROUTES.contact, language)
     const sections = [
         `# ${languageContent.labels.authorName}\n\n> ${languageContent.profile.summary}`,
-        buildProfile(languageContent, labels),
+        buildProfile(languageContent, labels, contactUrl),
         buildStack(languageContent, labels),
         buildTimeline(languageContent, labels),
-        buildResume(language, languageContent, labels, origin, base),
+        buildResume(language, languageContent, labels, origin, base, contactUrl),
         ...languageContent.projects.map((project) => buildProject(project, languageContent, labels))
     ]
 

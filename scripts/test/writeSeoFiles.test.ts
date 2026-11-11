@@ -139,4 +139,22 @@ describe("writeSeoFiles", () => {
             expect(llms).toContain(content[language].profile.summary)
         )
     })
+
+    it("nenhum llms*.txt gerado traz endereço de e-mail", async () => {
+        const targets = await listRealTargets()
+
+        writeSeoFiles({
+            publicDirectory: "public",
+            outputDirectory: output,
+            origin: FATEC_SITE_URL,
+            base: FATEC_BASE_PATH,
+            targets
+        })
+
+        FILES.filter((file) => file.startsWith("llms")).forEach((file) =>
+            expect(readFileSync(join(output, file), "utf-8")).not.toMatch(
+                /[A-Za-z0-9._+-]+@[A-Za-z0-9-]+\.[a-z]{2,}/
+            )
+        )
+    })
 })

@@ -21,6 +21,12 @@ const AI_CRAWLERS = [
     "CCBot"
 ]
 const FULL_FILES = ["llms-full.txt", "llms-full.en.txt", "llms-full.es.txt"]
+const FULL_FILE_BY_LANGUAGE: Record<string, string> = {
+    "pt-BR": "llms-full.txt",
+    en: "llms-full.en.txt",
+    es: "llms-full.es.txt"
+}
+const EMAIL_PATTERN = /[A-Za-z0-9._+-]+@[A-Za-z0-9-]+\.[a-z]{2,}/
 
 function countDocumentsBesidesReadme(): number {
     return readRawProjects("pt-BR").reduce((total, project) => {
@@ -31,6 +37,10 @@ function countDocumentsBesidesReadme(): number {
                 .length
         )
     }, 0)
+}
+
+function contactUrl(language: string): string {
+    return `${ORIGIN}${FATEC_BASE_PATH}${language}/contact`
 }
 
 function toRelativePath(url: string): string {
@@ -180,18 +190,15 @@ test.describe("arquivos para buscadores e IA", () => {
     test("NF-IA-06, NF-IA-07: cada llms-full está no idioma do arquivo e traz o CV e todos os projetos", async ({
         request
     }) => {
-        const files: Record<string, string> = {
-            "pt-BR": "llms-full.txt",
-            en: "llms-full.en.txt",
-            es: "llms-full.es.txt"
-        }
         for (const language of LANGUAGES) {
-            const body = await (await request.get(files[language])).text()
+            const body = await (await request.get(FULL_FILE_BY_LANGUAGE[language])).text()
             for (const extension of ["md", "pdf"]) {
                 expect(body).toContain(`${ORIGIN}${FATEC_BASE_PATH}cv/cv-${language}.${extension}`)
             }
             const resume = await (await request.get(`cv/cv-${language}.md`)).text()
-            expect(body).toContain(resume.trim())
+            expect(body).toContain(
+                resume.trim().replaceAll(readProfile(language).email, contactUrl(language))
+            )
             for (const project of readRawProjects(language)) {
                 expect(body).toContain(String(project.title))
                 expect(body).toContain(String(project.summary))
@@ -201,6 +208,23 @@ test.describe("arquivos para buscadores e IA", () => {
         const english = await (await request.get("llms-full.en.txt")).text()
         for (const project of portuguese) {
             expect(english).not.toContain(String(project.summary))
+        }
+    })
+
+    test("NF-IA-06: nenhum llms*.txt traz o e-mail, e cada llms-full liga a Contato do idioma", async ({
+        request
+    }) => {
+        const emails = LANGUAGES.map((language) => readProfile(language).email)
+        for (const file of ["llms.txt", ...FULL_FILES]) {
+            const body = await (await request.get(file)).text()
+            expect(body, file).not.toMatch(EMAIL_PATTERN)
+            for (const email of emails) {
+                expect(body, file).not.toContain(email)
+            }
+        }
+        for (const language of LANGUAGES) {
+            const body = await (await request.get(FULL_FILE_BY_LANGUAGE[language])).text()
+            expect(body).toContain(contactUrl(language))
         }
     })
 })

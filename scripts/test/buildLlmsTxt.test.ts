@@ -150,4 +150,10 @@ describe("buildLlmsTxt", () => {
 
         listLinkedUrls().forEach((url) => expect(known.has(url)).toBe(true))
     })
+
+    it("não traz o e-mail de nenhum idioma", () => {
+        SUPPORTED_LANGUAGES.forEach((language) =>
+            expect(text).not.toContain(content[language].profile.contact.email)
+        )
+    })
 })

@@ -6,11 +6,22 @@ import readSeoContent from "@scripts/seo/readSeoContent"
 import FATEC_BASE_PATH from "@scripts/fatecBasePath"
 import FATEC_SITE_URL from "@scripts/fatecSiteUrl"
 import SUPPORTED_LANGUAGES from "@/i18n/supportedLanguages"
+import type SupportedLanguage from "@/types/language/SupportedLanguage.types"
+import type SeoContent from "@/types/seo/SeoContent.types"
 
 const content = readSeoContent("public")
+const EMAIL_PATTERN = /[A-Za-z0-9._+-]+@[A-Za-z0-9-]+\.[a-z]{2,}/
 
-function build(language: (typeof SUPPORTED_LANGUAGES)[number]): string {
-    return buildLlmsFullTxt(language, content, FATEC_SITE_URL, FATEC_BASE_PATH)
+function build(language: SupportedLanguage, source: SeoContent = content): string {
+    return buildLlmsFullTxt(language, source, FATEC_SITE_URL, FATEC_BASE_PATH)
+}
+
+function contactUrl(language: SupportedLanguage): string {
+    return buildSeoUrl(FATEC_SITE_URL, FATEC_BASE_PATH, `/${language}/contact`)
+}
+
+function withResume(language: SupportedLanguage, resume: string): SeoContent {
+    return { ...content, [language]: { ...content[language], resume } }
 }
 
 describe("buildLlmsFullTxt", () => {
@@ -104,7 +115,11 @@ describe("buildLlmsFullTxt", () => {
         (language) => {
             const text = build(language)
 
-            expect(text).toContain(content[language].resume.trimEnd())
+            expect(text).toContain(
+                content[language].resume
+                    .trimEnd()
+                    .replaceAll(content[language].profile.contact.email, contactUrl(language))
+            )
             ;["md", "pdf"].forEach((format) =>
                 expect(text).toContain(
                     buildSeoUrl(FATEC_SITE_URL, FATEC_BASE_PATH, `cv/cv-${language}.${format}`)
@@ -119,5 +134,37 @@ describe("buildLlmsFullTxt", () => {
         const readme = project.documents.find((document) => document.name === "README.md")
 
         expect(text).toContain(`### README.md\n\n${readme?.text.trimEnd()}\n\n---`)
+    })
+
+    it.each(SUPPORTED_LANGUAGES)("%s não traz e-mail de nenhum idioma", (language) => {
+        const text = build(language)
+
+        SUPPORTED_LANGUAGES.forEach((other) =>
+            expect(text).not.toContain(content[other].profile.contact.email)
+        )
+        expect(text).not.toMatch(EMAIL_PATTERN)
+    })
+
+    it.each(SUPPORTED_LANGUAGES)(
+        "%s traz no perfil a linha de Contato com a URL do idioma",
+        (language) => {
+            expect(build(language)).toContain(
+                `\n- ${content[language].labels.navigation.contact}: ${contactUrl(language)}\n`
+            )
+        }
+    )
+
+    it("troca todas as ocorrências do e-mail no currículo pela URL de Contato", () => {
+        const { email } = content.en.profile.contact
+        const text = build("en", withResume("en", `# CV\n\n${email}\n\nEmail: ${email}\n`))
+
+        expect(text).toContain(`# CV\n\n${contactUrl("en")}\n\nEmail: ${contactUrl("en")}`)
+        expect(text).not.toContain(email)
+    })
+
+    it("embute o currículo sem mudança quando ele não traz o e-mail", () => {
+        const resume = "# CV\n\nSem endereço aqui."
+
+        expect(build("es", withResume("es", `${resume}\n`))).toContain(`\n\n${resume}\n`)
     })
 })
