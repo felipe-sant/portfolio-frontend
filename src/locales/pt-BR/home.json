@@ -1,10 +1,11 @@
 {
     "meta": {
         "title": "Portfólio · Luiz Felipe dos Santos",
-        "description": "Portfólio de Luiz Felipe dos Santos, desenvolvedor full stack em TypeScript: projetos, trajetória e contato."
+        "description": "Portfólio de Luiz Felipe dos Santos, desenvolvedor full stack Júnior com React, TypeScript e Node.js: projetos, trajetória e contato."
     },
-    "heading": "Desenvolvedor full stack em TypeScript",
+    "heading": "Desenvolvedor full stack Júnior",
     "hero": {
+        "stack": "React, TypeScript e Node.js",
         "viewProjects": "Ver projetos"
     },
     "status": {

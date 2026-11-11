@@ -44,7 +44,7 @@ describe("routes", () => {
         expect(
             await screen.findByRole(
                 "heading",
-                { name: "Desenvolvedor full stack em TypeScript" },
+                { name: "Desenvolvedor full stack Júnior" },
                 { timeout: 5000 }
             )
         ).toBeInTheDocument()
@@ -53,9 +53,9 @@ describe("routes", () => {
     })
 
     it.each([
-        ["/pt-BR", "Desenvolvedor full stack em TypeScript", "pt-BR"],
-        ["/en", "Full stack developer in TypeScript", "en"],
-        ["/es", "Desarrollador full stack en TypeScript", "es"]
+        ["/pt-BR", "Desenvolvedor full stack Júnior", "pt-BR"],
+        ["/en", "Junior full stack developer", "en"],
+        ["/es", "Desarrollador full stack junior", "es"]
     ])("renderiza a Início em %s com o idioma do prefixo", async (path, heading, language) => {
         renderRoutes([path])
 
@@ -123,7 +123,7 @@ describe("routes", () => {
     it("leva o foco ao h1 e marca Contato como página atual ao navegar pelo cabeçalho", async () => {
         const user = userEvent.setup()
         renderRoutes(["/pt-BR"])
-        await screen.findByRole("heading", { name: "Desenvolvedor full stack em TypeScript" })
+        await screen.findByRole("heading", { name: "Desenvolvedor full stack Júnior" })
 
         const link = within(screen.getByRole("banner")).getByRole("link", { name: "Contato" })
         await user.click(link)
@@ -237,20 +237,20 @@ describe("routes", () => {
 
         expect(router.state.location.pathname).toBe("/en")
         expect(
-            await screen.findByRole("heading", { name: "Full stack developer in TypeScript" })
+            await screen.findByRole("heading", { name: "Junior full stack developer" })
         ).toBeInTheDocument()
     })
 
     it("troca o texto ao navegar de /en para /es sem reload", async () => {
         const router = renderRoutes(["/en"])
-        await screen.findByRole("heading", { name: "Full stack developer in TypeScript" })
+        await screen.findByRole("heading", { name: "Junior full stack developer" })
 
         await act(async () => {
             await router.navigate("/es")
         })
 
         expect(
-            await screen.findByRole("heading", { name: "Desarrollador full stack en TypeScript" })
+            await screen.findByRole("heading", { name: "Desarrollador full stack junior" })
         ).toBeInTheDocument()
         expect(document.documentElement.lang).toBe("es")
     })
@@ -322,7 +322,7 @@ describe("routes", () => {
             const router = renderRoutes(["/pt-BR?lng=es"])
 
             await screen.findByRole("heading", {
-                name: "Desenvolvedor full stack em TypeScript"
+                name: "Desenvolvedor full stack Júnior"
             })
 
             expect(router.state.location.pathname).toBe("/pt-BR")

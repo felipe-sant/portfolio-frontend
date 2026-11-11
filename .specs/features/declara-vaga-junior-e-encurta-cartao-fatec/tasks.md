@@ -16,7 +16,7 @@ T5 (README e `index.html`), T6 (docs) e T7 (CV e PDFs) editam arquivos diferente
 
 ## Tarefas
 
-- [ ] T1 — Cargo e linha da stack no hero (`home.json`, `Home.page.tsx`) com os testes que o `h1` quebra
+- [x] T1 — Cargo e linha da stack no hero (`home.json`, `Home.page.tsx`) com os testes que o `h1` quebra
     - **Arquivo(s):** `src/locales/{pt-BR,en,es}/home.json` (`heading`, `meta.description`, `hero.stack` nova), `src/pages/Home.page.tsx` (`<p className={css.stack}>` entre o `h1` e `.intro`, texto de `t("home:hero.stack")`), `src/styles/pages/home.module.css` (`.stack`: `--text-body-lg`, `--text-strong`, `max-width: var(--measure)`, sem token novo), testes `src/pages/test/Home.page.test.tsx`, `src/test/App.test.tsx`, `src/routers/test/routes.test.tsx`, `src/test/entry-server.test.tsx`, `src/prerender/test/mountClient.test.tsx`, `src/pages/hooks/test/useHome.test.tsx`
     - **Depende de:** nenhuma
     - **Testes (escritos antes, RED):**
@@ -30,7 +30,7 @@ T5 (README e `index.html`), T6 (docs) e T7 (CV e PDFs) editam arquivos diferente
         - `expectNoAxeViolations(container)` na Início (CA13) em `Home.page.test.tsx`
     - **Gate:** `npm run typecheck && npm run lint && npm test -- --run src/pages/test/Home.page.test.tsx src/test/App.test.tsx src/routers/test/routes.test.tsx src/test/entry-server.test.tsx src/prerender/test/mountClient.test.tsx src/pages/hooks/test/useHome.test.tsx`
     - **Feito quando:** o gate passa e cada teste listado tem asserção; `grep -rn "full stack em TypeScript" src` não retorna nada fora dos fixtures permitidos pela spec; a aparência da linha é conferida à mão na T4
-    - **Evidência:** (preenchida pelo `executor`: tabela de adequação com `arquivo:linha` e veredito)
+    - **Evidência:** gate verde (typecheck, lint, 7 arquivos, 183 testes). Adequação: CA1/RF-HOME-26/27 `Home.page.test.tsx` "declara o cargo sem ponto e a linha da stack logo abaixo em %s" (`title.textContent` toBe, `nextElementSibling` toBe a linha, ordem antes do parágrafo); borda perfil falhando `Home.page.test.tsx` "esconde selo, parágrafo e faixa..." (h1 e stack presentes, parágrafo ausente); CA3 `Home.page.test.tsx` "define título e meta description" e "traduz..."; CA7 jobTitle `Home.page.test.tsx` "usa o cargo exato como jobTitle" (`toBe`) e `useHome.test.tsx` "monta o JSON-LD"; CA2 `entry-server.test.tsx` "renderiza %s com o h1" (regex `</h1><p>stack</p>`); CA11 `resources.test.ts` (mesmas chaves); CA13 `Home.page.test.tsx` expectNoAxeViolations; `App.test.tsx`, `routes.test.tsx`, `mountClient.test.tsx` com os textos novos. Veredito: adequado.
 
 - [ ] T2 — Conteúdo: cargo Júnior no perfil e na trajetória, sem "estagiário", com teste de conteúdo
     - **Arquivo(s):** `public/content/{pt-BR,en,es}/profile.json` (`role`, `homeIntro`, `summary`, `aboutParagraphs[0]` e `[1]` conforme a spec, reconferindo o texto atual), `public/content/{pt-BR,en,es}/timeline.json` (entrada atual editada no lugar: `title` igual ao `heading`, `details` só "Híbrido"/"Hybrid"/"Híbrido", `id` e `start` "2026-05" mantidos), `src/services/content/validation/translationExceptions.ts` (acrescentar "Híbrido" a `items[].details[]`), `src/services/content/test/content.test.ts`
