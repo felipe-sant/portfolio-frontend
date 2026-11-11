@@ -6,7 +6,7 @@ Registro da issue #140: o que compõe o JavaScript que toda página baixa antes 
 
 - A causa do TBT alto na Início e em Informações não é o download: são as tarefas longas da **hidratação do React** (`hydrateRoot` em `src/prerender/mountClient.tsx`), de 300 a 740 ms cada uma, por volta de 5,7 a 6,8 s da carga. Informações custa mais porque hidrata mais DOM.
 - A correção principal é **hidratar dentro de `startTransition`**: o React fatia a hidratação em tarefas curtas e devolve o thread entre elas.
-- O pacote de entrada caiu de **145,0 KB** para **136,9 KB** brotli: os textos dos três idiomas e o modal do currículo saíram dele. O resto é biblioteca que não encolhe com divisão.
+- O pacote de entrada caiu de **145,0 KB** para **137,0 KB** brotli: os textos dos três idiomas e o modal do currículo saíram dele. O resto é biblioteca que não encolhe com divisão.
 
 ## Como medir o pacote
 
@@ -23,17 +23,19 @@ Sobre o `dist/assets/` do `npm run build:fatec`: os chunks de entrada são os `.
 | demais (4 chunks pequenos) |         0,8 | runtime do Rolldown, `VisuallyHidden`, `button.module`                                                                                                                  |
 | **Total**                  |   **145,0** |                                                                                                                                                                         |
 
-## Depois (esta branch, mesmo método)
+## Depois (esta branch sobre `origin/staging` em `6af713d`, mesmo método)
+
+Inclui a leitura do bloco `prerender-data` (`readPrerenderData`, #163), que entrou na `staging` depois da linha de base.
 
 | Chunk                      | Brotli (KB) | Conteúdo                                                                                                        |
 | -------------------------- | ----------: | --------------------------------------------------------------------------------------------------------------- |
-| `index`                    |        66,7 | código da aplicação, sem o modal do currículo; ganha `loadLanguage` e o carregamento do idioma no `mountClient` |
+| `index`                    |        66,8 | código da aplicação, sem o modal do currículo; ganha `loadLanguage` e o carregamento do idioma no `mountClient` |
 | `api`                      |        23,3 | Redux Toolkit, RTK Query e a store, sem texto de idioma                                                         |
 | `paths`                    |        27,6 | `react-router` (igual)                                                                                          |
 | `resolveSupportedLanguage` |        17,1 | `react`, `i18next` e `react-i18next` (igual)                                                                    |
 | `Spinner`                  |         1,5 | `Spinner`, que antes ficava no `index` e agora é compartilhado com o chunk do modal                             |
 | demais (4 chunks pequenos) |         0,7 | runtime do Rolldown, `VisuallyHidden`, `button.module`                                                          |
-| **Total**                  |   **136,9** |                                                                                                                 |
+| **Total**                  |   **137,0** |                                                                                                                 |
 
 Fora da entrada, baixados só quando usados:
 
