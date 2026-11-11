@@ -276,7 +276,7 @@ validação do cliente.
 - `<title>` "Contato · Luiz Felipe dos Santos" e descrição "Como falar com Luiz Felipe dos Santos:
   e-mail e currículo.", das chaves `contact:meta.*`, com as tags nativas do React 19 (a mesma
   tabela de `layout.md`, sem mudança). A descrição vale com a flag ligada ou desligada.
-- Canônica, `hreflang`, Open Graph (`og:type` `website`) e `twitter:card` pelo mecanismo de #52
+- Canônica, `hreflang`, Open Graph (`og:type` `website`, `og:image` a própria, `images/share/<idioma>/contact.png`) e `twitter:card` pelo mecanismo de #52
   (NF-IA-10, NF-IA-11).
 - JSON-LD `ContactPage` (NF-IA-08), gerado dos mesmos dados da tela com `<` escapado (NF-IA-09), no
   idioma do caminho:

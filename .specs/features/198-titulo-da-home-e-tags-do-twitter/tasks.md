@@ -159,7 +159,7 @@ const`) e `src/types/seo/SharePage.types.ts` (tipo derivado do enum);
       foram regeneradas com `npm run og:image` e o gate continua verde.
     - **Evidência:** o PO aprovou o desenho das 12 imagens e os quatro alts nos três idiomas em 11/11/2026, sem ajuste.
 
-- [ ] T8: as quatro telas declaram a própria imagem, e Projeto usa a de Projetos como reserva
+- [x] T8: as quatro telas declaram a própria imagem, e Projeto usa a de Projetos como reserva
     - **Arquivo(s):**
         - hook: `src/hooks/useShareImage.ts` (recebe a página e devolve `{ image, imageAlt }`, com o idioma ativo e
           o alt de `<página>:meta.imageAlt` por um `Record<SharePage, ...>` de chaves literais tipadas, sem cast nem
@@ -197,9 +197,9 @@ const`) e `src/types/seo/SharePage.types.ts` (tipo derivado do enum);
         - nenhuma página monta o caminho da imagem no JSX (só chama o hook);
         - as quatro chaves `meta.imageAlt` existem nos três idiomas;
         - `common:meta.imageAlt` continua em uso pelo `PageMeta` como alt padrão.
-    - **Evidência:**
+    - **Evidência:** typecheck e lint verdes; 7 arquivos do gate, 301 testes verdes; as páginas só chamam `useShareImage` (pelo hook da página ou, na Projeto, para a reserva); `meta.imageAlt` nas quatro telas e nos três idiomas; `common:meta.imageAlt` segue como alt padrão do `PageMeta`.
 
-- [ ] T9: documentação das imagens por página
+- [x] T9: documentação das imagens por página
     - **Arquivo(s):** `docs/architecture/frontend.md` (seção "Metadados de SEO" e "SEO por tela"),
       `docs/setup/development.md` (`npm run og:image`, linhas ~73 e ~174), `docs/screens/layout.md` (`og:image` por
       página) e `docs/product/non-functional-requirements.md` (NF-IA-10)
@@ -213,7 +213,7 @@ const`) e `src/types/seo/SharePage.types.ts` (tipo derivado do enum);
         - dizem que `og-site.png` continua como reserva;
         - T5 a T9 saem juntas no commit `Feat :sparkles: [#138] Gera uma imagem de compartilhamento por página`, o
           último do PR.
-    - **Evidência:**
+    - **Evidência:** `frontend.md`, `development.md`, `layout.md`, NF-IA-10 e as telas Início, Projetos, Projeto, Informações e Contato citam a imagem própria por idioma, a reserva de Projetos e o `og-site.png`; T5 e T6 saíram no commit das imagens e T8 e T9 num commit próprio.
 
 - [ ] T10: verificação completa, repartida por PR
     - **Arquivo(s):** nenhum (só verificação)

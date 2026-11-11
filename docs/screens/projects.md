@@ -325,7 +325,7 @@ do que a tela usa:
 
 ## Metadados e JSON-LD
 
-- `<title>` e descrição de RF-PROJECTS-27, das chaves de `projects`, com as tags nativas do React 19. Canônica, `hreflang`, Open Graph (`og:type` `website`, `og:image` a do site) e
+- `<title>` e descrição de RF-PROJECTS-27, das chaves de `projects`, com as tags nativas do React 19. Canônica, `hreflang`, Open Graph (`og:type` `website`, `og:image` a própria, `images/share/<idioma>/projects.png`) e
   `twitter:card` pelo mecanismo de #52, como em [`layout.md`](layout.md) ("Metadados por rota e
   idioma"). A canônica nunca leva a query, e URL com query não ganha `noindex` (a canônica já
   aponta a lista padrão, NF-IA-11).

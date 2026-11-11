@@ -11,7 +11,7 @@ import css from "@/styles/pages/contact.module.css"
 const ContactForm = lazy(() => import("@/components/ContactForm"))
 
 function ContactPage() {
-    const { t, jsonLd, profile, isError, isFormEnabled, ids, retry } = useContact()
+    const { t, shareImage, jsonLd, profile, isError, isFormEnabled, ids, retry } = useContact()
 
     return (
         <>
@@ -21,6 +21,8 @@ function ContactPage() {
                 title={t("contact:meta.title")}
                 description={t("contact:meta.description")}
                 path={ROUTES.contact}
+                image={shareImage.image}
+                imageAlt={shareImage.imageAlt}
             />
             <JsonLd data={jsonLd} />
             <div className={isFormEnabled ? css.container : css.containerDirect}>
