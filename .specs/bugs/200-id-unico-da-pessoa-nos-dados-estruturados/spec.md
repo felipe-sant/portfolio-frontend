@@ -1,7 +1,7 @@
 # Spec: 200-id-unico-da-pessoa-nos-dados-estruturados
 
 > **Tipo:** `bug` (Fix na branch e no commit principal) <br />
-> **Status:** `em-revisao` <br />
+> **Status:** `aprovada` <br />
 > **Issue:** `#200` (com `#199`) <br />
 > **Criado em:** `11-11-2026`
 
