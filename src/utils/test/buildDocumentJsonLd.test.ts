@@ -38,7 +38,7 @@ describe("buildDocumentJsonLd", () => {
             "@type": "TechArticle",
             headline: "SETUP.md · Maps",
             url: `${SITE_URL}/en/projects/${ID}/docs/SETUP.md`,
-            author: { "@id": `${SITE_URL}/en#person` },
+            author: { "@id": `${SITE_URL}/#person` },
             about: { "@id": `${SITE_URL}/en/projects/${ID}#project` }
         })
     })

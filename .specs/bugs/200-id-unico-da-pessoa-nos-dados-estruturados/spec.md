@@ -1,7 +1,7 @@
 # Spec: 200-id-unico-da-pessoa-nos-dados-estruturados
 
 > **Tipo:** `bug` (Fix na branch e no commit principal) <br />
-> **Status:** `aprovada` <br />
+> **Status:** `em-andamento` <br />
 > **Issue:** `#200` (com `#199`) <br />
 > **Criado em:** `11-11-2026`
 
@@ -46,16 +46,16 @@ Origem: auditoria de SEO de 10/11/2026 em felipe-sant.vercel.app (issues #200 e 
 
 Requisitos: NF-IA-08 e NF-IA-09 (`docs/product/non-functional-requirements.md`), RF-HOME-26 (`docs/screens/home.md`), RF-ABOUT-29 (`docs/screens/about.md`), RF-CONTACT-26 (`docs/screens/contact.md`) e o JSON-LD de `docs/screens/projects.md` e `docs/screens/project.md`.
 
-- [ ] **CA1 (NF-IA-08):** `buildPersonId()` devolve `<origem>/#person` com `base` `/`, `<origem>/<base>/#person` com `base` de subpasta (o `base` uma vez só) e nunca `//` depois do esquema, mesmo com `VITE_SITE_URL` terminada em `/`.
-- [ ] **CA2 (NF-IA-08, RF-HOME-26):** na Início, `Person["@id"]` e `WebSite.publisher["@id"]` são `buildPersonId()` nos três idiomas; `Person.url` e `WebSite.url` continuam a Início no idioma.
-- [ ] **CA3 (RF-ABOUT-29):** em Informações, `mainEntity["@id"]` é `buildPersonId()` nos três idiomas e `mainEntity.url` continua a Início no idioma.
-- [ ] **CA4 (RF-CONTACT-26):** em Contato, `mainEntity["@id"]` é `buildPersonId()` e `mainEntity.email` é o e-mail do perfil sem `mailto:`; sem perfil, `email` continua omitido.
-- [ ] **CA5 (NF-IA-08, Projetos):** em Projetos, `author["@id"]` é `buildPersonId()`.
-- [ ] **CA6 (NF-IA-08, Projeto):** no projeto e no documento (`TechArticle`), `author["@id"]` é `buildPersonId()`.
-- [ ] **CA7 (NF-IA-08, Projeto):** com repositório e linguagem marcada, `keywords` não contém nenhum nome de `programmingLanguage` (fixture com React e TypeScript: `keywords` `["React"]`, `programmingLanguage` `["TypeScript"]`); sem repositório, `keywords` traz toda a stack (`["React", "TypeScript"]`); nome repetido entre grupos aparece uma vez em cada lista; stack só de linguagens com repositório omite `keywords`.
+- [x] **CA1 (NF-IA-08):** `buildPersonId()` devolve `<origem>/#person` com `base` `/`, `<origem>/<base>/#person` com `base` de subpasta (o `base` uma vez só) e nunca `//` depois do esquema, mesmo com `VITE_SITE_URL` terminada em `/`.
+- [x] **CA2 (NF-IA-08, RF-HOME-26):** na Início, `Person["@id"]` e `WebSite.publisher["@id"]` são `buildPersonId()` nos três idiomas; `Person.url` e `WebSite.url` continuam a Início no idioma.
+- [x] **CA3 (RF-ABOUT-29):** em Informações, `mainEntity["@id"]` é `buildPersonId()` nos três idiomas e `mainEntity.url` continua a Início no idioma.
+- [x] **CA4 (RF-CONTACT-26):** em Contato, `mainEntity["@id"]` é `buildPersonId()` e `mainEntity.email` é o e-mail do perfil sem `mailto:`; sem perfil, `email` continua omitido.
+- [x] **CA5 (NF-IA-08, Projetos):** em Projetos, `author["@id"]` é `buildPersonId()`.
+- [x] **CA6 (NF-IA-08, Projeto):** no projeto e no documento (`TechArticle`), `author["@id"]` é `buildPersonId()`.
+- [x] **CA7 (NF-IA-08, Projeto):** com repositório e linguagem marcada, `keywords` não contém nenhum nome de `programmingLanguage` (fixture com React e TypeScript: `keywords` `["React"]`, `programmingLanguage` `["TypeScript"]`); sem repositório, `keywords` traz toda a stack (`["React", "TypeScript"]`); nome repetido entre grupos aparece uma vez em cada lista; stack só de linguagens com repositório omite `keywords`.
 - [ ] **CA8 (RF-HOME-26, RF-ABOUT-29, #199):** com o conteúdo real, nos três idiomas, o `jobTitle` do JSON-LD pré-renderizado da Início é igual ao de Informações e a `home:heading` do idioma, não tem termo de estágio (`/estagi|internship|\bintern\b|pasante|pasant[ií]a/i`), o `@id` da `Person` é o mesmo nas duas páginas e igual a `buildPersonId()`, e `worksFor` de Informações traz o empregador atual (a `organization` da experiência em curso).
-- [ ] **CA9 (NF-IA-08):** nenhum teste nem código em `src/` monta mais o id com o prefixo de idioma (`grep -rn '#person' src e2e scripts` só mostra `buildPersonId.ts` e testes que usam `buildPersonId()` ou o literal `<origem>/#person`).
-- [ ] **CA10:** `docs/screens/home.md`, `about.md`, `contact.md`, `projects.md`, `project.md` e `docs/architecture/frontend.md` descrevem o id como a raiz do site com o `base` e sem idioma (`<origem><base>/#person`, por `buildPersonId()`), o exemplo de Contato traz `email` sem `mailto:` e `project.md` diz que `keywords` exclui as linguagens de `programmingLanguage`.
+- [x] **CA9 (NF-IA-08):** nenhum teste nem código em `src/` monta mais o id com o prefixo de idioma (`grep -rn '#person' src e2e scripts` só mostra `buildPersonId.ts` e testes que usam `buildPersonId()` ou o literal `<origem>/#person`).
+- [x] **CA10:** `docs/screens/home.md`, `about.md`, `contact.md`, `projects.md`, `project.md` e `docs/architecture/frontend.md` descrevem o id como a raiz do site com o `base` e sem idioma (`<origem><base>/#person`, por `buildPersonId()`), o exemplo de Contato traz `email` sem `mailto:` e `project.md` diz que `keywords` exclui as linguagens de `programmingLanguage`.
 
 ## Estratégia de validação
 

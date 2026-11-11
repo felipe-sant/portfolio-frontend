@@ -215,7 +215,8 @@ describe("render", () => {
         expect(html.match(/<link rel="alternate" hrefLang="[^"]+"/g)).toHaveLength(4)
         expect(html).toContain('hrefLang="x-default" href="http://localhost:5173/en"')
         expect(html).toContain('<script type="application/ld+json">')
-        expect(html).toContain(`http://localhost:5173/${language}#person`)
+        expect(html).toContain("http://localhost:5173/#person")
+        expect(html).not.toContain(`http://localhost:5173/${language}#person`)
         expect(html).toContain("https://github.com/example")
     })
 

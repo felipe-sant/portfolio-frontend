@@ -15,7 +15,7 @@ T2, T3 e T4 são sequenciais porque mexem nos mesmos arquivos de teste (`buildCo
 
 ## Tarefas
 
-- [ ] T1 — Criar `buildPersonId()`, a fonte única do `@id` da `Person`
+- [x] T1 — Criar `buildPersonId()`, a fonte única do `@id` da `Person`
     - **Arquivo(s):** `src/utils/buildPersonId.ts` (novo), `src/utils/test/buildPersonId.test.ts` (novo)
     - **Depende de:** nenhuma
     - **Implementação:** função sem parâmetro que devolve `` `${getSiteUrl()}${publicUrl("/")}#person` ``, com `export default buildPersonId` no final.
@@ -25,9 +25,9 @@ T2, T3 e T4 são sequenciais porque mexem nos mesmos arquivos de teste (`buildCo
         - CA1: com `base` `/`, devolve `https://fatec-jacarei-dsm-portfolio.github.io/#person`, sem `pt-BR`, `en` nem `es`.
     - **Gate:** `npm run typecheck && npm run lint && npm test -- --run src/utils/test/buildPersonId.test.ts`
     - **Feito quando:** o gate passa e cada teste listado está na tabela de adequação.
-    - **Evidência:**
+    - **Evidência:** RED: `buildPersonId.test.ts` falhou por módulo inexistente; GREEN com 3 testes. Gate verde (typecheck, lint, 3 testes). Adequação: CA1 origem com `/` e base de subpasta → `src/utils/test/buildPersonId.test.ts:23` `expect(id).toBe(SITE_URL + "/ra2581392423047/#person")` e `:24` `not.toContain("//")`; base uma vez → `:31` `expect(id.split("ra2581392423047")).toHaveLength(2)`; base `/` sem idioma → `:38` `toBe(SITE_URL + "/#person")` e `:39` `not.toMatch(/\/(pt-BR|en|es)(\/|#)/)`.
 
-- [ ] T2 — Usar `buildPersonId()` nos seis construtores (reproduz o bug primeiro)
+- [x] T2 — Usar `buildPersonId()` nos seis construtores (reproduz o bug primeiro)
     - **Arquivo(s):** `src/utils/build{About,Contact,Document,Home,Project,Projects}JsonLd.ts`; testes `src/utils/test/build{About,Contact,Document,Home,Project,Projects}JsonLd.test.ts`, `src/pages/test/Home.page.test.tsx`, `src/pages/test/Projects.page.test.tsx`, `src/test/entry-server.test.tsx`
     - **Depende de:** T1
     - **Implementação:** trocar todo `` `${buildAbsoluteUrl(ROUTES.home, language)}#person` `` (e o `personId`/`homeUrl` + `#person` de Home e About) por `buildPersonId()`. Em `buildHomeJsonLd`, `WebSite.publisher` e `Person["@id"]` usam `buildPersonId()`, e `WebSite.url` e `Person.url` continuam `buildAbsoluteUrl(ROUTES.home, language)`. Em `buildAboutJsonLd`, `mainEntity.url` continua a Início do idioma. Remover import de `ROUTES` ou `buildAbsoluteUrl` que ficar sem uso.
@@ -45,9 +45,9 @@ T2, T3 e T4 são sequenciais porque mexem nos mesmos arquivos de teste (`buildCo
         - CA2: o HTML pré-renderizado de `pt-BR.html`, `en.html` e `es.html` contém `http://localhost:5173/#person` e não contém `` `http://localhost:5173/${language}#person` `` (`src/test/entry-server.test.tsx`, linha 218).
     - **Gate:** `npm run typecheck && npm run lint && npm test -- --run src/utils/test src/pages/test/Home.page.test.tsx src/pages/test/Projects.page.test.tsx src/test/entry-server.test.tsx`
     - **Feito quando:** o gate passa e `grep -rn '#person' src e2e scripts` só mostra `src/utils/buildPersonId.ts` e testes que afirmam `` `${SITE_URL}/#person` ``, `http://localhost:5173/#person`, o literal de `buildPersonId.test.ts` ou `buildPersonId()` (CA9).
-    - **Evidência:**
+    - **Evidência:** RED: 18 testes falharam com o id antigo `<origem>/<idioma>#person` (reprodução do bug); GREEN depois da troca nos seis construtores; gate verde (62 arquivos, 550 testes). Adequação: CA2 → `buildHomeJsonLd.test.ts:29` e `:33` `${SITE_URL}/#person`, `:58`/`:59` `toContain(SITE_URL + "/#person")` e `not.toContain("/es#person")`, `:68` mesmo `@id` nos três idiomas; `Home.page.test.tsx:223` `toBe(SITE_URL + "/#person")` e `:224` `publisher["@id"]` igual; `entry-server.test.tsx:218`/`:219`. CA3 → `buildAboutJsonLd.test.ts:26` e `:39`/`:40` (`url` `${SITE_URL}/en`). CA4 (id) → `buildContactJsonLd.test.ts:32`, `:52`, `:63`. CA5 → `buildProjectsJsonLd.test.ts:35`, `Projects.page.test.tsx:622`. CA6 → `buildProjectJsonLd.test.ts:123`, `buildDocumentJsonLd.test.ts:41`. CA9: `grep -rn '#person' src e2e scripts` só mostra `src/utils/buildPersonId.ts:5` e testes com `${SITE_URL}/#person`, `http://localhost:5173/#person` ou o literal de `buildPersonId.test.ts`.
 
-- [ ] T3 — `email` do JSON-LD de Contato sem `mailto:`
+- [x] T3 — `email` do JSON-LD de Contato sem `mailto:`
     - **Arquivo(s):** `src/utils/buildContactJsonLd.ts`; testes `src/utils/test/buildContactJsonLd.test.ts`, `src/pages/test/Contact.page.test.tsx`
     - **Depende de:** T2
     - **Implementação:** `email: profile?.contact.email` (sem o prefixo); sem perfil, `email` continua `undefined`.
@@ -57,9 +57,9 @@ T2, T3 e T4 são sequenciais porque mexem nos mesmos arquivos de teste (`buildCo
         - CA4: na página de Contato, `readJsonLd().mainEntity.email` é `"contato@example.com"` (`src/pages/test/Contact.page.test.tsx`, linha 224).
     - **Gate:** `npm run typecheck && npm run lint && npm test -- --run src/utils/test/buildContactJsonLd.test.ts src/pages/test/Contact.page.test.tsx`
     - **Feito quando:** o gate passa e cada teste listado está na tabela de adequação.
-    - **Evidência:**
+    - **Evidência:** RED: 3 testes falharam (`mailto:` no `email`); GREEN com `email: profile?.contact.email`; gate verde (2 arquivos, 19 testes). Adequação: CA4 → `buildContactJsonLd.test.ts:33` `email: profile.contact.email` e `:36` `expect(JSON.stringify(jsonLd.mainEntity)).not.toContain("mailto:")`; `:54` (`toEqual` sem rede); sem perfil `:61` `toEqual` sem `email`; `Contact.page.test.tsx:224` `toBe("contato@example.com")`.
 
-- [ ] T4 — `keywords` sem repetir `programmingLanguage` nem nomes repetidos
+- [x] T4 — `keywords` sem repetir `programmingLanguage` nem nomes repetidos
     - **Arquivo(s):** `src/utils/buildProjectJsonLd.ts`; teste `src/utils/test/buildProjectJsonLd.test.ts`
     - **Depende de:** T3
     - **Implementação:** nomes da stack sem repetição (`Array.from(new Set(...))`); `programmingLanguage` = nomes sem repetição dos itens com `isProgrammingLanguage`, emitido só com repositório e lista não vazia; `keywords` = nomes da stack menos os de `programmingLanguage` quando ele é emitido, ou todos quando não é; `keywords` vazio vira `undefined`. Funções auxiliares pequenas no próprio arquivo, sem regra no objeto literal além da escolha do valor.
@@ -71,9 +71,9 @@ T2, T3 e T4 são sequenciais porque mexem nos mesmos arquivos de teste (`buildCo
         - CA7: sem repositório, `programmingLanguage` é `undefined` e `keywords` continua `["React", "TypeScript"]` (o teste "traz as imagens grandes absolutas, o gênero e as palavras-chave da stack" continua igual e segue verde).
     - **Gate:** `npm run typecheck && npm run lint && npm test -- --run src/utils/test/buildProjectJsonLd.test.ts`
     - **Feito quando:** o gate passa e cada teste listado está na tabela de adequação.
-    - **Evidência:**
+    - **Evidência:** RED: 4 testes falharam (`keywords` com `TypeScript` e repetições); GREEN com `uniqueNames` e `orUndefined`; gate verde (8 testes). Adequação: CA7 → `buildProjectJsonLd.test.ts:40`/`:41` `programmingLanguage` `["TypeScript"]` e `keywords` `["React"]`, `:42` interseção `toEqual([])`; `:69`/`:70` só linguagens omite `keywords`; `:95`/`:96` linguagem em dois grupos; `:111` `React` em dois grupos sem repositório uma vez; `:141` sem repositório `["React", "TypeScript"]`.
 
-- [ ] T5 — Documentar o formato do id, o e-mail e a regra de `keywords`
+- [x] T5 — Documentar o formato do id, o e-mail e a regra de `keywords`
     - **Arquivo(s):** `docs/screens/home.md`, `docs/screens/about.md`, `docs/screens/contact.md`, `docs/screens/projects.md`, `docs/screens/project.md`, `docs/architecture/frontend.md`
     - **Depende de:** T4
     - **Testes (escritos antes, RED):** não se aplica (documentação)
@@ -85,15 +85,15 @@ T2, T3 e T4 são sequenciais porque mexem nos mesmos arquivos de teste (`buildCo
         - `docs/architecture/frontend.md` (linhas 64 e 346): citar `buildPersonId()` em `src/utils/` e o formato `<origem><base>/#person`.
     - **Gate:** `grep -rn 'URL canônica de />#person' docs` sem resultado e `grep -n 'mailto' docs/screens/contact.md` sem `"email": "mailto:`
     - **Feito quando:** o gate passa e CA10 está atendido.
-    - **Evidência:**
+    - **Evidência:** `grep -rn 'URL canônica de />#person' docs` sem resultado; `grep -n 'mailto' docs/screens/contact.md` sem `"email": "mailto:`. `prettier --check` verde nos arquivos alterados.
 
-- [ ] T6 — Commit principal
+- [x] T6 — Commit principal
     - **Arquivo(s):** os de T1 a T5
     - **Depende de:** T5
     - **Testes (escritos antes, RED):** não se aplica
     - **Gate:** `npm run typecheck && npm run lint && npm test -- --run src/utils/test src/pages/test/Home.page.test.tsx src/pages/test/Contact.page.test.tsx src/pages/test/Projects.page.test.tsx src/test/entry-server.test.tsx`
     - **Feito quando:** o gate passa e existe um commit `Fix :bug: [#200] Unifica o id da pessoa e corrige e-mail e palavras-chave dos dados estruturados` com só os arquivos de T1 a T5 (`git add` explícito por arquivo) e a linha final `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`.
-    - **Evidência:**
+    - **Evidência:** Gate verde (typecheck, lint, testes da área). Commit principal com `git add` explícito por arquivo.
 
 - [ ] T7 — Teste de caracterização do cargo em Início e Informações (#199)
     - **Arquivo(s):** `src/test/entry-server.content.test.tsx`

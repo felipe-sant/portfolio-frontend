@@ -372,9 +372,12 @@ ids UUID v7 únicos; `types` com pelo menos um código válido e sem repetição
   `SoftwareSourceCode` quando há repositório público, `CreativeWork` quando não há, com `@id` igual
   à canônica do `README.md` no idioma mais `#project`, `name`, `description`, `url` (canônica do
   `README.md`), `inLanguage`, `author` (a `Person` do site, referenciada pelo `@id` único
-  `<URL canônica de />#person`, o mesmo em todas as telas), `dateCreated` (`date`, `AAAA-MM`),
-  `dateModified` (se houver), `image` (capturas absolutas), `genre` (rótulos dos tipos no idioma),
-  `keywords` (itens da stack) e, em `SoftwareSourceCode`, `codeRepository` e `programmingLanguage`.
+  `<origem><base>/#person`, a raiz do site sem prefixo de idioma, por `buildPersonId()`, o mesmo
+  em todas as telas e idiomas), `dateCreated` (`date`, `AAAA-MM`), `dateModified` (se houver),
+  `image` (capturas absolutas), `genre` (rótulos dos tipos no idioma), `keywords` (itens da stack
+  sem repetição; em `SoftwareSourceCode`, sem as linguagens de `programmingLanguage`; omitido
+  quando vazio) e, em `SoftwareSourceCode`, `codeRepository` e `programmingLanguage` (sem
+  repetição).
   Em cada documento além do `README.md`, também um `TechArticle` com `headline` igual
   ao título sem o nome do autor (`<documento> · <projeto>`), `url` (canônica do documento),
   `inLanguage` (o idioma da página; em documento neutro, `contentLanguage` quando houver), `author`

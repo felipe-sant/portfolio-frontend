@@ -38,7 +38,77 @@ describe("buildProjectJsonLd", () => {
         expect(node["@type"]).toBe("SoftwareSourceCode")
         expect(node.codeRepository).toBe("https://github.com/felipe-sant/maps")
         expect(node.programmingLanguage).toEqual(["TypeScript"])
+        expect(node.keywords).toEqual(["React"])
+        expect(
+            ["React", "TypeScript"].filter(
+                (name) =>
+                    Array.isArray(node.keywords) &&
+                    node.keywords.includes(name) &&
+                    Array.isArray(node.programmingLanguage) &&
+                    node.programmingLanguage.includes(name)
+            )
+        ).toEqual([])
         expect(node.dateModified).toBe("2026-04-10")
+    })
+
+    it("omite keywords com repositório e stack só de linguagens", () => {
+        const node = buildProjectJsonLd(
+            "pt-BR",
+            buildProjectDetailFixture({
+                repositoryUrl: "https://github.com/felipe-sant/maps",
+                stack: [
+                    {
+                        category: "frontend",
+                        items: [{ name: "TypeScript", isProgrammingLanguage: true }]
+                    }
+                ]
+            }),
+            ["Web"]
+        )
+
+        expect(node.keywords).toBeUndefined()
+        expect(node.programmingLanguage).toEqual(["TypeScript"])
+    })
+
+    it("não repete a linguagem marcada em dois grupos com repositório", () => {
+        const node = buildProjectJsonLd(
+            "pt-BR",
+            buildProjectDetailFixture({
+                repositoryUrl: "https://github.com/felipe-sant/maps",
+                stack: [
+                    {
+                        category: "frontend",
+                        items: [
+                            { name: "React" },
+                            { name: "TypeScript", isProgrammingLanguage: true }
+                        ]
+                    },
+                    {
+                        category: "backend",
+                        items: [{ name: "TypeScript", isProgrammingLanguage: true }]
+                    }
+                ]
+            }),
+            ["Web"]
+        )
+
+        expect(node.programmingLanguage).toEqual(["TypeScript"])
+        expect(node.keywords).toEqual(["React"])
+    })
+
+    it("não repete em keywords o nome presente em dois grupos sem repositório", () => {
+        const node = buildProjectJsonLd(
+            "pt-BR",
+            buildProjectDetailFixture({
+                stack: [
+                    { category: "frontend", items: [{ name: "React" }] },
+                    { category: "tooling", items: [{ name: "React" }] }
+                ]
+            }),
+            ["Web"]
+        )
+
+        expect(node.keywords).toEqual(["React"])
     })
 
     it("monta @id, url, autor, idioma e data de criação", () => {
@@ -50,7 +120,7 @@ describe("buildProjectJsonLd", () => {
             url: `${SITE_URL}/en/projects/${ID}`,
             name: "Maps",
             description: "Mapa colaborativo de pontos de interesse da cidade.",
-            author: { "@id": `${SITE_URL}/en#person` },
+            author: { "@id": `${SITE_URL}/#person` },
             inLanguage: "en",
             dateCreated: "2026-03"
         })
