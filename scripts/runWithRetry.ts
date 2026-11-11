@@ -1,18 +1,23 @@
 async function runWithRetry(
-    execute: () => number,
+    execute: () => number | Promise<number>,
     delaysInSeconds: number[],
     wait: (seconds: number) => Promise<void>,
-    log: (message: string) => void
+    log: (message: string) => void,
+    timeoutCode?: number
 ): Promise<number> {
     const attempts = delaysInSeconds.length + 1
     let code = 0
 
     for (let attempt = 1; attempt <= attempts; attempt++) {
         log(`Tentativa ${attempt} de ${attempts}.`)
-        code = execute()
+        code = await execute()
 
         if (code === 0) {
             return 0
+        }
+
+        if (code === timeoutCode) {
+            log(`A tentativa ${attempt} excedeu o tempo limite e foi interrompida.`)
         }
 
         const delay = delaysInSeconds[attempt - 1]
