@@ -2,6 +2,8 @@
 
 Esta pasta guarda como o Claude Code trabalha neste repositório. As regras e convenções vivem em [`CLAUDE.md`](CLAUDE.md), a fonte da verdade; este arquivo só diz quem faz o quê. A política de uso de IA do projeto está na seção "Como este projeto é feito" do [`README.md`](../README.md) da raiz.
 
+O [`AGENTS.md`](../AGENTS.md) da raiz é o resumo para ferramentas de IA e aponta para este `CLAUDE.md`.
+
 ## Agentes
 
 Ficam em `agents/` e rodam nesta ordem, cada um revisando o trabalho do anterior e nunca o próprio:
