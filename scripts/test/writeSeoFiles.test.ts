@@ -13,9 +13,11 @@ import { join } from "node:path"
 import { afterEach, beforeEach, describe, expect, it } from "vitest"
 import listTargets from "@scripts/prerender/listTargets"
 import readProjectRecords from "@scripts/prerender/readProjectRecords"
+import readSeoContent from "@scripts/seo/readSeoContent"
 import writeSeoFiles from "@scripts/seo/writeSeoFiles"
 import FATEC_BASE_PATH from "@scripts/fatecBasePath"
 import FATEC_SITE_URL from "@scripts/fatecSiteUrl"
+import SUPPORTED_LANGUAGES from "@/i18n/supportedLanguages"
 import prerenderRoutes from "@/prerender/prerenderRoutes"
 import routes from "@/routers/routes"
 
@@ -117,6 +119,24 @@ describe("writeSeoFiles", () => {
         links.forEach((link) => expect(accepted.has(link)).toBe(true))
         expect(readFileSync(join(output, "robots.txt"), "utf-8")).toContain(
             `Sitemap: ${FATEC_SITE_URL}${FATEC_BASE_PATH}sitemap.xml`
+        )
+    })
+
+    it("o llms.txt gerado traz o resumo do perfil nos três idiomas", async () => {
+        const targets = await listRealTargets()
+        const content = readSeoContent("public")
+
+        writeSeoFiles({
+            publicDirectory: "public",
+            outputDirectory: output,
+            origin: FATEC_SITE_URL,
+            base: FATEC_BASE_PATH,
+            targets
+        })
+        const llms = readFileSync(join(output, "llms.txt"), "utf-8")
+
+        SUPPORTED_LANGUAGES.forEach((language) =>
+            expect(llms).toContain(content[language].profile.summary)
         )
     })
 })

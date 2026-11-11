@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test"
 import FATEC_BASE_PATH from "@scripts/fatecBasePath"
 import isRecord from "./support/isRecord"
+import readProfile from "./support/readProfile"
 import readRawProjects from "./support/readRawProjects"
 
 const ORIGIN = "https://fatec-jacarei-dsm-portfolio.github.io"
@@ -115,13 +116,17 @@ test.describe("arquivos para buscadores e IA", () => {
         }
     })
 
-    test("NF-IA-05: llms.txt é servido em pt-BR no formato llmstxt.org", async ({ request }) => {
+    test("NF-IA-05: llms.txt é servido nos três idiomas no formato llmstxt.org", async ({
+        request
+    }) => {
         const response = await request.get("llms.txt")
         expect(response.status()).toBe(200)
         const body = await response.text()
         expect(body).toMatch(/^# \S/)
-        expect(body).toMatch(/\n> \S/)
-        expect(body).toMatch(/\n## \S/)
+        expect(body).toContain(`\n> ${readProfile("pt-BR").summary}\n`)
+        expect(body).toContain(`\nEnglish: ${readProfile("en").summary}\n`)
+        expect(body).toContain(`\nEspañol: ${readProfile("es").summary}\n`)
+        expect(body.match(/^## \S/gm)).toHaveLength(12)
         expect(body).toMatch(/\n- \[[^\]]+\]\(https:\/\/[^)]+\)/)
     })
 

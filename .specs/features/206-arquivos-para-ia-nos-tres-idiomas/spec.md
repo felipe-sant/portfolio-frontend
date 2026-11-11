@@ -1,7 +1,7 @@
 # Spec: 206-arquivos-para-ia-nos-tres-idiomas
 
 > **Tipo:** `feature` (trilha G: #206, #212 e #210 num PR só) <br />
-> **Status:** `aprovada` <br />
+> **Status:** `em-andamento` <br />
 > **Issue:** `#206`, `#212`, `#210` <br />
 > **Criado em:** `11-11-2026`
 
@@ -99,14 +99,14 @@ De onde vem cada texto (nada escrito à mão no construtor):
 
 `llms.txt` (#206, NF-IA-05)
 
-- [ ] **CA1** — O `llms.txt` abre com `# <authorName>`, uma linha em branco e `> <profile.summary pt-BR>`, e tem um único `#` e um único `>`.
-- [ ] **CA2** — Logo depois do `>`, antes do primeiro `##`, vêm dois parágrafos, `English: <summary en>` e `Español: <summary es>`, nessa ordem.
-- [ ] **CA3** — As seções `##` são exatamente as 12 de `[pages, projects, resume, fullText] × [pt-BR, en, es]`, no formato `## <rótulo do idioma> (<languageName do idioma>)`, agrupadas por idioma na ordem `pt-BR`, `en`, `es`. Nenhum `##` se repete.
-- [ ] **CA4** — Na seção de páginas de cada idioma, as quatro linhas são `- [<navigation.<página> do idioma>](<URL /<idioma><rota>>): <<página>:meta.description do idioma>`, na ordem Início, Projetos, Informações e Contato.
-- [ ] **CA5** — Na seção de projetos de cada idioma, há uma linha por projeto de `content[<idioma>].projects`, na ordem do conteúdo: `- [<título do idioma>](<URL /<idioma>/projects/<id>>): <resumo do idioma>`.
-- [ ] **CA6** — Na seção de CV de cada idioma estão o `.md` e o `.pdf` daquele idioma; na seção de texto completo, o `llms-full*.txt` daquele idioma (`getLlmsFullFileName`).
-- [ ] **CA7** — O conjunto de URLs ligadas é o mesmo de hoje: as quatro páginas e cada projeto nos três idiomas, os seis CV e os três textos completos. Cada uma aparece exatamente uma vez, e nenhuma aponta para fora do que o build gera (o teste "todo link do llms.txt é um loc do sitemap ou um arquivo gerado" segue verde).
-- [ ] **CA8** — `readSeoContent` lê `meta.description` de `home`, `projects`, `about` e `contact` nos três idiomas. Nenhum texto de resumo, descrição, nome de página ou título de projeto está escrito em `buildLlmsTxt.ts`.
+- [x] **CA1** — O `llms.txt` abre com `# <authorName>`, uma linha em branco e `> <profile.summary pt-BR>`, e tem um único `#` e um único `>`.
+- [x] **CA2** — Logo depois do `>`, antes do primeiro `##`, vêm dois parágrafos, `English: <summary en>` e `Español: <summary es>`, nessa ordem.
+- [x] **CA3** — As seções `##` são exatamente as 12 de `[pages, projects, resume, fullText] × [pt-BR, en, es]`, no formato `## <rótulo do idioma> (<languageName do idioma>)`, agrupadas por idioma na ordem `pt-BR`, `en`, `es`. Nenhum `##` se repete.
+- [x] **CA4** — Na seção de páginas de cada idioma, as quatro linhas são `- [<navigation.<página> do idioma>](<URL /<idioma><rota>>): <<página>:meta.description do idioma>`, na ordem Início, Projetos, Informações e Contato.
+- [x] **CA5** — Na seção de projetos de cada idioma, há uma linha por projeto de `content[<idioma>].projects`, na ordem do conteúdo: `- [<título do idioma>](<URL /<idioma>/projects/<id>>): <resumo do idioma>`.
+- [x] **CA6** — Na seção de CV de cada idioma estão o `.md` e o `.pdf` daquele idioma; na seção de texto completo, o `llms-full*.txt` daquele idioma (`getLlmsFullFileName`).
+- [x] **CA7** — O conjunto de URLs ligadas é o mesmo de hoje: as quatro páginas e cada projeto nos três idiomas, os seis CV e os três textos completos. Cada uma aparece exatamente uma vez, e nenhuma aponta para fora do que o build gera (o teste "todo link do llms.txt é um loc do sitemap ou um arquivo gerado" segue verde).
+- [x] **CA8** — `readSeoContent` lê `meta.description` de `home`, `projects`, `about` e `contact` nos três idiomas. Nenhum texto de resumo, descrição, nome de página ou título de projeto está escrito em `buildLlmsTxt.ts`.
 
 E-mail (#212, NF-IA-06)
 
