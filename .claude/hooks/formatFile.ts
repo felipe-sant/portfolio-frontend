@@ -5,10 +5,16 @@ import planFileChecks from "@scripts/claudeHooks/planFileChecks"
 
 const BLOCK_EXIT_CODE = 2
 
+function readStream(source: object, key: "stdout" | "stderr") {
+    const value = Object.getOwnPropertyDescriptor(source, key)?.value
+    return typeof value === "string" ? value : ""
+}
+
 function readFailureOutput(error: unknown) {
     if (error instanceof Error) {
-        const output = error as Error & { stdout?: string; stderr?: string }
-        return `${output.stdout ?? ""}${output.stderr ?? ""}`.trim() || error.message
+        return (
+            `${readStream(error, "stdout")}${readStream(error, "stderr")}`.trim() || error.message
+        )
     }
     return String(error)
 }
