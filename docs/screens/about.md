@@ -236,17 +236,17 @@ Lista de necessidades da tela. Os nomes finais, os arquivos e os endpoints estã
 
 Um por idioma.
 
-| Campo sugerido                                    | Tipo                                                            | Uso                                                                   |
-| ------------------------------------------------- | --------------------------------------------------------------- | --------------------------------------------------------------------- |
-| `role`                                            | texto                                                           | JSON-LD `jobTitle`                                                    |
-| `summary`                                         | texto, obrigatório                                              | Parágrafo de apresentação, JSON-LD `description`                      |
-| `location`                                        | `{ city, region, countryCode, detail? }`                        | "São José dos Campos · SP"; JSON-LD `homeLocation`; rodapé            |
-| `availability`                                    | `{ isAvailable: boolean, label: texto }`                        | Selo de Informações, Início, Contato e rodapé; `false` esconde o selo |
-| `photo`                                           | `ResponsiveImage` (`large`, `small`; o `alt` é chave)           | Foto 1:1 (D26)                                                        |
-| `aboutParagraphs`                                 | texto[], pelo menos um                                          | Sobre mim                                                             |
-| `workPrinciples`                                  | texto[]                                                         | "Como eu trabalho"                                                    |
-| `stack`                                           | `StackGroup[]` (`category` e `items` com `name` e `isPrimary?`) | Stack, Início, JSON-LD                                                |
-| `contact.email`, `links.github`, `links.linkedin` | (já pedidos por `layout.md`)                                    | JSON-LD `sameAs`                                                      |
+| Campo sugerido                                    | Tipo                                                                                                                                                                       | Uso                                                                   |
+| ------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| `role`                                            | texto, igual a `home:heading` (decisão do PO de 11-11-2026): "Desenvolvedor full stack Júnior", `en` "Junior full stack developer", `es` "Desarrollador full stack junior" | JSON-LD `jobTitle`; cartão "Agora"                                    |
+| `summary`                                         | texto, obrigatório                                                                                                                                                         | Parágrafo de apresentação, JSON-LD `description`                      |
+| `location`                                        | `{ city, region, countryCode, detail? }`                                                                                                                                   | "São José dos Campos · SP"; JSON-LD `homeLocation`; rodapé            |
+| `availability`                                    | `{ isAvailable: boolean, label: texto }`                                                                                                                                   | Selo de Informações, Início, Contato e rodapé; `false` esconde o selo |
+| `photo`                                           | `ResponsiveImage` (`large`, `small`; o `alt` é chave)                                                                                                                      | Foto 1:1 (D26)                                                        |
+| `aboutParagraphs`                                 | texto[], pelo menos um                                                                                                                                                     | Sobre mim                                                             |
+| `workPrinciples`                                  | texto[]                                                                                                                                                                    | "Como eu trabalho"                                                    |
+| `stack`                                           | `StackGroup[]` (`category` e `items` com `name` e `isPrimary?`)                                                                                                            | Stack, Início, JSON-LD                                                |
+| `contact.email`, `links.github`, `links.linkedin` | (já pedidos por `layout.md`)                                                                                                                                               | JSON-LD `sameAs`                                                      |
 
 ### Item de trajetória
 
@@ -329,6 +329,8 @@ trata erro por fonte, RF-ABOUT-26).
     }
 }
 ```
+
+O `jobTitle` é o `role` do perfil, igual ao da Início (`home:heading`) e ao título da experiência atual da trajetória: o PO decidiu em 11-11-2026 que o cargo atual é "Desenvolvedor full stack Júnior" e que nada no site diz estagiário; a InCicle segue como empregador (`worksFor`) e `alumniOf` usa a instituição curta do conteúdo ("Fatec Jacareí").
 
 O `@id` da `Person` é `<URL canônica de />#person`, o mesmo em todas as telas (decisão transversal
 do PO de 11-10-2026). Cursos não entram em `alumniOf` (só formação), mas os certificados deles
