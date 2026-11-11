@@ -1,3 +1,5 @@
+import { readdirSync, readFileSync } from "node:fs"
+import { join, relative } from "node:path"
 import { describe, expect, it, vi } from "vitest"
 import { act, render, screen } from "@testing-library/react"
 import LazyResumeModal from "@/components/LazyResumeModal"
@@ -17,6 +19,20 @@ vi.mock("@/components/ResumeModal", async (importOriginal) => {
 })
 
 vi.mock("@/utils/loadPdfRenderer", () => ({ default: vi.fn() }))
+
+const SOURCE_ROOT = join(process.cwd(), "src")
+
+function listSources(directory: string): string[] {
+    return readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
+        const path = join(directory, entry.name)
+
+        if (entry.isDirectory()) {
+            return entry.name === "test" ? [] : listSources(path)
+        }
+
+        return /\.tsx?$/.test(entry.name) ? [path] : []
+    })
+}
 
 function renderWithSibling(isOpen: boolean) {
     return render(
@@ -78,5 +94,13 @@ describe("LazyResumeModal", () => {
         await screen.findByRole("dialog", { name: "Currículo" })
 
         await expectNoAxeViolations(container)
+    })
+
+    it("é o único arquivo de src fora dos testes que importa o ResumeModal", () => {
+        const importers = listSources(SOURCE_ROOT)
+            .filter((path) => readFileSync(path, "utf-8").includes('"@/components/ResumeModal"'))
+            .map((path) => relative(SOURCE_ROOT, path))
+
+        expect(importers).toEqual(["components/LazyResumeModal.tsx"])
     })
 })

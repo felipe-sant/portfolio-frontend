@@ -50,15 +50,15 @@ Regras para o `executor`: nenhum comentário em código (nem `//`, `/* */`, JSDo
 
         | Critério                                                           | `arquivo:linha` e asserção                                                                                                                                                             | Coberto? |
         | ------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- |
-        | PERF-140-03 (borda): fechado não renderiza nem importa             | `src/components/test/LazyResumeModal.test.tsx:33` `expect(screen.queryByRole("dialog")).not.toBeInTheDocument()`; `:34` `expect(moduleState.evaluations).toBe(0)`                      | sim      |
-        | PERF-140-03: `isOpen` para `true` mostra o diálogo                 | `src/components/test/LazyResumeModal.test.tsx:57` `expect(await screen.findByRole("dialog", { name: "Currículo" })).toBeInTheDocument()`                                               | sim      |
-        | PERF-140-03: abrir, fechar, abrir importa uma vez e some ao fechar | `src/components/test/LazyResumeModal.test.tsx:67` `expect(screen.queryByRole("dialog")).not.toBeInTheDocument()`; `:71` `expect(moduleState.evaluations).toBe(1)`                      | sim      |
-        | PERF-140-04: irmão visível durante a carga                         | `src/components/test/LazyResumeModal.test.tsx:40` `expect(screen.getByText("Conteúdo da página")).toBeVisible()`; `:41` `expect(screen.queryByRole("dialog")).not.toBeInTheDocument()` | sim      |
-        | Acessibilidade com o modal aberto                                  | `src/components/test/LazyResumeModal.test.tsx:78` `await expectNoAxeViolations(container)`                                                                                             | sim      |
+        | PERF-140-03 (borda): fechado não renderiza nem importa             | `src/components/test/LazyResumeModal.test.tsx:34` `expect(screen.queryByRole("dialog")).not.toBeInTheDocument()`; `:35` `expect(moduleState.evaluations).toBe(0)`                      | sim      |
+        | PERF-140-03: `isOpen` para `true` mostra o diálogo                 | `src/components/test/LazyResumeModal.test.tsx:58` `expect(await screen.findByRole("dialog", { name: "Currículo" })).toBeInTheDocument()`                                               | sim      |
+        | PERF-140-03: abrir, fechar, abrir importa uma vez e some ao fechar | `src/components/test/LazyResumeModal.test.tsx:68` `expect(screen.queryByRole("dialog")).not.toBeInTheDocument()`; `:72` `expect(moduleState.evaluations).toBe(1)`                      | sim      |
+        | PERF-140-04: irmão visível durante a carga                         | `src/components/test/LazyResumeModal.test.tsx:41` `expect(screen.getByText("Conteúdo da página")).toBeVisible()`; `:42` `expect(screen.queryByRole("dialog")).not.toBeInTheDocument()` | sim      |
+        | Acessibilidade com o modal aberto                                  | `src/components/test/LazyResumeModal.test.tsx:80` `await expectNoAxeViolations(container)`                                                                                             | sim      |
 
         Veredito: necessários e suficientes.
 
-- [ ] T3 — Trocar `ResumeModal` por `LazyResumeModal` nos quatro pontos de uso
+- [x] T3 — Trocar `ResumeModal` por `LazyResumeModal` nos quatro pontos de uso
     - **Arquivo(s):** `src/components/Footer.tsx`, `src/components/ContactChannels.tsx`, `src/pages/Home.page.tsx`, `src/pages/About.page.tsx`. Testes que abrem o modal e talvez precisem passar a esperar por estado (`findBy*` no lugar de `getBy*` logo após o clique): `src/components/test/Footer.test.tsx`, `src/components/test/ContactChannels.test.tsx`, `src/components/test/ResumeLink.test.tsx`, `src/pages/test/Home.page.test.tsx`, `src/pages/test/About.page.test.tsx`
     - **Depende de:** T2
     - **Testes (escritos antes, RED):**
@@ -67,7 +67,15 @@ Regras para o `executor`: nenhum comentário em código (nem `//`, `/* */`, JSDo
         - PERF-140-02: a hidratação das páginas com rodapé continua sem divergência com o modal fechado. Arquivo: `src/prerender/test/mountClient.test.tsx` (testes existentes)
     - **Gate:** `npm run typecheck && npm run lint && npm test -- --run src/components/test/Footer.test.tsx src/components/test/ContactChannels.test.tsx src/components/test/ResumeLink.test.tsx src/components/test/LazyResumeModal.test.tsx src/pages/test/Home.page.test.tsx src/pages/test/About.page.test.tsx && npm test -- --run --project prerender`
     - **Feito quando:** o gate passa e nenhum chamador renderiza `ResumeModal` direto.
-    - **Evidência:**
+    - **Evidência:** gate verde (typecheck, lint, 117 testes dos seis arquivos, 21 do projeto `prerender`). RED visto: a busca achou `ContactChannels.tsx`, `Footer.tsx`, `About.page.tsx` e `Home.page.tsx`. Depois da troca, quatro testes (`Footer`, `ContactChannels`, `Home.page`, `About.page`) passaram a esperar o diálogo por estado (`findByRole` no lugar de `getByRole`), sem mudar a expectativa; `ResumeLink.test.tsx` renderiza o `ResumeModal` direto e não mudou.
+
+        | Critério                                                    | `arquivo:linha` e asserção                                                                                                                                                                                                                    | Coberto? |
+        | ----------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- |
+        | PERF-140-03: só o `LazyResumeModal` importa o `ResumeModal` | `src/components/test/LazyResumeModal.test.tsx:104` `expect(importers).toEqual(["components/LazyResumeModal.tsx"])`                                                                                                                            | sim      |
+        | PERF-140-05: abrir o currículo pelos quatro pontos          | `src/components/test/Footer.test.tsx`, `ContactChannels.test.tsx`, `src/pages/test/Home.page.test.tsx`, `About.page.test.tsx`: `const dialog = await screen.findByRole("dialog", { name: "Currículo" })` e a mesma asserção do `title` do PDF | sim      |
+        | PERF-140-02: hidratação com o modal fechado                 | testes existentes de `src/prerender/test/mountClient.test.tsx` (`expect(consoleSpies.error).not.toHaveBeenCalled()`)                                                                                                                          | sim      |
+
+        Veredito: necessários e suficientes.
 
 - [ ] T4 — Separar os textos por idioma e criar `loadLanguage` (só acréscimo, sem trocar o carregamento ainda)
     - **Arquivo(s):** `src/i18n/languageBundles/ptBR.ts`, `src/i18n/languageBundles/en.ts`, `src/i18n/languageBundles/es.ts`, `src/i18n/resources.ts`, `src/i18n/loadLanguage.ts`, `src/i18n/test/loadLanguage.test.ts`, `src/i18n/test/resources.test.ts`, e o tipo do conjunto de um idioma em `src/types/i18n/LanguageResources.types.ts` se mais de um arquivo precisar dele
