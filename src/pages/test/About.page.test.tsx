@@ -187,18 +187,18 @@ describe("AboutPage, estrutura", () => {
         expect(regions.map((region) => region.querySelector("h1, h2")?.textContent)).toEqual([
             "Luiz Felipe dos Santos",
             "Sobre mim",
+            "Trajetória",
             "Stack",
-            "Certificados",
-            "Trajetória"
+            "Certificados"
         ])
         expect(screen.getAllByRole("heading", { level: 1 })).toHaveLength(1)
         expect(
             screen.getAllByRole("heading", { level: 2 }).map((heading) => heading.textContent)
-        ).toEqual(["Sobre mim", "Stack", "Certificados", "Como eu trabalho", "Trajetória"])
+        ).toEqual(["Sobre mim", "Trajetória", "Stack", "Certificados", "Como eu trabalho"])
         expect(screen.queryByText(/depoimento/i)).not.toBeInTheDocument()
     })
 
-    it("mostra os grupos de stack e de trajetória com h3", async () => {
+    it("mostra os grupos de trajetória e de stack com h3", async () => {
         renderAbout()
         await loaded()
 
@@ -206,12 +206,12 @@ describe("AboutPage, estrutura", () => {
             screen.getAllByRole("heading", { level: 3 }).map((heading) => heading.textContent)
         ).toEqual([
             "Agora",
-            "Frontend",
-            "Backend",
-            "Infra e ferramentas",
             "Experiências profissionais",
             "Formações",
-            "Cursos"
+            "Cursos",
+            "Frontend",
+            "Backend",
+            "Infra e ferramentas"
         ])
         expect(screen.getByText("Selecione um item para ver o detalhe.")).toBeInTheDocument()
     })
@@ -383,16 +383,49 @@ describe("AboutPage, erro por fonte", () => {
         expect(screen.queryByText(/erro|500|404|Error/i)).not.toBeInTheDocument()
     })
 
-    it("com a trajetória falhando mostra o alerta em Certificados e em Trajetória e mantém o perfil", async () => {
+    it("com a trajetória falhando anuncia o alerta só na Trajetória e mantém o perfil", async () => {
         stubContentFetch(without(buildFiles(), "content/pt-BR/timeline.json"))
         renderAbout()
 
-        await screen.findByRole("alert")
+        const alert = await screen.findByRole("alert")
+        const trajectory = screen.getByRole("region", { name: "Trajetória" })
+        const certificates = screen.getByRole("region", { name: /Certificados/ })
 
         expect(screen.getAllByRole("alert")).toHaveLength(1)
+        expect(within(trajectory).getByRole("alert")).toBe(alert)
+        expect(within(certificates).queryByRole("alert")).not.toBeInTheDocument()
+        expect(within(certificates).getByRole("button", { name: "Tentar novamente" })).toBeVisible()
         expect(screen.getAllByRole("button", { name: "Tentar novamente" })).toHaveLength(2)
         expect(screen.getByText("Sou desenvolvedor full stack em TypeScript.")).toBeInTheDocument()
         expect(screen.getByText("Reviso o que entrego")).toBeInTheDocument()
+    })
+
+    it("Tentar novamente da trajetória, quando falha de novo, leva o foco ao alerta da Trajetória", async () => {
+        const failing = stubContentFetch(without(buildFiles(), "content/pt-BR/timeline.json"))
+        renderAbout()
+        const alert = await screen.findByRole("alert")
+        const [retry] = screen.getAllByRole("button", { name: "Tentar novamente" })
+        const callsBefore = failing.mock.calls.length
+
+        await userEvent.click(retry)
+
+        await waitFor(() => expect(failing.mock.calls.length).toBeGreaterThan(callsBefore))
+        await waitFor(() => expect(screen.getByRole("alert")).toHaveFocus())
+        expect(screen.getByRole("alert")).toBe(alert)
+    })
+
+    it("Tentar novamente da trajetória, quando dá certo, leva o foco ao título Trajetória", async () => {
+        stubContentFetch(without(buildFiles(), "content/pt-BR/timeline.json"))
+        renderAbout()
+        const [retry] = await screen.findAllByRole("button", { name: "Tentar novamente" })
+        stubContentFetch(buildFiles())
+
+        await userEvent.click(retry)
+
+        await waitFor(() =>
+            expect(screen.getByRole("heading", { level: 2, name: "Trajetória" })).toHaveFocus()
+        )
+        expect(screen.queryByRole("alert")).not.toBeInTheDocument()
     })
 
     it("Tentar novamente do perfil refaz só o perfil", async () => {

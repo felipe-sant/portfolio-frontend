@@ -237,10 +237,10 @@ test.describe("sem JavaScript, informações", () => {
             await expect(main.getByText(about.summary, { exact: true })).toBeVisible()
             await expect(main.getByRole("heading", { level: 2 })).toHaveText([
                 texts.aboutMe,
+                texts.trajectory,
                 texts.stack,
                 texts.certificates,
-                texts.workStyle,
-                texts.trajectory
+                texts.workStyle
             ])
             for (const paragraph of about.aboutParagraphs) {
                 await expect(main.getByText(paragraph, { exact: true })).toBeVisible()

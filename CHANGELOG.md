@@ -1,5 +1,11 @@
 # portfolio-frontend
 
+## 1.2.2
+
+### Patch Changes
+
+- [#213](https://github.com/felipe-sant/portfolio-frontend/pull/213) [`2155d85`](https://github.com/felipe-sant/portfolio-frontend/commit/2155d85952afd0ad42fbb852c5248d4f4af1dbf6) Thanks [@felipe-sant](https://github.com/felipe-sant)! - Troca a foto de perfil pela foto real, gerada pelo script `profile:photo`, e passa a reprovar EXIF e XMP nas imagens publicadas. O conteúdo exige ao menos uma captura por projeto e a foto do perfil nos três idiomas.
+
 ## 1.2.1
 
 ### Patch Changes

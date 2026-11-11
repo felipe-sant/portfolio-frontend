@@ -25,10 +25,8 @@
         }
     },
     "aboutParagraphs": [
-        "I took a computing course at Microcamp, but it was in high school, at Etec, that I developed a taste for technology and had my first contact with programming, databases and agile methodologies. Today I study Multiplatform Software Development at Fatec, now in the 6th semester, and a good part of the fundamentals I use every day comes from there.",
-        "I am currently a development intern at InCicle, where I work on different product modules within a micro frontend architecture, going through several delivery fronts, from implementing new features to evolving versions of existing modules. I work with React, TypeScript and Node.js across the full development cycle, from gathering rules with the product team to deploying to production.",
-        "Day to day, I like to understand the context of each delivery well before implementing it, discussing business rules directly with the people who define the product to make sure the technical solution really meets the user's need. I also use Artificial Intelligence tools in my development workflow, not only to write code faster, but to keep the quality and organization of what I deliver.",
-        "I am at a time of strong technical growth, aiming to move from intern to a junior position and, in the medium term, to mid-level. I like learning by doing, so a good part of what I know came from getting my hands dirty on real projects, both at work and outside it."
+        "I am a full stack developer, mainly focused on frontend, and a development intern at InCicle, where I work on product modules of a micro frontend architecture, from implementing new features to evolving versions of existing modules. I use React, TypeScript and Node.js across the full cycle, from gathering rules with the product team to deploying to production. I study Multiplatform Software Development at Fatec, in the 6th semester; it was at Etec that I had my first contact with programming.",
+        "I like to understand the context of each delivery before implementing it and to discuss business rules with the people who define the product. I use Artificial Intelligence tools in my development workflow to keep the quality and organization of what I deliver. I am looking for a junior position and I learn by doing, on projects both at work and outside it."
     ],
     "workPrinciples": [
         "I discuss the rules with the PO before implementing, instead of just following what is written in the task",

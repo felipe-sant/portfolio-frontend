@@ -49,26 +49,39 @@
 
 .pair {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
     gap: var(--space-6);
 }
 
 .value {
+    min-height: 1lh;
     margin: 0;
     color: var(--text-strong);
     font-weight: var(--weight-medium);
 }
 
 .detail {
+    min-height: 1lh;
     margin: 0;
     color: var(--text-weak);
     font-size: var(--text-body-sm);
 }
 
-.skeleton {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-2);
+.emailSkeleton {
+    min-height: 1lh;
+}
+
+@media (max-width: 20.625rem) {
+    .emailSkeleton {
+        min-height: 2lh;
+    }
+}
+
+.actionSkeleton {
+    position: relative;
+    border-color: transparent;
+    color: transparent;
+    cursor: default;
 }
 
 .resume {
