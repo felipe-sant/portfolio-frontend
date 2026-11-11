@@ -1,0 +1,26 @@
+{
+    "hooks": {
+        "PreToolUse": [
+            {
+                "matcher": "Bash",
+                "hooks": [
+                    {
+                        "type": "command",
+                        "command": "cd \"$CLAUDE_PROJECT_DIR\" && npx tsx --tsconfig tsconfig.node.json \"$CLAUDE_PROJECT_DIR/.claude/hooks/guardBash.ts\""
+                    }
+                ]
+            }
+        ],
+        "PostToolUse": [
+            {
+                "matcher": "Edit|Write|MultiEdit",
+                "hooks": [
+                    {
+                        "type": "command",
+                        "command": "cd \"$CLAUDE_PROJECT_DIR\" && npx tsx --tsconfig tsconfig.node.json \"$CLAUDE_PROJECT_DIR/.claude/hooks/formatFile.ts\""
+                    }
+                ]
+            }
+        ]
+    }
+}
