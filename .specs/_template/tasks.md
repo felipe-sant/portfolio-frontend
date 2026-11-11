@@ -33,6 +33,14 @@ Fase 1 (sequencial)  →  Fase 2 (T2 [P] e T3 [P] em paralelo)  →  Fase 3
     - **Feito quando:** critério objetivo e verificável
     - **Evidência:** ...
 
+- [ ] T3 — Verificação completa
+    - **Arquivo(s):** nenhum (só verificação)
+    - **Depende de:** todas as tarefas anteriores
+    - **Testes (escritos antes, RED):** não se aplica
+    - **Gate:** `npm run build && npm run test:cov` (única rodada pesada da feature)
+    - **Feito quando:** o gate passa
+    - **Evidência:** ...
+
 <!-- `[P]` no título marca a tarefa como paralelizável com outras `[P]` da mesma fase (ver "Plano de execução"). Omita o marcador se a tarefa for sequencial. -->
 
 <!--
