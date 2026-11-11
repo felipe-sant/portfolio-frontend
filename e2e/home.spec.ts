@@ -232,6 +232,232 @@ test.describe("estrutura da página", () => {
     })
 })
 
+const NARROWEST_WIDTH = 320
+const FEATURED_TARGET_WIDTHS = [NARROWEST_WIDTH, 375, 390, 768] as const
+const COVER_WIDTHS = [375, 1280] as const
+const MEDIA_RATIO = 16 / 9
+const RATIO_TOLERANCE = 0.01
+const MAX_TAB_PRESSES = 80
+
+function targetWidths(projectWidth: number) {
+    return [...FEATURED_TARGET_WIDTHS, projectWidth].filter(
+        (width, index, all) => all.indexOf(width) === index
+    )
+}
+
+function getFeaturedTitleLinks(page: Page) {
+    return page.getByRole("article").getByRole("heading", { level: 3 }).getByRole("link")
+}
+
+function hasHorizontalScroll(page: Page) {
+    return page.evaluate(
+        () => document.documentElement.scrollWidth > document.documentElement.clientWidth
+    )
+}
+
+async function setWidth(page: Page, width: number) {
+    await page.setViewportSize({ width, height: 800 })
+    await expect.poll(() => page.evaluate(() => window.innerWidth)).toBe(width)
+}
+
+async function measureFocusedTitleLink(page: Page) {
+    return page.evaluate(() => {
+        const active = document.activeElement
+        if (!(active instanceof HTMLAnchorElement) || !active.closest("article h3")) {
+            return null
+        }
+        const style = getComputedStyle(active)
+        const reach = parseFloat(style.outlineWidth) + parseFloat(style.outlineOffset)
+        const box = active.getBoundingClientRect()
+        const ring = {
+            left: box.left - reach,
+            right: box.right + reach,
+            top: box.top - reach,
+            bottom: box.bottom + reach
+        }
+        const clippers = []
+        for (let ancestor = active.parentElement; ancestor; ancestor = ancestor.parentElement) {
+            const ancestorStyle = getComputedStyle(ancestor)
+            const clips =
+                ancestorStyle.overflowX !== "visible" ||
+                ancestorStyle.overflowY !== "visible" ||
+                ancestorStyle.clipPath !== "none" ||
+                ancestorStyle.maskImage !== "none"
+            if (clips && ancestor !== document.documentElement && ancestor !== document.body) {
+                const area = ancestor.getBoundingClientRect()
+                if (
+                    ring.left < area.left - 0.5 ||
+                    ring.right > area.right + 0.5 ||
+                    ring.top < area.top - 0.5 ||
+                    ring.bottom > area.bottom + 0.5
+                ) {
+                    clippers.push(ancestor.tagName)
+                }
+            }
+        }
+        return {
+            text: active.textContent,
+            focusVisible: active.matches(":focus-visible"),
+            outlineStyle: style.outlineStyle,
+            outlineWidth: parseFloat(style.outlineWidth),
+            insideViewport:
+                ring.left >= -0.5 && ring.right <= document.documentElement.clientWidth + 0.5,
+            clippers
+        }
+    })
+}
+
+test.describe("alvo do título dos destaques", () => {
+    for (const language of LANGUAGES) {
+        test(`RF-HOME-19, A11Y-G08, NF-RE-03: em ${language} o link de título de cada destaque tem 44px, a linha do título não cresce e a página não rola na horizontal em 320, 375, 390, 768px e na largura do projeto`, async ({
+            page
+        }) => {
+            test.slow()
+            await page.goto(language)
+            await page.getByRole("article").last().waitFor()
+            const projectWidth = page.viewportSize()?.width ?? 0
+            const links = getFeaturedTitleLinks(page)
+            const total = await links.count()
+            expect(total).toBeGreaterThan(0)
+
+            for (const width of targetWidths(projectWidth)) {
+                await setWidth(page, width)
+                let tallestLines = 0
+
+                for (let index = 0; index < total; index++) {
+                    const label = `${width}px, destaque ${index + 1}`
+                    const link = links.nth(index)
+                    const box = await link.boundingBox()
+                    expect(box?.height ?? 0, label).toBeGreaterThanOrEqual(HIT_MIN)
+                    const measures = await link.evaluate((element) => {
+                        const range = document.createRange()
+                        range.selectNodeContents(element)
+                        const lineTops = new Set(
+                            [...range.getClientRects()].map((rect) => Math.round(rect.top))
+                        )
+                        const heading = element.closest("h3")
+                        return {
+                            lines: lineTops.size,
+                            lineHeight: heading
+                                ? parseFloat(getComputedStyle(heading).lineHeight)
+                                : 0,
+                            heading: heading?.getBoundingClientRect().height ?? 0
+                        }
+                    })
+                    tallestLines = Math.max(tallestLines, measures.lines)
+
+                    expect(measures.lineHeight, label).toBeGreaterThan(0)
+                    expect(
+                        Math.abs(measures.heading - measures.lines * measures.lineHeight),
+                        label
+                    ).toBeLessThanOrEqual(1)
+                }
+
+                if (width === NARROWEST_WIDTH) {
+                    expect(tallestLines, `${width}px`).toBeGreaterThan(1)
+                }
+                expect(await hasHorizontalScroll(page), `${width}px`).toBe(false)
+            }
+        })
+
+        test(`RF-HOME-19, A11Y-G06, A11Y-G08: em ${language} o foco por Tab no título de cada destaque mostra o contorno inteiro em 320, 375, 390, 768px e na largura do projeto`, async ({
+            page
+        }) => {
+            test.slow()
+            await page.goto(language)
+            await page.getByRole("article").last().waitFor()
+            const projectWidth = page.viewportSize()?.width ?? 0
+            const total = await getFeaturedTitleLinks(page).count()
+            expect(total).toBeGreaterThan(0)
+
+            for (const width of targetWidths(projectWidth)) {
+                await setWidth(page, width)
+                await page.getByRole("heading", { level: 1 }).click()
+
+                const focused = []
+                for (let press = 0; press < MAX_TAB_PRESSES && focused.length < total; press++) {
+                    await page.keyboard.press("Tab")
+                    const measure = await measureFocusedTitleLink(page)
+                    if (measure) {
+                        focused.push(measure)
+                    }
+                }
+
+                expect(focused, `${width}px`).toHaveLength(total)
+                for (const measure of focused) {
+                    const label = `${width}px, ${measure.text}`
+                    expect(measure.focusVisible, label).toBe(true)
+                    expect(measure.outlineStyle, label).not.toBe("none")
+                    expect(measure.outlineWidth, label).toBeGreaterThan(0)
+                    expect(measure.insideViewport, label).toBe(true)
+                    expect(measure.clippers, label).toEqual([])
+                }
+            }
+        })
+    }
+})
+
+test.describe("proporção das capas dos destaques", () => {
+    for (const language of LANGUAGES) {
+        test(`RF-HOME-21, NF-DE-16: em ${language} a capa de cada destaque é 16:9 em 375 e 1280px`, async ({
+            page
+        }) => {
+            test.slow()
+            await page.goto(language)
+            await page.getByRole("article").last().waitFor()
+            const images = page.getByRole("article").locator("img")
+            const total = await images.count()
+            expect(total).toBeGreaterThan(0)
+
+            for (const width of COVER_WIDTHS) {
+                await setWidth(page, width)
+
+                for (let index = 0; index < total; index++) {
+                    const label = `${width}px, capa ${index + 1}`
+                    const image = images.nth(index)
+                    await image.scrollIntoViewIfNeeded()
+                    await expect
+                        .poll(() =>
+                            image.evaluate(
+                                (element: HTMLImageElement) =>
+                                    element.complete && element.naturalWidth > 0
+                            )
+                        )
+                        .toBe(true)
+                    const measures = await image.evaluate((element: HTMLImageElement) => {
+                        const box = element.getBoundingClientRect()
+                        return {
+                            width: box.width,
+                            height: box.height,
+                            naturalRatio: element.naturalWidth / element.naturalHeight,
+                            attributeRatio:
+                                Number(element.getAttribute("width")) /
+                                Number(element.getAttribute("height"))
+                        }
+                    })
+
+                    expect(
+                        Math.abs(measures.height - (measures.width * 9) / 16),
+                        label
+                    ).toBeLessThanOrEqual(1)
+                    expect(
+                        Math.abs(measures.width / measures.height - MEDIA_RATIO),
+                        label
+                    ).toBeLessThanOrEqual(RATIO_TOLERANCE)
+                    expect(
+                        Math.abs(measures.naturalRatio - MEDIA_RATIO),
+                        label
+                    ).toBeLessThanOrEqual(RATIO_TOLERANCE)
+                    expect(
+                        Math.abs(measures.attributeRatio - MEDIA_RATIO),
+                        label
+                    ).toBeLessThanOrEqual(RATIO_TOLERANCE)
+                }
+            }
+        })
+    }
+})
+
 test.describe("imagens dos destaques", () => {
     for (const language of LANGUAGES) {
         test(`RF-HOME-21: em ${language} cada destaque mostra a imagem carregada e nenhum placeholder`, async ({
