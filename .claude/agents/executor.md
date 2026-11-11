@@ -41,7 +41,7 @@ Rode só os comandos que o `package.json` da branch realmente tem; confira-o em 
 
 - `npm run typecheck` — checagem de tipos (`tsc -b`, sempre disponível).
 - `npm run lint` — checagem de lint via `oxlint`.
-- `npm test -- --run <arquivo de teste alterado>` — só o teste do arquivo alterado (Vitest, one-shot); quando a tarefa altera um arquivo compartilhado cujos testes estão em outros arquivos, use os arquivos de teste listados no gate da tarefa. Use sempre `-- --run`: `npm test` puro entra em watch mode e não termina. Tarefa sem mudança de comportamento (documentação, config) roda só `typecheck` e `lint`.
+- `npm test -- --run <arquivo de teste alterado>` — só o teste do arquivo alterado (Vitest, one-shot); quando a tarefa altera um arquivo compartilhado cujos testes estão em outros arquivos, use os arquivos de teste listados no gate da tarefa; a tarefa de página que cria ou altera chave de tradução inclui também `src/i18n/test/resources.test.ts`. Use sempre `-- --run`: `npm test` puro entra em watch mode e não termina. Tarefa sem mudança de comportamento (documentação, config) roda só `typecheck` e `lint`.
 
 **Nunca rode `npm run build` nem a suíte completa por tarefa.**
 

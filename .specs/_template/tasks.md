@@ -33,7 +33,7 @@ Fase 1 (sequencial)  →  Fase 2 (T2 [P] e T3 [P] em paralelo)  →  Fase 3
     - **Feito quando:** critério objetivo e verificável
     - **Evidência:** ...
 
-- [ ] T3 — Verificação completa
+- [ ] TN — Verificação completa
     - **Arquivo(s):** nenhum (só verificação)
     - **Depende de:** todas as tarefas anteriores
     - **Testes (escritos antes, RED):** não se aplica
