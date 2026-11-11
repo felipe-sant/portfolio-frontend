@@ -204,9 +204,10 @@ O `<Tipo>` de branch, commit e título de PR vem sempre desta tabela:
 
 ### Issues
 
-Toda issue entra no projeto [Portfolio](https://github.com/users/felipe-sant/projects/16) com Status `Backlog`, `Marco`
-do `docs/product/roadmap.md` (ou `Pessoal`), um único `Tipo` (`FEAT`, `DOC` ou `BUG`) e labels só de área (`frontend`,
-`backend`, `infra`); dependência vira "blocked by" do GitHub ([`CONTRIBUTING.md`](../CONTRIBUTING.md#issues)).
+Toda issue entra no projeto [Portfolio](https://github.com/users/felipe-sant/projects/16) com Status `Backlog`, `Versão`
+(`v1`, a entrega da Fatec, ou `v2`, AWS, banco e backend), um único `Tipo` (`FEAT`, `DOC` ou `BUG`) e labels só de área
+(`frontend`, `backend`, `infra`); dependência vira "blocked by" do GitHub
+([`CONTRIBUTING.md`](../CONTRIBUTING.md#issues)).
 
 ### Branches
 
