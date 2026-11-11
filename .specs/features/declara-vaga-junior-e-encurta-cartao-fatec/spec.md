@@ -1,7 +1,7 @@
 # Spec: declara-vaga-junior-e-encurta-cartao-fatec
 
 > **Tipo:** `feature` (Feat na branch e no commit) <br />
-> **Status:** `em-andamento` <br />
+> **Status:** `implementada` <br />
 > **Issue:** `#134` <br />
 > **Criado em:** `11-11-2026`
 
@@ -114,10 +114,10 @@ Legenda: [teste] Vitest, [E2E] Playwright, [manual] verificação do PO ou do `q
 - [x] **CA7** (decisão do PO) [teste]: nos três idiomas, `home:heading`, `profile.role` e o `title` da experiência atual são a mesma string, e o `jobTitle` do JSON-LD da Início é igual ao de Informações (`Home.page.test.tsx`, `content.test.ts`).
 - [x] **CA8** (decisão do PO) [teste]: `profile.json` e `timeline.json` dos três idiomas não contêm "estagiário", "estágio", "intern", "internship", "pasante" ou "pasantía" (caixa ignorada), e a validação do conteúdo real (inclusive de tradução) passa; os três `cv-*.md` também não contêm esses termos.
 - [x] **CA9** (decisão do PO) [teste]: o cartão "Trabalhando como" mostra o cargo Júnior, a InCicle e "desde 05/2026", e o `worksFor` do JSON-LD de Informações segue `InCicle`.
-- [ ] **CA10** (issue 4) [teste] [E2E]: `npm run test:cov` e os E2E de Início, Informações, idioma, navegação e sem JavaScript passam com os textos novos; os PDFs do CV batem com os `.md` (`scripts/test/resumePdfsUpToDate.test.ts`).
+- [x] **CA10** (issue 4) [teste] [E2E]: `npm run test:cov` e os E2E de Início, Informações, idioma, navegação e sem JavaScript passam com os textos novos; os PDFs do CV batem com os `.md` (`scripts/test/resumePdfsUpToDate.test.ts`).
 - [x] **CA11** (R2) [teste]: os três `home.json` têm as mesmas chaves, `hero.stack` existe nos três e nenhuma chave de `home` ficou sem uso.
-- [ ] **CA12** (documentação) [review]: `home.md` risca `RF-HOME-04` e `A11Y-IN01` e traz `RF-HOME-26`, `RF-HOME-27`, `RF-HOME-28` e o novo ID de acessibilidade; `design-system.md`, `layout.md`, `accessibility.md`, `overview.md` e `about.md` coerentes com a decisão; `decisions.md` e contrato de dados intocados.
-- [ ] **CA13** [E2E] [teste]: `expectNoAxeViolations` na Início e em Informações nos temas e larguras já cobertos e `jsx-a11y` limpo.
+- [x] **CA12** (documentação) [review]: `home.md` risca `RF-HOME-04` e `A11Y-IN01` e traz `RF-HOME-26`, `RF-HOME-27`, `RF-HOME-28` e o novo ID de acessibilidade; `design-system.md`, `layout.md`, `accessibility.md`, `overview.md` e `about.md` coerentes com a decisão; `decisions.md` e contrato de dados intocados.
+- [x] **CA13** [E2E] [teste]: `expectNoAxeViolations` na Início e em Informações nos temas e larguras já cobertos e `jsx-a11y` limpo.
 - [ ] **CA14** [manual]: pendência de verificação manual depois do `executor`: o PO confere e ajusta o texto do `homeIntro`, de `aboutParagraphs` e o resultado do cartão a 375 e 390px.
 
 ## Casos de borda
