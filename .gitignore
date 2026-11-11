@@ -28,11 +28,6 @@ Thumbs.db
 .claude/settings.local.json
 .claude/worktrees/
 
-.specs/bugs/*/
-.specs/features/*/
-!.specs/bugs/_archive/
-!.specs/features/_archive/
-
 test-results/
 playwright-report/
 blob-report/
