@@ -1,7 +1,7 @@
 # Spec: 206-arquivos-para-ia-nos-tres-idiomas
 
 > **Tipo:** `feature` (trilha G: #206, #212 e #210 num PR só) <br />
-> **Status:** `em-andamento` <br />
+> **Status:** `implementada` <br />
 > **Issue:** `#206`, `#212`, `#210` <br />
 > **Criado em:** `11-11-2026`
 
@@ -122,9 +122,9 @@ E-mail (#212, NF-IA-06)
 
 Build, E2E e docs
 
-- [ ] **CA15** — `scripts/seo/writeSeoFiles.ts` sem diff (`git diff origin/staging -- scripts/seo/writeSeoFiles.ts` vazio). `writeSeoFiles.test.ts` afirma, sobre os seis arquivos gerados de verdade: os três resumos no `llms.txt`, nenhum e-mail nos `llms*.txt` e a linha `Content-Signal` no `robots.txt`.
-- [ ] **CA16** — `e2e/machine-files.spec.ts` (NF-IA-05, NF-IA-06, NF-IA-12 nos títulos) afirma o mesmo sobre o build da Fatec: `llms.txt` nos três idiomas, nenhum e-mail nos `llms*.txt` com o link de Contato no lugar, e `Content-Signal` em cada grupo. Sem spec novo e sem mudança em `specClassification.ts`.
-- [ ] **CA17** — `docs/product/non-functional-requirements.md` (NF-IA-05, NF-IA-06, NF-IA-12), `docs/architecture/frontend.md` ("Arquivos para buscadores e IA") e `docs/design/decisions.md` (duas decisões novas, com a data 11-11-2026, fonte `PO` e a nota de que o `Content-Signal` é proposta, pode mudar e o Google informa que não age sobre ele) descrevem o comportamento novo.
+- [x] **CA15** — `scripts/seo/writeSeoFiles.ts` sem diff (`git diff origin/staging -- scripts/seo/writeSeoFiles.ts` vazio). `writeSeoFiles.test.ts` afirma, sobre os seis arquivos gerados de verdade: os três resumos no `llms.txt`, nenhum e-mail nos `llms*.txt` e a linha `Content-Signal` no `robots.txt`.
+- [x] **CA16** — `e2e/machine-files.spec.ts` (NF-IA-05, NF-IA-06, NF-IA-12 nos títulos) afirma o mesmo sobre o build da Fatec: `llms.txt` nos três idiomas, nenhum e-mail nos `llms*.txt` com o link de Contato no lugar, e `Content-Signal` em cada grupo. Sem spec novo e sem mudança em `specClassification.ts`.
+- [x] **CA17** — `docs/product/non-functional-requirements.md` (NF-IA-05, NF-IA-06, NF-IA-12), `docs/architecture/frontend.md` ("Arquivos para buscadores e IA") e `docs/design/decisions.md` (duas decisões novas, com a data 11-11-2026, fonte `PO` e a nota de que o `Content-Signal` é proposta, pode mudar e o Google informa que não age sobre ele) descrevem o comportamento novo.
 
 ## Casos de borda
 
