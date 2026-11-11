@@ -1,7 +1,7 @@
 # Spec: 206-arquivos-para-ia-nos-tres-idiomas
 
 > **Tipo:** `feature` (trilha G: #206, #212 e #210 num PR só) <br />
-> **Status:** `em-revisao` <br />
+> **Status:** `aprovada` <br />
 > **Issue:** `#206`, `#212`, `#210` <br />
 > **Criado em:** `11-11-2026`
 
