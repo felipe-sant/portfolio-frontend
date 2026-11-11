@@ -2,13 +2,11 @@ import { spawnSync } from "node:child_process"
 import { readFileSync } from "node:fs"
 import { describe, expect, it } from "vitest"
 
-type VercelRewrite = { source: string; destination: string }
 type VercelHeader = { key: string; value: string }
 type VercelHeaderRule = { source: string; headers: VercelHeader[] }
 type VercelConfig = {
     cleanUrls?: boolean
     trailingSlash?: boolean
-    rewrites?: VercelRewrite[]
     headers?: VercelHeaderRule[]
 }
 
@@ -47,12 +45,9 @@ describe("vercel.json", () => {
         expect(config.trailingSlash).toBe(false)
     })
 
-    it("não tem reescrita genérica para o index.html", () => {
-        const catchAll = (config.rewrites ?? []).filter((rewrite) =>
-            ["/(.*)", "/:path*", "/(.*)/"].includes(rewrite.source)
-        )
-
-        expect(catchAll).toEqual([])
+    it("não tem reescrita nem rota, para caminho inexistente cair no 404.html", () => {
+        expect(config).not.toHaveProperty("rewrites")
+        expect(config).not.toHaveProperty("routes")
     })
 
     it.skipIf(!hasJq)(

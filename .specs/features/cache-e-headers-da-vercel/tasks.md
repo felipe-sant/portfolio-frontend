@@ -63,7 +63,7 @@ o script de dados das páginas pré-renderizadas).
       para `/fonts/(.*)`; CA-04: `:96` `expect(value).toBe("public, max-age=2592000")` e `:97`
       `expect(value).not.toContain("immutable")`.
 
-- [ ] T3 — Travar o 404 de caminho inexistente e corrigir o ADR 0003
+- [x] T3 — Travar o 404 de caminho inexistente e corrigir o ADR 0003
     - **Arquivo(s):** `scripts/test/vercelConfig.test.ts`, `scripts/test/resolvePagesFile.test.ts`,
       `docs/adr/0003-hosting-vercel.md`
     - **Depende de:** T2
@@ -81,7 +81,12 @@ o script de dados das páginas pré-renderizadas).
     - **Feito quando:** o gate passa e a linha de "Consequências" do ADR 0003 que diz "`vercel.json` devolve
       `index.html` para qualquer caminho que não seja arquivo estático" passa a dizer que, sem reescrita, a Vercel serve
       o arquivo exato, o `<caminho>.html` (`cleanUrls`) ou o `404.html` com status 404 desde #49 (CA-08)
-    - **Evidência:**
+    - **Evidência:** testes de regressão, verdes na primeira execução; RED de CA-06 conferido pondo `rewrites` e depois
+      `routes` temporários no `vercel.json` (1 falha cada), desfeito antes do commit; gate verde (29 testes). CA-06:
+      `scripts/test/vercelConfig.test.ts:49` `expect(config).not.toHaveProperty("rewrites")` e `:50`
+      `expect(config).not.toHaveProperty("routes")`; CA-07: `scripts/test/resolvePagesFile.test.ts:98`
+      `expect(resolvePagesFile(directory, ".well-known/rsl.xml")).toEqual({ status: 404, file: join(directory, "404.html") })`
+      e `:105` o mesmo para `"xyz.xml"`; CA-08: `docs/adr/0003-hosting-vercel.md`, item de "Consequências" reescrito.
 
 - [ ] T4 — Dados da pré-renderização num bloco `application/json` lido pelo cliente
     - **Arquivo(s):** `scripts/prerender/composePage.ts`, `scripts/test/composePage.test.ts`,

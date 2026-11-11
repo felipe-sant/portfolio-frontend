@@ -101,11 +101,11 @@ noindex` ao fim de `headers` sem descartar nenhuma regra; aplicada ao `vercel.js
 
 **#197 — 404 para caminho inexistente**
 
-- [ ] CA-06 (NF-HO-02, NF-IA-04): o `vercel.json` não tem `rewrites` nem `routes` (nenhuma, não só a genérica). Teste:
+- [x] CA-06 (NF-HO-02, NF-IA-04): o `vercel.json` não tem `rewrites` nem `routes` (nenhuma, não só a genérica). Teste:
       `scripts/test/vercelConfig.test.ts`.
-- [ ] CA-07 (NF-IA-04): no resolvedor que reproduz o Pages, `.well-known/rsl.xml` e um caminho de arquivo com extensão
+- [x] CA-07 (NF-IA-04): no resolvedor que reproduz o Pages, `.well-known/rsl.xml` e um caminho de arquivo com extensão
       desconhecida (`xyz.xml`) respondem 404 com o `404.html`. Teste: `scripts/test/resolvePagesFile.test.ts`.
-- [ ] CA-08 (NF-IA-04): o ADR 0003 deixa de dizer que o `vercel.json` devolve `index.html` para qualquer caminho e
+- [x] CA-08 (NF-IA-04): o ADR 0003 deixa de dizer que o `vercel.json` devolve `index.html` para qualquer caminho e
       descreve o 404 pelo `404.html` (revisão do `reviewer`).
 - [ ] CA-09 (NF-IA-04): na `staging`, depois do merge, `curl` com o bypass de automação em `/.well-known/rsl.xml`,
       `/xyz.xml` e `/projects` devolve 404, e `/pt-BR`, `/en/projects` e `/pt-BR/projects/<id>/docs/<nome>.md` devolvem

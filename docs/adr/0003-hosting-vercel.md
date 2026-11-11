@@ -18,7 +18,7 @@ A aplicação só tinha CI: não havia hospedagem nem pipeline de publicação. 
 - Só publica com build, lint e testes verdes: CI falhando, cancelado ou vindo de PR não gera deploy.
 - O `deploy.yml` roda a partir do arquivo da branch padrão (`staging`), então o primeiro deploy de produção só acontece depois da primeira promoção `staging` -> `main`.
 - Credenciais da Vercel (`VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`) ficam em GitHub Secrets e as variáveis de build em GitHub Environments (`production`, `staging`).
-- `vercel.json` devolve `index.html` para qualquer caminho que não seja arquivo estático, para as rotas internas recarregarem sem 404.
+- Desde #49 o `vercel.json` não tem `rewrites` nem `routes`: a Vercel serve o arquivo exato, o `<caminho>.html` (`cleanUrls`) ou, se nenhum existir, o `404.html` da raiz do build com status 404. As rotas internas recarregam sem 404 porque cada uma tem HTML pré-renderizado (ADR 0004), e caminho inexistente, com ou sem extensão (como `/.well-known/rsl.xml`), responde 404 com a não encontrada. O fallback antigo que devolvia `index.html` com 200 para qualquer caminho (#15) saiu em #49, e `scripts/test/vercelConfig.test.ts` impede a volta de qualquer reescrita ou rota.
 - A versão da Vercel CLI é fixada no workflow e atualizada à mão.
 - O beta não é visível para terceiros sem login Vercel, o que impede mostrá-lo ou checá-lo por `curl` sem o bypass de automação.
 
