@@ -3,6 +3,7 @@ import { tmpdir } from "node:os"
 import { join } from "node:path"
 import { afterEach, describe, expect, it } from "vitest"
 import SUPPORTED_LANGUAGES from "@/i18n/supportedLanguages"
+import buildCurrentTimeline from "@/services/content/buildCurrentTimeline"
 import validateContent from "@/services/content/validation/validateContent"
 import readContentSnapshot from "@/testUtils/readContentSnapshot"
 import relaxAsyncUtilTimeout from "@/testUtils/relaxAsyncUtilTimeout"
@@ -59,4 +60,47 @@ describe("conteúdo de public/", () => {
             'content/en/projects.json#items[0].date: Data fora do formato AAAA-MM: "2026-13"'
         )
     })
+})
+
+const INTERNSHIP_TERMS = /estagi|internship|\bintern\b|pasante|pasant[ií]a/i
+
+describe("cargo Júnior no conteúdo", () => {
+    it.each(SUPPORTED_LANGUAGES)(
+        "profile.json e timeline.json de %s não falam de estágio",
+        async (lang) => {
+            const folder = join(PUBLIC_ROOT, "content", lang)
+            const profile = await readFile(join(folder, "profile.json"), "utf-8")
+            const timeline = await readFile(join(folder, "timeline.json"), "utf-8")
+
+            expect(profile).not.toMatch(INTERNSHIP_TERMS)
+            expect(timeline).not.toMatch(INTERNSHIP_TERMS)
+        }
+    )
+
+    it.each(SUPPORTED_LANGUAGES)(
+        "o heading da Início, o role do perfil e o título da experiência atual de %s são iguais",
+        async (lang) => {
+            const snapshot = await readContentSnapshot(PUBLIC_ROOT)
+            const home = JSON.parse(
+                await readFile(join(process.cwd(), "src", "locales", lang, "home.json"), "utf-8")
+            )
+            const current = buildCurrentTimeline(snapshot.languages[lang].timeline ?? [], [])
+                .items[0]
+
+            expect(snapshot.languages[lang].profile?.role).toBe(home.heading)
+            expect(current.title).toBe(home.heading)
+        }
+    )
+
+    it.each(SUPPORTED_LANGUAGES)(
+        "a experiência atual de %s é a da InCicle desde 2026-05",
+        async (lang) => {
+            const snapshot = await readContentSnapshot(PUBLIC_ROOT)
+            const current = buildCurrentTimeline(snapshot.languages[lang].timeline ?? [], [])
+                .items[0]
+
+            expect(current.organization).toBe("InCicle")
+            expect(current.start).toBe("2026-05")
+        }
+    )
 })

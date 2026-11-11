@@ -17,7 +17,7 @@ const TRANSLATION_EXCEPTIONS: Record<string, string[]> = {
         "Expro",
         "Microcamp São José dos Campos"
     ],
-    "items[].details[]": ["200 horas"],
+    "items[].details[]": ["200 horas", "Híbrido"],
     "items[].disciplines[]": ["Ética"],
     "items[].certificates[].issuer": ["Expro", "Microcamp"],
     "items[].role": ["Full stack", "Frontend", "Full stack + IA"],
