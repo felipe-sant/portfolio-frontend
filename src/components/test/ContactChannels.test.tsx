@@ -133,7 +133,7 @@ describe("ContactChannels", () => {
         const { unmount } = render(<ContactChannels profile={PROFILE} />)
         const loadedHeadings = screen
             .getAllByRole("heading", { level: 2 })
-            .map((h) => h.textContent)
+            .map((heading) => heading.textContent)
         unmount()
 
         const { container: loadingContainer } = render(<ContactChannels />)

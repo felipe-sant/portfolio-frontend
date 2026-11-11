@@ -12,7 +12,7 @@ const MAPS_IMAGES_DIR = join(
     "01a13188-a1da-7d4b-901c-e7bcc81d497b"
 )
 const MAX_LARGE_BYTES = 102_400
-const MAX_SMALL_BYTES = 27_574
+const MAX_SMALL_BYTES = 22_000
 
 async function readMapsImage(name: string) {
     return new Uint8Array(await readFile(join(MAPS_IMAGES_DIR, name)))
