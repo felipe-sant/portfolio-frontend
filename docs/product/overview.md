@@ -48,7 +48,7 @@ Cinco rotas, cada uma com o propósito definido no handoff e o caminho em inglê
 | `/`             | Início      | Primeira impressão: quem é, o que faz agora (status atual), quatro projetos em destaque e faixa de stack                                                                                                               | Handoff, `prototipo-inicio`; D26, D11, D13, D14, D24                 |
 | `/projects`     | Projetos    | Encontrar um projeto por busca, tipo, categoria ou tecnologia, com ordenação e carregamento incremental                                                                                                                | Handoff, `prototipo-projetos`; D16, D17                              |
 | `/projects/:id` | Projeto     | Contar como o problema foi resolvido, como estudo de caso: galeria, documentação do projeto (`README.md` e qualquer outro documento, cada um com endereço próprio em `/projects/:id/docs/<name>`, D55) e ficha técnica | Handoff, `prototipo-projeto`; D06, D10, D18, D19, D33, D55, PI1, PI2 |
-| `/about`        | Informações | Quem é o autor, o que domina e por onde passou: sobre mim, stack, complementos e trajetória com modal de detalhe                                                                                                       | Handoff, `prototipo-informacoes`; D13, D14, D20, PI1                 |
+| `/about`        | Informações | Quem é o autor, o que domina e por onde passou: sobre mim, trajetória com modal de detalhe, stack e complementos                                                                                                       | Handoff, `prototipo-informacoes`; D13, D14, D20, PI1                 |
 | `/contact`      | Contato     | Dar o canal direto (e-mail, CV) para quem quer falar com o autor; o formulário existe, mas está desligado na v1 e é ligado na V2+                                                                                      | Handoff, `prototipo-contato`; D05, D07, D21, D25                     |
 
 - Cabeçalho igual nas cinco telas, com o item da rota atual destacado; rodapé igual em quatro delas (em `/contact` ele vira navegação). Fonte: handoff; protótipo, `ProtoHeader` e `ProtoFooter`; D01, D02, D04.
@@ -148,7 +148,7 @@ caminhos abaixo omitem o prefixo:
 - `/projects/:id` (Projeto): estudo de caso, com galeria, documentação e ficha técnica; o
   `README.md` abre em `/projects/:id` e cada outro documento do projeto (lista livre, D55) em
   `/projects/:id/docs/<name>`, pelo nome do arquivo.
-- `/about` (Informações): sobre mim, stack, complementos e trajetória.
+- `/about` (Informações): sobre mim, trajetória, stack e complementos.
 - `/contact` (Contato): formulário de mensagem e canais diretos (formulário desligado na v1,
   D05).
 

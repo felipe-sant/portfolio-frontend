@@ -185,7 +185,7 @@ de código"); `D32` estende o inglês ao caminho da URL. Opções para "Informa�
 
 | Caminho    | Avaliação                                                                                                          | Decisão         |
 | ---------- | ------------------------------------------------------------------------------------------------------------------ | --------------- |
-| `/about`   | Convenção de portfólio que recrutador, IA e buscador reconhecem; cobre sobre mim, stack, complementos e trajetória | **Recomendada** |
+| `/about`   | Convenção de portfólio que recrutador, IA e buscador reconhecem; cobre sobre mim, trajetória, stack e complementos | **Recomendada** |
 | `/profile` | Sugere conta ou área logada, que está fora do produto (`DP03`)                                                     | Descartada      |
 | `/resume`  | Confunde com o CV em PDF e Markdown de `D52`, que é outro artefato                                                 | Descartada      |
 | `/info`    | Genérico, não diz o que a página tem                                                                               | Descartada      |
