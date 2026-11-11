@@ -62,6 +62,10 @@
         "description": "Verifica tu conexión e inténtalo de nuevo. Tus filtros se mantuvieron.",
         "retry": "Intentar de nuevo"
     },
+    "experiments": {
+        "heading": "Experimentos",
+        "description": "Proyectos pequeños que hice para practicar una idea."
+    },
     "loadMore": "Cargar más",
     "loadMoreError": {
         "heading": "No pude cargar más proyectos",

@@ -39,6 +39,27 @@ describe("conteúdo de public/", () => {
         expect(projects.filter((project) => project.images.length < 1)).toEqual([])
     })
 
+    it.each(SUPPORTED_LANGUAGES)(
+        "só os dois experimentos de %s têm experiment true",
+        async (lang) => {
+            const snapshot = await readContentSnapshot(PUBLIC_ROOT)
+            const projects = snapshot.languages[lang].projects ?? []
+
+            expect(
+                projects
+                    .filter((project) => project.experiment === true)
+                    .map((project) => project.id)
+                    .toSorted()
+            ).toEqual([
+                "01a131fc-d24c-7c70-887b-0d055f57d251",
+                "01a13216-9960-7a66-8288-462bf96ec9a5"
+            ])
+            expect(projects.filter((project) => project.experiment === false)).toHaveLength(
+                projects.length - 2
+            )
+        }
+    )
+
     it.each(SUPPORTED_LANGUAGES)("o perfil de %s tem a foto", async (lang) => {
         const snapshot = await readContentSnapshot(PUBLIC_ROOT)
 

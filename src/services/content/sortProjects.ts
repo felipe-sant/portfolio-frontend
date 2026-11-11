@@ -19,6 +19,10 @@ function byDateAscending(first: ProjectRecord, second: ProjectRecord): number {
     return compareText(first.date, second.date)
 }
 
+function byExperimentLast(first: ProjectRecord, second: ProjectRecord): number {
+    return Number(first.experiment) - Number(second.experiment)
+}
+
 function byId(first: ProjectRecord, second: ProjectRecord): number {
     return compareText(first.id, second.id)
 }
@@ -31,9 +35,9 @@ function sortProjects(
     const collator = new Intl.Collator(lang, { sensitivity: "base", numeric: true })
     const byTitle: Comparator = (first, second) => collator.compare(first.title, second.title)
     const criteria: Comparator[] = {
-        recent: [byDateDescending, byTitle, byId],
-        oldest: [byDateAscending, byTitle, byId],
-        title: [byTitle, byDateDescending, byId]
+        recent: [byExperimentLast, byDateDescending, byTitle, byId],
+        oldest: [byExperimentLast, byDateAscending, byTitle, byId],
+        title: [byExperimentLast, byTitle, byDateDescending, byId]
     }[sort]
 
     return projects.toSorted((first, second) => {

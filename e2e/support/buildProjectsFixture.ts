@@ -27,7 +27,8 @@ function buildProjectsFixture(language: string, count: number) {
             date: `${year}-06`,
             stack: [{ category: "frontend", items: names.map((name) => ({ name })) }],
             cardTechnologies: names,
-            featured: false
+            featured: false,
+            experiment: false
         }
     })
 

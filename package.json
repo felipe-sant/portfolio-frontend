@@ -48,6 +48,7 @@
     "cv:pdf": "tsx --tsconfig tsconfig.node.json scripts/generateResume.ts",
     "profile:photo": "tsx --tsconfig tsconfig.node.json scripts/generateProfilePhoto.ts",
     "playwright:install": "tsx --tsconfig tsconfig.node.json scripts/installChromium.ts",
+    "content:crop-captures": "tsx --tsconfig tsconfig.node.json scripts/cropProjectCaptures.ts",
     "og:image": "tsx --tsconfig tsconfig.node.json scripts/generateOgImage.ts",
     "readme:images": "tsx --tsconfig tsconfig.node.json scripts/generateReadmeScreenshots.ts",
     "check:contact-form": "tsx --tsconfig tsconfig.node.json scripts/checkContactForm.ts",

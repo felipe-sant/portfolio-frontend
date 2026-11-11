@@ -417,6 +417,8 @@ pedir (Validações de [`projects.md`](../screens/projects.md)), então nunca o 
 | `oldest` | `date` crescente   | Título A–Z; por fim, `id` em ordem crescente de texto |
 | `title`  | Título A–Z         | `date` decrescente; por fim, `id` crescente           |
 
+Em todas as ordenações, os projetos com `experiment: true` vêm depois de todos os principais (D69), e o critério da tabela vale dentro de cada grupo; `total`, `offset` e `limit` seguem a lista inteira assim ordenada.
+
 Título A–Z é a colação do `lang` com sensibilidade de base e comparação numérica (o equivalente a
 `Intl.Collator(lang, { sensitivity: "base", numeric: true })`).
 
@@ -459,6 +461,7 @@ Lista padrão, primeira página: `GET /projects?lang=pt-BR`
             "types": ["web", "api"],
             "category": "personal",
             "featured": true,
+            "experiment": false,
             "technologies": ["React", "TypeScript", "Node.js", "PostGIS", "Docker"],
             "cardTechnologies": ["React", "PostGIS", "Node.js"],
             "cover": {
@@ -482,6 +485,7 @@ Lista padrão, primeira página: `GET /projects?lang=pt-BR`
             "types": ["library"],
             "category": "academic",
             "featured": false,
+            "experiment": false,
             "technologies": ["React", "TypeScript", "Storybook"],
             "cardTechnologies": ["React", "Storybook"]
         }
@@ -511,6 +515,7 @@ Filtro por tecnologia e ano: `GET /projects?lang=pt-BR&tech=React&tech=TypeScrip
             "types": ["web", "api"],
             "category": "personal",
             "featured": true,
+            "experiment": false,
             "technologies": ["React", "TypeScript", "Node.js", "PostGIS", "Docker"],
             "cardTechnologies": ["React", "PostGIS", "Node.js"],
             "cover": {
@@ -549,6 +554,7 @@ Destaques do Início: `GET /projects?lang=pt-BR&featured=true&sort=recent&limit=
             "types": ["web", "api"],
             "category": "personal",
             "featured": true,
+            "experiment": false,
             "technologies": ["React", "TypeScript", "Node.js", "PostGIS", "Docker"],
             "cardTechnologies": ["React", "PostGIS", "Node.js"],
             "cover": {
@@ -572,6 +578,7 @@ Destaques do Início: `GET /projects?lang=pt-BR&featured=true&sort=recent&limit=
             "types": ["mobile", "api"],
             "category": "academic",
             "featured": true,
+            "experiment": false,
             "technologies": ["React Native", "TypeScript", "Node.js"],
             "cardTechnologies": ["React Native", "Node.js"]
         }
@@ -687,6 +694,7 @@ O projeto inteiro, no idioma pedido, com os relacionados expandidos.
     "types": ["web", "api"],
     "category": "personal",
     "featured": true,
+    "experiment": false,
     "technologies": ["React", "TypeScript", "Node.js", "PostGIS", "Docker"],
     "cardTechnologies": ["React", "PostGIS", "Node.js"],
     "cover": {
@@ -782,6 +790,7 @@ O projeto inteiro, no idioma pedido, com os relacionados expandidos.
                 "types": ["mobile", "api"],
                 "category": "academic",
                 "featured": true,
+                "experiment": false,
                 "technologies": ["React Native", "TypeScript", "Node.js"],
                 "cardTechnologies": ["React Native", "Node.js"]
             }

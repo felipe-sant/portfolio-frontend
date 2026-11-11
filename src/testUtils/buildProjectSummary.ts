@@ -9,6 +9,7 @@ function buildProjectSummary(overrides: Partial<ProjectSummary> = {}): ProjectSu
         types: ["web", "api"],
         category: "personal",
         featured: true,
+        experiment: false,
         technologies: ["TypeScript", "React", "Node.js", "PostgreSQL"],
         cardTechnologies: ["TypeScript", "React", "Node.js"],
         cover: {

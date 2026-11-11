@@ -22,6 +22,10 @@ const records = [
     build(5, { types: ["web"], title: "Catálogo" })
 ]
 
+function paging(offset: number, limit: number) {
+    return validateProjectListParams({ lang: "pt-BR", offset, limit })
+}
+
 function list(params: Omit<ProjectListParams, "lang">) {
     return listProjects(records, validateProjectListParams({ lang: "pt-BR", ...params }))
 }
@@ -46,6 +50,33 @@ describe("listProjects", () => {
 
         expect(page.items.map((item) => item.date)).toEqual(["2026-03", "2026-02"])
         expect(page).toMatchObject({ total: 5, offset: 2, limit: 2 })
+    })
+
+    it("fatia a lista já com os experimentos no fim e conta todos no total", () => {
+        const withExperiments = [
+            build(1),
+            build(2, { experiment: true, date: "2027-01" }),
+            build(3),
+            build(4, { experiment: true, date: "2027-02" })
+        ]
+
+        const first = listProjects(withExperiments, paging(0, 3))
+        const second = listProjects(withExperiments, paging(3, 3))
+
+        expect(first.items.map((item) => item.experiment)).toEqual([false, false, true])
+        expect(second.items.map((item) => item.experiment)).toEqual([true])
+        expect(first.total).toBe(4)
+        expect(second.total).toBe(4)
+    })
+
+    it("mantém a ordem de antes quando nenhum projeto é experimento", () => {
+        expect(list({}).items.map((item) => item.date)).toEqual([
+            "2026-05",
+            "2026-04",
+            "2026-03",
+            "2026-02",
+            "2026-01"
+        ])
     })
 
     it("devolve items vazio com offset além do fim e o total real", () => {

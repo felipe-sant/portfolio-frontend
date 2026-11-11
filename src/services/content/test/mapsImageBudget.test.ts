@@ -11,18 +11,18 @@ const MAPS_IMAGES_DIR = join(
     "projects",
     "01a13188-a1da-7d4b-901c-e7bcc81d497b"
 )
-const MAX_LARGE_BYTES = 102_400
-const MAX_SMALL_BYTES = 22_000
+const MAX_LARGE_BYTES = 30_000
+const MAX_SMALL_BYTES = 15_000
 
 async function readMapsImage(name: string) {
     return new Uint8Array(await readFile(join(MAPS_IMAGES_DIR, name)))
 }
 
 describe("peso das capturas do Maps", () => {
-    it("mantém o 1-large.webp em 1600x900 e até 100 KB", async () => {
+    it("mantém o 1-large.webp em 960x540 e até 30 KB", async () => {
         const bytes = await readMapsImage("1-large.webp")
 
-        expect(readImageSize(bytes)).toEqual({ width: 1600, height: 900 })
+        expect(readImageSize(bytes)).toEqual({ width: 960, height: 540 })
         expect(bytes.length).toBeLessThanOrEqual(MAX_LARGE_BYTES)
     })
 

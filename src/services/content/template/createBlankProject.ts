@@ -9,6 +9,7 @@ function createBlankProject(): ProjectRecord {
         types: ["web"],
         category: "academic",
         featured: false,
+        experiment: false,
         cardTechnologies: [""],
         role: "",
         duration: "",

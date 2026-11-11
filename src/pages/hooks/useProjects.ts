@@ -12,6 +12,7 @@ import projectsApi from "@/store/api/projects.api"
 import buildProjectsJsonLd from "@/utils/buildProjectsJsonLd"
 import buildProjectsQueryArgs from "@/utils/buildProjectsQueryArgs"
 import projectsElementIds from "@/utils/projectsElementIds"
+import splitExperiments from "@/utils/splitExperiments"
 
 function useProjects() {
     const { t, i18n } = useTranslation(["projects", "common"])
@@ -69,6 +70,7 @@ function useProjects() {
             : t("results.count", { count: pages.total, shown: pages.shown })
     }
 
+    const { main: mainItems, experiments: experimentItems } = splitExperiments(pages.items)
     const currentResultsText = buildResultsText()
     const resultsText = useDeferredValue(
         currentResultsText,
@@ -120,6 +122,8 @@ function useProjects() {
         isEmptyContent,
         isNoResults,
         ...pages,
+        mainItems,
+        experimentItems,
         retry
     }
 }

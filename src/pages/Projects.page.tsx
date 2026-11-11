@@ -21,6 +21,7 @@ interface SkeletonItemsProps {
 interface ProjectListItemProps {
     project: ProjectSummary
     index: number
+    headingLevel?: 2 | 3
 }
 
 const SEARCH_MAX_LENGTH = 100
@@ -33,13 +34,14 @@ function SkeletonItems({ count }: SkeletonItemsProps) {
     ))
 }
 
-function ProjectListItem({ project, index }: ProjectListItemProps) {
+function ProjectListItem({ project, index, headingLevel }: ProjectListItemProps) {
     return (
         <li className={css.item}>
             <ProjectCard
                 project={project}
                 index={index}
                 revealIndex={index % projectsPageSize}
+                headingLevel={headingLevel}
                 fromProjects
             />
         </li>
@@ -79,7 +81,8 @@ function ProjectsPage() {
         isLoading,
         isError,
         retry,
-        items,
+        mainItems,
+        experimentItems,
         hasMore,
         isFetchingMore,
         skeletonCount,
@@ -191,16 +194,43 @@ function ProjectsPage() {
                                 </div>
                             )}
                             {!isError && !isNoResults && (
-                                <ul ref={gridRef} className={css.grid}>
-                                    {items.map((project, index) => (
-                                        <ProjectListItem
-                                            key={project.id}
-                                            project={project}
-                                            index={index}
-                                        />
-                                    ))}
-                                    <SkeletonItems count={skeletonCount} />
-                                </ul>
+                                <div ref={gridRef}>
+                                    {(mainItems.length > 0 || experimentItems.length === 0) && (
+                                        <ul className={css.grid}>
+                                            {mainItems.map((project, index) => (
+                                                <ProjectListItem
+                                                    key={project.id}
+                                                    project={project}
+                                                    index={index}
+                                                />
+                                            ))}
+                                            {experimentItems.length === 0 && (
+                                                <SkeletonItems count={skeletonCount} />
+                                            )}
+                                        </ul>
+                                    )}
+                                    {experimentItems.length > 0 && (
+                                        <section className={css.experiments}>
+                                            <h2 className={css.experimentsHeading}>
+                                                {t("experiments.heading")}
+                                            </h2>
+                                            <p className={css.experimentsDescription}>
+                                                {t("experiments.description")}
+                                            </p>
+                                            <ul className={css.grid}>
+                                                {experimentItems.map((project, index) => (
+                                                    <ProjectListItem
+                                                        key={project.id}
+                                                        project={project}
+                                                        index={mainItems.length + index}
+                                                        headingLevel={3}
+                                                    />
+                                                ))}
+                                                <SkeletonItems count={skeletonCount} />
+                                            </ul>
+                                        </section>
+                                    )}
+                                </div>
                             )}
                         </SkeletonSwap>
                         {loadMoreError && (

@@ -4,6 +4,7 @@ import PROJECT_TEXTS from "./support/projectTexts"
 import projectPath from "./support/projectPath"
 import readFeaturedProjects from "./support/readFeaturedProjects"
 import readProfile from "./support/readProfile"
+import readProjects from "./support/readProjects"
 import readAbout from "./support/readAbout"
 import readProjectDetail from "./support/readProjectDetail"
 import ROUTES_UNDER_TEST from "./support/routesUnderTest"
@@ -177,6 +178,37 @@ test.describe("sem JavaScript, projeto", () => {
             )
         }
     })
+})
+
+test.describe("sem JavaScript, projetos", () => {
+    test.use({ javaScriptEnabled: false })
+
+    for (const language of LANGUAGES) {
+        const texts = UI_TEXTS[language].projects
+
+        test(`RF-PROJECTS-32, NF-CO-03, NF-IA-07: em ${language} /projects traz o h2 da seção e os cards experimentais com links funcionando no HTML`, async ({
+            page
+        }) => {
+            const experiments = readProjects(language).filter((project) => project.experiment)
+            expect(experiments.length).toBe(2)
+
+            const response = await page.goto(`${language}/projects`)
+
+            expect(response?.status()).toBe(200)
+            const main = page.getByRole("main")
+            await expect(
+                main.getByRole("heading", { level: 2, name: texts.experimentsHeading })
+            ).toBeVisible()
+            await expect(main.getByText(texts.experimentsDescription)).toBeVisible()
+            const links = main.getByRole("heading", { level: 3 }).getByRole("link")
+            await expect(links).toHaveCount(experiments.length)
+            for (const project of experiments) {
+                await expect(
+                    links.and(page.locator(`a[href$="/${language}/projects/${project.id}"]`))
+                ).toHaveText(project.title)
+            }
+        })
+    }
 })
 
 test.describe("sem JavaScript, informações", () => {

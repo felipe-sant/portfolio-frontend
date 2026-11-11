@@ -8,6 +8,7 @@
             "types": ["web", "api"],
             "category": "academic",
             "featured": true,
+            "experiment": false,
             "cardTechnologies": ["React", "Express", "Leaflet"],
             "role": "Full stack",
             "duration": "13 meses",
@@ -58,8 +59,8 @@
                 {
                     "large": {
                         "src": "images/projects/01a13188-a1da-7d4b-901c-e7bcc81d497b/1-large.webp",
-                        "width": 1600,
-                        "height": 900
+                        "width": 960,
+                        "height": 540
                     },
                     "small": {
                         "src": "images/projects/01a13188-a1da-7d4b-901c-e7bcc81d497b/1-small.webp",
@@ -105,6 +106,7 @@
             "types": ["web", "api", "data"],
             "category": "personal",
             "featured": true,
+            "experiment": false,
             "cardTechnologies": ["React", "TensorFlow", "FastAPI"],
             "role": "Full stack + IA",
             "duration": "2 semanas",
@@ -162,8 +164,8 @@
                 {
                     "large": {
                         "src": "images/projects/01a131df-93ee-72f3-8c7a-f67501e47a7a/1-large.webp",
-                        "width": 1600,
-                        "height": 900
+                        "width": 720,
+                        "height": 405
                     },
                     "small": {
                         "src": "images/projects/01a131df-93ee-72f3-8c7a-f67501e47a7a/1-small.webp",
@@ -217,6 +219,7 @@
             "types": ["web"],
             "category": "personal",
             "featured": false,
+            "experiment": true,
             "cardTechnologies": ["React", "TypeScript"],
             "role": "Frontend",
             "duration": "1 dia",
@@ -242,8 +245,8 @@
                 {
                     "large": {
                         "src": "images/projects/01a131fc-d24c-7c70-887b-0d055f57d251/1-large.webp",
-                        "width": 1600,
-                        "height": 900
+                        "width": 640,
+                        "height": 360
                     },
                     "small": {
                         "src": "images/projects/01a131fc-d24c-7c70-887b-0d055f57d251/1-small.webp",
@@ -281,6 +284,7 @@
             "types": ["web", "api"],
             "category": "academic",
             "featured": false,
+            "experiment": true,
             "cardTechnologies": ["React", "Express", "MongoDB"],
             "role": "Full stack",
             "duration": "2 semanas",
@@ -326,8 +330,8 @@
                 {
                     "large": {
                         "src": "images/projects/01a13216-9960-7a66-8288-462bf96ec9a5/1-large.webp",
-                        "width": 1600,
-                        "height": 900
+                        "width": 928,
+                        "height": 522
                     },
                     "small": {
                         "src": "images/projects/01a13216-9960-7a66-8288-462bf96ec9a5/1-small.webp",
@@ -371,6 +375,7 @@
             "types": ["web"],
             "category": "academic",
             "featured": false,
+            "experiment": false,
             "cardTechnologies": ["React", "TypeScript"],
             "role": "Frontend",
             "duration": "5 dias",
@@ -396,8 +401,8 @@
                 {
                     "large": {
                         "src": "images/projects/01a13229-0594-7b2f-a012-ecf61257f6ad/1-large.webp",
-                        "width": 1600,
-                        "height": 900
+                        "width": 912,
+                        "height": 513
                     },
                     "small": {
                         "src": "images/projects/01a13229-0594-7b2f-a012-ecf61257f6ad/1-small.webp",
@@ -435,6 +440,7 @@
             "types": ["api", "data"],
             "category": "personal",
             "featured": true,
+            "experiment": false,
             "cardTechnologies": ["scikit-learn", "ONNX Runtime", "Node.js"],
             "role": "IA (modelo e treinamento)",
             "duration": "1 semana",

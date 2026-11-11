@@ -104,6 +104,18 @@ function buildHomeFiles() {
     return files
 }
 
+function stubProjectsWithExperiments() {
+    const files = buildHomeFiles()
+
+    for (const language of ["pt-BR", "en", "es"]) {
+        files[`content/${language}/projects.json`] = {
+            items: buildProjectRecords(5, (index) => ({ experiment: index >= 3 }))
+        }
+    }
+
+    stubContentFetch(files)
+}
+
 function stubTenProjects() {
     const files = buildHomeFiles()
 
@@ -263,6 +275,21 @@ describe("render", () => {
                 expect(html).toMatch(/Carregar mais|Load more|Cargar más/)
             }
         )
+
+        it.each([
+            ["pt-BR/projects.html", "Experimentos"],
+            ["en/projects.html", "Experiments"],
+            ["es/projects.html", "Experimentos"]
+        ])("traz o h2 da seção e os cards experimentais em %s", async (file, heading) => {
+            stubProjectsWithExperiments()
+
+            const { html } = await renderProjects(file)
+
+            expect(html).toMatch(new RegExp(`<h2[^>]*>${heading}</h2>`))
+            expect(html.indexOf(`>${heading}</h2>`)).toBeGreaterThan(html.indexOf("Projeto 3"))
+            expect(html).toMatch(/<h3[^>]*><a[^>]*>Projeto 5<\/a>/)
+            expect(html).toMatch(/<h3[^>]*><a[^>]*>Projeto 4<\/a>/)
+        })
 
         it.each([
             ["pt-BR/projects.html", "9 de 10 projetos"],

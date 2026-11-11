@@ -84,7 +84,7 @@ test.describe("galeria", () => {
         await expect(image).toHaveAttribute("src", new RegExp(`${first.small}$`))
         await expect(image).toHaveAttribute("sizes", "(min-width: 980px) 66vw, 100vw")
         await expect(image).toHaveAttribute("srcset", new RegExp(`${first.small} 640w`))
-        await expect(image).toHaveAttribute("srcset", new RegExp(`${first.large} 1600w`))
+        await expect(image).toHaveAttribute("srcset", new RegExp(`${first.large} \\d+w`))
         const width = Number(await image.getAttribute("width"))
         const height = Number(await image.getAttribute("height"))
         expect(width).toBe(640)

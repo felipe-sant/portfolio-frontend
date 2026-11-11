@@ -18,6 +18,7 @@ const REQUIRED_KEYS = [
     "types",
     "category",
     "featured",
+    "experiment",
     "cardTechnologies",
     "role",
     "duration",
@@ -87,6 +88,10 @@ function validateProjects(snapshot: ContentSnapshot): ContentIssue[] {
             }
             requireText(project, "summary", path, issues, MAX_SUMMARY_LENGTH)
             requireBoolean(project, "featured", path, issues)
+            requireBoolean(project, "experiment", path, issues)
+            if (project.featured === true && project.experiment === true) {
+                issues.push({ path, message: "Destaque e experimento não se combinam" })
+            }
             validateStack(project.stack, `${path}.stack`, 1, issues)
             validateRelated(project.related, `${path}.related`, issues)
 

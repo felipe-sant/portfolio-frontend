@@ -10,6 +10,7 @@ type ProjectSummary = {
     types: ProjectType[]
     category: ProjectCategory
     featured: boolean
+    experiment: boolean
     technologies: string[]
     cardTechnologies: string[]
     cover?: ResponsiveImage

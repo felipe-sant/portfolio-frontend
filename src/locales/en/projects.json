@@ -62,6 +62,10 @@
         "description": "Check your connection and try again. Your filters were kept.",
         "retry": "Try again"
     },
+    "experiments": {
+        "heading": "Experiments",
+        "description": "Small projects I built to practice an idea."
+    },
     "loadMore": "Load more",
     "loadMoreError": {
         "heading": "I couldn't load more projects",
