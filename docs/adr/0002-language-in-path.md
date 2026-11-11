@@ -2,6 +2,7 @@
 
 - **Status:** `aceita`
 - **Data:** `12-10-2026`
+- **Issues:** [#53](https://github.com/felipe-sant/portfolio-frontend/issues/53)
 
 ## Contexto
 
@@ -15,13 +16,13 @@ Até aqui o idioma era decidido por `?lng=`, escolha salva, idioma do navegador 
 - A raiz `/` só redireciona, nesta ordem: escolha salva, idioma do navegador, `en`. Um script inline no `<head>` do `index.html` faz isso antes da pintura; o `loader` da rota `/` faz o mesmo dentro do app quando o script não rodou.
 - `/pt/...`, `/fr/...` e caminho sem prefixo (`/projects`) caem na página não encontrada, em inglês.
 - `?lng=` e o detector do i18next são removidos; `setLanguage` continua salvando a escolha, que só a raiz lê.
-- Todo link interno é montado por `buildPath`/`useLocalizedPath` a partir de `ROUTES`; `getEquivalentPath` devolve a URL equivalente em outro idioma, para o seletor da #33.
+- Todo link interno é montado por `buildPath`/`useLocalizedPath` a partir de `ROUTES`; `getEquivalentPath` devolve a URL equivalente em outro idioma, para o seletor da [#33](https://github.com/felipe-sant/portfolio-frontend/issues/33).
 
 ## Consequências
 
-- Cada idioma tem URL própria, o que destrava a pré-renderização por idioma e o `hreflang` (#41, #49).
-- `/` deixa de ser conteúdo e vira redirecionamento por JavaScript (sem 301 no GitHub Pages). A #49 decide se o `x-default` do `hreflang` aponta para `/` ou `/en`.
-- O GitHub Pages só serve `/en` sem redirecionar para `/en/` se existir `en.html`; a pré-renderização (#41, #49) precisa emitir um `.html` por idioma e por rota. O código funciona no dev server sem isso.
+- Cada idioma tem URL própria, o que destrava a pré-renderização por idioma e o `hreflang` ([#41](https://github.com/felipe-sant/portfolio-frontend/issues/41), [#49](https://github.com/felipe-sant/portfolio-frontend/issues/49)).
+- `/` deixa de ser conteúdo e vira redirecionamento por JavaScript (sem 301 no GitHub Pages). A [#49](https://github.com/felipe-sant/portfolio-frontend/issues/49) decide se o `x-default` do `hreflang` aponta para `/` ou `/en`.
+- O GitHub Pages só serve `/en` sem redirecionar para `/en/` se existir `en.html`; a pré-renderização ([#41](https://github.com/felipe-sant/portfolio-frontend/issues/41), [#49](https://github.com/felipe-sant/portfolio-frontend/issues/49)) precisa emitir um `.html` por idioma e por rota. O código funciona no dev server sem isso.
 - O script inline duplica a chave de `localStorage` e o mapa de idiomas; `src/i18n/test/rootRedirect.test.ts` compara o resultado com `getPreferredLanguage` para a duplicação não divergir.
 - O `jsdom` reporta `en-US`: teste que abria `/` esperando `pt-BR` passa a abrir `/pt-BR`.
 - O `base` do Vite é lido por `publicUrl` e usado como `basename` do roteador; o `pathname` das funções de caminho é sempre relativo a ele.
