@@ -188,7 +188,7 @@ test.describe("largura do cabeçalho", () => {
                 await page.goto(path)
                 await expect(page.getByRole("heading", { level: 1 })).toBeVisible()
 
-                expect(await hasHorizontalScroll(page), `largura ${width}px`).toBe(false)
+                await expect.poll(() => hasHorizontalScroll(page), `largura ${width}px`).toBe(false)
             }
         })
     }
@@ -202,7 +202,7 @@ test.describe("largura do cabeçalho", () => {
             for (const width of SWEEP_WIDTHS) {
                 await page.setViewportSize({ width, height: VIEWPORT_HEIGHT })
 
-                expect(await hasHorizontalScroll(page), `largura ${width}px`).toBe(false)
+                await expect.poll(() => hasHorizontalScroll(page), `largura ${width}px`).toBe(false)
             }
         })
     }
