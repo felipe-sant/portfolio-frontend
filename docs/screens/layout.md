@@ -286,7 +286,7 @@ Regras:
   `hreflang` recíproco para `pt-BR`, `en`, `es` e `x-default` (`en`), `og:title` e
   `og:description` iguais ao título e à descrição, `og:type`, `og:url` igual à canônica,
   `og:image` (a do site, 1200×630, ou a captura 16:9 do projeto quando houver, D26), `og:locale`
-  do idioma com os outros dois em `og:locale:alternate`, e `twitter:card` `summary_large_image`.
+  do idioma com os outros dois em `og:locale:alternate`, `twitter:card` `summary_large_image` e `twitter:title`, `twitter:description`, `twitter:image` e `twitter:image:alt` iguais a `og:title`, `og:description`, `og:image` e `og:image:alt` (#138).
   JSON-LD por tipo de página (NF-IA-08) é das telas #34 a #38, com o mecanismo de #52.
 - Página não encontrada e página de erro: `<title>` e descrição próprios,
   `<meta name="robots" content="noindex">`, sem canônica, sem `hreflang`, sem Open Graph e sem
@@ -296,19 +296,22 @@ Regras:
 Os namespaces das telas que ainda não existem são previstos e podem mudar de nome na spec da tela,
 que também revisa o texto sem mudar a chave:
 
-| Rota                        | Namespace             | `meta.title` (`pt-BR`)                                                                    | `meta.description` (`pt-BR`)                                                                                                                   |
-| --------------------------- | --------------------- | ----------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| `/`                         | `home` (existe)       | Portfólio · Luiz Felipe dos Santos (`pt-BR`), Portfolio · … (`en`), Portafolio · … (`es`) | Portfólio de Luiz Felipe dos Santos, desenvolvedor full stack Júnior com React, TypeScript e Node.js: projetos, trajetória e contato. (existe) |
-| `/projects`                 | `projects` (previsto) | Projetos · Luiz Felipe dos Santos                                                         | Projetos de Luiz Felipe dos Santos, com busca por tipo, categoria e tecnologia.                                                                |
-| `/projects/:id`             | `project` (previsto)  | `{{project}}` · Luiz Felipe dos Santos                                                    | Resumo do projeto, do conteúdo (#10, #58), sem chave                                                                                           |
-| `/projects/:id/docs/<name>` | `project` (previsto)  | `{{document}}` · `{{project}}` · Luiz Felipe dos Santos (`meta.documentTitle`)            | Resumo do projeto, do conteúdo                                                                                                                 |
-| `/about`                    | `about` (previsto)    | Informações · Luiz Felipe dos Santos                                                      | Quem é Luiz Felipe dos Santos: sobre mim, stack, trajetória e formação.                                                                        |
-| `/contact`                  | `contact` (previsto)  | Contato · Luiz Felipe dos Santos                                                          | Como falar com Luiz Felipe dos Santos: e-mail e currículo.                                                                                     |
-| Página não encontrada       | `notFound` (existe)   | Página não encontrada · Luiz Felipe dos Santos (existe)                                   | O endereço acessado não existe neste portfólio. (existe)                                                                                       |
-| Página de erro              | `error` (existe)      | Erro inesperado · Luiz Felipe dos Santos (existe)                                         | Algo deu errado ao carregar esta página. (existe)                                                                                              |
+| Rota                        | Namespace             | `meta.title` (`pt-BR`)                                                                 | `meta.description` (`pt-BR`)                                                                                                                   |
+| --------------------------- | --------------------- | -------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/`                         | `home` (existe)       | Luiz Felipe dos Santos · Desenvolvedor full stack Júnior · React, TypeScript e Node.js | Portfólio de Luiz Felipe dos Santos, desenvolvedor full stack Júnior com React, TypeScript e Node.js: projetos, trajetória e contato. (existe) |
+| `/projects`                 | `projects` (previsto) | Projetos · Luiz Felipe dos Santos                                                      | Projetos de Luiz Felipe dos Santos, com busca por tipo, categoria e tecnologia.                                                                |
+| `/projects/:id`             | `project` (previsto)  | `{{project}}` · Luiz Felipe dos Santos                                                 | Resumo do projeto, do conteúdo (#10, #58), sem chave                                                                                           |
+| `/projects/:id/docs/<name>` | `project` (previsto)  | `{{document}}` · `{{project}}` · Luiz Felipe dos Santos (`meta.documentTitle`)         | Resumo do projeto, do conteúdo                                                                                                                 |
+| `/about`                    | `about` (previsto)    | Informações · Luiz Felipe dos Santos                                                   | Quem é Luiz Felipe dos Santos: sobre mim, stack, trajetória e formação.                                                                        |
+| `/contact`                  | `contact` (previsto)  | Contato · Luiz Felipe dos Santos                                                       | Como falar com Luiz Felipe dos Santos: e-mail e currículo.                                                                                     |
+| Página não encontrada       | `notFound` (existe)   | Página não encontrada · Luiz Felipe dos Santos (existe)                                | O endereço acessado não existe neste portfólio. (existe)                                                                                       |
+| Página de erro              | `error` (existe)      | Erro inesperado · Luiz Felipe dos Santos (existe)                                      | Algo deu errado ao carregar esta página. (existe)                                                                                              |
 
-O `meta.title` de `home` é "Portfólio · Luiz Felipe dos Santos" em `pt-BR`, "Portfolio · …" em `en` e
-"Portafolio · …" em `es`, decisão do PO (a raiz é a exceção ao formato `<Tela> · Luiz Felipe dos Santos`). `{{document}}` é o nome do
+O `meta.title` de `home` é "Luiz Felipe dos Santos · Desenvolvedor full stack Júnior · React, TypeScript e
+Node.js" em `pt-BR`, "Luiz Felipe dos Santos · Junior full stack developer · React, TypeScript and Node.js" em
+`en` e "Luiz Felipe dos Santos · Desarrollador full stack junior · React, TypeScript y Node.js" em `es`, decisão
+do PO (#198: nome, cargo e stack; a raiz é a exceção ao formato `<Tela> · Luiz Felipe dos Santos`). O
+`<title>` estático do `index.html` repete o valor `pt-BR`. `{{document}}` é o nome do
 documento (`SETUP.md`, `LICENSE`, D55), igual nos três idiomas. Na página de
 projeto, o `<title>` só existe depois que o conteúdo do projeto chega; na pré-renderização (#49) ele
 já está no HTML.
@@ -420,7 +423,7 @@ verificação de lá.
 - [ ] `NF-RE-04` — Decisão de layout por largura do menu (D01) [#33, #34 a #38; #41]
 - [ ] `NF-MO-01` — `prefers-reduced-motion: reduce` desliga animação e transição [#41]
 - [ ] `NF-IA-01` — Cabeçalho e rodapé no HTML pré-renderizado de cada rota e idioma, legíveis sem JavaScript [CI; #49; #41]
-- [ ] `NF-IA-10` — `<title>`, descrição, Open Graph e `twitter:card` por página e idioma [CI; #52; #41]
+- [ ] `NF-IA-10` — `<title>`, descrição, Open Graph e tags do Twitter por página e idioma [CI; #52; #41]
 - [ ] `NF-IA-11` — Canônica autorreferente e `hreflang` recíproco com `x-default` [CI; #52; #41]
 - [ ] `NF-IA-16` — HTML semântico, com o conteúdo principal dentro do `main` [CI; #33, #34 a #38]
 - [ ] `NF-CO-03` — Sem JavaScript, o layout é legível; menu, tema e idioma salvo precisam de JavaScript [#41]
