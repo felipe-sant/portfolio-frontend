@@ -12,7 +12,7 @@ Pré-requisito: o PO responde as questões em aberto 1 a 3 da spec; mudou a resp
 
 ## Tarefas
 
-- [ ] T1 [P] — `AsyncSection`
+- [x] T1 [P] — `AsyncSection`
     - **Arquivo(s):** `src/components/AsyncSection.tsx`, `src/components/test/AsyncSection.test.tsx`
     - **Depende de:** nenhuma
     - **Testes (escritos antes, RED):**
@@ -25,7 +25,7 @@ Pré-requisito: o PO responde as questões em aberto 1 a 3 da spec; mudou a resp
     - **Feito quando:** o gate passa e cada teste listado existe
     - **Evidência:** (executor)
 
-- [ ] T2 [P] — `Section`
+- [x] T2 [P] — `Section`
     - **Arquivo(s):** `src/components/Section.tsx`, `src/styles/components/section.module.css`, `src/components/test/Section.test.tsx`
     - **Depende de:** nenhuma
     - **Testes (escritos antes, RED):**
@@ -38,7 +38,7 @@ Pré-requisito: o PO responde as questões em aberto 1 a 3 da spec; mudou a resp
     - **Feito quando:** o gate passa; `.container` e `.sectionHeading` com os mesmos valores de `about.module.css`
     - **Evidência:** (executor)
 
-- [ ] T3 [P] — Informações em partes
+- [x] T3 [P] — Informações em partes
     - **Arquivo(s):** `src/components/AboutHero.tsx`, `AboutMeSection.tsx`, `AboutTrajectory.tsx`, `AboutStack.tsx`, `AboutComplements.tsx`, `src/pages/About.page.tsx`, `src/styles/pages/about.module.css`, `src/components/test/About*.test.tsx`
     - **Depende de:** T1, T2
     - **Testes (escritos antes, RED):**
@@ -49,7 +49,7 @@ Pré-requisito: o PO responde as questões em aberto 1 a 3 da spec; mudou a resp
     - **Feito quando:** o gate passa; `About.page.tsx` sem `SkeletonSwap` nem `LoadError` e abaixo de 120 linhas; nenhuma classe de `about.module.css` sem uso
     - **Evidência:** (executor)
 
-- [ ] T4 [P] — `AsyncSection` no Início e em Projetos
+- [x] T4 [P] — `AsyncSection` no Início e em Projetos
     - **Arquivo(s):** `src/pages/Home.page.tsx`, `src/pages/Projects.page.tsx`
     - **Depende de:** T1
     - **Testes (escritos antes, RED):** não se aplica (refatoração); `src/pages/test/Home.page.test.tsx` e `src/pages/test/Projects.page.test.tsx` seguem verdes sem alteração (CA4)
@@ -57,7 +57,7 @@ Pré-requisito: o PO responde as questões em aberto 1 a 3 da spec; mudou a resp
     - **Feito quando:** o gate passa; nenhum par `SkeletonSwap` + `LoadError` escrito à mão sobra nas duas páginas
     - **Evidência:** (executor)
 
-- [ ] T5 — Documentação
+- [x] T5 — Documentação
     - **Arquivo(s):** `docs/architecture/components.md`
     - **Depende de:** T3, T4
     - **Testes (escritos antes, RED):** não se aplica (documentação); `npm run lint` verde (CA7)
