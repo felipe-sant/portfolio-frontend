@@ -1,7 +1,7 @@
 # Spec: 202-lastmod-e-licencas-fora-do-sitemap
 
 > **Tipo:** `feature` (trilha H: #202 e #207 num PR só) <br />
-> **Status:** `aprovada` <br />
+> **Status:** `em-andamento` <br />
 > **Issue:** `#202 e #207` <br />
 > **Criado em:** `11-11-2026`
 
