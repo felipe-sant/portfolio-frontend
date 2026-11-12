@@ -37,6 +37,16 @@ describe("validateLanguageParity", () => {
         ).toEqual([])
     })
 
+    it("reprova updatedAt do perfil diferente entre idiomas", () => {
+        const issues = issuesAfter((snapshot) => {
+            profileOf(snapshot, "en").updatedAt = "2026-11-01"
+        })
+
+        expect(issues).toHaveLength(1)
+        expect(issues[0].path).toBe("content/en/profile.json#updatedAt")
+        expect(issues[0].message).toContain("Valor neutro diferente")
+    })
+
     it("reprova lista com tamanho diferente", () => {
         const issues = issuesAfter((snapshot) => {
             profileOf(snapshot, "es").aboutParagraphs.push("Outro")

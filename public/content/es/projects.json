@@ -188,13 +188,15 @@
                     "id": "01a131fb-193b-7065-bea0-59df4e8fec28",
                     "name": "ARCHITECTURE.md",
                     "format": "markdown",
-                    "translated": true
+                    "translated": true,
+                    "updatedAt": "2026-10-24"
                 },
                 {
                     "id": "01a131fc-1e60-7eeb-9495-8dbe3349a860",
                     "name": "SETUP.md",
                     "format": "markdown",
-                    "translated": true
+                    "translated": true,
+                    "updatedAt": "2026-10-24"
                 },
                 {
                     "id": "01a17614-cf8e-7df8-b3f6-49262756aa73",
@@ -209,7 +211,8 @@
                 {
                     "id": "01a1323d-b9bc-73c0-8bac-2e93e30ee193"
                 }
-            ]
+            ],
+            "updatedAt": "2026-11-11"
         },
         {
             "id": "01a131fc-d24c-7c70-887b-0d055f57d251",
@@ -274,7 +277,8 @@
                     "updatedAt": "2024-12-27"
                 }
             ],
-            "related": []
+            "related": [],
+            "updatedAt": "2026-11-11"
         },
         {
             "id": "01a13216-9960-7a66-8288-462bf96ec9a5",
@@ -353,7 +357,8 @@
                     "id": "01a13219-e5bf-773f-99e9-c808e0b55c92",
                     "name": "SETUP.md",
                     "format": "markdown",
-                    "translated": true
+                    "translated": true,
+                    "updatedAt": "2026-10-24"
                 },
                 {
                     "id": "01a17614-d52d-7268-a4ed-2bffa6df5ed1",
@@ -512,13 +517,15 @@
                     "id": "01a13243-761a-7d1f-9a82-1c1a72aa8f89",
                     "name": "ARCHITECTURE.md",
                     "format": "markdown",
-                    "translated": true
+                    "translated": true,
+                    "updatedAt": "2026-10-24"
                 },
                 {
                     "id": "01a13243-d3c3-7292-95d0-fb0f335a167c",
                     "name": "SETUP.md",
                     "format": "markdown",
-                    "translated": true
+                    "translated": true,
+                    "updatedAt": "2026-10-24"
                 },
                 {
                     "id": "01a17614-dada-7f65-aa85-da32106d31cf",

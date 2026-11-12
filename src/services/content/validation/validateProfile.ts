@@ -10,6 +10,7 @@ import type ContentIssue from "@/types/content/ContentIssue.types"
 import type ContentSnapshot from "@/types/content/ContentSnapshot.types"
 
 const REQUIRED_KEYS = [
+    "updatedAt",
     "role",
     "homeIntro",
     "summary",

@@ -6,6 +6,7 @@ import type Location from "@/types/profile/Location.types"
 import type SocialLinks from "@/types/profile/SocialLinks.types"
 
 type Profile = {
+    updatedAt: string
     role: string
     homeIntro: string
     summary: string
