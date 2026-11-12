@@ -18,6 +18,7 @@ const BATCH = 9
 const TOUCH_TARGET = 44
 const NARROW_VIEWPORT = 320
 const TWO_LINES_MIN_HEIGHT = 40
+const MAX_TAB_PRESSES = 40
 const NARROW_FILTER_WIDTHS = [320, 375, 390] as const
 const WIDE_FILTERS_WIDTH = 768
 const TYPE_ORDER = [
@@ -628,8 +629,10 @@ test.describe("filtros de tipo e categoria", () => {
 
     for (const language of LANGUAGES) {
         test(`RF-PROJECTS-08, D70, NF-RE-03: em ${language} abaixo de 640px a linha de filtros rola, esmaece as bordas, começa com o primeiro chip inteiro e o último cortado, e a página não rola na horizontal`, async ({
-            page
+            page,
+            colorScheme
         }) => {
+            test.skip(colorScheme === "dark", "o tema não muda a geometria")
             test.slow()
             await openProjects(page, language)
             const row = getProjectsView(page, language).typeGroup.locator("xpath=..")
@@ -672,8 +675,10 @@ test.describe("filtros de tipo e categoria", () => {
     }
 
     test("A11Y-G06, D70, RF-PROJECTS-08: abaixo de 640px o chip focado pelo Tab fica inteiro dentro da folga e o contorno de foco fora do esmaecimento", async ({
-        page
+        page,
+        colorScheme
     }) => {
+        test.skip(colorScheme === "dark", "o tema não muda a geometria")
         test.slow()
         await openProjects(page, "pt-BR")
         const row = getProjectsView(page, "pt-BR").typeGroup.locator("xpath=..")
@@ -685,7 +690,14 @@ test.describe("filtros de tipo e categoria", () => {
         for (const width of narrowFilterWidths(projectWidth)) {
             await setWidth(page, width)
             await page.getByRole("heading", { level: 1 }).click()
-            await buttons.first().focus()
+            for (let press = 0; press < MAX_TAB_PRESSES; press++) {
+                await page.keyboard.press("Tab")
+                if (
+                    await buttons.first().evaluate((element) => element === document.activeElement)
+                ) {
+                    break
+                }
+            }
 
             for (let index = 0; index < total; index++) {
                 const current = buttons.nth(index)
@@ -717,9 +729,11 @@ test.describe("filtros de tipo e categoria", () => {
     })
 
     for (const language of LANGUAGES) {
-        test(`RF-PROJECTS-08, D70, NF-RE-03: em ${language} a partir de 640px a linha de filtros não esmaece, quebra quando não cabe e mostra todos os chips inteiros`, async ({
-            page
+        test(`RF-PROJECTS-08, D70, NF-RE-03: em ${language} a partir de 640px a linha de filtros não esmaece, quebra em mais de uma linha a 640px (depende do conteúdo atual) e mostra todos os chips inteiros`, async ({
+            page,
+            colorScheme
         }) => {
+            test.skip(colorScheme === "dark", "o tema não muda a geometria")
             test.slow()
             await openProjects(page, language)
             const row = getProjectsView(page, language).typeGroup.locator("xpath=..")
