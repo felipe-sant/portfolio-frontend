@@ -59,7 +59,7 @@ Nada precisa mudar em `buildProjectJsonLd` salvo se algum teste novo falhar por 
 - [x] **CA8 (#208)** Para cada idioma (`pt-BR`, `en`, `es`), `buildProjectJsonLd` tem teste de cada campo: nome, descrição, linguagem de programação, repositório, autor (mesmo `@id` de `buildPersonId()`) e URL absoluta.
 - [x] **CA9 (#208)** Um teste percorre os seis projetos reais nos três idiomas e exige `SoftwareSourceCode` com os seis campos preenchidos.
 - [x] **CA10 (#208)** Projeto sem repositório continua `CreativeWork` sem `codeRepository` e sem `programmingLanguage` (já coberto; não pode regredir).
-- [ ] **CA11** `<` continua escapado em todo JSON-LD novo (NF-IA-09).
+- [x] **CA11** `<` continua escapado em todo JSON-LD novo (NF-IA-09).
 
 ## Casos de borda
 
@@ -84,7 +84,7 @@ Nada precisa mudar em `buildProjectJsonLd` salvo se algum teste novo falhar por 
 ## Notas / decisões
 
 - **Construtor novo, não embutido (#201).** Cria-se `src/utils/buildBreadcrumbJsonLd.ts` (`export default`, um símbolo por arquivo) com `buildBreadcrumbJsonLd(language, items)`, `items: { name: string; path: string; params?: Record<string, string> }[]`, usando `buildAbsoluteUrl` por item. Motivo: o mesmo nó serve às três páginas (e a futuras); embutir em `buildProjectsJsonLd`/`buildProjectJsonLd` misturaria dois tipos num retorno de nó único (o `JsonLdNode` é um objeto, não um `@graph`) e obrigaria a mudar o contrato dos testes atuais. Cada página emite seu `<JsonLd>` próprio, depois dos existentes (os E2E de `projects.spec.ts` leem `.first()`, então a `CollectionPage` continua primeiro).
-- **Nomes por tradução:** os rótulos vêm de `common:navigation.home` e `common:navigation.projects`, que já existem nos três idiomas (R2); não há chave nova, logo nenhum JSON de `src/locales/` muda. O hook da página (`useProjects`, `useProject`/hook de `Project.page.tsx`) monta a lista de itens e a passa ao construtor; o JSX só renderiza.
+- **Nomes por tradução:** os rótulos vêm de `common:navigation.home` e `common:navigation.projects`, que já existem nos três idiomas (R2); não há chave nova, logo nenhum JSON de `src/locales/` muda. Em Projetos, o hook `useProjects` monta a lista de itens; em Projeto e documento, o construtor puro `buildProjectBreadcrumbItems` (`src/utils/`) monta a lista e a página só o chama e passa o resultado a `buildBreadcrumbJsonLd`. O tipo do item fica em `src/types/seo/BreadcrumbItem.types.ts`.
 - **Sem dependência nova.** Sem backend (R1). Referências: NF-IA-08, NF-IA-09; D-IDs de design não se aplicam (sem UI).
 - **`/docs/README.md` não é página de projeto:** a rota responde não encontrada (já coberto em `Project.page.test.tsx`), então o README só existe em `/projects/:id` e o breadcrumb dele tem sempre 3 itens.
 - **#208 sem implementação de campo:** a auditoria mostra os campos todos presentes; o trabalho é prova (testes) e registro.

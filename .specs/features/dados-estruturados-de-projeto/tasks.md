@@ -66,7 +66,7 @@ T1 e T2 não editam o mesmo arquivo. Vitest sempre com `--maxWorkers=2` e confer
     - **Evidência:** `src/pages/test/Projects.page.test.tsx` (breadcrumb 2 itens, 3 idiomas, CollectionPage primeiro, sem dados sem breadcrumb); RED visto antes do código; arquivo inteiro 85/85 verde.
 
 - [x] T5 [P] — Breadcrumb nas páginas de Projeto e de documento (#201) e prova do `SoftwareSourceCode` na página (#208)
-    - **Arquivo(s):** `src/pages/Project.page.tsx` (e o hook da página, se a lista de itens for montada fora do JSX), `src/pages/test/Project.page.test.tsx`
+    - **Arquivo(s):** `src/pages/Project.page.tsx`, `src/utils/buildProjectBreadcrumbItems.ts`, `src/types/seo/BreadcrumbItem.types.ts`, `src/pages/test/Project.page.test.tsx`
     - **Depende de:** T3
     - **Testes (escritos antes, RED):**
         - `README tem BreadcrumbList com 3 itens: Início, Projetos, título do projeto` (CA2; borda: README não vira 4º item)
