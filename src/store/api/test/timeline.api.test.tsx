@@ -111,6 +111,20 @@ describe("timelineApi", () => {
         expect(error.data.error.code).toBe("UNSUPPORTED_LANGUAGE")
     })
 
+    it("responde 500 INVALID_CONTENT quando a trajetória foge do contrato", async () => {
+        stubContentFetch({
+            ...files("pt-BR"),
+            "content/pt-BR/timeline.json": parseUntyped('{"items":[{"id":"x"}]}')
+        })
+
+        renderWithStore(<Probe args={{ lang: "pt-BR" }} />)
+
+        const { error } = await resultOf()
+        expect(error.status).toBe(500)
+        expect(error.data.error.code).toBe("INVALID_CONTENT")
+        expect(error.data.error.message).toContain("content/pt-BR/timeline.json")
+    })
+
     it("responde FETCH_ERROR quando o arquivo não carrega", async () => {
         stubContentFetch({})
 

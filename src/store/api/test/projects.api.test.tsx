@@ -274,6 +274,19 @@ describe("projectsApi", () => {
         expect((await resultOf()).error.status).toBe("FETCH_ERROR")
     })
 
+    it("responde 500 INVALID_CONTENT quando os projetos fogem do contrato", async () => {
+        stubContentFetch({
+            "content/pt-BR/projects.json": parseUntyped('{"items":[{"id":"x"}]}')
+        })
+
+        renderWithStore(<Probe endpoint="list" />)
+
+        const { error } = await resultOf()
+        expect(error.status).toBe(500)
+        expect(error.data.error.code).toBe("INVALID_CONTENT")
+        expect(error.data.error.message).toContain("content/pt-BR/projects.json")
+    })
+
     it("pede os arquivos com o prefixo do GitHub Pages e não chama a API", async () => {
         vi.stubEnv("BASE_URL", "/ra2581392423047/")
         vi.stubEnv("VITE_API_URL", "https://api.example.com")
