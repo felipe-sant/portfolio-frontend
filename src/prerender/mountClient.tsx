@@ -36,7 +36,12 @@ async function loadInitialLanguage() {
     const language =
         getLanguageFromPath(removeBasePath(window.location.pathname)) ?? FALLBACK_LANGUAGE
 
-    await loadLanguage(language)
+    try {
+        await loadLanguage(language)
+    } catch {
+        await loadLanguage(language)
+    }
+
     await i18n.changeLanguage(language)
 }
 

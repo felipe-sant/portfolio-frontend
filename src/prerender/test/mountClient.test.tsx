@@ -7,6 +7,7 @@ import { afterEach, beforeEach, describe, expect, inject, it, vi } from "vitest"
 import { act, screen, within } from "@testing-library/react"
 import composePage from "@scripts/prerender/composePage"
 import i18n from "@/i18n/i18n"
+import LANGUAGE_BUNDLE_IMPORTERS from "@/i18n/languageBundleImporters"
 import NAMESPACES from "@/i18n/namespaces"
 import mountClient from "@/prerender/mountClient"
 import buildProfile from "@/testUtils/buildProfile"
@@ -262,6 +263,37 @@ describe("mountClient com caminho pré-renderizado", () => {
         expect(screen.getByRole("heading", { name: "Junior full stack developer" })).toBe(heading)
         expect(consoleSpies.error).not.toHaveBeenCalled()
         expect(hydrationWarnings(consoleSpies.warn)).toEqual([])
+    })
+
+    it("tenta de novo uma vez quando o pacote do idioma falha e hidrata em seguida", async () => {
+        removeLanguagesOtherThanPtBR()
+        injectPrerendered("en.html", rootElement)
+        window.history.pushState({}, "", "/en")
+        const importer = vi
+            .spyOn(LANGUAGE_BUNDLE_IMPORTERS, "en")
+            .mockRejectedValueOnce(new Error("rede"))
+        const consoleSpies = spyOnConsole()
+
+        await mount()
+        await settle()
+
+        expect(importer).toHaveBeenCalledTimes(2)
+        expect(transitionState.languageAtRender).toEqual(["en"])
+        expect(consoleSpies.error).not.toHaveBeenCalled()
+        importer.mockRestore()
+    })
+
+    it("rejeita quando o pacote do idioma falha duas vezes", async () => {
+        removeLanguagesOtherThanPtBR()
+        injectPrerendered("en.html", rootElement)
+        window.history.pushState({}, "", "/en")
+        const importer = vi
+            .spyOn(LANGUAGE_BUNDLE_IMPORTERS, "en")
+            .mockRejectedValue(new Error("rede"))
+
+        await expect(mount()).rejects.toThrow("rede")
+        expect(importer).toHaveBeenCalledTimes(2)
+        importer.mockRestore()
     })
 
     it("hidrata dentro de startTransition e devolve o Root da hidratação", async () => {
