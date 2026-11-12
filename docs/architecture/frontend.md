@@ -369,8 +369,8 @@ Texto movido do `.claude/CLAUDE.md`, por área. As seções acima dão a visão 
     - Refetch on focus/reconnect (`setupListeners`) segue desligado, o padrão do RTK Query.
     - Endpoints de conteúdo (`profile.api.ts`, `timeline.api.ts`, `projects.api.ts`) usam `queryFn`
       que chama `src/services/content/`, com `lang` no argumento (cache por idioma). O corpo do
-      `queryFn` vai dentro de `runQueryFn` (`src/utils/runQueryFn.ts`), que devolve `{ data }` ou o erro no formato do
-      contrato (`toQueryError`); a #43 troca cada `queryFn` por `query`.
+      `queryFn` vai dentro de `runQueryFn` (`src/utils/runQueryFn.ts`), que devolve `{ data }` ou o erro no
+      formato do contrato (`toQueryError`); a #43 troca cada `queryFn` por `query`.
     - **Projetos:** consultas, estado na URL e paginação em [`projects.md`](../screens/projects.md#implementação).
 
 ### SEO por tela
