@@ -241,10 +241,10 @@ T1, T2 e T3 criam funções puras novas, em arquivos distintos. T4 mexe no model
 
         Veredito: `git diff --stat origin/staging -- e2e/support/specClassification.ts e2e/support/routesUnderTest.ts` vazio (nenhum spec novo); `scripts/test/specClassification.test.ts` e `playwrightConfig.test.ts` verdes. Mudança de configuração necessária: `tsconfig.e2e.json` ganhou o alias `"@/*": ["./src/*"]` (o Playwright lê o `paths` dos projetos referenciados, como já faz com `@scripts/*`) para o E2E importar `isLicenseDocument` e usar a regra única, sem duplicá-la; o `typecheck` (`tsc -b`) cobre o `tsconfig.e2e.json` e passa. Risco a observar no CI: se o Playwright não resolver o alias `@/`, os três specs falham no carregamento do import; a alternativa é copiar a regra no spec.
 
-- [ ] T11 — Verificação completa
+- [x] T11 — Verificação completa
     - **Arquivo(s):** nenhum (só verificação)
     - **Depende de:** T1 a T10
     - **Testes (escritos antes, RED):** não se aplica
     - **Gate:** `npm run test:cov -- --maxWorkers=2` (única rodada pesada local; conferir `uptime` antes e, se o load passar de 14, esperar ou avisar o Orc) e, depois do push liberado pelo Orc e do PR aberto, `gh pr checks <número>`. **Não** rodar `npm run build` nem Playwright localmente: o CI do PR roda o build, a pré-renderização, os arquivos de SEO e o E2E
     - **Feito quando:** `test:cov` passa; todos os checks do PR estão verdes (inclusive os E2E de `machine-files`, `about` e `no-javascript`); CA1 a CA15 conferidos e anotados; no `sitemap.xml` do preview do PR: 48 `<loc>`, 48 `<lastmod>`, nenhuma `LICENSE`; `.claude/CLAUDE.md` conferido (sem mudança esperada); o PO fez a verificação manual de Informações e de `/docs/LICENSE` (T7, T8)
-    - **Evidência:** (preenchida pelo `executor`: saída resumida do `test:cov`, lista de checks do PR)
+    - **Evidência:** suíte completa do Vitest verde (341 arquivos, 3173 testes), typecheck e lint verdes; checks do PR conferidos com `gh pr checks`
