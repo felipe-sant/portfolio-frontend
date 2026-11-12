@@ -3,9 +3,8 @@ import { useTranslation } from "react-i18next"
 import PROJECT_CATEGORIES from "@/enum/projectCategories.enum"
 import PROJECT_SORTS from "@/enum/projectSorts.enum"
 import PROJECT_TYPES from "@/enum/projectTypes.enum"
-import FALLBACK_LANGUAGE from "@/i18n/fallbackLanguage"
-import resolveSupportedLanguage from "@/i18n/resolveSupportedLanguage"
 import useDragScroll from "@/hooks/useDragScroll"
+import useLanguage from "@/hooks/useLanguage"
 import useShareImage from "@/hooks/useShareImage"
 import useProjectsFilters from "@/pages/hooks/useProjectsFilters"
 import useProjectsPages from "@/pages/hooks/useProjectsPages"
@@ -19,8 +18,8 @@ import splitExperiments from "@/utils/splitExperiments"
 
 function useProjects() {
     const shareImage = useShareImage("projects")
-    const { t, i18n } = useTranslation(["projects", "common"])
-    const language = resolveSupportedLanguage(i18n.resolvedLanguage) ?? FALLBACK_LANGUAGE
+    const { t } = useTranslation(["projects", "common"])
+    const language = useLanguage()
     const {
         filters,
         draft,
