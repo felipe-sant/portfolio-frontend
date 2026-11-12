@@ -34,7 +34,7 @@ T1, T2 e T3 criam funções puras novas, em arquivos distintos. T4 mexe no model
 
         Veredito: RED visto (módulo ausente), GREEN com 8 testes; typecheck e lint verdes.
 
-- [ ] T2 [P] — #207: `isLicenseDocument` (regra única de `LICENSE`)
+- [x] T2 [P] — #207: `isLicenseDocument` (regra única de `LICENSE`)
     - **Arquivo(s):** `src/utils/isLicenseDocument.ts` (novo, `export default`), `src/utils/test/isLicenseDocument.test.ts`
     - **Depende de:** nenhuma
     - **Testes (escritos antes, RED):**
@@ -42,7 +42,14 @@ T1, T2 e T3 criam funções puras novas, em arquivos distintos. T4 mexe no model
         - `"LICENSE"`, `"license"`, `"License.md"` e `"LICENSE.txt"` devolvem `true`, sem diferenciar maiúsculas e sem extensão (CA8), em `isLicenseDocument.test.ts`
     - **Gate:** `npm run typecheck && npm run lint && npm test -- --run --maxWorkers=2 src/utils/test/isLicenseDocument.test.ts`
     - **Feito quando:** o gate passa e cada teste listado tem asserção
-    - **Evidência:** (preenchida pelo `executor`)
+    - **Evidência:**
+
+        | Critério / borda                                                                                   | `arquivo:linha` e asserção                                                                 | Coberto? |
+        | -------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ | -------- |
+        | borda: `LICENSES`, `NOTICE`, `README.md`, `SETUP.md`, `MYLICENSE.md`, `""` são `false` (CA8, CA10) | `src/utils/test/isLicenseDocument.test.ts:7` `expect(isLicenseDocument(name)).toBe(false)` | sim      |
+        | `LICENSE`, `license`, `License.md`, `LICENSE.txt` são `true` (CA8)                                 | `isLicenseDocument.test.ts:14` `expect(isLicenseDocument(name)).toBe(true)`                | sim      |
+
+        Veredito: RED visto (módulo ausente), GREEN com 10 testes; typecheck e lint verdes.
 
 - [ ] T3 [P] — #207: `buildDocumentDescription` (descrição própria derivada do documento)
     - **Arquivo(s):** `src/utils/buildDocumentDescription.ts` (novo, `export default`; assinatura `buildDocumentDescription(content: string | undefined, format: "markdown" | "text"): string | undefined`, limite 155 caracteres em constante, só texto puro: sem importar `parseMarkdown`, remark nem `@/services/`), `src/utils/test/buildDocumentDescription.test.ts`
