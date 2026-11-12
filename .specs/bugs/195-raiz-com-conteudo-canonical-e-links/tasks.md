@@ -25,7 +25,7 @@ T1 (teste que reproduz o bug)  →  T2  →  T3  →  T4 [P] e T5 [P]  →  T6
     - **Feito quando:** o gate passa, o `index.html` do repositório e `scripts/test/indexHtmlMeta.test.ts` seguem sem alteração, e cada teste listado existe
     - **Evidência:** RED visto (módulo inexistente e, depois, uma asserção minha corrigida); GREEN: `scripts/test/composeRootPage.test.ts` 8 testes e `indexHtmlMeta.test.ts` passam; typecheck e lint limpos. Cobertura por critério: idempotência (`composeRootPage.test.ts`, `expect(twice).toBe(once)`); molde limpo (`removeRootPageItems(TEMPLATE)).toBe(TEMPLATE)`); 3 scripts inline byte a byte (`toContain(REDIRECT_SCRIPT)`, `THEME_SCRIPT`, `MOTION_SCRIPT`); canonical e 4 `hreflang` com `base` da Fatec; lang/título/descrição `en`; `og:*`; `<noscript data-root>` com h1 e 3 links escapados. Desvio: a função de remoção ficou em `scripts/prerender/removeRootPageItems.ts` (um símbolo por arquivo); ao limpar uma raiz já processada, lang/título/descrição ficam os do `en` e o noscript vira `<noscript></noscript>` (o `composePage` os substitui nas demais páginas).
 
-- [ ] T2 — Leitura dos textos da raiz nos três idiomas
+- [x] T2 — Leitura dos textos da raiz nos três idiomas
     - **Arquivo(s):** `scripts/prerender/readRootTexts.ts`, `scripts/test/readRootTexts.test.ts`, `src/locales/pt-BR/common.json`, `src/locales/en/common.json`, `src/locales/es/common.json`
     - **Depende de:** T1
     - **Testes (escritos antes, RED):**
@@ -34,7 +34,7 @@ T1 (teste que reproduz o bug)  →  T2  →  T3  →  T4 [P] e T5 [P]  →  T6
         - os três `common.json` reais trazem `root.heading` e `root.link`, com os valores da spec (R2, NF-IN-01; mesmo arquivo, lendo `src/locales`)
     - **Gate:** `npm run typecheck && npm run lint && npm test -- --run --maxWorkers=2 scripts/test/readRootTexts.test.ts`
     - **Feito quando:** o gate passa e os três idiomas têm as duas chaves novas (sem comentário, `pt-BR` como referência)
-    - **Evidência:** (preenchida pelo `executor`)
+    - **Evidência:** RED visto (`root.heading` ausente nos `common.json` reais); GREEN: `scripts/test/readRootTexts.test.ts` 3 testes (`expect(texts).toEqual(...)`, `rejects.toThrow(/"root\.link".*"es"/)`, valores reais da spec) passam, junto com `composeRootPage.test.ts`, `src/i18n`, `src/routers` e `src/test/entry-server.test.tsx` (21 arquivos, 280 testes); typecheck e lint limpos; chaves `root.heading`/`root.link` nos três idiomas.
 
 - [ ] T3 — Gerar a raiz no fim da pré-renderização
     - **Arquivo(s):** `scripts/prerender.ts`
