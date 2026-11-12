@@ -28,14 +28,14 @@ Tela: **sim**, mas só metadados no `<head>`/`<script>`; nenhuma mudança visual
 
 Feita lendo `public/content/{pt-BR,en,es}/projects.json` e o construtor (sem build; o JSON-LD é gerado do mesmo dado, NF-IA-09). Resultado em `staging` (`09390d5`):
 
-| Projeto (`id` termina em) | Repositório | Linguagens de programação (stack, sem repetição) | `@type` emitido | Páginas (README + documentos) |
-| --- | --- | --- | --- | --- |
-| Maps (`1d497b`) | `felipe-sant/maps` | TypeScript | `SoftwareSourceCode` | README, SETUP, LICENSE |
-| MNIST Classifier (`e47a7a`) | `felipe-sant/mnist-classifier` | TypeScript, Python | `SoftwareSourceCode` | README, ARCHITECTURE, SETUP, LICENSE |
-| Pedido de Namoro Irrecusável (`57d251`) | `felipe-sant/pedido-de-namoro` | TypeScript | `SoftwareSourceCode` | README, LICENSE |
-| Controle de Despesas (`6ec9a5`) | `felipe-sant/controle-despesas` | TypeScript | `SoftwareSourceCode` | README, SETUP, LICENSE |
-| Conversor de Unidades (`57f6ad`) | `felipe-sant/conversor-de-unidades` | TypeScript | `SoftwareSourceCode` | README, LICENSE |
-| Player Profile Clustering (`0ee193`) | `felipe-sant/player-profile-clustering-ai` | TypeScript, Python | `SoftwareSourceCode` | README, ARCHITECTURE, SETUP, LICENSE |
+| Projeto (`id` termina em)               | Repositório                                | Linguagens de programação (stack, sem repetição) | `@type` emitido      | Páginas (README + documentos)        |
+| --------------------------------------- | ------------------------------------------ | ------------------------------------------------ | -------------------- | ------------------------------------ |
+| Maps (`1d497b`)                         | `felipe-sant/maps`                         | TypeScript                                       | `SoftwareSourceCode` | README, SETUP, LICENSE               |
+| MNIST Classifier (`e47a7a`)             | `felipe-sant/mnist-classifier`             | TypeScript, Python                               | `SoftwareSourceCode` | README, ARCHITECTURE, SETUP, LICENSE |
+| Pedido de Namoro Irrecusável (`57d251`) | `felipe-sant/pedido-de-namoro`             | TypeScript                                       | `SoftwareSourceCode` | README, LICENSE                      |
+| Controle de Despesas (`6ec9a5`)         | `felipe-sant/controle-despesas`            | TypeScript                                       | `SoftwareSourceCode` | README, SETUP, LICENSE               |
+| Conversor de Unidades (`57f6ad`)        | `felipe-sant/conversor-de-unidades`        | TypeScript                                       | `SoftwareSourceCode` | README, LICENSE                      |
+| Player Profile Clustering (`0ee193`)    | `felipe-sant/player-profile-clustering-ai` | TypeScript, Python                               | `SoftwareSourceCode` | README, ARCHITECTURE, SETUP, LICENSE |
 
 Em todas: `name` = título do idioma, `description` = `summary` do idioma, `url` e `@id` absolutos por `buildAbsoluteUrl` com o idioma da página, `inLanguage` = idioma, `author` = `{ "@id": "<site>/#person" }`, `codeRepository` = `repositoryUrl`, `programmingLanguage` sem repetição (`TypeScript` aparece duas vezes na stack de Maps, MNIST e Controle de Despesas e sai uma vez). Páginas de documento (não README) emitem, além disso, o `TechArticle` com `about` apontando para o `#project`. Nenhum dos seis cai em `CreativeWork`; esse ramo existe para projeto sem `repositoryUrl` e continua coberto.
 
@@ -49,16 +49,16 @@ Nada precisa mudar em `buildProjectJsonLd` salvo se algum teste novo falhar por 
 
 ## Critérios de aceite
 
-- [ ] **CA1 (#201)** Em `/<idioma>/projects`, o HTML traz um `BreadcrumbList` com 2 itens, na ordem: Início (`/<idioma>`) e Projetos (`/<idioma>/projects`), com `position` 1 e 2 e URLs absolutas.
-- [ ] **CA2 (#201)** Em `/<idioma>/projects/:id`, o `BreadcrumbList` tem 3 itens: Início, Projetos e o título do projeto (`/<idioma>/projects/:id`).
-- [ ] **CA3 (#201)** Em `/<idioma>/projects/:id/docs/:name` (documento que não é o README), o `BreadcrumbList` tem 4 itens: Início, Projetos, título do projeto e o nome exato do documento (`/<idioma>/projects/:id/docs/:name`).
-- [ ] **CA4 (#201)** Os nomes de Início e Projetos vêm de `common:navigation.home` e `common:navigation.projects` e mudam com o idioma (`Início`/`Projetos`, `Home`/`Projects`, `Inicio`/`Proyectos`); título do projeto e nome do documento vêm dos dados.
-- [ ] **CA5 (#201)** O construtor de breadcrumb fica em `src/utils/` e tem teste que confere itens, ordem, `position` e URLs absolutas (inclusive com o prefixo de `BASE_URL` do GitHub Pages).
-- [ ] **CA6 (#201)** Estados sem página real (carregando, erro, projeto ou documento inexistente) não emitem `BreadcrumbList`, igual ao JSON-LD atual (`Project.page.test.tsx`, "não declara canônica, Open Graph nem JSON-LD em %s").
-- [ ] **CA7 (#208)** Esta spec registra o que as seis páginas declaram hoje (seção "Auditoria").
-- [ ] **CA8 (#208)** Para cada idioma (`pt-BR`, `en`, `es`), `buildProjectJsonLd` tem teste de cada campo: nome, descrição, linguagem de programação, repositório, autor (mesmo `@id` de `buildPersonId()`) e URL absoluta.
-- [ ] **CA9 (#208)** Um teste percorre os seis projetos reais nos três idiomas e exige `SoftwareSourceCode` com os seis campos preenchidos.
-- [ ] **CA10 (#208)** Projeto sem repositório continua `CreativeWork` sem `codeRepository` e sem `programmingLanguage` (já coberto; não pode regredir).
+- [x] **CA1 (#201)** Em `/<idioma>/projects`, o HTML traz um `BreadcrumbList` com 2 itens, na ordem: Início (`/<idioma>`) e Projetos (`/<idioma>/projects`), com `position` 1 e 2 e URLs absolutas.
+- [x] **CA2 (#201)** Em `/<idioma>/projects/:id`, o `BreadcrumbList` tem 3 itens: Início, Projetos e o título do projeto (`/<idioma>/projects/:id`).
+- [x] **CA3 (#201)** Em `/<idioma>/projects/:id/docs/:name` (documento que não é o README), o `BreadcrumbList` tem 4 itens: Início, Projetos, título do projeto e o nome exato do documento (`/<idioma>/projects/:id/docs/:name`).
+- [x] **CA4 (#201)** Os nomes de Início e Projetos vêm de `common:navigation.home` e `common:navigation.projects` e mudam com o idioma (`Início`/`Projetos`, `Home`/`Projects`, `Inicio`/`Proyectos`); título do projeto e nome do documento vêm dos dados.
+- [x] **CA5 (#201)** O construtor de breadcrumb fica em `src/utils/` e tem teste que confere itens, ordem, `position` e URLs absolutas (inclusive com o prefixo de `BASE_URL` do GitHub Pages).
+- [x] **CA6 (#201)** Estados sem página real (carregando, erro, projeto ou documento inexistente) não emitem `BreadcrumbList`, igual ao JSON-LD atual (`Project.page.test.tsx`, "não declara canônica, Open Graph nem JSON-LD em %s").
+- [x] **CA7 (#208)** Esta spec registra o que as seis páginas declaram hoje (seção "Auditoria").
+- [x] **CA8 (#208)** Para cada idioma (`pt-BR`, `en`, `es`), `buildProjectJsonLd` tem teste de cada campo: nome, descrição, linguagem de programação, repositório, autor (mesmo `@id` de `buildPersonId()`) e URL absoluta.
+- [x] **CA9 (#208)** Um teste percorre os seis projetos reais nos três idiomas e exige `SoftwareSourceCode` com os seis campos preenchidos.
+- [x] **CA10 (#208)** Projeto sem repositório continua `CreativeWork` sem `codeRepository` e sem `programmingLanguage` (já coberto; não pode regredir).
 - [ ] **CA11** `<` continua escapado em todo JSON-LD novo (NF-IA-09).
 
 ## Casos de borda
@@ -86,4 +86,5 @@ Nada precisa mudar em `buildProjectJsonLd` salvo se algum teste novo falhar por 
 - **Construtor novo, não embutido (#201).** Cria-se `src/utils/buildBreadcrumbJsonLd.ts` (`export default`, um símbolo por arquivo) com `buildBreadcrumbJsonLd(language, items)`, `items: { name: string; path: string; params?: Record<string, string> }[]`, usando `buildAbsoluteUrl` por item. Motivo: o mesmo nó serve às três páginas (e a futuras); embutir em `buildProjectsJsonLd`/`buildProjectJsonLd` misturaria dois tipos num retorno de nó único (o `JsonLdNode` é um objeto, não um `@graph`) e obrigaria a mudar o contrato dos testes atuais. Cada página emite seu `<JsonLd>` próprio, depois dos existentes (os E2E de `projects.spec.ts` leem `.first()`, então a `CollectionPage` continua primeiro).
 - **Nomes por tradução:** os rótulos vêm de `common:navigation.home` e `common:navigation.projects`, que já existem nos três idiomas (R2); não há chave nova, logo nenhum JSON de `src/locales/` muda. O hook da página (`useProjects`, `useProject`/hook de `Project.page.tsx`) monta a lista de itens e a passa ao construtor; o JSX só renderiza.
 - **Sem dependência nova.** Sem backend (R1). Referências: NF-IA-08, NF-IA-09; D-IDs de design não se aplicam (sem UI).
+- **`/docs/README.md` não é página de projeto:** a rota responde não encontrada (já coberto em `Project.page.test.tsx`), então o README só existe em `/projects/:id` e o breadcrumb dele tem sempre 3 itens.
 - **#208 sem implementação de campo:** a auditoria mostra os campos todos presentes; o trabalho é prova (testes) e registro.
