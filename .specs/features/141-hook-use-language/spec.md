@@ -1,7 +1,7 @@
 # Spec: Hook useLanguage
 
 > **Tipo:** `feature` <br />
-> **Status:** `em-andamento` <br />
+> **Status:** `implementada` <br />
 > **Issue:** `#141` <br />
 > **Criado em:** `11-11-2026`
 

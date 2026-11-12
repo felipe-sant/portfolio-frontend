@@ -56,10 +56,10 @@ T3 e T4 editam arquivos distintos e podem correr em paralelo. Nenhum código tem
     - **Feito quando:** a "API de idioma" cita `useLanguage()` (hook em `src/hooks/`) ao lado de `getLanguage()`, e o texto não promete mais que o componente lê `i18n.resolvedLanguage` direto
     - **Evidência:** a "API de idioma" de `docs/architecture/frontend.md` cita `useLanguage()` ao lado de `getLanguage()` e `setLanguage`.
 
-- [ ] T6 — Verificação completa
+- [x] T6 — Verificação completa
     - **Arquivo(s):** nenhum (só verificação)
     - **Depende de:** T1 a T5
     - **Testes (escritos antes, RED):** não se aplica
     - **Gate:** `uptime` (load abaixo de 14) e `npm run build && npm run test:cov -- --maxWorkers=2` (única rodada pesada; E2E roda no CI)
     - **Feito quando:** o gate passa
-    - **Evidência:**
+    - **Evidência:** PR #255 com todos os checks do CI verdes: Build, Lint, Test (com cobertura), Changeset, E2E scope, 4 shards de E2E e E2E agregado.
