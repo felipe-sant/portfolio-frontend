@@ -1,14 +1,13 @@
 import { useTranslation } from "react-i18next"
 import { useParams } from "react-router-dom"
-import FALLBACK_LANGUAGE from "@/i18n/fallbackLanguage"
-import resolveSupportedLanguage from "@/i18n/resolveSupportedLanguage"
+import useLanguage from "@/hooks/useLanguage"
 import projectsApi from "@/store/api/projects.api"
 import isUuidV7 from "@/utils/isUuidV7"
 
 function useProject() {
-    const { t, i18n } = useTranslation("project")
+    const { t } = useTranslation("project")
     const { id } = useParams()
-    const language = resolveSupportedLanguage(i18n.resolvedLanguage) ?? FALLBACK_LANGUAGE
+    const language = useLanguage()
     const isValidId = isUuidV7(id)
     const query = projectsApi.useGetProjectQuery(
         { id: isValidId ? id : "", lang: language },

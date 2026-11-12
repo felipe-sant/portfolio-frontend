@@ -1,11 +1,8 @@
-import { useTranslation } from "react-i18next"
-import FALLBACK_LANGUAGE from "@/i18n/fallbackLanguage"
-import resolveSupportedLanguage from "@/i18n/resolveSupportedLanguage"
+import useLanguage from "@/hooks/useLanguage"
 import buildPath from "@/routers/buildPath"
 
 function useLocalizedPath() {
-    const { i18n } = useTranslation()
-    const language = resolveSupportedLanguage(i18n.resolvedLanguage) ?? FALLBACK_LANGUAGE
+    const language = useLanguage()
 
     return (path: string, params?: Record<string, string>) => buildPath(path, language, params)
 }

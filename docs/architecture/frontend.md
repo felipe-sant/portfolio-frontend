@@ -259,8 +259,11 @@ Texto movido do `.claude/CLAUDE.md`, por área. As seções acima dão a visão 
       (`languageStorageKey.ts`, único lugar onde o valor da chave aparece), interno à pasta e
       chamado só por `setLanguage`. Visitar `/en` por link não grava escolha.
     - **API de idioma:** `getLanguage(): SupportedLanguage` (idioma ativo, função comum, usável fora
-      de React) e `setLanguage(language): Promise<void>` (carrega o idioma, troca e salva a escolha). Componente e
-      página usam só essas duas, nunca `saveLanguage` nem `localStorage` direto.
+      de React), `useLanguage(): SupportedLanguage` (`src/hooks/`, o mesmo valor em componente e hook, que
+      rerenderiza na troca de idioma) e `setLanguage(language): Promise<void>` (carrega o idioma, troca e salva a
+      escolha). Componente e página leem o idioma por `useLanguage()` (nunca repetem
+      `resolveSupportedLanguage(i18n.resolvedLanguage) ?? FALLBACK_LANGUAGE`) e trocam por `setLanguage`, nunca por
+      `saveLanguage` nem `localStorage` direto.
     - Um listener de `languageChanged`, registrado antes do `init()`, mantém
       `document.documentElement.lang` sincronizado com o idioma ativo. O `lang="pt-BR"` do
       `index.html` descreve o conteúdo estático daquele arquivo e é corrigido assim que o JS roda.
