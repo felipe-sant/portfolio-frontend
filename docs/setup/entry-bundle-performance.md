@@ -99,3 +99,22 @@ Rodadas, na ordem (base | branch), em ms:
 | Informações | 221,5; 344,0; 712,5; 255,0; 6.854,5 | 98,0; 279,8; 36,0; 2,5; 157,0  |
 
 **Outlier:** a rodada 5 da base em Informações (6.854,5 ms) coincidiu com carga de 3,06 na máquina. Foi mantida na tabela e não afeta a mediana, que é a medida de aceite. O TBT da branch é menor que o da base nas duas páginas, em todas as rodadas da Início e em todas as de Informações; o CA2 passa.
+
+## Peso do Zod (#162)
+
+Os schemas de `src/services/content/schemas/` usam `zod/mini` e são carregados por `import()` dinâmico em `readJson`, em paralelo com a leitura do arquivo, para o Zod não entrar no pacote de entrada. Spec: [`.specs/features/162-valida-contrato-dos-json-com-zod/spec.md`](../../.specs/features/162-valida-contrato-dos-json-com-zod/spec.md).
+
+Estimativa da spec (`zod/mini` dinâmico): 7,7 KB gzip e 7,0 KB brotli, fora da entrada; a entrada cresce só a chamada do `import()` (cerca de 0,06 KB).
+
+Como medir, sobre o `dist/assets/` de `npm run build`:
+
+1. Escolha um marcador do Zod que apareça só no chunk dos schemas (por exemplo o nome interno `ZodMiniType` ou a string `$ZodType`); confira com `grep -l` que ele existe num `.js` e anote qual.
+2. Liste os `.js` que `dist/index.html` referencia (`<script type="module">` e `<link rel="modulepreload">`) e rode `grep -c <marcador>` neles: o esperado é zero em todos.
+3. Comprima o chunk dos schemas com `gzipSync` e `brotliCompressSync` (qualidade 11) do `zlib` do Node, como no método acima, e some a entrada antes e depois.
+4. Rode `npm run check:chunk`: continua passando, sem mudar nenhum teto.
+
+| Medida                                | Valor              |
+| ------------------------------------- | ------------------ |
+| Chunk dos schemas, gzip e brotli (KB) | medido no CI do PR |
+| Entrada (`index`), brotli (KB)        | medido no CI do PR |
+| Marcador do Zod nos chunks de entrada | medido no CI do PR |

@@ -32,15 +32,16 @@ Na v1 não há backend (R1). Os dados vêm de arquivos locais que uma camada de 
 API responderia, com os mesmos parâmetros, respostas e erros de
 [`api-contract.md`](api-contract.md):
 
-| Onde                                          | O que guarda                                                                             |
-| --------------------------------------------- | ---------------------------------------------------------------------------------------- |
-| `public/content/<idioma>/`                    | `profile.json`, `timeline.json` e `projects.json` de `pt-BR`, `en` e `es`                |
-| `public/content/<idioma>/projects/<id>/docs/` | Documentos traduzidos do projeto (`README.md`, `SETUP.md` ...)                           |
-| `public/content/shared/projects/<id>/docs/`   | Documentos neutros do projeto (`LICENSE`), um arquivo só para os três idiomas            |
-| `public/images/`                              | Imagens dos projetos (`projects/<id>/<n>-large.webp` e `-small.webp`) e a foto do perfil |
-| `content/template/`                           | Modelo em branco do conteúdo, com README de uso (não é publicado)                        |
-| `src/services/content/`                       | A camada local: leitura dos arquivos, busca, ordenação, trajetória e validação           |
-| `src/store/api/`                              | Endpoints do RTK Query (`profile.api.ts`, `timeline.api.ts`, `projects.api.ts`)          |
+| Onde                                          | O que guarda                                                                                 |
+| --------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| `public/content/<idioma>/`                    | `profile.json`, `timeline.json` e `projects.json` de `pt-BR`, `en` e `es`                    |
+| `public/content/<idioma>/projects/<id>/docs/` | Documentos traduzidos do projeto (`README.md`, `SETUP.md` ...)                               |
+| `public/content/shared/projects/<id>/docs/`   | Documentos neutros do projeto (`LICENSE`), um arquivo só para os três idiomas                |
+| `public/images/`                              | Imagens dos projetos (`projects/<id>/<n>-large.webp` e `-small.webp`) e a foto do perfil     |
+| `content/template/`                           | Modelo em branco do conteúdo, com README de uso (não é publicado)                            |
+| `src/services/content/`                       | A camada local: leitura dos arquivos, busca, ordenação, trajetória e validação               |
+| `src/services/content/schemas/`               | Schemas Zod (`zod/mini`) da forma dos JSON, carregados por `import()` dinâmico em `readJson` |
+| `src/store/api/`                              | Endpoints do RTK Query (`profile.api.ts`, `timeline.api.ts`, `projects.api.ts`)              |
 
 Página e componente nunca leem esses arquivos: o acesso é pelos endpoints, com `lang` no argumento
 (`projectsApi.useGetProjectsQuery({ lang, sort: "recent" })`). Os arquivos de `public/` são

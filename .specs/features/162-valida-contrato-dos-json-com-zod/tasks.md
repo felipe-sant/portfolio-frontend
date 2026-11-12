@@ -89,13 +89,13 @@ Regras para o `executor`: nenhum comentário em código (nem `//`, `/* */`, JSDo
     - **Feito quando:** o gate passa e `public/content/` não foi alterado.
     - **Evidência:** asserção em `src/services/content/test/content.test.ts:49-62` (`it.each(SUPPORTED_LANGUAGES)`, `toEqual([[], [], []])` sobre `profileSchema`, `listResponse(projectRecordSchema)` e `listResponse(timelineItemRecordSchema)`). RED visto: cópia dos arquivos em pasta do scratchpad com `countryCode: "brazil"` em `en/profile.json` reprovou com `location.countryCode: Invalid input`; `public/` intocado. `npm run typecheck`, `npm run lint` e `npm run content:check` (29 testes) verdes.
 
-- [ ] T6 — Documentação e medição de pacote
+- [x] T6 — Documentação e medição de pacote
     - **Arquivo(s):** `docs/architecture/data-model.md` (seção "Validação do conteúdo"), `docs/architecture/code-structure.md` ou `docs/architecture/frontend.md` (pasta `schemas/` e carregamento dinâmico), `docs/architecture/api-contract.md` (reaproveitamento na v2), `docs/setup/entry-bundle-performance.md` (peso do Zod, método e marcador), `docs/setup/development.md` (se `content:check` passar a citar schemas)
     - **Depende de:** T5
     - **Testes (escritos antes, RED):** não se aplica (documentação); os critérios PERF-162-01 e PERF-162-02 são verificados na T7
     - **Gate:** `npm run lint` e leitura dos links relativos das páginas editadas
     - **Feito quando:** DOC-162-01 atendido: o mapa do que `content:check` garante (da spec), "roda no teste e no CI, não no navegador", a validação de borda, a regra de chave desconhecida, a duplicação aceita e a pergunta para v2 estão em `data-model.md`; a medição de pacote entra em `entry-bundle-performance.md` com o método da spec.
-    - **Evidência:** (links dos trechos)
+    - **Evidência:** `docs/architecture/data-model.md#o-que-cada-camada-garante-162` (mapa, teste e CI, borda, chave desconhecida, duplicação, pergunta da v2); `docs/architecture/frontend.md` (pasta `schemas/`, carregamento dinâmico); `docs/architecture/code-structure.md` (tabela de dados); `docs/architecture/api-contract.md` (reaproveitamento na v2); `docs/setup/entry-bundle-performance.md#peso-do-zod-162` (método e marcador `medido no CI do PR`, sem build); `docs/setup/development.md` (`content:check`). `npm run lint` verde; links relativos conferidos.
 
 - [ ] T7 — Verificação completa
     - **Arquivo(s):** nenhum (só verificação)
