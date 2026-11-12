@@ -35,9 +35,11 @@ function composeRootPage(
     }
 
     const canonical = buildPageUrl(origin, base, ROUTES.home, FALLBACK_LANGUAGE)
-    const alternates = [...SUPPORTED_LANGUAGES, "x-default"].map((hreflang) => {
-        const language = hreflang === "x-default" ? FALLBACK_LANGUAGE : hreflang
-        const href = buildPageUrl(origin, base, ROUTES.home, language as SupportedLanguage)
+    const alternates = [
+        ...SUPPORTED_LANGUAGES.map((language) => ({ hreflang: language, language })),
+        { hreflang: "x-default", language: FALLBACK_LANGUAGE }
+    ].map(({ hreflang, language }) => {
+        const href = buildPageUrl(origin, base, ROUTES.home, language)
 
         return `<link rel="alternate" hreflang="${hreflang}" href="${href}">`
     })

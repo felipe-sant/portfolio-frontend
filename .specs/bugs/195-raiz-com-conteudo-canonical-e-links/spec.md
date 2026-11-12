@@ -94,3 +94,7 @@ Decisões desta spec (aplicam `NF-IA-11`, `NF-IA-17`, `NF-IN-05`, `NF-IN-09`, `N
 
 - Nenhuma dependência nova.
 - IDs: `NF-IA-22` é novo (próximo livre depois de `NF-IA-21`) e entra em `docs/product/non-functional-requirements.md` na tarefa de doc.
+
+## Desvios da implementação
+
+- A remoção dos itens da raiz ficou em `scripts/prerender/removeRootPageItems.ts`, fora da lista de arquivos da spec, por causa da regra de um símbolo exportado por arquivo. Numa raiz já processada ela deixa `lang`, título e descrição do `en` e um `<noscript></noscript>` vazio; o `composePage` os troca nas demais páginas.
