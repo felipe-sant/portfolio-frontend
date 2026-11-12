@@ -30,7 +30,7 @@ Os dois grupos de teste passam de forma estável em execuções repetidas e com 
 ## Critérios de aceite
 
 - [x] O teste de "Limpar filtros" espera o filtro de tipo ser aplicado (endereço e contagem) antes de clicar em "Carregar mais".
-- [x] O teste passa em execuções repetidas do arquivo com `--maxWorkers=2` e carga artificial na máquina.
+- [x] O teste passa em execuções repetidas (4 rodadas completas registradas) do arquivo com `--maxWorkers=2` e carga artificial na máquina.
 - [ ] Parte 2 (`BASE_URL`): **não reproduzida**. Decisão do PO: a issue fecha só com a parte 1; se a falha voltar no CI, abrir nova issue com o log.
 - [x] Nenhum timeout aumentado e nenhum comentário no código.
 
