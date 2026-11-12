@@ -73,7 +73,7 @@ executor: Fase 1          Fase 2              Fase 3   |  PO: T6  |  qa: T7 [P] 
     - **Feito quando:** o gate passa
     - **Evidência:** `npm run typecheck` e `npm run lint` verdes; `npm run build` verde com `VITE_SITE_URL=https://felipe-sant.vercel.app` (sem a variável o build falha por desenho, `scripts/resolveSiteUrl.ts`), e o CSS de `dist/assets/` traz o `mask-image` e o `padding-block` do alvo; `npm test -- --run` com 2904 de 2905 testes verdes e uma falha intermitente de tempo em `src/prerender/test/mountClient.test.tsx` ("renderiza no cliente usando o BASE_URL como basename") com a máquina sob carga 16 a 19, que passa 19/19 em três rodadas isoladas e não toca arquivo desta spec; `test:cov` trocado pela suíte completa pedida pelo Orc.
 
-- [x] T6 — Verificação manual do PO (CA4, CA9, CA10)
+- [ ] T6 — Verificação manual do PO (CA4, CA9, CA10)
     - **Arquivo(s):** nenhum
     - **Depende de:** T5
     - **Testes (escritos antes, RED):** não se aplica
@@ -87,7 +87,7 @@ executor: Fase 1          Fase 2              Fase 3   |  PO: T6  |  qa: T7 [P] 
           anel inteiro e opaco; a 768 px não há esmaecimento; nenhuma das telas rola na horizontal.
     - **Gate:** aprovação do PO
     - **Feito quando:** o PO aprova ou devolve ajustes (que voltam ao `executor`, em T1/T2).
-    - **Evidência:** verificação manual do PO confirmada pelo Orc.
+    - **Evidência:** ...
 
 - [x] T7 [P] — E2E da Início (responsável: `qa`)
     - **Arquivo(s):** `e2e/home.spec.ts` (sem spec novo; `e2e/support/specClassification.ts` não muda)
