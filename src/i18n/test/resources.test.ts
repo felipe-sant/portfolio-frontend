@@ -53,4 +53,12 @@ describe("resources", () => {
     it.each(languages)("%s tem about.updatedAt com a data interpolada", (_language, namespaces) => {
         expect(namespaces.about.updatedAt).toContain("{{date}}")
     })
+
+    it.each(languages)(
+        "%s tem project.meta.documentDescription com o documento e o projeto interpolados",
+        (_language, namespaces) => {
+            expect(namespaces.project.meta.documentDescription).toContain("{{document}}")
+            expect(namespaces.project.meta.documentDescription).toContain("{{project}}")
+        }
+    )
 })

@@ -21,9 +21,11 @@ import useProject from "@/pages/hooks/useProject"
 import useProjectDocument from "@/pages/hooks/useProjectDocument"
 import ROUTES from "@/routers/paths"
 import css from "@/styles/pages/project.module.css"
+import buildDocumentDescription from "@/utils/buildDocumentDescription"
 import buildDocumentJsonLd from "@/utils/buildDocumentJsonLd"
 import buildProjectJsonLd from "@/utils/buildProjectJsonLd"
 import findDocumentByName from "@/utils/findDocumentByName"
+import isLicenseDocument from "@/utils/isLicenseDocument"
 import type ProjectDetail from "@/types/project/ProjectDetail.types"
 
 interface ProjectContentProps {
@@ -69,6 +71,7 @@ function ProjectDetailView({ project, documentName }: ProjectContentProps) {
     const firstImage = project.images[0]
     const documentEntry = document.document
     const isDocumentPage = documentEntry !== undefined && documentEntry.name !== "README.md"
+    const isLicense = documentEntry !== undefined && isLicenseDocument(documentEntry.name)
     const isReadme = document.exactName === "README.md"
     const title = isReadme
         ? t("project:meta.title", { project: project.title })
@@ -77,13 +80,22 @@ function ProjectDetailView({ project, documentName }: ProjectContentProps) {
               project: project.title
           })
 
+    const description = isDocumentPage
+        ? (buildDocumentDescription(document.content, document.format) ??
+          t("project:meta.documentDescription", {
+              document: documentEntry.name,
+              project: project.title
+          }))
+        : project.summary
+
     return (
         <>
             <title>{title}</title>
-            <meta name="description" content={project.summary} />
+            <meta name="description" content={description} />
+            {isLicense && <meta name="robots" content={"noindex"} />}
             <PageMeta
                 title={title}
-                description={project.summary}
+                description={description}
                 path={isDocumentPage ? ROUTES.projectDocument : ROUTES.project}
                 params={
                     isDocumentPage

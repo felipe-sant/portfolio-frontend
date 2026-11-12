@@ -597,25 +597,106 @@ describe("ProjectPage, SEO", () => {
         expect(head('meta[property="og:image:alt"]')?.getAttribute("content")).toMatch(/\S{5,}/)
     })
 
-    it("tem a mesma descrição, igual ao resumo, no README e nos outros documentos", async () => {
+    it("mantém o resumo como descrição do README e usa o texto do documento nos outros", async () => {
         const { router } = renderProject(`/pt-BR/projects/${ID_ONE}`)
         await projectLoaded()
 
-        for (const path of ["", "/docs/SETUP.md"]) {
+        for (const [path, description] of [
+            ["", "Resumo pt-BR 1"],
+            ["/docs/SETUP.md", "Texto do setup pt-BR"]
+        ]) {
             await act(async () => {
                 await router.navigate(`/pt-BR/projects/${ID_ONE}${path}`)
             })
             await waitFor(() =>
-                expect(head('meta[name="description"]')).toHaveAttribute(
-                    "content",
-                    "Resumo pt-BR 1"
-                )
+                expect(head('meta[name="description"]')).toHaveAttribute("content", description)
             )
-            expect(head('meta[property="og:description"]')).toHaveAttribute(
-                "content",
-                "Resumo pt-BR 1"
-            )
+            expect(head('meta[property="og:description"]')).toHaveAttribute("content", description)
+            expect(head('meta[name="twitter:description"]')).toHaveAttribute("content", description)
         }
+    })
+
+    it("marca a LICENSE com noindex e não marca o README nem os outros documentos", async () => {
+        const { router } = renderProject(`/pt-BR/projects/${ID_ONE}/docs/LICENSE`)
+        await screen.findByRole("heading", { level: 2, name: "LICENSE" }, { timeout: 5000 })
+
+        await waitFor(() =>
+            expect(head('meta[name="robots"]')).toHaveAttribute("content", "noindex")
+        )
+
+        for (const path of ["/docs/SETUP.md", ""]) {
+            await act(async () => {
+                await router.navigate(`/pt-BR/projects/${ID_ONE}${path}`)
+            })
+            await waitFor(() => expect(head('link[rel="canonical"]')).not.toBeNull())
+            expect(head('meta[name="robots"]')).toBeNull()
+        }
+    })
+
+    it.each([
+        ["pt-BR", "Documento SETUP.md do projeto Projeto 1."],
+        ["en", "SETUP.md document of the Project 1 project."],
+        ["es", "Documento SETUP.md del proyecto Proyecto 1."]
+    ] as const)(
+        "usa a descrição traduzida do documento em %s sem parágrafo útil, nunca o resumo",
+        async (language, description) => {
+            const files = buildFiles()
+            files[`content/${language}/projects/${ID_ONE}/docs/SETUP.md`] = "## Só título\n"
+            stubContentFetch(files)
+            const router = createMemoryRouter(routes, {
+                initialEntries: [`/${language}/projects/${ID_ONE}/docs/SETUP.md`]
+            })
+            renderWithStore(<RouterProvider router={router} />)
+            await screen.findByRole("heading", { level: 2, name: "SETUP.md" }, { timeout: 5000 })
+
+            await waitFor(() =>
+                expect(head('meta[name="description"]')).toHaveAttribute("content", description)
+            )
+            expect(head('meta[property="og:description"]')).toHaveAttribute("content", description)
+        }
+    )
+
+    it("usa a descrição traduzida do documento enquanto o conteúdo carrega", async () => {
+        const { router, fetchMock } = renderProject(`/pt-BR/projects/${ID_ONE}`)
+        await projectLoaded()
+        const release = holdFetchAfter(fetchMock, 0)
+
+        await act(async () => {
+            await router.navigate(`/pt-BR/projects/${ID_ONE}/docs/SETUP.md`)
+        })
+
+        await waitFor(() =>
+            expect(head('meta[name="description"]')).toHaveAttribute(
+                "content",
+                "Documento SETUP.md do projeto Projeto 1."
+            )
+        )
+
+        await act(async () => {
+            release()
+        })
+        await waitFor(() =>
+            expect(head('meta[name="description"]')).toHaveAttribute(
+                "content",
+                "Texto do setup pt-BR"
+            )
+        )
+    })
+
+    it("usa a descrição traduzida quando o conteúdo do documento falha", async () => {
+        const { router, fetchMock } = renderProject(`/pt-BR/projects/${ID_ONE}`)
+        await projectLoaded()
+        failFetchAfter(fetchMock, 0)
+
+        await act(async () => {
+            await router.navigate(`/pt-BR/projects/${ID_ONE}/docs/SETUP.md`)
+        })
+        await screen.findByRole("alert", {}, { timeout: 5000 })
+
+        expect(head('meta[name="description"]')).toHaveAttribute(
+            "content",
+            "Documento SETUP.md do projeto Projeto 1."
+        )
     })
 
     it.each(LANGUAGES)(

@@ -2,7 +2,8 @@
     "meta": {
         "title": "{{project}} · Luiz Felipe dos Santos",
         "fallbackTitle": "Proyecto · Luiz Felipe dos Santos",
-        "documentTitle": "{{document}} · {{project}} · Luiz Felipe dos Santos"
+        "documentTitle": "{{document}} · {{project}} · Luiz Felipe dos Santos",
+        "documentDescription": "Documento {{document}} del proyecto {{project}}."
     },
     "backToProjects": "Volver a Proyectos",
     "gallery": {

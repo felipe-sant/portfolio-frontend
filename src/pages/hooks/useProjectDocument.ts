@@ -2,6 +2,7 @@ import { useTranslation } from "react-i18next"
 import FALLBACK_LANGUAGE from "@/i18n/fallbackLanguage"
 import resolveSupportedLanguage from "@/i18n/resolveSupportedLanguage"
 import projectsApi from "@/store/api/projects.api"
+import type DocumentFormat from "@/types/project/DocumentFormat.types"
 import type ProjectDetail from "@/types/project/ProjectDetail.types"
 import findDocumentByName from "@/utils/findDocumentByName"
 
@@ -30,12 +31,14 @@ function useProjectDocument(project: ProjectDetail, name?: string) {
         return query.isError && !query.isFetching ? "error" : "loading"
     }
 
+    const format: DocumentFormat = document?.format === "markdown" ? "markdown" : "text"
+
     return {
         status: resolveStatus(),
         document,
         exactName: document?.name,
         content: query.currentData,
-        format: document?.format === "markdown" ? "markdown" : "text",
+        format,
         lang: document && !document.translated ? document.contentLanguage : undefined,
         retry
     }
