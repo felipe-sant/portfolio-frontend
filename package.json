@@ -34,6 +34,7 @@
     "preview": "vite preview",
     "build:fatec": "tsx --tsconfig tsconfig.node.json scripts/buildFatec.ts",
     "publish:fatec:docs": "tsx --tsconfig tsconfig.node.json scripts/publishFatecDocs.ts",
+    "publish:fatec:readme": "tsx --tsconfig tsconfig.node.json scripts/publishFatecReadme.ts",
     "build:fatec:form": "tsx --tsconfig tsconfig.node.json scripts/buildFatecForm.ts",
     "preview:fatec": "tsx --tsconfig tsconfig.node.json scripts/previewFatec.ts",
     "test": "vitest",

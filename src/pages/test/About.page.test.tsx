@@ -580,6 +580,49 @@ describe("AboutPage, metadados", () => {
     })
 })
 
+describe("AboutPage, data de atualização", () => {
+    it.each([
+        ["pt-BR", "Atualizado em 07/2026"],
+        ["en", "Updated 07/2026"],
+        ["es", "Actualizado en 07/2026"]
+    ] as const)("mostra mês e ano de updatedAt em %s", async (language, text) => {
+        await act(() => setLanguage(language))
+        renderAbout()
+
+        expect(await screen.findByText(text)).toBeInTheDocument()
+    })
+
+    it("não mostra a data enquanto o perfil carrega", () => {
+        renderAbout()
+
+        expect(screen.queryByText(/Atualizado/)).not.toBeInTheDocument()
+    })
+
+    it("não mostra a data nem a chave quando o perfil falha", async () => {
+        stubContentFetch(without(buildFiles(), "content/pt-BR/profile.json"))
+        renderAbout()
+
+        await screen.findByRole("alert")
+
+        expect(screen.queryByText(/Atualizado/)).not.toBeInTheDocument()
+        expect(screen.queryByText(/updatedAt/)).not.toBeInTheDocument()
+    })
+
+    it("traz dateModified no JSON-LD ProfilePage com o updatedAt do perfil", async () => {
+        renderAbout()
+        await screen.findByText("Atualizado em 07/2026")
+
+        await waitFor(() => expect(readJsonLd().dateModified).toBe("2026-07-19"))
+    })
+
+    it("não tem violações de acessibilidade com a data visível", async () => {
+        const { container } = renderAbout()
+        await screen.findByText("Atualizado em 07/2026")
+
+        await expectNoAxeViolations(container)
+    })
+})
+
 describe("AboutPage, Reveal", () => {
     it("envolve as quatro seções abaixo da primeira tela e não a apresentação", async () => {
         const { container } = renderAbout()

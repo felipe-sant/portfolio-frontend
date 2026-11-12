@@ -44,6 +44,7 @@ function buildState(
     overrides: Partial<DocumentState> = {}
 ): DocumentState {
     return {
+        description: "Descrição do documento",
         status: "success",
         document,
         exactName: document.name,

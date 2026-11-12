@@ -61,8 +61,9 @@ Reutilizável (`workflow_call`) e manual (`workflow_dispatch`), com a entrada op
 1. **Guarda de origem:** consulta `repos/<repositório>/compare/<tag>...main` pela API do GitHub (com `github.token`, só leitura) e falha a menos que o `status` seja `ahead` ou `identical`, ou seja, o commit da tag precisa estar na `main` deste repositório.
 2. Faz checkout deste repositório na tag (`refs/tags/<tag>`, sem persistir credenciais), para o script e o artefato serem da mesma versão, instala as dependências e baixa o artefato `fatec-pages` (com `.nojekyll` e `404.html`).
 3. Faz checkout de `fatec-jacarei-dsm-portfolio/ra2581392423047` em `main`, em `fatec-repository`, com `FATEC_PAGES_TOKEN`.
-4. `npm run publish:fatec:docs -- fatec-artifact fatec-repository` (`scripts/replaceFatecDocs.ts`) valida o artefato (`index.html`, `404.html` e `.nojekyll`; senão falha em português sem tocar o destino), remove o `docs/` inteiro do destino e copia o artefato. Nada fora de `docs/` muda, inclusive o `README.md` da raiz. O `docs/` é removido e recriado para não sobrar arquivo do build antigo (Create React App).
-5. Faz commit como `github-actions[bot]` com a mensagem `Publica a <tag> do portfólio` e `git push origin main`, sem `--force`. Se `git status --porcelain` não mostra mudança, termina verde sem commit. Se o push é rejeitado (alguém commitou na `main` da Fatec no meio), o job falha e não faz rebase: o PO resolve à mão.
+4. `npm run publish:fatec:docs -- fatec-artifact fatec-repository` (`scripts/replaceFatecDocs.ts`) valida o artefato (`index.html`, `404.html` e `.nojekyll`; senão falha em português sem tocar o destino), remove o `docs/` inteiro do destino e copia o artefato. O `docs/` é removido e recriado para não sobrar arquivo do build antigo (Create React App). Antes, o passo `Resolve origin commit` guarda o SHA curto do checkout da tag (`git rev-parse --short HEAD`).
+5. `npm run publish:fatec:readme -- fatec-repository`, com `TAG` e `ORIGIN_SHA` por `env:` (`scripts/publishFatecReadme.ts` e `scripts/writeFatecReadme.ts`), renderiza o modelo `scripts/fatecReadme.template.md` com a tag e o SHA (`scripts/renderFatecReadme.ts` recusa tag fora de `^v1\.[0-9]+\.[0-9]+$` e SHA que não seja hexadecimal de 7 a 40 caracteres, e falha se sobrar `{{...}}`), grava o resultado em `README.md` na raiz do destino e copia as capturas `docs/design/assets/readme/home-light.png` e `home-dark.png` (até 300 KB cada, geradas por `npm run readme:images`) para `docs/readme/` do destino, depois da troca do `docs/`. Falha em português, sem tocar o destino, se o clone, o modelo ou uma captura não existir. O `README.md` da Fatec é reescrito inteiro a cada publicação: edição manual nele é sobrescrita, e o próprio texto avisa isso. É o único arquivo da raiz que o workflow escreve (sem LICENSE).
+6. Faz commit como `github-actions[bot]` só de `docs` e `README.md` (`git add --all docs README.md`), com o assunto `Publica a <tag> do portfólio` e, no corpo, a linha `Origem: felipe-sant/portfolio-frontend@<sha curto> (tag <tag>)`, e `git push origin main`, sem `--force`. Se `git status --porcelain` não mostra mudança, termina verde sem commit. Se o push é rejeitado (alguém commitou na `main` da Fatec no meio), o job falha e não faz rebase: o PO resolve à mão.
 
 #### Como disparar
 
@@ -99,14 +100,25 @@ O PO tem push, mas não admin, no repositório da Fatec, então não há Pages p
 - Na `v1.0.0` foi usado o PAT classic com escopo `repo`, porque a organização não listou o repositório da Fatec na criação do token fine-grained.
 - O primeiro deploy do Pages travou e só voltou depois de um commit vazio em `main` do repositório da Fatec (`git commit --allow-empty` e push). Se uma publicação aparecer commitada mas o site não atualizar, esse é o caminho antes de investigar mais.
 
+#### Metadados do repositório da Fatec
+
+Homepage, descrição e topics do repositório da Fatec ficam vazios e não foram configurados: editá-los exige administrador, e o PO tem só `push` (`admin=false`, `maintain=false` em 11/11/2026). O item está fechado como não feito por falta de permissão. Quem tiver administrador pode aplicar:
+
+```bash
+gh repo edit fatec-jacarei-dsm-portfolio/ra2581392423047 \
+  --homepage "https://fatec-jacarei-dsm-portfolio.github.io/ra2581392423047/" \
+  --description "Portfólio de Luiz Felipe dos Santos (Fatec Jacareí, DSM): código-fonte em felipe-sant/portfolio-frontend" \
+  --add-topic portfolio --add-topic react --add-topic typescript --add-topic fatec
+```
+
 #### Plano B manual
 
 Se o workflow não puder rodar (token indisponível, Actions fora do ar), o PO publica à mão, com push na Fatec:
 
 1. `git clone git@github.com:fatec-jacarei-dsm-portfolio/ra2581392423047.git` em outra pasta e `git switch main`.
 2. Neste repositório, na tag da versão (`git switch --detach v1.x.y`), `npm ci` e `npm run build:fatec`.
-3. No clone da Fatec, `rm -rf docs` e `mkdir docs`; copie o `dist/` inteiro, incluindo o `.nojekyll` (`cp -a <este repositório>/dist/. docs/`).
-4. `git add --all docs`, `git commit -m "Publica a v1.x.y do portfólio"` e `git push origin main`.
+3. No clone da Fatec, `rm -rf docs` e `mkdir docs`; copie o `dist/` inteiro, incluindo o `.nojekyll` (`cp -a <este repositório>/dist/. docs/`). Depois, neste repositório, `TAG=v1.x.y ORIGIN_SHA=$(git rev-parse --short HEAD) npm run publish:fatec:readme -- <clone da Fatec>` grava o `README.md` e as capturas em `docs/readme/`.
+4. `git add --all docs README.md`, `git commit -m "Publica a v1.x.y do portfólio" -m "Origem: felipe-sant/portfolio-frontend@<sha curto> (tag v1.x.y)"` e `git push origin main`.
 5. Aguarde o Pages e abra `https://fatec-jacarei-dsm-portfolio.github.io/ra2581392423047/pt-BR`, mais `/en`, `/es`, `/pt-BR/projects` e uma rota inexistente (404.html), recarregando cada uma.
 
 #### Na V2

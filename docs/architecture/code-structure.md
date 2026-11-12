@@ -86,9 +86,10 @@ ativo. Link interno usa `useLocalizedPath()`, que mantém o prefixo do idioma. O
 
 ## Alias de import, `public/`, enum e utils
 
-- **Alias de import `@/`** — `@/*` resolve para `src/*`. Configurado em dois lugares que precisam
-  continuar concordando: `paths` no `tsconfig.app.json` (para o `tsc` e o editor) e `resolve.alias` no
-  `vite.config.ts` (para o dev server e o build). Mexer em um sem o outro deixa o `tsc -b`
+- **Alias de import `@/`** — `@/*` resolve para `src/*`. Configurado em três lugares que precisam
+  continuar concordando: `paths` no `tsconfig.app.json` (para o `tsc` e o editor), `paths` no
+  `tsconfig.e2e.json` (para os E2E do Playwright) e `resolve.alias` no `vite.config.ts` (para o dev
+  server e o build). Mexer em um sem o outro deixa o `tsc -b`
   verde e quebra o build, ou vice-versa. O Vitest herda o alias do mesmo `vite.config.ts`.
 - **`public/`** — assets estáticos que o Vite copia como estão para a raiz de `dist/` no build, sem
   passar pelo bundler, e são referenciados por caminho absoluto (`/favicon.svg`). Arquivo estático

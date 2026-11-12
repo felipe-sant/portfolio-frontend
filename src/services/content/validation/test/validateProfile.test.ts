@@ -24,6 +24,14 @@ describe("validateProfile", () => {
         ).toContain("pelo menos um parágrafo")
     })
 
+    it("reprova perfil sem updatedAt apontando o arquivo e o campo", () => {
+        const issues = issuesAfter((profile) => {
+            Reflect.deleteProperty(profile, "updatedAt")
+        })
+
+        expect(issues).toEqual(["content/pt-BR/profile.json#updatedAt Campo obrigatório ausente"])
+    })
+
     it("reprova summary, homeIntro e role vazios ou longos", () => {
         const issues = issuesAfter((profile) => {
             profile.summary = ""

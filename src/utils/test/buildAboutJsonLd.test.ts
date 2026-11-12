@@ -30,6 +30,18 @@ describe("buildAboutJsonLd", () => {
         })
     })
 
+    it("traz dateModified igual ao updatedAt do perfil e o omite sem perfil", () => {
+        const withProfile = buildAboutJsonLd(
+            "pt-BR",
+            LABELS,
+            buildProfile({ updatedAt: "2026-07-19" })
+        )
+        const withoutProfile = buildAboutJsonLd("pt-BR", LABELS)
+
+        expect(JSON.parse(serializeJsonLd(withProfile)).dateModified).toBe("2026-07-19")
+        expect(JSON.parse(serializeJsonLd(withoutProfile))).not.toHaveProperty("dateModified")
+    })
+
     it("usa a canônica de about no idioma, o cargo e o resumo do perfil", () => {
         const node = buildAboutJsonLd("en", LABELS, buildProfile(), buildTimeline())
         const person = mainEntity(node)

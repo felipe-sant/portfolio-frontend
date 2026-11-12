@@ -121,8 +121,8 @@ Regras por área; o mecanismo de cada uma está em `docs/` (tabela "Onde ler mai
   calado). Sem estilo inline nem CSS global local; `:global` só nos hovers de `projectCard.module.css` e
   `featuredProject.module.css`. Tema e movimento só se escrevem por `useTheme()` e `useMotion()`; animação nova usa
   `--dur-*` e `--ease`. Detalhe em `docs/architecture/frontend.md`.
-- **Alias e `public/`**: `@/*` resolve para `src/*` em dois lugares que precisam concordar, `paths` do
-  `tsconfig.app.json` e `resolve.alias` do `vite.config.ts`. Asset estático novo (imagem, fonte, dado mock) entra em
+- **Alias e `public/`**: `@/*` resolve para `src/*` em três lugares que precisam concordar, `paths` do
+  `tsconfig.app.json` e do `tsconfig.e2e.json` e `resolve.alias` do `vite.config.ts`. Asset estático novo (imagem, fonte, dado mock) entra em
   `public/`; fonte é self-hospedada, nunca CDN.
 - **Config e dados:** variável do cliente tem prefixo `VITE_` e se lê com `import.meta.env.VITE_ALGO`; `BASE_URL`,
   `VITE_API_URL` e `VITE_SITE_URL` só são lidos em `src/utils/publicUrl.ts`, `src/services/http/apiUrl.ts` e

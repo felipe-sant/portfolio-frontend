@@ -53,6 +53,7 @@ describe("buildContentTemplate", () => {
         expect(project.title).toBe("")
         expect(item.title).toBe("")
         expect(profile.role).toBe("")
+        expect(profile.updatedAt).toBe("")
     })
 
     it("é reprovado pelo validador enquanto não for preenchido, sem lançar exceção", () => {

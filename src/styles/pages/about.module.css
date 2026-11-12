@@ -81,6 +81,12 @@
     text-wrap: pretty;
 }
 
+.updated {
+    margin: 0;
+    color: var(--text-weak);
+    font-size: var(--text-body-sm);
+}
+
 .textSkeleton {
     display: flex;
     flex-direction: column;
