@@ -1,7 +1,7 @@
 # Spec: AsyncSection e Section para o padrão carregando, erro e dados
 
 > **Tipo:** `feature` <br />
-> **Status:** `aprovada` <br />
+> **Status:** `em-andamento` <br />
 > **Issue:** `#164` <br />
 > **Criado em:** `12-11-2026`
 
