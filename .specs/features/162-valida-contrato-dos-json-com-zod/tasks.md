@@ -22,7 +22,7 @@ Regras para o `executor`: nenhum comentário em código (nem `//`, `/* */`, JSDo
     - **Feito quando:** `zod` está em `dependencies` com a versão decidida; `package-lock.json` tem uma versão só de `zod` (`npm ls zod`); o tempo de `npm run typecheck` antes e depois fica anotado na evidência; o checklist da spec foi reconferido com `npm view` e `npm audit` (se algo mudou desde 11/11/2026, voltar ao `sdd`).
     - **Evidência:** `zod@4.6.6` exato; `npm ls zod` com uma versão só; `npm audit` 0 avisos (a 4.6.5 tem GHSA-mrhx-c7xc-m3w5, HIGH). `npm run typecheck` sem o Zod: 45,9 s e 778 MB; com um arquivo de sonda de `zod/mini` (enum, objeto, regex, e-mail, url, anotação contra tipo): 18,0 s e 766 MB, sem erro (issue #6732 não reproduzida).
 
-- [ ] T2 — Schemas em `src/services/content/schemas/` e tipo `ContentSchema`
+- [x] T2 — Schemas em `src/services/content/schemas/` e tipo `ContentSchema`
     - **Arquivo(s):** `src/types/content/ContentSchema.types.ts`, `src/services/content/schemas/{imageAsset,responsiveImage,stackGroup,profile,projectRecord,timelineItemRecord,listResponse}.schema.ts`, testes em `src/services/content/schemas/test/<nome>.schema.test.ts`
     - **Depende de:** T1
     - **Testes (escritos antes, RED, borda primeiro):**
@@ -35,7 +35,17 @@ Regras para o `executor`: nenhum comentário em código (nem `//`, `/* */`, JSDo
         - Compilação (guarda de tipo): cada schema anotado contra o tipo de `src/types/` (`Profile`, `ProjectRecord`, `TimelineItemRecord`, `StackGroup`, `ResponsiveImage`); `npm run typecheck` prova
     - **Gate:** `npm run typecheck && npm run lint && npm test -- --run --maxWorkers=2 src/services/content/schemas`
     - **Feito quando:** o gate passa; um schema por arquivo com `export default`; os valores de enum vêm de `src/enum/*.enum.ts`; o tipo `ContentSchema<T>` aceita a atribuição de cada schema sem cast (se o `tsc` rejeitar, ajustar o tipo estrutural e registrar).
-    - **Evidência:** (tabela de adequação com `arquivo:linha` e veredito)
+    - **Evidência:** `npm run typecheck` e `npm run lint` verdes; `npm test -- --run --maxWorkers=2 src/services/content/schemas`: 4 arquivos, 26 testes verdes. `ContentSchema<T>` aceitou cada schema de `zod/mini` sem ajuste e sem cast (a atribuição é provada em `loadProfile`/`loadProjectRecords`/`loadTimelineRecords` com `readJson<T>` explícito; a inferência de `T` pela união com `data?: undefined` dava `T | undefined`, por isso o `T` explícito nos carregadores).
+
+        | Critério                                                                                                  | Prova                                                                 |
+        | --------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+        | `profile` rejeita countryCode, e-mail, isAvailable string, category                                       | `profile.schema.test.ts` (4 primeiros `it`, `path` do primeiro issue) |
+        | `projectRecord` rejeita types vazio/fora do enum, category, status, format, featured, data, campo ausente | `projectRecord.schema.test.ts` (8 primeiros `it`)                     |
+        | `timelineItemRecord` rejeita kind, start, projectIds                                                      | `timelineItemRecord.schema.test.ts` (3 primeiros `it`)                |
+        | `listResponse` rejeita `items` ausente, aceita `[]`                                                       | `listResponse.schema.test.ts`                                         |
+        | Aceita a fixture e devolve igual                                                                          | `toEqual(fixture)` nos três arquivos                                  |
+        | Chave extra aceita e removida                                                                             | `profile` e `projectRecord`, `toEqual(build*())`                      |
+        | Guarda de tipo                                                                                            | `ZodMiniType<T>` anotado em cada schema; `tsc` verde                  |
 
 - [ ] T3 — `readJson` valida com carregamento dinâmico e paralelo; carregadores passam o schema
     - **Arquivo(s):** `src/services/content/readJson.ts`, `loadProfile.ts`, `loadProjectRecords.ts`, `loadTimelineRecords.ts`, testes em `src/services/content/test/{readJson,loadProfile,loadProjectRecords,loadTimelineRecords}.test.ts`
