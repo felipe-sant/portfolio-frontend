@@ -43,6 +43,7 @@ async function openAboutFromHeader(page: Page, language: Language) {
     const texts = UI_TEXTS[language]
     await page.goto(`${language}/rota-inexistente`)
     await page.getByRole("heading", { level: 1 }).waitFor()
+    await waitForHydration(page)
     if ((page.viewportSize()?.width ?? 0) < DESKTOP_MIN_WIDTH) {
         await page.getByRole("button", { name: texts.menu }).click()
     }

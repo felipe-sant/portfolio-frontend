@@ -2,6 +2,7 @@ import { expect, test } from "@playwright/test"
 import type { Page } from "@playwright/test"
 import FATEC_BASE_PATH from "@scripts/fatecBasePath"
 import UI_TEXTS from "./support/uiTexts"
+import waitForHydration from "./support/waitForHydration"
 
 const DESKTOP_MIN_WIDTH = 720
 const BELOW_DESKTOP_WIDTH = 719
@@ -29,6 +30,7 @@ function isDesktop(page: Page) {
 async function openHome(page: Page, language: Language) {
     await page.goto(language)
     await page.getByRole("heading", { level: 1 }).waitFor()
+    await waitForHydration(page)
 }
 
 async function hasHorizontalScroll(page: Page) {
