@@ -4,6 +4,7 @@ import type { Locator, Page } from "@playwright/test"
 import chooseLanguageInHeader from "./support/chooseLanguageInHeader"
 import holdContent from "./support/holdContent"
 import readAbout from "./support/readAbout"
+import readProfileUpdatedAt from "./support/readProfileUpdatedAt"
 import readContentWidth from "./support/readContentWidth"
 import UI_TEXTS from "./support/uiTexts"
 import waitForHydration from "./support/waitForHydration"
@@ -176,6 +177,31 @@ test.describe("estrutura e apresentação", () => {
             await expect(item).toContainText(texts.current)
             await expect(item).toContainText(texts.since)
             expect((await getBox(item)).height).toBeGreaterThanOrEqual(44)
+        })
+    }
+})
+
+test.describe("data de atualização", () => {
+    for (const language of LANGUAGES) {
+        const texts = UI_TEXTS[language].aboutPage
+
+        test(`RF-ABOUT-31, NF-IA-15: em ${language} a tela mostra Atualizado em MM/AAAA do conteúdo e o JSON-LD traz dateModified`, async ({
+            page
+        }) => {
+            const updatedAt = readProfileUpdatedAt(language)
+            const [year, month] = updatedAt.split("-")
+            await openAbout(page, language)
+
+            await expect(
+                page.getByRole("main").getByText(`${texts.updatedPrefix} ${month}/${year}`, {
+                    exact: true
+                })
+            ).toBeVisible()
+            const jsonLd = await page
+                .locator('script[type="application/ld+json"]')
+                .first()
+                .textContent()
+            expect(JSON.parse(jsonLd ?? "null").dateModified).toBe(updatedAt)
         })
     }
 })
