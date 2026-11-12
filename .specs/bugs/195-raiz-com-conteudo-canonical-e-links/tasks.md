@@ -52,7 +52,7 @@ T1 (teste que reproduz o bug)  →  T2  →  T3  →  T4 [P] e T5 [P]  →  T6
     - **Feito quando:** `body > noscript` exclui `[data-root]` e há regra própria só com custom properties de `global.css`; sem estilo inline nem cor literal
     - **Evidência:** lint limpo, prettier ok; `body > noscript:not([data-root])` mantém o aviso vermelho e `body > noscript[data-root]` tem regra própria só com custom properties (`--measure`, `--space-*`, `--pad-page`, `--text-*`), sem cor literal nem estilo inline; foco vem do `:focus-visible` global. Verificação manual de aparência (claro/escuro, 390 e 1280 px, sem JavaScript): verificação no CI / manual do PO.
 
-- [ ] T5 [P] — E2E da raiz sem JavaScript
+- [x] T5 [P] — E2E da raiz sem JavaScript
     - **Arquivo(s):** `e2e/no-javascript.spec.ts`
     - **Depende de:** T3
     - **Testes (escritos antes, RED):** num `describe` com `javaScriptEnabled: false` e `page.goto("")`, com ID de requisito no título:
@@ -63,7 +63,7 @@ T1 (teste que reproduz o bug)  →  T2  →  T3  →  T4 [P] e T5 [P]  →  T6
           A redireção com JavaScript e o sitemap sem a raiz já são cobertos por `e2e/language.spec.ts` ("raiz e caminho sem prefixo") e `e2e/machine-files.spec.ts` (NF-IA-15), sem mudança. `e2e/support/specClassification.ts` e `e2e/support/routesUnderTest.ts` não mudam (o spec já está em `independentSpecs`).
     - **Gate:** `npm run typecheck && npm run lint` (E2E roda na tarefa final, uma vez: `npm run build:fatec && npm run test:e2e -- e2e/no-javascript.spec.ts e2e/language.spec.ts e2e/machine-files.spec.ts`)
     - **Feito quando:** o gate passa e os testes acima existem; o E2E dos três specs passa depois do build
-    - **Evidência:** (preenchida pelo `executor`)
+    - **Evidência:** typecheck, lint e `specClassification.test.ts` verdes; `describe` "sem JavaScript, raiz" em `e2e/no-javascript.spec.ts` com `javaScriptEnabled: false`, IDs `NF-IA-22`, `NF-IA-04`, `NF-IN-05`, `NF-IA-11`, `NF-IA-10` nos títulos (lang/h1/três links, canonical e `hreflang`, título/descrição/`og:*`, navegação por idioma com 200, `404.html` sem `hreflang` nem `noscript[data-root]`). Execução do E2E: verificação no CI / manual do PO (não rodado localmente).
 
 - [ ] T6 — Documentação
     - **Arquivo(s):** `docs/product/non-functional-requirements.md`, `docs/architecture/frontend.md`, `docs/setup/environments.md`
