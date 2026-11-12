@@ -1,7 +1,7 @@
 # Spec: 140-divide-javascript-por-pagina
 
 > **Tipo:** `feature` (Perf na branch e no commit) <br />
-> **Status:** `em-andamento` <br />
+> **Status:** `implementada` <br />
 > **Aprovada por:** Felipe, em 11-11-2026 (registrada pelo Orc) <br />
 > **Issue:** `#140` <br />
 > **Criado em:** `11-11-2026`
@@ -54,12 +54,12 @@ IDs desta spec, citados nos testes e nas tarefas.
 
 ## Critérios de aceite
 
-- [ ] **CA1 (issue, critério 1):** `docs/setup/entry-bundle-performance.md` existe e traz a tabela de composição do pacote de entrada antes (da análise de 11/11/2026) e depois (medida no build desta branch com o mesmo método); o que saiu da entrada e o que ficou, com o motivo (react-dom, react-router, i18next, Redux Toolkit não encolhem com divisão); a fonte Bricolage (77 KB, pré-carregada no `index.html`, `font-display: swap` em `global.css`, subset do eixo `opsz` como recomendação); e o método de medição do TBT. Está ligado em `docs/setup/development.md`.
+- [x] **CA1 (issue, critério 1):** `docs/setup/entry-bundle-performance.md` existe e traz a tabela de composição do pacote de entrada antes (da análise de 11/11/2026) e depois (medida no build desta branch com o mesmo método); o que saiu da entrada e o que ficou, com o motivo (react-dom, react-router, i18next, Redux Toolkit não encolhem com divisão); a fonte Bricolage (77 KB, pré-carregada no `index.html`, `font-display: swap` em `global.css`, subset do eixo `opsz` como recomendação); e o método de medição do TBT. Está ligado em `docs/setup/development.md`.
 - [ ] **CA2 (issue, critério 2):** o TBT da Início (`/pt-BR`) e de Informações (`/pt-BR/about`) no Lighthouse mobile é menor nesta branch do que em `origin/staging` (`6c10b34`). A medição usa o método do relatório, roda com a máquina ociosa (sem build, E2E ou outro agente em paralelo) e compara a mediana de pelo menos 5 rodadas alternadas entre os dois builds. A linha de base é medida de novo na mesma sessão. Não valem como "atual" as medianas da análise (máquina carregada) nem os 730 e 1.140 ms da issue (outro site e outro método). Responsável: `qa`.
-- [ ] **CA3 (issue, critério 3):** `npm run check:chunk` passa depois de `npm run build`, com os orçamentos do markdown e do `pdfjs` inalterados e sem `react-markdown` na entrada.
-- [ ] **CA4:** o pacote de entrada desta branch não contém textos de locale de nenhum idioma nem o módulo do `ResumeModal`. Isso é conferido no build e registrado na tabela "depois" do relatório.
-- [ ] **CA5:** PERF-140-01 a PERF-140-12 cobertos pelos testes listados em `tasks.md`.
-- [ ] **CA6:** `npm run typecheck`, `npm run lint`, `npm run test:cov` e `npm run test:e2e` (depois de `npm run build:fatec` e `npm run build:fatec:form`) verdes.
+- [x] **CA3 (issue, critério 3):** `npm run check:chunk` passa depois de `npm run build`, com os orçamentos do markdown e do `pdfjs` inalterados e sem `react-markdown` na entrada.
+- [x] **CA4:** o pacote de entrada desta branch não contém textos de locale de nenhum idioma nem o módulo do `ResumeModal`. Isso é conferido no build e registrado na tabela "depois" do relatório.
+- [x] **CA5:** PERF-140-01 a PERF-140-12 cobertos pelos testes listados em `tasks.md`.
+- [x] **CA6:** `npm run typecheck`, `npm run lint`, `npm run test:cov` e `npm run test:e2e` (depois de `npm run build:fatec` e `npm run build:fatec:form`) verdes.
 - [ ] **CA7 (verificação manual do Felipe):** nas cinco telas (Início, Projetos, Projeto, Informações, Contato) e nos três idiomas, nada pisca nem some na carga, na troca de idioma (seletor do cabeçalho) e na troca de tema. A primeira abertura do modal do currículo (rodapé, Início, Informações, Contato) não esconde a página. Feito com `npm run build && npm run preview` (a hidratação só acontece no HTML pré-renderizado; o `npm run dev` não pré-renderiza).
 
 ## Casos de borda
