@@ -65,7 +65,7 @@ Pré-requisito: o PO responde as questões em aberto 1 a 3 da spec; mudou a resp
     - **Feito quando:** o catálogo lista `AsyncSection`, `Section` e as cinco partes, com a frase de quando usar cada uma
     - **Evidência:** (executor)
 
-- [ ] T6 — Verificação completa
+- [x] T6 — Verificação completa
     - **Arquivo(s):** nenhum (só verificação)
     - **Depende de:** T1 a T5
     - **Testes (escritos antes, RED):** não se aplica
