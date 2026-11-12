@@ -45,6 +45,7 @@ function PageMeta({
     const canonical = buildAbsoluteUrl(path, language, params)
     const imageUrl = `${getSiteUrl()}${publicUrl(image)}`
     const otherLanguages = SUPPORTED_LANGUAGES.filter((item) => item !== language)
+    const resolvedImageAlt = imageAlt ?? t("meta.imageAlt")
 
     return (
         <>
@@ -69,12 +70,16 @@ function PageMeta({
             <meta property="og:image" content={imageUrl} />
             <meta property="og:image:width" content={String(imageWidth)} />
             <meta property="og:image:height" content={String(imageHeight)} />
-            <meta property="og:image:alt" content={imageAlt ?? t("meta.imageAlt")} />
+            <meta property="og:image:alt" content={resolvedImageAlt} />
             <meta property="og:locale" content={OG_LOCALES[language]} />
             {otherLanguages.map((item) => (
                 <meta key={item} property="og:locale:alternate" content={OG_LOCALES[item]} />
             ))}
             <meta name="twitter:card" content={"summary_large_image"} />
+            <meta name="twitter:title" content={title} />
+            <meta name="twitter:description" content={description} />
+            <meta name="twitter:image" content={imageUrl} />
+            <meta name="twitter:image:alt" content={resolvedImageAlt} />
         </>
     )
 }

@@ -117,6 +117,7 @@ describe("PageMeta", () => {
         expect(getLink("canonical")).toBe(`${SITE_URL}/en/projects`)
         expect(getMeta("og:locale")).toBe("en_US")
         expect(getMeta("og:image:alt")).toBe("Cat next to the name Luiz Felipe dos Santos")
+        expect(getMeta("twitter:image:alt")).toBe("Cat next to the name Luiz Felipe dos Santos")
     })
 
     it.each(["pt-BR", "en", "es"] as const)(
@@ -148,6 +149,38 @@ describe("PageMeta", () => {
         expect(getMeta("og:image:alt")).toBe("Captura do projeto")
         expect(getMeta("og:image:width")).toBe("1600")
         expect(getMeta("og:image:height")).toBe("900")
+        expect(getMeta("twitter:image")).toBe(`${SITE_URL}/images/projects/x-large.webp`)
+        expect(getMeta("twitter:image:alt")).toBe("Captura do projeto")
+    })
+
+    it.each(["pt-BR", "en", "es"] as const)(
+        "declara as tags do Twitter iguais às de Open Graph em %s",
+        async (language) => {
+            await renderPage(`/${language}/projects`)
+
+            expect(getMeta("twitter:title")).toBe(getMeta("og:title"))
+            expect(getMeta("twitter:description")).toBe(getMeta("og:description"))
+            expect(getMeta("twitter:image")).toBe(getMeta("og:image"))
+            expect(getMeta("twitter:image:alt")).toBe(getMeta("og:image:alt"))
+        }
+    )
+
+    it("declara as tags do Twitter pelo atributo name", async () => {
+        await renderPage("/pt-BR/projects")
+
+        for (const key of [
+            "twitter:card",
+            "twitter:title",
+            "twitter:description",
+            "twitter:image",
+            "twitter:image:alt"
+        ]) {
+            expect(document.head.querySelector(`meta[name="${key}"]`)).not.toBeNull()
+            expect(document.head.querySelector(`meta[property="${key}"]`)).toBeNull()
+        }
+        expect(getMeta("twitter:card")).toBe("summary_large_image")
+        expect(getMeta("twitter:title")).toBe("Título da página")
+        expect(getMeta("twitter:description")).toBe("Descrição da página")
     })
 
     it("declara og:type article e o nome exato do documento na canônica e nos hreflang", async () => {

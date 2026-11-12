@@ -71,8 +71,8 @@ chaves em `pt-BR`, `en` e `es`. A configuração fica em `src/i18n/`. As chaves 
 dos JSON de `pt-BR`: chave inexistente em `t()` ou faltando em `en`/`es` é erro de compilação.
 
 Para adicionar uma chave, escreva-a primeiro em `src/locales/pt-BR/<namespace>.json` e depois em
-`en` e `es`. Para adicionar um namespace, crie o JSON nos três idiomas, registre-o em
-`src/i18n/resources.ts` e inclua o nome no `ns` de `src/i18n/i18n.ts`.
+`en` e `es`. Para adicionar um namespace, crie o JSON nos três idiomas, importe-o nos
+três arquivos de `src/i18n/languageBundles/` (`ptBR.ts`, `en.ts` e `es.ts`) e inclua o nome em `src/i18n/namespaces.ts`.
 
 O idioma ativo é o do primeiro segmento do caminho: `/pt-BR`, `/en` ou `/es`. Prefixo
 desconhecido ou ausente (`/fr`, `/pt`, `/projects`) cai na página não encontrada, em inglês, e `?lng=`

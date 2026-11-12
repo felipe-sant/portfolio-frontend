@@ -336,7 +336,7 @@ describe("HomePage", () => {
 
 Não precisa desfazer a troca: o `beforeEach` do setup volta para `pt-BR` e apaga a escolha que o `setLanguage` gravou, antes do próximo teste.
 
-**Não mocke `react-i18next`.** Um mock de `useTranslation` que devolve a chave esconde exatamente o que o teste deveria pegar (chave errada, namespace não registrado em `src/i18n/resources.ts`, tradução faltando) e diverge do comportamento real de `<Trans>`.
+**Não mocke `react-i18next`.** Um mock de `useTranslation` que devolve a chave esconde exatamente o que o teste deveria pegar (chave errada, namespace não registrado em `src/i18n/languageBundles/<idioma>.ts` e `src/i18n/namespaces.ts`, tradução faltando) e diverge do comportamento real de `<Trans>`.
 
 **`*.test.ts`/`*.test.tsx` estão liberados de `react/jsx-no-literals`** por um bloco `overrides` no `.oxlintrc.json`. Em teste, `render(<SaveButton label="Salvar alterações" />)` é aceito; o mesmo literal num componente da aplicação é erro de lint.
 
@@ -416,7 +416,7 @@ Ordem de preferência: **`getByRole` com `name`** > `getByLabelText` / `getByTex
 | `describe is not defined` / `vi is not defined`                                                   | falta o `import` de `vitest` — não há `globals: true`                                                                                                                            |
 | teste de tela não acha o texto em português, mas acha o texto em inglês                           | o `beforeEach` do `src/setupTests.ts` sumiu ou trocou o `"pt-BR"` pelo fallback `en`, e o idioma veio do navegador do `jsdom` (`en-US`) (item 4)                                 |
 | teste passa sozinho e falha na suíte, com o idioma ou a URL de outro teste                        | um teste stubou a URL ou o `navigator` e não restaurou no `afterEach` (item 7)                                                                                                   |
-| o texto renderizado é a própria chave (`heading`, `meta.title`)                                   | chave sem valor, ou namespace não registrado em `src/i18n/resources.ts`: o i18next devolve a chave quando não acha tradução (item 7)                                             |
+| o texto renderizado é a própria chave (`heading`, `meta.title`)                                   | chave sem valor, ou namespace não registrado em `src/i18n/languageBundles/<idioma>.ts` e `src/i18n/namespaces.ts`: o i18next devolve a chave quando não acha tradução (item 7)   |
 | `Requiring @playwright/test second time` só na suíte inteira                                      | teste que importa o `playwright.config` com `vi.resetModules()` recarrega o Playwright de verdade no worker reaproveitado do `vmThreads`: mocke `@playwright/test` com `vi.mock` |
 | asserção logo após `user.click(...)` falha de forma intermitente, ou passa sem o efeito acontecer | a interação da v14 é assíncrona e faltou o `await` (item 9)                                                                                                                      |
 

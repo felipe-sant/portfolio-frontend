@@ -11,6 +11,7 @@ import readProjects from "./support/readProjects"
 import serveProjectsFixture from "./support/serveProjectsFixture"
 import sortProjects from "./support/sortProjects"
 import UI_TEXTS from "./support/uiTexts"
+import waitForHydration from "./support/waitForHydration"
 
 const LANGUAGES = ["pt-BR", "en", "es"] as const
 const DESKTOP_MIN_WIDTH = 640
@@ -47,6 +48,7 @@ function isDesktop(page: Page) {
 async function openProjects(page: Page, language: Language, query = "") {
     await page.goto(`${language}/projects${query}`)
     await page.getByRole("heading", { level: 1 }).waitFor()
+    await waitForHydration(page)
 }
 
 function loadProjects(language: Language) {

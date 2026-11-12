@@ -37,6 +37,30 @@ function compose(result: PrerenderResult = buildResult()) {
     return composePage(TEMPLATE, result, TARGET, "Needs JavaScript", "/ra2581392423047/")
 }
 
+const INLINE_SCRIPT = /<script\b([^>]*)>([\s\S]*?)<\/script>/g
+const JAVASCRIPT_TYPE = /^(?:module|(?:text|application)\/(?:x-)?(?:java|ecma)script)$/i
+
+function isExecutableInline(attributes: string): boolean {
+    const type = /\btype="([^"]*)"/.exec(attributes)?.[1]
+
+    return (
+        !/\bsrc=/.test(attributes) &&
+        (type === undefined || type === "" || JAVASCRIPT_TYPE.test(type))
+    )
+}
+
+function executableInlineScripts(page: string): string[] {
+    return Array.from(page.matchAll(INLINE_SCRIPT))
+        .filter(([, attributes]) => isExecutableInline(attributes))
+        .map(([, , content]) => content)
+}
+
+function readDataBlock(page: string): string | undefined {
+    return /<script type="application\/json" id="prerender-data">([\s\S]*?)<\/script>/.exec(
+        page
+    )?.[1]
+}
+
 describe("composePage", () => {
     it("troca o lang do html pelo idioma do resultado", () => {
         expect(compose()).toContain('<html lang="en"')
@@ -105,18 +129,37 @@ describe("composePage", () => {
         expect(page).toContain("<noscript>A &lt; B</noscript>")
     })
 
-    it("grava o caminho pré-renderizado com o base, o estado e os dados do roteador", () => {
-        const page = compose()
+    it("não acrescenta script inline executável além dos que o molde já tem", () => {
+        const template = TEMPLATE.replace(
+            "</head>",
+            "<script>window.fromTemplate=1</script></head>"
+        )
+        const page = composePage(template, buildResult(), TARGET, "Needs JavaScript", "/")
 
-        expect(page).toContain('window.prerenderedPath="/ra2581392423047/en"')
-        expect(page).toContain('window.preloadedState={"api":{"text":"\\u003c/script>"}}')
-        expect(page).toContain('window.routerData={"loaderData":{}}')
+        expect(executableInlineScripts(page)).toEqual(["window.fromTemplate=1"])
     })
 
-    it("não deixa menor cru dentro do script de dados", () => {
-        const script = compose().match(/<script>window\.prerenderedPath[\s\S]*?<\/script>/)?.[0]
+    it("grava caminho com o base, estado e dados do roteador num único bloco JSON depois de #root", () => {
+        const page = compose()
 
-        expect(script?.slice(8, -9)).not.toContain("<")
+        expect(page.match(/id="prerender-data"/g)).toHaveLength(1)
+        expect(page).toContain(
+            '<div id="root"><div><h1>Hello</h1></div></div><script type="application/json" id="prerender-data">'
+        )
+        expect(JSON.parse(readDataBlock(page) ?? "")).toEqual({
+            path: "/ra2581392423047/en",
+            state: { api: { text: "</script>" } },
+            routerData: { loaderData: {} }
+        })
+    })
+
+    it("não deixa menor cru dentro do bloco de dados", () => {
+        const page = compose(buildResult({ state: '{"api":{"text":"</script>"}}' }))
+        const block = readDataBlock(page)
+
+        expect(block).toBeDefined()
+        expect(block).not.toContain("<")
+        expect(block).toContain("\\u003c/script>")
     })
 
     it("falha em português se o HTML tiver bloco de Suspense fora de linha", () => {

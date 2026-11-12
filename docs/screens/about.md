@@ -305,7 +305,7 @@ trata erro por fonte, RF-ABOUT-26).
     "inLanguage": "<idioma>",
     "mainEntity": {
         "@type": "Person",
-        "@id": "<URL canônica de />#person",
+        "@id": "<origem><base>/#person",
         "name": "Luiz Felipe dos Santos",
         "jobTitle": "<role>",
         "description": "<summary>",
@@ -332,8 +332,9 @@ trata erro por fonte, RF-ABOUT-26).
 
 O `jobTitle` é o `role` do perfil, igual ao da Início (`home:heading`) e ao título da experiência atual da trajetória: o PO decidiu em 11-11-2026 que o cargo atual é "Desenvolvedor full stack Júnior" e que nada no site diz estagiário; a InCicle segue como empregador (`worksFor`) e `alumniOf` usa a instituição curta do conteúdo ("Fatec Jacareí").
 
-O `@id` da `Person` é `<URL canônica de />#person`, o mesmo em todas as telas (decisão transversal
-do PO de 11-10-2026). Cursos não entram em `alumniOf` (só formação), mas os certificados deles
+O `@id` da `Person` é `<origem><base>/#person`, a raiz do site com o `base` do Vite e sem prefixo de
+idioma, montado por `buildPersonId()`, o mesmo em todas as telas e idiomas (decisão transversal do
+PO de 11-10-2026); o `url` da `Person` segue a canônica da Início no idioma. Cursos não entram em `alumniOf` (só formação), mas os certificados deles
 entram em `hasCredential`. Sem `dateModified` inventado: só entra se o conteúdo tiver a data. Sem
 foto entregue (D26 bloqueada), o JSON-LD não tem `image`.
 

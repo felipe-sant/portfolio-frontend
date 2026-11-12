@@ -26,11 +26,11 @@ describe("buildHomeJsonLd", () => {
                     name: "Luiz Felipe dos Santos",
                     url: `${SITE_URL}/pt-BR`,
                     inLanguage: "pt-BR",
-                    publisher: { "@id": `${SITE_URL}/pt-BR#person` }
+                    publisher: { "@id": `${SITE_URL}/#person` }
                 },
                 {
                     "@type": "Person",
-                    "@id": `${SITE_URL}/pt-BR#person`,
+                    "@id": `${SITE_URL}/#person`,
                     name: "Luiz Felipe dos Santos",
                     jobTitle: "Desenvolvedor full stack",
                     url: `${SITE_URL}/pt-BR`,
@@ -55,7 +55,17 @@ describe("buildHomeJsonLd", () => {
 
         expect(serialized).not.toContain("sameAs")
         expect(serialized).not.toContain("knowsAbout")
-        expect(serialized).toContain(`${SITE_URL}/es#person`)
+        expect(serialized).toContain(`${SITE_URL}/#person`)
+        expect(serialized).not.toContain("/es#person")
+    })
+
+    it("usa o mesmo @id da Person em pt-BR, en e es", () => {
+        const persons = (["pt-BR", "en", "es"] as const).map((language) => {
+            const graph = buildHomeJsonLd(language, LABELS, buildProfile())["@graph"]
+            return Array.isArray(graph) ? graph[1] : undefined
+        })
+
+        persons.forEach((person) => expect(person).toMatchObject({ "@id": `${SITE_URL}/#person` }))
     })
 
     it("usa o idioma na URL e em inLanguage", () => {

@@ -64,7 +64,9 @@ describe("App", () => {
         expect(
             await screen.findByRole("heading", { name: "Desenvolvedor full stack Júnior" })
         ).toBeInTheDocument()
-        expect(document.title).toBe("Portfólio · Luiz Felipe dos Santos")
+        expect(document.title).toBe(
+            "Luiz Felipe dos Santos · Desenvolvedor full stack Júnior · React, TypeScript e Node.js"
+        )
         expect(document.querySelector('meta[name="description"]')?.getAttribute("content")).toBe(
             "Portfólio de Luiz Felipe dos Santos, desenvolvedor full stack Júnior com React, TypeScript e Node.js: projetos, trajetória e contato."
         )

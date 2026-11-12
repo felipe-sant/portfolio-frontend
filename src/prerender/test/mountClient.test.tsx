@@ -1,10 +1,14 @@
 import { readFileSync } from "node:fs"
+import { startTransition } from "react"
 import type { Root } from "react-dom/client"
+import { hydrateRoot } from "react-dom/client"
 import type { MockInstance } from "vitest"
 import { afterEach, beforeEach, describe, expect, inject, it, vi } from "vitest"
 import { act, screen, within } from "@testing-library/react"
 import composePage from "@scripts/prerender/composePage"
 import i18n from "@/i18n/i18n"
+import LANGUAGE_BUNDLE_IMPORTERS from "@/i18n/languageBundleImporters"
+import NAMESPACES from "@/i18n/namespaces"
 import mountClient from "@/prerender/mountClient"
 import buildProfile from "@/testUtils/buildProfile"
 import parseUntyped from "@/testUtils/parseUntyped"
@@ -12,6 +16,7 @@ import relaxAsyncUtilTimeout from "@/testUtils/relaxAsyncUtilTimeout"
 import stubContentFetch from "@/testUtils/stubContentFetch"
 import loadMarkdownRenderer from "@/utils/loadMarkdownRenderer"
 import MOTION_STORAGE_KEY from "@/utils/motionStorageKey"
+import PRERENDER_DATA_ID from "@/utils/prerenderDataId"
 import THEME_STORAGE_KEY from "@/utils/themeStorageKey"
 
 relaxAsyncUtilTimeout()
@@ -20,6 +25,48 @@ vi.mock("@/utils/loadMarkdownRenderer", async (importOriginal) => {
     const original = await importOriginal<typeof import("@/utils/loadMarkdownRenderer")>()
 
     return { default: vi.fn(original.default) }
+})
+
+const transitionState = vi.hoisted(() => ({
+    active: false,
+    hydratedInTransition: [] as boolean[],
+    languageAtRender: [] as (string | undefined)[]
+}))
+
+vi.mock("react", async (importOriginal) => {
+    const original = await importOriginal<typeof import("react")>()
+
+    return {
+        ...original,
+        startTransition: vi.fn<typeof original.startTransition>((callback) => {
+            transitionState.active = true
+            try {
+                original.startTransition(callback)
+            } finally {
+                transitionState.active = false
+            }
+        })
+    }
+})
+
+vi.mock("react-dom/client", async (importOriginal) => {
+    const original = await importOriginal<typeof import("react-dom/client")>()
+    const { default: i18nInstance } = await import("@/i18n/i18n")
+
+    return {
+        ...original,
+        hydrateRoot: vi.fn<typeof original.hydrateRoot>((...args) => {
+            transitionState.hydratedInTransition.push(transitionState.active)
+            transitionState.languageAtRender.push(i18nInstance.resolvedLanguage)
+
+            return original.hydrateRoot(...args)
+        }),
+        createRoot: vi.fn<typeof original.createRoot>((...args) => {
+            transitionState.languageAtRender.push(i18nInstance.resolvedLanguage)
+
+            return original.createRoot(...args)
+        })
+    }
 })
 
 const PROJECT_ID = "01a131df-93ee-72f3-8c7a-f67501e47a7a"
@@ -38,11 +85,15 @@ function injectPrerendered(file: string, rootElement: HTMLElement) {
     const page = composePage(TEMPLATE, result, target, "x", "/")
     const parsed = new DOMParser().parseFromString(page, "text/html")
 
+    const dataBlock = parsed.getElementById(PRERENDER_DATA_ID)
+
+    if (!dataBlock) {
+        throw new Error(`Bloco ${PRERENDER_DATA_ID} ausente em ${file}`)
+    }
+
     document.head.innerHTML = parsed.head.innerHTML
     rootElement.innerHTML = parsed.getElementById("root")?.innerHTML ?? ""
-    window.prerenderedPath = `/${target.path}`
-    window.preloadedState = JSON.parse(result.state)
-    window.routerData = JSON.parse(result.routerData)
+    document.body.appendChild(document.importNode(dataBlock, true))
 }
 
 const REAL_PROJECTS = parseUntyped(readFileSync("public/content/pt-BR/projects.json", "utf-8"))
@@ -87,6 +138,14 @@ function hydrationWarnings(spy: MockInstance<typeof console.warn>) {
     )
 }
 
+function removeLanguagesOtherThanPtBR() {
+    for (const language of ["en", "es"]) {
+        for (const namespace of NAMESPACES) {
+            i18n.removeResourceBundle(language, namespace)
+        }
+    }
+}
+
 let rootElement: HTMLElement
 let mountedRoots: Root[] = []
 
@@ -97,6 +156,10 @@ async function mount() {
 }
 
 beforeEach(() => {
+    vi.mocked(startTransition).mockClear()
+    vi.mocked(hydrateRoot).mockClear()
+    transitionState.hydratedInTransition = []
+    transitionState.languageAtRender = []
     rootElement = document.createElement("div")
     document.body.appendChild(rootElement)
     stubContentFetch({
@@ -115,9 +178,7 @@ afterEach(async () => {
     localStorage.removeItem(MOTION_STORAGE_KEY)
     document.documentElement.removeAttribute("data-motion")
     document.head.innerHTML = ""
-    window.prerenderedPath = undefined
-    window.preloadedState = undefined
-    window.routerData = undefined
+    document.getElementById(PRERENDER_DATA_ID)?.remove()
     vi.unstubAllGlobals()
     vi.unstubAllEnvs()
     window.history.pushState({}, "", "/")
@@ -135,6 +196,27 @@ describe("mountClient sem caminho pré-renderizado", () => {
         ).toBeInTheDocument()
     })
 
+    it("carrega en antes do createRoot quando o caminho não tem prefixo válido", async () => {
+        removeLanguagesOtherThanPtBR()
+        window.history.pushState({}, "", "/fr")
+
+        await mount()
+        await settle()
+
+        expect(transitionState.languageAtRender).toEqual(["en"])
+        expect(document.documentElement.lang).toBe("en")
+    })
+
+    it("não usa startTransition ao renderizar com createRoot", async () => {
+        window.history.pushState({}, "", "/pt-BR")
+
+        await mount()
+
+        await screen.findByRole("heading", { name: "Desenvolvedor full stack Júnior" })
+        expect(startTransition).not.toHaveBeenCalled()
+        expect(hydrateRoot).not.toHaveBeenCalled()
+    })
+
     it("remove o title e a meta description do index.html e deixa só os da página", async () => {
         document.head.innerHTML =
             '<title>Estático</title><meta name="description" content="Estática" />'
@@ -144,12 +226,91 @@ describe("mountClient sem caminho pré-renderizado", () => {
 
         await screen.findByRole("heading", { name: "Desenvolvedor full stack Júnior" })
         expect(document.head.querySelectorAll("title")).toHaveLength(1)
-        expect(document.title).toBe("Portfólio · Luiz Felipe dos Santos")
+        expect(document.title).toBe(
+            "Luiz Felipe dos Santos · Desenvolvedor full stack Júnior · React, TypeScript e Node.js"
+        )
         expect(document.head.querySelectorAll("meta[name='description']")).toHaveLength(1)
     })
 })
 
+describe("mountClient com HTML pré-renderizado sem bloco de dados", () => {
+    it("usa createRoot sem estado e troca o HTML do servidor", async () => {
+        injectPrerendered("en.html", rootElement)
+        document.getElementById(PRERENDER_DATA_ID)?.remove()
+        await i18n.changeLanguage("en")
+        window.history.pushState({}, "", "/en")
+        const serverHeading = screen.getByRole("heading", { name: "Junior full stack developer" })
+
+        await mount()
+
+        expect(
+            await screen.findByRole("heading", { name: "Junior full stack developer" })
+        ).not.toBe(serverHeading)
+        expect(serverHeading).not.toBeInTheDocument()
+    })
+})
+
 describe("mountClient com caminho pré-renderizado", () => {
+    it("carrega o idioma do caminho antes de hidratar quando ele não estava na instância", async () => {
+        removeLanguagesOtherThanPtBR()
+        injectPrerendered("en.html", rootElement)
+        window.history.pushState({}, "", "/en")
+        const heading = screen.getByRole("heading", { name: "Junior full stack developer" })
+        const consoleSpies = spyOnConsole()
+
+        await mount()
+        await settle()
+
+        expect(transitionState.languageAtRender).toEqual(["en"])
+        expect(screen.getByRole("heading", { name: "Junior full stack developer" })).toBe(heading)
+        expect(consoleSpies.error).not.toHaveBeenCalled()
+        expect(hydrationWarnings(consoleSpies.warn)).toEqual([])
+    })
+
+    it("tenta de novo uma vez quando o pacote do idioma falha e hidrata em seguida", async () => {
+        removeLanguagesOtherThanPtBR()
+        injectPrerendered("en.html", rootElement)
+        window.history.pushState({}, "", "/en")
+        const importer = vi
+            .spyOn(LANGUAGE_BUNDLE_IMPORTERS, "en")
+            .mockRejectedValueOnce(new Error("rede"))
+        const consoleSpies = spyOnConsole()
+
+        await mount()
+        await settle()
+
+        expect(importer).toHaveBeenCalledTimes(2)
+        expect(transitionState.languageAtRender).toEqual(["en"])
+        expect(consoleSpies.error).not.toHaveBeenCalled()
+        importer.mockRestore()
+    })
+
+    it("rejeita quando o pacote do idioma falha duas vezes", async () => {
+        removeLanguagesOtherThanPtBR()
+        injectPrerendered("en.html", rootElement)
+        window.history.pushState({}, "", "/en")
+        const importer = vi
+            .spyOn(LANGUAGE_BUNDLE_IMPORTERS, "en")
+            .mockRejectedValue(new Error("rede"))
+
+        await expect(mount()).rejects.toThrow("rede")
+        expect(importer).toHaveBeenCalledTimes(2)
+        importer.mockRestore()
+    })
+
+    it("hidrata dentro de startTransition e devolve o Root da hidratação", async () => {
+        injectPrerendered("en.html", rootElement)
+        await i18n.changeLanguage("en")
+        window.history.pushState({}, "", "/en")
+
+        await mount()
+        await settle()
+
+        expect(startTransition).toHaveBeenCalledTimes(1)
+        expect(transitionState.hydratedInTransition).toEqual([true])
+        expect(mountedRoots).toEqual([vi.mocked(hydrateRoot).mock.results[0]?.value])
+    })
+
     it("hidrata o HTML gerado sem erro nem aviso e mantém o h1 do servidor", async () => {
         injectPrerendered("en.html", rootElement)
         await i18n.changeLanguage("en")

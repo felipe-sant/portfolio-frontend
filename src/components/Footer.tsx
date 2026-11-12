@@ -4,7 +4,7 @@ import ButtonLink from "@/components/ButtonLink"
 import CopyEmailButton from "@/components/CopyEmailButton"
 import Icon from "@/components/Icon"
 import ResumeLink from "@/components/ResumeLink"
-import ResumeModal from "@/components/ResumeModal"
+import LazyResumeModal from "@/components/LazyResumeModal"
 import useLocalizedPath from "@/hooks/useLocalizedPath"
 import usePageTransition from "@/hooks/usePageTransition"
 import useResume from "@/hooks/useResume"
@@ -174,7 +174,7 @@ function NavigationBlock({ profile }: ProfileBlockProps) {
                     </li>
                 </ul>
             </div>
-            <ResumeModal isOpen={resume.isOpen} onClose={resume.close} />
+            <LazyResumeModal isOpen={resume.isOpen} onClose={resume.close} />
         </>
     )
 }

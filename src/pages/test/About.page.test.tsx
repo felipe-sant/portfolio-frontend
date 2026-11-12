@@ -306,7 +306,7 @@ describe("AboutPage, apresentação", () => {
 
         await userEvent.click(link)
 
-        const dialog = screen.getByRole("dialog", { name: "Currículo" })
+        const dialog = await screen.findByRole("dialog", { name: "Currículo" })
         expect(within(dialog).getByTitle("Currículo em PDF")).toHaveAttribute(
             "src",
             "/cv/cv-pt-BR.pdf"

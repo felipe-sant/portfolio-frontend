@@ -336,8 +336,9 @@ do que a tela usa:
   lote da tela, sem consulta própria; na pré-renderização, os 9 primeiros na ordem padrão "Mais
   recente", e depois de hidratar com busca ou filtro, os do resultado), cada um `ListItem` com `position` (a partir de 1), `url` absoluta de
   `/projects/<id>` no mesmo idioma e `name` igual ao título. A página referencia o autor por
-  `author` com o `@id` único da `Person` (`<URL canônica de />#person`, o mesmo em todas as telas,
-  decisão transversal do PO de 11-10-2026), sem repetir a `Person` inteira.
+  `author` com o `@id` único da `Person` (`<origem><base>/#person`, a raiz do site sem prefixo de
+  idioma, por `buildPersonId()`, o mesmo em todas as telas e idiomas, decisão transversal do PO de
+  11-10-2026), sem repetir a `Person` inteira.
 - Na pré-renderização (#49), `/pt-BR/projects`, `/en/projects` e `/es/projects` têm cada um seu HTML com o
   primeiro lote na ordem padrão e o JSON-LD com esse mesmo lote. Os projetos além do primeiro lote chegam ao
   rastreador pelo `sitemap.xml` e pelos `llms*.txt` (#51).
@@ -350,7 +351,7 @@ do que a tela usa:
     "description": "<projects:meta.description>",
     "url": "<canônica de /projects no idioma>",
     "inLanguage": "<pt-BR, en ou es>",
-    "author": { "@id": "<URL canônica de />#person" },
+    "author": { "@id": "<origem><base>/#person" },
     "mainEntity": {
         "@type": "ItemList",
         "itemListElement": [
