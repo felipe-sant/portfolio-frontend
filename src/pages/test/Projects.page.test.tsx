@@ -385,7 +385,11 @@ describe("ProjectsPage", () => {
         await user.click(
             within(screen.getByRole("group", { name: "Tipo" })).getByRole("button", { name: "Web" })
         )
-        await user.click(screen.getByRole("button", { name: "Carregar mais" }))
+        await waitFor(() => expect(currentLocation()).toContain("type="))
+        await waitFor(() =>
+            expect(screen.getByRole("status")).toHaveTextContent("9 de 10 projetos")
+        )
+        await user.click(await screen.findByRole("button", { name: "Carregar mais" }))
         await waitFor(() => expect(cards()).toHaveLength(10))
         await user.click(await screen.findByRole("button", { name: "Limpar filtros" }))
 
