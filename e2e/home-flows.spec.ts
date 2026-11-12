@@ -3,6 +3,7 @@ import type { Page } from "@playwright/test"
 import FATEC_BASE_PATH from "@scripts/fatecBasePath"
 import readFeaturedProjects from "./support/readFeaturedProjects"
 import UI_TEXTS from "./support/uiTexts"
+import waitForHydration from "./support/waitForHydration"
 
 const LANGUAGES = ["pt-BR", "en", "es"] as const
 
@@ -12,6 +13,7 @@ async function openHome(page: Page, language: Language) {
     await page.goto(language)
     await page.getByRole("heading", { level: 1 }).waitFor()
     await page.getByRole("article").first().waitFor()
+    await waitForHydration(page)
 }
 
 async function expectProjectsIn(page: Page, language: Language) {
@@ -182,6 +184,7 @@ async function openHomeFromNotFound(
     await page.route(`**/content/pt-BR/${blockedFile}.json`, handler ?? ((route) => route.abort()))
     await page.goto("pt-BR/rota-inexistente")
     await page.getByRole("heading", { level: 1, name: texts.notFoundHeading }).waitFor()
+    await waitForHydration(page)
     if (!isDesktop(page)) {
         await page.getByRole("button", { name: texts.menu }).click()
     }

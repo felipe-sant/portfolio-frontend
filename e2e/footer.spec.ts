@@ -4,6 +4,7 @@ import FATEC_BASE_PATH from "@scripts/fatecBasePath"
 import readAppVersion from "./support/readAppVersion"
 import readProfile from "./support/readProfile"
 import UI_TEXTS from "./support/uiTexts"
+import waitForHydration from "./support/waitForHydration"
 
 const LANGUAGES = ["pt-BR", "en", "es"] as const
 const AUTHOR = "Luiz Felipe dos Santos"
@@ -12,6 +13,7 @@ const RESET_TIMEOUT = 8000
 async function openHome(page: Page, language: string = "pt-BR") {
     await page.goto(language)
     await page.getByRole("heading", { level: 1 }).waitFor()
+    await waitForHydration(page)
 }
 
 test.describe("rodapé", () => {
