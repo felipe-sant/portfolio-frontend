@@ -1195,6 +1195,9 @@ test.describe("breadcrumb em JSON-LD", () => {
             ])
             expect(items[0].item).toMatch(new RegExp(`^https?://[^/]+/.*${language}$`))
             expect(items[1].item).toMatch(new RegExp(`^https?://[^/]+/.*${language}/projects$`))
+            await expect
+                .poll(() => page.locator('script[type="application/ld+json"]').count())
+                .toBe(2)
             const firstNode = JSON.parse(
                 (await page.locator('script[type="application/ld+json"]').first().textContent()) ??
                     "{}"
