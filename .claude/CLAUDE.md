@@ -91,9 +91,12 @@ Regras por área; o mecanismo de cada uma está em `docs/` (tabela "Onde ler mai
   próprio (exceção: Contato, em `docs/screens/contact.md#implementação`).
 - **i18n** (`src/i18n/`, `src/locales/`): idioma ativo por `getLanguage()` e troca por `setLanguage(language)`, o único
   código que grava `LANGUAGE_STORAGE_KEY` (componente nunca usa `saveLanguage` nem `localStorage`). Namespace novo entra
-  nos três idiomas, em `src/i18n/resources.ts` e no `ns` de `src/i18n/i18n.ts`. Chave em inglês, lowerCamelCase,
-  hierárquica; quem usa `common` carrega `useTranslation(["notFound", "common"])` e chama `t("common:backHome")`; texto
-  com marcação usa `<Trans>`.
+  nos três idiomas, no `src/i18n/languageBundles/<idioma>.ts` de cada idioma e em `src/i18n/namespaces.ts` (o `ns` de
+  `src/i18n/i18n.ts`). O cliente baixa um chunk por idioma com `loadLanguage(language)` antes de todo
+  `i18n.changeLanguage`; código de cliente nunca importa `@/i18n/resources` nem JSON de `src/locales/` (só o
+  `entry-server.tsx`, por `addStaticResources`, e os testes), senão os três idiomas voltam ao pacote de entrada. Chave
+  em inglês, lowerCamelCase, hierárquica; quem usa `common` carrega `useTranslation(["notFound", "common"])` e chama
+  `t("common:backHome")`; texto com marcação usa `<Trans>`.
 - **Estado** (`src/store/`): endpoint nunca em `api.ts`, sempre injetado por domínio em `src/store/api/<dominio>.api.ts`
   (`api.injectEndpoints`); slice em `slices/<nome>.slice.ts`; tipos de store em `src/types/store/`. Código de aplicação
   usa `useAppDispatch` e `useAppSelector` com seletor estreito, nunca o estado inteiro. Dado de conteúdo (R1) vem de

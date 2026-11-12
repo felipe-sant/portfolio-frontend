@@ -48,12 +48,12 @@ Uma rota só entra em `paths.ts` junto com a página que ela renderiza. Navegaç
 
 Decidida no [ADR 0004](../adr/0004-prerendering.md) (opção 1, script próprio, sem biblioteca nova). `npm run build` gera, em `dist/`, um HTML por rota pública pré-renderizada e por idioma, mais o `404.html`, e o cliente os hidrata sem erro.
 
-- **Entrada de servidor** (`src/entry-server.tsx`, `render(target)`): `createStaticHandler`, `createStaticRouter` e `StaticRouterProvider` sobre `routes`, com uma store nova por chamada; carrega os dados da rota (`src/prerender/loadPrerenderData.ts`: o perfil do Rodapé mais as consultas da rota, por `initiate`, aguardando as assinaturas e dando `unsubscribe` ao fim, falhando o build com a rota e a causa se uma consulta der erro) e renderiza com `prerender` de `react-dom/static` e `progressiveChunkSize: Infinity`, para nenhum bloco de Suspense sair fora de linha. Os renders são sequenciais, porque o i18next é uma instância global trocada pelo `loader` de cada rota.
+- **Entrada de servidor** (`src/entry-server.tsx`, `render(target)`): ao ser importada, chama `addStaticResources()` (`src/i18n/`), que adiciona à instância do i18next os três idiomas de `src/i18n/resources.ts` de forma estática, sem chunk dinâmico; depois, `createStaticHandler`, `createStaticRouter` e `StaticRouterProvider` sobre `routes`, com uma store nova por chamada; carrega os dados da rota (`src/prerender/loadPrerenderData.ts`: o perfil do Rodapé mais as consultas da rota, por `initiate`, aguardando as assinaturas e dando `unsubscribe` ao fim, falhando o build com a rota e a causa se uma consulta der erro) e renderiza com `prerender` de `react-dom/static` e `progressiveChunkSize: Infinity`, para nenhum bloco de Suspense sair fora de linha. Os renders são sequenciais, porque o i18next é uma instância global trocada pelo `loader` de cada rota.
 - **Registro** (`src/prerender/prerenderRoutes.ts`): descreve cada rota pré-renderizável (padrão, escopo dos parâmetros e consultas). A raiz `/` nunca entra (responde 302). `scripts/prerender/listTargets.ts` só emite o alvo cujo padrão existe em `routes` além da `*`; o resto é listado como ignorado e não falha o build. **Toda tela nova entrega a própria pré-renderização**: acrescenta a entrada ao registro (rota e consultas) e um teste de `<h1>` e conteúdo principal nos três idiomas.
 - **Arquivos** (todos sob o `base`): `pt-BR.html`, `en.html`, `es.html` para a Início; `<idioma>/<rota>.html` para as demais; `<idioma>/projects/<id>.html`; documento em `<idioma>/projects/<id>/docs/<nome>.html` com o nome do arquivo e a extensão (`SETUP.md.html`), **nunca** em pasta com `index.html`, que o Pages redireciona (301) e quebra a URL do D55. O `README.md` do projeto é `/projects/<id>` e não gera arquivo de documento. O `404.html` é a página não encontrada em inglês; `/` continua o `index.html`, com o script de redirecionamento por idioma.
 - **Composição** (`scripts/prerender/composePage.ts`): parte do `index.html` buildado, troca o `lang`, move o `<head>` que o React emite (`title`, `meta`, `link`, `script type="application/ld+json"`) para o `<head>` do arquivo sem duplicar `title` nem `description`, acrescenta ao `<head>` o `<link rel="stylesheet">` dos CSS de chunk que a rota usa (`readStylesheets` lê `dist/assets/*.css`; `selectStylesheets` escolhe os que têm classe presente no HTML da rota e que o `index.html` ainda não linka), troca o `<noscript>` pelo texto de `common:noscript` do idioma (a faixa de aviso, em vermelho claro, é `body > noscript` em `global.css`, sob `@media (scripting: none)`), põe o corpo em `#root` e grava logo depois dele um bloco `<script type="application/json" id="prerender-data">` com `path` (o caminho com o `base`), `state` (a store) e `routerData` (`loaderData`, `actionData` e `errors`), com `<` escapado como `\u003c`. É bloco de dados, não script executável: a CSP não o governa (como o JSON-LD), e o HTML pré-renderizado fica sem script inline além dos 3 do `index.html`, que a CSP da Vercel cobre por hash (#163). Falha se o HTML tiver `id="S:`.
 - **Leitura de `public/` no Node** (`scripts/prerender/installPublicFetch.ts`): durante a pré-renderização troca `globalThis.fetch` por uma leitura de `public/` para URLs sob o `base`, restaurando no fim; `src/services/` não muda.
-- **Cliente** (`src/entry-client.tsx` e `src/prerender/mountClient.tsx`): lê o bloco `prerender-data` com `readPrerenderData` (`src/utils/`, que devolve `undefined` sem bloco, com bloco vazio, JSON inválido ou forma errada) e chama `hydrateRoot` com o `state` na store e o `routerData` em `hydrationData` quando `shouldHydrate` vê que o caminho aberto é o `path` do bloco; senão remove o `title` e a `meta description` do HTML (`removePrerenderedHead`) e usa `createRoot` sem estado nem dados do roteador. É o caso do `404.html` servido em `/pt-BR/xyz` e da raiz `/`.
+- **Cliente** (`src/entry-client.tsx` e `src/prerender/mountClient.tsx`): antes de montar, `loadInitialLanguage` baixa o idioma do prefixo do caminho (ou `en`, sem prefixo válido) com `loadLanguage` e o ativa com `i18n.changeLanguage`, para o primeiro render já sair no idioma do HTML. Se o chunk falhar, há um único retry; se as duas tentativas falharem, `mountClient` rejeita e a página pré-renderizada fica visível, mas sem hidratar. Depois, lê o bloco `prerender-data` com `readPrerenderData` (`src/utils/`, que devolve `undefined` sem bloco, com bloco vazio, JSON inválido ou forma errada) e chama `hydrateRoot` com o `state` na store e o `routerData` em `hydrationData` quando `shouldHydrate` vê que o caminho aberto é o `path` do bloco, dentro de `startTransition` (`hydrateInTransition`), para o React fatiar a hidratação em tarefas curtas e reduzir o tempo de bloqueio (TBT); senão remove o `title` e a `meta description` do HTML (`removePrerenderedHead`) e usa `createRoot` sem estado nem dados do roteador. É o caso do `404.html` servido em `/pt-BR/xyz` e da raiz `/`.
 - **Cache e headers na Vercel** (`vercel.json`): cache longo em `/assets`, `/fonts` e `/images`, headers de segurança e a CSP em `Report-Only` com o hash dos 3 scripts inline do `index.html` vêm só do `vercel.json` e só valem na Vercel (produção e `staging`). O build da Fatec não recebe nada disso: o GitHub Pages não lê `vercel.json` nem permite header próprio (NF-HO-04). Detalhe em [`environments.md`](../setup/environments.md#fluxo-de-publicação).
 - **Guarda de ambiente**: `src/i18n/i18n.ts` testa `typeof window` e `typeof document` para importar no Node.
 - **Teste**: `src/test/entry-server.test.tsx` renderiza cada rota do registro existente nos três idiomas; a hidratação (`src/prerender/test/mountClient.test.tsx`) usa HTML gerado por `src/testUtils/prerenderGlobalSetup.ts`, que roda no processo principal do Vitest (`globalSetup` só no projeto `prerender`), porque o `react-dom/server` deixa os contextos do React sujos no mesmo processo e o cliente acusaria "multiple renderers".
@@ -145,7 +145,7 @@ As fontes são as três famílias do handoff (Bricolage Grotesque para títulos,
 
 Todo texto visível vem de uma chave de tradução, com o valor de cada idioma em `src/locales/<idioma>/<namespace>.json`. Os idiomas suportados são `pt-BR`, `en` e `es`; `pt-BR` é a língua de referência e `en` é o `fallbackLng`.
 
-O caminho da URL decide o idioma (`/pt-BR`, `/en`, `/es`); o i18next inicia com o idioma do primeiro segmento e o `loader` de cada rota-pai o troca na navegação. `?lng=` não tem efeito. A escolha salva por `setLanguage` fica em `localStorage` na chave `portfolio-frontend:language` e só é lida na raiz `/`, que redireciona por ela, depois pelo idioma do navegador e por fim `en`.
+O caminho da URL decide o idioma (`/pt-BR`, `/en`, `/es`); o i18next inicia com o idioma do primeiro segmento e o `loader` de cada rota-pai o troca na navegação. No cliente, os textos de cada idioma são um chunk próprio, baixado por `loadLanguage` antes de montar e antes de cada troca: o pacote de entrada não carrega texto de nenhum idioma. `?lng=` não tem efeito. A escolha salva por `setLanguage` fica em `localStorage` na chave `portfolio-frontend:language` e só é lida na raiz `/`, que redireciona por ela, depois pelo idioma do navegador e por fim `en`.
 
 Toda feature com texto de UI entrega o texto nos três idiomas, e chave sem uso é removida (R2). O seletor de idioma fica no cabeçalho (`PT · EN · ES`, entre a navegação e o tema) e no menu mobile, e navega para a URL equivalente no outro idioma, salvando a escolha por `setLanguage` (D31, em [`decisions.md`](../design/decisions.md)).
 
@@ -220,14 +220,34 @@ Texto movido do `.claude/CLAUDE.md`, por área. As seções acima dão a visão 
   arquivo com `export default`. `i18n.ts` cria a instância com `createInstance()` (import nomeado
   de `i18next`; `i18next.use(...)` no export default cai em `import/no-named-as-default-member`),
   registra `initReactI18next` — que torna a instância global, sem provider nem wrapper de render —
-  e inicia de forma síncrona (`initAsync: false`) com `resources` (`resources.ts`),
-  `defaultNS: "common"`, `supportedLngs: SUPPORTED_LANGUAGES` (`supportedLanguages.ts`),
+  e inicia de forma síncrona (`initAsync: false`) sem recursos (`resources: {}`,
+  `partialBundledLanguages: true`), com `ns` copiado de `NAMESPACES` (`namespaces.ts`; cópia porque o
+  i18next tira do array o namespace removido), `defaultNS: "common"`, `supportedLngs: SUPPORTED_LANGUAGES` (`supportedLanguages.ts`),
   `fallbackLng: FALLBACK_LANGUAGE` (`fallbackLanguage.ts`, valor `en`) e
   `lng: getLanguageFromPath(removeBasePath(window.location.pathname))` (indefinido, sem prefixo
   válido, vale o `fallbackLng`). Não há detector do i18next, nem `?lng=`: o caminho é a única fonte
   do idioma e o `loader` de cada rota-pai o troca na navegação. Não existe constante de "idioma
-  padrão" nem de língua de referência: `pt-BR` é referência pelo tipo de `resources.ts`, não pelo
-  runtime.
+  padrão" nem de língua de referência: `pt-BR` é referência pelo tipo de
+  `languageBundles/ptBR.ts`, não pelo runtime.
+    - **Carga dos textos por idioma:** `languageBundles/<idioma>.ts` (`ptBR.ts`, `en.ts`, `es.ts`)
+      junta os oito JSON de um idioma; `languageBundleImporters.ts` tem um `import()` explícito por
+      idioma, para o Vite gerar um chunk por idioma (`import.meta.glob` com um JSON por arquivo
+      daria oito requisições). `loadLanguage(language): Promise<void>` importa o chunk e chama
+      `i18n.addResourceBundle` para cada namespace; é idempotente: com os oito namespaces já na
+      instância (servidor, testes) resolve sem importar, guarda a promessa em andamento (duas
+      chamadas simultâneas fazem uma importação só) e a descarta ao terminar, então uma falha de
+      rede rejeita e a chamada seguinte tenta de novo. Todo `i18n.changeLanguage` do cliente vem
+      depois de `await loadLanguage(...)` (`setLanguage`, `createLanguageLoader` e
+      `loadInitialLanguage` do `mountClient`): o i18next só resolve um idioma que tem recursos no
+      momento da troca, e sem isso `getLanguage()` cairia para `en`.
+    - **Recursos estáticos:** `resources.ts` compõe os três idiomas a partir de `languageBundles/`
+      e só é importado por `addStaticResources.ts` (fora o `import type` de `src/types/i18next.d.ts`
+      e os testes), chamado pelo `entry-server.tsx` (pré-renderização,
+      antes do primeiro render) e pelo `beforeEach` de `src/setupTests.ts` (todo teste começa com os
+      três idiomas carregados). Código de cliente nunca importa `resources` nem JSON de
+      `src/locales/`, senão os três idiomas voltam ao pacote de entrada;
+      `src/i18n/test/loadLanguage.test.ts` lê os fontes de `src/` e falha se outro arquivo fizer
+      esse import estático.
     - **Funções de caminho** (puras, sobre o `pathname` relativo ao `basename`):
       `getLanguageFromPath` (primeiro segmento exatamente igual a um idioma suportado, senão
       `undefined`), `stripLanguagePrefix`, `addLanguagePrefix` (`/` vira `/en`),
@@ -239,15 +259,17 @@ Texto movido do `.claude/CLAUDE.md`, por área. As seções acima dão a visão 
       (`languageStorageKey.ts`, único lugar onde o valor da chave aparece), interno à pasta e
       chamado só por `setLanguage`. Visitar `/en` por link não grava escolha.
     - **API de idioma:** `getLanguage(): SupportedLanguage` (idioma ativo, função comum, usável fora
-      de React) e `setLanguage(language): Promise<void>` (troca e salva a escolha). Componente e
+      de React) e `setLanguage(language): Promise<void>` (carrega o idioma, troca e salva a escolha). Componente e
       página usam só essas duas, nunca `saveLanguage` nem `localStorage` direto.
     - Um listener de `languageChanged`, registrado antes do `init()`, mantém
       `document.documentElement.lang` sincronizado com o idioma ativo. O `lang="pt-BR"` do
       `index.html` descreve o conteúdo estático daquele arquivo e é corrigido assim que o JS roda.
     - `SupportedLanguage` vem de `src/types/language/SupportedLanguage.types.ts`, derivado de `SUPPORTED_LANGUAGES`.
       `src/types/i18next.d.ts` augmenta `CustomTypeOptions` com `defaultNS: "common"` e os recursos
-      de `pt-BR`: chave inexistente em `t()` é erro de compilação, e `en`/`es` são tipados como
-      `typeof` de `pt-BR` em `resources.ts`, então namespace ou chave faltando também não compila.
+      de `pt-BR` (só `import type` de `resources.ts`, sem trazer código ao pacote): chave inexistente
+      em `t()` é erro de compilação, e `languageBundles/en.ts` e `es.ts` são tipados por
+      `LanguageResources` (`src/types/i18n/`, `typeof` de `languageBundles/ptBR.ts`), então
+      namespace ou chave faltando também não compila.
 
 ### Módulo `src/locales/`
 
@@ -261,8 +283,8 @@ Texto movido do `.claude/CLAUDE.md`, por área. As seções acima dão a visão 
   dois, `useTranslation(["notFound", "common"])`, e chama `t("common:backHome")`, senão a chave não
   tipa. Texto com marcação no meio usa `<Trans>` com `t={t}`, `i18nKey` e
   `components={{ strong: <strong /> }}`, com o `<strong>` escrito no próprio valor do JSON.
-  Namespace novo entra nos três idiomas, em `src/i18n/resources.ts` e no `ns` de
-  `src/i18n/i18n.ts`.
+  Namespace novo entra nos três idiomas, no `src/i18n/languageBundles/<idioma>.ts` de cada idioma
+  e em `src/i18n/namespaces.ts` (o `ns` de `src/i18n/i18n.ts`); `resources.ts` os compõe sozinho.
 
 ### Módulo `src/routers/`
 
@@ -270,7 +292,8 @@ Texto movido do `.claude/CLAUDE.md`, por área. As seções acima dão a visão 
   (`RouteObject[]`, export default): as páginas ficam em `pageRoutes`, definidas uma vez (Início
   como `index`, `*` de não encontrada, caminhos relativos), e uma função local gera **três
   rotas-pai idênticas** (`pt-BR`, `en`, `es`) com `MainLayout`, `errorElement`,
-  `loader: createLanguageLoader(idioma)` (chama `i18n.changeLanguage`, não `setLanguage`) e as
+  `loader: createLanguageLoader(idioma)` (espera `loadLanguage` e chama `i18n.changeLanguage`, não
+  `setLanguage`) e as
   mesmas `pageRoutes`. Depois delas, a rota `/` (`redirectRootLoader`: escolha salva → navegador →
   `en`, preservando query e hash) e a rota `*` sem prefixo, que renderiza a não encontrada em
   inglês. Os paths vêm de `ROUTES` em `paths.ts` (`root` é a raiz que redireciona, `home` a
@@ -293,14 +316,16 @@ Texto movido do `.claude/CLAUDE.md`, por área. As seções acima dão a visão 
 
 - **Pré-renderização** (ADR 0004, `docs/architecture/frontend.md#pré-renderização`) — `npm run build`
   gera em `dist/` um HTML por rota pública e idioma, mais o `404.html`. `src/entry-server.tsx`
-  (`render(target)`, só `react-dom/static` com `progressiveChunkSize: Infinity`, uma URL por vez),
+  (`render(target)`, só `react-dom/static` com `progressiveChunkSize: Infinity`, uma URL por vez,
+  com os três idiomas adicionados de forma estática por `addStaticResources`),
   `src/prerender/` (`prerenderRoutes.ts`, o registro das rotas pré-renderizáveis com padrão, escopo dos
   parâmetros e consultas RTK Query; `loadPrerenderData.ts`; `mountClient.tsx`) e `scripts/prerender.ts`
   com `scripts/prerender/` (`listTargets`, `getTargetFile`, `composePage`, `installPublicFetch`, que lê
   `public/` no Node sem tocar em `src/services/`). O servidor nunca importa `App.tsx`. Arquivos: `<idioma>.html`
   para a Início, `<idioma>/<rota>.html` para as demais e `<nome>.md.html` para documento (nunca pasta com
   `index.html`, que o Pages redireciona); `/` continua o `index.html`. O `404.html` é a não encontrada em
-  inglês: o cliente só chama `hydrateRoot` quando o caminho é o `path` do bloco `prerender-data`, senão remove o
+  inglês: o cliente carrega o idioma do caminho antes de montar e só chama `hydrateRoot` (dentro de
+  `startTransition`) quando o caminho é o `path` do bloco `prerender-data`, senão remove o
   `title` e a `meta description` do HTML e usa `createRoot` (`shouldHydrate`, `removePrerenderedHead`).
   **Toda tela nova entrega a própria pré-renderização**: acrescenta a entrada ao registro (rota e
   consultas) e um teste de `<h1>` e conteúdo principal nos três idiomas (`src/test/entry-server.test.tsx`
