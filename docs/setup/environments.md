@@ -213,3 +213,7 @@ Os três segredos do deploy ficam em GitHub Secrets do repositório (Settings > 
 | `VERCEL_PROJECT_ID` | Project ID, em Settings > General do projeto `felipe-sant` |
 
 Os GitHub Environments `production` e `staging` entregam as variáveis a cada job do `deploy.yml`. Em `workflow_run`, o GitHub avalia a regra de branches do Environment contra a branch padrão (`staging`), não contra a do push: a regra de ambos precisa permitir `staging` (o `if` de cada job já garante que `production` só publica o CI da `main`). A integração Git da Vercel fica desconectada: quem publica é o GitHub Actions.
+
+## Dependabot
+
+Os alertas do Dependabot e as atualizações de segurança (security updates) do repositório estão ativos em Settings > Security desde 11/11/2026. As atualizações de dependências agendadas seguem no `.github/dependabot.yml`, de `npm` e `github-actions`, uma vez por mês.
