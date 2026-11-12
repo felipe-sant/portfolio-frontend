@@ -1,7 +1,7 @@
 # Spec: Testes instáveis de "Limpar filtros" e do cliente HTTP com BASE_URL
 
 > **Tipo:** `bug` <br />
-> **Status:** `em-revisao` <br />
+> **Status:** `em-andamento` <br />
 > **Issue:** `#247` <br />
 > **Criado em:** `12-11-2026`
 
