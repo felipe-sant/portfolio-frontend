@@ -1,9 +1,8 @@
 import { useTranslation } from "react-i18next"
 import Modal from "@/components/Modal"
 import ResumePdfPages from "@/components/ResumePdfPages"
+import useLanguage from "@/hooks/useLanguage"
 import useResumeViewerMode from "@/hooks/useResumeViewerMode"
-import FALLBACK_LANGUAGE from "@/i18n/fallbackLanguage"
-import resolveSupportedLanguage from "@/i18n/resolveSupportedLanguage"
 import css from "@/styles/components/resumeModal.module.css"
 import getResumePath from "@/utils/getResumePath"
 
@@ -13,14 +12,14 @@ interface ResumeModalProps {
 }
 
 function ResumeModal({ isOpen, onClose }: ResumeModalProps) {
-    const { t, i18n } = useTranslation("common")
+    const { t } = useTranslation("common")
     const viewerMode = useResumeViewerMode()
+    const language = useLanguage()
 
     if (!isOpen) {
         return null
     }
 
-    const language = resolveSupportedLanguage(i18n.resolvedLanguage) ?? FALLBACK_LANGUAGE
     const pdfPath = getResumePath(language)
 
     return (

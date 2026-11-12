@@ -1,13 +1,10 @@
-import { useTranslation } from "react-i18next"
-import FALLBACK_LANGUAGE from "@/i18n/fallbackLanguage"
-import resolveSupportedLanguage from "@/i18n/resolveSupportedLanguage"
+import useLanguage from "@/hooks/useLanguage"
 import projectsApi from "@/store/api/projects.api"
 import type ProjectDetail from "@/types/project/ProjectDetail.types"
 import findDocumentByName from "@/utils/findDocumentByName"
 
 function useProjectDocument(project: ProjectDetail, name?: string) {
-    const { i18n } = useTranslation()
-    const language = resolveSupportedLanguage(i18n.resolvedLanguage) ?? FALLBACK_LANGUAGE
+    const language = useLanguage()
     const document = findDocumentByName(project.documents, name)
     const query = projectsApi.useGetProjectDocumentContentQuery(
         { id: project.id, documentId: document?.id ?? "", lang: language },

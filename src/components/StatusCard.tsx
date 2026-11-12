@@ -1,7 +1,6 @@
 import { Fragment } from "react"
 import { useTranslation } from "react-i18next"
-import FALLBACK_LANGUAGE from "@/i18n/fallbackLanguage"
-import resolveSupportedLanguage from "@/i18n/resolveSupportedLanguage"
+import useLanguage from "@/hooks/useLanguage"
 import css from "@/styles/components/statusCard.module.css"
 import formatSinceDate from "@/utils/formatSinceDate"
 
@@ -31,8 +30,8 @@ function JoinedParts({ parts }: JoinedPartsProps) {
 }
 
 function StatusCard({ variant, label, title, organization, stage, start }: StatusCardProps) {
-    const { t, i18n } = useTranslation("common")
-    const language = resolveSupportedLanguage(i18n.resolvedLanguage) ?? FALLBACK_LANGUAGE
+    const { t } = useTranslation("common")
+    const language = useLanguage()
     const since = formatSinceDate(start, language)
     const isStudying = variant === "studying"
     const detailLead = isStudying ? stage : organization

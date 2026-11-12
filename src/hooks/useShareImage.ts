@@ -1,7 +1,6 @@
 import { useTranslation } from "react-i18next"
-import FALLBACK_LANGUAGE from "@/i18n/fallbackLanguage"
-import resolveSupportedLanguage from "@/i18n/resolveSupportedLanguage"
 import type SharePage from "@/types/seo/SharePage.types"
+import useLanguage from "@/hooks/useLanguage"
 import buildShareImagePath from "@/utils/buildShareImagePath"
 
 type ShareImage = {
@@ -17,8 +16,8 @@ const IMAGE_ALT_KEYS = {
 } as const satisfies Record<SharePage, string>
 
 function useShareImage(page: SharePage): ShareImage {
-    const { t, i18n } = useTranslation(["home", "projects", "about", "contact"])
-    const language = resolveSupportedLanguage(i18n.resolvedLanguage) ?? FALLBACK_LANGUAGE
+    const { t } = useTranslation(["home", "projects", "about", "contact"])
+    const language = useLanguage()
     return { image: buildShareImagePath(page, language), imageAlt: t(IMAGE_ALT_KEYS[page]) }
 }
 

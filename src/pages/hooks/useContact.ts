@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState } from "react"
 import { useTranslation } from "react-i18next"
+import useLanguage from "@/hooks/useLanguage"
 import useShareImage from "@/hooks/useShareImage"
-import FALLBACK_LANGUAGE from "@/i18n/fallbackLanguage"
-import resolveSupportedLanguage from "@/i18n/resolveSupportedLanguage"
 import profileApi from "@/store/api/profile.api"
 import buildContactJsonLd from "@/utils/buildContactJsonLd"
 import contactFormEnabled from "@/utils/contactFormEnabled"
@@ -14,8 +13,8 @@ const FOCUS_IDS = {
 
 function useContact() {
     const shareImage = useShareImage("contact")
-    const { t, i18n } = useTranslation(["contact", "common"])
-    const language = resolveSupportedLanguage(i18n.resolvedLanguage) ?? FALLBACK_LANGUAGE
+    const { t } = useTranslation(["contact", "common"])
+    const language = useLanguage()
     const profileQuery = profileApi.useGetProfileQuery({ lang: language })
     const profile = profileQuery.data
     const isError = profileQuery.isError && !profile

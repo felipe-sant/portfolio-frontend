@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next"
+import useLanguage from "@/hooks/useLanguage"
 import FALLBACK_LANGUAGE from "@/i18n/fallbackLanguage"
-import resolveSupportedLanguage from "@/i18n/resolveSupportedLanguage"
 import SUPPORTED_LANGUAGES from "@/i18n/supportedLanguages"
 import type SupportedLanguage from "@/types/language/SupportedLanguage.types"
 import buildAbsoluteUrl from "@/utils/buildAbsoluteUrl"
@@ -40,8 +40,8 @@ function PageMeta({
     imageWidth = IMAGE_WIDTH,
     imageHeight = IMAGE_HEIGHT
 }: PageMetaProps) {
-    const { t, i18n } = useTranslation("common")
-    const language = resolveSupportedLanguage(i18n.resolvedLanguage) ?? FALLBACK_LANGUAGE
+    const { t } = useTranslation("common")
+    const language = useLanguage()
     const canonical = buildAbsoluteUrl(path, language, params)
     const imageUrl = `${getSiteUrl()}${publicUrl(image)}`
     const otherLanguages = SUPPORTED_LANGUAGES.filter((item) => item !== language)
