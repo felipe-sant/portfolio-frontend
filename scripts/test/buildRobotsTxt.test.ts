@@ -37,4 +37,15 @@ describe("buildRobotsTxt", () => {
         expect(text.endsWith("\n")).toBe(true)
         expect(text).not.toContain("Disallow")
     })
+
+    it("declara a política de IA uma vez por grupo, sem nenhum não", () => {
+        expect(text.match(/^Content-Signal: /gm)).toHaveLength(CRAWLERS.length + 1)
+        expect(text).not.toContain("=no")
+    })
+
+    it.each(["*", ...CRAWLERS])("declara buscar, responder e treinar sim para %s", (agent) => {
+        expect(text).toContain(
+            `User-agent: ${agent}\nAllow: /\nContent-Signal: search=yes, ai-input=yes, ai-train=yes\n`
+        )
+    })
 })

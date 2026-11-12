@@ -6,6 +6,7 @@ type Profile = {
     linkedin: string
     availabilityLabel: string
     homeIntro: string
+    summary: string
     stack: string[]
 }
 
@@ -74,6 +75,7 @@ function readProfile(language: string): Profile {
         linkedin: readText(links, "linkedin"),
         availabilityLabel: readText(availability, "label"),
         homeIntro: readText(content, "homeIntro"),
+        summary: readText(content, "summary"),
         stack: readStack(content)
     }
 }

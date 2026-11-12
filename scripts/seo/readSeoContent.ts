@@ -14,6 +14,8 @@ import type SeoProject from "@/types/seo/SeoProject.types"
 import type SeoProjectDocument from "@/types/seo/SeoProjectDocument.types"
 import type TimelineItemRecord from "@/types/timeline/TimelineItemRecord.types"
 
+const DEFAULT_LOCALES_DIRECTORY = join("src", "locales")
+
 function readText(file: string): string {
     if (!existsSync(file)) {
         throw new Error(`Arquivo ausente: ${file}`)
@@ -63,19 +65,50 @@ function readProjects(contentDirectory: string, language: SupportedLanguage): Se
     }))
 }
 
-function readLabels(language: SupportedLanguage): SeoCommonLabels {
-    const { authorName, navigation, projectStatus, stackCategory } = readJson<SeoCommonLabels>(
-        join("src", "locales", language, "common.json")
-    )
+type PageNamespace = keyof SeoCommonLabels["pageDescriptions"]
 
-    return { authorName, navigation, projectStatus, stackCategory }
+type PageMeta = {
+    meta?: { description?: unknown }
 }
 
-function readLanguage(publicDirectory: string, language: SupportedLanguage): SeoLanguageContent {
+function readPageDescription(
+    localesDirectory: string,
+    language: SupportedLanguage,
+    page: PageNamespace
+): string {
+    const file = join(localesDirectory, language, `${page}.json`)
+    const description = readJson<PageMeta>(file).meta?.description
+
+    if (typeof description !== "string" || description.trim() === "") {
+        throw new Error(`meta.description ausente em ${file}`)
+    }
+
+    return description
+}
+
+function readLabels(localesDirectory: string, language: SupportedLanguage): SeoCommonLabels {
+    const { authorName, navigation, projectStatus, stackCategory } = readJson<
+        Omit<SeoCommonLabels, "pageDescriptions">
+    >(join(localesDirectory, language, "common.json"))
+    const pageDescriptions = {
+        home: readPageDescription(localesDirectory, language, "home"),
+        projects: readPageDescription(localesDirectory, language, "projects"),
+        about: readPageDescription(localesDirectory, language, "about"),
+        contact: readPageDescription(localesDirectory, language, "contact")
+    }
+
+    return { authorName, navigation, pageDescriptions, projectStatus, stackCategory }
+}
+
+function readLanguage(
+    publicDirectory: string,
+    localesDirectory: string,
+    language: SupportedLanguage
+): SeoLanguageContent {
     const contentDirectory = join(publicDirectory, "content")
 
     return {
-        labels: readLabels(language),
+        labels: readLabels(localesDirectory, language),
         profile: readJson<Profile>(join(contentDirectory, language, "profile.json")),
         projects: readProjects(contentDirectory, language),
         timeline: readJson<ListResponse<TimelineItemRecord>>(
@@ -93,13 +126,16 @@ function assertResumePdf(publicDirectory: string, language: SupportedLanguage) {
     }
 }
 
-function readSeoContent(publicDirectory: string): SeoContent {
+function readSeoContent(
+    publicDirectory: string,
+    localesDirectory = DEFAULT_LOCALES_DIRECTORY
+): SeoContent {
     SUPPORTED_LANGUAGES.forEach((language) => assertResumePdf(publicDirectory, language))
 
     return {
-        "pt-BR": readLanguage(publicDirectory, "pt-BR"),
-        en: readLanguage(publicDirectory, "en"),
-        es: readLanguage(publicDirectory, "es")
+        "pt-BR": readLanguage(publicDirectory, localesDirectory, "pt-BR"),
+        en: readLanguage(publicDirectory, localesDirectory, "en"),
+        es: readLanguage(publicDirectory, localesDirectory, "es")
     }
 }
 
