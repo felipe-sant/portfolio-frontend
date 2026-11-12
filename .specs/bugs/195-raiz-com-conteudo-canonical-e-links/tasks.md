@@ -36,13 +36,13 @@ T1 (teste que reproduz o bug)  →  T2  →  T3  →  T4 [P] e T5 [P]  →  T6
     - **Feito quando:** o gate passa e os três idiomas têm as duas chaves novas (sem comentário, `pt-BR` como referência)
     - **Evidência:** RED visto (`root.heading` ausente nos `common.json` reais); GREEN: `scripts/test/readRootTexts.test.ts` 3 testes (`expect(texts).toEqual(...)`, `rejects.toThrow(/"root\.link".*"es"/)`, valores reais da spec) passam, junto com `composeRootPage.test.ts`, `src/i18n`, `src/routers` e `src/test/entry-server.test.tsx` (21 arquivos, 280 testes); typecheck e lint limpos; chaves `root.heading`/`root.link` nos três idiomas.
 
-- [ ] T3 — Gerar a raiz no fim da pré-renderização
+- [x] T3 — Gerar a raiz no fim da pré-renderização
     - **Arquivo(s):** `scripts/prerender.ts`
     - **Depende de:** T1, T2
     - **Testes (escritos antes, RED):** o script é de topo de arquivo e não tem teste de unidade; o comportamento está provado em T1 e T2 e no E2E de T5. Verificação do executor: `npm run build:fatec`, depois `grep -c 'rel="canonical"' dist/index.html dist/en.html dist/404.html` dá 1, 1 e 0 em `404.html`
     - **Gate:** `npm run typecheck && npm run lint`
     - **Feito quando:** o gate passa; a raiz é gravada depois do último alvo e do `404.html`; o molde usado pelas demais páginas passa pela remoção dos itens da raiz (uma segunda `npm run prerender` não vaza canonical); `listTargets`, `prerenderRoutes`, `routes.tsx` e `vercel.json` seguem sem alteração
-    - **Evidência:** (preenchida pelo `executor`)
+    - **Evidência:** typecheck e lint limpos; a raiz é gravada depois do laço de alvos (inclui `404.html`) e o molde passa por `removeRootPageItems`; `listTargets`, `prerenderRoutes`, `routes.tsx` e `vercel.json` sem alteração. Verificação do build (`grep -c 'rel="canonical"' dist/index.html dist/en.html dist/404.html`): verificação no CI / manual do PO.
 
 - [ ] T4 [P] — Estilo do `<noscript>` da raiz
     - **Arquivo(s):** `src/styles/global.css`
