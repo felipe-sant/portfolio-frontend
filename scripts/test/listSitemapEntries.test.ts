@@ -7,6 +7,7 @@ import readSeoContent from "@scripts/seo/readSeoContent"
 import prerenderRoutes from "@/prerender/prerenderRoutes"
 import appRoutes from "@/routers/routes"
 import SUPPORTED_LANGUAGES from "@/i18n/supportedLanguages"
+import isLicenseDocument from "@/utils/isLicenseDocument"
 import buildProfile from "@/testUtils/buildProfile"
 import type PrerenderTarget from "@/types/prerender/PrerenderTarget.types"
 import type SeoContent from "@/types/seo/SeoContent.types"
@@ -22,6 +23,9 @@ const recordsByLanguage = {
 }
 const { targets } = listTargets(appRoutes, prerenderRoutes, recordsByLanguage)
 const entries = listSitemapEntries(targets, content)
+const licenseTargets = targets.filter(
+    (target) => target.params?.name !== undefined && isLicenseDocument(target.params.name)
+)
 
 const FIRST_PROJECT = "0192f1a0-0000-7000-8000-000000000001"
 const SECOND_PROJECT = "0192f1a0-0000-7000-8000-000000000002"
@@ -124,16 +128,22 @@ describe("listSitemapEntries", () => {
         expect(entries.some((entry) => entry.path === "" || entry.path.includes("not-found"))).toBe(
             false
         )
-        expect(targets.length).toBe(entries.length + 1)
+        expect(targets.length).toBe(entries.length + licenseTargets.length + 1)
     })
 
-    it("tem quatro páginas fixas, projetos e documentos além do README em cada idioma, todos com lastmod", () => {
+    it("tem quatro páginas fixas, projetos e documentos que não são README nem LICENSE em cada idioma", () => {
         const projects = content["pt-BR"].projects
         const documents = projects.flatMap((project) =>
-            project.documents.filter((document) => document.name !== "README.md")
+            project.documents.filter(
+                (document) => document.name !== "README.md" && !isLicenseDocument(document.name)
+            )
         )
 
         expect(entries).toHaveLength((4 + projects.length + documents.length) * 3)
+        expect(entries).toHaveLength(48)
+        expect(entries.some((entry) => isLicenseDocument(entry.path.split("/").at(-1) ?? ""))).toBe(
+            false
+        )
         expect(entries.every((entry) => DAY_PATTERN.test(entry.lastmod ?? ""))).toBe(true)
     })
 
@@ -160,6 +170,26 @@ describe("listSitemapEntries", () => {
     describe("com conteúdo de teste", () => {
         const fixture = buildFixtureContent("2026-04-02", "2026-05-10")
         const fixtureEntries = listSitemapEntries(buildFixtureTargets(fixture), fixture)
+
+        it("deixa a LICENSE fora do sitemap e mantém SETUP.md e os alternates completos", () => {
+            const paths = fixtureEntries.map((entry) => entry.path)
+
+            expect(paths.some((path) => /\/docs\/license/i.test(path))).toBe(false)
+            expect(paths).toContain(`pt-BR/projects/${FIRST_PROJECT}/docs/SETUP.md`)
+            expect(fixtureEntries).toHaveLength((4 + 2 + 1) * 3)
+            fixtureEntries.forEach((entry) => {
+                expect(Object.keys(entry.alternates).toSorted()).toEqual(["en", "es", "pt-BR"])
+            })
+            expect(
+                fixtureEntries.find(
+                    (entry) => entry.path === `en/projects/${FIRST_PROJECT}/docs/SETUP.md`
+                )?.alternates
+            ).toEqual({
+                "pt-BR": `pt-BR/projects/${FIRST_PROJECT}/docs/SETUP.md`,
+                en: `en/projects/${FIRST_PROJECT}/docs/SETUP.md`,
+                es: `es/projects/${FIRST_PROJECT}/docs/SETUP.md`
+            })
+        })
 
         it.each(SUPPORTED_LANGUAGES)(
             "usa profile.updatedAt em Informações e Contato, o maior dos projetos em Projetos e o maior dos dois no Início em %s",

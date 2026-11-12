@@ -1,3 +1,4 @@
+import isLicenseDocument from "@/utils/isLicenseDocument"
 import type SeoContent from "@/types/seo/SeoContent.types"
 import type SitemapEntry from "@/types/seo/SitemapEntry.types"
 import type PrerenderTarget from "@/types/prerender/PrerenderTarget.types"
@@ -72,7 +73,11 @@ function completeAlternates(paths: PartialPaths, key: string): Record<SupportedL
 }
 
 function listSitemapEntries(targets: PrerenderTarget[], content: SeoContent): SitemapEntry[] {
-    const pageTargets = targets.filter((target) => target.pattern !== undefined)
+    const pageTargets = targets.filter(
+        (target) =>
+            target.pattern !== undefined &&
+            !(target.pattern === DOCUMENT_PATTERN && isLicenseDocument(target.params?.name ?? ""))
+    )
     const groups = groupPaths(pageTargets)
 
     return pageTargets.map((target) => {
