@@ -80,14 +80,14 @@ Regras para o `executor`: nenhum comentário em código (nem `//`, `/* */`, JSDo
     - **Feito quando:** a suíte inteira passa; nenhum schema foi afrouxado; `git diff --stat -- src/store/api` mostra só arquivos de `test/`.
     - **Evidência:** (lista das fixtures trocadas e tabela de adequação dos casos novos)
 
-- [ ] T5 — `content:check` prova os schemas sobre os arquivos publicados
+- [x] T5 — `content:check` prova os schemas sobre os arquivos publicados
     - **Arquivo(s):** `src/services/content/test/content.test.ts`
     - **Depende de:** T3
     - **Testes (escritos antes, RED):**
         - VAL-162-06: `it.each(SUPPORTED_LANGUAGES)` que roda `profile`, `projectRecord` (via `listResponse`) e `timelineItemRecord` sobre os dados lidos por `readContentSnapshot` e espera zero erros (descrever os erros por `path: message`, como `describeIssues`). Para ver o vermelho, quebrar à mão um campo num JSON copiado em `mkdtemp` (padrão que o arquivo já usa) e conferir que o `it` reprova, sem tocar `public/`
     - **Gate:** `npm run typecheck && npm run lint && npm run content:check`
     - **Feito quando:** o gate passa e `public/content/` não foi alterado.
-    - **Evidência:** (asserção `arquivo:linha` e o RED visto)
+    - **Evidência:** asserção em `src/services/content/test/content.test.ts:49-62` (`it.each(SUPPORTED_LANGUAGES)`, `toEqual([[], [], []])` sobre `profileSchema`, `listResponse(projectRecordSchema)` e `listResponse(timelineItemRecordSchema)`). RED visto: cópia dos arquivos em pasta do scratchpad com `countryCode: "brazil"` em `en/profile.json` reprovou com `location.countryCode: Invalid input`; `public/` intocado. `npm run typecheck`, `npm run lint` e `npm run content:check` (29 testes) verdes.
 
 - [ ] T6 — Documentação e medição de pacote
     - **Arquivo(s):** `docs/architecture/data-model.md` (seção "Validação do conteúdo"), `docs/architecture/code-structure.md` ou `docs/architecture/frontend.md` (pasta `schemas/` e carregamento dinâmico), `docs/architecture/api-contract.md` (reaproveitamento na v2), `docs/setup/entry-bundle-performance.md` (peso do Zod, método e marcador), `docs/setup/development.md` (se `content:check` passar a citar schemas)
