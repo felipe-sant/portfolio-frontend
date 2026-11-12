@@ -4,6 +4,7 @@ import type ProjectStatus from "@/types/project/ProjectStatus.types"
 type SeoCommonLabels = {
     authorName: string
     navigation: Record<"home" | "projects" | "about" | "contact", string>
+    pageDescriptions: Record<"home" | "projects" | "about" | "contact", string>
     projectStatus: Record<ProjectStatus, string>
     stackCategory: Record<StackCategory, string>
 }

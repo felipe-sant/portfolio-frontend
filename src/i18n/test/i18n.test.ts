@@ -13,6 +13,9 @@ async function loadPage({ path = "/", browserLanguages = ["en-US"] }: PageLoad =
     vi.resetModules()
 
     const { default: i18n } = await import("@/i18n/i18n")
+    const { default: addStaticResources } = await import("@/i18n/addStaticResources")
+    addStaticResources()
+    await i18n.changeLanguage(i18n.language)
 
     return i18n
 }
@@ -104,5 +107,13 @@ describe("i18n", () => {
         const i18n = await loadPage({ path: "/pt-BR" })
 
         expect(i18n.options.ns).toContain("contact")
+    })
+
+    it("tipa as chaves pelos textos de pt-BR e recusa chave inexistente", async () => {
+        const i18n = await loadPage({ path: "/pt-BR" })
+
+        // @ts-expect-error
+        expect(i18n.t("common:missingKey")).toBe("missingKey")
+        expect(i18n.t("common:loading")).toBe("Carregando...")
     })
 })

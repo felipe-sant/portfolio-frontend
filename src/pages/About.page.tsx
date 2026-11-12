@@ -10,7 +10,7 @@ import LoadError from "@/components/LoadError"
 import PageMeta from "@/components/PageMeta"
 import ProfilePhoto from "@/components/ProfilePhoto"
 import ResumeLink from "@/components/ResumeLink"
-import ResumeModal from "@/components/ResumeModal"
+import LazyResumeModal from "@/components/LazyResumeModal"
 import Reveal from "@/components/Reveal"
 import Skeleton from "@/components/Skeleton"
 import SkeletonSwap from "@/components/SkeletonSwap"
@@ -332,7 +332,7 @@ function AboutPage() {
                 </Reveal>
             )}
             <TrajectoryModal item={selectedItem} onClose={close} />
-            <ResumeModal isOpen={resume.isOpen} onClose={resume.close} />
+            <LazyResumeModal isOpen={resume.isOpen} onClose={resume.close} />
         </>
     )
 }

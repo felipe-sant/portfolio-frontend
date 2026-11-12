@@ -233,7 +233,7 @@ describe("Footer de navegação", () => {
 
         await userEvent.click(resume)
 
-        const dialog = screen.getByRole("dialog", { name: "Currículo" })
+        const dialog = await screen.findByRole("dialog", { name: "Currículo" })
         expect(within(dialog).getByTitle("Currículo em PDF")).toBeInTheDocument()
     })
 

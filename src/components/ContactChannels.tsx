@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next"
 import CopyEmailButton from "@/components/CopyEmailButton"
 import Icon from "@/components/Icon"
 import ResumeLink from "@/components/ResumeLink"
-import ResumeModal from "@/components/ResumeModal"
+import LazyResumeModal from "@/components/LazyResumeModal"
 import Skeleton from "@/components/Skeleton"
 import VisuallyHidden from "@/components/VisuallyHidden"
 import useResume from "@/hooks/useResume"
@@ -145,7 +145,7 @@ function ContactChannels({ profile }: ContactChannelsProps) {
                     {t("common:resume.download")}
                 </ResumeLink>
             </div>
-            <ResumeModal isOpen={resume.isOpen} onClose={resume.close} />
+            <LazyResumeModal isOpen={resume.isOpen} onClose={resume.close} />
         </div>
     )
 }

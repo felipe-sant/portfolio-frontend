@@ -7,7 +7,7 @@ import JsonLd from "@/components/JsonLd"
 import LoadError from "@/components/LoadError"
 import PageMeta from "@/components/PageMeta"
 import ResumeLink from "@/components/ResumeLink"
-import ResumeModal from "@/components/ResumeModal"
+import LazyResumeModal from "@/components/LazyResumeModal"
 import Skeleton from "@/components/Skeleton"
 import SkeletonSwap from "@/components/SkeletonSwap"
 import Reveal from "@/components/Reveal"
@@ -230,7 +230,7 @@ function HomePage() {
                     </Reveal>
                 </div>
             </section>
-            <ResumeModal isOpen={resume.isOpen} onClose={resume.close} />
+            <LazyResumeModal isOpen={resume.isOpen} onClose={resume.close} />
         </>
     )
 }

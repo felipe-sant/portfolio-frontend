@@ -196,7 +196,7 @@ disponibilidade e o parágrafo do hero não têm chave: vêm do perfil (D44).
 
 | Namespace | Chave                          | Valor em `pt-BR`                                                                                                                                           | Onde                                                                     |
 | --------- | ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
-| `home`    | `meta.title`                   | Portfólio · Luiz Felipe dos Santos em `pt-BR`, Portfolio · … em `en`, Portafolio · … em `es` (existe, valor muda, como em `layout.md`)                     | `<title>`, `og:title`                                                    |
+| `home`    | `meta.title`                   | Luiz Felipe dos Santos · Desenvolvedor full stack Júnior · React, TypeScript e Node.js (nome, cargo e stack nos três idiomas, como em `layout.md`)         | `<title>`, `og:title`, `twitter:title`                                   |
 | `home`    | `meta.description`             | Portfólio de Luiz Felipe dos Santos, desenvolvedor full stack Júnior com React, TypeScript e Node.js: projetos, trajetória e contato. (existe, valor muda) | Descrição, `og:description`                                              |
 | `home`    | `heading`                      | Desenvolvedor full stack Júnior (existe, valor muda; `en` "Junior full stack developer", `es` "Desarrollador full stack junior")                           | `h1`; `jobTitle` do JSON-LD                                              |
 | `home`    | `hero.stack`                   | React, TypeScript e Node.js (nova; `en` "React, TypeScript and Node.js", `es` "React, TypeScript y Node.js")                                               | Linha da stack sob o `h1` (`RF-HOME-27`)                                 |
@@ -299,7 +299,9 @@ Lista de necessidades; os nomes de campo, os arquivos e os endpoints estão deci
 
 ## Metadados e dados estruturados
 
-- `<title>` "Portfólio · Luiz Felipe dos Santos" (`pt-BR`), "Portfolio · …" (`en`), "Portafolio · …" (`es`) e
+- `<title>` "Luiz Felipe dos Santos · Desenvolvedor full stack Júnior · React, TypeScript e Node.js" (`pt-BR`),
+  "Luiz Felipe dos Santos · Junior full stack developer · React, TypeScript and Node.js" (`en`), "Luiz Felipe dos
+  Santos · Desarrollador full stack junior · React, TypeScript y Node.js" (`es`) e
   `<meta name="description">`, das chaves de `home`, com as tags nativas do React 19; o título da
   raiz é a exceção ao formato `<Tela> · Luiz Felipe dos Santos` ([`layout.md`](layout.md)).
 - Canônica, `hreflang`, Open Graph (`og:type` `website`, `og:image` a do site, 1200×630) e
