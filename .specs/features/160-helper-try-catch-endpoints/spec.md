@@ -5,7 +5,7 @@
 > **Issue:** `#160` <br />
 > **Criado em:** `12-11-2026`
 
-Sem tela: a mudança é interna a `src/store/api/`, então o `qa` não se aplica (só testes de unidade; os E2E existentes
+Sem tela: a mudança é interna a `src/store/api/` e `src/utils/`, então o `qa` não se aplica (só testes de unidade; os E2E existentes
 seguem como regressão).
 
 ## Problema
@@ -40,7 +40,7 @@ do contrato nem o resultado de nenhum endpoint.
 
 ## Critérios de aceite
 
-- [ ] Existe `src/store/api/runQueryFn.ts`, com um único `export default`, genérico no tipo do resultado, sem `any` nem
+- [ ] Existe `src/utils/runQueryFn.ts`, com um único `export default`, genérico no tipo do resultado, sem `any` nem
       cast (testes: T1).
 - [ ] QUANDO a função resolve ENTÃO o helper devolve `{ data: <resultado> }`, inclusive `undefined` (mutation de contato)
       (testes: T1).
@@ -58,11 +58,11 @@ do contrato nem o resultado de nenhum endpoint.
 
 ## Notas / decisões
 
-- **Onde mora:** `src/store/api/runQueryFn.ts`. Adapta o resultado de um `queryFn` do RTK Query (tipo da biblioteca) e só
-  os endpoints o usam; `src/services/content/` é a camada que simula o backend e não deve conhecer o contrato do RTK
-  Query, e o `CLAUDE.md` já determina que só `queryFn` chamam essa camada. Alternativa descartada: `services/content/`
-  ao lado de `toQueryError`, por acoplar a camada local ao RTK Query e sumir na troca da #43. Como na #43 o `queryFn`
-  vira `query`, o arquivo (e seu teste) sai junto com os endpoints; registrar isso em `frontend.md`.
+- **Onde mora:** `src/utils/runQueryFn.ts`, com teste em `src/utils/test/runQueryFn.test.ts`. Decidido pelo PO: o
+  `CLAUDE.md` reserva `src/store/api/<dominio>.api.ts` aos endpoints injetados e define `src/utils/` para funções
+  reutilizáveis sem React. O helper importa só tipos do RTK Query e `toQueryError`, sem tocar no `api`. Alternativas
+  descartadas: `src/store/api/` (não é endpoint) e `src/services/content/` (acoplaria a camada local ao RTK Query).
+  Na #43 o `queryFn` vira `query`; se o helper deixar de ter uso, sai junto com seu teste (registrar em `frontend.md`).
 - **Nome:** `runQueryFn` (executa o corpo de um `queryFn` e normaliza o retorno).
 - **Assinatura:**
   `function runQueryFn<Result>(run: () => Promise<Result>): Promise<QueryReturnValue<Result, FetchBaseQueryError, unknown>>`,
@@ -77,5 +77,4 @@ do contrato nem o resultado de nenhum endpoint.
 
 ## Questões em aberto
 
-- Nenhuma bloqueante. Confirmar com o PO o local `src/store/api/` (um arquivo não-endpoint na pasta, que o `CLAUDE.md`
-  descreve como só de endpoints injetados); a alternativa é `src/utils/`, mas ele importaria tipos do RTK Query.
+- Nenhuma. O local do helper (`src/utils/`) foi decidido pelo PO.

@@ -19,15 +19,15 @@ T0 (sequencial) → T1 → T2 → T3 → T4 → T5
     - **Evidência:**
 
 - [ ] T1 — Helper `runQueryFn`
-    - **Arquivo(s):** `src/store/api/runQueryFn.ts`, `src/store/api/test/runQueryFn.test.ts`
+    - **Arquivo(s):** `src/utils/runQueryFn.ts`, `src/utils/test/runQueryFn.test.ts`
     - **Depende de:** T0
-    - **Testes (escritos antes, RED):** em `src/store/api/test/runQueryFn.test.ts`
+    - **Testes (escritos antes, RED):** em `src/utils/test/runQueryFn.test.ts`
         - função que lança `ContentException` devolve `{ error }` com o `contentError` (critério 3)
         - função que lança `Error` comum devolve `{ error: { status: "FETCH_ERROR", error: message } }` (critério 3)
         - função que lança valor não-`Error` (string) devolve `FETCH_ERROR` com `String(valor)` (critério 3)
         - função que resolve devolve `{ data }` (critério 2)
         - função que resolve `undefined` devolve `{ data: undefined }` (critério 2)
-    - **Gate:** `npm run typecheck && npm run lint && npm test -- --run --maxWorkers=2 src/store/api/test/runQueryFn.test.ts`
+    - **Gate:** `npm run typecheck && npm run lint && npm test -- --run --maxWorkers=2 src/utils/test/runQueryFn.test.ts`
     - **Feito quando:** o gate passa e o arquivo tem um único `export default`, sem `any` nem cast.
     - **Evidência:**
 
