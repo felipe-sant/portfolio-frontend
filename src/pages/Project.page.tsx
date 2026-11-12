@@ -22,7 +22,9 @@ import useProject from "@/pages/hooks/useProject"
 import useProjectDocument from "@/pages/hooks/useProjectDocument"
 import ROUTES from "@/routers/paths"
 import css from "@/styles/pages/project.module.css"
+import buildBreadcrumbJsonLd from "@/utils/buildBreadcrumbJsonLd"
 import buildDocumentJsonLd from "@/utils/buildDocumentJsonLd"
+import buildProjectBreadcrumbItems from "@/utils/buildProjectBreadcrumbItems"
 import buildProjectJsonLd from "@/utils/buildProjectJsonLd"
 import findDocumentByName from "@/utils/findDocumentByName"
 import type ProjectDetail from "@/types/project/ProjectDetail.types"
@@ -79,6 +81,12 @@ function ProjectDetailView({ project, documentName }: ProjectContentProps) {
               project: project.title
           })
 
+    const breadcrumbItems = buildProjectBreadcrumbItems(
+        { home: t("common:navigation.home"), projects: t("common:navigation.projects") },
+        project,
+        isDocumentPage ? documentEntry.name : undefined
+    )
+
     return (
         <>
             <title>{title}</title>
@@ -102,6 +110,7 @@ function ProjectDetailView({ project, documentName }: ProjectContentProps) {
             {isDocumentPage && (
                 <JsonLd data={buildDocumentJsonLd(language, project, documentEntry)} />
             )}
+            <JsonLd data={buildBreadcrumbJsonLd(language, breadcrumbItems)} />
             <header className={css.header}>
                 <div className={css.badges}>
                     {project.featured && (

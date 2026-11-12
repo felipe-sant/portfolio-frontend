@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest"
+import type SupportedLanguage from "@/types/language/SupportedLanguage.types"
 import buildProjectDetailFixture from "@/testUtils/buildProjectDetailFixture"
+import buildPersonId from "@/utils/buildPersonId"
 import buildProjectJsonLd from "@/utils/buildProjectJsonLd"
 import serializeJsonLd from "@/utils/serializeJsonLd"
 
@@ -13,6 +15,100 @@ function image(name: string) {
         alt: `Captura ${name}`
     }
 }
+
+const LANGUAGES: SupportedLanguage[] = ["pt-BR", "en", "es"]
+const REPOSITORY = "https://github.com/felipe-sant/maps"
+
+describe.each(LANGUAGES)("buildProjectJsonLd em %s", (language) => {
+    it("projeto sem repositório continua CreativeWork, sem codeRepository nem programmingLanguage", () => {
+        const node = buildProjectJsonLd(language, buildProjectDetailFixture(), ["Web"])
+
+        expect(node["@type"]).toBe("CreativeWork")
+        expect(node.codeRepository).toBeUndefined()
+        expect(node.programmingLanguage).toBeUndefined()
+    })
+
+    it("programmingLanguage vazio com repositório e sem linguagem na stack sai undefined", () => {
+        const node = buildProjectJsonLd(
+            language,
+            buildProjectDetailFixture({
+                repositoryUrl: REPOSITORY,
+                stack: [{ category: "frontend", items: [{ name: "React" }] }]
+            }),
+            ["Web"]
+        )
+
+        expect(node["@type"]).toBe("SoftwareSourceCode")
+        expect(node.programmingLanguage).toBeUndefined()
+    })
+
+    it("name e description são o título e o resumo recebidos", () => {
+        const node = buildProjectJsonLd(
+            language,
+            buildProjectDetailFixture({
+                title: `Título ${language}`,
+                summary: `Resumo ${language}`,
+                repositoryUrl: REPOSITORY
+            }),
+            ["Web"]
+        )
+
+        expect(node.name).toBe(`Título ${language}`)
+        expect(node.description).toBe(`Resumo ${language}`)
+    })
+
+    it("url e @id são absolutos com o idioma da página", () => {
+        const node = buildProjectJsonLd(
+            language,
+            buildProjectDetailFixture({ repositoryUrl: REPOSITORY }),
+            ["Web"]
+        )
+
+        expect(node.url).toBe(`${SITE_URL}/${language}/projects/${ID}`)
+        expect(node["@id"]).toBe(`${SITE_URL}/${language}/projects/${ID}#project`)
+        expect(node.inLanguage).toBe(language)
+    })
+
+    it("author é { @id: buildPersonId() }", () => {
+        const node = buildProjectJsonLd(
+            language,
+            buildProjectDetailFixture({ repositoryUrl: REPOSITORY }),
+            ["Web"]
+        )
+
+        expect(node.author).toEqual({ "@id": buildPersonId() })
+    })
+
+    it("codeRepository é o repositoryUrl e programmingLanguage só traz linguagens, sem repetição", () => {
+        const node = buildProjectJsonLd(
+            language,
+            buildProjectDetailFixture({
+                repositoryUrl: REPOSITORY,
+                stack: [
+                    {
+                        category: "frontend",
+                        items: [
+                            { name: "React" },
+                            { name: "TypeScript", isProgrammingLanguage: true }
+                        ]
+                    },
+                    {
+                        category: "backend",
+                        items: [
+                            { name: "TypeScript", isProgrammingLanguage: true },
+                            { name: "Python", isProgrammingLanguage: true }
+                        ]
+                    }
+                ]
+            }),
+            ["Web"]
+        )
+
+        expect(node["@type"]).toBe("SoftwareSourceCode")
+        expect(node.codeRepository).toBe(REPOSITORY)
+        expect(node.programmingLanguage).toEqual(["TypeScript", "Python"])
+    })
+})
 
 describe("buildProjectJsonLd", () => {
     it("vira CreativeWork sem repositório, sem imagens e sem data de atualização", () => {
