@@ -49,4 +49,8 @@ describe("resources", () => {
             expect(value, path).not.toBe("")
         }
     })
+
+    it.each(languages)("%s tem about.updatedAt com a data interpolada", (_language, namespaces) => {
+        expect(namespaces.about.updatedAt).toContain("{{date}}")
+    })
 })

@@ -3,6 +3,7 @@
         "title": "About · Luiz Felipe dos Santos",
         "description": "Who Luiz Felipe dos Santos is: about me, stack, background and education."
     },
+    "updatedAt": "Updated {{date}}",
     "hero": {
         "label": "About",
         "photoAlt": "Photo of {{name}}"

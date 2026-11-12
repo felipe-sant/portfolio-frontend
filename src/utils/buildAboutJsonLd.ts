@@ -54,6 +54,7 @@ function buildAboutJsonLd(
         "@type": "ProfilePage",
         url: buildAbsoluteUrl(ROUTES.about, language),
         inLanguage: language,
+        dateModified: profile?.updatedAt,
         mainEntity: {
             "@type": "Person",
             "@id": buildPersonId(),

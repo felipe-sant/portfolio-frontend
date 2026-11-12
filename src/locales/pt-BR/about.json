@@ -3,6 +3,7 @@
         "title": "Informações · Luiz Felipe dos Santos",
         "description": "Quem é Luiz Felipe dos Santos: sobre mim, stack, trajetória e formação."
     },
+    "updatedAt": "Atualizado em {{date}}",
     "hero": {
         "label": "Informações",
         "photoAlt": "Foto de {{name}}"

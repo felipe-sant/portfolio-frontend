@@ -11,6 +11,7 @@ import profileApi from "@/store/api/profile.api"
 import timelineApi from "@/store/api/timeline.api"
 import type TimelineItem from "@/types/timeline/TimelineItem.types"
 import buildAboutJsonLd from "@/utils/buildAboutJsonLd"
+import formatMonthYear from "@/utils/formatMonthYear"
 import sortStackGroups from "@/utils/sortStackGroups"
 
 type RetrySource = "profile" | "timeline"
@@ -116,6 +117,7 @@ function useAbout() {
     )
     const certificates = timeline?.certificates ?? []
     const workPrinciples = profile?.workPrinciples ?? []
+    const updatedLabel = profile && formatMonthYear(profile.updatedAt)
     const isProfilePending = profileQuery.isLoading || isProfileError
     const isTimelinePending = timelineQuery.isLoading || isTimelineError
     const showCertificates = isTimelinePending || certificates.length > 0
@@ -144,6 +146,7 @@ function useAbout() {
         },
         stackGroups,
         workPrinciples,
+        updatedLabel,
         show: {
             stack: isProfilePending || stackGroups.length > 0,
             trajectory: isTimelinePending || groups.length > 0,
