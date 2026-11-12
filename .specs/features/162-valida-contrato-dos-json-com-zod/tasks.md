@@ -70,7 +70,7 @@ Regras para o `executor`: nenhum comentário em código (nem `//`, `/* */`, JSDo
         | Falha de validação não apaga o cache                 | `readJson.test.ts` "não apaga o texto do cache quando a validação falha" (1 fetch em 2 leituras)                                                        |
         | Chave extra descartada                               | `readJson.test.ts` "descarta chave desconhecida"                                                                                                        |
 
-- [ ] T4 — Fixtures e testes que alimentam o conteúdo pelos carregadores
+- [x] T4 — Fixtures e testes que alimentam o conteúdo pelos carregadores
     - **Arquivo(s):** `src/testUtils/build*.ts` e os testes que a suíte apontar (candidatos: os que usam `stubContentFetch` ou `parseUntyped`, ex.: `src/store/api/test/*.api.test.tsx`, `src/pages/test/*.page.test.tsx`, `src/pages/hooks/test/*.test.tsx`, `src/components/test/Footer.test.tsx`, `src/layouts/test/Main.layout.test.tsx`, `src/test/entry-server*.test.tsx`, `src/routers/test/*.test.ts*`, `src/prerender/test/prerenderRoutes.test.ts`)
     - **Depende de:** T3
     - **Testes (escritos antes, RED):** a própria suíte vermelha por fixture parcial é o RED; para cada teste corrigido, trocar o dado parcial pelo `build*` completo. Proibido afrouxar o schema ou usar cast.
@@ -78,7 +78,14 @@ Regras para o `executor`: nenhum comentário em código (nem `//`, `/* */`, JSDo
         - VAL-162-07: `loadPrerenderData.test.ts` ganha caso de conteúdo inválido que lança com o nome do arquivo e o campo
     - **Gate:** `npm run typecheck && npm run lint && npm test -- --run --maxWorkers=2` (suíte inteira uma vez, nesta tarefa, para achar as fixtures; depois só os arquivos alterados)
     - **Feito quando:** a suíte inteira passa; nenhum schema foi afrouxado; `git diff --stat -- src/store/api` mostra só arquivos de `test/`.
-    - **Evidência:** (lista das fixtures trocadas e tabela de adequação dos casos novos)
+    - **Evidência:** suíte inteira (`npm test -- --run --maxWorkers=2`): 339 arquivos, 3.128 testes; a única falha foi `useAbout.test.tsx` "descarta grupo de trajetória com tipo desconhecido" (`kind: "volunteer"`, agora rejeitado pelo schema), reescrito para "marca erro na trajetória quando um item tem tipo fora do contrato" (`timeline.isError` verdadeiro, `profile.isError` falso, `groups` vazio). Nenhuma fixture `build*` precisou mudar e nenhum schema foi afrouxado. Depois: typecheck, lint e os 6 arquivos alterados (65 testes) verdes; `git diff --stat -- src/store/api` vazio (só `test/` mudou).
+
+        | Critério                    | Prova                                                                                                                                                             |
+        | --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+        | VAL-162-04 perfil           | `profile.api.test.tsx`, "responde 500 INVALID_CONTENT quando o perfil foge do contrato" (`status` 500, `code`, mensagem com o arquivo)                            |
+        | VAL-162-04 projetos         | `projects.api.test.tsx`, "responde 500 INVALID_CONTENT quando os projetos fogem do contrato"                                                                      |
+        | VAL-162-04 trajetória       | `timeline.api.test.tsx`, "responde 500 INVALID_CONTENT quando a trajetória foge do contrato"                                                                      |
+        | VAL-162-07 pré-renderização | `loadPrerenderData.test.ts`, "rejeita com o arquivo e o campo quando o conteúdo foge do contrato" (regex `content/pt-BR/profile.json não segue o contrato: role`) |
 
 - [x] T5 — `content:check` prova os schemas sobre os arquivos publicados
     - **Arquivo(s):** `src/services/content/test/content.test.ts`

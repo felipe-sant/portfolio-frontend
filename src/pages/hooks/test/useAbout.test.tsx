@@ -140,7 +140,7 @@ describe("useAbout", () => {
         ])
     })
 
-    it("descarta grupo de trajetória com tipo desconhecido", async () => {
+    it("marca erro na trajetória quando um item tem tipo fora do contrato", async () => {
         const unknownGroup = parseUntyped(
             JSON.stringify({
                 items: [{ ...TIMELINE.items[0], kind: "volunteer" }, { ...TIMELINE.items[1] }]
@@ -149,11 +149,10 @@ describe("useAbout", () => {
         stubContentFetch({ ...FILES, "content/pt-BR/timeline.json": unknownGroup })
         const { result } = renderUseAbout()
 
-        await waitFor(() => expect(result.current.about.isLoading).toBe(false))
+        await waitFor(() => expect(result.current.about.timeline.isError).toBe(true))
 
-        expect(result.current.about.timeline.groups.map((group) => group.kind)).toEqual([
-            "education"
-        ])
+        expect(result.current.about.profile.isError).toBe(false)
+        expect(result.current.about.timeline.groups).toEqual([])
     })
 
     it("esconde as seções sem dado e a faixa de complementos com as duas colunas vazias", async () => {
