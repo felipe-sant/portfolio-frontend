@@ -117,18 +117,15 @@ Mutation: `const [createItem, { isLoading }] = itemsApi.useCreateItemMutation()`
 
 ### 3.1. Endpoint de conteúdo local (v1)
 
-Enquanto não há backend (R1), o endpoint de conteúdo usa `queryFn` em vez de `query`: ele valida o argumento, chama `src/services/content/` e devolve `{ data }` ou `{ error: toQueryError(error) }`. Todo argumento leva `lang` (o cache é por argumento, então trocar de idioma refaz o pedido). A #43 troca o `queryFn` por `query` com o mesmo argumento; os exemplos de `src/store/api/*.api.ts` e os testes com `stubContentFetch` são o modelo.
+Enquanto não há backend (R1), o endpoint de conteúdo usa `queryFn` em vez de `query`: ele valida o argumento, chama `src/services/content/` e devolve o resultado dentro de `runQueryFn` (`src/utils/runQueryFn.ts`), que converte a falha em `{ error }` no formato do contrato com `toQueryError`. Todo argumento leva `lang` (o cache é por argumento, então trocar de idioma refaz o pedido). A #43 troca o `queryFn` por `query` com o mesmo argumento; os exemplos de `src/store/api/*.api.ts` e os testes com `stubContentFetch` são o modelo.
 
 ```ts
 getProfile: build.query<Profile, GetProfileArgs>({
-    queryFn: async ({ lang }) => {
-        try {
+    queryFn: ({ lang }) =>
+        runQueryFn(async () => {
             validateLang(lang)
-            return { data: await loadProfile(lang) }
-        } catch (error) {
-            return { error: toQueryError(error) }
-        }
-    }
+            return await loadProfile(lang)
+        })
 })
 ```
 
