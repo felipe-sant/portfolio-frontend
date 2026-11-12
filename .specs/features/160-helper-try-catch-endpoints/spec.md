@@ -1,7 +1,7 @@
 # Spec: Helper do try/catch dos endpoints de conteúdo
 
 > **Tipo:** `feature` (refactor, sem mudança de comportamento) <br />
-> **Status:** `em-andamento` <br />
+> **Status:** `implementada` <br />
 > **Issue:** `#160` <br />
 > **Criado em:** `12-11-2026`
 
@@ -31,7 +31,7 @@ do contrato nem o resultado de nenhum endpoint.
 
 - O PR #260 está aberto. `gh pr view 260 --json files` confirma que ele **não altera** `src/store/api/*.api.ts`, mas
   altera `src/store/api/test/{profile,projects,timeline}.api.test.tsx`, `src/services/content/{readJson,loadProfile,
-  loadProjectRecords,loadTimelineRecords}.ts` e `docs/architecture/{frontend,api-contract,code-structure,data-model}.md`.
+loadProjectRecords,loadTimelineRecords}.ts` e `docs/architecture/{frontend,api-contract,code-structure,data-model}.md`.
 - Conflito potencial: os testes de `src/store/api/test/` (se esta tarefa os tocar) e os três docs de arquitetura
   (parágrafo dos endpoints em `frontend.md`). Mexe também no tratamento de erro a montante, o que pode mudar o que
   `toQueryError` recebe nos testes.
@@ -65,7 +65,7 @@ do contrato nem o resultado de nenhum endpoint.
   Na #43 o `queryFn` vira `query`; se o helper deixar de ter uso, sai junto com seu teste (registrar em `frontend.md`).
 - **Nome:** `runQueryFn` (executa o corpo de um `queryFn` e normaliza o retorno).
 - **Assinatura:**
-  `function runQueryFn<Result>(run: () => Promise<Result>): Promise<QueryReturnValue<Result, FetchBaseQueryError, unknown>>`,
+  `function runQueryFn<Result>(run: () => Promise<Result>): Promise<QueryReturnValue<Result, FetchBaseQueryError, FetchBaseQueryMeta | undefined>>`,
   com `QueryReturnValue` e `FetchBaseQueryError` importados de `@reduxjs/toolkit/query`. Uso:
   `queryFn: ({ lang }) => runQueryFn(async () => { validateLang(lang); return await loadProfile(lang) })`.
   O helper não conhece o argumento: o endpoint o desestrutura e o fecha na função, então o mesmo helper serve ao
