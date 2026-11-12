@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test"
 import type { Page } from "@playwright/test"
 import openPreferences from "./support/openPreferences"
+import waitForHydration from "./support/waitForHydration"
 
 const THEME_COLORS = { light: "#fbf9f5", dark: "#141210" }
 
@@ -13,6 +14,7 @@ function opposite(theme: Theme): Theme {
 async function openHome(page: Page) {
     await page.goto("pt-BR")
     await page.getByRole("heading", { level: 1 }).waitFor()
+    await waitForHydration(page)
 }
 
 async function getThemeToggle(page: Page) {

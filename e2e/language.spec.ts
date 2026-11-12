@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test"
 import type { Locator, Page } from "@playwright/test"
+import waitForHydration from "./support/waitForHydration"
 
 const DESKTOP_MIN_WIDTH = 640
 const SCROLL_TARGET = 600
@@ -69,6 +70,7 @@ async function chooseLanguage(page: Page, from: Language, to: Language) {
 async function openHome(page: Page, language: Language) {
     await page.goto(language)
     await page.getByRole("heading", { level: 1 }).waitFor()
+    await waitForHydration(page)
 }
 
 async function expectHomeIn(page: Page, language: Language) {

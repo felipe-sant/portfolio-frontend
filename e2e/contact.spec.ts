@@ -28,6 +28,7 @@ function isDesktop(page: Page) {
 async function openContact(page: Page, language: Language = "pt-BR") {
     await page.goto(`${language}/contact`)
     await page.getByRole("heading", { level: 1 }).waitFor()
+    await waitForHydration(page)
 }
 
 async function openMenuIfCollapsed(page: Page, language: Language) {
