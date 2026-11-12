@@ -2,6 +2,7 @@ import type Profile from "@/types/profile/Profile.types"
 
 function createBlankProfile(): Profile {
     return {
+        updatedAt: "",
         role: "",
         homeIntro: "",
         summary: "",

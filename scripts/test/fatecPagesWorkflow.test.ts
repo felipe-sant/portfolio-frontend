@@ -105,4 +105,42 @@ describe("fatec-pages.yml", () => {
         expect(buildJob).not.toContain("npx playwright install")
         expect(buildJob).not.toContain("--with-deps")
     })
+
+    it("resolve o SHA de origem na tag e o passa por env, nunca no run", () => {
+        expect(publishJob).toContain("git rev-parse --short HEAD")
+        expect(publishJob).toContain("ORIGIN_SHA: ${{ steps.origin.outputs.sha }}")
+        expect(runScriptLines(publishJob).filter((line) => line.includes("${{"))).toEqual([])
+    })
+
+    it("grava o README depois do docs e antes do commit", () => {
+        const docs = publishJob.indexOf("npm run publish:fatec:docs")
+        const readme = publishJob.indexOf("npm run publish:fatec:readme")
+        const commit = publishJob.indexOf("- name: Commit and push")
+
+        expect(readme).toBeGreaterThan(docs)
+        expect(commit).toBeGreaterThan(readme)
+    })
+
+    it("passa tag e SHA ao passo do README por env", () => {
+        const step = publishJob.split("- name: Write README\n")[1].split("- name:")[0]
+
+        expect(step).toContain("TAG: ${{ inputs.tag }}")
+        expect(step).toContain("ORIGIN_SHA: ${{ steps.origin.outputs.sha }}")
+        expect(step).toContain("npm run publish:fatec:readme -- fatec-repository")
+    })
+
+    it("mantém o assunto do commit e grava a linha de origem", () => {
+        const step = publishJob.split("- name: Commit and push\n")[1]
+
+        expect(step).toContain("TAG: ${{ inputs.tag }}")
+        expect(step).toContain("ORIGIN_SHA: ${{ steps.origin.outputs.sha }}")
+        expect(step).toContain('-m "Publica a $TAG do portfólio"')
+        expect(step).toContain('-m "Origem: felipe-sant/portfolio-frontend@$ORIGIN_SHA (tag $TAG)"')
+    })
+
+    it("adiciona ao commit só docs e README.md", () => {
+        const addLines = runScriptLines(publishJob).filter((line) => line.includes("git add"))
+
+        expect(addLines.map((line) => line.trim())).toEqual(["git add --all docs README.md"])
+    })
 })

@@ -129,11 +129,12 @@ Cada subseção lista os requisitos na ordem dos IDs.
 
 ### Metadados e pré-renderização
 
-| ID            | Regra                                                                                                                                                                                                                                                                                                                                | Fonte                             |
-| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------- |
-| `RF-ABOUT-28` | `<title>` "Informações · Luiz Felipe dos Santos" e `<meta name="description">` por chave do namespace `about` (A11Y-G01); canônica, `hreflang`, Open Graph e `twitter:card` pelo mecanismo de #52 (NF-IA-10, NF-IA-11), com `og:type` `profile` e `og:image` própria, `images/share/<idioma>/about.png` (a foto é 1:1, não 1200×630) | `layout.md` (Metadados), NF-IA-10 |
-| `RF-ABOUT-29` | JSON-LD `ProfilePage` com `mainEntity` `Person` (ver [Metadados e dados estruturados](#metadados-e-dados-estruturados)), gerado dos mesmos dados da tela, com `<` escapado (NF-IA-08, NF-IA-09)                                                                                                                                      | NF-IA-08                          |
-| `RF-ABOUT-30` | `/about` é pré-renderizada nos três idiomas com `h1`, todas as seções e o detalhe dos itens no `main` (NF-IA-01, NF-IA-16, RF-ABOUT-23); os dados de perfil e trajetória usados no HTML vão serializados para a store (NF-IA-03), sem erro de hidratação                                                                             | NF-IA-01, NF-IA-03                |
+| ID            | Regra                                                                                                                                                                                                                                                                                                                                                            | Fonte                             |
+| ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------- |
+| `RF-ABOUT-28` | `<title>` "Informações · Luiz Felipe dos Santos" e `<meta name="description">` por chave do namespace `about` (A11Y-G01); canônica, `hreflang`, Open Graph e `twitter:card` pelo mecanismo de #52 (NF-IA-10, NF-IA-11), com `og:type` `profile` e `og:image` própria, `images/share/<idioma>/about.png` (a foto é 1:1, não 1200×630)                             | `layout.md` (Metadados), NF-IA-10 |
+| `RF-ABOUT-29` | JSON-LD `ProfilePage` com `mainEntity` `Person` (ver [Metadados e dados estruturados](#metadados-e-dados-estruturados)), gerado dos mesmos dados da tela, com `<` escapado (NF-IA-08, NF-IA-09)                                                                                                                                                                  | NF-IA-08                          |
+| `RF-ABOUT-30` | `/about` é pré-renderizada nos três idiomas com `h1`, todas as seções e o detalhe dos itens no `main` (NF-IA-01, NF-IA-16, RF-ABOUT-23); os dados de perfil e trajetória usados no HTML vão serializados para a store (NF-IA-03), sem erro de hidratação                                                                                                         | NF-IA-01, NF-IA-03                |
+| `RF-ABOUT-31` | O topo mostra, abaixo do resumo, "Atualizado em MM/AAAA" (`about:updatedAt`, `Updated MM/YYYY` em `en`, `Actualizado en MM/AAAA` em `es`), com mês e ano de `profile.updatedAt` por texto (`formatMonthYear`, sem `new Date`); some enquanto o perfil carrega e quando ele falha. O JSON-LD `ProfilePage` traz `dateModified` com o mesmo `updatedAt` (NF-IA-15) | NF-IA-15                          |
 
 ## Navegação
 
@@ -335,7 +336,7 @@ O `jobTitle` é o `role` do perfil, igual ao da Início (`home:heading`) e ao t�
 O `@id` da `Person` é `<origem><base>/#person`, a raiz do site com o `base` do Vite e sem prefixo de
 idioma, montado por `buildPersonId()`, o mesmo em todas as telas e idiomas (decisão transversal do
 PO de 11-10-2026); o `url` da `Person` segue a canônica da Início no idioma. Cursos não entram em `alumniOf` (só formação), mas os certificados deles
-entram em `hasCredential`. Sem `dateModified` inventado: só entra se o conteúdo tiver a data. Sem
+entram em `hasCredential`. O `ProfilePage` traz `dateModified` igual a `profile.updatedAt` e o omite sem perfil carregado (`RF-ABOUT-31`); a data nunca é inventada. Sem
 foto entregue (D26 bloqueada), o JSON-LD não tem `image`.
 
 ## Critérios de aceite
@@ -379,6 +380,7 @@ tela cheia por media query, rolagem travada).
 - [ ] `RF-ABOUT-28` — `<title>` e descrição por chave de `about`, nos três idiomas, sem chave no lugar de texto; `og:type` `profile` e `og:image` própria [teste] [review]
 - [x] `RF-ABOUT-29` — JSON-LD `ProfilePage` com `Person` gerado dos dados da tela, `<` escapado e sem campo inventado [teste]
 - [ ] `RF-ABOUT-30` — `/about` pré-renderizada nos três idiomas com `h1`, seções e detalhe dos itens no `main`, dados serializados na store e sem erro de hidratação [teste] [navegador]
+- [ ] `RF-ABOUT-31` — "Atualizado em MM/AAAA" abaixo do resumo nos três idiomas, ausente com o perfil carregando ou com erro, e `dateModified` no JSON-LD `ProfilePage` [teste] [e2e]
 
 ### Acessibilidade
 

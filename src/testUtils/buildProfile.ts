@@ -2,6 +2,7 @@ import type Profile from "@/types/profile/Profile.types"
 
 function buildProfile(overrides: Partial<Profile> = {}): Profile {
     return {
+        updatedAt: "2026-07-19",
         role: "Desenvolvedor full stack",
         homeIntro: "Trabalho em produtos web de ponta a ponta.",
         summary: "Desenvolvedor full stack em TypeScript.",

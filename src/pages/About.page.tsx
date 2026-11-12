@@ -65,6 +65,7 @@ function AboutPage() {
         timeline,
         stackGroups,
         workPrinciples,
+        updatedLabel,
         show,
         selectedItem,
         open,
@@ -157,7 +158,16 @@ function AboutPage() {
                                 {profile.isError && (
                                     <PartError announce={false} onRetry={profile.retry} />
                                 )}
-                                {data && <p className={css.summary}>{data.summary}</p>}
+                                {data && (
+                                    <>
+                                        <p className={css.summary}>{data.summary}</p>
+                                        {updatedLabel && (
+                                            <p className={css.updated}>
+                                                {t("about:updatedAt", { date: updatedLabel })}
+                                            </p>
+                                        )}
+                                    </>
+                                )}
                             </SkeletonSwap>
                             <div className={css.actions}>
                                 <ResumeLink

@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test"
 import FATEC_BASE_PATH from "@scripts/fatecBasePath"
+import isLicenseDocument from "@/utils/isLicenseDocument"
 import isRecord from "./support/isRecord"
 import readProfile from "./support/readProfile"
 import readRawProjects from "./support/readRawProjects"
@@ -28,15 +29,18 @@ const FULL_FILE_BY_LANGUAGE: Record<string, string> = {
 }
 const EMAIL_PATTERN = /[A-Za-z0-9._+-]+@[A-Za-z0-9-]+\.[a-z]{2,}/
 
-function countDocumentsBesidesReadme(): number {
-    return readRawProjects("pt-BR").reduce((total, project) => {
+function listIndexableDocuments(language: string): string[] {
+    return readRawProjects(language).flatMap((project) => {
         const documents = Array.isArray(project.documents) ? project.documents : []
-        return (
-            total +
-            documents.filter((document) => isRecord(document) && document.name !== "README.md")
-                .length
+        return documents.flatMap((document) =>
+            isRecord(document) &&
+            typeof document.name === "string" &&
+            document.name !== "README.md" &&
+            !isLicenseDocument(document.name)
+                ? [`${language}/projects/${String(project.id)}/docs/${document.name}`]
+                : []
         )
-    }, 0)
+    })
 }
 
 function contactUrl(language: string): string {
@@ -98,10 +102,33 @@ test.describe("arquivos para buscadores e IA", () => {
     }) => {
         const projects = readRawProjects("pt-BR").length
         expect(projects).toBeGreaterThan(0)
-        const expected = (STATIC_ROUTES + projects + countDocumentsBesidesReadme()) * 3
+        const expected = (STATIC_ROUTES + projects + listIndexableDocuments("pt-BR").length) * 3
         const locs = extractLocs(await (await request.get("sitemap.xml")).text())
         expect(locs).toHaveLength(expected)
         expect(new Set(locs).size).toBe(expected)
+    })
+
+    test("NF-IA-15, NF-IA-02: nenhuma loc é de LICENSE e cada idioma lista os documentos além do README e da LICENSE", async ({
+        request
+    }) => {
+        const locs = extractLocs(await (await request.get("sitemap.xml")).text())
+        const paths = locs.map(toRelativePath)
+        expect(paths.some((path) => isLicenseDocument(path.split("/").at(-1) ?? ""))).toBe(false)
+        for (const language of LANGUAGES) {
+            const listed = paths.filter((path) => path.startsWith(`${language}/projects/`))
+            const documents = listed.filter((path) => path.includes("/docs/")).toSorted()
+            expect(documents).toEqual(listIndexableDocuments(language).toSorted())
+            expect(documents).toHaveLength(6)
+        }
+    })
+
+    test("NF-IA-15: toda url do sitemap tem lastmod AAAA-MM-DD", async ({ request }) => {
+        const xml = await (await request.get("sitemap.xml")).text()
+        const blocks = xml.split("<url>").slice(1)
+        expect(blocks.length).toBe(extractLocs(xml).length)
+        for (const block of blocks) {
+            expect(block).toMatch(/<lastmod>\d{4}-\d{2}-\d{2}<\/lastmod>/)
+        }
     })
 
     test("NF-IA-15, NF-IA-11: cada loc é absoluto sob o base e tem hreflang recíproco com x-default em en", async ({

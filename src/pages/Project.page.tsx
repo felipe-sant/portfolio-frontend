@@ -26,6 +26,7 @@ import buildDocumentJsonLd from "@/utils/buildDocumentJsonLd"
 import buildProjectBreadcrumbItems from "@/utils/buildProjectBreadcrumbItems"
 import buildProjectJsonLd from "@/utils/buildProjectJsonLd"
 import findDocumentByName from "@/utils/findDocumentByName"
+import isLicenseDocument from "@/utils/isLicenseDocument"
 import type ProjectDetail from "@/types/project/ProjectDetail.types"
 
 interface ProjectContentProps {
@@ -72,6 +73,7 @@ function ProjectDetailView({ project, documentName }: ProjectContentProps) {
     const projectsShareImage = useShareImage("projects")
     const documentEntry = document.document
     const isDocumentPage = documentEntry !== undefined && documentEntry.name !== "README.md"
+    const isLicense = documentEntry !== undefined && isLicenseDocument(documentEntry.name)
     const isReadme = document.exactName === "README.md"
     const title = isReadme
         ? t("project:meta.title", { project: project.title })
@@ -89,10 +91,11 @@ function ProjectDetailView({ project, documentName }: ProjectContentProps) {
     return (
         <>
             <title>{title}</title>
-            <meta name="description" content={project.summary} />
+            <meta name="description" content={document.description} />
+            {isLicense && <meta name="robots" content={"noindex"} />}
             <PageMeta
                 title={title}
-                description={project.summary}
+                description={document.description}
                 path={isDocumentPage ? ROUTES.projectDocument : ROUTES.project}
                 params={
                     isDocumentPage

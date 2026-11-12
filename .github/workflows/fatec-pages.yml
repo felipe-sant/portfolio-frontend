@@ -115,6 +115,9 @@ jobs:
                   cache-dependency-path: package-lock.json
             - name: Install dependencies
               run: npm ci
+            - name: Resolve origin commit
+              id: origin
+              run: echo "sha=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
             - name: Download artifact
               uses: actions/download-artifact@v7
               with:
@@ -130,17 +133,23 @@ jobs:
                   fetch-depth: 1
             - name: Replace docs
               run: npm run publish:fatec:docs -- fatec-artifact fatec-repository
+            - name: Write README
+              env:
+                  TAG: ${{ inputs.tag }}
+                  ORIGIN_SHA: ${{ steps.origin.outputs.sha }}
+              run: npm run publish:fatec:readme -- fatec-repository
             - name: Commit and push
               working-directory: fatec-repository
               env:
                   TAG: ${{ inputs.tag }}
+                  ORIGIN_SHA: ${{ steps.origin.outputs.sha }}
               run: |
                   git config user.name "github-actions[bot]"
                   git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-                  git add --all docs
+                  git add --all docs README.md
                   if [ -z "$(git status --porcelain)" ]; then
                       echo "Nada a publicar"
                       exit 0
                   fi
-                  git commit -m "Publica a $TAG do portfólio"
+                  git commit -m "Publica a $TAG do portfólio" -m "Origem: felipe-sant/portfolio-frontend@$ORIGIN_SHA (tag $TAG)"
                   git push origin main
