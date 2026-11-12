@@ -14,7 +14,7 @@ T1, T2 e T3 criam funções puras novas, em arquivos distintos. T4 mexe no model
 
 ## Tarefas
 
-- [ ] T1 [P] — #202: `formatMonthYear` (`AAAA-MM-DD` para `MM/AAAA`, por texto)
+- [x] T1 [P] — #202: `formatMonthYear` (`AAAA-MM-DD` para `MM/AAAA`, por texto)
     - **Arquivo(s):** `src/utils/formatMonthYear.ts` (novo, `export default`), `src/utils/test/formatMonthYear.test.ts`
     - **Depende de:** nenhuma
     - **Testes (escritos antes, RED):**
@@ -23,7 +23,16 @@ T1, T2 e T3 criam funções puras novas, em arquivos distintos. T4 mexe no model
         - não depende do fuso: com `vi.stubEnv("TZ", "America/Sao_Paulo")` e `"2026-01-01"`, devolve `"01/2026"` (CA5), em `formatMonthYear.test.ts`
     - **Gate:** `npm run typecheck && npm run lint && npm test -- --run --maxWorkers=2 src/utils/test/formatMonthYear.test.ts`
     - **Feito quando:** o gate passa e cada teste listado tem asserção; `grep -n "new Date\|toLocale" src/utils/formatMonthYear.ts` não retorna nada
-    - **Evidência:** (preenchida pelo `executor`: tabela de adequação com `arquivo:linha` e veredito)
+    - **Evidência:**
+
+        | Critério / borda                                                                    | `arquivo:linha` e asserção                                                                                                         | Coberto? |
+        | ----------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- | -------- |
+        | borda: `""`, `"2026-13-01"`, `"2026-7-1"`, `"hoje"` devolvem `undefined` (CA5, CA6) | `src/utils/test/formatMonthYear.test.ts:12` `expect(formatMonthYear(value)).toBeUndefined()` (`it.each` com os 4 valores e mais 2) | sim      |
+        | `"2026-07-19"` vira `"07/2026"`; `"2026-01-01"` vira `"01/2026"` (CA5)              | `formatMonthYear.test.ts:17-18` `toBe("07/2026")`, `toBe("01/2026")`                                                               | sim      |
+        | independe do fuso (CA5)                                                             | `formatMonthYear.test.ts:24` com `vi.stubEnv("TZ", "America/Sao_Paulo")`, `toBe("01/2026")`                                        | sim      |
+        | sem `new Date`/`toLocale`                                                           | `grep -n "new Date\|toLocale" src/utils/formatMonthYear.ts` sem saída                                                              | sim      |
+
+        Veredito: RED visto (módulo ausente), GREEN com 8 testes; typecheck e lint verdes.
 
 - [ ] T2 [P] — #207: `isLicenseDocument` (regra única de `LICENSE`)
     - **Arquivo(s):** `src/utils/isLicenseDocument.ts` (novo, `export default`), `src/utils/test/isLicenseDocument.test.ts`
