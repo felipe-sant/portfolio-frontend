@@ -12,9 +12,7 @@ async function readJsonFile(path: string): Promise<unknown> {
 function readString(source: unknown, keys: string[], lang: SupportedLanguage, file: string) {
     const value = keys.reduce<unknown>(
         (current, key) =>
-            typeof current === "object" && current !== null
-                ? (current as { [name: string]: unknown })[key]
-                : undefined,
+            typeof current === "object" && current !== null ? Reflect.get(current, key) : undefined,
         source
     )
 
@@ -26,24 +24,22 @@ function readString(source: unknown, keys: string[], lang: SupportedLanguage, fi
 }
 
 async function readRootTexts(localesDirectory = "src/locales"): Promise<RootPageTexts> {
-    const commons = await Promise.all(
-        SUPPORTED_LANGUAGES.map(
-            async (lang) =>
-                [lang, await readJsonFile(join(localesDirectory, lang, "common.json"))] as const
-        )
+    const [ptBR, en, es] = await Promise.all(
+        SUPPORTED_LANGUAGES.map((lang) => readJsonFile(join(localesDirectory, lang, "common.json")))
     )
+    const commons: Record<SupportedLanguage, unknown> = { "pt-BR": ptBR, en, es }
     const home = await readJsonFile(join(localesDirectory, FALLBACK_LANGUAGE, "home.json"))
-    const fallbackCommon = Object.fromEntries(commons)[FALLBACK_LANGUAGE]
-    const pick = (keys: string[]) =>
-        Object.fromEntries(
-            commons.map(([lang, common]) => [lang, readString(common, keys, lang, "common.json")])
-        ) as Record<SupportedLanguage, string>
+    const pick = (keys: string[]): Record<SupportedLanguage, string> => ({
+        "pt-BR": readString(commons["pt-BR"], keys, "pt-BR", "common.json"),
+        en: readString(commons.en, keys, "en", "common.json"),
+        es: readString(commons.es, keys, "es", "common.json")
+    })
 
     return {
         title: readString(home, ["meta", "title"], FALLBACK_LANGUAGE, "home.json"),
         description: readString(home, ["meta", "description"], FALLBACK_LANGUAGE, "home.json"),
         languageLabel: readString(
-            fallbackCommon,
+            commons[FALLBACK_LANGUAGE],
             ["languageSelector", "label"],
             FALLBACK_LANGUAGE,
             "common.json"
