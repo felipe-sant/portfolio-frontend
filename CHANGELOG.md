@@ -1,5 +1,13 @@
 # portfolio-frontend
 
+## 1.3.1
+
+### Patch Changes
+
+- [#240](https://github.com/felipe-sant/portfolio-frontend/pull/240) [`3cbb9d5`](https://github.com/felipe-sant/portfolio-frontend/commit/3cbb9d5c5584eb111df3e961cb088f033a409582) Thanks [@felipe-sant](https://github.com/felipe-sant)! - Guarda em cache por mais tempo os scripts, estilos, fontes e imagens na Vercel, acrescenta headers de segurança e uma política de conteúdo em modo de relatório, e passa os dados das páginas pré-renderizadas para um bloco JSON que a política não precisa liberar.
+
+- [#236](https://github.com/felipe-sant/portfolio-frontend/pull/236) [`cfc37dc`](https://github.com/felipe-sant/portfolio-frontend/commit/cfc37dc7a97027689a943b700b8cf1f7f2ca34f5) Thanks [@felipe-sant](https://github.com/felipe-sant)! - Unifica o id da pessoa nos dados estruturados de todas as páginas e idiomas, tira o prefixo mailto: do e-mail de Contato, evita repetir linguagens entre as palavras-chave e as linguagens de programação das páginas de projeto e confere que o cargo é o mesmo em Início e Informações.
+
 ## 1.3.0
 
 ### Minor Changes
