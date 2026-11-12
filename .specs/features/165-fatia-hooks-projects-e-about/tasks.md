@@ -1,16 +1,17 @@
 # Tasks: Fatia os hooks useProjects e useAbout por responsabilidade
 
-> Spec: `./spec.md`
+> Spec: `./spec.md` <br />
+> **Status:** `em-andamento`
 
-Regras de todas as tarefas: nenhum comentário em código; identificadores em inglês; `npm test -- --run --maxWorkers=2 <arquivo>` (nunca todos os workers); conferir `uptime` antes de Vitest/build (load acima de 14: esperar); um commit atômico por tarefa no formato `Refactor :recycle: [#165] <descrição>` (`Test :test_tube:` na T1, `Docs :bulb:` na T10), sempre verde; asserção de comportamento de teste existente nunca é editada.
+Regras de todas as tarefas: nenhum comentário em código; identificadores em inglês; `npm test -- --run --maxWorkers=2 <arquivo>` (nunca todos os workers); conferir `uptime` antes de Vitest/build (load acima de 14: esperar); um commit atômico por tarefa no formato `Refactor :recycle: [#165] <descrição>` (`Test :test_tube:` na T1, `Docs :bulb:` na T18; componentes novos de Projetos entram como `Refactor :recycle:` com o CSS movido no mesmo commit), sempre verde; asserção de comportamento de teste existente nunca é editada.
 
 ## Plano de execução
 
 ```
-T0 → T1 → Fase Informações (T2 → T3 → T4 → T5) → Fase Projetos (T6 → T7 → T8 → T9) → T10 → T11
+T0 → T1 → Fase Informações (T2 → T3 → T4 → T5) → Fase hooks de Projetos (T6 → T7 → T8 → T9) → Fase componentes de Projetos (T10 → T11 → T12 → T13 → T14 → T15 → T16 → T17) → T18 → T19
 ```
 
-Sequencial (as duas fases editam hooks e páginas que cada uma depende de si); as fases de Informações e Projetos são independentes entre si, mas rodam uma de cada vez para o rebase e a revisão ficarem simples.
+Sequencial (as três fases editam hooks e páginas que cada uma depende de si); as fases de Informações e Projetos são independentes entre si, mas rodam uma de cada vez para o rebase e a revisão ficarem simples. Na fase de componentes, cada tarefa move uma região do JSX de `Projects.page.tsx` e as classes dela de `src/styles/pages/projects.module.css` para o módulo novo; a ordem vai das folhas para o todo (vazio, grade, Experimentos, miolo de resultados) e depois as regiões soltas, e cada tarefa deixa a página verde e funcionando.
 
 ## Tarefas
 
@@ -18,8 +19,8 @@ Sequencial (as duas fases editam hooks e páginas que cada uma depende de si); a
     - **Arquivo(s):** nenhum no repositório; saída em `/tmp/claude-1000/-home-felipe-faculdade-portfolio-frontend--maestri-roles-a18f6928-4d12-40d4-bc54-14ecab3390d9/31be6ed5-5491-40f9-ac17-23e0bdd173c7/scratchpad/` (ou o scratchpad da sessão)
     - **Depende de:** nenhuma
     - **Testes (escritos antes, RED):** não se aplica
-    - **Gate:** `uptime` com load até 14; `npm run build`; gerar `sha256sum` dos HTML de `about` e `projects` nos três idiomas (caminhos em `dist/` conforme `src/prerender/prerenderRoutes.ts`) e guardar a lista
-    - **Feito quando:** a lista de seis hashes existe fora do repositório e `npx vitest run --maxWorkers=2` dos quatro arquivos da rede de segurança (`useAbout`, `useProjects`, `About.page`, `Projects.page`) está verde antes de qualquer mudança
+    - **Gate:** `uptime` com load até 14; `npm run build`; normalizar o HTML (nomes de `/assets/` sem o hash e sufixo hash das classes de CSS Module reduzido ao nome base) com um script guardado no scratchpad; gerar `sha256sum` do HTML normalizado de `about` e `projects` nos três idiomas (caminhos em `dist/` conforme `src/prerender/prerenderRoutes.ts`) e guardar a lista e o script
+    - **Feito quando:** a lista de seis hashes e o script de normalização existem fora do repositório e `npx vitest run --maxWorkers=2` dos quatro arquivos da rede de segurança (`useAbout`, `useProjects`, `About.page`, `Projects.page`) está verde antes de qualquer mudança
     - **Evidência:** ...
 
 - [ ] T1 — Testes de caracterização das lacunas
@@ -126,18 +127,115 @@ Sequencial (as duas fases editam hooks e páginas que cada uma depende de si); a
     - **Feito quando:** o retorno tem exatamente `{ t, shareImage, ids, seo, filters, search, filterBar, modal, results, list, more }`; `Projects.page.tsx` desestrutura no máximo 12 nomes; `git diff origin/staging -- src/pages/test` vazio; `useProjects.ts` abaixo de 100 linhas (VAL-165-02, 04, 08)
     - **Evidência:** ...
 
-- [ ] T10 — Documentação
-    - **Arquivo(s):** `docs/screens/about.md` (parágrafo de `useAbout`, linha cerca de 454), `docs/screens/projects.md` (Implementação de `useProjects`), e qualquer outro `docs/` achado por `grep -rn "useProjects\|useAbout" docs/` que cite o formato antigo
+- [ ] T10 — Componente `ProjectsEmptyState`
+    - **Arquivo(s):** `src/components/ProjectsEmptyState.tsx`, `src/components/test/ProjectsEmptyState.test.tsx`, `src/styles/components/projectsEmptyState.module.css`, `src/styles/pages/projects.module.css` (remove as classes movidas), `src/pages/Projects.page.tsx`
     - **Depende de:** T9
-    - **Testes (escritos antes, RED):** não se aplica
-    - **Gate:** `npm run lint` e `grep -rn "useAboutRetryFocus\|useTrajectorySelection\|useProjectsResults" docs/` com ao menos uma ocorrência por hook novo
-    - **Feito quando:** a documentação cita os cinco hooks novos, o util `aboutElementIds` e o formato por subobjetos, sem texto de UI nem comentário em código (VAL-165-11)
+    - **Testes (escritos antes, RED):** (`render` com props simuladas, sem store; texto em português)
+        - mostra `h2` com o título e o parágrafo com a descrição (VAL-165-12; herda 118)
+        - sem `action` não renderiza botão e com `action` renderiza o nó depois da descrição (VAL-165-12; herda 491 e 516)
+        - sem violação de axe (`expectNoAxeViolations(container)`)
+    - **Gate:** `npm run typecheck && npm run lint && npm test -- --run --maxWorkers=2 src/components/test/ProjectsEmptyState.test.tsx src/pages/test/Projects.page.test.tsx src/pages/hooks/test/useProjects.test.tsx`
+    - **Feito quando:** a página usa `ProjectsEmptyState` para o conteúdo vazio e `projects.module.css` perdeu `emptyBox`, `emptyHeading` e `emptyText` (o uso no sem resultados passa na T13); `ProjectsEmptyStateProps` local, `export default`, sem comentário; toda classe `css.x` existe no módulo novo com declaração idêntica à da `staging`; `Projects.page.test.tsx` sem edição e verde
     - **Evidência:** ...
 
-- [ ] T11 — Verificação completa
+- [ ] T11 — Componente `ProjectsGrid`
+    - **Arquivo(s):** `src/components/ProjectsGrid.tsx`, `src/components/test/ProjectsGrid.test.tsx`, `src/styles/components/projectsGrid.module.css`, `src/styles/pages/projects.module.css` (remove as classes movidas), `src/pages/Projects.page.tsx`
+    - **Depende de:** T10
+    - **Testes (escritos antes, RED):** (`render` com props simuladas, sem store; texto em português)
+        - `projects=[]` com `skeletonCount` N renderiza só N itens `aria-hidden` (VAL-165-12; herda 423)
+        - um `li` por projeto na ordem recebida, com `ProjectCard` e `headingLevel` repassado (VAL-165-12; herda 404)
+        - `revealIndex` recomeça a cada nove e `firstIndex` desloca o `index` dos cards (VAL-165-12; herda 445 e 1465)
+        - esqueletos ao fim da lista com `skeletonCount` e nenhum com 0 (VAL-165-12; herda 1489)
+        - sem violação de axe (`expectNoAxeViolations(container)`)
+    - **Gate:** `npm run typecheck && npm run lint && npm test -- --run --maxWorkers=2 src/components/test/ProjectsGrid.test.tsx src/pages/test/Projects.page.test.tsx src/pages/hooks/test/useProjects.test.tsx`
+    - **Feito quando:** a página usa `ProjectsGrid` nas duas grades e no esqueleto de carga; `ProjectListItem` e `SkeletonItems` saem da página e viram auxiliares locais de `ProjectsGrid.tsx`; `projects.module.css` perdeu `grid` e `item`; `ProjectsGridProps` local, `export default`, sem comentário; toda classe `css.x` existe no módulo novo com declaração idêntica à da `staging`; `Projects.page.test.tsx` sem edição e verde
+    - **Evidência:** ...
+
+- [ ] T12 — Componente `ProjectsExperiments`
+    - **Arquivo(s):** `src/components/ProjectsExperiments.tsx`, `src/components/test/ProjectsExperiments.test.tsx`, `src/styles/components/projectsExperiments.module.css`, `src/styles/pages/projects.module.css` (remove as classes movidas), `src/pages/Projects.page.tsx`
+    - **Depende de:** T11
+    - **Testes (escritos antes, RED):** (`render` com props simuladas, sem store; texto em português)
+        - `section` com `h2` e descrição, e os cards em `h3` (VAL-165-12; herda 1374-1457)
+        - `firstIndex` repassado à grade e esqueletos do lote novo ao fim (VAL-165-12; herda 1489)
+        - sem violação de axe (`expectNoAxeViolations(container)`)
+    - **Gate:** `npm run typecheck && npm run lint && npm test -- --run --maxWorkers=2 src/components/test/ProjectsExperiments.test.tsx src/pages/test/Projects.page.test.tsx src/pages/hooks/test/useProjects.test.tsx`
+    - **Feito quando:** a página usa `ProjectsExperiments`; `projects.module.css` perdeu `experiments`, `experimentsHeading` e `experimentsDescription`; `ProjectsExperimentsProps` local, `export default`, sem comentário; toda classe `css.x` existe no módulo novo com declaração idêntica à da `staging`; `Projects.page.test.tsx` sem edição e verde
+    - **Evidência:** ...
+
+- [ ] T13 — Componente `ProjectsResults`
+    - **Arquivo(s):** `src/components/ProjectsResults.tsx`, `src/components/test/ProjectsResults.test.tsx`, `src/pages/Projects.page.tsx`
+    - **Depende de:** T12
+    - **Testes (escritos antes, RED):** (`render` com props simuladas, sem store; texto em português)
+        - carregando mostra nove esqueletos `aria-hidden` e nenhuma grade (VAL-165-12; herda 423)
+        - erro mostra o `LoadError` com "Tentar novamente" que chama `list.retry` e esconde grade e vazio (VAL-165-12; herda 526)
+        - `isNoResults` mostra o estado vazio com o termo (com e sem busca) e o botão que chama `onClearFilters` (VAL-165-12; herda 491 e 516)
+        - só principais: grade sem seção; só experimentos: seção sem grade principal; os dois: grade e depois a seção (VAL-165-12; herda 1413 e 1437)
+        - o `div` recebe `list.gridRef` (VAL-165-12; herda 404)
+        - sem violação de axe (`expectNoAxeViolations(container)`)
+    - **Gate:** `npm run typecheck && npm run lint && npm test -- --run --maxWorkers=2 src/components/test/ProjectsResults.test.tsx src/pages/test/Projects.page.test.tsx src/pages/hooks/test/useProjects.test.tsx`
+    - **Feito quando:** a página usa `ProjectsResults` no lugar de `AsyncSection` com a grade e o sem resultados, e o `ProjectsEmptyState` do sem resultados passa a viver nele; sem módulo CSS próprio (a tarefa não move classe); `ProjectsResultsProps` local, `export default`, sem comentário; o componente não importa CSS Module; `Projects.page.test.tsx` sem edição e verde
+    - **Evidência:** ...
+
+- [ ] T14 — Componente `ProjectsToolbar`
+    - **Arquivo(s):** `src/components/ProjectsToolbar.tsx`, `src/components/test/ProjectsToolbar.test.tsx`, `src/styles/components/projectsToolbar.module.css`, `src/styles/pages/projects.module.css` (remove as classes movidas), `src/pages/Projects.page.tsx`
+    - **Depende de:** T13
+    - **Testes (escritos antes, RED):** (`render` com props simuladas, sem store; texto em português)
+        - o campo de busca tem rótulo, placeholder e `maxLength` 100 (VAL-165-12; herda 215)
+        - digitar chama `search.setDraft` e limpar chama `search.clearSearch` (VAL-165-12; herda 229 e 244)
+        - o botão tem `aria-haspopup="dialog"` e `aria-expanded` conforme `isFiltersOpen`, sem `aria-disabled` (VAL-165-12; herda 920 e 946)
+        - o texto é "Filtros" sem contador e "Filtros (N)" com `filtersCount` maior que 0; o clique chama `onOpenFilters` (VAL-165-12; herda 920)
+        - sem violação de axe (`expectNoAxeViolations(container)`)
+    - **Gate:** `npm run typecheck && npm run lint && npm test -- --run --maxWorkers=2 src/components/test/ProjectsToolbar.test.tsx src/pages/test/Projects.page.test.tsx src/pages/hooks/test/useProjects.test.tsx`
+    - **Feito quando:** a página usa `ProjectsToolbar`; `projects.module.css` perdeu `controls` e `search`; `ProjectsToolbarProps` local, `export default`, sem comentário; toda classe `css.x` existe no módulo novo com declaração idêntica à da `staging`; `Projects.page.test.tsx` sem edição e verde
+    - **Evidência:** ...
+
+- [ ] T15 — Componente `ProjectsFilterBar`
+    - **Arquivo(s):** `src/components/ProjectsFilterBar.tsx`, `src/components/test/ProjectsFilterBar.test.tsx`, `src/styles/components/projectsFilterBar.module.css`, `src/styles/pages/projects.module.css` (remove as classes movidas), `src/pages/Projects.page.tsx`
+    - **Depende de:** T14
+    - **Testes (escritos antes, RED):** (`render` com props simuladas, sem store; texto em português)
+        - renderiza os grupos Tipo e Categoria com `aria-pressed` pelo valor recebido e o separador `aria-hidden` (VAL-165-12; herda 258)
+        - clicar numa opção chama `setType` ou `setCategory` com o valor (VAL-165-12; herda 258)
+        - `ref` e `dragProps` ficam no contêiner (VAL-165-12; herda 298)
+        - sem violação de axe (`expectNoAxeViolations(container)`)
+    - **Gate:** `npm run typecheck && npm run lint && npm test -- --run --maxWorkers=2 src/components/test/ProjectsFilterBar.test.tsx src/pages/test/Projects.page.test.tsx src/pages/hooks/test/useProjects.test.tsx`
+    - **Feito quando:** a página usa `ProjectsFilterBar`; `projects.module.css` perdeu `filters` (com o `@media`, o `data-dragging` e o `mask-image`) e `separator`; `ProjectsFilterBarProps` local, `export default`, sem comentário; toda classe `css.x` existe no módulo novo com declaração idêntica à da `staging`; `Projects.page.test.tsx` sem edição e verde
+    - **Evidência:** ...
+
+- [ ] T16 — Componente `ProjectsSummary`
+    - **Arquivo(s):** `src/components/ProjectsSummary.tsx`, `src/components/test/ProjectsSummary.test.tsx`, `src/styles/components/projectsSummary.module.css`, `src/styles/pages/projects.module.css` (remove as classes movidas), `src/pages/Projects.page.tsx`
+    - **Depende de:** T15
+    - **Testes (escritos antes, RED):** (`render` com props simuladas, sem store; texto em português)
+        - o `p` com `role="status"` mostra `text` e é o mesmo nó entre renderizações (VAL-165-12; herda 351)
+        - o botão "Limpar filtros" só existe com `canClear` e o clique chama `onClear` (VAL-165-12; herda 378)
+        - sem violação de axe (`expectNoAxeViolations(container)`)
+    - **Gate:** `npm run typecheck && npm run lint && npm test -- --run --maxWorkers=2 src/components/test/ProjectsSummary.test.tsx src/pages/test/Projects.page.test.tsx src/pages/hooks/test/useProjects.test.tsx`
+    - **Feito quando:** a página usa `ProjectsSummary` com `results.canClearFilters`; `projects.module.css` perdeu `summary` e `count`; `ProjectsSummaryProps` local, `export default`, sem comentário; toda classe `css.x` existe no módulo novo com declaração idêntica à da `staging`; `Projects.page.test.tsx` sem edição e verde
+    - **Evidência:** ...
+
+- [ ] T17 — Componente `ProjectsLoadMore`
+    - **Arquivo(s):** `src/components/ProjectsLoadMore.tsx`, `src/components/test/ProjectsLoadMore.test.tsx`, `src/styles/components/projectsLoadMore.module.css`, `src/styles/pages/projects.module.css` (remove as classes movidas), `src/pages/Projects.page.tsx`
+    - **Depende de:** T16
+    - **Testes (escritos antes, RED):** (`render` com props simuladas, sem store; texto em português)
+        - com `loadMoreError` mostra o `LoadError` com o `id` recebido e "Tentar novamente" chama `retryLoadMore` (VAL-165-12; herda 469)
+        - o botão só existe com `hasMore` e sem `isListError` (VAL-165-12; herda 404)
+        - com `isFetchingMore` o botão fica `loading` sem desabilitar e o segundo clique é ignorado (VAL-165-12; herda 445)
+        - sem violação de axe (`expectNoAxeViolations(container)`)
+    - **Gate:** `npm run typecheck && npm run lint && npm test -- --run --maxWorkers=2 src/components/test/ProjectsLoadMore.test.tsx src/pages/test/Projects.page.test.tsx src/pages/hooks/test/useProjects.test.tsx`
+    - **Feito quando:** a página usa `ProjectsLoadMore`; `projects.module.css` fica só com `container`, `heading` e `intro`; `Projects.page.tsx` tem no máximo cerca de 90 linhas, desestrutura no máximo 12 nomes e não importa mais `Button`, `AsyncSection`, `FilterGroup`, `SearchInput`, `LoadError`, `ProjectCard` nem `ProjectCardSkeleton` (VAL-165-08, 12 e 13); `ProjectsLoadMoreProps` local, `export default`, sem comentário; toda classe `css.x` existe no módulo novo com declaração idêntica à da `staging`; `Projects.page.test.tsx` sem edição e verde
+    - **Evidência:** ...
+
+- [ ] T18 — Documentação
+    - **Arquivo(s):** `docs/screens/about.md` (parágrafo de `useAbout`, linha cerca de 454), `docs/screens/projects.md` (Implementação de `useProjects` e dos componentes novos), `docs/architecture/components.md` (catálogo: acrescentar os oito componentes e trocar a menção ao `ProjectListItem` local da página), `docs/architecture/frontend.md` se citar hooks ou o formato antigo, e qualquer outro `docs/` achado por `grep -rn "useProjects\|useAbout\|ProjectListItem" docs/` que cite o formato antigo
+    - **Depende de:** T17
+    - **Testes (escritos antes, RED):** não se aplica
+    - **Gate:** `npm run lint` e `grep -rn "useAboutRetryFocus\|useTrajectorySelection\|useProjectsResults\|ProjectsToolbar\|ProjectsLoadMore" docs/` com ao menos uma ocorrência por hook e por componente novo
+    - **Feito quando:** a documentação cita os cinco hooks novos, o util `aboutElementIds`, o formato por subobjetos e os oito componentes de Projetos no catálogo, sem texto de UI nem comentário em código (VAL-165-11)
+    - **Evidência:** ...
+
+- [ ] T19 — Verificação completa
     - **Arquivo(s):** nenhum (só verificação)
     - **Depende de:** todas as tarefas anteriores
     - **Testes (escritos antes, RED):** não se aplica
-    - **Gate:** `uptime` até 14; `npm run build && npm run test:cov -- --maxWorkers=2` (única rodada pesada); depois comparar os seis `sha256sum` do HTML com os da T0; depois `npm run build:fatec` e `npx playwright test e2e/about.spec.ts e2e/projects.spec.ts e2e/projects-filters.spec.ts e2e/no-javascript.spec.ts e2e/accessibility.spec.ts e2e/keyboard.spec.ts` (um de cada vez); conferir `git diff origin/staging -- src/components src/types/about src/pages/test e2e` vazio (exceto a adição eventual da T1 em `Projects.page.test.tsx`) e o grep de memoização do VAL-165-09
-    - **Feito quando:** tudo passa, os seis hashes são iguais aos da T0 e os critérios VAL-165-01 a 11 estão marcados
+    - **Gate:** `uptime` até 14; `npm run build && npm run test:cov -- --maxWorkers=2` (única rodada pesada); depois comparar os seis `sha256sum` do HTML normalizado com os da T0 (mesmo script); depois `npm run build:fatec` e `npx playwright test e2e/about.spec.ts e2e/projects.spec.ts e2e/projects-filters.spec.ts e2e/no-javascript.spec.ts e2e/accessibility.spec.ts e2e/keyboard.spec.ts` (um de cada vez); conferir `git diff origin/staging -- src/components/About*.tsx src/components/AsyncSection.tsx src/types/about src/pages/test e2e` vazio (exceto a adição eventual da T1 em `Projects.page.test.tsx`), que `src/styles/pages/projects.module.css` ficou só com `container`, `heading` e `intro` (VAL-165-13), o grep de memoização do VAL-165-09 e a verificação visual do VAL-165-14 (Projetos em claro e escuro, 375, 768 e 1280 px, comparada com a `staging`); por fim `npm run changeset` com `patch` (não vazio)
+    - **Feito quando:** tudo passa, os seis hashes são iguais aos da T0, o changeset `patch` existe e os critérios VAL-165-01 a 14 estão marcados
     - **Evidência:** ...
