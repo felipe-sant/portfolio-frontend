@@ -1,7 +1,7 @@
 # Spec: dados-estruturados-de-projeto
 
 > **Tipo:** `feature` <br />
-> **Status:** `em-revisao` <br />
+> **Status:** `em-andamento` <br />
 > **Issue:** `#201` e `#208` (uma feature só, um PR) <br />
 > **Criado em:** `11-11-2026`
 
