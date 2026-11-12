@@ -14,13 +14,13 @@ Regras para o `executor`: nenhum comentário em código (nem `//`, `/* */`, JSDo
 
 ## Tarefas
 
-- [ ] T1 — Adicionar `zod` e conferir peso e compatibilidade
+- [x] T1 — Adicionar `zod` e conferir peso e compatibilidade
     - **Arquivo(s):** `package.json`, `package-lock.json`
     - **Depende de:** aprovação da spec e resposta à pergunta 1 e 6 da spec
     - **Testes (escritos antes, RED):** não se aplica (dependência)
     - **Gate:** `npm ci && npm run typecheck && npm run lint`
     - **Feito quando:** `zod` está em `dependencies` com a versão decidida; `package-lock.json` tem uma versão só de `zod` (`npm ls zod`); o tempo de `npm run typecheck` antes e depois fica anotado na evidência; o checklist da spec foi reconferido com `npm view` e `npm audit` (se algo mudou desde 11/11/2026, voltar ao `sdd`).
-    - **Evidência:** (preenchida pelo `executor`)
+    - **Evidência:** `zod@4.6.6` exato; `npm ls zod` com uma versão só; `npm audit` 0 avisos (a 4.6.5 tem GHSA-mrhx-c7xc-m3w5, HIGH). `npm run typecheck` sem o Zod: 45,9 s e 778 MB; com um arquivo de sonda de `zod/mini` (enum, objeto, regex, e-mail, url, anotação contra tipo): 18,0 s e 766 MB, sem erro (issue #6732 não reproduzida).
 
 - [ ] T2 — Schemas em `src/services/content/schemas/` e tipo `ContentSchema`
     - **Arquivo(s):** `src/types/content/ContentSchema.types.ts`, `src/services/content/schemas/{imageAsset,responsiveImage,stackGroup,profile,projectRecord,timelineItemRecord,listResponse}.schema.ts`, testes em `src/services/content/schemas/test/<nome>.schema.test.ts`
