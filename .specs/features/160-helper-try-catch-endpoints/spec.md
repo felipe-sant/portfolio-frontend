@@ -1,7 +1,7 @@
 # Spec: Helper do try/catch dos endpoints de conteúdo
 
 > **Tipo:** `feature` (refactor, sem mudança de comportamento) <br />
-> **Status:** `em-revisao` <br />
+> **Status:** `em-andamento` <br />
 > **Issue:** `#160` <br />
 > **Criado em:** `12-11-2026`
 
