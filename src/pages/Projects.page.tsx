@@ -53,6 +53,7 @@ function ProjectsPage() {
         t,
         ids,
         jsonLd,
+        breadcrumbJsonLd,
         filters,
         filtersRef,
         filtersDragProps,
@@ -103,6 +104,7 @@ function ProjectsPage() {
                 path={ROUTES.projects}
             />
             {jsonLd && <JsonLd data={jsonLd} />}
+            {breadcrumbJsonLd && <JsonLd data={breadcrumbJsonLd} />}
             <div className={css.container}>
                 <h1 id={ids.heading} tabIndex={-1} className={css.heading}>
                     {t("heading")}

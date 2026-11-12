@@ -71,6 +71,16 @@ function readJsonLd() {
     return JSON.parse(script?.textContent ?? "null")
 }
 
+function readAllJsonLd() {
+    return Array.from(document.querySelectorAll('script[type="application/ld+json"]')).map(
+        (script) => JSON.parse(script.textContent ?? "null")
+    )
+}
+
+function readBreadcrumb() {
+    return readAllJsonLd().find((node) => node?.["@type"] === "BreadcrumbList")
+}
+
 function hiddenItemsOf(card: HTMLElement) {
     return card.closest("ul")?.querySelectorAll(':scope > li[aria-hidden="true"]') ?? []
 }
@@ -633,6 +643,60 @@ describe("ProjectsPage", () => {
         expect(readJsonLd().mainEntity.itemListElement).toHaveLength(9)
         expect(readJsonLd().url).toBe(plain.url)
         expect(readJsonLd().name).toBe(plain.name)
+    })
+
+    it("emite BreadcrumbList com Início e Projetos, nessa ordem, com URLs absolutas", async () => {
+        stubProjects(3)
+
+        renderPage()
+        await waitFor(() => expect(readBreadcrumb()).toBeDefined())
+
+        expect(readBreadcrumb().itemListElement).toEqual([
+            { "@type": "ListItem", position: 1, name: "Início", item: `${SITE_URL}/pt-BR` },
+            {
+                "@type": "ListItem",
+                position: 2,
+                name: "Projetos",
+                item: `${SITE_URL}/pt-BR/projects`
+            }
+        ])
+    })
+
+    it.each([
+        ["pt-BR", "Início", "Projetos"],
+        ["en", "Home", "Projects"],
+        ["es", "Inicio", "Proyectos"]
+    ] as const)("os nomes do breadcrumb em %s são %s e %s", async (language, home, projects) => {
+        stubProjects(3)
+        await setLanguage(language)
+
+        renderPage(`/${language}/projects`)
+        await waitFor(() => expect(readBreadcrumb()).toBeDefined())
+
+        expect(readBreadcrumb().itemListElement.map((item: { name: string }) => item.name)).toEqual(
+            [home, projects]
+        )
+        expect(readBreadcrumb().itemListElement[1].item).toBe(`${SITE_URL}/${language}/projects`)
+    })
+
+    it("a CollectionPage continua sendo o primeiro JSON-LD", async () => {
+        stubProjects(3)
+
+        renderPage()
+        await waitFor(() => expect(readBreadcrumb()).toBeDefined())
+
+        expect(readAllJsonLd().map((node) => node["@type"])).toEqual([
+            "CollectionPage",
+            "BreadcrumbList"
+        ])
+    })
+
+    it("sem dados carregados não emite o breadcrumb", () => {
+        stubProjects(3)
+
+        renderPage()
+
+        expect(readAllJsonLd()).toEqual([])
     })
 
     it("abre só a lista e as opções, sem consulta de índice", async () => {

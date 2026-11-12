@@ -8,7 +8,9 @@ import resolveSupportedLanguage from "@/i18n/resolveSupportedLanguage"
 import useDragScroll from "@/hooks/useDragScroll"
 import useProjectsFilters from "@/pages/hooks/useProjectsFilters"
 import useProjectsPages from "@/pages/hooks/useProjectsPages"
+import ROUTES from "@/routers/paths"
 import projectsApi from "@/store/api/projects.api"
+import buildBreadcrumbJsonLd from "@/utils/buildBreadcrumbJsonLd"
 import buildProjectsJsonLd from "@/utils/buildProjectsJsonLd"
 import buildProjectsQueryArgs from "@/utils/buildProjectsQueryArgs"
 import projectsElementIds from "@/utils/projectsElementIds"
@@ -86,6 +88,12 @@ function useProjects() {
                   { title: t("meta.title"), description: t("meta.description") },
                   pages.firstPageItems
               )
+            : undefined,
+        breadcrumbJsonLd: pages.firstPageItems
+            ? buildBreadcrumbJsonLd(language, [
+                  { name: t("common:navigation.home"), path: ROUTES.home },
+                  { name: t("common:navigation.projects"), path: ROUTES.projects }
+              ])
             : undefined,
         filters,
         filtersRef,
