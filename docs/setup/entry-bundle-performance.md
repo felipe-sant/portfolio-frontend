@@ -84,9 +84,18 @@ O TBT fica em `audits["total-blocking-time"].numericValue` do JSON.
 
 ## Resultado do QA
 
-A preencher pelo `qa` (CA2), com a máquina ociosa, linha de base medida de novo na mesma sessão e a mediana de pelo menos 5 rodadas alternadas.
+Medido em 11/11/2026 por `qa`, com a máquina ociosa (carga entre 1,3 e 1,9; só a última rodada de Informações passou de 2), Lighthouse 13.6.0 no perfil mobile padrão, uma instância do Chromium do Playwright e dois previews em portas próprias, rodadas alternadas (base, branch, base, branch…) na mesma sessão. A mediana é de 5 rodadas por página e por build.
 
 | Página      | TBT base `6c10b34` (ms) | TBT branch (ms) | Rodadas |
 | ----------- | ----------------------: | --------------: | ------: |
-| Início      |                         |                 |         |
-| Informações |                         |                 |         |
+| Início      |                   270,5 |            60,0 |       5 |
+| Informações |                   344,0 |            98,0 |       5 |
+
+Rodadas, na ordem (base | branch), em ms:
+
+| Página      | Base                                | Branch                         |
+| ----------- | ----------------------------------- | ------------------------------ |
+| Início      | 168,5; 127,5; 410,5; 529,0; 270,5   | 60,0; 48,5; 28,5; 107,5; 122,5 |
+| Informações | 221,5; 344,0; 712,5; 255,0; 6.854,5 | 98,0; 279,8; 36,0; 2,5; 157,0  |
+
+**Outlier:** a rodada 5 da base em Informações (6.854,5 ms) coincidiu com carga de 3,06 na máquina. Foi mantida na tabela e não afeta a mediana, que é a medida de aceite. O TBT da branch é menor que o da base nas duas páginas, em todas as rodadas da Início e em todas as de Informações; o CA2 passa.
