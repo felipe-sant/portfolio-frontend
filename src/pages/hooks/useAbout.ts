@@ -2,11 +2,10 @@ import { useCallback, useEffect, useRef, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { useLocation } from "react-router-dom"
 import TIMELINE_KINDS from "@/enum/timelineKinds.enum"
+import useLanguage from "@/hooks/useLanguage"
 import useLocalizedPath from "@/hooks/useLocalizedPath"
 import useResume from "@/hooks/useResume"
 import useShareImage from "@/hooks/useShareImage"
-import FALLBACK_LANGUAGE from "@/i18n/fallbackLanguage"
-import resolveSupportedLanguage from "@/i18n/resolveSupportedLanguage"
 import ROUTES from "@/routers/paths"
 import profileApi from "@/store/api/profile.api"
 import timelineApi from "@/store/api/timeline.api"
@@ -37,8 +36,8 @@ const FOCUS_IDS: Record<FocusableName, string> = {
 
 function useAbout() {
     const shareImage = useShareImage("about")
-    const { t, i18n } = useTranslation(["about", "common"])
-    const language = resolveSupportedLanguage(i18n.resolvedLanguage) ?? FALLBACK_LANGUAGE
+    const { t } = useTranslation(["about", "common"])
+    const language = useLanguage()
     const localizedPath = useLocalizedPath()
     const resume = useResume()
     const { pathname } = useLocation()

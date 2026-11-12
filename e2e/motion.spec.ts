@@ -2,6 +2,7 @@ import { expect, test } from "@playwright/test"
 import type { Locator, Page } from "@playwright/test"
 import openPreferences from "./support/openPreferences"
 import readStackOffset from "./support/readStackOffset"
+import waitForHydration from "./support/waitForHydration"
 
 const STACK_HEADING = "Tecnologias que uso"
 const MOVEMENT_THRESHOLD = 5
@@ -14,6 +15,7 @@ function getStackBand(page: Page) {
 async function openHome(page: Page) {
     await page.goto("pt-BR")
     await getStackBand(page).waitFor()
+    await waitForHydration(page)
 }
 
 async function getMotionToggle(page: Page) {

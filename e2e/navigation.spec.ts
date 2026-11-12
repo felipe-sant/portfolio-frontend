@@ -2,6 +2,7 @@ import { expect, test } from "@playwright/test"
 import type { Page } from "@playwright/test"
 import FATEC_BASE_PATH from "@scripts/fatecBasePath"
 import UI_TEXTS from "./support/uiTexts"
+import waitForHydration from "./support/waitForHydration"
 
 const DESKTOP_MIN_WIDTH = 720
 const BELOW_DESKTOP_WIDTH = 719
@@ -29,6 +30,7 @@ function isDesktop(page: Page) {
 async function openHome(page: Page, language: Language) {
     await page.goto(language)
     await page.getByRole("heading", { level: 1 }).waitFor()
+    await waitForHydration(page)
 }
 
 async function hasHorizontalScroll(page: Page) {
@@ -186,7 +188,7 @@ test.describe("largura do cabeçalho", () => {
                 await page.goto(path)
                 await expect(page.getByRole("heading", { level: 1 })).toBeVisible()
 
-                expect(await hasHorizontalScroll(page), `largura ${width}px`).toBe(false)
+                await expect.poll(() => hasHorizontalScroll(page), `largura ${width}px`).toBe(false)
             }
         })
     }
@@ -200,7 +202,7 @@ test.describe("largura do cabeçalho", () => {
             for (const width of SWEEP_WIDTHS) {
                 await page.setViewportSize({ width, height: VIEWPORT_HEIGHT })
 
-                expect(await hasHorizontalScroll(page), `largura ${width}px`).toBe(false)
+                await expect.poll(() => hasHorizontalScroll(page), `largura ${width}px`).toBe(false)
             }
         })
     }

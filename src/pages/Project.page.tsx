@@ -11,8 +11,7 @@ import ProjectLinks from "@/components/ProjectLinks"
 import ProjectStack from "@/components/ProjectStack"
 import ProjectSkeleton from "@/components/ProjectSkeleton"
 import RelatedProjects from "@/components/RelatedProjects"
-import FALLBACK_LANGUAGE from "@/i18n/fallbackLanguage"
-import resolveSupportedLanguage from "@/i18n/resolveSupportedLanguage"
+import useLanguage from "@/hooks/useLanguage"
 import useLocalizedPath from "@/hooks/useLocalizedPath"
 import usePageTransition from "@/hooks/usePageTransition"
 import useShareImage from "@/hooks/useShareImage"
@@ -65,8 +64,8 @@ function MetaItem({ text, hasSeparator }: MetaItemProps) {
 }
 
 function ProjectDetailView({ project, documentName }: ProjectContentProps) {
-    const { t, i18n } = useTranslation(["project", "common"])
-    const language = resolveSupportedLanguage(i18n.resolvedLanguage) ?? FALLBACK_LANGUAGE
+    const { t } = useTranslation(["project", "common"])
+    const language = useLanguage()
     const document = useProjectDocument(project, documentName)
     const typeLabels = project.types.map((type) => t(`common:projectType.${type}`))
     const labelItems = [...typeLabels, project.date.slice(0, 4)]

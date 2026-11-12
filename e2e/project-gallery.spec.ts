@@ -8,6 +8,7 @@ import PROJECT_TEXTS from "./support/projectTexts"
 import projectPath from "./support/projectPath"
 import readProjectDetail from "./support/readProjectDetail"
 import serveProjectFixture from "./support/serveProjectFixture"
+import waitForHydration from "./support/waitForHydration"
 
 const LANGUAGES = ["pt-BR", "en", "es"] as const
 const MNIST = "MNIST Classifier"
@@ -27,6 +28,7 @@ async function openProjectWithImages(
     const project = readProjectDetail(language, MNIST)
     await page.goto(`${language}/rota-inexistente`)
     await page.getByRole("heading", { level: 1 }).waitFor()
+    await waitForHydration(page)
     afterProbe?.()
     const fixture = await serveProjectFixture(page, {
         language,
