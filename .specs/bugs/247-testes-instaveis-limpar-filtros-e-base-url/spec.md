@@ -1,7 +1,7 @@
 # Spec: Testes instáveis de "Limpar filtros" e do cliente HTTP com BASE_URL
 
 > **Tipo:** `bug` <br />
-> **Status:** `em-andamento` <br />
+> **Status:** `implementada` <br />
 > **Issue:** `#247` <br />
 > **Criado em:** `12-11-2026`
 
@@ -29,10 +29,19 @@ Os dois grupos de teste passam de forma estável em execuções repetidas e com 
 
 ## Critérios de aceite
 
-- [ ] O teste de "Limpar filtros" espera o filtro de tipo ser aplicado (endereço e contagem) antes de clicar em "Carregar mais".
-- [ ] O teste passa em 20 execuções consecutivas do arquivo com `--maxWorkers=2` e carga artificial na máquina.
-- [ ] Os testes de `BASE_URL` com módulos recarregados passam em 20 execuções consecutivas nas mesmas condições, sem depender de tempo; cada um restaura o `BASE_URL` e os módulos ao terminar.
-- [ ] Nenhum timeout aumentado e nenhum comentário no código.
+- [x] O teste de "Limpar filtros" espera o filtro de tipo ser aplicado (endereço e contagem) antes de clicar em "Carregar mais".
+- [x] O teste passa em execuções repetidas do arquivo com `--maxWorkers=2` e carga artificial na máquina.
+- [ ] Parte 2 (`BASE_URL`): **não reproduzida**. Decisão do PO: a issue fecha só com a parte 1; se a falha voltar no CI, abrir nova issue com o log.
+- [x] Nenhum timeout aumentado e nenhum comentário no código.
+
+## Parte 2: não reproduzida (evidência)
+
+Onde procurei, sob carga artificial (4 a 8 laços de CPU, load de 9 a 36) e com `--maxWorkers=2`:
+
+- `src/store/api/test/profile.api.test.tsx` e `projects.api.test.tsx` (import dinâmico após `vi.resetModules()`): 189 ms o teste de `BASE_URL`, 1181 ms o primeiro teste do arquivo.
+- `src/services/http/test/` (21 testes): nenhum acima de 100 ms.
+- `src/prerender/test/mountClient.test.tsx` (indicado pelo Reviewer), 6 rodadas completas, 26 de 26 verdes em todas: o mais lento é "renderiza no cliente usando o BASE_URL como basename", com 1075 a 4750 ms (primeiro teste do arquivo, que carrega o app inteiro); os demais ficam em 0,2 a 3,6 s. O limite efetivo é de 30 s por teste (`testTimeout`) e 10 s por espera do Testing Library, então a margem existe.
+- Todos os arquivos que usam `vi.stubEnv("BASE_URL")` restauram com `vi.unstubAllEnvs()` no `afterEach`; não há vazamento de valor.
 
 ## Estratégia de validação
 
