@@ -73,7 +73,7 @@ executor: Fase 1          Fase 2              Fase 3   |  PO: T6  |  qa: T7 [P] 
     - **Feito quando:** o gate passa
     - **Evidência:** `npm run typecheck` e `npm run lint` verdes; `npm run build` verde com `VITE_SITE_URL=https://felipe-sant.vercel.app` (sem a variável o build falha por desenho, `scripts/resolveSiteUrl.ts`), e o CSS de `dist/assets/` traz o `mask-image` e o `padding-block` do alvo; `npm test -- --run` com 2904 de 2905 testes verdes e uma falha intermitente de tempo em `src/prerender/test/mountClient.test.tsx` ("renderiza no cliente usando o BASE_URL como basename") com a máquina sob carga 16 a 19, que passa 19/19 em três rodadas isoladas e não toca arquivo desta spec; `test:cov` trocado pela suíte completa pedida pelo Orc.
 
-- [ ] T6 — Verificação manual do PO (CA4, CA9, CA10)
+- [x] T6 — Verificação manual do PO (CA4, CA9, CA10)
     - **Arquivo(s):** nenhum
     - **Depende de:** T5
     - **Testes (escritos antes, RED):** não se aplica
@@ -87,9 +87,9 @@ executor: Fase 1          Fase 2              Fase 3   |  PO: T6  |  qa: T7 [P] 
           anel inteiro e opaco; a 768 px não há esmaecimento; nenhuma das telas rola na horizontal.
     - **Gate:** aprovação do PO
     - **Feito quando:** o PO aprova ou devolve ajustes (que voltam ao `executor`, em T1/T2).
-    - **Evidência:** ...
+    - **Evidência:** verificação manual do PO confirmada pelo Orc.
 
-- [ ] T7 [P] — E2E da Início (responsável: `qa`)
+- [x] T7 [P] — E2E da Início (responsável: `qa`)
     - **Arquivo(s):** `e2e/home.spec.ts` (sem spec novo; `e2e/support/specClassification.ts` não muda)
     - **Depende de:** T6
     - **Testes:**
@@ -105,9 +105,9 @@ executor: Fase 1          Fase 2              Fase 3   |  PO: T6  |  qa: T7 [P] 
         - `NF-RE-03` — em 320, 375, 390 e 768 px, a Início não rola na horizontal (CA8).
     - **Gate:** `npm run build:fatec && npm run test:e2e -- e2e/home.spec.ts`
     - **Feito quando:** o gate passa nos projetos de 390 e 1280 px, nos dois temas, e os testes listados existem com esses IDs.
-    - **Evidência:** ...
+    - **Evidência:** E2E da Início em `e2e/home.spec.ts` entregues pelo `qa` (commits 5c0e749 e 0b397fa), com os checks de E2E do PR #245 verdes no CI.
 
-- [ ] T8 [P] — E2E de Projetos (responsável: `qa`)
+- [x] T8 [P] — E2E de Projetos (responsável: `qa`)
     - **Arquivo(s):** `e2e/projects.spec.ts`
     - **Depende de:** T6
     - **Testes:**
@@ -120,4 +120,4 @@ executor: Fase 1          Fase 2              Fase 3   |  PO: T6  |  qa: T7 [P] 
         - Os testes existentes de `RF-PROJECTS-08` seguem sem alteração e verdes (CA7).
     - **Gate:** `npm run build:fatec && npm run test:e2e -- e2e/projects.spec.ts`
     - **Feito quando:** o gate passa nos projetos de 390 e 1280 px, nos dois temas.
-    - **Evidência:** ...
+    - **Evidência:** E2E de Projetos em `e2e/projects.spec.ts` entregues pelo `qa` (commits f2ae147 e 8f13bb0), com os checks de E2E do PR #245 verdes no CI.
