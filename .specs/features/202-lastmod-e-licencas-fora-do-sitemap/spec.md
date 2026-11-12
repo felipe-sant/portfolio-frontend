@@ -1,7 +1,7 @@
 # Spec: 202-lastmod-e-licencas-fora-do-sitemap
 
 > **Tipo:** `feature` (trilha H: #202 e #207 num PR só) <br />
-> **Status:** `em-revisao` <br />
+> **Status:** `aprovada` <br />
 > **Issue:** `#202 e #207` <br />
 > **Criado em:** `11-11-2026`
 
@@ -115,11 +115,13 @@ Contagem esperada com o conteúdo atual (6 projetos; por idioma: 4 páginas fixa
 
 ## Questões em aberto
 
-1. **(bloqueia CA1 e CA4)** Datas reais de `updatedAt` para os 2 projetos e os 5 documentos que não têm (lista no Problema). Proposta do planejamento, para o Felipe confirmar na revisão: o `executor` preenche uma única vez com `git log -1 --format=%cs -- <arquivo>` do documento (e do `projects.json` para o projeto), registra na Evidência de T5 e o Felipe corrige se algum não for a data real. Isso é curadoria de conteúdo, não derivação no build.
-2. **(bloqueia o texto do `profile.updatedAt`)** Valor inicial de `profile.updatedAt`: proposta, a data do último commit que mudou `profile.json` ou `timeline.json` (mesma técnica da questão 1). O Felipe confirma.
-3. Posição da linha "Atualizado em" em Informações: o protótipo e o handoff não têm esse elemento; proposta, parágrafo discreto (`--text-muted`) logo abaixo do resumo do hero, sem `<time>` visível diferente do resto. O PO decide na verificação à mão.
-4. Rótulo em `en`: "Updated MM/YYYY" ou "Last updated MM/YYYY"; a spec adota "Updated {{date}}" (curto, voz direta).
-5. Início deve mesmo refletir também o maior `updatedAt` de projeto? Adotado (mostra projetos em destaque); se o Felipe preferir só `profile.updatedAt`, é uma linha em `listSitemapEntries`.
+Nenhuma. Respondidas na aprovação da spec em 11-11-2026 (o PO aprovou e manteve as propostas do planejamento; o Felipe corrige no PR se discordar):
+
+1. Datas de `updatedAt` dos 2 projetos e dos 5 documentos sem data: `git log -1 --format=%cs` do arquivo, registradas na Evidência de T5 e listadas no corpo do PR para conferência.
+2. `profile.updatedAt` inicial: data do último commit que mudou `profile.json` ou `timeline.json`.
+3. Linha "Atualizado em": parágrafo discreto abaixo do resumo do topo de Informações.
+4. Rótulo em `en`: "Updated {{date}}".
+5. Início reflete o maior `updatedAt`, incluindo o dos projetos.
 
 ## Notas / decisões
 
