@@ -1,7 +1,7 @@
 # Spec: README da Fatec e origem da publicação
 
 > **Tipo:** `feature` <br />
-> **Status:** `em-revisao` <br />
+> **Status:** `aprovada` <br />
 > **Issue:** `#157` <br />
 > **Criado em:** `11-11-2026`
 
