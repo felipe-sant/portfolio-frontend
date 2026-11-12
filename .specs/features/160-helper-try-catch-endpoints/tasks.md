@@ -61,4 +61,4 @@ T0 (sequencial) → T1 → T2 → T3 → T4 → T5
     - **Testes (escritos antes, RED):** não se aplica
     - **Gate:** `npm run build && npm run test:cov -- --maxWorkers=2` (única rodada pesada; conferir `uptime` antes)
     - **Feito quando:** o gate passa.
-    - **Evidência:** Vitest completo verde (348 arquivos, 3252 testes), typecheck e lint verdes; build e E2E rodam no CI do PR.
+    - **Evidência:** Vitest completo verde (348 arquivos, 3252 testes), typecheck e lint verdes; checks do PR 263 verdes (build, lint, test, changeset, 4 shards de E2E e E2E).
