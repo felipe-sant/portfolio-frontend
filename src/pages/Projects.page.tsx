@@ -54,6 +54,7 @@ function ProjectsPage() {
         shareImage,
         ids,
         jsonLd,
+        breadcrumbJsonLd,
         filters,
         filtersRef,
         filtersDragProps,
@@ -106,6 +107,7 @@ function ProjectsPage() {
                 imageAlt={shareImage.imageAlt}
             />
             {jsonLd && <JsonLd data={jsonLd} />}
+            {breadcrumbJsonLd && <JsonLd data={breadcrumbJsonLd} />}
             <div className={css.container}>
                 <h1 id={ids.heading} tabIndex={-1} className={css.heading}>
                     {t("heading")}
