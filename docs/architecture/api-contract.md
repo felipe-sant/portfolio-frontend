@@ -1071,6 +1071,10 @@ origem, sem mudar telas.
   `limit` (e `lang`) e responde `ProjectPage` e `ProjectFilterOptions` como descrito acima; a tela
   continua só montando parâmetros e acumulando páginas (RF-PROJECTS-26). Conferir no fim da #43 que
   nenhuma função de busca, filtro, ordenação, paginação ou contagem restou em `src/`.
+- **Validação de borda (#162):** `readJson` valida cada JSON lido contra um schema Zod
+  (`src/services/content/schemas/`) e responde `500 INVALID_CONTENT` quando ele foge da forma do
+  contrato. Na #43 os mesmos schemas passam a validar a resposta da API no cliente, pela mesma
+  `ContentSchema`, sem mudar as telas.
 - **Envio de contato:** `POST /contact-messages` continua com a `queryFn` simulada de
   RF-CONTACT-22, que não lê arquivo nem faz requisição.
 

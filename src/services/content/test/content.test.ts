@@ -4,6 +4,10 @@ import { join } from "node:path"
 import { afterEach, describe, expect, it } from "vitest"
 import SUPPORTED_LANGUAGES from "@/i18n/supportedLanguages"
 import buildCurrentTimeline from "@/services/content/buildCurrentTimeline"
+import listResponse from "@/services/content/schemas/listResponse.schema"
+import profileSchema from "@/services/content/schemas/profile.schema"
+import projectRecordSchema from "@/services/content/schemas/projectRecord.schema"
+import timelineItemRecordSchema from "@/services/content/schemas/timelineItemRecord.schema"
 import validateContent from "@/services/content/validation/validateContent"
 import readContentSnapshot from "@/testUtils/readContentSnapshot"
 import relaxAsyncUtilTimeout from "@/testUtils/relaxAsyncUtilTimeout"
@@ -16,6 +20,15 @@ let copyRoot = ""
 
 function describeIssues(issues: ContentIssue[]) {
     return issues.map((issue) => `${issue.path}: ${issue.message}`)
+}
+
+function describeSchemaIssues(result: {
+    success: boolean
+    error?: { issues: { path: PropertyKey[]; message: string }[] }
+}) {
+    return (result.error?.issues ?? []).map(
+        (issue) => `${issue.path.map(String).join(".")}: ${issue.message}`
+    )
 }
 
 afterEach(async () => {
@@ -31,6 +44,24 @@ describe("conteúdo de public/", () => {
 
         expect(describeIssues(issues)).toEqual([])
     })
+
+    it.each(SUPPORTED_LANGUAGES)(
+        "os arquivos de %s passam nos schemas de execução",
+        async (lang) => {
+            const { profile, projects, timeline } = (await readContentSnapshot(PUBLIC_ROOT))
+                .languages[lang]
+
+            expect([
+                describeSchemaIssues(profileSchema.safeParse(profile)),
+                describeSchemaIssues(
+                    listResponse(projectRecordSchema).safeParse({ items: projects })
+                ),
+                describeSchemaIssues(
+                    listResponse(timelineItemRecordSchema).safeParse({ items: timeline })
+                )
+            ]).toEqual([[], [], []])
+        }
+    )
 
     it.each(SUPPORTED_LANGUAGES)("todo projeto de %s tem ao menos uma imagem", async (lang) => {
         const snapshot = await readContentSnapshot(PUBLIC_ROOT)
