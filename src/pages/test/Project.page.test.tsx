@@ -50,7 +50,11 @@ function image(index: number) {
     }
 }
 
-function buildRecords(language: (typeof LANGUAGES)[number], count = 2): ProjectRecord[] {
+function buildRecords(
+    language: (typeof LANGUAGES)[number],
+    count = 2,
+    firstOverrides: Partial<ProjectRecord> = {}
+): ProjectRecord[] {
     return Array.from({ length: count }, (_value, index) => {
         const number = index + 1
         const id = `0192f1a0-0000-7000-8000-${String(number).padStart(12, "0")}`
@@ -64,16 +68,19 @@ function buildRecords(language: (typeof LANGUAGES)[number], count = 2): ProjectR
             featured: number === 1,
             images: number === 1 ? [image(1), image(2)] : [],
             documents: number === 1 ? [README, SETUP, LICENSE] : [README],
-            related: number === 1 ? [{ id: ID_TWO }] : []
+            related: number === 1 ? [{ id: ID_TWO }] : [],
+            ...(number === 1 ? firstOverrides : {})
         })
     })
 }
 
-function buildFiles(count = 2) {
+function buildFiles(count = 2, firstOverrides: Partial<ProjectRecord> = {}) {
     const files: Record<string, unknown> = {}
 
     for (const language of LANGUAGES) {
-        files[`content/${language}/projects.json`] = { items: buildRecords(language, count) }
+        files[`content/${language}/projects.json`] = {
+            items: buildRecords(language, count, firstOverrides)
+        }
         files[`content/${language}/profile.json`] = buildProfile()
         files[`content/${language}/projects/${ID_ONE}/docs/README.md`] =
             `# Título\n\n## Instalação\n\nTexto do readme ${language}`
@@ -87,8 +94,8 @@ function buildFiles(count = 2) {
     return files
 }
 
-function renderProject(entry: string, count = 2) {
-    const fetchMock = stubContentFetch(buildFiles(count))
+function renderProject(entry: string, count = 2, firstOverrides: Partial<ProjectRecord> = {}) {
+    const fetchMock = stubContentFetch(buildFiles(count, firstOverrides))
     const router = createMemoryRouter(routes, { initialEntries: [entry] })
     const utils = renderWithStore(<RouterProvider router={router} />)
 
@@ -567,6 +574,18 @@ function jsonLdNodes() {
     )
 }
 
+type BreadcrumbItem = { name: string; item: string }
+
+function breadcrumbOf(nodes: ReturnType<typeof jsonLdNodes>) {
+    const node = nodes.find((candidate) => candidate["@type"] === "BreadcrumbList")
+
+    if (!node) {
+        return undefined
+    }
+
+    return { ...node, itemListElement: node.itemListElement as BreadcrumbItem[] }
+}
+
 describe("ProjectPage, SEO", () => {
     it("com imagem usa a variante grande da primeira captura com alt, largura e altura", async () => {
         renderProject(`/pt-BR/projects/${ID_ONE}`)
@@ -674,29 +693,121 @@ describe("ProjectPage, SEO", () => {
         )
     })
 
-    it("README tem um JSON-LD do projeto e o documento além do README tem também o TechArticle", async () => {
+    it("README tem o JSON-LD do projeto e o BreadcrumbList; o documento além do README tem também o TechArticle", async () => {
         const { router } = renderProject(`/pt-BR/projects/${ID_ONE}`)
         await projectLoaded()
 
-        await waitFor(() => expect(jsonLdNodes()).toHaveLength(1))
-        const [project] = jsonLdNodes()
-        expect(project["@id"]).toBe(`${SITE}/pt-BR/projects/${ID_ONE}#project`)
-        expect(["SoftwareSourceCode", "CreativeWork"]).toContain(project["@type"])
+        await waitFor(() => expect(jsonLdNodes()).toHaveLength(2))
+        const project = jsonLdNodes().find((node) => node["@id"] !== undefined)
+        expect(project?.["@id"]).toBe(`${SITE}/pt-BR/projects/${ID_ONE}#project`)
+        expect(["SoftwareSourceCode", "CreativeWork"]).toContain(project?.["@type"])
+        expect(breadcrumbOf(jsonLdNodes())).toBeDefined()
 
         await act(async () => {
             await router.navigate(`/pt-BR/projects/${ID_ONE}/docs/SETUP.md`)
         })
 
-        await waitFor(() => expect(jsonLdNodes()).toHaveLength(2))
+        await waitFor(() => expect(jsonLdNodes()).toHaveLength(3))
         const article = jsonLdNodes().find((node) => node["@type"] === "TechArticle")
         expect(article?.about).toEqual({ "@id": `${SITE}/pt-BR/projects/${ID_ONE}#project` })
+        expect(project?.["@id"]).toBe(`${SITE}/pt-BR/projects/${ID_ONE}#project`)
+    })
+
+    it("o SoftwareSourceCode da página traz name, description, url, author, codeRepository e programmingLanguage", async () => {
+        renderProject(`/pt-BR/projects/${ID_ONE}`, 2, {
+            repositoryUrl: "https://github.com/felipe-sant/maps"
+        })
+        await projectLoaded()
+
+        await waitFor(() => expect(jsonLdNodes()).toHaveLength(2))
+        const project = jsonLdNodes().find((node) => node["@type"] === "SoftwareSourceCode")
+        expect(project).toMatchObject({
+            name: "Projeto 1",
+            description: "Resumo pt-BR 1",
+            url: `${SITE}/pt-BR/projects/${ID_ONE}`,
+            author: { "@id": `${SITE}/#person` },
+            codeRepository: "https://github.com/felipe-sant/maps",
+            programmingLanguage: ["TypeScript"]
+        })
+    })
+
+    it("README tem BreadcrumbList com 3 itens: Início, Projetos, título do projeto", async () => {
+        renderProject(`/pt-BR/projects/${ID_ONE}`)
+        await projectLoaded()
+
+        await waitFor(() => expect(breadcrumbOf(jsonLdNodes())).toBeDefined())
+        expect(breadcrumbOf(jsonLdNodes())?.itemListElement).toEqual([
+            { "@type": "ListItem", position: 1, name: "Início", item: `${SITE}/pt-BR` },
+            {
+                "@type": "ListItem",
+                position: 2,
+                name: "Projetos",
+                item: `${SITE}/pt-BR/projects`
+            },
+            {
+                "@type": "ListItem",
+                position: 3,
+                name: "Projeto 1",
+                item: `${SITE}/pt-BR/projects/${ID_ONE}`
+            }
+        ])
+    })
+
+    it.each(["SETUP.md", "setup.md"])(
+        "documento além do README aberto como %s tem 4 itens, o último com o nome exato e a URL canônica",
+        async (opened) => {
+            renderProject(`/pt-BR/projects/${ID_ONE}/docs/${opened}`)
+            await screen.findByRole("heading", { level: 2, name: "SETUP.md" }, { timeout: 5000 })
+
+            await waitFor(() => expect(breadcrumbOf(jsonLdNodes())).toBeDefined())
+            const items = breadcrumbOf(jsonLdNodes())?.itemListElement
+            expect(items).toHaveLength(4)
+            expect(items?.[2]).toMatchObject({ position: 3, name: "Projeto 1" })
+            expect(items?.[3]).toEqual({
+                "@type": "ListItem",
+                position: 4,
+                name: "SETUP.md",
+                item: `${SITE}/pt-BR/projects/${ID_ONE}/docs/SETUP.md`
+            })
+        }
+    )
+
+    it.each([
+        ["pt-BR", "Início", "Projetos"],
+        ["en", "Home", "Projects"],
+        ["es", "Inicio", "Proyectos"]
+    ] as const)("os nomes do breadcrumb em %s são %s e %s", async (language, home, projects) => {
+        renderProject(`/${language}/projects/${ID_ONE}`)
+        await projectLoaded(`${NAMES[language]} 1`)
+
+        await waitFor(() => expect(breadcrumbOf(jsonLdNodes())).toBeDefined())
+        const items = breadcrumbOf(jsonLdNodes())?.itemListElement
+        expect(items?.map((item: BreadcrumbItem) => item.name)).toEqual([
+            home,
+            projects,
+            `${NAMES[language]} 1`
+        ])
+        expect(items?.[0].item).toBe(`${SITE}/${language}`)
+        expect(items?.[1].item).toBe(`${SITE}/${language}/projects`)
+    })
+
+    it("título com </script> não quebra o script: < escapado", async () => {
+        renderProject(`/pt-BR/projects/${ID_ONE}`, 2, { title: "</script><i>" })
+        await projectLoaded("</script><i>")
+
+        await waitFor(() => expect(jsonLdNodes()).toHaveLength(2))
+        const scripts = Array.from(
+            document.querySelectorAll('script[type="application/ld+json"]')
+        ).map((script) => script.textContent ?? "")
+        expect(scripts.every((raw) => !raw.includes("<"))).toBe(true)
+        expect(scripts.some((raw) => raw.includes("\\u003c/script>"))).toBe(true)
     })
 
     it("escapa o < no JSON-LD", async () => {
         renderProject(`/pt-BR/projects/${ID_TWO}`)
         await projectLoaded("Projeto 2")
 
-        await waitFor(() => expect(jsonLdNodes()).toHaveLength(1))
+        await waitFor(() => expect(jsonLdNodes()).toHaveLength(2))
         const raw = document.querySelector('script[type="application/ld+json"]')?.textContent
         expect(raw).not.toContain("<")
         expect(raw).toContain("\\u003cb>")
