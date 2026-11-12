@@ -1086,13 +1086,14 @@ Até o contrato ir para o repositório do backend, ele muda aqui.
   mudar ou remover valor de enum (salvo `format`, acima), mudar o formato de data ou de id, mudar o envelope (`items`,
   `total`, `offset`, `limit`, `availableTypes`), mudar a forma ou a ordem de `groups` da
   trajetória, mudar um padrão de parâmetro ou o formato de erro.
-- **Idioma do conteúdo na V2:** o parâmetro `lang` existe porque a v1 é servida pelo GitHub Pages,
-  que não escolhe conteúdo por header. Com o backend real, ele pode virar o header
-  `Accept-Language` (com `Vary: Accept-Language` no cache) ou um prefixo de idioma no caminho
-  (`/en/projects`, coerente com o idioma no caminho das páginas da #53). Na transição, o backend
-  aceita as duas formas, com `lang` valendo primeiro e `Accept-Language` como alternativa quando
-  `lang` falta; o cliente troca depois, só em `src/store/api/`, sem mudar o formato das respostas.
-  A decisão fica com o backend, onde o contrato oficial vai viver.
+- **Idioma do conteúdo com o backend real (decidido em 11/11/2026, #68):** o parâmetro `lang` continua
+  como a forma de pedir o idioma do conteúdo. Ele existe porque a v1 é servida pelo GitHub Pages, que não
+  escolhe conteúdo por header, e fica também com o backend real, para o cliente não mudar. O
+  `Accept-Language` continua sendo enviado em toda requisição, como hoje, e segue valendo para o idioma
+  das mensagens de erro. O header para o conteúdo (com `Vary: Accept-Language` no cache) e o prefixo de
+  idioma no caminho (`/en/projects`) ficam descartados por ora; se o backend quiser mudar, a transição
+  aceita as duas formas, com `lang` valendo primeiro, e o cliente troca só em `src/store/api/`, sem mudar o
+  formato das respostas. O contrato oficial, quando for para o repositório do backend, registra a decisão.
 - Mudança que quebra exige, no mesmo PR, atualizar este documento, o
   [`data-model.md`](data-model.md), os tipos em `src/types/` e a camada local. Valor novo de enum
   exige também a chave do rótulo nos três idiomas.
