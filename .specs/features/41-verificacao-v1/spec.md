@@ -1,7 +1,7 @@
 # Spec: Verificação da v1 (checklist executável e pré-check automatizado)
 
 > **Tipo:** `feature` <br />
-> **Status:** `em-revisao` <br />
+> **Status:** `em-andamento` <br />
 > **Issue:** `#41` <br />
 > **Criado em:** `12-11-2026`
 
@@ -57,13 +57,16 @@ As tabelas de acessibilidade e de requisitos são geradas a partir dos documento
 
 O resultado de um pré-check entra no documento como `pré-check` na coluna `Resultado`, nunca como `OK`: a linha só fecha com `OK`, o nome de quem verificou e a data, no Pages.
 
-**Limite da staging.** A staging é `https://felipe-sant-beta.vercel.app`, na raiz e com `noindex`; o alvo é o Pages, em `/ra2581392423047/`. Por isso, na staging, o Lighthouse SEO sai abaixo da meta por causa do `noindex` e `base`, canônica, `sitemap.xml` e `llms.txt` apontam para outra origem. O pré-check de `base` e de SEO fica mais fiel contra `npm run build:fatec` com `SITE` do Pages, servido localmente.
+**Limite da staging (não usada).** A staging é `https://felipe-sant-beta.vercel.app`, na raiz e com `noindex`; o alvo é o Pages, em `/ra2581392423047/`. Por isso, na staging, o Lighthouse SEO sai abaixo da meta por causa do `noindex` e `base`, canônica, `sitemap.xml` e `llms.txt` apontam para outra origem. O pré-check de `base` e de SEO fica mais fiel contra `npm run build:fatec` com `SITE` do Pages, servido localmente.
 
 ## Regras
 
-- **Falha vira issue `Fix`.** Cada falha ganha uma issue própria no projeto Portfolio, com `Tipo` `BUG`, o ID da linha e o passo para reproduzir; o link vai na coluna `Issue Fix`. Nunca se corrige na #41.
-- **Sem falha sem issue.** A #41 só fecha com toda linha em `OK`, `N/A` com motivo ou ligada a uma issue `Fix`.
-- **A verificação final é no Pages.** Resultado da staging ou do build local não substitui.
+- **Falha vai para o PO.** O QA não abre issue `Fix`. Cada falha do pré-check vai ao PO (`maestri ask "PO"`) com a tela, o ID da linha do checklist, a evidência e os passos para reproduzir; o PO decide entre abrir uma issue `Fix` ou passar direto a um Dev como tarefa ligada à #41. O link da issue ou da tarefa vai na coluna `Issue Fix`. Fluxo: falha, PO, `Fix` ou Dev, sempre ligada à #41. Nunca se corrige dentro da #41.
+- **Sem falha sem destino.** A #41 só fecha com toda linha em `OK`, `N/A` com motivo ou ligada a uma issue `Fix` ou tarefa de Dev.
+- **A verificação final é no Pages.** O Pages da Fatec ainda não tem o build final (a publicação vem na próxima release). Resultado do build local é `pré-check`; o passo manual do PO (NVDA, TalkBack, NF-IA-18, Lighthouse e axe DevTools no Pages) só vale depois da publicação.
+- **Idiomas.** Checklist completo em `pt-BR` e por amostra em `en` e `es`.
+- **Ambiente do pré-check.** `npm run build:fatec` servido em porta própria (`PREVIEW_PORT`, nunca 4173 nem 5173), um build por vez e com a carga da máquina abaixo de 14. Lighthouse por `npx`, sem entrar no `package.json`. A staging Vercel não é usada.
+- **Registro.** O documento é preenchido na branch da #41.
 
 ## Critérios de aceite
 
@@ -83,12 +86,7 @@ O resultado de um pré-check entra no documento como `pré-check` na coluna `Res
 
 ## Questões em aberto
 
-1. **Lighthouse no projeto:** rodar por `npx lighthouse` (sem entrar no `package.json`) basta como pré-check? Entrar como devDependency exige a checagem de "Dependências novas" do `CLAUDE.md`.
-2. **Quem abre as issues `Fix`:** o QA abre à medida que o pré-check acha falha, ou todas ficam para o PO depois da execução no Pages? A regra desta spec é que a falha só vira issue depois do registro na linha do documento.
-3. **Onde fica o registro:** o PO preenche o documento direto no `staging` (um PR por rodada), ou numa branch única da #41 que vira o PR que fecha a issue?
-4. **Estado do Pages:** o Pages já está publicado com o build final? Sem isso, a execução do PO espera o publish (`fatec-pages.yml`).
-5. **Escopo de idioma:** o checklist roda por completo em `pt-BR` e por amostra em `en` e `es` (nomes acessíveis, A11Y-G15, e NF-IN). Isso basta, ou o PO quer os três idiomas completos?
-6. **Aparelho:** o TalkBack será no Android do PO, com Chrome; confirmar o modelo e a versão para o registro.
+Nenhuma. Decisões do PO na aprovação: falha vai ao PO; pré-check contra `build:fatec` em porta própria; Lighthouse por `npx`; Pages sem build final; `pt-BR` completo e `en`/`es` por amostra; registro na branch da #41.
 
 ## Notas / decisões
 
