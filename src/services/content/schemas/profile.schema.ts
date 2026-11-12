@@ -4,7 +4,10 @@ import stackGroupSchema from "@/services/content/schemas/stackGroup.schema"
 import type Profile from "@/types/profile/Profile.types"
 import type { ZodMiniType } from "zod/mini"
 
+const DAY_PATTERN = /^\d{4}-\d{2}-\d{2}$/
+
 const profileSchema: ZodMiniType<Profile> = object({
+    updatedAt: string().check(regex(DAY_PATTERN)),
     role: string(),
     homeIntro: string(),
     summary: string(),

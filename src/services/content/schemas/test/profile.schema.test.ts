@@ -3,6 +3,13 @@ import profileSchema from "@/services/content/schemas/profile.schema"
 import buildProfile from "@/testUtils/buildProfile"
 
 describe("profileSchema", () => {
+    it("rejeita updatedAt fora do formato AAAA-MM-DD", () => {
+        const result = profileSchema.safeParse(buildProfile({ updatedAt: "11/11/2026" }))
+
+        expect(result.success).toBe(false)
+        expect(result.error?.issues[0]?.path).toEqual(["updatedAt"])
+    })
+
     it("rejeita countryCode fora de duas letras maiúsculas", () => {
         const profile = buildProfile({
             location: { city: "A", region: "B", countryCode: "br" }
