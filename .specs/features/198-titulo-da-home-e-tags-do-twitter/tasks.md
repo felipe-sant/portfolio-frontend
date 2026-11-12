@@ -4,7 +4,8 @@
 
 ## Plano de execução
 
-O PR tem três commits atômicos, nesta ordem. Nenhum estado vermelho é commitado: cada teste é escrito antes do código
+A entrega tem dois PRs, com commits atômicos nesta ordem: o PR1 leva os commits 1 e 2 mais o changeset e fecha a
+#198 (só referencia a #138); o PR2 leva o commit 3, abre depois do merge do PR1 e fecha a #138. Nenhum estado vermelho é commitado: cada teste é escrito antes do código
 e o commit só sai com o gate verde. Nenhum exemplo nem arquivo leva comentário em código. O changeset (`patch`) não é
 tarefa do `executor`.
 
@@ -13,7 +14,8 @@ Commit 1 (#198)   T1 → T2   Feat :sparkles: [#198] Inclui função e stack no 
 Commit 2 (#138)   T3 → T4   Feat :sparkles: [#138] Completa as tags de compartilhamento do Twitter
 Commit 3 (#138)   T5 → T6 → (aprovação do PO, Q-B) → T7 → T8 → T9
                             Feat :sparkles: [#138] Gera uma imagem de compartilhamento por página
-Fim               T10 Verificação completa
+PR1               Commits 1 e 2 + changeset; T10 (verificação do PR1)
+PR2               Commit 3; T10 (verificação do PR2)
 ```
 
 O título usa a opção A da spec. Se o PO escolher B ao aprovar, troque só a string nos mesmos arquivos.
@@ -213,11 +215,14 @@ const`) e `src/types/seo/SharePage.types.ts` (tipo derivado do enum);
           último do PR.
     - **Evidência:**
 
-- [ ] T10: verificação completa
+- [ ] T10: verificação completa, repartida por PR
     - **Arquivo(s):** nenhum (só verificação)
-    - **Depende de:** todas as tarefas anteriores
+    - **Depende de:** PR1: T1 a T4; PR2: T5 a T9
     - **Testes (escritos antes, RED):** não se aplica
-    - **Gate:** `npm run build && npm run test:cov` (única rodada pesada da feature)
-    - **Feito quando:** o gate passa. Depois dele, a sessão principal sobe `npm run dev` para a verificação manual do PO
-      (spec, "Checagens manuais") e o `qa` roda os E2E.
+    - **Gate:** `npm run build && npm run test:cov` (uma rodada pesada por PR)
+    - **Feito quando:**
+        - PR1: o gate passa com os commits 1 e 2 e o changeset;
+        - PR2: o gate passa com o commit 3, depois do merge do PR1;
+        - depois de cada gate, a sessão principal sobe `npm run dev` para a verificação manual do PO (spec,
+          "Checagens manuais") e o `qa` roda os E2E.
     - **Evidência:**

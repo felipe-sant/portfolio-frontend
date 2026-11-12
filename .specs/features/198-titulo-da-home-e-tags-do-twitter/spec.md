@@ -113,8 +113,8 @@ Cada critério tem um ID desta spec, o requisito de `docs/` entre colchetes e o 
     2. Código-fonte da Início, Projetos, Informações e Contato (Ctrl+U) com as tags `twitter:*` e o `og:image` da
        página. Opcionalmente, uma prévia de link com a URL publicada da `staging` (LinkedIn Post Inspector ou WhatsApp).
     3. Aprovação do desenho de cada uma das 12 imagens em `public/images/share/` **antes** do commit das imagens (T7).
-- **Rollback / mitigação:** são três commits independentes. Reverter o das imagens volta as páginas para
-  `og-site.png` sem afetar o título nem as tags de texto.
+- **Rollback / mitigação:** são dois PRs. O PR1 (título e tags do Twitter) e o PR2 (imagens) são independentes: reverter o PR2
+  volta as páginas para `og-site.png` sem afetar o título nem as tags de texto.
 
 ## Questões em aberto
 
