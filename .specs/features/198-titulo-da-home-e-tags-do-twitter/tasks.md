@@ -215,7 +215,7 @@ const`) e `src/types/seo/SharePage.types.ts` (tipo derivado do enum);
           último do PR.
     - **Evidência:** `frontend.md`, `development.md`, `layout.md`, NF-IA-10 e as telas Início, Projetos, Projeto, Informações e Contato citam a imagem própria por idioma, a reserva de Projetos e o `og-site.png`; T5 e T6 saíram no commit das imagens e T8 e T9 num commit próprio.
 
-- [ ] T10: verificação completa, repartida por PR
+- [x] T10: verificação completa, repartida por PR
     - **Arquivo(s):** nenhum (só verificação)
     - **Depende de:** PR1: T1 a T4; PR2: T5 a T9
     - **Testes (escritos antes, RED):** não se aplica
@@ -225,4 +225,4 @@ const`) e `src/types/seo/SharePage.types.ts` (tipo derivado do enum);
         - PR2: o gate passa com o commit 3, depois do merge do PR1;
         - depois de cada gate, a sessão principal sobe `npm run dev` para a verificação manual do PO (spec,
           "Checagens manuais") e o `qa` roda os E2E.
-    - **Evidência:**
+    - **Evidência:** PR1 (#243) e PR2 (#252) com todos os checks do CI verdes: Build, Lint, Test (com cobertura), Changeset, E2E scope, 4 shards de E2E e E2E agregado.
