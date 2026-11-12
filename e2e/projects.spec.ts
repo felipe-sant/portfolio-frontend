@@ -18,6 +18,8 @@ const BATCH = 9
 const TOUCH_TARGET = 44
 const NARROW_VIEWPORT = 320
 const TWO_LINES_MIN_HEIGHT = 40
+const NARROW_FILTER_WIDTHS = [320, 375, 390] as const
+const WIDE_FILTERS_WIDTH = 768
 const TYPE_ORDER = [
     "web",
     "mobile",
@@ -78,6 +80,56 @@ async function getBox(target: ReturnType<Page["locator"]>) {
         throw new Error("o alvo não tem caixa na tela")
     }
     return box
+}
+
+async function setWidth(page: Page, width: number) {
+    await page.setViewportSize({ width, height: 900 })
+    await expect.poll(() => page.evaluate(() => window.innerWidth)).toBe(width)
+}
+
+function narrowFilterWidths(projectWidth: number) {
+    return [...NARROW_FILTER_WIDTHS, projectWidth].filter(
+        (width, index, all) => width < DESKTOP_MIN_WIDTH && all.indexOf(width) === index
+    )
+}
+
+function hasPageHorizontalScroll(page: Page) {
+    return page.evaluate(
+        () => document.documentElement.scrollWidth > document.documentElement.clientWidth
+    )
+}
+
+function readFilterRow(row: ReturnType<Page["locator"]>) {
+    return row.evaluate((element) => {
+        const style = getComputedStyle(element)
+        const box = element.getBoundingClientRect()
+        const buttons = [...element.querySelectorAll("button")].map((button) => {
+            const rect = button.getBoundingClientRect()
+            return { left: rect.left, right: rect.right }
+        })
+        const paddingLeft = parseFloat(style.paddingLeft)
+        const paddingRight = parseFloat(style.paddingRight)
+        const probe = document.createElement("span")
+        probe.style.setProperty("position", "absolute")
+        probe.style.setProperty("width", "calc(var(--pad-page) - var(--space-1))")
+        element.append(probe)
+        const fade = probe.getBoundingClientRect().width
+        probe.remove()
+        return {
+            left: box.left,
+            right: box.right,
+            contentLeft: box.left + paddingLeft,
+            contentRight: box.right - paddingRight,
+            fade,
+            scrollWidth: element.scrollWidth,
+            clientWidth: element.clientWidth,
+            overflowX: style.overflowX,
+            flexWrap: style.flexWrap,
+            maskImage: style.maskImage,
+            first: buttons[0],
+            last: buttons[buttons.length - 1]
+        }
+    })
 }
 
 for (const language of LANGUAGES) {
@@ -573,6 +625,135 @@ test.describe("filtros de tipo e categoria", () => {
 
         expect(overflow).toBeLessThanOrEqual(1)
     })
+
+    for (const language of LANGUAGES) {
+        test(`RF-PROJECTS-08, D70, NF-RE-03: em ${language} abaixo de 640px a linha de filtros rola, esmaece as bordas, começa com o primeiro chip inteiro e o último cortado, e a página não rola na horizontal`, async ({
+            page
+        }) => {
+            test.slow()
+            await openProjects(page, language)
+            const row = getProjectsView(page, language).typeGroup.locator("xpath=..")
+            const projectWidth = page.viewportSize()?.width ?? 0
+
+            for (const width of narrowFilterWidths(projectWidth)) {
+                await setWidth(page, width)
+                await row.evaluate((element) => element.scrollTo({ left: 0, behavior: "instant" }))
+                await expect.poll(() => row.evaluate((element) => element.scrollLeft)).toBe(0)
+                const start = await readFilterRow(row)
+
+                expect(start.scrollWidth, `${width}px`).toBeGreaterThan(start.clientWidth)
+                expect(["auto", "scroll"], `${width}px`).toContain(start.overflowX)
+                expect(start.maskImage, `${width}px`).not.toBe("none")
+                expect(start.maskImage, `${width}px`).toContain("linear-gradient")
+                expect(start.first.left, `${width}px`).toBeGreaterThanOrEqual(start.contentLeft - 1)
+                expect(start.first.right, `${width}px`).toBeLessThanOrEqual(start.contentRight + 1)
+                expect(start.last.right, `${width}px`).toBeGreaterThan(start.contentRight + 1)
+                expect(await hasPageHorizontalScroll(page), `${width}px`).toBe(false)
+
+                await row.evaluate((element) =>
+                    element.scrollTo({ left: element.scrollWidth, behavior: "instant" })
+                )
+                await expect
+                    .poll(() =>
+                        row.evaluate(
+                            (element) =>
+                                element.scrollWidth - element.clientWidth - element.scrollLeft
+                        )
+                    )
+                    .toBeLessThanOrEqual(1)
+                const end = await readFilterRow(row)
+
+                expect(end.last.left, `${width}px`).toBeGreaterThanOrEqual(end.contentLeft - 1)
+                expect(end.last.right, `${width}px`).toBeLessThanOrEqual(end.contentRight + 1)
+                expect(end.first.left, `${width}px`).toBeLessThan(end.contentLeft - 1)
+                expect(await hasPageHorizontalScroll(page), `${width}px`).toBe(false)
+            }
+        })
+    }
+
+    test("A11Y-G06, D70, RF-PROJECTS-08: abaixo de 640px o chip focado pelo Tab fica inteiro dentro da folga e o contorno de foco fora do esmaecimento", async ({
+        page
+    }) => {
+        test.slow()
+        await openProjects(page, "pt-BR")
+        const row = getProjectsView(page, "pt-BR").typeGroup.locator("xpath=..")
+        const buttons = row.getByRole("button")
+        const total = await buttons.count()
+        expect(total).toBeGreaterThan(3)
+        const projectWidth = page.viewportSize()?.width ?? 0
+
+        for (const width of narrowFilterWidths(projectWidth)) {
+            await setWidth(page, width)
+            await page.getByRole("heading", { level: 1 }).click()
+            await buttons.first().focus()
+
+            for (let index = 0; index < total; index++) {
+                const current = buttons.nth(index)
+                await expect(current).toBeFocused()
+                await expect
+                    .poll(
+                        async () => {
+                            const measure = await readFilterRow(row)
+                            const box = await getBox(current)
+                            const reach = await current.evaluate((element) => {
+                                const style = getComputedStyle(element)
+                                return (
+                                    parseFloat(style.outlineWidth) + parseFloat(style.outlineOffset)
+                                )
+                            })
+                            return (
+                                box.x >= measure.contentLeft - 1 &&
+                                box.x + box.width <= measure.contentRight + 1 &&
+                                box.x - reach >= measure.left + measure.fade - 0.5 &&
+                                box.x + box.width + reach <= measure.right - measure.fade + 0.5
+                            )
+                        },
+                        `${width}px, botão ${index + 1}`
+                    )
+                    .toBe(true)
+                await page.keyboard.press("Tab")
+            }
+        }
+    })
+
+    for (const language of LANGUAGES) {
+        test(`RF-PROJECTS-08, D70, NF-RE-03: em ${language} a partir de 640px a linha de filtros não esmaece, quebra quando não cabe e mostra todos os chips inteiros`, async ({
+            page
+        }) => {
+            test.slow()
+            await openProjects(page, language)
+            const row = getProjectsView(page, language).typeGroup.locator("xpath=..")
+            const projectWidth = page.viewportSize()?.width ?? 0
+            const widths = [DESKTOP_MIN_WIDTH, WIDE_FILTERS_WIDTH, projectWidth].filter(
+                (width, index, all) => width >= DESKTOP_MIN_WIDTH && all.indexOf(width) === index
+            )
+
+            for (const width of widths) {
+                await setWidth(page, width)
+                const measure = await readFilterRow(row)
+                const buttons = await row
+                    .getByRole("button")
+                    .evaluateAll((elements) =>
+                        elements.map((element) => element.getBoundingClientRect().toJSON())
+                    )
+                const lines = new Set(buttons.map((button) => Math.round(button.top))).size
+
+                expect(measure.maskImage, `${width}px`).toBe("none")
+                expect(measure.flexWrap, `${width}px`).toBe("wrap")
+                expect(measure.scrollWidth - measure.clientWidth, `${width}px`).toBeLessThanOrEqual(
+                    1
+                )
+                for (const button of buttons) {
+                    expect(button.left, `${width}px`).toBeGreaterThanOrEqual(measure.left - 1)
+                    expect(button.right, `${width}px`).toBeLessThanOrEqual(measure.right + 1)
+                }
+                if (width === DESKTOP_MIN_WIDTH) {
+                    expect(lines, `${width}px`).toBeGreaterThan(1)
+                }
+                expect(await hasPageHorizontalScroll(page), `${width}px`).toBe(false)
+            }
+        })
+    }
 
     test("A11Y-G05, A11Y-PS07: a ordem do Tab segue a ordem visual até os cards", async ({
         page
