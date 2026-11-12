@@ -556,6 +556,17 @@ describe("AboutPage, metadados", () => {
         expect(document.head.querySelector('meta[name="twitter:card"]')).toBeInTheDocument()
     })
 
+    it("declara a imagem de compartilhamento de Informações", () => {
+        renderAbout()
+
+        expect(
+            document.head.querySelector('meta[property="og:image"]')?.getAttribute("content")
+        ).toBe(`${SITE_URL}/images/share/pt-BR/about.png`)
+        expect(
+            document.head.querySelector('meta[property="og:image:alt"]')?.getAttribute("content")
+        ).toBe("Gato ao lado do nome Luiz Felipe dos Santos e do título Informações")
+    })
+
     it("monta o JSON-LD ProfilePage com Person e escapa o <", async () => {
         stubContentFetch(buildFiles({ summary: "Texto </script> perigoso" }))
         renderAbout()

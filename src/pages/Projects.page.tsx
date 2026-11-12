@@ -51,8 +51,10 @@ function ProjectListItem({ project, index, headingLevel }: ProjectListItemProps)
 function ProjectsPage() {
     const {
         t,
+        shareImage,
         ids,
         jsonLd,
+        breadcrumbJsonLd,
         filters,
         filtersRef,
         filtersDragProps,
@@ -101,8 +103,11 @@ function ProjectsPage() {
                 title={t("meta.title")}
                 description={t("meta.description")}
                 path={ROUTES.projects}
+                image={shareImage.image}
+                imageAlt={shareImage.imageAlt}
             />
             {jsonLd && <JsonLd data={jsonLd} />}
+            {breadcrumbJsonLd && <JsonLd data={breadcrumbJsonLd} />}
             <div className={css.container}>
                 <h1 id={ids.heading} tabIndex={-1} className={css.heading}>
                     {t("heading")}

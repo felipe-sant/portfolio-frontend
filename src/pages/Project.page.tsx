@@ -15,14 +15,16 @@ import FALLBACK_LANGUAGE from "@/i18n/fallbackLanguage"
 import resolveSupportedLanguage from "@/i18n/resolveSupportedLanguage"
 import useLocalizedPath from "@/hooks/useLocalizedPath"
 import usePageTransition from "@/hooks/usePageTransition"
+import useShareImage from "@/hooks/useShareImage"
 import NotFoundPage from "@/pages/NotFound.page"
 import useBackToProjects from "@/pages/hooks/useBackToProjects"
 import useProject from "@/pages/hooks/useProject"
 import useProjectDocument from "@/pages/hooks/useProjectDocument"
 import ROUTES from "@/routers/paths"
 import css from "@/styles/pages/project.module.css"
-import buildDocumentDescription from "@/utils/buildDocumentDescription"
+import buildBreadcrumbJsonLd from "@/utils/buildBreadcrumbJsonLd"
 import buildDocumentJsonLd from "@/utils/buildDocumentJsonLd"
+import buildProjectBreadcrumbItems from "@/utils/buildProjectBreadcrumbItems"
 import buildProjectJsonLd from "@/utils/buildProjectJsonLd"
 import findDocumentByName from "@/utils/findDocumentByName"
 import isLicenseDocument from "@/utils/isLicenseDocument"
@@ -69,6 +71,7 @@ function ProjectDetailView({ project, documentName }: ProjectContentProps) {
     const typeLabels = project.types.map((type) => t(`common:projectType.${type}`))
     const labelItems = [...typeLabels, project.date.slice(0, 4)]
     const firstImage = project.images[0]
+    const projectsShareImage = useShareImage("projects")
     const documentEntry = document.document
     const isDocumentPage = documentEntry !== undefined && documentEntry.name !== "README.md"
     const isLicense = documentEntry !== undefined && isLicenseDocument(documentEntry.name)
@@ -80,22 +83,20 @@ function ProjectDetailView({ project, documentName }: ProjectContentProps) {
               project: project.title
           })
 
-    const description = isDocumentPage
-        ? (buildDocumentDescription(document.content, document.format) ??
-          t("project:meta.documentDescription", {
-              document: documentEntry.name,
-              project: project.title
-          }))
-        : project.summary
+    const breadcrumbItems = buildProjectBreadcrumbItems(
+        { home: t("common:navigation.home"), projects: t("common:navigation.projects") },
+        project,
+        isDocumentPage ? documentEntry.name : undefined
+    )
 
     return (
         <>
             <title>{title}</title>
-            <meta name="description" content={description} />
+            <meta name="description" content={document.description} />
             {isLicense && <meta name="robots" content={"noindex"} />}
             <PageMeta
                 title={title}
-                description={description}
+                description={document.description}
                 path={isDocumentPage ? ROUTES.projectDocument : ROUTES.project}
                 params={
                     isDocumentPage
@@ -103,8 +104,8 @@ function ProjectDetailView({ project, documentName }: ProjectContentProps) {
                         : { id: project.id }
                 }
                 type="article"
-                image={firstImage?.large.src}
-                imageAlt={firstImage?.alt}
+                image={firstImage?.large.src ?? projectsShareImage.image}
+                imageAlt={firstImage?.alt ?? projectsShareImage.imageAlt}
                 imageWidth={firstImage?.large.width}
                 imageHeight={firstImage?.large.height}
             />
@@ -112,6 +113,7 @@ function ProjectDetailView({ project, documentName }: ProjectContentProps) {
             {isDocumentPage && (
                 <JsonLd data={buildDocumentJsonLd(language, project, documentEntry)} />
             )}
+            <JsonLd data={buildBreadcrumbJsonLd(language, breadcrumbItems)} />
             <header className={css.header}>
                 <div className={css.badges}>
                     {project.featured && (

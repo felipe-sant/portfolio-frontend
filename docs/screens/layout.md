@@ -285,7 +285,7 @@ Regras:
   autorreferente do idioma (da variável de build de #52, sugestão `VITE_SITE_URL`, mais o `base`),
   `hreflang` recíproco para `pt-BR`, `en`, `es` e `x-default` (`en`), `og:title` e
   `og:description` iguais ao título e à descrição, `og:type`, `og:url` igual à canônica,
-  `og:image` (a do site, 1200×630, ou a captura 16:9 do projeto quando houver, D26), `og:locale`
+  `og:image` (1200×630: a própria por idioma em Início, Projetos, Informações e Contato, de `public/images/share/`; a captura 16:9 do projeto quando houver, D26, ou a de Projetos sem ela; `og-site.png` como reserva), `og:locale`
   do idioma com os outros dois em `og:locale:alternate`, `twitter:card` `summary_large_image` e `twitter:title`, `twitter:description`, `twitter:image` e `twitter:image:alt` iguais a `og:title`, `og:description`, `og:image` e `og:image:alt` (#138).
   JSON-LD por tipo de página (NF-IA-08) é das telas #34 a #38, com o mecanismo de #52.
 - Página não encontrada e página de erro: `<title>` e descrição próprios,

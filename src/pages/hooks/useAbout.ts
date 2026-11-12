@@ -4,6 +4,7 @@ import { useLocation } from "react-router-dom"
 import TIMELINE_KINDS from "@/enum/timelineKinds.enum"
 import useLocalizedPath from "@/hooks/useLocalizedPath"
 import useResume from "@/hooks/useResume"
+import useShareImage from "@/hooks/useShareImage"
 import FALLBACK_LANGUAGE from "@/i18n/fallbackLanguage"
 import resolveSupportedLanguage from "@/i18n/resolveSupportedLanguage"
 import ROUTES from "@/routers/paths"
@@ -35,6 +36,7 @@ const FOCUS_IDS: Record<FocusableName, string> = {
 }
 
 function useAbout() {
+    const shareImage = useShareImage("about")
     const { t, i18n } = useTranslation(["about", "common"])
     const language = resolveSupportedLanguage(i18n.resolvedLanguage) ?? FALLBACK_LANGUAGE
     const localizedPath = useLocalizedPath()
@@ -124,6 +126,7 @@ function useAbout() {
     const showWorkStyle = isProfilePending || workPrinciples.length > 0
 
     return {
+        shareImage,
         t,
         language,
         jsonLd: buildAboutJsonLd(language, { name: t("common:authorName") }, profile, timeline),

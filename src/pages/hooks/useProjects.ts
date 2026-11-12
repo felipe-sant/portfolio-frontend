@@ -6,15 +6,19 @@ import PROJECT_TYPES from "@/enum/projectTypes.enum"
 import FALLBACK_LANGUAGE from "@/i18n/fallbackLanguage"
 import resolveSupportedLanguage from "@/i18n/resolveSupportedLanguage"
 import useDragScroll from "@/hooks/useDragScroll"
+import useShareImage from "@/hooks/useShareImage"
 import useProjectsFilters from "@/pages/hooks/useProjectsFilters"
 import useProjectsPages from "@/pages/hooks/useProjectsPages"
+import ROUTES from "@/routers/paths"
 import projectsApi from "@/store/api/projects.api"
+import buildBreadcrumbJsonLd from "@/utils/buildBreadcrumbJsonLd"
 import buildProjectsJsonLd from "@/utils/buildProjectsJsonLd"
 import buildProjectsQueryArgs from "@/utils/buildProjectsQueryArgs"
 import projectsElementIds from "@/utils/projectsElementIds"
 import splitExperiments from "@/utils/splitExperiments"
 
 function useProjects() {
+    const shareImage = useShareImage("projects")
     const { t, i18n } = useTranslation(["projects", "common"])
     const language = resolveSupportedLanguage(i18n.resolvedLanguage) ?? FALLBACK_LANGUAGE
     const {
@@ -78,6 +82,7 @@ function useProjects() {
     )
 
     return {
+        shareImage,
         t,
         ids: projectsElementIds,
         jsonLd: pages.firstPageItems
@@ -86,6 +91,12 @@ function useProjects() {
                   { title: t("meta.title"), description: t("meta.description") },
                   pages.firstPageItems
               )
+            : undefined,
+        breadcrumbJsonLd: pages.firstPageItems
+            ? buildBreadcrumbJsonLd(language, [
+                  { name: t("common:navigation.home"), path: ROUTES.home },
+                  { name: t("common:navigation.projects"), path: ROUTES.projects }
+              ])
             : undefined,
         filters,
         filtersRef,

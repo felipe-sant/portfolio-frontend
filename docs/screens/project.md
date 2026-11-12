@@ -367,8 +367,8 @@ ids UUID v7 únicos; `types` com pelo menos um código válido e sem repetição
   (`/en/projects/<id>/docs/SETUP.md` aponta para si, mesmo quando aberta como `/docs/setup.md`);
   `hreflang` recíproco entre os três idiomas do mesmo documento, `x-default` no `en` (NF-IA-11).
 - Open Graph: `og:type` `article`; `og:url` igual à canônica; `og:image` a variante grande da
-  primeira captura (D26), absoluta, com `og:image:alt` do `alt` dela, ou a imagem do site quando
-  não há captura; `og:locale` e `og:locale:alternate`; `twitter:card` `summary_large_image`
+  primeira captura (D26), absoluta, com `og:image:alt` do `alt` dela, ou a imagem de compartilhamento de
+  Projetos (`images/share/<idioma>/projects.png`, alt de `projects:meta.imageAlt`) quando não há captura; `og:locale` e `og:locale:alternate`; `twitter:card` `summary_large_image`
   (NF-IA-10).
 - JSON-LD (NF-IA-08, NF-IA-09, mecanismo de #52), em todos os documentos, a entidade do projeto:
   `SoftwareSourceCode` quando há repositório público, `CreativeWork` quando não há, com `@id` igual
@@ -385,6 +385,11 @@ ids UUID v7 únicos; `types` com pelo menos um código válido e sem repetição
   `inLanguage` (o idioma da página; em documento neutro, `contentLanguage` quando houver), `author`
   (o mesmo `@id` da `Person`), `dateModified` (`updatedAt` do documento, se houver) e `about`
   apontando para o `@id` do projeto.
+  Em todos os documentos, também um `BreadcrumbList` (#201, `buildBreadcrumbJsonLd`), nó separado,
+  depois dos anteriores: Início, Projetos e o título do projeto (3 itens no `README.md`), mais o
+  nome exato do documento nos demais (4 itens), com `position` a partir de 1 e `item` absoluto
+  (canônica do projeto ou do documento); os dois primeiros nomes vêm de `common:navigation.home` e
+  `common:navigation.projects`.
   Gerado dos mesmos dados da tela, com `<` escapado.
 - Página não encontrada: a de [`layout.md`](layout.md) (`noindex`, sem canônica, sem Open Graph,
   sem JSON-LD).
@@ -506,7 +511,7 @@ verificação de lá (nos orçamentos, a forma de medir).
 - [ ] `NF-IA-02` — Cada documento com URL e HTML próprios com o markdown renderizado, e no `sitemap.xml` [CI; #49; #51]
 - [ ] `NF-IA-03` — Primeira renderização do cliente igual ao HTML, com projeto e documento serializados na store [CI; #49; #41]
 - [ ] `NF-IA-04` — Status 200 na primeira carga; id ou documento inexistente responde 404 [#41]
-- [ ] `NF-IA-08` — JSON-LD `SoftwareSourceCode` ou `CreativeWork`, e `TechArticle` nos documentos além do `README.md` [CI; #52; #34 a #38; #41]
+- [ ] `NF-IA-08` — JSON-LD `SoftwareSourceCode` ou `CreativeWork`, `TechArticle` nos documentos além do `README.md` e `BreadcrumbList` [CI; #52; #34 a #38; #41]
 - [ ] `NF-IA-09` — JSON-LD gerado dos mesmos dados da tela, com `<` escapado [CI; #52]
 - [ ] `NF-IA-10` — `<title>`, descrição, Open Graph com a captura e `twitter:card` por documento e idioma [CI; #52; #41]
 - [ ] `NF-IA-11` — Canônica absoluta por documento e idioma e `hreflang` recíproco [CI; #52; #41]
