@@ -1,7 +1,7 @@
 # Spec: 162-valida-contrato-dos-json-com-zod
 
 > **Tipo:** `feature` (Feat na branch e no commit) <br />
-> **Status:** `em-revisao` <br />
+> **Status:** `em-andamento` <br />
 > **Issue:** `#162` <br />
 > **Criado em:** `11-11-2026`
 
@@ -57,7 +57,7 @@ Sem tela nova e sem texto de UI novo (a mensagem de erro é de diagnóstico, em 
 
 Dados de 11/11/2026 (`npm view`, `gh api`). Projeto: React `^19.3.1`, TypeScript `^7.0.2`, Vite `^8.3.5`, `"type": "module"`.
 
-| Item                          | `zod` (4.6.7) e `zod/mini`                                                                                                                                                                                                                                                                                                                | `valibot` (1.5.0)                                                                                                                           |
+| Item                          | `zod` (4.6.7) e `zod/mini` (decisão: pin exato em 4.6.5)                                                                                                                                                                                                                                                                                  | `valibot` (1.5.0)                                                                                                                           |
 | ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
 | Última versão                 | 4.6.7, publicada em 12/10/2026                                                                                                                                                                                                                                                                                                            | 1.5.0, publicada em 09/09/2026                                                                                                              |
 | Repositório                   | `colinhacks/zod`, não arquivado, último push em 06/11/2026, ~44 mil estrelas, 122 issues abertas                                                                                                                                                                                                                                          | `open-circle/valibot`, não arquivado, último push em 07/11/2026, ~9 mil estrelas, 241 issues abertas                                        |
@@ -167,11 +167,14 @@ A spec é pequena: dependência, 7 arquivos de schema, `readJson` e três carreg
 | Mensagem do Zod em inglês nas `fields`                                                                          | Aceita (diagnóstico); a mensagem principal é em português                                                                                                                |
 | Prazo: toca a camada de dados de todas as telas perto do corte                                                  | Escopo mínimo acima; sem mudança em `store/api`; se as fixtures se espalharem, adiar para depois do corte                                                                |
 
-## Questões em aberto (para o Felipe)
+## Decisões do Felipe
 
-1. **Biblioteca:** `zod/mini` carregado dinamicamente (recomendada, 7,7 KB gzip), `zod` completo (24,4 KB gzip, API mais encadeada) ou `valibot` (2,5 KB gzip, mas reabre a D-03)?
-2. **Prazo:** fazer antes do corte de 17/11 (a spec é pequena e não toca `store/api`) ou esperar o corte?
-3. **Chaves desconhecidas em runtime:** concorda em ignorá-las no cliente e manter a rejeição só no `content:check`?
-4. **Erro de conteúdo:** `INVALID_CONTENT` com `status 500` serve, ou prefere outro `status` para a v2 (a API real pode devolver o seu)?
-5. **Duplicação:** aceita deixar a parte estrutural de `content:check` duplicada até a #43 (v2), em vez de refatorar agora?
-6. O `executor` pode pinar `zod` em `^4.6.7` ou prefere `4.6.5` por causa da issue #6732 enquanto ela está aberta?
+Aprovadas em 11/11/2026, registradas pelo Orc em nome do Felipe.
+
+1. **Biblioteca:** `zod/mini` carregado por `import()` dinâmico.
+2. **Versão:** pin exato, sem `^`, em `zod@4.6.5` no `package.json` (a versão que evita a issue #6732 do `tsc`).
+3. **Chaves desconhecidas em runtime:** ignoradas no cliente; a rejeição fica só no `content:check`.
+4. **Erro de conteúdo:** `INVALID_CONTENT` com `status 500`.
+5. **Duplicação:** a parte estrutural de `content:check` fica duplicada até a #43 (v2).
+6. **Prazo:** a ordem de execução é decidida pelo Orc; a T4 (fixtures de teste) vai por último.
+7. **Saída do Zod:** quando o backend real existir (v2, #43), a validação passa para a API e o Zod sai do cliente, junto com os schemas de `src/services/content/schemas/` e o carregamento dinâmico em `readJson`.
