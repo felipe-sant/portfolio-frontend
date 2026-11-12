@@ -304,7 +304,7 @@ Lista de necessidades; os nomes de campo, os arquivos e os endpoints estão deci
   Santos · Desarrollador full stack junior · React, TypeScript y Node.js" (`es`) e
   `<meta name="description">`, das chaves de `home`, com as tags nativas do React 19; o título da
   raiz é a exceção ao formato `<Tela> · Luiz Felipe dos Santos` ([`layout.md`](layout.md)).
-- Canônica, `hreflang`, Open Graph (`og:type` `website`, `og:image` a do site, 1200×630) e
+- Canônica, `hreflang`, Open Graph (`og:type` `website`, `og:image` a própria, `images/share/<idioma>/home.png`, 1200×630) e
   `twitter:card`: pelo mecanismo de #52, como em [`layout.md`](layout.md) ("Metadados por rota e
   idioma"); a tela não declara nada além disso.
 - JSON-LD (NF-IA-08, NF-IA-09), num `<script type="application/ld+json">` com `<` escapado,

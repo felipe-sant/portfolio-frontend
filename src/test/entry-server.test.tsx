@@ -271,6 +271,23 @@ describe("render", () => {
         expect(html).toContain(`<meta name="twitter:image" content="${ogImage}"/>`)
     })
 
+    it.each([
+        ["en.html", "en/home.png"],
+        ["es.html", "es/home.png"],
+        ["pt-BR/contact.html", "pt-BR/contact.png"]
+    ])("traz a imagem de compartilhamento da página no idioma em %s", async (file, image) => {
+        const target = targets.find((item) => item.file === file)
+        if (!target) {
+            throw new Error(`Alvo ${file} não encontrado`)
+        }
+
+        const { html } = await render(target)
+        const url = `http://localhost:5173/images/share/${image}`
+
+        expect(html).toContain(`<meta property="og:image" content="${url}"/>`)
+        expect(html).toContain(`<meta name="twitter:image" content="${url}"/>`)
+    })
+
     it.each(["pt-BR/contact.html", "en/contact.html", "es/contact.html"])(
         "renderiza os canais de contato sem formulário em %s",
         async (file) => {

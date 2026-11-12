@@ -129,11 +129,11 @@ Cada subseção lista os requisitos na ordem dos IDs.
 
 ### Metadados e pré-renderização
 
-| ID            | Regra                                                                                                                                                                                                                                                                                             | Fonte                             |
-| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------- |
-| `RF-ABOUT-28` | `<title>` "Informações · Luiz Felipe dos Santos" e `<meta name="description">` por chave do namespace `about` (A11Y-G01); canônica, `hreflang`, Open Graph e `twitter:card` pelo mecanismo de #52 (NF-IA-10, NF-IA-11), com `og:type` `profile` e `og:image` do site (a foto é 1:1, não 1200×630) | `layout.md` (Metadados), NF-IA-10 |
-| `RF-ABOUT-29` | JSON-LD `ProfilePage` com `mainEntity` `Person` (ver [Metadados e dados estruturados](#metadados-e-dados-estruturados)), gerado dos mesmos dados da tela, com `<` escapado (NF-IA-08, NF-IA-09)                                                                                                   | NF-IA-08                          |
-| `RF-ABOUT-30` | `/about` é pré-renderizada nos três idiomas com `h1`, todas as seções e o detalhe dos itens no `main` (NF-IA-01, NF-IA-16, RF-ABOUT-23); os dados de perfil e trajetória usados no HTML vão serializados para a store (NF-IA-03), sem erro de hidratação                                          | NF-IA-01, NF-IA-03                |
+| ID            | Regra                                                                                                                                                                                                                                                                                                                                | Fonte                             |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------- |
+| `RF-ABOUT-28` | `<title>` "Informações · Luiz Felipe dos Santos" e `<meta name="description">` por chave do namespace `about` (A11Y-G01); canônica, `hreflang`, Open Graph e `twitter:card` pelo mecanismo de #52 (NF-IA-10, NF-IA-11), com `og:type` `profile` e `og:image` própria, `images/share/<idioma>/about.png` (a foto é 1:1, não 1200×630) | `layout.md` (Metadados), NF-IA-10 |
+| `RF-ABOUT-29` | JSON-LD `ProfilePage` com `mainEntity` `Person` (ver [Metadados e dados estruturados](#metadados-e-dados-estruturados)), gerado dos mesmos dados da tela, com `<` escapado (NF-IA-08, NF-IA-09)                                                                                                                                      | NF-IA-08                          |
+| `RF-ABOUT-30` | `/about` é pré-renderizada nos três idiomas com `h1`, todas as seções e o detalhe dos itens no `main` (NF-IA-01, NF-IA-16, RF-ABOUT-23); os dados de perfil e trajetória usados no HTML vão serializados para a store (NF-IA-03), sem erro de hidratação                                                                             | NF-IA-01, NF-IA-03                |
 
 ## Navegação
 
@@ -376,7 +376,7 @@ tela cheia por media query, rolagem travada).
 - [ ] `RF-ABOUT-25` — Carregando: skeletons `aria-hidden`, um único `role="status"` e shimmer parado com movimento reduzido [teste] [navegador]
 - [x] `RF-ABOUT-26` — Erro por fonte com mensagem e "Tentar novamente", `role="alert"` uma vez por fonte e nova carga só daquela fonte, nos três idiomas, sem chave no lugar de texto [teste]
 - [x] `RF-ABOUT-27` — Parte sem dado some com o título [teste]
-- [ ] `RF-ABOUT-28` — `<title>` e descrição por chave de `about`, nos três idiomas, sem chave no lugar de texto; `og:type` `profile` e `og:image` do site [teste] [review]
+- [ ] `RF-ABOUT-28` — `<title>` e descrição por chave de `about`, nos três idiomas, sem chave no lugar de texto; `og:type` `profile` e `og:image` própria [teste] [review]
 - [x] `RF-ABOUT-29` — JSON-LD `ProfilePage` com `Person` gerado dos dados da tela, `<` escapado e sem campo inventado [teste]
 - [ ] `RF-ABOUT-30` — `/about` pré-renderizada nos três idiomas com `h1`, seções e detalhe dos itens no `main`, dados serializados na store e sem erro de hidratação [teste] [navegador]
 

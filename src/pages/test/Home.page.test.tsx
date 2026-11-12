@@ -225,6 +225,27 @@ describe("HomePage", () => {
         expect(document.documentElement.lang).toBe("es")
     })
 
+    it.each([
+        ["pt-BR", "Gato ao lado do nome Luiz Felipe dos Santos, do cargo e da stack"],
+        ["en", "Cat next to the name Luiz Felipe dos Santos, the role and the stack"],
+        ["es", "Gato junto al nombre Luiz Felipe dos Santos, el cargo y el stack"]
+    ] as const)("declara a imagem de compartilhamento da Início em %s", async (language, alt) => {
+        await setLanguage(language)
+
+        renderHomePage()
+
+        const image = `${SITE_URL}/images/share/${language}/home.png`
+        expect(
+            document.head.querySelector('meta[property="og:image"]')?.getAttribute("content")
+        ).toBe(image)
+        expect(
+            document.head.querySelector('meta[name="twitter:image"]')?.getAttribute("content")
+        ).toBe(image)
+        expect(
+            document.head.querySelector('meta[property="og:image:alt"]')?.getAttribute("content")
+        ).toBe(alt)
+    })
+
     it.each(["pt-BR", "en", "es"] as const)(
         "declara canônica, quatro hreflang e JSON-LD em %s",
         async (language) => {

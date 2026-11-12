@@ -15,6 +15,7 @@ import FALLBACK_LANGUAGE from "@/i18n/fallbackLanguage"
 import resolveSupportedLanguage from "@/i18n/resolveSupportedLanguage"
 import useLocalizedPath from "@/hooks/useLocalizedPath"
 import usePageTransition from "@/hooks/usePageTransition"
+import useShareImage from "@/hooks/useShareImage"
 import NotFoundPage from "@/pages/NotFound.page"
 import useBackToProjects from "@/pages/hooks/useBackToProjects"
 import useProject from "@/pages/hooks/useProject"
@@ -67,6 +68,7 @@ function ProjectDetailView({ project, documentName }: ProjectContentProps) {
     const typeLabels = project.types.map((type) => t(`common:projectType.${type}`))
     const labelItems = [...typeLabels, project.date.slice(0, 4)]
     const firstImage = project.images[0]
+    const projectsShareImage = useShareImage("projects")
     const documentEntry = document.document
     const isDocumentPage = documentEntry !== undefined && documentEntry.name !== "README.md"
     const isReadme = document.exactName === "README.md"
@@ -91,8 +93,8 @@ function ProjectDetailView({ project, documentName }: ProjectContentProps) {
                         : { id: project.id }
                 }
                 type="article"
-                image={firstImage?.large.src}
-                imageAlt={firstImage?.alt}
+                image={firstImage?.large.src ?? projectsShareImage.image}
+                imageAlt={firstImage?.alt ?? projectsShareImage.imageAlt}
                 imageWidth={firstImage?.large.width}
                 imageHeight={firstImage?.large.height}
             />

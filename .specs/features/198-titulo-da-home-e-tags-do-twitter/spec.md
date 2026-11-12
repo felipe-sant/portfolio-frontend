@@ -1,7 +1,7 @@
 # Spec: título da home, tags do Twitter e imagem de compartilhamento por página
 
 > **Tipo:** `feature` <br />
-> **Status:** `em-andamento` <!-- rascunho -> em-revisao -> aprovada -> em-andamento -> implementada --> <br />
+> **Status:** `implementada` <!-- rascunho -> em-revisao -> aprovada -> em-andamento -> implementada --> <br />
 > **Issue:** `#198` e `#138` (dois PRs: PR1 `Closes #198` e `Refs #138`, PR2 `Closes #138`) <br />
 > **Criado em:** `11-11-2026`
 
