@@ -65,13 +65,13 @@ T1 (teste que reproduz o bug)  →  T2  →  T3  →  T4 [P] e T5 [P]  →  T6
     - **Feito quando:** o gate passa e os testes acima existem; o E2E dos três specs passa depois do build
     - **Evidência:** typecheck, lint e `specClassification.test.ts` verdes; `describe` "sem JavaScript, raiz" em `e2e/no-javascript.spec.ts` com `javaScriptEnabled: false`, IDs `NF-IA-22`, `NF-IA-04`, `NF-IN-05`, `NF-IA-11`, `NF-IA-10` nos títulos (lang/h1/três links, canonical e `hreflang`, título/descrição/`og:*`, navegação por idioma com 200, `404.html` sem `hreflang` nem `noscript[data-root]`). Execução do E2E: verificação no CI / manual do PO (não rodado localmente).
 
-- [ ] T6 — Documentação
+- [x] T6 — Documentação
     - **Arquivo(s):** `docs/product/non-functional-requirements.md`, `docs/architecture/frontend.md`, `docs/setup/environments.md`
     - **Depende de:** T3
     - **Testes (escritos antes, RED):** não se aplica
     - **Gate:** `npm run format -- --check` ou `npx prettier --check docs/product/non-functional-requirements.md docs/architecture/frontend.md docs/setup/environments.md`
     - **Feito quando:** `NF-IA-22` existe; `NF-IA-17` (raiz em `pt-BR`) e `NF-IN-09` ("só redireciona") deixam de contradizer a spec; `frontend.md` (registro de pré-renderização, "Arquivos", "Composição" e a nota do script na raiz) e `environments.md` (a raiz serve o `index.html` gerado com `lang` `en`, canonical, `hreflang` e `<noscript>`) descrevem `composeRootPage`; o catálogo/ `CLAUDE.md` não precisa mudar
-    - **Evidência:** (preenchida pelo `executor`)
+    - **Evidência:** `npx prettier --check` nos três docs passa (a tabela de requisitos foi realinhada pelo Prettier); `NF-IA-22` criado; `NF-IN-09`, `NF-IA-17` e `NF-IA-01` ajustados; `frontend.md` (registro, "Arquivos", "Composição") e `environments.md` descrevem `composeRootPage`.
 
 - [ ] T7 — Verificação completa
     - **Arquivo(s):** nenhum (só verificação)
