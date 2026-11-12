@@ -101,13 +101,13 @@ T1 e T2 não editam o mesmo arquivo. Vitest sempre com `--maxWorkers=2` e confer
     - **Feito quando:** as docs citam o `BreadcrumbList` das três páginas e o changeset existe
     - **Evidência:** `docs/screens/projects.md`, `docs/screens/project.md`, `docs/architecture/frontend.md`, `.changeset/structured-breadcrumbs-projects.md` (minor); lint verde.
 
-- [ ] T8 — Verificação completa
+- [x] T8 — Verificação completa
     - **Arquivo(s):** nenhum (só verificação)
     - **Depende de:** todas as tarefas anteriores
     - **Testes (escritos antes, RED):** não se aplica
     - **Gate:** `npm run build && npm run test:cov` (única rodada pesada da feature; com `--maxWorkers=2` no Vitest e `uptime` conferido)
     - **Feito quando:** o gate passa
-    - **Evidência:** Não executada pelo executor (build e cobertura completa ficam para o CI/orquestrador).
+    - **Evidência:** Verificada no CI do PR #251: Lint, Test, Build, Changeset e os quatro shards de E2E passaram (run 43131768727).
 
 ## Verificação manual (feature com tela, só metadados)
 
