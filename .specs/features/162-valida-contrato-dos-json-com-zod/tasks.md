@@ -47,7 +47,7 @@ Regras para o `executor`: nenhum comentário em código (nem `//`, `/* */`, JSDo
         | Chave extra aceita e removida                                                                             | `profile` e `projectRecord`, `toEqual(build*())`                      |
         | Guarda de tipo                                                                                            | `ZodMiniType<T>` anotado em cada schema; `tsc` verde                  |
 
-- [ ] T3 — `readJson` valida com carregamento dinâmico e paralelo; carregadores passam o schema
+- [x] T3 — `readJson` valida com carregamento dinâmico e paralelo; carregadores passam o schema
     - **Arquivo(s):** `src/services/content/readJson.ts`, `loadProfile.ts`, `loadProjectRecords.ts`, `loadTimelineRecords.ts`, testes em `src/services/content/test/{readJson,loadProfile,loadProjectRecords,loadTimelineRecords}.test.ts`
     - **Depende de:** T2
     - **Testes (escritos antes, RED, borda primeiro):**
@@ -58,7 +58,17 @@ Regras para o `executor`: nenhum comentário em código (nem `//`, `/* */`, JSDo
         - Casos de borda: o `import()` do schema começa antes de o `fetch` terminar (`loadSchema` chamado com `fetch` pendente); falha na validação não apaga o texto do `contentCache`; chave extra é descartada. `readJson.test.ts`
     - **Gate:** `npm run typecheck && npm run lint && npm test -- --run --maxWorkers=2 src/services/content/test`
     - **Feito quando:** o gate passa; `readJson.ts` não importa `zod`; nenhum `as T` sobra em `readJson`; só os módulos de `schemas/` importam `zod`.
-    - **Evidência:** (tabela de adequação)
+    - **Evidência:** `npm run typecheck` e `npm run lint` verdes; `npm test -- --run --maxWorkers=2 src/services/content/test`: 36 arquivos, 227 testes verdes. `readJson.ts` não importa `zod` e não tem `as T`; só `schemas/` importa `zod/mini`.
+
+        | Critério                                             | Prova                                                                                                                                                   |
+        | ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+        | VAL-162-03 JSON ilegível vira INVALID_CONTENT        | `readJson.test.ts`, "lança INVALID_CONTENT quando o texto não é um JSON válido"                                                                         |
+        | VAL-162-03 404 continua `Error` comum                | `readJson.test.ts`, "mantém o Error comum quando a resposta é 404" (`not.toBeInstanceOf(ContentException)`)                                             |
+        | VAL-162-02 fora do contrato, um teste por carregador | `readJson.test.ts` (fields, mensagem), `loadProfile.test.ts`, `loadProjectRecords.test.ts`, `loadTimelineRecords.test.ts` ("lança INVALID_CONTENT ...") |
+        | VAL-162-01 dado válido sem mudança                   | `readJson.test.ts` "devolve o dado validado sem mudança" e os três carregadores (`toEqual`)                                                             |
+        | `import()` começa antes do fetch terminar            | `readJson.test.ts` "começa a carregar o schema antes de o fetch terminar"                                                                               |
+        | Falha de validação não apaga o cache                 | `readJson.test.ts` "não apaga o texto do cache quando a validação falha" (1 fetch em 2 leituras)                                                        |
+        | Chave extra descartada                               | `readJson.test.ts` "descarta chave desconhecida"                                                                                                        |
 
 - [ ] T4 — Fixtures e testes que alimentam o conteúdo pelos carregadores
     - **Arquivo(s):** `src/testUtils/build*.ts` e os testes que a suíte apontar (candidatos: os que usam `stubContentFetch` ou `parseUntyped`, ex.: `src/store/api/test/*.api.test.tsx`, `src/pages/test/*.page.test.tsx`, `src/pages/hooks/test/*.test.tsx`, `src/components/test/Footer.test.tsx`, `src/layouts/test/Main.layout.test.tsx`, `src/test/entry-server*.test.tsx`, `src/routers/test/*.test.ts*`, `src/prerender/test/prerenderRoutes.test.ts`)
