@@ -1,10 +1,10 @@
 import { Link } from "react-router-dom"
+import AsyncSection from "@/components/AsyncSection"
 import AvailabilityBadge from "@/components/AvailabilityBadge"
 import ButtonLink from "@/components/ButtonLink"
 import FeaturedProject from "@/components/FeaturedProject"
 import Icon from "@/components/Icon"
 import JsonLd from "@/components/JsonLd"
-import LoadError from "@/components/LoadError"
 import PageMeta from "@/components/PageMeta"
 import ResumeLink from "@/components/ResumeLink"
 import LazyResumeModal from "@/components/LazyResumeModal"
@@ -118,24 +118,23 @@ function HomePage() {
                             >
                                 {t("home:status.heading")}
                             </h2>
-                            <SkeletonSwap
+                            <AsyncSection
                                 isLoading={status.isLoading}
+                                isError={status.isError}
                                 skeleton={
                                     <div className={css.cards}>
                                         <Skeleton shape="card" />
                                         <Skeleton shape="card" />
                                     </div>
                                 }
+                                error={{
+                                    id: ids.statusAlert,
+                                    title: t("home:status.error"),
+                                    description: t("home:loadError.description"),
+                                    retryLabel: t("home:loadError.retry"),
+                                    onRetry: status.retry
+                                }}
                             >
-                                {status.isError && (
-                                    <LoadError
-                                        id={ids.statusAlert}
-                                        title={t("home:status.error")}
-                                        description={t("home:loadError.description")}
-                                        retryLabel={t("home:loadError.retry")}
-                                        onRetry={status.retry}
-                                    />
-                                )}
                                 {!status.isError && (
                                     <div className={css.cards}>
                                         {status.working && (
@@ -160,7 +159,7 @@ function HomePage() {
                                         )}
                                     </div>
                                 )}
-                            </SkeletonSwap>
+                            </AsyncSection>
                         </div>
                     </section>
                 )}
@@ -196,24 +195,23 @@ function HomePage() {
                             </Link>
                         </div>
                     </Reveal>
-                    <SkeletonSwap
+                    <AsyncSection
                         isLoading={featured.isLoading}
+                        isError={featured.isError}
                         skeleton={
                             <ul className={css.featuredList}>
                                 <FeaturedSkeletonItem mirrored={false} />
                                 <FeaturedSkeletonItem mirrored />
                             </ul>
                         }
+                        error={{
+                            id: ids.featuredAlert,
+                            title: t("home:featured.error"),
+                            description: t("home:loadError.description"),
+                            retryLabel: t("home:loadError.retry"),
+                            onRetry: featured.retry
+                        }}
                     >
-                        {featured.isError && (
-                            <LoadError
-                                id={ids.featuredAlert}
-                                title={t("home:featured.error")}
-                                description={t("home:loadError.description")}
-                                retryLabel={t("home:loadError.retry")}
-                                onRetry={featured.retry}
-                            />
-                        )}
                         {!featured.isError && featured.projects.length === 0 && (
                             <p className={css.empty}>{t("home:featured.empty")}</p>
                         )}
@@ -230,7 +228,7 @@ function HomePage() {
                                 ))}
                             </ul>
                         )}
-                    </SkeletonSwap>
+                    </AsyncSection>
                     <Reveal>
                         <div className={css.exits}>
                             <ButtonLink to={paths.projects} size="lg">

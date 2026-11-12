@@ -1,4 +1,5 @@
 import Button from "@/components/Button"
+import AsyncSection from "@/components/AsyncSection"
 import FilterGroup from "@/components/FilterGroup"
 import JsonLd from "@/components/JsonLd"
 import LoadError from "@/components/LoadError"
@@ -7,7 +8,6 @@ import ProjectCard from "@/components/ProjectCard"
 import ProjectCardSkeleton from "@/components/ProjectCardSkeleton"
 import ProjectsFiltersModal from "@/components/ProjectsFiltersModal"
 import SearchInput from "@/components/SearchInput"
-import SkeletonSwap from "@/components/SkeletonSwap"
 import useProjects from "@/pages/hooks/useProjects"
 import ROUTES from "@/routers/paths"
 import css from "@/styles/pages/projects.module.css"
@@ -169,22 +169,21 @@ function ProjectsPage() {
                                 </Button>
                             )}
                         </div>
-                        <SkeletonSwap
+                        <AsyncSection
                             isLoading={isLoading}
+                            isError={isError}
                             skeleton={
                                 <ul className={css.grid}>
                                     <SkeletonItems count={projectsPageSize} />
                                 </ul>
                             }
+                            error={{
+                                title: t("error.heading"),
+                                description: t("error.description"),
+                                retryLabel: t("error.retry"),
+                                onRetry: retry
+                            }}
                         >
-                            {isError && (
-                                <LoadError
-                                    title={t("error.heading")}
-                                    description={t("error.description")}
-                                    retryLabel={t("error.retry")}
-                                    onRetry={retry}
-                                />
-                            )}
                             {isNoResults && !isError && (
                                 <div className={css.emptyBox}>
                                     <h2 className={css.emptyHeading}>{t("noResults.heading")}</h2>
@@ -237,7 +236,7 @@ function ProjectsPage() {
                                     )}
                                 </div>
                             )}
-                        </SkeletonSwap>
+                        </AsyncSection>
                         {loadMoreError && (
                             <div className={css.moreError}>
                                 <LoadError
