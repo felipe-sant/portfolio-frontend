@@ -309,9 +309,11 @@ async function measureFocusedTitleLink(page: Page) {
 
 test.describe("alvo do título dos destaques", () => {
     for (const language of LANGUAGES) {
-        test(`RF-HOME-19, A11Y-G08, NF-RE-03: em ${language} o link de título de cada destaque tem 44px, a linha do título não cresce e a página não rola na horizontal em 320, 375, 390, 768px e na largura do projeto`, async ({
-            page
+        test(`RF-HOME-19, A11Y-G08, NF-RE-03: em ${language} o link de título de cada destaque tem 44px, a linha do título não cresce e a página não rola na horizontal em 320, 375, 390, 768px e na largura do projeto, com o título mais longo em duas linhas a 320px (depende do conteúdo atual)`, async ({
+            page,
+            colorScheme
         }) => {
+            test.skip(colorScheme === "dark", "o tema não muda a geometria")
             test.slow()
             await page.goto(language)
             await page.getByRole("article").last().waitFor()
@@ -361,8 +363,10 @@ test.describe("alvo do título dos destaques", () => {
         })
 
         test(`RF-HOME-19, A11Y-G06, A11Y-G08: em ${language} o foco por Tab no título de cada destaque mostra o contorno inteiro em 320, 375, 390, 768px e na largura do projeto`, async ({
-            page
+            page,
+            colorScheme
         }) => {
+            test.skip(colorScheme === "dark", "o tema não muda a geometria")
             test.slow()
             await page.goto(language)
             await page.getByRole("article").last().waitFor()
@@ -400,8 +404,10 @@ test.describe("alvo do título dos destaques", () => {
 test.describe("proporção das capas dos destaques", () => {
     for (const language of LANGUAGES) {
         test(`RF-HOME-21, NF-DE-16: em ${language} a capa de cada destaque é 16:9 em 375 e 1280px`, async ({
-            page
+            page,
+            colorScheme
         }) => {
+            test.skip(colorScheme === "dark", "o tema não muda a geometria")
             test.slow()
             await page.goto(language)
             await page.getByRole("article").last().waitFor()
