@@ -891,3 +891,39 @@ Quando o backend existir, ele aplica as mesmas regras na escrita.
 - **Perfil:** `aboutParagraphs` com pelo menos um item; `summary` e `homeIntro` presentes; no máximo
   um `isPrimary` na stack do site; `contact.email` válido; `links` `https:` absolutas;
   `location.countryCode` ISO 3166-1 alfa-2.
+
+### O que cada camada garante (#162)
+
+Duas camadas validam o conteúdo, com papéis diferentes. Os schemas Zod
+(`src/services/content/schemas/`) cuidam só da **forma**: tipo de cada campo, obrigatoriedade, enum,
+`types` não vazio, `countryCode` em `^[A-Z]{2}$`, e-mail e datas em `AAAA-MM`. O teste de conteúdo
+(`validation/`) cuida do que depende de mais de um arquivo ou do disco: tradução e paridade entre
+idiomas, ids únicos, referências, datas coerentes, imagens e documentos.
+
+| Garantia                                                                | Schemas (`readJson`) | `content:check` |
+| ----------------------------------------------------------------------- | :------------------: | :-------------: |
+| Tipo, obrigatoriedade e enum de cada campo                              |         sim          |       sim       |
+| `types` não vazio, `countryCode`, e-mail, `AAAA-MM`                     |         sim          |       sim       |
+| Chave desconhecida                                                      | ignorada e removida  |     reprova     |
+| Paridade e tradução entre `pt-BR`, `en` e `es`                          |         não          |       sim       |
+| Ids únicos, UUID v7, referências, datas coerentes, imagens e documentos |         não          |       sim       |
+
+- **Onde roda:** `content:check` (o teste `src/services/content/test/content.test.ts`) roda no teste
+  e no CI, não no navegador; o `it.each` por idioma desse arquivo também aplica os schemas aos nove
+  arquivos publicados, então um schema desatualizado ou um JSON fora dele reprova no CI. O navegador
+  só roda os schemas dentro de `readJson`.
+- **Validação de borda:** `readJson` valida o JSON recém-lido contra o schema do carregador
+  (`loadProfile`, `loadProjectRecords`, `loadTimelineRecords`) e lança `ContentException` de status
+  500 e `code` `INVALID_CONTENT`, com o arquivo e o primeiro campo na mensagem e até dez campos em
+  `fields`. JSON ilegível vira o mesmo erro; falha de rede continua `FETCH_ERROR`. Na
+  pré-renderização, `loadPrerenderData` lança com o arquivo e o campo, e `npm run build` falha em vez
+  de gerar HTML com dado quebrado.
+- **Chave desconhecida:** o schema de execução ignora e remove a chave extra, para a API de v2
+  poder acrescentar campo sem derrubar o cliente; `content:check` continua estrito.
+- **Duplicação aceita:** chaves obrigatórias, tipos e enums existem nos validadores à mão e nos
+  schemas. A anotação do schema contra o tipo de `src/types/` o mantém alinhado, e o enum vem de
+  `src/enum/`.
+- **Pergunta para a v2 (#43):** os schemas podem substituir a parte estrutural de
+  `validateProfile`, `validateProjects`, `validateTimeline`, `validateStack` e `validateEnums`,
+  chamando `safeParse` e mapeando `issues` para `ContentIssue`, deixando em `validation/` só
+  paridade, tradução, referências, datas, imagens e documentos. Não entrou na #162.
