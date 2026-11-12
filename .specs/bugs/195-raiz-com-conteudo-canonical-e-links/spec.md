@@ -1,7 +1,7 @@
 # Spec: raiz com conteúdo, canonical e links
 
 > **Tipo:** `bug` <br />
-> **Status:** `em-andamento` <br />
+> **Status:** `implementada` <br />
 > **Issue:** `#195` <br />
 > **Criado em:** `11-11-2026`
 
@@ -30,12 +30,13 @@ Decisões desta spec (aplicam `NF-IA-11`, `NF-IA-17`, `NF-IN-05`, `NF-IN-09`, `N
 5. **Open Graph mínimo** (para as prévias de link citadas na issue): `og:title`, `og:description`, `og:type` (`website`), `og:url` (= canonical) e `og:image` (a `images/og-site.png` da #138, absoluta). Sem `og:locale`, `twitter:*` nem JSON-LD na raiz.
 6. **`<noscript>` da raiz** substitui o aviso de `common:noscript` (a raiz não tem conteúdo a avisar sobre) por: um `<h1>` e uma `<nav>` com uma lista de três `<a href hreflang lang>`, cada um no próprio idioma. O `<noscript>` fica dentro do `<body>`, como hoje (`body > noscript`). Texto por chave de tradução, em `common` nos três idiomas (R2; `pt-BR` é a referência):
 
-   | Chave | pt-BR | en | es |
-   | --- | --- | --- | --- |
-   | `root.heading` | Luiz Felipe dos Santos | Luiz Felipe dos Santos | Luiz Felipe dos Santos |
-   | `root.link` | Ver o portfólio em português | View the portfolio in English | Ver el portafolio en español |
+    | Chave          | pt-BR                        | en                            | es                           |
+    | -------------- | ---------------------------- | ----------------------------- | ---------------------------- |
+    | `root.heading` | Luiz Felipe dos Santos       | Luiz Felipe dos Santos        | Luiz Felipe dos Santos       |
+    | `root.link`    | Ver o portfólio em português | View the portfolio in English | Ver el portafolio en español |
 
-   O rótulo acessível da `<nav>` vem de `languageSelector.label` do `en` ("Language"). Voz e copy: primeira pessoa não se aplica aqui, botão com verbo no infinitivo + objeto, sem emoji nem ponto final. Nenhuma chave sai de uso (`common:noscript` continua usada nas demais páginas).
+    O rótulo acessível da `<nav>` vem de `languageSelector.label` do `en` ("Language"). Voz e copy: primeira pessoa não se aplica aqui, botão com verbo no infinitivo + objeto, sem emoji nem ponto final. Nenhuma chave sai de uso (`common:noscript` continua usada nas demais páginas).
+
 7. **Script de redirecionamento:** inalterado. Fica no `<head>` antes de tudo e só age quando `location.pathname === base`; no navegador com JavaScript a pessoa é levada ao idioma antes de ver o `<noscript>`. `rootRedirect.test.ts` e `language.spec.ts` ("raiz e caminho sem prefixo") continuam sendo o contrato.
 8. **404.html e `base` do Pages:** o `404.html` continua composto do molde limpo (sem canonical de raiz nem links), e o `composeRootPage` só roda sobre `<base>index.html`, então o 404 não herda nada. Sob `/ra2581392423047/` os `href` do `<noscript>` e as URLs absolutas levam o `base` (`/ra2581392423047/en`); os links relativos ao `base` usam o mesmo `buildPath` das demais páginas, nunca caminho escrito à mão.
 9. **Redirecionamento HTTP na Vercel (sugestão da issue): descartado nesta spec.** Redirecionar `/` por `Accept-Language` em `vercel.json` só valeria na Vercel; o Pages da Fatec (a v1) não aceita regra de servidor, então o comportamento diferiria entre ambientes e a raiz continuaria vazia na entrega da faculdade. Também mexeria em `vercel.json`, que a #194, #197 e #163 disputam. Pode voltar como melhoria da V2 (ver "Questões em aberto"). `<meta http-equiv="refresh">` também descartado: mandaria robôs sem JavaScript embora da página que deve ter conteúdo, sem escolher idioma.
