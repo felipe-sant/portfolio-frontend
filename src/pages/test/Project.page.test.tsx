@@ -602,18 +602,26 @@ describe("ProjectPage, SEO", () => {
         expect(head('meta[property="og:image:height"]')).toHaveAttribute("content", "900")
     })
 
-    it("sem imagem usa a imagem padrão do site e o alt padrão", async () => {
+    it("sem imagem usa a imagem de compartilhamento de Projetos e o alt dela", async () => {
         renderProject(`/pt-BR/projects/${ID_TWO}`)
         await projectLoaded("Projeto 2")
 
         await waitFor(() =>
             expect(head('meta[property="og:image"]')).toHaveAttribute(
                 "content",
-                `${SITE}/images/og-site.png`
+                `${SITE}/images/share/pt-BR/projects.png`
             )
         )
+        expect(head('meta[name="twitter:image"]')).toHaveAttribute(
+            "content",
+            `${SITE}/images/share/pt-BR/projects.png`
+        )
         expect(head('meta[property="og:image:width"]')).toHaveAttribute("content", "1200")
-        expect(head('meta[property="og:image:alt"]')?.getAttribute("content")).toMatch(/\S{5,}/)
+        expect(head('meta[property="og:image:height"]')).toHaveAttribute("content", "630")
+        expect(head('meta[property="og:image:alt"]')).toHaveAttribute(
+            "content",
+            "Gato ao lado do nome Luiz Felipe dos Santos e do título Projetos"
+        )
     })
 
     it("tem a mesma descrição, igual ao resumo, no README e nos outros documentos", async () => {

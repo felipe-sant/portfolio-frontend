@@ -1,7 +1,8 @@
 {
     "meta": {
         "title": "Información · Luiz Felipe dos Santos",
-        "description": "Quién es Luiz Felipe dos Santos: sobre mí, stack, trayectoria y formación."
+        "description": "Quién es Luiz Felipe dos Santos: sobre mí, stack, trayectoria y formación.",
+        "imageAlt": "Gato junto al nombre Luiz Felipe dos Santos y el título Información"
     },
     "hero": {
         "label": "Información",

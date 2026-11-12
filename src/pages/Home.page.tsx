@@ -32,8 +32,19 @@ function FeaturedSkeletonItem({ mirrored }: { mirrored: boolean }) {
 }
 
 function HomePage() {
-    const { t, jsonLd, isLoading, paths, viewTransition, resume, ids, profile, status, featured } =
-        useHome()
+    const {
+        t,
+        shareImage,
+        jsonLd,
+        isLoading,
+        paths,
+        viewTransition,
+        resume,
+        ids,
+        profile,
+        status,
+        featured
+    } = useHome()
     const hasStatus = Boolean(status.working || status.studying)
 
     return (
@@ -44,6 +55,8 @@ function HomePage() {
                 title={t("home:meta.title")}
                 description={t("home:meta.description")}
                 path={ROUTES.home}
+                image={shareImage.image}
+                imageAlt={shareImage.imageAlt}
             />
             <JsonLd data={jsonLd} />
             {isLoading && <VisuallyHidden role={"status"}>{t("common:loading")}</VisuallyHidden>}

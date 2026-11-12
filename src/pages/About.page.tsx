@@ -55,6 +55,7 @@ function ChipsSkeleton() {
 function AboutPage() {
     const {
         t,
+        shareImage,
         jsonLd,
         isLoading,
         paths,
@@ -90,6 +91,8 @@ function AboutPage() {
                 description={t("about:meta.description")}
                 path={ROUTES.about}
                 type="profile"
+                image={shareImage.image}
+                imageAlt={shareImage.imageAlt}
             />
             <JsonLd data={jsonLd} />
             {isLoading && <VisuallyHidden role={"status"}>{t("common:loading")}</VisuallyHidden>}

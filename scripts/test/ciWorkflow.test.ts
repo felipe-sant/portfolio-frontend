@@ -93,9 +93,14 @@ describe("ci.yml", () => {
 describe("ci.yml, preparação do navegador", () => {
     const ci = readWorkflow("ci.yml")
 
-    it.each(["test", "e2e-shard"])("o passo Install Chromium do job %s usa npm run playwright:install", (jobKey) => {
-        expect(findStepRun(ci.jobs[jobKey], "Install Chromium")).toBe("npm run playwright:install")
-    })
+    it.each(["test", "e2e-shard"])(
+        "o passo Install Chromium do job %s usa npm run playwright:install",
+        (jobKey) => {
+            expect(findStepRun(ci.jobs[jobKey], "Install Chromium")).toBe(
+                "npm run playwright:install"
+            )
+        }
+    )
 
     it.each(["test", "e2e-shard"])("nenhum passo do job %s usa --with-deps", (jobKey) => {
         for (const step of ci.jobs[jobKey]?.steps ?? []) {
@@ -103,16 +108,19 @@ describe("ci.yml, preparação do navegador", () => {
         }
     })
 
-    it.each(["test", "e2e-shard"])("nenhum passo de teste do job %s passa por playwright:install", (jobKey) => {
-        const testSteps = (ci.jobs[jobKey]?.steps ?? []).filter((step) =>
-            /test:cov|vitest|playwright test/.test(step.run ?? "")
-        )
+    it.each(["test", "e2e-shard"])(
+        "nenhum passo de teste do job %s passa por playwright:install",
+        (jobKey) => {
+            const testSteps = (ci.jobs[jobKey]?.steps ?? []).filter((step) =>
+                /test:cov|vitest|playwright test/.test(step.run ?? "")
+            )
 
-        expect(testSteps.length).toBeGreaterThan(0)
-        for (const step of testSteps) {
-            expect(step.run).not.toContain("playwright:install")
+            expect(testSteps.length).toBeGreaterThan(0)
+            for (const step of testSteps) {
+                expect(step.run).not.toContain("playwright:install")
+            }
         }
-    })
+    )
 })
 
 function runBash(script: string, env: Record<string, string>, cwd = process.cwd()): number {

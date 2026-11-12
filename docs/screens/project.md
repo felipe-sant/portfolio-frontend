@@ -365,8 +365,8 @@ ids UUID v7 únicos; `types` com pelo menos um código válido e sem repetição
   (`/en/projects/<id>/docs/SETUP.md` aponta para si, mesmo quando aberta como `/docs/setup.md`);
   `hreflang` recíproco entre os três idiomas do mesmo documento, `x-default` no `en` (NF-IA-11).
 - Open Graph: `og:type` `article`; `og:url` igual à canônica; `og:image` a variante grande da
-  primeira captura (D26), absoluta, com `og:image:alt` do `alt` dela, ou a imagem do site quando
-  não há captura; `og:locale` e `og:locale:alternate`; `twitter:card` `summary_large_image`
+  primeira captura (D26), absoluta, com `og:image:alt` do `alt` dela, ou a imagem de compartilhamento de
+  Projetos (`images/share/<idioma>/projects.png`, alt de `projects:meta.imageAlt`) quando não há captura; `og:locale` e `og:locale:alternate`; `twitter:card` `summary_large_image`
   (NF-IA-10).
 - JSON-LD (NF-IA-08, NF-IA-09, mecanismo de #52), em todos os documentos, a entidade do projeto:
   `SoftwareSourceCode` quando há repositório público, `CreativeWork` quando não há, com `@id` igual

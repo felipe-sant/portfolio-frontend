@@ -713,6 +713,20 @@ describe("ProjectsPage", () => {
         expect(endpoints).not.toContain("getProjectsIndex")
     })
 
+    it("declara a imagem de compartilhamento de Projetos", async () => {
+        stubProjects(10)
+
+        renderPage()
+        await listLoaded()
+
+        expect(
+            document.head.querySelector('meta[property="og:image"]')?.getAttribute("content")
+        ).toBe(`${SITE_URL}/images/share/pt-BR/projects.png`)
+        expect(
+            document.head.querySelector('meta[property="og:image:alt"]')?.getAttribute("content")
+        ).toBe("Gato ao lado do nome Luiz Felipe dos Santos e do título Projetos")
+    })
+
     it("declara a canônica sem query e nenhum noindex com query", async () => {
         stubProjects(10)
 

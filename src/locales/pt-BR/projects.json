@@ -1,7 +1,8 @@
 {
     "meta": {
         "title": "Projetos · Luiz Felipe dos Santos",
-        "description": "Projetos de Luiz Felipe dos Santos, com busca por tipo, categoria e tecnologia."
+        "description": "Projetos de Luiz Felipe dos Santos, com busca por tipo, categoria e tecnologia.",
+        "imageAlt": "Gato ao lado do nome Luiz Felipe dos Santos e do título Projetos"
     },
     "heading": "Projetos",
     "intro": "Tudo o que construí e posso mostrar: trabalho profissional, projetos da faculdade e o que fiz por conta própria.",
