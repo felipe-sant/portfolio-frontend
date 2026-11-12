@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next"
-import AvailabilityBadge from "@/components/AvailabilityBadge"
 import AboutAsync from "@/components/AboutAsync"
+import AvailabilityBadge from "@/components/AvailabilityBadge"
 import ButtonLink from "@/components/ButtonLink"
 import Icon from "@/components/Icon"
 import ProfilePhoto from "@/components/ProfilePhoto"
