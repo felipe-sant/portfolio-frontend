@@ -339,6 +339,10 @@ do que a tela usa:
   `author` com o `@id` único da `Person` (`<origem><base>/#person`, a raiz do site sem prefixo de
   idioma, por `buildPersonId()`, o mesmo em todas as telas e idiomas, decisão transversal do PO de
   11-10-2026), sem repetir a `Person` inteira.
+- Um segundo `<script type="application/ld+json">`, depois da `CollectionPage`, com o `BreadcrumbList`
+  (#201, `buildBreadcrumbJsonLd`): 2 itens, Início (`/<idioma>`) e Projetos (`/<idioma>/projects`),
+  com `position` 1 e 2, `name` de `common:navigation.home` e `common:navigation.projects` e `item`
+  absoluto; só é emitido quando a lista carregou, como a `CollectionPage`.
 - Na pré-renderização (#49), `/pt-BR/projects`, `/en/projects` e `/es/projects` têm cada um seu HTML com o
   primeiro lote na ordem padrão e o JSON-LD com esse mesmo lote. Os projetos além do primeiro lote chegam ao
   rastreador pelo `sitemap.xml` e pelos `llms*.txt` (#51).
@@ -471,7 +475,7 @@ verificação de lá.
 - [ ] `NF-IA-01` — `/pt-BR/projects`, `/en/projects` e `/es/projects` com HTML gerado no build, legível sem JavaScript [CI; #49; #41]
 - [ ] `NF-IA-02` — Projetos depois de "Carregar mais" em `llms-full*.txt` e todo projeto no `sitemap.xml` [CI; #49; #51]
 - [ ] `NF-IA-03` — Primeira renderização do cliente igual ao HTML, com os dados serializados na store [CI; #49; #41]
-- [ ] `NF-IA-08` — JSON-LD `CollectionPage` com `ItemList` dos projetos [CI; #52; #34 a #38; #41]
+- [ ] `NF-IA-08` — JSON-LD `CollectionPage` com `ItemList` dos projetos e `BreadcrumbList` [CI; #52; #34 a #38; #41]
 - [ ] `NF-IA-09` — JSON-LD gerado dos mesmos dados da tela, com `<` escapado [CI; #52]
 - [ ] `NF-IA-11` — Canônica absoluta por idioma, sem query string, e `hreflang` recíproco [CI; #52; #41]
 - [ ] `NF-IA-16` — HTML semântico, com o conteúdo principal dentro do `main` e as tecnologias em texto [CI; #33, #34 a #38]
