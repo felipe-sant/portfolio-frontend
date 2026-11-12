@@ -89,8 +89,9 @@ Regras por área; o mecanismo de cada uma está em `docs/` (tabela "Onde ler mai
   mão nem `ROUTES.home` cru em `<Link>`. Navegação interna usa `<Link to>`/`useNavigate`, nunca `<a href>` (âncora crua
   recarrega e descarta o estado). O único `<Suspense>` fica em volta do `<Outlet />` do layout: página nova não tem o
   próprio (exceção: Contato, em `docs/screens/contact.md#implementação`).
-- **i18n** (`src/i18n/`, `src/locales/`): idioma ativo por `getLanguage()` e troca por `setLanguage(language)`, o único
-  código que grava `LANGUAGE_STORAGE_KEY` (componente nunca usa `saveLanguage` nem `localStorage`). Namespace novo entra
+- **i18n** (`src/i18n/`, `src/locales/`): idioma ativo por `useLanguage()` (`src/hooks/`) em componente e hook, `getLanguage()` só
+  em código fora de React, e troca por `setLanguage(language)`, o único código que grava `LANGUAGE_STORAGE_KEY`
+  (componente nunca usa `saveLanguage` nem `localStorage`). Namespace novo entra
   nos três idiomas, no `src/i18n/languageBundles/<idioma>.ts` de cada idioma e em `src/i18n/namespaces.ts` (o `ns` de
   `src/i18n/i18n.ts`). O cliente baixa um chunk por idioma com `loadLanguage(language)` antes de todo
   `i18n.changeLanguage`; código de cliente nunca importa `@/i18n/resources` nem JSON de `src/locales/` (só o

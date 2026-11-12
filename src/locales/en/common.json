@@ -79,6 +79,10 @@
         "separator": "·"
     },
     "noscript": "Search, filters, language and theme switching need JavaScript. The content of this page is available without it.",
+    "root": {
+        "heading": "Luiz Felipe dos Santos",
+        "link": "View the portfolio in English"
+    },
     "resume": {
         "download": "Download CV",
         "downloadPdf": "Download CV (PDF), opens the preview",
