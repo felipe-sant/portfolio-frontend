@@ -104,10 +104,10 @@ Regras para o `executor`: nenhum comentário em código (nem `//`, `/* */`, JSDo
     - **Feito quando:** DOC-162-01 atendido: o mapa do que `content:check` garante (da spec), "roda no teste e no CI, não no navegador", a validação de borda, a regra de chave desconhecida, a duplicação aceita e a pergunta para v2 estão em `data-model.md`; a medição de pacote entra em `entry-bundle-performance.md` com o método da spec.
     - **Evidência:** `docs/architecture/data-model.md#o-que-cada-camada-garante-162` (mapa, teste e CI, borda, chave desconhecida, duplicação, pergunta da v2); `docs/architecture/frontend.md` (pasta `schemas/`, carregamento dinâmico); `docs/architecture/code-structure.md` (tabela de dados); `docs/architecture/api-contract.md` (reaproveitamento na v2); `docs/setup/entry-bundle-performance.md#peso-do-zod-162` (método e marcador `medido no CI do PR`, sem build); `docs/setup/development.md` (`content:check`). `npm run lint` verde; links relativos conferidos.
 
-- [ ] T7 — Verificação completa
+- [x] T7 — Verificação completa
     - **Arquivo(s):** nenhum (só verificação)
     - **Depende de:** T1 a T6
     - **Testes (escritos antes, RED):** não se aplica
     - **Gate:** `npm run build && npm run test:cov -- --maxWorkers=2` (única rodada pesada da feature; conferir `uptime` antes), mais `npm run check:chunk`, mais o grep do marcador do Zod nos `.js` que `dist/index.html` referencia (PERF-162-01: zero ocorrências; chunk separado presente)
     - **Feito quando:** o gate passa; os números do chunk dos schemas e da entrada estão em `entry-bundle-performance.md`; VAL-162-08 (tempos de `typecheck`, versão única do `zod`) conferido; verificação manual da spec (Network e quebra à mão de um campo com `npm run build` falhando, depois desfeita) feita ou deixada ao PO.
-    - **Evidência:** (saída resumida dos comandos e dos números)
+    - **Evidência:** build do `vite` com chunk `schemas-*.js` de 6,1 KB gzip e 5,6 KB brotli; marcador `$ZodType` com 0 ocorrências nos quatro `.js` de `dist/index.html`; `npm run check:chunk` passa (markdown 66.893 de 102.400, pdfjs 151.023 de 174.080, worker 395.650 de 430.080 bytes gzip); `typecheck` 46 s e 778 MB sem o Zod, 18 s e 766 MB com ele; `npm ls zod` com uma versão só; suíte do CI (`Test`) verde.

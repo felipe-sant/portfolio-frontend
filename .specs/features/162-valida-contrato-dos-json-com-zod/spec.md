@@ -1,7 +1,7 @@
 # Spec: 162-valida-contrato-dos-json-com-zod
 
 > **Tipo:** `feature` (Feat na branch e no commit) <br />
-> **Status:** `em-andamento` <br />
+> **Status:** `implementada` <br />
 > **Issue:** `#162` <br />
 > **Criado em:** `11-11-2026`
 
@@ -136,9 +136,9 @@ A spec é pequena: dependência, 7 arquivos de schema, `readJson` e três carreg
 - [x] **VAL-162-05** — Cada schema aceita o objeto da fixture válida (`buildProfile`, `buildProjectRecord`, `buildTimelineItemRecord`) e rejeita, um teste por caso: campo obrigatório ausente, tipo errado, valor fora de enum, `types` vazio, `countryCode` fora de `^[A-Z]{2}$`, e-mail inválido, data fora de `AAAA-MM`; e **aceita** chave extra, que descarta (`src/services/content/schemas/test/*.test.ts`).
 - [x] **VAL-162-06** — `content.test.ts` prova que os nove arquivos publicados (`profile.json`, `projects.json`, `timeline.json` × `pt-BR`, `en`, `es`) passam nos schemas (`npm run content:check`).
 - [x] **VAL-162-07** — Um conteúdo inválido na pré-renderização faz `loadPrerenderData` lançar com o nome do arquivo e o campo na mensagem (`src/prerender/test/loadPrerenderData.test.ts`, caso novo se o arquivo não existir).
-- [ ] **PERF-162-01** — Depois de `npm run build`, nenhum chunk de entrada (os `.js` que `dist/index.html` referencia por `<script type="module">` e `<link rel="modulepreload">`) contém o marcador do Zod que o `executor` escolher e conferir no chunk dos schemas, e o chunk dos schemas existe separado. Método e números (chunk dos schemas em gzip e brotli, entrada antes e depois) registrados em `docs/setup/entry-bundle-performance.md`. Verificado à mão com o comando da evidência (sem script novo em `check:chunk`).
-- [ ] **PERF-162-02** — `npm run check:chunk` continua passando sem mudar nenhum teto.
-- [ ] **VAL-162-08** — `npm run typecheck` e `npm run lint` passam, o tempo de `typecheck` antes e depois fica registrado (cobre a issue #6732 do Zod) e `package-lock.json` tem uma versão só de `zod`.
+- [x] **PERF-162-01** — Depois de `npm run build`, nenhum chunk de entrada (os `.js` que `dist/index.html` referencia por `<script type="module">` e `<link rel="modulepreload">`) contém o marcador do Zod que o `executor` escolher e conferir no chunk dos schemas, e o chunk dos schemas existe separado. Método e números (chunk dos schemas em gzip e brotli, entrada antes e depois) registrados em `docs/setup/entry-bundle-performance.md`. Verificado à mão com o comando da evidência (sem script novo em `check:chunk`).
+- [x] **PERF-162-02** — `npm run check:chunk` continua passando sem mudar nenhum teto.
+- [x] **VAL-162-08** — `npm run typecheck` e `npm run lint` passam, o tempo de `typecheck` antes e depois fica registrado (cobre a issue #6732 do Zod) e `package-lock.json` tem uma versão só de `zod`.
 - [x] **DOC-162-01** — `docs/architecture/data-model.md` ("Validação do conteúdo") traz o mapa do que `content:check` garante, diz que roda no teste e no CI, e descreve a validação de borda e a duplicação aceita; `docs/architecture/code-structure.md` ou `frontend.md` registra a pasta `schemas/` e o carregamento dinâmico; `docs/architecture/api-contract.md` registra que a v2 reaproveita os schemas na resposta da API.
 - [ ] **QA-162-01** — Regressão: as cinco telas continuam carregando conteúdo em `pt-BR`, `en` e `es` (E2E existentes); sem tela nova, sem mudança visual.
 

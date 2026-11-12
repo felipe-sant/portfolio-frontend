@@ -113,8 +113,8 @@ Como medir, sobre o `dist/assets/` de `npm run build`:
 3. Comprima o chunk dos schemas com `gzipSync` e `brotliCompressSync` (qualidade 11) do `zlib` do Node, como no método acima, e some a entrada antes e depois.
 4. Rode `npm run check:chunk`: continua passando, sem mudar nenhum teto.
 
-| Medida                                | Valor              |
-| ------------------------------------- | ------------------ |
-| Chunk dos schemas, gzip e brotli (KB) | medido no CI do PR |
-| Entrada (`index`), brotli (KB)        | medido no CI do PR |
-| Marcador do Zod nos chunks de entrada | medido no CI do PR |
+| Medida                                | Valor                                                                              |
+| ------------------------------------- | ---------------------------------------------------------------------------------- |
+| Chunk dos schemas, gzip e brotli (KB) | 6,1 gzip e 5,6 brotli (`schemas-*.js`, 18,2 KB sem comprimir, marcador `$ZodType`) |
+| Entrada (`index`), brotli (KB)        | 90,1 (`index-*.js`; sem o Zod, a chamada de `import()` é o único acréscimo)        |
+| Marcador do Zod nos chunks de entrada | 0 ocorrências nos quatro `.js` que `dist/index.html` referencia                    |
