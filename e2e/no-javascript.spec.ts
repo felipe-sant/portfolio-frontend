@@ -1,5 +1,7 @@
+import { readFileSync } from "node:fs"
 import { expect, test } from "@playwright/test"
 import FATEC_BASE_PATH from "@scripts/fatecBasePath"
+import FATEC_SITE_URL from "@scripts/fatecSiteUrl"
 import PROJECT_TEXTS from "./support/projectTexts"
 import projectPath from "./support/projectPath"
 import readFeaturedProjects from "./support/readFeaturedProjects"
@@ -323,5 +325,101 @@ test.describe("sem JavaScript, com toque e movimento pleno", () => {
         await expect(band.locator("ul[aria-hidden='true']")).toBeVisible()
         await expect(band.locator("div").first()).not.toHaveCSS("animation-name", "none")
         await expect(band.getByRole("listitem")).toHaveText(profile.stack)
+    })
+})
+
+test.describe("sem JavaScript, raiz", () => {
+    test.use({ javaScriptEnabled: false })
+
+    const ROOT_LINKS = [
+        { language: "pt-BR", text: "Ver o portfólio em português" },
+        { language: "en", text: "View the portfolio in English" },
+        { language: "es", text: "Ver el portafolio en español" }
+    ] as const
+    const ROOT_URL = `${FATEC_SITE_URL}${FATEC_BASE_PATH}`
+    const homeMeta: { meta: { title: string; description: string } } = JSON.parse(
+        readFileSync("src/locales/en/home.json", "utf-8")
+    )
+
+    test("NF-IA-22, NF-IA-04, NF-IN-05: a raiz responde 200 com lang en, h1 e três links por idioma", async ({
+        page
+    }) => {
+        const response = await page.goto("")
+
+        expect(response?.status()).toBe(200)
+        await expect(page.locator("html")).toHaveAttribute("lang", "en")
+        await expect(page.getByRole("heading", { level: 1 })).toHaveText("Luiz Felipe dos Santos")
+        const links = page.getByRole("navigation", { name: "Language" }).getByRole("link")
+        await expect(links).toHaveCount(ROOT_LINKS.length)
+
+        for (const { language, text } of ROOT_LINKS) {
+            const link = page.getByRole("link", { name: text })
+
+            await expect(link).toHaveAttribute("href", `${FATEC_BASE_PATH}${language}`)
+            await expect(link).toHaveAttribute("hreflang", language)
+            await expect(link).toHaveAttribute("lang", language)
+        }
+    })
+
+    test("NF-IA-22, NF-IA-11: a raiz tem canonical para o en e hreflang absolutos com o base", async ({
+        page
+    }) => {
+        await page.goto("")
+
+        await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", `${ROOT_URL}en`)
+
+        for (const hreflang of ["pt-BR", "en", "es", "x-default"]) {
+            const expected = `${ROOT_URL}${hreflang === "x-default" ? "en" : hreflang}`
+
+            await expect(
+                page.locator(`link[rel="alternate"][hreflang="${hreflang}"]`)
+            ).toHaveAttribute("href", expected)
+        }
+    })
+
+    test("NF-IA-22, NF-IA-10: a raiz tem título, descrição e og do en", async ({ page }) => {
+        await page.goto("")
+
+        await expect(page).toHaveTitle(homeMeta.meta.title)
+        await expect(page.locator('meta[name="description"]')).toHaveAttribute(
+            "content",
+            homeMeta.meta.description
+        )
+        await expect(page.locator('meta[property="og:title"]')).toHaveAttribute(
+            "content",
+            homeMeta.meta.title
+        )
+        await expect(page.locator('meta[property="og:description"]')).toHaveAttribute(
+            "content",
+            homeMeta.meta.description
+        )
+        await expect(page.locator('meta[property="og:type"]')).toHaveAttribute("content", "website")
+        await expect(page.locator('meta[property="og:url"]')).toHaveAttribute(
+            "content",
+            `${ROOT_URL}en`
+        )
+        await expect(page.locator('meta[property="og:image"]')).toHaveAttribute(
+            "content",
+            `${ROOT_URL}images/og-site.png`
+        )
+    })
+
+    for (const { language, text } of ROOT_LINKS) {
+        test(`NF-IA-22: o link em ${language} leva a /${language} com 200`, async ({ page }) => {
+            await page.goto("")
+            const target = await page.getByRole("link", { name: text }).getAttribute("href")
+
+            const response = await page.goto(target ?? "")
+
+            expect(response?.status()).toBe(200)
+            expect(new URL(page.url()).pathname).toBe(`${FATEC_BASE_PATH}${language}`)
+        })
+    }
+
+    test("NF-IA-22: o 404.html não herda hreflang nem o noscript da raiz", async ({ page }) => {
+        await page.goto(NOT_FOUND_ROUTE)
+
+        await expect(page.locator("link[hreflang]")).toHaveCount(0)
+        await expect(page.locator("noscript[data-root]")).toHaveCount(0)
     })
 })

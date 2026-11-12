@@ -79,6 +79,10 @@
         "separator": "·"
     },
     "noscript": "La búsqueda, los filtros y el cambio de idioma y de tema necesitan JavaScript. El contenido de esta página está disponible sin él.",
+    "root": {
+        "heading": "Luiz Felipe dos Santos",
+        "link": "Ver el portafolio en español"
+    },
     "resume": {
         "download": "Descargar CV",
         "downloadPdf": "Descargar CV (PDF), abre la vista previa",
