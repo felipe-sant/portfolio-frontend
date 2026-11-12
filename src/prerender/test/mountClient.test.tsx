@@ -12,6 +12,7 @@ import relaxAsyncUtilTimeout from "@/testUtils/relaxAsyncUtilTimeout"
 import stubContentFetch from "@/testUtils/stubContentFetch"
 import loadMarkdownRenderer from "@/utils/loadMarkdownRenderer"
 import MOTION_STORAGE_KEY from "@/utils/motionStorageKey"
+import PRERENDER_DATA_ID from "@/utils/prerenderDataId"
 import THEME_STORAGE_KEY from "@/utils/themeStorageKey"
 
 relaxAsyncUtilTimeout()
@@ -38,11 +39,15 @@ function injectPrerendered(file: string, rootElement: HTMLElement) {
     const page = composePage(TEMPLATE, result, target, "x", "/")
     const parsed = new DOMParser().parseFromString(page, "text/html")
 
+    const dataBlock = parsed.getElementById(PRERENDER_DATA_ID)
+
+    if (!dataBlock) {
+        throw new Error(`Bloco ${PRERENDER_DATA_ID} ausente em ${file}`)
+    }
+
     document.head.innerHTML = parsed.head.innerHTML
     rootElement.innerHTML = parsed.getElementById("root")?.innerHTML ?? ""
-    window.prerenderedPath = `/${target.path}`
-    window.preloadedState = JSON.parse(result.state)
-    window.routerData = JSON.parse(result.routerData)
+    document.body.appendChild(document.importNode(dataBlock, true))
 }
 
 const REAL_PROJECTS = parseUntyped(readFileSync("public/content/pt-BR/projects.json", "utf-8"))
@@ -115,9 +120,7 @@ afterEach(async () => {
     localStorage.removeItem(MOTION_STORAGE_KEY)
     document.documentElement.removeAttribute("data-motion")
     document.head.innerHTML = ""
-    window.prerenderedPath = undefined
-    window.preloadedState = undefined
-    window.routerData = undefined
+    document.getElementById(PRERENDER_DATA_ID)?.remove()
     vi.unstubAllGlobals()
     vi.unstubAllEnvs()
     window.history.pushState({}, "", "/")
@@ -146,6 +149,23 @@ describe("mountClient sem caminho pré-renderizado", () => {
         expect(document.head.querySelectorAll("title")).toHaveLength(1)
         expect(document.title).toBe("Portfólio · Luiz Felipe dos Santos")
         expect(document.head.querySelectorAll("meta[name='description']")).toHaveLength(1)
+    })
+})
+
+describe("mountClient com HTML pré-renderizado sem bloco de dados", () => {
+    it("usa createRoot sem estado e troca o HTML do servidor", async () => {
+        injectPrerendered("en.html", rootElement)
+        document.getElementById(PRERENDER_DATA_ID)?.remove()
+        await i18n.changeLanguage("en")
+        window.history.pushState({}, "", "/en")
+        const serverHeading = screen.getByRole("heading", { name: "Junior full stack developer" })
+
+        await mount()
+
+        expect(
+            await screen.findByRole("heading", { name: "Junior full stack developer" })
+        ).not.toBe(serverHeading)
+        expect(serverHeading).not.toBeInTheDocument()
     })
 })
 

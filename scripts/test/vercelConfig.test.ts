@@ -1,13 +1,14 @@
 import { spawnSync } from "node:child_process"
+import { createHash } from "node:crypto"
 import { readFileSync } from "node:fs"
 import { describe, expect, it } from "vitest"
 
-type VercelRewrite = { source: string; destination: string }
+type VercelHeader = { key: string; value: string }
+type VercelHeaderRule = { source: string; headers: VercelHeader[] }
 type VercelConfig = {
     cleanUrls?: boolean
     trailingSlash?: boolean
-    rewrites?: VercelRewrite[]
-    headers?: unknown[]
+    headers?: VercelHeaderRule[]
 }
 
 const config: VercelConfig = JSON.parse(readFileSync("vercel.json", "utf-8"))
@@ -15,7 +16,49 @@ const deployWorkflow = readFileSync(".github/workflows/deploy.yml", "utf-8")
 
 const hasJq = spawnSync("jq", ["--version"]).error === undefined
 
-const NOINDEX_HEADERS = [{ source: "/(.*)", headers: [{ key: "X-Robots-Tag", value: "noindex" }] }]
+const NOINDEX_RULE = { source: "/(.*)", headers: [{ key: "X-Robots-Tag", value: "noindex" }] }
+
+const stagingExpression = /jq '([^']+)' vercel\.json > vercel\.staging\.json/.exec(
+    deployWorkflow
+)?.[1]
+
+function applyStagingExpression(input: string): VercelConfig {
+    expect(stagingExpression).toBeDefined()
+
+    const merged = spawnSync("jq", [stagingExpression ?? ""], { input, encoding: "utf-8" })
+
+    expect(merged.error).toBeUndefined()
+    expect(merged.status).toBe(0)
+    return JSON.parse(merged.stdout)
+}
+
+const LONG_IMMUTABLE_CACHE = "public, max-age=31536000, immutable"
+
+function headerValue(source: string, key: string): string | undefined {
+    const rule = (config.headers ?? []).find((candidate) => candidate.source === source)
+
+    return rule?.headers.find((header) => header.key.toLowerCase() === key.toLowerCase())?.value
+}
+
+const INLINE_SCRIPT = /<script>([\s\S]*?)<\/script>/g
+
+const inlineScriptHashes = Array.from(
+    readFileSync("index.html", "utf-8").matchAll(INLINE_SCRIPT),
+    ([, content]) =>
+        `'sha256-${createHash("sha256").update(content.replaceAll("%BASE_URL%", "/")).digest("base64")}'`
+)
+
+function cspDirectives(): Map<string, string[]> {
+    const policy = headerValue("/(.*)", "Content-Security-Policy-Report-Only") ?? ""
+
+    return new Map(
+        policy
+            .split(";")
+            .map((directive) => directive.trim().split(/\s+/))
+            .filter(([name]) => name !== "")
+            .map(([name, ...sources]) => [name, sources])
+    )
+}
 
 describe("vercel.json", () => {
     it("serve os HTML por rota sem extensão e sem barra final", () => {
@@ -23,28 +66,92 @@ describe("vercel.json", () => {
         expect(config.trailingSlash).toBe(false)
     })
 
-    it("não tem reescrita genérica para o index.html", () => {
-        const catchAll = (config.rewrites ?? []).filter((rewrite) =>
-            ["/(.*)", "/:path*", "/(.*)/"].includes(rewrite.source)
-        )
-
-        expect(catchAll).toEqual([])
+    it("não tem reescrita nem rota, para caminho inexistente cair no 404.html", () => {
+        expect(config).not.toHaveProperty("rewrites")
+        expect(config).not.toHaveProperty("routes")
     })
 
-    it.skipIf(!hasJq)("mantém as chaves quando o deploy da staging acrescenta o noindex", () => {
-        const expression = /jq '(\. \+ \{headers:.*\})' vercel\.json/.exec(deployWorkflow)?.[1]
+    it.skipIf(!hasJq)(
+        "acrescenta o noindex da staging ao fim dos headers sem descartar nenhuma regra",
+        () => {
+            const staging = applyStagingExpression(readFileSync("vercel.json", "utf-8"))
 
-        expect(expression).toBeDefined()
+            expect(staging.cleanUrls).toBe(true)
+            expect(staging.trailingSlash).toBe(false)
+            expect(staging.headers).toEqual([...(config.headers ?? []), NOINDEX_RULE])
+        }
+    )
 
-        const merged = spawnSync("jq", [expression ?? ""], {
-            input: readFileSync("vercel.json", "utf-8"),
-            encoding: "utf-8"
+    it.skipIf(!hasJq)("devolve só a regra de noindex quando o vercel.json não tem headers", () => {
+        const staging = applyStagingExpression(JSON.stringify({ cleanUrls: true }))
+
+        expect(staging.headers).toEqual([NOINDEX_RULE])
+    })
+
+    it("só as regras de /assets, /fonts e /images definem Cache-Control", () => {
+        const sourcesWithCache = (config.headers ?? [])
+            .filter((rule) =>
+                rule.headers.some((header) => header.key.toLowerCase() === "cache-control")
+            )
+            .map((rule) => rule.source)
+
+        expect(sourcesWithCache).toEqual(["/assets/(.*)", "/fonts/(.*)", "/images/(.*)"])
+    })
+
+    it("guarda por um ano e como imutável os arquivos de /assets", () => {
+        expect(headerValue("/assets/(.*)", "Cache-Control")).toBe(LONG_IMMUTABLE_CACHE)
+    })
+
+    it("guarda por um ano e como imutáveis as fontes de /fonts", () => {
+        expect(headerValue("/fonts/(.*)", "Cache-Control")).toBe(LONG_IMMUTABLE_CACHE)
+    })
+
+    it("guarda por 30 dias, sem immutable, as imagens de /images", () => {
+        const value = headerValue("/images/(.*)", "Cache-Control")
+
+        expect(value).toBe("public, max-age=2592000")
+        expect(value).not.toContain("immutable")
+    })
+
+    it("define em todo caminho os headers de segurança sem risco", () => {
+        expect(headerValue("/(.*)", "X-Content-Type-Options")).toBe("nosniff")
+        expect(headerValue("/(.*)", "Referrer-Policy")).toBe("strict-origin-when-cross-origin")
+        expect(headerValue("/(.*)", "Permissions-Policy")).toBe(
+            "camera=(), microphone=(), geolocation=(), payment=(), usb=(), browsing-topics=()"
+        )
+        expect(headerValue("/(.*)", "X-Frame-Options")).toBe("SAMEORIGIN")
+        expect(headerValue("/(.*)", "Content-Security-Policy")).toBe("frame-ancestors 'self'")
+    })
+
+    it("define a CSP completa em Report-Only", () => {
+        const directives = cspDirectives()
+
+        expect(Object.fromEntries(directives)).toEqual({
+            "default-src": ["'self'"],
+            "script-src": ["'self'", ...inlineScriptHashes],
+            "style-src": ["'self'", "'unsafe-inline'"],
+            "img-src": ["'self'", "data:", "blob:"],
+            "font-src": ["'self'"],
+            "connect-src": ["'self'"],
+            "worker-src": ["'self'"],
+            "object-src": ["'none'"],
+            "base-uri": ["'self'"],
+            "form-action": ["'self'"]
         })
+        expect(directives.get("script-src")).not.toContain("'unsafe-inline'")
+        expect(directives.get("script-src")).not.toContain("'unsafe-eval'")
+    })
 
-        expect(merged.error).toBeUndefined()
-        const staging: VercelConfig = JSON.parse(merged.stdout)
-        expect(staging.cleanUrls).toBe(true)
-        expect(staging.trailingSlash).toBe(false)
-        expect(staging.headers).toEqual(NOINDEX_HEADERS)
+    it("lista em script-src exatamente o hash de cada script inline do index.html", () => {
+        const hashes = (cspDirectives().get("script-src") ?? []).filter((source) =>
+            source.startsWith("'sha256-")
+        )
+
+        expect(new Set(hashes)).toEqual(new Set(inlineScriptHashes))
+        expect(hashes).toHaveLength(inlineScriptHashes.length)
+    })
+
+    it("encontra os 3 scripts inline do index.html", () => {
+        expect(inlineScriptHashes).toHaveLength(3)
     })
 })
