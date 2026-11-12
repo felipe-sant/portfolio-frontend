@@ -12,7 +12,7 @@ Pré-requisito: o PO responde as questões em aberto 1 a 5 da spec; mudou a resp
 
 ## Tarefas
 
-- [ ] T1 [P] — Modelo e renderização do README da Fatec
+- [x] T1 [P] — Modelo e renderização do README da Fatec
     - **Arquivo(s):** `scripts/fatecReadme.template.md`, `scripts/renderFatecReadme.ts`, `scripts/test/renderFatecReadme.test.ts`
     - **Depende de:** nenhuma
     - **Testes (escritos antes, RED):**
@@ -25,7 +25,7 @@ Pré-requisito: o PO responde as questões em aberto 1 a 5 da spec; mudou a resp
     - **Feito quando:** o gate passa e cada teste listado existe
     - **Evidência:** (executor)
 
-- [ ] T2 [P] — Mensagem do commit com a origem e escopo do `git add`
+- [x] T2 [P] — Mensagem do commit com a origem e escopo do `git add`
     - **Arquivo(s):** `.github/workflows/fatec-pages.yml`, `scripts/test/fatecPagesWorkflow.test.ts`
     - **Depende de:** nenhuma
     - **Testes (escritos antes, RED):**
@@ -38,7 +38,7 @@ Pré-requisito: o PO responde as questões em aberto 1 a 5 da spec; mudou a resp
     - **Feito quando:** o gate passa; o SHA vem de `git rev-parse --short HEAD` no checkout da tag
     - **Evidência:** (executor)
 
-- [ ] T3 — Escrita do README e da captura no clone da Fatec
+- [x] T3 — Escrita do README e da captura no clone da Fatec
     - **Arquivo(s):** `scripts/writeFatecReadme.ts`, `scripts/publishFatecReadme.ts`, `package.json` (script `publish:fatec:readme`), `scripts/test/writeFatecReadme.test.ts`
     - **Depende de:** T1
     - **Testes (escritos antes, RED):**
@@ -52,7 +52,7 @@ Pré-requisito: o PO responde as questões em aberto 1 a 5 da spec; mudou a resp
     - **Feito quando:** o gate passa; `replaceFatecDocs` sem alteração
     - **Evidência:** (executor)
 
-- [ ] T4 [P] — Ligar o script ao job `publish`
+- [x] T4 [P] — Ligar o script ao job `publish`
     - **Arquivo(s):** `.github/workflows/fatec-pages.yml`, `scripts/test/fatecPagesWorkflow.test.ts`
     - **Depende de:** T2, T3
     - **Testes (escritos antes, RED):**
@@ -62,7 +62,7 @@ Pré-requisito: o PO responde as questões em aberto 1 a 5 da spec; mudou a resp
     - **Feito quando:** o gate passa
     - **Evidência:** (executor)
 
-- [ ] T5 [P] — Documentação
+- [x] T5 [P] — Documentação
     - **Arquivo(s):** `docs/setup/environments.md`
     - **Depende de:** T3
     - **Testes (escritos antes, RED):** não se aplica (documentação); `scripts/test/readme.test.ts` segue verde (CA7)
