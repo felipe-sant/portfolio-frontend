@@ -9,6 +9,7 @@ import openProject from "./support/openProject"
 import openProjectsFromHeader from "./support/openProjectsFromHeader"
 import PROJECT_TEXTS from "./support/projectTexts"
 import projectPath from "./support/projectPath"
+import readBreadcrumb from "./support/readBreadcrumb"
 import readProjectDetail from "./support/readProjectDetail"
 import readRawProjects from "./support/readRawProjects"
 import serveProjectFixture from "./support/serveProjectFixture"
@@ -132,6 +133,29 @@ test.describe("rotas do projeto", () => {
             UI_TEXTS.en.notFoundHeading
         )
     })
+})
+
+test.describe("breadcrumb em JSON-LD", () => {
+    for (const language of LANGUAGES) {
+        test(`NF-IA-08, RF-PROJECT-35: em ${language} o projeto emite BreadcrumbList com 3 itens`, async ({
+            page
+        }) => {
+            const project = readProjectDetail(language, MNIST)
+            await page.goto(projectPath(language, project.id))
+
+            await expect.poll(() => readBreadcrumb(page)).toHaveLength(3)
+
+            const items = await readBreadcrumb(page)
+            expect(items.map((item) => item.name)).toEqual([
+                UI_TEXTS[language].navigation.home,
+                UI_TEXTS[language].navigation.projects,
+                project.title
+            ])
+            expect(items[2].item).toMatch(
+                new RegExp(`^https?://.+/${language}/projects/${project.id}$`)
+            )
+        })
+    }
 })
 
 test.describe("não encontrado", () => {

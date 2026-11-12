@@ -7,6 +7,7 @@ import getProjectsView from "./support/getProjectsView"
 import holdContent from "./support/holdContent"
 import openProjectsFromHeader from "./support/openProjectsFromHeader"
 import readContentWidth from "./support/readContentWidth"
+import readBreadcrumb from "./support/readBreadcrumb"
 import readProjects from "./support/readProjects"
 import serveProjectsFixture from "./support/serveProjectsFixture"
 import sortProjects from "./support/sortProjects"
@@ -1176,8 +1177,50 @@ test.describe("conteúdo e consultas", () => {
     })
 })
 
+test.describe("breadcrumb em JSON-LD", () => {
+    for (const language of LANGUAGES) {
+        test(`NF-IA-08, RF-PROJECTS-26: em ${language} Projetos emite BreadcrumbList com 2 itens`, async ({
+            page
+        }) => {
+            await serveProjectsFixture(page, language, 3)
+            await page.goto(`${language}/projects`)
+
+            await expect.poll(() => readBreadcrumb(page)).toHaveLength(2)
+
+            const items = await readBreadcrumb(page)
+            expect(items.map((item) => item.position)).toEqual([1, 2])
+            expect(items.map((item) => item.name)).toEqual([
+                UI_TEXTS[language].navigation.home,
+                UI_TEXTS[language].navigation.projects
+            ])
+            expect(items[0].item).toMatch(new RegExp(`^https?://[^/]+/.*${language}$`))
+            expect(items[1].item).toMatch(new RegExp(`^https?://[^/]+/.*${language}/projects$`))
+            const firstNode = JSON.parse(
+                (await page.locator('script[type="application/ld+json"]').first().textContent()) ??
+                    "{}"
+            )
+            expect(firstNode["@type"]).toBe("CollectionPage")
+        })
+    }
+})
+
 test.describe("sem JavaScript", () => {
     test.use({ javaScriptEnabled: false })
+
+    for (const language of LANGUAGES) {
+        test(`NF-CO-03, NF-IA-08: ${language} traz o BreadcrumbList de Projetos no HTML sem JavaScript`, async ({
+            page
+        }) => {
+            await page.goto(`${language}/projects`)
+
+            const items = await readBreadcrumb(page)
+            expect(items.map((item) => item.name)).toEqual([
+                UI_TEXTS[language].navigation.home,
+                UI_TEXTS[language].navigation.projects
+            ])
+            expect(items[1].item).toMatch(new RegExp(`^https?://.+/${language}/projects$`))
+        })
+    }
 
     for (const language of LANGUAGES) {
         test(`NF-CO-03, NF-IA-01, NF-IA-08, RF-PROJECTS-30: ${language} traz h1, introdução, controles, os cards do primeiro lote e o JSON-LD sem JavaScript`, async ({
