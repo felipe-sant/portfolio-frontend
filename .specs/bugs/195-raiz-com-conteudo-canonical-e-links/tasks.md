@@ -44,13 +44,13 @@ T1 (teste que reproduz o bug)  →  T2  →  T3  →  T4 [P] e T5 [P]  →  T6
     - **Feito quando:** o gate passa; a raiz é gravada depois do último alvo e do `404.html`; o molde usado pelas demais páginas passa pela remoção dos itens da raiz (uma segunda `npm run prerender` não vaza canonical); `listTargets`, `prerenderRoutes`, `routes.tsx` e `vercel.json` seguem sem alteração
     - **Evidência:** typecheck e lint limpos; a raiz é gravada depois do laço de alvos (inclui `404.html`) e o molde passa por `removeRootPageItems`; `listTargets`, `prerenderRoutes`, `routes.tsx` e `vercel.json` sem alteração. Verificação do build (`grep -c 'rel="canonical"' dist/index.html dist/en.html dist/404.html`): verificação no CI / manual do PO.
 
-- [ ] T4 [P] — Estilo do `<noscript>` da raiz
+- [x] T4 [P] — Estilo do `<noscript>` da raiz
     - **Arquivo(s):** `src/styles/global.css`
     - **Depende de:** T1
     - **Testes (escritos antes, RED):** não se aplica (aparência). Verificação manual: `npm run build:fatec && npm run preview:fatec`, abrir `http://localhost:4173/ra2581392423047/` com JavaScript desligado, em claro e escuro, em 390 px e 1280 px; a raiz não tem faixa vermelha, usa tokens, os links são legíveis e mostram foco visível
     - **Gate:** `npm run lint`
     - **Feito quando:** `body > noscript` exclui `[data-root]` e há regra própria só com custom properties de `global.css`; sem estilo inline nem cor literal
-    - **Evidência:** (preenchida pelo `executor`)
+    - **Evidência:** lint limpo, prettier ok; `body > noscript:not([data-root])` mantém o aviso vermelho e `body > noscript[data-root]` tem regra própria só com custom properties (`--measure`, `--space-*`, `--pad-page`, `--text-*`), sem cor literal nem estilo inline; foco vem do `:focus-visible` global. Verificação manual de aparência (claro/escuro, 390 e 1280 px, sem JavaScript): verificação no CI / manual do PO.
 
 - [ ] T5 [P] — E2E da raiz sem JavaScript
     - **Arquivo(s):** `e2e/no-javascript.spec.ts`
