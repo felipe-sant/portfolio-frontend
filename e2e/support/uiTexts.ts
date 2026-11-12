@@ -59,6 +59,7 @@ const UI_TEXTS = {
             title: "Informações · Luiz Felipe dos Santos",
             description: "Quem é Luiz Felipe dos Santos: sobre mim, stack, trajetória e formação.",
             label: "Informações",
+            updatedPrefix: "Atualizado em",
             photoAlt: "Foto de Luiz Felipe dos Santos",
             aboutMe: "Sobre mim",
             nowHeading: "Agora",
@@ -280,6 +281,7 @@ const UI_TEXTS = {
             description:
                 "Who Luiz Felipe dos Santos is: about me, stack, background and education.",
             label: "About",
+            updatedPrefix: "Updated",
             photoAlt: "Photo of Luiz Felipe dos Santos",
             aboutMe: "About me",
             nowHeading: "Now",
@@ -498,6 +500,7 @@ const UI_TEXTS = {
             description:
                 "Quién es Luiz Felipe dos Santos: sobre mí, stack, trayectoria y formación.",
             label: "Información",
+            updatedPrefix: "Actualizado en",
             photoAlt: "Foto de Luiz Felipe dos Santos",
             aboutMe: "Sobre mí",
             nowHeading: "Ahora",

@@ -114,6 +114,7 @@ Perfil do autor no idioma pedido.
 
 ```json
 {
+    "updatedAt": "2026-07-19",
     "role": "Desenvolvedor full stack",
     "homeIntro": "Trabalho em produtos web de ponta a ponta, do banco de dados à interface. Aqui estão os projetos que melhor mostram como resolvo problemas.",
     "summary": "Desenvolvedor full stack em TypeScript, estudante de Análise e Desenvolvimento de Sistemas na Fatec.",

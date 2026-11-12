@@ -166,6 +166,30 @@ test.describe("sem JavaScript, projeto", () => {
         }
     }
 
+    test("RF-PROJECT-40, NF-IA-02: no HTML sem JavaScript a LICENSE tem noindex, SETUP.md não, e a descrição de SETUP.md é própria", async ({
+        page
+    }) => {
+        const project = readProjectDetail("pt-BR", "MNIST Classifier")
+        const robots = page.locator('meta[name="robots"]')
+        const description = page.locator('meta[name="description"]')
+
+        await page.goto(projectPath("pt-BR", project.id, "LICENSE"))
+        await expect(robots).toHaveAttribute("content", "noindex")
+
+        await page.goto(projectPath("pt-BR", project.id, "SETUP.md"))
+        await expect(robots).toHaveCount(0)
+        const setupDescription = await description.getAttribute("content")
+
+        await page.goto(projectPath("pt-BR", project.id, "ARCHITECTURE.md"))
+        const architectureDescription = await description.getAttribute("content")
+
+        expect(setupDescription).toBeTruthy()
+        expect(architectureDescription).toBeTruthy()
+        expect(setupDescription).not.toBe(architectureDescription)
+        expect(setupDescription).not.toBe(project.summary)
+        expect(architectureDescription).not.toBe(project.summary)
+    })
+
     test("NF-IA-04, RF-PROJECT-34: id inexistente e documento inexistente respondem 404 com a não encontrada", async ({
         page
     }) => {
