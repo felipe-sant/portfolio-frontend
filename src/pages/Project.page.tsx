@@ -21,6 +21,7 @@ import useProject from "@/pages/hooks/useProject"
 import useProjectDocument from "@/pages/hooks/useProjectDocument"
 import ROUTES from "@/routers/paths"
 import css from "@/styles/pages/project.module.css"
+import buildBreadcrumbJsonLd from "@/utils/buildBreadcrumbJsonLd"
 import buildDocumentJsonLd from "@/utils/buildDocumentJsonLd"
 import buildProjectJsonLd from "@/utils/buildProjectJsonLd"
 import findDocumentByName from "@/utils/findDocumentByName"
@@ -77,6 +78,21 @@ function ProjectDetailView({ project, documentName }: ProjectContentProps) {
               project: project.title
           })
 
+    const breadcrumbItems: Parameters<typeof buildBreadcrumbJsonLd>[1] = [
+        { name: t("common:navigation.home"), path: ROUTES.home },
+        { name: t("common:navigation.projects"), path: ROUTES.projects },
+        { name: project.title, path: ROUTES.project, params: { id: project.id } },
+        ...(isDocumentPage
+            ? [
+                  {
+                      name: documentEntry.name,
+                      path: ROUTES.projectDocument,
+                      params: { id: project.id, name: documentEntry.name }
+                  }
+              ]
+            : [])
+    ]
+
     return (
         <>
             <title>{title}</title>
@@ -100,6 +116,7 @@ function ProjectDetailView({ project, documentName }: ProjectContentProps) {
             {isDocumentPage && (
                 <JsonLd data={buildDocumentJsonLd(language, project, documentEntry)} />
             )}
+            <JsonLd data={buildBreadcrumbJsonLd(language, breadcrumbItems)} />
             <header className={css.header}>
                 <div className={css.badges}>
                     {project.featured && (
