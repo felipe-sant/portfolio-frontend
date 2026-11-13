@@ -1,7 +1,7 @@
 # Spec: Cabeçalho e título da Início sem vazamento com o espaçamento de texto
 
 > **Tipo:** `bug` <br />
-> **Status:** `em-revisao` <br />
+> **Status:** `em-andamento` <br />
 > **Issue:** `#264` e `#265` (mesmo PR; relacionadas à `#41`, sem fechá-la) <br />
 > **Criado em:** `12-11-2026`
 
