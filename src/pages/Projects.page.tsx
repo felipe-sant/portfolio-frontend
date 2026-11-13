@@ -6,6 +6,7 @@ import ProjectsEmptyState from "@/components/ProjectsEmptyState"
 import ProjectsFilterBar from "@/components/ProjectsFilterBar"
 import ProjectsFiltersModal from "@/components/ProjectsFiltersModal"
 import ProjectsResults from "@/components/ProjectsResults"
+import ProjectsSummary from "@/components/ProjectsSummary"
 import ProjectsToolbar from "@/components/ProjectsToolbar"
 import useProjects from "@/pages/hooks/useProjects"
 import ROUTES from "@/routers/paths"
@@ -48,16 +49,11 @@ function ProjectsPage() {
                             onOpenFilters={modal.open}
                         />
                         <ProjectsFilterBar filterBar={filterBar} categoryValue={filters.category} />
-                        <div className={css.summary}>
-                            <p role={"status"} className={css.count}>
-                                {results.text}
-                            </p>
-                            {results.canClearFilters && (
-                                <Button variant="ghost" onClick={results.clearFilters}>
-                                    {t("results.clearFilters")}
-                                </Button>
-                            )}
-                        </div>
+                        <ProjectsSummary
+                            text={results.text}
+                            canClear={results.canClearFilters}
+                            onClear={results.clearFilters}
+                        />
                         <ProjectsResults
                             list={list}
                             isNoResults={results.isNoResults}

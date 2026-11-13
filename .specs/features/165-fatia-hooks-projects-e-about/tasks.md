@@ -201,7 +201,7 @@ Sequencial (as três fases editam hooks e páginas que cada uma depende de si); 
     - **Feito quando:** a página usa `ProjectsFilterBar`; `projects.module.css` perdeu `filters` (com o `@media`, o `data-dragging` e o `mask-image`) e `separator`; `ProjectsFilterBarProps` local, `export default`, sem comentário; toda classe `css.x` existe no módulo novo com declaração idêntica à da `staging`; `Projects.page.test.tsx` sem edição e verde
     - **Evidência:** gate verde (typecheck, lint, ProjectsFilterBar.test.tsx 8 testes, Projects.page.test.tsx e useProjects.test.tsx 147 testes); página usa ProjectsFilterBar (filterBar inteiro, categoryValue=filters.category); o componente desestrutura ref e dragProps antes de ler o resto (sem violação de react/refs, sem cast nem disable); projects.module.css perdeu filters (com ::-webkit-scrollbar, data-dragging, mask-image e o @media (min-width: 640px)) e separator copiados literalmente; Projects.page.test.tsx sem edição.
 
-- [ ] T16 — Componente `ProjectsSummary`
+- [x] T16 — Componente `ProjectsSummary`
     - **Arquivo(s):** `src/components/ProjectsSummary.tsx`, `src/components/test/ProjectsSummary.test.tsx`, `src/styles/components/projectsSummary.module.css`, `src/styles/pages/projects.module.css` (remove as classes movidas), `src/pages/Projects.page.tsx`
     - **Depende de:** T15
     - **Testes (escritos antes, RED):** (`render` com props simuladas, sem store; texto em português)
@@ -210,7 +210,7 @@ Sequencial (as três fases editam hooks e páginas que cada uma depende de si); 
         - sem violação de axe (`expectNoAxeViolations(container)`)
     - **Gate:** `npm run typecheck && npm run lint && npm test -- --run --maxWorkers=2 src/components/test/ProjectsSummary.test.tsx src/pages/test/Projects.page.test.tsx src/pages/hooks/test/useProjects.test.tsx`
     - **Feito quando:** a página usa `ProjectsSummary` com `results.canClearFilters`; `projects.module.css` perdeu `summary` e `count`; `ProjectsSummaryProps` local, `export default`, sem comentário; toda classe `css.x` existe no módulo novo com declaração idêntica à da `staging`; `Projects.page.test.tsx` sem edição e verde
-    - **Evidência:** ...
+    - **Evidência:** gate verde (typecheck, lint, ProjectsSummary.test.tsx 5 testes, Projects.page.test.tsx e useProjects.test.tsx: 152 testes); página usa ProjectsSummary com results.text, results.canClearFilters e results.clearFilters; <p role={"status"}> segue um único nó (teste de rerender confere o mesmo nó); projects.module.css perdeu summary e count copiados literalmente; Projects.page.test.tsx sem edição.
 
 - [ ] T17 — Componente `ProjectsLoadMore`
     - **Arquivo(s):** `src/components/ProjectsLoadMore.tsx`, `src/components/test/ProjectsLoadMore.test.tsx`, `src/styles/components/projectsLoadMore.module.css`, `src/styles/pages/projects.module.css` (remove as classes movidas), `src/pages/Projects.page.tsx`
