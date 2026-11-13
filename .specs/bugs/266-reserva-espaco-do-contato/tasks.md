@@ -12,7 +12,7 @@ Pré-requisito: o PO responde as questões em aberto 1 a 3 da spec; mudou a resp
 
 ## Tarefas
 
-- [ ] T1 [P] — Teste vermelho do deslocamento (E2E de Contato com fonte atrasada)
+- [x] T1 [P] — Teste vermelho do deslocamento (E2E de Contato com fonte atrasada)
     - **Arquivo(s):** `e2e/contact.spec.ts`, `e2e/support/specClassification.ts` (só se o arquivo mudar de lista)
     - **Depende de:** nenhuma
     - **Testes (escritos antes, RED):**
@@ -21,7 +21,7 @@ Pré-requisito: o PO responde as questões em aberto 1 a 3 da spec; mudou a resp
     - **Feito quando:** o caso existe, falha no código atual pelo motivo certo (deslocamento da linha de ações) e está classificado em `specClassification.ts`
     - **Evidência:** (executor)
 
-- [ ] T2 [P] — Teste vermelho da reserva por peso
+- [x] T2 [P] — Teste vermelho da reserva por peso
     - **Arquivo(s):** `scripts/test/fontWeights.test.ts`
     - **Depende de:** nenhuma
     - **Testes (escritos antes, RED):**
@@ -31,7 +31,7 @@ Pré-requisito: o PO responde as questões em aberto 1 a 3 da spec; mudou a resp
     - **Feito quando:** os dois testes existem e falham pelo motivo certo
     - **Evidência:** (executor)
 
-- [ ] T3 — Fonte reserva com métricas ajustadas
+- [x] T3 — Fonte reserva com métricas ajustadas
     - **Arquivo(s):** `src/styles/global.css`
     - **Depende de:** T1, T2
     - **Testes (escritos antes, RED):** os de T1 e T2 passam a verdes (CA2, CA3); a aparência é CSS e não entra em TDD
