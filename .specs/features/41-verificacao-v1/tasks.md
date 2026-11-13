@@ -11,7 +11,7 @@ Fase 1 (sequencial)  →  Fase 2 (sequencial)  →  Fase 3
 
 ## Tarefas
 
-- [ ] T1 — Escrever `docs/product/v1-verification.md` e listá-lo em `docs/README.md`
+- [x] T1 — Escrever `docs/product/v1-verification.md` e listá-lo em `docs/README.md`
     - **Arquivo(s):** `docs/product/v1-verification.md`, `docs/README.md`
     - **Depende de:** nenhuma
     - **Testes (escritos antes, RED):** não se aplica (só documentação)
@@ -19,7 +19,7 @@ Fase 1 (sequencial)  →  Fase 2 (sequencial)  →  Fase 3
     - **Feito quando:** o gate passa e as seções da spec existem com `Resultado`, `Quem fez`, `Data` e `Issue Fix` vazios
     - **Evidência:** (preenchida na execução)
 
-- [ ] T2 — Conferir a cobertura contra as fontes
+- [x] T2 — Conferir a cobertura contra as fontes
     - **Arquivo(s):** nenhum (script descartável fora do repositório)
     - **Depende de:** T1
     - **Testes (escritos antes, RED):** não se aplica
