@@ -176,7 +176,7 @@ Sequencial (as três fases editam hooks e páginas que cada uma depende de si); 
     - **Feito quando:** a página usa `ProjectsResults` no lugar de `AsyncSection` com a grade e o sem resultados, e o `ProjectsEmptyState` do sem resultados passa a viver nele; sem módulo CSS próprio (a tarefa não move classe); `ProjectsResultsProps` local, `export default`, sem comentário; o componente não importa CSS Module; `Projects.page.test.tsx` sem edição e verde
     - **Evidência:** gate verde (typecheck, lint, ProjectsResults.test.tsx 9 testes, Projects.page.test.tsx e useProjects.test.tsx: 156 testes); página usa ProjectsResults (list inteiro, isNoResults, query=filters.q, onClearFilters); o componente desestrutura gridRef de list (sem violação de react/refs) e não importa CSS Module; Projects.page.test.tsx sem edição.
 
-- [ ] T14 — Componente `ProjectsToolbar`
+- [x] T14 — Componente `ProjectsToolbar`
     - **Arquivo(s):** `src/components/ProjectsToolbar.tsx`, `src/components/test/ProjectsToolbar.test.tsx`, `src/styles/components/projectsToolbar.module.css`, `src/styles/pages/projects.module.css` (remove as classes movidas), `src/pages/Projects.page.tsx`
     - **Depende de:** T13
     - **Testes (escritos antes, RED):** (`render` com props simuladas, sem store; texto em português)
@@ -187,7 +187,7 @@ Sequencial (as três fases editam hooks e páginas que cada uma depende de si); 
         - sem violação de axe (`expectNoAxeViolations(container)`)
     - **Gate:** `npm run typecheck && npm run lint && npm test -- --run --maxWorkers=2 src/components/test/ProjectsToolbar.test.tsx src/pages/test/Projects.page.test.tsx src/pages/hooks/test/useProjects.test.tsx`
     - **Feito quando:** a página usa `ProjectsToolbar`; `projects.module.css` perdeu `controls` e `search`; `ProjectsToolbarProps` local, `export default`, sem comentário; toda classe `css.x` existe no módulo novo com declaração idêntica à da `staging`; `Projects.page.test.tsx` sem edição e verde
-    - **Evidência:** ...
+    - **Evidência:** gate verde (typecheck, lint, ProjectsToolbar.test.tsx 8 testes, Projects.page.test.tsx e useProjects.test.tsx); página usa ProjectsToolbar (search passado sem remapear, searchId=ids.search); SEARCH_MAX_LENGTH moveu para o componente; projects.module.css perdeu controls e search copiados literalmente; Projects.page.test.tsx sem edição.
 
 - [ ] T15 — Componente `ProjectsFilterBar`
     - **Arquivo(s):** `src/components/ProjectsFilterBar.tsx`, `src/components/test/ProjectsFilterBar.test.tsx`, `src/styles/components/projectsFilterBar.module.css`, `src/styles/pages/projects.module.css` (remove as classes movidas), `src/pages/Projects.page.tsx`

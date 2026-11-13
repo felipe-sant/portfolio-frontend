@@ -6,12 +6,10 @@ import PageMeta from "@/components/PageMeta"
 import ProjectsEmptyState from "@/components/ProjectsEmptyState"
 import ProjectsFiltersModal from "@/components/ProjectsFiltersModal"
 import ProjectsResults from "@/components/ProjectsResults"
-import SearchInput from "@/components/SearchInput"
+import ProjectsToolbar from "@/components/ProjectsToolbar"
 import useProjects from "@/pages/hooks/useProjects"
 import ROUTES from "@/routers/paths"
 import css from "@/styles/pages/projects.module.css"
-
-const SEARCH_MAX_LENGTH = 100
 
 function ProjectsPage() {
     const { t, shareImage, ids, seo, filters, search, filterBar, modal, results, list, more } =
@@ -43,30 +41,13 @@ function ProjectsPage() {
                     />
                 ) : (
                     <>
-                        <div className={css.controls}>
-                            <div className={css.search}>
-                                <SearchInput
-                                    id={ids.search}
-                                    value={search.draft}
-                                    onChange={search.setDraft}
-                                    onClear={search.clearSearch}
-                                    label={t("search.label")}
-                                    placeholder={t("search.placeholder")}
-                                    maxLength={SEARCH_MAX_LENGTH}
-                                />
-                            </div>
-                            <Button
-                                variant="secondary"
-                                icon="filter"
-                                aria-haspopup="dialog"
-                                aria-expanded={modal.isOpen}
-                                onClick={modal.open}
-                            >
-                                {modal.filtersCount > 0
-                                    ? t("filters.openWithCount", { count: modal.filtersCount })
-                                    : t("filters.open")}
-                            </Button>
-                        </div>
+                        <ProjectsToolbar
+                            searchId={ids.search}
+                            search={search}
+                            filtersCount={modal.filtersCount}
+                            isFiltersOpen={modal.isOpen}
+                            onOpenFilters={modal.open}
+                        />
                         <div ref={filterBarRef} className={css.filters} {...dragProps}>
                             <FilterGroup
                                 label={t("filters.type.label")}
