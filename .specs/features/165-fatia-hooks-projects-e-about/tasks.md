@@ -15,13 +15,13 @@ Sequencial (as três fases editam hooks e páginas que cada uma depende de si); 
 
 ## Tarefas
 
-- [ ] T0 — Linha de base do HTML pré-renderizado (sem commit)
+- [x] T0 — Linha de base do HTML pré-renderizado (sem commit)
     - **Arquivo(s):** nenhum no repositório; saída em `/tmp/claude-1000/-home-felipe-faculdade-portfolio-frontend--maestri-roles-a18f6928-4d12-40d4-bc54-14ecab3390d9/31be6ed5-5491-40f9-ac17-23e0bdd173c7/scratchpad/` (ou o scratchpad da sessão)
     - **Depende de:** nenhuma
     - **Testes (escritos antes, RED):** não se aplica
     - **Gate:** `uptime` com load até 14; `npm run build`; normalizar o HTML (nomes de `/assets/` sem o hash e sufixo hash das classes de CSS Module reduzido ao nome base) com um script guardado no scratchpad; gerar `sha256sum` do HTML normalizado de `about` e `projects` nos três idiomas (caminhos em `dist/` conforme `src/prerender/prerenderRoutes.ts`) e guardar a lista e o script
     - **Feito quando:** a lista de seis hashes e o script de normalização existem fora do repositório e `npx vitest run --maxWorkers=2` dos quatro arquivos da rede de segurança (`useAbout`, `useProjects`, `About.page`, `Projects.page`) está verde antes de qualquer mudança
-    - **Evidência:** ...
+    - **Evidência:** Base gerada pelo Dev em origin/staging 742fee8 com npm run build (44 s, load 2,5); seis hashes sha256 do HTML normalizado (about e projects em pt-BR, en, es) e o script hashhtml.py guardados no scratchpad; 199 testes dos quatro arquivos de rede de segurança verdes antes de mudar código (feita pelo Dev, não pelo executor).
 
 - [x] T1 — Testes de caracterização das lacunas
     - **Arquivo(s):** `src/pages/hooks/test/useAbout.test.tsx`, `src/pages/hooks/test/useProjects.test.tsx` (e `src/pages/test/Projects.page.test.tsx` só se faltar o caso de `canClearFilters`; nesse caso é adição, nunca edição de asserção, e a regra do VAL-165-02 vale a partir da T2)
@@ -224,13 +224,13 @@ Sequencial (as três fases editam hooks e páginas que cada uma depende de si); 
     - **Feito quando:** a página usa `ProjectsLoadMore`; `projects.module.css` fica só com `container`, `heading` e `intro`; `Projects.page.tsx` tem no máximo cerca de 90 linhas, desestrutura no máximo 12 nomes e não importa mais `Button`, `AsyncSection`, `FilterGroup`, `SearchInput`, `LoadError`, `ProjectCard` nem `ProjectCardSkeleton` (VAL-165-08, 12 e 13); `ProjectsLoadMoreProps` local, `export default`, sem comentário; toda classe `css.x` existe no módulo novo com declaração idêntica à da `staging`; `Projects.page.test.tsx` sem edição e verde
     - **Evidência:** gate verde (typecheck, lint, ProjectsLoadMore.test.tsx 7 testes, Projects.page.test.tsx e useProjects.test.tsx 147 testes); página usa ProjectsLoadMore (more inteiro, alertId=ids.loadMoreAlert, isListError=list.isError); Projects.page.tsx com 83 linhas, desestrutura 11 nomes e não importa mais Button, AsyncSection, FilterGroup, SearchInput, LoadError, ProjectCard nem ProjectCardSkeleton; projects.module.css ficou só com container, heading (e heading:focus) e intro; moreError e more copiados literalmente; Projects.page.test.tsx sem edição.
 
-- [ ] T18 — Documentação
+- [x] T18 — Documentação
     - **Arquivo(s):** `docs/screens/about.md` (parágrafo de `useAbout`, linha cerca de 454), `docs/screens/projects.md` (Implementação de `useProjects` e dos componentes novos), `docs/architecture/components.md` (catálogo: acrescentar os oito componentes e trocar a menção ao `ProjectListItem` local da página), `docs/architecture/frontend.md` se citar hooks ou o formato antigo, e qualquer outro `docs/` achado por `grep -rn "useProjects\|useAbout\|ProjectListItem" docs/` que cite o formato antigo
     - **Depende de:** T17
     - **Testes (escritos antes, RED):** não se aplica
     - **Gate:** `npm run lint` e `grep -rn "useAboutRetryFocus\|useTrajectorySelection\|useProjectsResults\|ProjectsToolbar\|ProjectsLoadMore" docs/` com ao menos uma ocorrência por hook e por componente novo
     - **Feito quando:** a documentação cita os cinco hooks novos, o util `aboutElementIds`, o formato por subobjetos e os oito componentes de Projetos no catálogo, sem texto de UI nem comentário em código (VAL-165-11)
-    - **Evidência:** ...
+    - **Evidência:** `npm run lint` limpo; grep do gate com ocorrência para cada hook e componente novo (useAboutRetryFocus, useTrajectorySelection, useProjectsResults, useProjectsSeo, useProjectsFilterOptions, aboutElementIds e os oito componentes Projects*); docs/screens/about.md (subobjetos de useAbout e os dois hooks novos), docs/screens/projects.md (hooks, subobjetos e os oito componentes) e docs/architecture/components.md (linha Projetos no catálogo; ProjectListItem agora local ao ProjectsGrid); frontend.md não cita os hooks; nomes e formatos conferidos nos arquivos de src.
 
 - [ ] T19 — Verificação completa
     - **Arquivo(s):** nenhum (só verificação)
