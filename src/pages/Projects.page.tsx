@@ -49,49 +49,10 @@ function ProjectListItem({ project, index, headingLevel }: ProjectListItemProps)
 }
 
 function ProjectsPage() {
-    const {
-        t,
-        shareImage,
-        ids,
-        seo,
-        filters,
-        filtersRef,
-        filtersDragProps,
-        draft,
-        setDraft,
-        clearSearch,
-        clearFilters,
-        setType,
-        setCategory,
-        applyModalFilters,
-        filtersCount,
-        appliedFilters,
-        isFiltersOpen,
-        openFilters,
-        closeFilters,
-        technologyOptions,
-        yearOptions,
-        typeValue,
-        typeOptions,
-        categoryOptions,
-        sortOptions,
-        resultsText,
-        isEmptyContent,
-        isNoResults,
-        canClearFilters,
-        isLoading,
-        isError,
-        retry,
-        mainItems,
-        experimentItems,
-        hasMore,
-        isFetchingMore,
-        skeletonCount,
-        loadMoreError,
-        loadMore,
-        retryLoadMore,
-        gridRef
-    } = useProjects()
+    const { t, shareImage, ids, seo, filters, search, filterBar, modal, results, list, more } =
+        useProjects()
+    const { ref: filterBarRef, dragProps, ...bar } = filterBar
+    const { gridRef, ...listState } = list
 
     return (
         <>
@@ -111,7 +72,7 @@ function ProjectsPage() {
                     {t("heading")}
                 </h1>
                 <p className={css.intro}>{t("intro")}</p>
-                {isEmptyContent ? (
+                {results.isEmptyContent ? (
                     <div className={css.emptyBox}>
                         <h2 className={css.emptyHeading}>{t("empty.heading")}</h2>
                         <p className={css.emptyText}>{t("empty.description")}</p>
@@ -122,9 +83,9 @@ function ProjectsPage() {
                             <div className={css.search}>
                                 <SearchInput
                                     id={ids.search}
-                                    value={draft}
-                                    onChange={setDraft}
-                                    onClear={clearSearch}
+                                    value={search.draft}
+                                    onChange={search.setDraft}
+                                    onClear={search.clearSearch}
                                     label={t("search.label")}
                                     placeholder={t("search.placeholder")}
                                     maxLength={SEARCH_MAX_LENGTH}
@@ -134,42 +95,42 @@ function ProjectsPage() {
                                 variant="secondary"
                                 icon="filter"
                                 aria-haspopup="dialog"
-                                aria-expanded={isFiltersOpen}
-                                onClick={openFilters}
+                                aria-expanded={modal.isOpen}
+                                onClick={modal.open}
                             >
-                                {filtersCount > 0
-                                    ? t("filters.openWithCount", { count: filtersCount })
+                                {modal.filtersCount > 0
+                                    ? t("filters.openWithCount", { count: modal.filtersCount })
                                     : t("filters.open")}
                             </Button>
                         </div>
-                        <div ref={filtersRef} className={css.filters} {...filtersDragProps}>
+                        <div ref={filterBarRef} className={css.filters} {...dragProps}>
                             <FilterGroup
                                 label={t("filters.type.label")}
-                                options={typeOptions}
-                                value={typeValue}
-                                onChange={setType}
+                                options={bar.typeOptions}
+                                value={bar.typeValue}
+                                onChange={bar.setType}
                             />
                             <span className={css.separator} aria-hidden="true" />
                             <FilterGroup
                                 label={t("filters.category.label")}
-                                options={categoryOptions}
+                                options={bar.categoryOptions}
                                 value={filters.category}
-                                onChange={setCategory}
+                                onChange={bar.setCategory}
                             />
                         </div>
                         <div className={css.summary}>
                             <p role={"status"} className={css.count}>
-                                {resultsText}
+                                {results.text}
                             </p>
-                            {canClearFilters && (
-                                <Button variant="ghost" onClick={clearFilters}>
+                            {results.canClearFilters && (
+                                <Button variant="ghost" onClick={results.clearFilters}>
                                     {t("results.clearFilters")}
                                 </Button>
                             )}
                         </div>
                         <AsyncSection
-                            isLoading={isLoading}
-                            isError={isError}
+                            isLoading={listState.isLoading}
+                            isError={listState.isError}
                             skeleton={
                                 <ul className={css.grid}>
                                     <SkeletonItems count={projectsPageSize} />
@@ -179,10 +140,10 @@ function ProjectsPage() {
                                 title: t("error.heading"),
                                 description: t("error.description"),
                                 retryLabel: t("error.retry"),
-                                onRetry: retry
+                                onRetry: listState.retry
                             }}
                         >
-                            {isNoResults && !isError && (
+                            {results.isNoResults && !listState.isError && (
                                 <div className={css.emptyBox}>
                                     <h2 className={css.emptyHeading}>{t("noResults.heading")}</h2>
                                     <p className={css.emptyText}>
@@ -190,28 +151,29 @@ function ProjectsPage() {
                                             ? t("noResults.withoutSearch")
                                             : t("noResults.withSearch", { query: filters.q })}
                                     </p>
-                                    <Button variant="secondary" onClick={clearFilters}>
+                                    <Button variant="secondary" onClick={results.clearFilters}>
                                         {t("results.clearFilters")}
                                     </Button>
                                 </div>
                             )}
-                            {!isError && !isNoResults && (
+                            {!listState.isError && !results.isNoResults && (
                                 <div ref={gridRef}>
-                                    {(mainItems.length > 0 || experimentItems.length === 0) && (
+                                    {(listState.mainItems.length > 0 ||
+                                        listState.experimentItems.length === 0) && (
                                         <ul className={css.grid}>
-                                            {mainItems.map((project, index) => (
+                                            {listState.mainItems.map((project, index) => (
                                                 <ProjectListItem
                                                     key={project.id}
                                                     project={project}
                                                     index={index}
                                                 />
                                             ))}
-                                            {experimentItems.length === 0 && (
-                                                <SkeletonItems count={skeletonCount} />
+                                            {listState.experimentItems.length === 0 && (
+                                                <SkeletonItems count={listState.skeletonCount} />
                                             )}
                                         </ul>
                                     )}
-                                    {experimentItems.length > 0 && (
+                                    {listState.experimentItems.length > 0 && (
                                         <section className={css.experiments}>
                                             <h2 className={css.experimentsHeading}>
                                                 {t("experiments.heading")}
@@ -220,50 +182,50 @@ function ProjectsPage() {
                                                 {t("experiments.description")}
                                             </p>
                                             <ul className={css.grid}>
-                                                {experimentItems.map((project, index) => (
+                                                {listState.experimentItems.map((project, index) => (
                                                     <ProjectListItem
                                                         key={project.id}
                                                         project={project}
-                                                        index={mainItems.length + index}
+                                                        index={listState.mainItems.length + index}
                                                         headingLevel={3}
                                                     />
                                                 ))}
-                                                <SkeletonItems count={skeletonCount} />
+                                                <SkeletonItems count={listState.skeletonCount} />
                                             </ul>
                                         </section>
                                     )}
                                 </div>
                             )}
                         </AsyncSection>
-                        {loadMoreError && (
+                        {more.loadMoreError && (
                             <div className={css.moreError}>
                                 <LoadError
                                     id={ids.loadMoreAlert}
                                     title={t("loadMoreError.heading")}
                                     retryLabel={t("loadMoreError.retry")}
-                                    onRetry={retryLoadMore}
+                                    onRetry={more.retryLoadMore}
                                 />
                             </div>
                         )}
-                        {hasMore && !isError && (
+                        {more.hasMore && !listState.isError && (
                             <div className={css.more}>
                                 <Button
                                     variant="secondary"
-                                    loading={isFetchingMore}
-                                    onClick={loadMore}
+                                    loading={more.isFetchingMore}
+                                    onClick={more.loadMore}
                                 >
                                     {t("loadMore")}
                                 </Button>
                             </div>
                         )}
                         <ProjectsFiltersModal
-                            isOpen={isFiltersOpen}
-                            technologies={technologyOptions}
-                            years={yearOptions}
-                            applied={appliedFilters}
-                            sorts={sortOptions}
-                            onApply={applyModalFilters}
-                            onClose={closeFilters}
+                            isOpen={modal.isOpen}
+                            technologies={modal.technologyOptions}
+                            years={modal.yearOptions}
+                            applied={modal.applied}
+                            sorts={modal.sortOptions}
+                            onApply={modal.applyModalFilters}
+                            onClose={modal.close}
                         />
                     </>
                 )}

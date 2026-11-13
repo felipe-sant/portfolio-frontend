@@ -45,28 +45,51 @@ function useProjects() {
         ids: projectsElementIds,
         seo,
         filters,
-        filtersRef,
-        filtersDragProps,
-        draft,
-        setDraft,
-        clearSearch,
-        clearFilters,
-        setType,
-        setCategory,
-        applyModalFilters,
-        hasFilters,
-        ...filterOptions,
-        isFiltersOpen,
-        openFilters,
-        closeFilters: () => setIsFiltersOpen(false),
-        resultsText: results.text,
-        isEmptyContent: results.isEmptyContent,
-        isNoResults: results.isNoResults,
-        canClearFilters: results.canClearFilters,
-        ...pages,
-        mainItems: results.mainItems,
-        experimentItems: results.experimentItems,
-        retry: results.retry
+        search: { draft, setDraft, clearSearch },
+        filterBar: {
+            ref: filtersRef,
+            dragProps: filtersDragProps,
+            typeValue: filterOptions.typeValue,
+            typeOptions: filterOptions.typeOptions,
+            categoryOptions: filterOptions.categoryOptions,
+            setType,
+            setCategory
+        },
+        modal: {
+            isOpen: isFiltersOpen,
+            open: openFilters,
+            close: () => setIsFiltersOpen(false),
+            filtersCount: filterOptions.filtersCount,
+            applied: filterOptions.appliedFilters,
+            technologyOptions: filterOptions.technologyOptions,
+            yearOptions: filterOptions.yearOptions,
+            sortOptions: filterOptions.sortOptions,
+            applyModalFilters
+        },
+        results: {
+            text: results.text,
+            hasFilters,
+            canClearFilters: results.canClearFilters,
+            isEmptyContent: results.isEmptyContent,
+            isNoResults: results.isNoResults,
+            clearFilters
+        },
+        list: {
+            isLoading: pages.isLoading,
+            isError: pages.isError,
+            retry: results.retry,
+            mainItems: results.mainItems,
+            experimentItems: results.experimentItems,
+            skeletonCount: pages.skeletonCount,
+            gridRef: pages.gridRef
+        },
+        more: {
+            hasMore: pages.hasMore,
+            isFetchingMore: pages.isFetchingMore,
+            loadMoreError: pages.loadMoreError,
+            loadMore: pages.loadMore,
+            retryLoadMore: pages.retryLoadMore
+        }
     }
 }
 
