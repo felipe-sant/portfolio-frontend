@@ -80,7 +80,7 @@ Sequencial (as três fases editam hooks e páginas que cada uma depende de si); 
     - **Feito quando:** o retorno tem exatamente `{ t, shareImage, jsonLd, isLoading, resume, paths, ids, profile, timeline, content, show, trajectory }`; `git diff origin/staging -- src/components src/types/about src/pages/test/About.page.test.tsx` vazio; `useAbout.ts` abaixo de 100 linhas (VAL-165-03, 08)
     - **Evidência:** gate verde (typecheck, lint, 7 arquivos, 92 testes); retorno com exatamente { shareImage, t, jsonLd, isLoading, resume, paths, ids, profile, timeline, content, show, trajectory }; `git diff origin/staging --stat -- src/components src/types/about src/pages/test/About.page.test.tsx` vazio; useAbout.ts com 88 linhas. Desvio: `language` saiu do retorno (fora do formato da spec) e o `it` "carrega o idioma novo" passou a ler `getLanguage()` no lugar de `about.language`, mesma asserção.
 
-- [ ] T6 — Hook `useProjectsSeo`
+- [x] T6 — Hook `useProjectsSeo`
     - **Arquivo(s):** `src/pages/hooks/useProjectsSeo.ts`, `src/pages/hooks/test/useProjectsSeo.test.tsx`, `src/pages/hooks/useProjects.ts` (devolve `seo: { jsonLd, breadcrumbJsonLd }`), `src/pages/Projects.page.tsx` e `src/pages/hooks/test/useProjects.test.tsx` (só acessores `jsonLd`/`breadcrumbJsonLd` para `seo.*`)
     - **Depende de:** T5
     - **Testes (escritos antes, RED):**
@@ -89,7 +89,7 @@ Sequencial (as três fases editam hooks e páginas que cada uma depende de si); 
         - breadcrumb com Início e Projetos e URLs com prefixo do idioma (VAL-165-07)
     - **Gate:** `npm run typecheck && npm run lint && npm test -- --run --maxWorkers=2 src/pages/hooks/test/useProjectsSeo.test.tsx src/pages/hooks/test/useProjects.test.tsx src/pages/test/Projects.page.test.tsx`
     - **Feito quando:** o gate passa; o describe "JSON-LD do primeiro lote" (669) segue verde com a mesma asserção, só com acessor novo
-    - **Evidência:** ...
+    - **Evidência:** gate verde (typecheck, lint, 3 arquivos, 151 testes). useProjectsSeo.test.tsx: "devolve os dois JSON-LD indefinidos sem itens" (toEqual({ jsonLd: undefined, breadcrumbJsonLd: undefined })) e it.each pt-BR/en/es (toMatchObject com name/description do idioma, itens Primeiro/Segundo, breadcrumb Início/Projetos e URLs com `/<idioma>"` e `/<idioma>/projects"`). Describe "JSON-LD do primeiro lote" sem mudança de asserção, só `latest.seo.jsonLd`.
 
 - [ ] T7 — Hook `useProjectsFilterOptions`
     - **Arquivo(s):** `src/pages/hooks/useProjectsFilterOptions.ts`, `src/pages/hooks/test/useProjectsFilterOptions.test.tsx`, `src/pages/hooks/useProjects.ts`

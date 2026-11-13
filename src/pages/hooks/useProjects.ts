@@ -8,10 +8,8 @@ import useLanguage from "@/hooks/useLanguage"
 import useShareImage from "@/hooks/useShareImage"
 import useProjectsFilters from "@/pages/hooks/useProjectsFilters"
 import useProjectsPages from "@/pages/hooks/useProjectsPages"
-import ROUTES from "@/routers/paths"
+import useProjectsSeo from "@/pages/hooks/useProjectsSeo"
 import projectsApi from "@/store/api/projects.api"
-import buildBreadcrumbJsonLd from "@/utils/buildBreadcrumbJsonLd"
-import buildProjectsJsonLd from "@/utils/buildProjectsJsonLd"
 import buildProjectsQueryArgs from "@/utils/buildProjectsQueryArgs"
 import projectsElementIds from "@/utils/projectsElementIds"
 import splitExperiments from "@/utils/splitExperiments"
@@ -73,6 +71,7 @@ function useProjects() {
             : t("results.count", { count: pages.total, shown: pages.shown })
     }
 
+    const seo = useProjectsSeo(pages.firstPageItems)
     const { main: mainItems, experiments: experimentItems } = splitExperiments(pages.items)
     const currentResultsText = buildResultsText()
     const resultsText = useDeferredValue(
@@ -84,19 +83,7 @@ function useProjects() {
         shareImage,
         t,
         ids: projectsElementIds,
-        jsonLd: pages.firstPageItems
-            ? buildProjectsJsonLd(
-                  language,
-                  { title: t("meta.title"), description: t("meta.description") },
-                  pages.firstPageItems
-              )
-            : undefined,
-        breadcrumbJsonLd: pages.firstPageItems
-            ? buildBreadcrumbJsonLd(language, [
-                  { name: t("common:navigation.home"), path: ROUTES.home },
-                  { name: t("common:navigation.projects"), path: ROUTES.projects }
-              ])
-            : undefined,
+        seo,
         filters,
         filtersRef,
         filtersDragProps,

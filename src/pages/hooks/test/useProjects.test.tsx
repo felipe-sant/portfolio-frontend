@@ -101,7 +101,7 @@ function projectRequests(fetchMock: ReturnType<typeof stubContentFetch>) {
 }
 
 function listedTitles() {
-    const list = latest.jsonLd?.mainEntity
+    const list = latest.seo.jsonLd?.mainEntity
     const elements =
         typeof list === "object" && list !== null && "itemListElement" in list
             ? list.itemListElement
@@ -672,13 +672,13 @@ describe("useProjects", () => {
             const release = holdFetchAfter(fetchMock, 0)
 
             mount()
-            expect(latest.breadcrumbJsonLd).toBeUndefined()
+            expect(latest.seo.breadcrumbJsonLd).toBeUndefined()
 
             await act(async () => {
                 release()
             })
-            await waitFor(() => expect(latest.breadcrumbJsonLd).toBeDefined())
-            const serialized = JSON.stringify(latest.breadcrumbJsonLd)
+            await waitFor(() => expect(latest.seo.breadcrumbJsonLd).toBeDefined())
+            const serialized = JSON.stringify(latest.seo.breadcrumbJsonLd)
 
             expect(serialized).toContain("BreadcrumbList")
             expect(serialized.indexOf("Início")).toBeGreaterThanOrEqual(0)
@@ -720,12 +720,12 @@ describe("useProjects", () => {
             const release = holdFetchAfter(fetchMock, 0)
 
             mount()
-            expect(latest.jsonLd).toBeUndefined()
+            expect(latest.seo.jsonLd).toBeUndefined()
 
             await act(async () => {
                 release()
             })
-            await waitFor(() => expect(latest.jsonLd).toBeDefined())
+            await waitFor(() => expect(latest.seo.jsonLd).toBeDefined())
         })
 
         it("fica indefinido quando a lista falha", async () => {
@@ -735,14 +735,14 @@ describe("useProjects", () => {
             mount()
             await waitFor(() => expect(latest.isError).toBe(true))
 
-            expect(latest.jsonLd).toBeUndefined()
+            expect(latest.seo.jsonLd).toBeUndefined()
         })
 
         it("lista os 3 projetos de um conteúdo pequeno", async () => {
             stubProjects(buildProjectRecords(3))
 
             mount()
-            await waitFor(() => expect(latest.jsonLd).toBeDefined())
+            await waitFor(() => expect(latest.seo.jsonLd).toBeDefined())
 
             expect(listedTitles()).toEqual(["Projeto 3", "Projeto 2", "Projeto 1"])
         })
@@ -751,20 +751,20 @@ describe("useProjects", () => {
             stubProjects(buildProjectRecords(10))
 
             mount()
-            await waitFor(() => expect(latest.jsonLd).toBeDefined())
+            await waitFor(() => expect(latest.seo.jsonLd).toBeDefined())
 
             const titles = listedTitles()
             expect(titles).toHaveLength(9)
             expect(titles[0]).toBe("Projeto 10")
             expect(titles).not.toContain("Projeto 1")
-            expect(JSON.stringify(latest.jsonLd)).not.toContain("numberOfItems")
+            expect(JSON.stringify(latest.seo.jsonLd)).not.toContain("numberOfItems")
         })
 
         it("não cresce com o Carregar mais", async () => {
             stubProjects(buildProjectRecords(10))
 
             mount()
-            await waitFor(() => expect(latest.jsonLd).toBeDefined())
+            await waitFor(() => expect(latest.seo.jsonLd).toBeDefined())
             act(() => latest.loadMore())
             await waitFor(() => expect(latest.shown).toBe(10))
 
@@ -775,19 +775,19 @@ describe("useProjects", () => {
             stubProjects(buildProjectRecords(20))
 
             mount(`${PATH}?type=web&sort=title`)
-            await waitFor(() => expect(latest.jsonLd).toBeDefined())
+            await waitFor(() => expect(latest.seo.jsonLd).toBeDefined())
 
             const titles = listedTitles()
             expect(titles).toHaveLength(9)
             expect(titles).toEqual(latest.items.map((item) => item.title))
-            expect(latest.jsonLd?.url).toBe("http://localhost:5173/pt-BR/projects")
+            expect(latest.seo.jsonLd?.url).toBe("http://localhost:5173/pt-BR/projects")
         })
 
         it("mantém o resultado anterior até o novo chegar e acompanha a lista mostrada", async () => {
             const fetchMock = stubProjects(buildProjectRecords(20))
             const store = createStore()
             const { router } = mount(PATH, store)
-            await waitFor(() => expect(latest.jsonLd).toBeDefined())
+            await waitFor(() => expect(latest.seo.jsonLd).toBeDefined())
             const before = listedTitles()
             const release = holdFetchAfter(fetchMock, 0)
 
@@ -812,7 +812,7 @@ describe("useProjects", () => {
             await waitFor(() => expect(latest.isNoResults).toBe(true))
 
             expect(listedTitles()).toEqual([])
-            expect(latest.jsonLd?.mainEntity).toMatchObject({ itemListElement: [] })
+            expect(latest.seo.jsonLd?.mainEntity).toMatchObject({ itemListElement: [] })
         })
 
         it("não abre a consulta de índice", async () => {
@@ -820,7 +820,7 @@ describe("useProjects", () => {
             const store = createStore()
 
             mount(PATH, store)
-            await waitFor(() => expect(latest.jsonLd).toBeDefined())
+            await waitFor(() => expect(latest.seo.jsonLd).toBeDefined())
 
             const endpoints = Object.values(store.getState().api.queries).map(
                 (entry) => entry?.endpointName
