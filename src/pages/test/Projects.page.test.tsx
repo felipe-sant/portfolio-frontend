@@ -549,6 +549,28 @@ describe("ProjectsPage", () => {
         expect(screen.queryByRole("alert")).not.toBeInTheDocument()
     })
 
+    it("não mostra Limpar filtros com filtro aplicado e a lista com erro", async () => {
+        const fetchMock = stubProjects(10)
+        failFetchAfter(fetchMock, 0)
+        renderPage("/pt-BR/projects?type=web")
+
+        await screen.findByRole("alert")
+
+        expect(screen.queryByRole("button", { name: "Limpar filtros" })).not.toBeInTheDocument()
+    })
+
+    it("não mostra Limpar filtros com filtro aplicado enquanto a lista carrega", async () => {
+        const fetchMock = stubProjects(10)
+        holdFetchAfter(fetchMock, 0)
+        renderPage("/pt-BR/projects?type=web")
+
+        await waitFor(() =>
+            expect(screen.getByRole("status")).toHaveTextContent("Carregando projetos…")
+        )
+
+        expect(screen.queryByRole("button", { name: "Limpar filtros" })).not.toBeInTheDocument()
+    })
+
     it.each(LANGUAGES)("mantém o prefixo de %s nos links dos cards", async (language) => {
         stubProjects(10)
         await setLanguage(language)

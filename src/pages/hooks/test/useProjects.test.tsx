@@ -666,6 +666,54 @@ describe("useProjects", () => {
         })
     })
 
+    describe("breadcrumb do primeiro lote", () => {
+        it("fica indefinido enquanto carrega e traz Início e Projetos quando a lista chega", async () => {
+            const fetchMock = stubProjects(buildProjectRecords(3))
+            const release = holdFetchAfter(fetchMock, 0)
+
+            mount()
+            expect(latest.breadcrumbJsonLd).toBeUndefined()
+
+            await act(async () => {
+                release()
+            })
+            await waitFor(() => expect(latest.breadcrumbJsonLd).toBeDefined())
+            const serialized = JSON.stringify(latest.breadcrumbJsonLd)
+
+            expect(serialized).toContain("BreadcrumbList")
+            expect(serialized.indexOf("Início")).toBeGreaterThanOrEqual(0)
+            expect(serialized.indexOf("Início")).toBeLessThan(serialized.indexOf("Projetos"))
+        })
+    })
+
+    describe("conteúdo vazio e sem resultado", () => {
+        it("distingue conteúdo vazio de sem resultado com e sem filtro", async () => {
+            stubProjects([])
+            const empty = mount()
+            await settled()
+
+            expect(latest.isEmptyContent).toBe(true)
+            expect(latest.isNoResults).toBe(false)
+            empty.unmount()
+
+            stubProjects([])
+            mount(`${PATH}?q=zzz`)
+            await settled()
+
+            expect(latest.isEmptyContent).toBe(false)
+            expect(latest.isNoResults).toBe(true)
+        })
+
+        it("não marca nenhum dos dois quando há resultado", async () => {
+            stubProjects(buildProjectRecords(3))
+            mount()
+            await settled()
+
+            expect(latest.isEmptyContent).toBe(false)
+            expect(latest.isNoResults).toBe(false)
+        })
+    })
+
     describe("JSON-LD do primeiro lote", () => {
         it("fica indefinido enquanto a lista carrega e aparece quando ela chega", async () => {
             const fetchMock = stubProjects(buildProjectRecords(3))

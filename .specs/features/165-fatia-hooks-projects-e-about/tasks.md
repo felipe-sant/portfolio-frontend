@@ -23,7 +23,7 @@ Sequencial (as três fases editam hooks e páginas que cada uma depende de si); 
     - **Feito quando:** a lista de seis hashes e o script de normalização existem fora do repositório e `npx vitest run --maxWorkers=2` dos quatro arquivos da rede de segurança (`useAbout`, `useProjects`, `About.page`, `Projects.page`) está verde antes de qualquer mudança
     - **Evidência:** ...
 
-- [ ] T1 — Testes de caracterização das lacunas
+- [x] T1 — Testes de caracterização das lacunas
     - **Arquivo(s):** `src/pages/hooks/test/useAbout.test.tsx`, `src/pages/hooks/test/useProjects.test.tsx` (e `src/pages/test/Projects.page.test.tsx` só se faltar o caso de `canClearFilters`; nesse caso é adição, nunca edição de asserção, e a regra do VAL-165-02 vale a partir da T2)
     - **Depende de:** T0
     - **Testes (escritos antes, RED):** estes testes caracterizam o código atual e passam já (verde); ler os `it` listados em "Lacunas" da spec e acrescentar só o que faltar:
@@ -34,7 +34,7 @@ Sequencial (as três fases editam hooks e páginas que cada uma depende de si); 
         - `isEmptyContent` x `isNoResults` com e sem filtro (VAL-165-07) em `useProjects.test.tsx`
     - **Gate:** `npm run typecheck && npm run lint && npm test -- --run --maxWorkers=2 src/pages/hooks/test/useAbout.test.tsx src/pages/hooks/test/useProjects.test.tsx src/pages/test/Projects.page.test.tsx`
     - **Feito quando:** o gate passa contra o código sem fatiar (se algum caso falhar, é bug real: parar e avisar o Orc em vez de mudar o código) e cada lacuna da spec tem um `it` identificável
-    - **Evidência:** ...
+    - **Evidência:** verde contra o código sem fatiar (3 arquivos, 164 testes). Lacunas: useAbout.test.tsx "foca o alerta da trajetória quando o retry da trajetória falha de novo" (expect(alert).toHaveFocus()), "foca o título do perfil quando o retry do perfil dá certo" (expect(heading).toHaveFocus()), "não refoca depois de tratado..." (expect(heading).not.toHaveFocus()); useProjects.test.tsx describe "breadcrumb do primeiro lote" (toBeUndefined, depois BreadcrumbList com Início antes de Projetos) e "conteúdo vazio e sem resultado" (isEmptyContent x isNoResults com e sem filtro); Projects.page.test.tsx dois `it` novos "não mostra Limpar filtros com filtro aplicado e a lista com erro" / "...enquanto a lista carrega" (queryByRole(...).not.toBeInTheDocument()), só adições.
 
 - [ ] T2 — Util `aboutElementIds`
     - **Arquivo(s):** `src/utils/aboutElementIds.ts`, `src/utils/test/aboutElementIds.test.ts`, `src/pages/hooks/useAbout.ts` (troca `FOCUS_IDS` pelo util, ids com os mesmos valores)

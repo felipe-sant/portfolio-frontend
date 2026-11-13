@@ -230,6 +230,69 @@ describe("useAbout", () => {
         expect(alert).toHaveFocus()
     })
 
+    it("foca o alerta da trajetória quando o retry da trajetória falha de novo", async () => {
+        stubContentFetch({ "content/pt-BR/profile.json": PROFILE })
+        const { result } = renderUseAbout()
+        await waitFor(() => expect(result.current.about.timeline.isError).toBe(true))
+        const alert = document.createElement("div")
+        alert.id = result.current.about.ids.timelineAlert
+        alert.tabIndex = -1
+        document.body.appendChild(alert)
+
+        stubContentFetch({ "content/pt-BR/profile.json": PROFILE })
+        await act(async () => {
+            await result.current.about.timeline.retry()
+        })
+
+        expect(alert).toHaveFocus()
+    })
+
+    it("foca o título do perfil quando o retry do perfil dá certo", async () => {
+        stubContentFetch({
+            "content/pt-BR/timeline.json": TIMELINE,
+            "content/pt-BR/projects.json": FILES["content/pt-BR/projects.json"]
+        })
+        const { result } = renderUseAbout()
+        await waitFor(() => expect(result.current.about.profile.isError).toBe(true))
+        const heading = document.createElement("h1")
+        heading.id = result.current.about.ids.profileHeading
+        heading.tabIndex = -1
+        document.body.appendChild(heading)
+
+        stubContentFetch(FILES)
+        await act(async () => {
+            await result.current.about.profile.retry()
+        })
+
+        await waitFor(() => expect(result.current.about.profile.isError).toBe(false))
+        expect(heading).toHaveFocus()
+    })
+
+    it("não refoca depois de tratado o retry quando outra fonte volta a buscar", async () => {
+        stubContentFetch({ "content/pt-BR/profile.json": PROFILE })
+        const { result, store } = renderUseAbout()
+        await waitFor(() => expect(result.current.about.timeline.isError).toBe(true))
+        const heading = document.createElement("h2")
+        heading.id = result.current.about.ids.timelineHeading
+        heading.tabIndex = -1
+        document.body.appendChild(heading)
+
+        stubContentFetch(FILES)
+        await act(async () => {
+            await result.current.about.timeline.retry()
+        })
+        await waitFor(() => expect(heading).toHaveFocus())
+        heading.blur()
+
+        await act(async () => {
+            await store.dispatch(
+                profileApi.endpoints.getProfile.initiate({ lang: "pt-BR" }, { forceRefetch: true })
+            )
+        })
+
+        expect(heading).not.toHaveFocus()
+    })
+
     it("abre e fecha o item e devolve o foco ao botão guardado, mesmo com o foco no body", async () => {
         stubContentFetch(FILES)
         const { result } = renderUseAbout()
