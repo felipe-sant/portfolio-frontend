@@ -3,6 +3,7 @@ import { Provider } from "react-redux"
 import { MemoryRouter, useNavigate } from "react-router-dom"
 import { afterEach, describe, expect, it, vi } from "vitest"
 import { act, renderHook, waitFor } from "@testing-library/react"
+import getLanguage from "@/i18n/getLanguage"
 import setLanguage from "@/i18n/setLanguage"
 import useAbout from "@/pages/hooks/useAbout"
 import profileApi from "@/store/api/profile.api"
@@ -101,7 +102,7 @@ describe("useAbout", () => {
         await waitFor(() =>
             expect(result.current.about.profile.data?.summary).toBe("Full stack developer.")
         )
-        expect(result.current.about.language).toBe("en")
+        expect(getLanguage()).toBe("en")
     })
 
     it("não faz nova requisição quando a store já vem hidratada", async () => {
@@ -131,9 +132,9 @@ describe("useAbout", () => {
         const { result } = renderUseAbout()
 
         await waitFor(() => expect(result.current.about.isLoading).toBe(false))
-        const { stackGroups, timeline } = result.current.about
+        const { content, timeline } = result.current.about
 
-        expect(stackGroups.map((group) => group.category)).toEqual(["frontend", "tooling"])
+        expect(content.stackGroups.map((group) => group.category)).toEqual(["frontend", "tooling"])
         expect(timeline.groups.map((group) => group.kind)).toEqual(["experience", "education"])
         expect(timeline.certificates.map((certificate) => certificate.name)).toEqual([
             "Certificado A"

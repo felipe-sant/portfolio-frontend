@@ -72,13 +72,13 @@ Sequencial (as três fases editam hooks e páginas que cada uma depende de si); 
     - **Feito quando:** o gate passa; `retry` de `profile` e `timeline` em `useAbout` vêm do hook novo; `useAbout.test.tsx` mantém 186 e 209 sem edição de asserção
     - **Evidência:** gate verde (typecheck, lint, 3 arquivos, 66 testes). useAboutRetryFocus.test.tsx (6 it): retry de cada fonte chama só o refetch dela (toHaveBeenCalledTimes), foco no título sem erro (expect(heading).toHaveFocus()), no alerta com erro, sem foco durante isFetching e foco quando cai, elemento ausente foca uma vez ao aparecer, não refoca depois de tratado (not.toHaveFocus()). useAbout.test.tsx 186 e 209 sem edição de asserção.
 
-- [ ] T5 — Formato final do retorno de `useAbout` e da página
+- [x] T5 — Formato final do retorno de `useAbout` e da página
     - **Arquivo(s):** `src/pages/hooks/useAbout.ts`, `src/pages/About.page.tsx`, `src/pages/hooks/test/useAbout.test.tsx` (só acessores)
     - **Depende de:** T4
     - **Testes (escritos antes, RED):** não se aplica (só reorganiza o retorno); a rede é `useAbout.test.tsx` e `About.page.test.tsx`
     - **Gate:** `npm run typecheck && npm run lint && npm test -- --run --maxWorkers=2 src/pages/hooks/test/useAbout.test.tsx src/pages/test/About.page.test.tsx src/components/test/AboutHero.test.tsx src/components/test/AboutTrajectory.test.tsx src/components/test/AboutStack.test.tsx src/components/test/AboutComplements.test.tsx src/components/test/AboutMeSection.test.tsx`
     - **Feito quando:** o retorno tem exatamente `{ t, shareImage, jsonLd, isLoading, resume, paths, ids, profile, timeline, content, show, trajectory }`; `git diff origin/staging -- src/components src/types/about src/pages/test/About.page.test.tsx` vazio; `useAbout.ts` abaixo de 100 linhas (VAL-165-03, 08)
-    - **Evidência:** ...
+    - **Evidência:** gate verde (typecheck, lint, 7 arquivos, 92 testes); retorno com exatamente { shareImage, t, jsonLd, isLoading, resume, paths, ids, profile, timeline, content, show, trajectory }; `git diff origin/staging --stat -- src/components src/types/about src/pages/test/About.page.test.tsx` vazio; useAbout.ts com 88 linhas. Desvio: `language` saiu do retorno (fora do formato da spec) e o `it` "carrega o idioma novo" passou a ler `getLanguage()` no lugar de `about.language`, mesma asserção.
 
 - [ ] T6 — Hook `useProjectsSeo`
     - **Arquivo(s):** `src/pages/hooks/useProjectsSeo.ts`, `src/pages/hooks/test/useProjectsSeo.test.tsx`, `src/pages/hooks/useProjects.ts` (devolve `seo: { jsonLd, breadcrumbJsonLd }`), `src/pages/Projects.page.tsx` e `src/pages/hooks/test/useProjects.test.tsx` (só acessores `jsonLd`/`breadcrumbJsonLd` para `seo.*`)

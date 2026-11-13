@@ -55,7 +55,6 @@ function useAbout() {
     return {
         shareImage,
         t,
-        language,
         jsonLd: buildAboutJsonLd(language, { name: t("common:authorName") }, profile, timeline),
         isLoading: profileQuery.isLoading || timelineQuery.isLoading,
         resume,
@@ -74,9 +73,7 @@ function useAbout() {
             isError: isTimelineError,
             retry: retryTimeline
         },
-        stackGroups,
-        workPrinciples,
-        updatedLabel,
+        content: { stackGroups, workPrinciples, updatedLabel },
         show: {
             stack: isProfilePending || stackGroups.length > 0,
             trajectory: isTimelinePending || groups.length > 0,

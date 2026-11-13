@@ -22,9 +22,7 @@ function AboutPage() {
         ids,
         profile,
         timeline,
-        stackGroups,
-        workPrinciples,
-        updatedLabel,
+        content,
         show,
         trajectory
     } = useAbout()
@@ -47,7 +45,7 @@ function AboutPage() {
                 profile={profile}
                 headingId={ids.profileHeading}
                 alertId={ids.profileAlert}
-                updatedLabel={updatedLabel}
+                updatedLabel={content.updatedLabel}
                 contactPath={paths.contact}
                 resumeHref={resume.href}
                 onOpenResume={resume.open}
@@ -62,12 +60,12 @@ function AboutPage() {
                     registerTrigger={trajectory.registerTrigger}
                 />
             )}
-            {show.stack && <AboutStack profile={profile} groups={stackGroups} />}
+            {show.stack && <AboutStack profile={profile} groups={content.stackGroups} />}
             {show.complements && (
                 <AboutComplements
                     profile={profile}
                     timeline={timeline}
-                    workPrinciples={workPrinciples}
+                    workPrinciples={content.workPrinciples}
                     showCertificates={show.certificates}
                     showWorkStyle={show.workStyle}
                 />
