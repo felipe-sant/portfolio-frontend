@@ -1,7 +1,7 @@
 # Spec: Fatia os hooks useProjects e useAbout por responsabilidade e extrai o JSX de Projetos em componentes
 
 > **Tipo:** `feature` (refatoração pura) <br />
-> **Status:** `implementada` <br />
+> **Status:** `em-andamento` <br />
 > **Issue:** `#165` <br />
 > **Criado em:** `12-11-2026`
 
