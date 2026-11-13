@@ -102,7 +102,7 @@ O `npm run build` já roda o `typecheck`. Mudança de tela também se confere no
 ## Pull Requests
 
 - Toda alteração passa por PR para a `staging`, sem push direto (exceção: `hotfix/*`, que vai para a `main`).
-- A promoção para produção é um PR de `staging` para `main`, aberto e atualizado pelo `promote.yml` a cada push na `staging`, com título `Chore :see_no_evil: Promove staging para produção` e a lista das issues incluídas geradas. O merge é humano e sempre por commit de merge (nunca squash), e fica bloqueado (PR em draft) enquanto houver changeset pendente.
+- A promoção para produção é um PR de `staging` para `main`, aberto e atualizado pelo `promote.yml` a cada push na `staging`, com título `Chore :see_no_evil: Promove staging para produção` e a lista das issues incluídas geradas. O merge é humano e sempre por commit de merge (nunca squash), e fica bloqueado (PR em draft) enquanto houver changeset pendente que altere a versão (o changeset vazio não bloqueia).
 - Ao abrir o PR, o autor se atribui já na criação (ex.: `gh pr create --assignee @me`) e aplica as labels de área da issue (`frontend`, `backend`, `infra`).
 - Referencie a issue relacionada na descrição (ex.: `Closes #5`). A branch padrão do repositório é a `staging`, então a issue fecha no merge do PR para a `staging`; o PR de promoção `staging` → `main` não repete o `Closes`.
 - O título do PR segue o mesmo padrão do commit principal (`<Tipo> <ícone> [#<número>] <descrição>`).
