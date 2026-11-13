@@ -22,14 +22,9 @@ function AboutPage() {
         ids,
         profile,
         timeline,
-        stackGroups,
-        workPrinciples,
-        updatedLabel,
+        content,
         show,
-        selectedItem,
-        open,
-        close,
-        registerTrigger
+        trajectory
     } = useAbout()
 
     return (
@@ -50,7 +45,7 @@ function AboutPage() {
                 profile={profile}
                 headingId={ids.profileHeading}
                 alertId={ids.profileAlert}
-                updatedLabel={updatedLabel}
+                updatedLabel={content.updatedLabel}
                 contactPath={paths.contact}
                 resumeHref={resume.href}
                 onOpenResume={resume.open}
@@ -61,21 +56,21 @@ function AboutPage() {
                     timeline={timeline}
                     headingId={ids.timelineHeading}
                     alertId={ids.timelineAlert}
-                    onOpen={open}
-                    registerTrigger={registerTrigger}
+                    onOpen={trajectory.open}
+                    registerTrigger={trajectory.registerTrigger}
                 />
             )}
-            {show.stack && <AboutStack profile={profile} groups={stackGroups} />}
+            {show.stack && <AboutStack profile={profile} groups={content.stackGroups} />}
             {show.complements && (
                 <AboutComplements
                     profile={profile}
                     timeline={timeline}
-                    workPrinciples={workPrinciples}
+                    workPrinciples={content.workPrinciples}
                     showCertificates={show.certificates}
                     showWorkStyle={show.workStyle}
                 />
             )}
-            <TrajectoryModal item={selectedItem} onClose={close} />
+            <TrajectoryModal item={trajectory.selectedItem} onClose={trajectory.close} />
             <LazyResumeModal isOpen={resume.isOpen} onClose={resume.close} />
         </>
     )

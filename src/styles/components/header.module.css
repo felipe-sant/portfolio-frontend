@@ -8,9 +8,10 @@
 
 .bar {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
-    gap: var(--space-6);
+    gap: var(--space-2) var(--space-6);
     width: 100%;
     max-width: var(--container-max);
     min-height: var(--header-height);
@@ -19,9 +20,11 @@
 }
 
 .brand {
+    flex: 1 1 0;
     display: inline-flex;
     align-items: center;
     gap: var(--space-3);
+    max-width: max-content;
     min-height: var(--hit-min);
     color: var(--text-strong);
     font-family: var(--font-heading);

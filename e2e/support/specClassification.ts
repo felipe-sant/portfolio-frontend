@@ -16,6 +16,7 @@ const specClassification = {
         "projects-filters.spec.ts",
         "projects.spec.ts",
         "resume.spec.ts",
+        "text-spacing.spec.ts",
         "theme.spec.ts"
     ],
     independentSpecs: [
