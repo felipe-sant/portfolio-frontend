@@ -64,7 +64,6 @@ function ProjectsPage() {
         setType,
         setCategory,
         applyModalFilters,
-        hasFilters,
         filtersCount,
         appliedFilters,
         isFiltersOpen,
@@ -79,6 +78,7 @@ function ProjectsPage() {
         resultsText,
         isEmptyContent,
         isNoResults,
+        canClearFilters,
         isLoading,
         isError,
         retry,
@@ -92,7 +92,6 @@ function ProjectsPage() {
         retryLoadMore,
         gridRef
     } = useProjects()
-    const canClearFilters = hasFilters && !isLoading && !isError && !isNoResults
 
     return (
         <>

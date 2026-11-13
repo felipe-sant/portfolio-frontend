@@ -105,7 +105,7 @@ Sequencial (as três fases editam hooks e páginas que cada uma depende de si); 
     - **Feito quando:** o gate passa; `useProjects` não chama mais `projectsApi.useGetProjectFilterOptionsQuery` nem importa os enums de opções
     - **Evidência:** gate verde (typecheck, lint, 3 arquivos, 155 testes). useProjectsFilterOptions.test.tsx (8 it): "Todos" primeiro e só disponíveis na ordem do enum (toEqual(["", "web", "api", "iot"])), typeValue, categorias e ordenações do enum, technologyOptions/yearOptions vazias e depois do endpoint, perfil falhando mantém vazias, filtersCount 3 (só tech e year) e appliedFilters com sort, mudança de idioma refaz a consulta uma vez por idioma (originalArgs [{lang:"pt-BR"},{lang:"en"}]). `useProjects` não chama mais `useGetProjectFilterOptionsQuery` nem importa os enums de opções.
 
-- [ ] T8 — Hook `useProjectsResults`
+- [x] T8 — Hook `useProjectsResults`
     - **Arquivo(s):** `src/pages/hooks/useProjectsResults.ts`, `src/pages/hooks/test/useProjectsResults.test.tsx`, `src/pages/hooks/useProjects.ts`
     - **Depende de:** T7
     - **Testes (escritos antes, RED):** (`renderHook` com um `pages` simulado e `MemoryRouter` quando preciso; `setLanguage` dentro do `it`)
@@ -117,7 +117,7 @@ Sequencial (as três fases editam hooks e páginas que cada uma depende de si); 
         - `retry` foca `#projects-heading` antes do `refetch` e devolve a promessa (VAL-165-07; herda 565)
     - **Gate:** `npm run typecheck && npm run lint && npm test -- --run --maxWorkers=2 src/pages/hooks/test/useProjectsResults.test.tsx src/pages/hooks/test/useProjects.test.tsx src/pages/test/Projects.page.test.tsx`
     - **Feito quando:** o gate passa; `canClearFilters` deixa de ser calculado em `Projects.page.tsx`
-    - **Evidência:** ...
+    - **Evidência:** gate verde (typecheck, lint, 3 arquivos, 157 testes). useProjectsResults.test.tsx (10 it, `pages` simulado): texto vazio com erro e sem dados, "Carregando projetos…", "0 projetos"/"9 de 10 projetos"/"1 de 1 projeto" e inglês "9 of 10 projects", texts[0] toBe("") e depois "9 de 10 projetos" (useDeferredValue), isEmptyContent e isNoResults nas combinações, canClearFilters nas quatro condições, mainItems/experimentItems A,C / B,D, retry foca o título antes do refetch (order toEqual(["focused"])) e devolve Promise. `canClearFilters` deixou de ser calculado em Projects.page.tsx. Desvio: o tipo de entrada `pages` é `Pick` dos campos lidos com `retry: () => Promise<unknown>` (o retry real do RTK não é simulável sem cast); `useProjects` ainda devolve o formato plano (muda na T9).
 
 - [ ] T9 — Formato final do retorno de `useProjects` e da página
     - **Arquivo(s):** `src/pages/hooks/useProjects.ts`, `src/pages/Projects.page.tsx`, `src/pages/hooks/test/useProjects.test.tsx` (`Probe` e acessores, mais os `it` 860 e 945 olhando todos os subobjetos)
