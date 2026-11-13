@@ -1,7 +1,7 @@
 # Tasks: Fatia os hooks useProjects e useAbout por responsabilidade
 
 > Spec: `./spec.md` <br />
-> **Status:** `em-andamento`
+> **Status:** `implementada`
 
 Regras de todas as tarefas: nenhum comentário em código; identificadores em inglês; `npm test -- --run --maxWorkers=2 <arquivo>` (nunca todos os workers); conferir `uptime` antes de Vitest/build (load acima de 14: esperar); um commit atômico por tarefa no formato `Refactor :recycle: [#165] <descrição>` (`Test :test_tube:` na T1, `Docs :bulb:` na T18; componentes novos de Projetos entram como `Refactor :recycle:` com o CSS movido no mesmo commit), sempre verde; asserção de comportamento de teste existente nunca é editada.
 
@@ -232,10 +232,10 @@ Sequencial (as três fases editam hooks e páginas que cada uma depende de si); 
     - **Feito quando:** a documentação cita os cinco hooks novos, o util `aboutElementIds`, o formato por subobjetos e os oito componentes de Projetos no catálogo, sem texto de UI nem comentário em código (VAL-165-11)
     - **Evidência:** `npm run lint` limpo; grep do gate com ocorrência para cada hook e componente novo (useAboutRetryFocus, useTrajectorySelection, useProjectsResults, useProjectsSeo, useProjectsFilterOptions, aboutElementIds e os oito componentes Projects*); docs/screens/about.md (subobjetos de useAbout e os dois hooks novos), docs/screens/projects.md (hooks, subobjetos e os oito componentes) e docs/architecture/components.md (linha Projetos no catálogo; ProjectListItem agora local ao ProjectsGrid); frontend.md não cita os hooks; nomes e formatos conferidos nos arquivos de src.
 
-- [ ] T19 — Verificação completa
+- [x] T19 — Verificação completa
     - **Arquivo(s):** nenhum (só verificação)
     - **Depende de:** todas as tarefas anteriores
     - **Testes (escritos antes, RED):** não se aplica
     - **Gate:** `uptime` até 14; `npm run build && npm run test:cov -- --maxWorkers=2` (única rodada pesada); depois comparar os seis `sha256sum` do HTML normalizado com os da T0 (mesmo script); depois `npm run build:fatec` e `npx playwright test e2e/about.spec.ts e2e/projects.spec.ts e2e/projects-filters.spec.ts e2e/no-javascript.spec.ts e2e/accessibility.spec.ts e2e/keyboard.spec.ts` (um de cada vez); conferir `git diff origin/staging -- src/components/About*.tsx src/components/AsyncSection.tsx src/types/about src/pages/test e2e` vazio (exceto a adição eventual da T1 em `Projects.page.test.tsx`), que `src/styles/pages/projects.module.css` ficou só com `container`, `heading` e `intro` (VAL-165-13), o grep de memoização do VAL-165-09 e a verificação visual do VAL-165-14 (Projetos em claro e escuro, 375, 768 e 1280 px, comparada com a `staging`); por fim `npm run changeset` com `patch` (não vazio)
     - **Feito quando:** tudo passa, os seis hashes são iguais aos da T0, o changeset `patch` existe e os critérios VAL-165-01 a 14 estão marcados
-    - **Evidência:** ...
+    - **Evidência:** HTML normalizado (assets sem hash, sufixo das classes de CSS Module, requestId e timestamps do estado serializado) idêntico ao da staging nas seis URLs, comparado com `hashhtml.py` e leitura do JSON do `prerender-data`; `npm run build` ok; `npm run check:chunk` ok; `test:cov` com 371 arquivos e 3.405 testes verdes; diff de `src/pages/test` só com as 22 linhas da T1, sem diff em `About*`, `AsyncSection`, `src/types/about` e `e2e`; `projects.module.css` só com `container`, `heading` e `intro`; único `useCallback` no diff é o `registerTrigger` já existente, movido para `useTrajectorySelection`; changeset `patch` criado. Ficam para o CI do PR: `build:fatec` e os E2E. VAL-165-14 (conferência visual) fica para o PO/QA no navegador.
