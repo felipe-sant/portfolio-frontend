@@ -3,6 +3,7 @@ import { Provider } from "react-redux"
 import { MemoryRouter, useNavigate } from "react-router-dom"
 import { afterEach, describe, expect, it, vi } from "vitest"
 import { act, renderHook, waitFor } from "@testing-library/react"
+import getLanguage from "@/i18n/getLanguage"
 import setLanguage from "@/i18n/setLanguage"
 import useAbout from "@/pages/hooks/useAbout"
 import profileApi from "@/store/api/profile.api"
@@ -101,7 +102,7 @@ describe("useAbout", () => {
         await waitFor(() =>
             expect(result.current.about.profile.data?.summary).toBe("Full stack developer.")
         )
-        expect(result.current.about.language).toBe("en")
+        expect(getLanguage()).toBe("en")
     })
 
     it("não faz nova requisição quando a store já vem hidratada", async () => {
@@ -131,9 +132,9 @@ describe("useAbout", () => {
         const { result } = renderUseAbout()
 
         await waitFor(() => expect(result.current.about.isLoading).toBe(false))
-        const { stackGroups, timeline } = result.current.about
+        const { content, timeline } = result.current.about
 
-        expect(stackGroups.map((group) => group.category)).toEqual(["frontend", "tooling"])
+        expect(content.stackGroups.map((group) => group.category)).toEqual(["frontend", "tooling"])
         expect(timeline.groups.map((group) => group.kind)).toEqual(["experience", "education"])
         expect(timeline.certificates.map((certificate) => certificate.name)).toEqual([
             "Certificado A"
@@ -230,6 +231,69 @@ describe("useAbout", () => {
         expect(alert).toHaveFocus()
     })
 
+    it("foca o alerta da trajetória quando o retry da trajetória falha de novo", async () => {
+        stubContentFetch({ "content/pt-BR/profile.json": PROFILE })
+        const { result } = renderUseAbout()
+        await waitFor(() => expect(result.current.about.timeline.isError).toBe(true))
+        const alert = document.createElement("div")
+        alert.id = result.current.about.ids.timelineAlert
+        alert.tabIndex = -1
+        document.body.appendChild(alert)
+
+        stubContentFetch({ "content/pt-BR/profile.json": PROFILE })
+        await act(async () => {
+            await result.current.about.timeline.retry()
+        })
+
+        expect(alert).toHaveFocus()
+    })
+
+    it("foca o título do perfil quando o retry do perfil dá certo", async () => {
+        stubContentFetch({
+            "content/pt-BR/timeline.json": TIMELINE,
+            "content/pt-BR/projects.json": FILES["content/pt-BR/projects.json"]
+        })
+        const { result } = renderUseAbout()
+        await waitFor(() => expect(result.current.about.profile.isError).toBe(true))
+        const heading = document.createElement("h1")
+        heading.id = result.current.about.ids.profileHeading
+        heading.tabIndex = -1
+        document.body.appendChild(heading)
+
+        stubContentFetch(FILES)
+        await act(async () => {
+            await result.current.about.profile.retry()
+        })
+
+        await waitFor(() => expect(result.current.about.profile.isError).toBe(false))
+        expect(heading).toHaveFocus()
+    })
+
+    it("não refoca depois de tratado o retry quando outra fonte volta a buscar", async () => {
+        stubContentFetch({ "content/pt-BR/profile.json": PROFILE })
+        const { result, store } = renderUseAbout()
+        await waitFor(() => expect(result.current.about.timeline.isError).toBe(true))
+        const heading = document.createElement("h2")
+        heading.id = result.current.about.ids.timelineHeading
+        heading.tabIndex = -1
+        document.body.appendChild(heading)
+
+        stubContentFetch(FILES)
+        await act(async () => {
+            await result.current.about.timeline.retry()
+        })
+        await waitFor(() => expect(heading).toHaveFocus())
+        heading.blur()
+
+        await act(async () => {
+            await store.dispatch(
+                profileApi.endpoints.getProfile.initiate({ lang: "pt-BR" }, { forceRefetch: true })
+            )
+        })
+
+        expect(heading).not.toHaveFocus()
+    })
+
     it("abre e fecha o item e devolve o foco ao botão guardado, mesmo com o foco no body", async () => {
         stubContentFetch(FILES)
         const { result } = renderUseAbout()
@@ -238,17 +302,17 @@ describe("useAbout", () => {
         const button = document.createElement("button")
         document.body.appendChild(button)
         act(() => {
-            result.current.about.registerTrigger(item.id)(button)
+            result.current.about.trajectory.registerTrigger(item.id)(button)
         })
 
-        act(() => result.current.about.open(item))
+        act(() => result.current.about.trajectory.open(item))
 
-        expect(result.current.about.selectedItem).toEqual(item)
+        expect(result.current.about.trajectory.selectedItem).toEqual(item)
         expect(document.activeElement).toBe(document.body)
 
-        act(() => result.current.about.close())
+        act(() => result.current.about.trajectory.close())
 
-        expect(result.current.about.selectedItem).toBeNull()
+        expect(result.current.about.trajectory.selectedItem).toBeNull()
         await waitFor(() => expect(button).toHaveFocus())
     })
 
@@ -259,17 +323,17 @@ describe("useAbout", () => {
         const item = result.current.about.timeline.groups[0].items[0]
         const before = window.history.length
 
-        act(() => result.current.about.open(item))
-        expect(result.current.about.selectedItem).toEqual(item)
+        act(() => result.current.about.trajectory.open(item))
+        expect(result.current.about.trajectory.selectedItem).toEqual(item)
         expect(window.history.length).toBe(before)
 
         act(() => result.current.navigate("/pt-BR/projects"))
 
-        expect(result.current.about.selectedItem).toBeNull()
+        expect(result.current.about.trajectory.selectedItem).toBeNull()
 
         act(() => result.current.navigate("/pt-BR/about"))
 
-        expect(result.current.about.selectedItem).toBeNull()
+        expect(result.current.about.trajectory.selectedItem).toBeNull()
     })
 
     it("monta o JSON-LD com os dados carregados", async () => {

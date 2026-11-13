@@ -1,99 +1,19 @@
-import Button from "@/components/Button"
-import AsyncSection from "@/components/AsyncSection"
-import FilterGroup from "@/components/FilterGroup"
 import JsonLd from "@/components/JsonLd"
-import LoadError from "@/components/LoadError"
 import PageMeta from "@/components/PageMeta"
-import ProjectCard from "@/components/ProjectCard"
-import ProjectCardSkeleton from "@/components/ProjectCardSkeleton"
+import ProjectsEmptyState from "@/components/ProjectsEmptyState"
+import ProjectsFilterBar from "@/components/ProjectsFilterBar"
 import ProjectsFiltersModal from "@/components/ProjectsFiltersModal"
-import SearchInput from "@/components/SearchInput"
+import ProjectsLoadMore from "@/components/ProjectsLoadMore"
+import ProjectsResults from "@/components/ProjectsResults"
+import ProjectsSummary from "@/components/ProjectsSummary"
+import ProjectsToolbar from "@/components/ProjectsToolbar"
 import useProjects from "@/pages/hooks/useProjects"
 import ROUTES from "@/routers/paths"
 import css from "@/styles/pages/projects.module.css"
-import type ProjectSummary from "@/types/project/ProjectSummary.types"
-import projectsPageSize from "@/utils/projectsPageSize"
-
-interface SkeletonItemsProps {
-    count: number
-}
-
-interface ProjectListItemProps {
-    project: ProjectSummary
-    index: number
-    headingLevel?: 2 | 3
-}
-
-const SEARCH_MAX_LENGTH = 100
-
-function SkeletonItems({ count }: SkeletonItemsProps) {
-    return Array.from({ length: count }, (_value, index) => (
-        <li key={index} className={css.item} aria-hidden="true">
-            <ProjectCardSkeleton />
-        </li>
-    ))
-}
-
-function ProjectListItem({ project, index, headingLevel }: ProjectListItemProps) {
-    return (
-        <li className={css.item}>
-            <ProjectCard
-                project={project}
-                index={index}
-                revealIndex={index % projectsPageSize}
-                headingLevel={headingLevel}
-                fromProjects
-            />
-        </li>
-    )
-}
 
 function ProjectsPage() {
-    const {
-        t,
-        shareImage,
-        ids,
-        jsonLd,
-        breadcrumbJsonLd,
-        filters,
-        filtersRef,
-        filtersDragProps,
-        draft,
-        setDraft,
-        clearSearch,
-        clearFilters,
-        setType,
-        setCategory,
-        applyModalFilters,
-        hasFilters,
-        filtersCount,
-        appliedFilters,
-        isFiltersOpen,
-        openFilters,
-        closeFilters,
-        technologyOptions,
-        yearOptions,
-        typeValue,
-        typeOptions,
-        categoryOptions,
-        sortOptions,
-        resultsText,
-        isEmptyContent,
-        isNoResults,
-        isLoading,
-        isError,
-        retry,
-        mainItems,
-        experimentItems,
-        hasMore,
-        isFetchingMore,
-        skeletonCount,
-        loadMoreError,
-        loadMore,
-        retryLoadMore,
-        gridRef
-    } = useProjects()
-    const canClearFilters = hasFilters && !isLoading && !isError && !isNoResults
+    const { t, shareImage, ids, seo, filters, search, filterBar, modal, results, list, more } =
+        useProjects()
 
     return (
         <>
@@ -106,166 +26,52 @@ function ProjectsPage() {
                 image={shareImage.image}
                 imageAlt={shareImage.imageAlt}
             />
-            {jsonLd && <JsonLd data={jsonLd} />}
-            {breadcrumbJsonLd && <JsonLd data={breadcrumbJsonLd} />}
+            {seo.jsonLd && <JsonLd data={seo.jsonLd} />}
+            {seo.breadcrumbJsonLd && <JsonLd data={seo.breadcrumbJsonLd} />}
             <div className={css.container}>
                 <h1 id={ids.heading} tabIndex={-1} className={css.heading}>
                     {t("heading")}
                 </h1>
                 <p className={css.intro}>{t("intro")}</p>
-                {isEmptyContent ? (
-                    <div className={css.emptyBox}>
-                        <h2 className={css.emptyHeading}>{t("empty.heading")}</h2>
-                        <p className={css.emptyText}>{t("empty.description")}</p>
-                    </div>
+                {results.isEmptyContent ? (
+                    <ProjectsEmptyState
+                        heading={t("empty.heading")}
+                        description={t("empty.description")}
+                    />
                 ) : (
                     <>
-                        <div className={css.controls}>
-                            <div className={css.search}>
-                                <SearchInput
-                                    id={ids.search}
-                                    value={draft}
-                                    onChange={setDraft}
-                                    onClear={clearSearch}
-                                    label={t("search.label")}
-                                    placeholder={t("search.placeholder")}
-                                    maxLength={SEARCH_MAX_LENGTH}
-                                />
-                            </div>
-                            <Button
-                                variant="secondary"
-                                icon="filter"
-                                aria-haspopup="dialog"
-                                aria-expanded={isFiltersOpen}
-                                onClick={openFilters}
-                            >
-                                {filtersCount > 0
-                                    ? t("filters.openWithCount", { count: filtersCount })
-                                    : t("filters.open")}
-                            </Button>
-                        </div>
-                        <div ref={filtersRef} className={css.filters} {...filtersDragProps}>
-                            <FilterGroup
-                                label={t("filters.type.label")}
-                                options={typeOptions}
-                                value={typeValue}
-                                onChange={setType}
-                            />
-                            <span className={css.separator} aria-hidden="true" />
-                            <FilterGroup
-                                label={t("filters.category.label")}
-                                options={categoryOptions}
-                                value={filters.category}
-                                onChange={setCategory}
-                            />
-                        </div>
-                        <div className={css.summary}>
-                            <p role={"status"} className={css.count}>
-                                {resultsText}
-                            </p>
-                            {canClearFilters && (
-                                <Button variant="ghost" onClick={clearFilters}>
-                                    {t("results.clearFilters")}
-                                </Button>
-                            )}
-                        </div>
-                        <AsyncSection
-                            isLoading={isLoading}
-                            isError={isError}
-                            skeleton={
-                                <ul className={css.grid}>
-                                    <SkeletonItems count={projectsPageSize} />
-                                </ul>
-                            }
-                            error={{
-                                title: t("error.heading"),
-                                description: t("error.description"),
-                                retryLabel: t("error.retry"),
-                                onRetry: retry
-                            }}
-                        >
-                            {isNoResults && !isError && (
-                                <div className={css.emptyBox}>
-                                    <h2 className={css.emptyHeading}>{t("noResults.heading")}</h2>
-                                    <p className={css.emptyText}>
-                                        {filters.q === ""
-                                            ? t("noResults.withoutSearch")
-                                            : t("noResults.withSearch", { query: filters.q })}
-                                    </p>
-                                    <Button variant="secondary" onClick={clearFilters}>
-                                        {t("results.clearFilters")}
-                                    </Button>
-                                </div>
-                            )}
-                            {!isError && !isNoResults && (
-                                <div ref={gridRef}>
-                                    {(mainItems.length > 0 || experimentItems.length === 0) && (
-                                        <ul className={css.grid}>
-                                            {mainItems.map((project, index) => (
-                                                <ProjectListItem
-                                                    key={project.id}
-                                                    project={project}
-                                                    index={index}
-                                                />
-                                            ))}
-                                            {experimentItems.length === 0 && (
-                                                <SkeletonItems count={skeletonCount} />
-                                            )}
-                                        </ul>
-                                    )}
-                                    {experimentItems.length > 0 && (
-                                        <section className={css.experiments}>
-                                            <h2 className={css.experimentsHeading}>
-                                                {t("experiments.heading")}
-                                            </h2>
-                                            <p className={css.experimentsDescription}>
-                                                {t("experiments.description")}
-                                            </p>
-                                            <ul className={css.grid}>
-                                                {experimentItems.map((project, index) => (
-                                                    <ProjectListItem
-                                                        key={project.id}
-                                                        project={project}
-                                                        index={mainItems.length + index}
-                                                        headingLevel={3}
-                                                    />
-                                                ))}
-                                                <SkeletonItems count={skeletonCount} />
-                                            </ul>
-                                        </section>
-                                    )}
-                                </div>
-                            )}
-                        </AsyncSection>
-                        {loadMoreError && (
-                            <div className={css.moreError}>
-                                <LoadError
-                                    id={ids.loadMoreAlert}
-                                    title={t("loadMoreError.heading")}
-                                    retryLabel={t("loadMoreError.retry")}
-                                    onRetry={retryLoadMore}
-                                />
-                            </div>
-                        )}
-                        {hasMore && !isError && (
-                            <div className={css.more}>
-                                <Button
-                                    variant="secondary"
-                                    loading={isFetchingMore}
-                                    onClick={loadMore}
-                                >
-                                    {t("loadMore")}
-                                </Button>
-                            </div>
-                        )}
+                        <ProjectsToolbar
+                            searchId={ids.search}
+                            search={search}
+                            filtersCount={modal.filtersCount}
+                            isFiltersOpen={modal.isOpen}
+                            onOpenFilters={modal.open}
+                        />
+                        <ProjectsFilterBar filterBar={filterBar} categoryValue={filters.category} />
+                        <ProjectsSummary
+                            text={results.text}
+                            canClear={results.canClearFilters}
+                            onClear={results.clearFilters}
+                        />
+                        <ProjectsResults
+                            list={list}
+                            isNoResults={results.isNoResults}
+                            query={filters.q}
+                            onClearFilters={results.clearFilters}
+                        />
+                        <ProjectsLoadMore
+                            more={more}
+                            alertId={ids.loadMoreAlert}
+                            isListError={list.isError}
+                        />
                         <ProjectsFiltersModal
-                            isOpen={isFiltersOpen}
-                            technologies={technologyOptions}
-                            years={yearOptions}
-                            applied={appliedFilters}
-                            sorts={sortOptions}
-                            onApply={applyModalFilters}
-                            onClose={closeFilters}
+                            isOpen={modal.isOpen}
+                            technologies={modal.technologyOptions}
+                            years={modal.yearOptions}
+                            applied={modal.applied}
+                            sorts={modal.sortOptions}
+                            onApply={modal.applyModalFilters}
+                            onClose={modal.close}
                         />
                     </>
                 )}
