@@ -1,10 +1,10 @@
-import { useEffect, useRef, useState } from "react"
 import { useTranslation } from "react-i18next"
 import TIMELINE_KINDS from "@/enum/timelineKinds.enum"
 import useLanguage from "@/hooks/useLanguage"
 import useLocalizedPath from "@/hooks/useLocalizedPath"
 import useResume from "@/hooks/useResume"
 import useShareImage from "@/hooks/useShareImage"
+import useAboutRetryFocus from "@/pages/hooks/useAboutRetryFocus"
 import useTrajectorySelection from "@/pages/hooks/useTrajectorySelection"
 import ROUTES from "@/routers/paths"
 import profileApi from "@/store/api/profile.api"
@@ -13,14 +13,6 @@ import aboutElementIds from "@/utils/aboutElementIds"
 import buildAboutJsonLd from "@/utils/buildAboutJsonLd"
 import formatMonthYear from "@/utils/formatMonthYear"
 import sortStackGroups from "@/utils/sortStackGroups"
-
-type RetrySource = "profile" | "timeline"
-
-type RetryRequest = {
-    source: RetrySource
-}
-
-type FocusableName = `${RetrySource}Heading` | `${RetrySource}Alert`
 
 function useAbout() {
     const shareImage = useShareImage("about")
@@ -33,36 +25,20 @@ function useAbout() {
     const profile = profileQuery.data
     const timeline = timelineQuery.data
     const trajectory = useTrajectorySelection()
-    const [retryRequest, setRetryRequest] = useState<RetryRequest | null>(null)
-    const handledRetry = useRef<RetryRequest | null>(null)
-
     const isProfileError = profileQuery.isError && !profileQuery.isFetching
     const isTimelineError = timelineQuery.isError && !timelineQuery.isFetching
-    const isProfileFetching = profileQuery.isFetching
-    const isTimelineFetching = timelineQuery.isFetching
-
-    useEffect(() => {
-        if (retryRequest === null || retryRequest === handledRetry.current) {
-            return
+    const { retryProfile, retryTimeline } = useAboutRetryFocus({
+        profile: {
+            isFetching: profileQuery.isFetching,
+            isError: isProfileError,
+            refetch: profileQuery.refetch
+        },
+        timeline: {
+            isFetching: timelineQuery.isFetching,
+            isError: isTimelineError,
+            refetch: timelineQuery.refetch
         }
-        const { source } = retryRequest
-        const isFetching = source === "profile" ? isProfileFetching : isTimelineFetching
-        if (isFetching) {
-            return
-        }
-        const isError = source === "profile" ? isProfileError : isTimelineError
-        const target: FocusableName = isError ? `${source}Alert` : `${source}Heading`
-        const element = document.getElementById(aboutElementIds[target])
-        if (element) {
-            element.focus()
-            handledRetry.current = retryRequest
-        }
-    }, [retryRequest, isProfileFetching, isTimelineFetching, isProfileError, isTimelineError])
-
-    async function retry(source: RetrySource) {
-        await (source === "profile" ? profileQuery : timelineQuery).refetch()
-        setRetryRequest({ source })
-    }
+    })
 
     const stackGroups = sortStackGroups(profile?.stack ?? [])
     const groups = (timeline?.groups ?? []).filter(
@@ -89,14 +65,14 @@ function useAbout() {
             data: profile,
             isLoading: profileQuery.isLoading,
             isError: isProfileError,
-            retry: () => retry("profile")
+            retry: retryProfile
         },
         timeline: {
             groups,
             certificates,
             isLoading: timelineQuery.isLoading,
             isError: isTimelineError,
-            retry: () => retry("timeline")
+            retry: retryTimeline
         },
         stackGroups,
         workPrinciples,

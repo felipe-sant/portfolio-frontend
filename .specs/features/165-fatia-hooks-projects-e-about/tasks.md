@@ -58,7 +58,7 @@ Sequencial (as três fases editam hooks e páginas que cada uma depende de si); 
     - **Feito quando:** o gate passa; os `it` 233 e 255 de `useAbout.test.tsx` continuam presentes com a mesma asserção; `About.page.test.tsx` sem edição
     - **Evidência:** gate verde (typecheck, lint, 3 arquivos, 67 testes). useTrajectorySelection.test.tsx (7 it): "devolve o foco ao gatilho registrado do item ao fechar, mesmo com o foco no body" (expect(button).toHaveFocus()), "fecha o item quando o caminho muda, sem alterar o histórico" (expect(window.history.length).toBe(before); selectedItem toBeNull), "mantém a identidade de registerTrigger" (toBe(first)), remoção com null, sem gatilho não lança. useAbout.test.tsx: `it` 233 e 255 mantidos, só acessores `about.trajectory.*`; About.page.test.tsx sem edição.
 
-- [ ] T4 — Hook `useAboutRetryFocus`
+- [x] T4 — Hook `useAboutRetryFocus`
     - **Arquivo(s):** `src/pages/hooks/useAboutRetryFocus.ts`, `src/pages/hooks/test/useAboutRetryFocus.test.tsx`, `src/pages/hooks/useAbout.ts`
     - **Depende de:** T3
     - **Testes (escritos antes, RED):** (`renderHook` com fontes simuladas controláveis por `rerender`, elementos com os ids de `aboutElementIds` no DOM)
@@ -70,7 +70,7 @@ Sequencial (as três fases editam hooks e páginas que cada uma depende de si); 
         - depois de tratado, nova renderização não refoca (VAL-165-05; herda o teste da T1)
     - **Gate:** `npm run typecheck && npm run lint && npm test -- --run --maxWorkers=2 src/pages/hooks/test/useAboutRetryFocus.test.tsx src/pages/hooks/test/useAbout.test.tsx src/pages/test/About.page.test.tsx`
     - **Feito quando:** o gate passa; `retry` de `profile` e `timeline` em `useAbout` vêm do hook novo; `useAbout.test.tsx` mantém 186 e 209 sem edição de asserção
-    - **Evidência:** ...
+    - **Evidência:** gate verde (typecheck, lint, 3 arquivos, 66 testes). useAboutRetryFocus.test.tsx (6 it): retry de cada fonte chama só o refetch dela (toHaveBeenCalledTimes), foco no título sem erro (expect(heading).toHaveFocus()), no alerta com erro, sem foco durante isFetching e foco quando cai, elemento ausente foca uma vez ao aparecer, não refoca depois de tratado (not.toHaveFocus()). useAbout.test.tsx 186 e 209 sem edição de asserção.
 
 - [ ] T5 — Formato final do retorno de `useAbout` e da página
     - **Arquivo(s):** `src/pages/hooks/useAbout.ts`, `src/pages/About.page.tsx`, `src/pages/hooks/test/useAbout.test.tsx` (só acessores)
