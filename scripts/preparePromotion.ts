@@ -28,7 +28,7 @@ function viewPull(number: number) {
             ])
         ) as PullView
     } catch (error) {
-        const stderr = String((error as { stderr?: unknown }).stderr ?? "")
+        const stderr = error instanceof Error && "stderr" in error ? String(error.stderr) : ""
 
         if (stderr.includes("Could not resolve to a PullRequest")) {
             return undefined
