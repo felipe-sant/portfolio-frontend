@@ -1,4 +1,8 @@
 import { describe, expect, it } from "vitest"
+import en from "@/i18n/languageBundles/en"
+import es from "@/i18n/languageBundles/es"
+import ptBR from "@/i18n/languageBundles/ptBR"
+import NAMESPACES from "@/i18n/namespaces"
 import resources from "@/i18n/resources"
 
 function collectEntries(value: unknown, path = ""): [string, unknown][] {
@@ -24,6 +28,11 @@ describe("resources", () => {
         expect(Object.keys(resources).toSorted()).toEqual(["en", "es", "pt-BR"])
     })
 
+    it("compõe cada idioma a partir de languageBundles, com os oito namespaces", () => {
+        expect(resources).toEqual({ "pt-BR": ptBR, en, es })
+        expect(Object.keys(resources["pt-BR"]).toSorted()).toEqual(NAMESPACES.toSorted())
+    })
+
     it.each(languages)("%s tem os mesmos namespaces que pt-BR", (_language, namespaces) => {
         expect(Object.keys(namespaces).toSorted()).toEqual(
             Object.keys(resources["pt-BR"]).toSorted()
@@ -40,4 +49,16 @@ describe("resources", () => {
             expect(value, path).not.toBe("")
         }
     })
+
+    it.each(languages)("%s tem about.updatedAt com a data interpolada", (_language, namespaces) => {
+        expect(namespaces.about.updatedAt).toContain("{{date}}")
+    })
+
+    it.each(languages)(
+        "%s tem project.meta.documentDescription com o documento e o projeto interpolados",
+        (_language, namespaces) => {
+            expect(namespaces.project.meta.documentDescription).toContain("{{document}}")
+            expect(namespaces.project.meta.documentDescription).toContain("{{project}}")
+        }
+    )
 })

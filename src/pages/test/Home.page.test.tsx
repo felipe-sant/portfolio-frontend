@@ -161,7 +161,9 @@ describe("HomePage", () => {
     it("define título e meta description da página no head", () => {
         renderHomePage()
 
-        expect(document.title).toBe("Portfólio · Luiz Felipe dos Santos")
+        expect(document.title).toBe(
+            "Luiz Felipe dos Santos · Desenvolvedor full stack Júnior · React, TypeScript e Node.js"
+        )
         expect(document.querySelector('meta[name="description"]')?.getAttribute("content")).toBe(
             "Portfólio de Luiz Felipe dos Santos, desenvolvedor full stack Júnior com React, TypeScript e Node.js: projetos, trajetória e contato."
         )
@@ -172,7 +174,9 @@ describe("HomePage", () => {
 
         renderHomePage()
 
-        expect(document.title).toBe("Portfolio · Luiz Felipe dos Santos")
+        expect(document.title).toBe(
+            "Luiz Felipe dos Santos · Junior full stack developer · React, TypeScript and Node.js"
+        )
         expect(document.querySelector('meta[name="description"]')?.getAttribute("content")).toBe(
             "Portfolio of Luiz Felipe dos Santos, junior full stack developer with React, TypeScript and Node.js: projects, background and contact."
         )
@@ -183,8 +187,23 @@ describe("HomePage", () => {
 
         renderHomePage()
 
-        expect(document.title).toBe("Portafolio · Luiz Felipe dos Santos")
+        expect(document.title).toBe(
+            "Luiz Felipe dos Santos · Desarrollador full stack junior · React, TypeScript y Node.js"
+        )
     })
+
+    it.each(["pt-BR", "en", "es"] as const)(
+        "usa o mesmo valor do title em og:title em %s",
+        async (language) => {
+            await setLanguage(language)
+
+            renderHomePage()
+
+            expect(
+                document.querySelector('meta[property="og:title"]')?.getAttribute("content")
+            ).toBe(document.title)
+        }
+    )
 
     it("atualiza texto, metadados e lang do html ao trocar o idioma com a página aberta", async () => {
         renderHomePage()
@@ -197,11 +216,34 @@ describe("HomePage", () => {
         expect(
             screen.getByRole("heading", { name: "Desarrollador full stack junior" })
         ).toBeInTheDocument()
-        expect(document.title).toBe("Portafolio · Luiz Felipe dos Santos")
+        expect(document.title).toBe(
+            "Luiz Felipe dos Santos · Desarrollador full stack junior · React, TypeScript y Node.js"
+        )
         expect(document.querySelector('meta[name="description"]')?.getAttribute("content")).toBe(
             "Portafolio de Luiz Felipe dos Santos, desarrollador full stack junior con React, TypeScript y Node.js: proyectos, trayectoria y contacto."
         )
         expect(document.documentElement.lang).toBe("es")
+    })
+
+    it.each([
+        ["pt-BR", "Gato ao lado do nome Luiz Felipe dos Santos, do cargo e da stack"],
+        ["en", "Cat next to the name Luiz Felipe dos Santos, the role and the stack"],
+        ["es", "Gato junto al nombre Luiz Felipe dos Santos, el cargo y el stack"]
+    ] as const)("declara a imagem de compartilhamento da Início em %s", async (language, alt) => {
+        await setLanguage(language)
+
+        renderHomePage()
+
+        const image = `${SITE_URL}/images/share/${language}/home.png`
+        expect(
+            document.head.querySelector('meta[property="og:image"]')?.getAttribute("content")
+        ).toBe(image)
+        expect(
+            document.head.querySelector('meta[name="twitter:image"]')?.getAttribute("content")
+        ).toBe(image)
+        expect(
+            document.head.querySelector('meta[property="og:image:alt"]')?.getAttribute("content")
+        ).toBe(alt)
     })
 
     it.each(["pt-BR", "en", "es"] as const)(
@@ -220,7 +262,7 @@ describe("HomePage", () => {
             const [website, person] = readJsonLd()["@graph"]
             expect(website["@type"]).toBe("WebSite")
             expect(website.inLanguage).toBe(language)
-            expect(person["@id"]).toBe(`${SITE_URL}/${language}#person`)
+            expect(person["@id"]).toBe(`${SITE_URL}/#person`)
             expect(website.publisher["@id"]).toBe(person["@id"])
         }
     )
@@ -300,7 +342,7 @@ describe("HomePage", () => {
 
         await userEvent.click(resume)
 
-        const dialog = screen.getByRole("dialog", { name: "Currículo" })
+        const dialog = await screen.findByRole("dialog", { name: "Currículo" })
         expect(within(dialog).getByTitle("Currículo em PDF")).toHaveAttribute(
             "src",
             "/cv/cv-pt-BR.pdf"

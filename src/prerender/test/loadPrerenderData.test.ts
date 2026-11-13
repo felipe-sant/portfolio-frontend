@@ -46,6 +46,17 @@ describe("loadPrerenderData", () => {
         expect(store.getState().api.queries['getProfile({"lang":"en"})']?.data).toEqual(profile)
     })
 
+    it("rejeita com o arquivo e o campo quando o conteúdo foge do contrato", async () => {
+        stubContentFetch({
+            "content/pt-BR/profile.json": { ...buildProfile(), role: 1 }
+        })
+        const store = createStore()
+
+        await expect(loadPrerenderData(store, homeRoute, {}, "pt-BR")).rejects.toThrow(
+            /content\/pt-BR\/profile\.json não segue o contrato: role/
+        )
+    })
+
     it("rejeita em português com a rota e a causa quando uma consulta falha", async () => {
         stubContentFetch({})
         const store = createStore()

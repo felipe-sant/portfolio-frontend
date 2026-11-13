@@ -191,11 +191,12 @@ Títulos das seções do `README.md` (RF-PROJECT-27):
 
 ### Pré-renderização e comum
 
-| ID              | Regra                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          | Fonte                                  |
-| --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------- |
-| `RF-PROJECT-35` | Cada projeto, documento existente e idioma tem HTML próprio gerado no build (#49) com `<html lang>`, metadados, JSON-LD, o cabeçalho do projeto com o `h1`, a imagem principal, a ficha, a stack, os links, a navegação entre documentos, o documento já renderizado e os relacionados, legível sem JavaScript; o projeto (com os relacionados expandidos, RF-PROJECT-36) e o documento vão serializados no `preloadedState`, e o chunk do markdown é carregado antes da hidratação, para a primeira renderização do cliente ser igual ao HTML | NF-IA-01, NF-IA-02, NF-IA-03, NF-CO-03 |
-| `RF-PROJECT-36` | Dados só pelos endpoints do RTK Query (`queryFn` local), nunca por import de JSON; uma requisição por projeto e idioma (`GET /projects/{id}`), outra por documento (`GET /projects/{id}/documents/{documentId}`, por idioma quando traduzido), com o `id` do documento resolvido pelo `name` da URL na lista embutida no projeto; os relacionados vêm expandidos na resposta do projeto (`related[].project`, D51), sem pedido à lista de projetos                                                                                             | NF-DA-02, NF-DA-05, R1, D51            |
-| `RF-PROJECT-37` | Abertura de links (D36): internos (volta, documentos, relacionados, "Ver todos", "Ver outros projetos", `project:`) na mesma aba por `<Link>` com o prefixo do idioma; externos (demonstração, repositório, `https:` do markdown) em nova aba com aviso no nome; `mailto:` sem `target`                                                                                                                                                                                                                                                        | D36, NF-IN-11                          |
+| ID              | Regra                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | Fonte                                  |
+| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------- |
+| `RF-PROJECT-35` | Cada projeto, documento existente e idioma tem HTML próprio gerado no build (#49) com `<html lang>`, metadados, JSON-LD, o cabeçalho do projeto com o `h1`, a imagem principal, a ficha, a stack, os links, a navegação entre documentos, o documento já renderizado e os relacionados, legível sem JavaScript; o projeto (com os relacionados expandidos, RF-PROJECT-36) e o documento vão serializados no `preloadedState`, e o chunk do markdown é carregado antes da hidratação, para a primeira renderização do cliente ser igual ao HTML                                                                                                                             | NF-IA-01, NF-IA-02, NF-IA-03, NF-CO-03 |
+| `RF-PROJECT-36` | Dados só pelos endpoints do RTK Query (`queryFn` local), nunca por import de JSON; uma requisição por projeto e idioma (`GET /projects/{id}`), outra por documento (`GET /projects/{id}/documents/{documentId}`, por idioma quando traduzido), com o `id` do documento resolvido pelo `name` da URL na lista embutida no projeto; os relacionados vêm expandidos na resposta do projeto (`related[].project`, D51), sem pedido à lista de projetos                                                                                                                                                                                                                         | NF-DA-02, NF-DA-05, R1, D51            |
+| `RF-PROJECT-37` | Abertura de links (D36): internos (volta, documentos, relacionados, "Ver todos", "Ver outros projetos", `project:`) na mesma aba por `<Link>` com o prefixo do idioma; externos (demonstração, repositório, `https:` do markdown) em nova aba com aviso no nome; `mailto:` sem `target`                                                                                                                                                                                                                                                                                                                                                                                    | D36, NF-IN-11                          |
+| `RF-PROJECT-40` | Documento além do `README.md` tem descrição própria, a mesma em `<meta name="description">`, `og:description` e `twitter:description`: o primeiro parágrafo útil do conteúdo, sem Markdown, até 155 caracteres, cortado em limite de palavra com `…` (`buildDocumentDescription`); sem conteúdo (carregando, erro ou sem parágrafo útil), a chave `project:meta.documentDescription`, nunca o resumo do projeto. A página da `LICENSE` (`isLicenseDocument`, sem diferenciar maiúsculas nem extensão) emite `<meta name="robots" content="noindex">`, no HTML pré-renderizado também, e não consta no `sitemap.xml`; a rota e o link continuam (`D73`, NF-IA-02, NF-IA-15) | NF-IA-02, NF-IA-15, D73                |
 
 ## Navegação
 
@@ -359,27 +360,36 @@ ids UUID v7 únicos; `types` com pelo menos um código válido e sem repetição
 - `<title>`: `project:meta.title` no `README.md` e `project:meta.documentTitle` nos outros, com
   `{{document}}` igual ao rótulo do documento; `project:meta.fallbackTitle` em carregando e erro
   ([`layout.md`](layout.md), A11Y-G01).
-- `<meta name="description">` e `og:description`: resumo do projeto, do conteúdo, igual em todos
-  os documentos ([`layout.md`](layout.md)).
+- `<meta name="description">` e `og:description`: no `README.md`, o resumo do projeto; nos outros
+  documentos, a descrição própria do documento (`RF-PROJECT-40`), a mesma em `twitter:description`
+  ([`layout.md`](layout.md)).
 - Canônica autorreferente por documento e idioma, com o nome exato do arquivo
   (`/en/projects/<id>/docs/SETUP.md` aponta para si, mesmo quando aberta como `/docs/setup.md`);
   `hreflang` recíproco entre os três idiomas do mesmo documento, `x-default` no `en` (NF-IA-11).
 - Open Graph: `og:type` `article`; `og:url` igual à canônica; `og:image` a variante grande da
-  primeira captura (D26), absoluta, com `og:image:alt` do `alt` dela, ou a imagem do site quando
-  não há captura; `og:locale` e `og:locale:alternate`; `twitter:card` `summary_large_image`
+  primeira captura (D26), absoluta, com `og:image:alt` do `alt` dela, ou a imagem de compartilhamento de
+  Projetos (`images/share/<idioma>/projects.png`, alt de `projects:meta.imageAlt`) quando não há captura; `og:locale` e `og:locale:alternate`; `twitter:card` `summary_large_image`
   (NF-IA-10).
 - JSON-LD (NF-IA-08, NF-IA-09, mecanismo de #52), em todos os documentos, a entidade do projeto:
   `SoftwareSourceCode` quando há repositório público, `CreativeWork` quando não há, com `@id` igual
   à canônica do `README.md` no idioma mais `#project`, `name`, `description`, `url` (canônica do
   `README.md`), `inLanguage`, `author` (a `Person` do site, referenciada pelo `@id` único
-  `<URL canônica de />#person`, o mesmo em todas as telas), `dateCreated` (`date`, `AAAA-MM`),
-  `dateModified` (se houver), `image` (capturas absolutas), `genre` (rótulos dos tipos no idioma),
-  `keywords` (itens da stack) e, em `SoftwareSourceCode`, `codeRepository` e `programmingLanguage`.
+  `<origem><base>/#person`, a raiz do site sem prefixo de idioma, por `buildPersonId()`, o mesmo
+  em todas as telas e idiomas), `dateCreated` (`date`, `AAAA-MM`), `dateModified` (se houver),
+  `image` (capturas absolutas), `genre` (rótulos dos tipos no idioma), `keywords` (itens da stack
+  sem repetição; em `SoftwareSourceCode`, sem as linguagens de `programmingLanguage`; omitido
+  quando vazio) e, em `SoftwareSourceCode`, `codeRepository` e `programmingLanguage` (sem
+  repetição).
   Em cada documento além do `README.md`, também um `TechArticle` com `headline` igual
   ao título sem o nome do autor (`<documento> · <projeto>`), `url` (canônica do documento),
   `inLanguage` (o idioma da página; em documento neutro, `contentLanguage` quando houver), `author`
   (o mesmo `@id` da `Person`), `dateModified` (`updatedAt` do documento, se houver) e `about`
   apontando para o `@id` do projeto.
+  Em todos os documentos, também um `BreadcrumbList` (#201, `buildBreadcrumbJsonLd`), nó separado,
+  depois dos anteriores: Início, Projetos e o título do projeto (3 itens no `README.md`), mais o
+  nome exato do documento nos demais (4 itens), com `position` a partir de 1 e `item` absoluto
+  (canônica do projeto ou do documento); os dois primeiros nomes vêm de `common:navigation.home` e
+  `common:navigation.projects`.
   Gerado dos mesmos dados da tela, com `<` escapado.
 - Página não encontrada: a de [`layout.md`](layout.md) (`noindex`, sem canônica, sem Open Graph,
   sem JSON-LD).
@@ -434,6 +444,7 @@ NF-DE-09.
 - [x] `RF-PROJECT-36` — Dados só por endpoints do RTK Query, um por projeto e idioma e um por documento e idioma [review] [teste]
 - [x] `RF-PROJECT-37` — Internos por `<Link>` com prefixo, externos em nova aba com aviso [teste]
 - [x] `RF-PROJECT-39` — Documento `text` num `<pre>` monoespaçado, sem interpretação, com rolagem própria focável e nomeada, `lang` de `contentLanguage` em documento neutro, sem o chunk do markdown; formato desconhecido mostrado como `text` [teste] [axe]
+- [ ] `RF-PROJECT-40` — Descrição própria por documento além do `README.md` (primeiro parágrafo útil, fallback traduzido) e `noindex` na `LICENSE`, fora do `sitemap.xml` [teste] [e2e]
 - [x] `RF-PROJECT-38` — Tabela com `th` e rolagem própria focável e nomeada, sem rolagem da página a 320px; tarefas com caixa só leitura nomeada [teste] [axe] [medição]
 
 ### Acessibilidade
@@ -500,7 +511,7 @@ verificação de lá (nos orçamentos, a forma de medir).
 - [ ] `NF-IA-02` — Cada documento com URL e HTML próprios com o markdown renderizado, e no `sitemap.xml` [CI; #49; #51]
 - [ ] `NF-IA-03` — Primeira renderização do cliente igual ao HTML, com projeto e documento serializados na store [CI; #49; #41]
 - [ ] `NF-IA-04` — Status 200 na primeira carga; id ou documento inexistente responde 404 [#41]
-- [ ] `NF-IA-08` — JSON-LD `SoftwareSourceCode` ou `CreativeWork`, e `TechArticle` nos documentos além do `README.md` [CI; #52; #34 a #38; #41]
+- [ ] `NF-IA-08` — JSON-LD `SoftwareSourceCode` ou `CreativeWork`, `TechArticle` nos documentos além do `README.md` e `BreadcrumbList` [CI; #52; #34 a #38; #41]
 - [ ] `NF-IA-09` — JSON-LD gerado dos mesmos dados da tela, com `<` escapado [CI; #52]
 - [ ] `NF-IA-10` — `<title>`, descrição, Open Graph com a captura e `twitter:card` por documento e idioma [CI; #52; #41]
 - [ ] `NF-IA-11` — Canônica absoluta por documento e idioma e `hreflang` recíproco [CI; #52; #41]

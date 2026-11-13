@@ -77,7 +77,7 @@ jobs:
               run: npm ci
             - name: Block indexing
               run: |
-                  jq '. + {headers: [{source: "/(.*)", headers: [{key: "X-Robots-Tag", value: "noindex"}]}]}' vercel.json > vercel.staging.json
+                  jq '.headers += [{source: "/(.*)", headers: [{key: "X-Robots-Tag", value: "noindex"}]}]' vercel.json > vercel.staging.json
                   mv vercel.staging.json vercel.json
             - name: Pull Vercel environment
               env:

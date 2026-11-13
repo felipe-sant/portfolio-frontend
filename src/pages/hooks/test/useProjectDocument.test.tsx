@@ -193,4 +193,36 @@ describe("useProjectDocument", () => {
         expect(latest.lang).toBe("en")
         expect(latest.content).toBe("MIT License")
     })
+
+    it("no README.md, a descrição é o resumo do projeto", async () => {
+        stubFiles()
+        const { project } = mount()
+
+        await waitFor(() => expect(latest.status).toBe("success"))
+        expect(latest.description).toBe(project.summary)
+    })
+
+    it("em documento além do README.md, a descrição vem do conteúdo", async () => {
+        stubFiles()
+        mount("SETUP.md")
+
+        await waitFor(() => expect(latest.status).toBe("success"))
+        expect(latest.description).toBe("SETUP pt-BR")
+    })
+
+    it("em documento ainda sem conteúdo, a descrição é o texto traduzido do documento", () => {
+        stubFiles()
+        const { project } = mount("SETUP.md")
+
+        expect(latest.status).toBe("loading")
+        expect(latest.description).toBe(`Documento SETUP.md do projeto ${project.title}.`)
+    })
+
+    it("sem parágrafo útil no conteúdo, a descrição cai no texto traduzido em en", async () => {
+        stubFiles()
+        await act(() => setLanguage("en"))
+        const { project } = mount("SETUP.md")
+
+        expect(latest.description).toBe(`SETUP.md document of the ${project.title} project.`)
+    })
 })

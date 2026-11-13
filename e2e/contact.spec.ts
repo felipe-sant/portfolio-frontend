@@ -17,6 +17,7 @@ const RESET_TIMEOUT = 8000
 const LAYOUT_TOLERANCE = 2
 const MAX_CLS = 0.1
 const MOBILE_VIEWPORT = { width: 412, height: 823 }
+const CLS_VIEWPORT = { width: 393, height: 851 }
 const DESKTOP_VIEWPORT = { width: 1280, height: 800 }
 
 type Language = (typeof LANGUAGES)[number]
@@ -28,6 +29,7 @@ function isDesktop(page: Page) {
 async function openContact(page: Page, language: Language = "pt-BR") {
     await page.goto(`${language}/contact`)
     await page.getByRole("heading", { level: 1 }).waitFor()
+    await waitForHydration(page)
 }
 
 async function openMenuIfCollapsed(page: Page, language: Language) {
@@ -107,6 +109,15 @@ async function trackLayoutShift(page: Page) {
             }
         })
     })
+}
+
+async function holdFonts(page: Page) {
+    const gate = Promise.withResolvers<void>()
+    await page.route("**/fonts/ibm-plex-sans-latin-{500,600,700}-normal.woff2", async (route) => {
+        await gate.promise
+        await route.continue()
+    })
+    return gate.resolve
 }
 
 async function readLayoutShiftTotal(page: Page) {
@@ -518,6 +529,35 @@ test.describe("carregando e erro dos canais", () => {
 
         expect((await readLayoutShiftTotal(page)) - shiftBeforeProfile).toBeLessThan(MAX_CLS)
     })
+
+    for (const language of LANGUAGES) {
+        test(`NF-DE-02: em ${language} o CLS de Contato em 393x851 fica abaixo de 0,1 quando as fontes chegam depois da primeira pintura`, async ({
+            page
+        }) => {
+            const channels = readContactChannels(language)
+            const releaseFonts = await holdFonts(page)
+            await page.setViewportSize(CLS_VIEWPORT)
+            await trackLayoutShift(page)
+
+            await page.goto(`${language}/contact`, { waitUntil: "domcontentloaded" })
+            await page.getByRole("heading", { level: 1 }).waitFor()
+            await waitForHydration(page)
+            const main = page.getByRole("main")
+            await expect(main.getByText(channels.email, { exact: true })).toBeVisible()
+            const shiftBeforeFonts = await readLayoutShiftTotal(page)
+
+            releaseFonts()
+            await page.waitForFunction(() => document.fonts.check('600 16px "IBM Plex Sans"'))
+            await page.evaluate(
+                () =>
+                    new Promise<void>((resolve) =>
+                        requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
+                    )
+            )
+
+            expect((await readLayoutShiftTotal(page)) - shiftBeforeFonts).toBeLessThan(MAX_CLS)
+        })
+    }
 
     test("A11Y-G14, RF-CONTACT-25: com o perfil falhando aparece o alerta com Tentar novamente e o retry refaz a consulta sem recarregar e devolve o foco ao título", async ({
         page

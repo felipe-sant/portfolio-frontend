@@ -81,6 +81,19 @@ describe("profileApi", () => {
         expect(error.error).toContain("content/es/profile.json")
     })
 
+    it("responde 500 INVALID_CONTENT quando o perfil foge do contrato", async () => {
+        stubContentFetch({
+            "content/pt-BR/profile.json": parseUntyped('{"role":"Desenvolvedor"}')
+        })
+
+        renderWithStore(<Probe args={{ lang: "pt-BR" }} />)
+
+        const { error } = await resultOf()
+        expect(error.status).toBe(500)
+        expect(error.data.error.code).toBe("INVALID_CONTENT")
+        expect(error.data.error.message).toContain("content/pt-BR/profile.json")
+    })
+
     it("pede o arquivo com o prefixo do GitHub Pages e não chama a API", async () => {
         vi.stubEnv("BASE_URL", "/ra2581392423047/")
         vi.stubEnv("VITE_API_URL", "https://api.example.com")

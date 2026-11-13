@@ -196,19 +196,20 @@ formato é texto puro.
 O perfil do autor, um por idioma. Resposta de `GET /profile`. Guardado no conteúdo como está;
 nada é montado.
 
-| Campo             | Tipo              | Obrigatório | Por idioma | Regra                                                                                                            | Fonte                                       |
-| ----------------- | ----------------- | ----------- | ---------- | ---------------------------------------------------------------------------------------------------------------- | ------------------------------------------- |
-| `role`            | `string`          | Sim         | Sim        | Cargo, texto curto                                                                                               | `about.md` (JSON-LD `jobTitle` de `/about`) |
-| `homeIntro`       | `string`          | Sim         | Sim        | Parágrafo do hero do Início, até cerca de 300 caracteres                                                         | RF-HOME-05                                  |
-| `summary`         | `string`          | Sim         | Sim        | Parágrafo de apresentação de Informações; também `description` do JSON-LD                                        | RF-ABOUT-04                                 |
-| `location`        | `Location`        | Sim         | Em parte   | Ver [`Location`](#location)                                                                                      | RF-ABOUT-03, RF-CONTACT-05, RF-LAY-21       |
-| `availability`    | `Availability`    | Sim         | Em parte   | Ver [`Availability`](#availability)                                                                              | D44                                         |
-| `photo`           | `ResponsiveImage` | Não         | Não        | Foto 1:1 (D26); o conteúdo publicado a traz nos três idiomas. O `alt` é chave (`about:hero.photoAlt`), não campo | D26, RF-ABOUT-02                            |
-| `aboutParagraphs` | `string[]`        | Sim         | Sim        | Parágrafos de "Sobre mim", pelo menos um, na ordem do conteúdo                                                   | RF-ABOUT-07                                 |
-| `workPrinciples`  | `string[]`        | Sim         | Sim        | Frases curtas de "Como eu trabalho", na ordem do conteúdo; pode ser `[]` (a coluna some)                         | RF-ABOUT-12                                 |
-| `stack`           | `StackGroup[]`    | Sim         | Não        | Stack do site; ver [`StackGroup`](#stackgroup). Pode ser `[]` (a faixa e a seção somem)                          | RF-HOME-13, RF-ABOUT-08                     |
-| `contact`         | `ContactChannels` | Sim         | Em parte   | Ver [`ContactChannels`](#contactchannels)                                                                        | RF-CONTACT-04 a RF-CONTACT-07               |
-| `links`           | `SocialLinks`     | Sim         | Não        | Ver [`SocialLinks`](#sociallinks)                                                                                | RF-LAY-24, RF-LAY-26                        |
+| Campo             | Tipo              | Obrigatório | Por idioma | Regra                                                                                                                                                                                                                                                                                    | Fonte                                       |
+| ----------------- | ----------------- | ----------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------- |
+| `role`            | `string`          | Sim         | Sim        | Cargo, texto curto                                                                                                                                                                                                                                                                       | `about.md` (JSON-LD `jobTitle` de `/about`) |
+| `homeIntro`       | `string`          | Sim         | Sim        | Parágrafo do hero do Início, até cerca de 300 caracteres                                                                                                                                                                                                                                 | RF-HOME-05                                  |
+| `summary`         | `string`          | Sim         | Sim        | Parágrafo de apresentação de Informações; também `description` do JSON-LD                                                                                                                                                                                                                | RF-ABOUT-04                                 |
+| `location`        | `Location`        | Sim         | Em parte   | Ver [`Location`](#location)                                                                                                                                                                                                                                                              | RF-ABOUT-03, RF-CONTACT-05, RF-LAY-21       |
+| `availability`    | `Availability`    | Sim         | Em parte   | Ver [`Availability`](#availability)                                                                                                                                                                                                                                                      | D44                                         |
+| `photo`           | `ResponsiveImage` | Não         | Não        | Foto 1:1 (D26); o conteúdo publicado a traz nos três idiomas. O `alt` é chave (`about:hero.photoAlt`), não campo                                                                                                                                                                         | D26, RF-ABOUT-02                            |
+| `aboutParagraphs` | `string[]`        | Sim         | Sim        | Parágrafos de "Sobre mim", pelo menos um, na ordem do conteúdo                                                                                                                                                                                                                           | RF-ABOUT-07                                 |
+| `workPrinciples`  | `string[]`        | Sim         | Sim        | Frases curtas de "Como eu trabalho", na ordem do conteúdo; pode ser `[]` (a coluna some)                                                                                                                                                                                                 | RF-ABOUT-12                                 |
+| `stack`           | `StackGroup[]`    | Sim         | Não        | Stack do site; ver [`StackGroup`](#stackgroup). Pode ser `[]` (a faixa e a seção somem)                                                                                                                                                                                                  | RF-HOME-13, RF-ABOUT-08                     |
+| `contact`         | `ContactChannels` | Sim         | Em parte   | Ver [`ContactChannels`](#contactchannels)                                                                                                                                                                                                                                                | RF-CONTACT-04 a RF-CONTACT-07               |
+| `links`           | `SocialLinks`     | Sim         | Não        | Ver [`SocialLinks`](#sociallinks)                                                                                                                                                                                                                                                        | RF-LAY-24, RF-LAY-26                        |
+| `updatedAt`       | `string`          | Sim         | Não        | `AAAA-MM-DD`, curado: atualize ao mudar `profile.json` ou `timeline.json`. É o `dateModified` do `ProfilePage`, o "Atualizado em MM/AAAA" de Informações e o `lastmod` de Informações e Contato (e de Início, junto com o dos projetos) no `sitemap.xml`. O mesmo valor nos três idiomas | NF-IA-15, RF-ABOUT-31                       |
 
 Não há campo de idiomas falados, de montagem do CV nem de visibilidade por destino: o CV é um
 arquivo próprio (D52). O status atual do Início não é campo do perfil: vem de
@@ -375,7 +376,7 @@ resposta, `related` é expandido (montado), e `technologies` e `cover` são mont
 | `images`        | `ProjectImage[]`    | Sim         | Em parte   | De uma a cinco no conteúdo publicado (o componente aceita zero), ordenadas, todas 16:9; a primeira é a capa (`cover`) e a imagem principal                                                                                                                                        | D48, RF-PROJECT-05                |
 | `documents`     | `ProjectDocument[]` | Sim         | Não        | Lista de documentos do projeto (D55): `README.md` primeiro, os outros na ordem do conteúdo; a mesma lista nos três idiomas. Vem embutida para a navegação entre documentos não depender de outro pedido; o conteúdo de cada um vem de `GET /projects/{id}/documents/{documentId}` | D55, RF-PROJECT-15, RF-PROJECT-20 |
 | `related`       | `RelatedProject[]`  | Sim         | Em parte   | Até três, na ordem do conteúdo, cada um com id de outro projeto existente, sem repetição; pode ser `[]` (a seção some). No conteúdo, `{ id }`                                                                                                                                     | RF-PROJECT-28                     |
-| `updatedAt`     | `string`            | Não         | Não        | `AAAA-MM-DD`; `dateModified` do JSON-LD e `lastmod` do `sitemap.xml`                                                                                                                                                                                                              | NF-IA-15, `project.md`            |
+| `updatedAt`     | `string`            | Sim         | Não        | `AAAA-MM-DD`; `dateModified` do JSON-LD e `lastmod` do `sitemap.xml`                                                                                                                                                                                                              | NF-IA-15, `project.md`            |
 
 ### `RelatedProject`
 
@@ -389,14 +390,14 @@ Um documento do projeto (D55), na lista `ProjectDetail.documents` e na resposta 
 `GET /projects/{id}/documents`. Guardado no conteúdo como está. O conteúdo do arquivo não faz parte
 do objeto: vem de `GET /projects/{id}/documents/{documentId}`.
 
-| Campo             | Tipo                | Obrigatório | Por idioma | Regra                                                                                                                                                                                                                    | Fonte         |
-| ----------------- | ------------------- | ----------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------- |
-| `id`              | `string`            | Sim         | Não        | UUID v7, igual nos três idiomas, único entre todos os documentos do portfólio; usado nos pedidos à API                                                                                                                   | D55           |
-| `name`            | `string`            | Sim         | Não        | Nome do arquivo (`README.md`, `SETUP.md`, `LICENSE`), mostrado como rótulo e usado na URL da tela; ver [Nome do documento](#nome-do-documento)                                                                           | D55           |
-| `format`          | `DocumentFormat`    | Sim         | Não        | `markdown` (renderizado, D50) ou `text` (texto pré-formatado, sem interpretação)                                                                                                                                         | D55           |
-| `translated`      | `boolean`           | Sim         | Não        | `true`: um conteúdo por idioma; `false`: o mesmo arquivo nos três idiomas (documento neutro)                                                                                                                             | D55           |
-| `contentLanguage` | `SupportedLanguage` | Não         | Não        | Só em documento neutro: o idioma em que o conteúdo está escrito (`LICENSE` em inglês é `en`), para a tela marcar o trecho com `lang` (WCAG 3.1.2); ausente quando o conteúdo não tem idioma (`.json`, `.yml`) ou é misto | D55, A11Y-G02 |
-| `updatedAt`       | `string`            | Não         | Não        | `AAAA-MM-DD`; `dateModified` do `TechArticle` e `lastmod` do documento no `sitemap.xml`                                                                                                                                  | NF-IA-15      |
+| Campo             | Tipo                | Obrigatório                | Por idioma | Regra                                                                                                                                                                                                                    | Fonte         |
+| ----------------- | ------------------- | -------------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------- |
+| `id`              | `string`            | Sim                        | Não        | UUID v7, igual nos três idiomas, único entre todos os documentos do portfólio; usado nos pedidos à API                                                                                                                   | D55           |
+| `name`            | `string`            | Sim                        | Não        | Nome do arquivo (`README.md`, `SETUP.md`, `LICENSE`), mostrado como rótulo e usado na URL da tela; ver [Nome do documento](#nome-do-documento)                                                                           | D55           |
+| `format`          | `DocumentFormat`    | Sim                        | Não        | `markdown` (renderizado, D50) ou `text` (texto pré-formatado, sem interpretação)                                                                                                                                         | D55           |
+| `translated`      | `boolean`           | Sim                        | Não        | `true`: um conteúdo por idioma; `false`: o mesmo arquivo nos três idiomas (documento neutro)                                                                                                                             | D55           |
+| `contentLanguage` | `SupportedLanguage` | Não                        | Não        | Só em documento neutro: o idioma em que o conteúdo está escrito (`LICENSE` em inglês é `en`), para a tela marcar o trecho com `lang` (WCAG 3.1.2); ausente quando o conteúdo não tem idioma (`.json`, `.yml`) ou é misto | D55, A11Y-G02 |
+| `updatedAt`       | `string`            | Sim, exceto no `README.md` | Não        | `AAAA-MM-DD`; `dateModified` do `TechArticle` e `lastmod` do documento no `sitemap.xml`                                                                                                                                  | NF-IA-15      |
 
 Campos além de `id`, `name`, `format` e `translated`: `contentLanguage` existe porque um documento
 neutro costuma estar num idioma diferente do da página, e a tela precisa dizer isso ao leitor de
@@ -890,3 +891,39 @@ Quando o backend existir, ele aplica as mesmas regras na escrita.
 - **Perfil:** `aboutParagraphs` com pelo menos um item; `summary` e `homeIntro` presentes; no máximo
   um `isPrimary` na stack do site; `contact.email` válido; `links` `https:` absolutas;
   `location.countryCode` ISO 3166-1 alfa-2.
+
+### O que cada camada garante (#162)
+
+Duas camadas validam o conteúdo, com papéis diferentes. Os schemas Zod
+(`src/services/content/schemas/`) cuidam só da **forma**: tipo de cada campo, obrigatoriedade, enum,
+`types` não vazio, `countryCode` em `^[A-Z]{2}$`, e-mail e datas em `AAAA-MM`. O teste de conteúdo
+(`validation/`) cuida do que depende de mais de um arquivo ou do disco: tradução e paridade entre
+idiomas, ids únicos, referências, datas coerentes, imagens e documentos.
+
+| Garantia                                                                | Schemas (`readJson`) | `content:check` |
+| ----------------------------------------------------------------------- | :------------------: | :-------------: |
+| Tipo, obrigatoriedade e enum de cada campo                              |         sim          |       sim       |
+| `types` não vazio, `countryCode`, e-mail, `AAAA-MM`                     |         sim          |       sim       |
+| Chave desconhecida                                                      | ignorada e removida  |     reprova     |
+| Paridade e tradução entre `pt-BR`, `en` e `es`                          |         não          |       sim       |
+| Ids únicos, UUID v7, referências, datas coerentes, imagens e documentos |         não          |       sim       |
+
+- **Onde roda:** `content:check` (o teste `src/services/content/test/content.test.ts`) roda no teste
+  e no CI, não no navegador; o `it.each` por idioma desse arquivo também aplica os schemas aos nove
+  arquivos publicados, então um schema desatualizado ou um JSON fora dele reprova no CI. O navegador
+  só roda os schemas dentro de `readJson`.
+- **Validação de borda:** `readJson` valida o JSON recém-lido contra o schema do carregador
+  (`loadProfile`, `loadProjectRecords`, `loadTimelineRecords`) e lança `ContentException` de status
+  500 e `code` `INVALID_CONTENT`, com o arquivo e o primeiro campo na mensagem e até dez campos em
+  `fields`. JSON ilegível vira o mesmo erro; falha de rede continua `FETCH_ERROR`. Na
+  pré-renderização, `loadPrerenderData` lança com o arquivo e o campo, e `npm run build` falha em vez
+  de gerar HTML com dado quebrado.
+- **Chave desconhecida:** o schema de execução ignora e remove a chave extra, para a API de v2
+  poder acrescentar campo sem derrubar o cliente; `content:check` continua estrito.
+- **Duplicação aceita:** chaves obrigatórias, tipos e enums existem nos validadores à mão e nos
+  schemas. A anotação do schema contra o tipo de `src/types/` o mantém alinhado, e o enum vem de
+  `src/enum/`.
+- **Pergunta para a v2 (#43):** os schemas podem substituir a parte estrutural de
+  `validateProfile`, `validateProjects`, `validateTimeline`, `validateStack` e `validateEnums`,
+  chamando `safeParse` e mapeando `issues` para `ContentIssue`, deixando em `validation/` só
+  paridade, tradução, referências, datas, imagens e documentos. Não entrou na #162.

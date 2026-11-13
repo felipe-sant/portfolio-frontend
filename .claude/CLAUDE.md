@@ -21,11 +21,12 @@ Este repositório é o frontend do **portfólio pessoal de Luiz Felipe dos Santo
 ao mesmo tempo cliente, PO e dev: ele decide escopo e prioridade e aprova as specs. Visão, público e escopo em
 `docs/product/overview.md`.
 
-**Handoff de design:** `/home/felipe/faculdade/design_handoff_portfolio` é a base do design (R3). Reaproveite `tokens/`
-e use `components/` como ponto de partida; não copie o HTML das telas (`*.dc.html`), `support.js`, `image-slot.js` nem
-os sketches de `assets/`. Onde o handoff diverge das convenções deste repositório, as convenções prevalecem (fonte
-self-hospedada, CSS Module em vez de `.ds-*`, código sem comentários). Referência visual validada pelo PO:
-`docs/design/prototype/` (`npm run dev`, em `/docs/design/prototype/prototipo-indice.dc.html`).
+**Handoff de design:** a pasta `design_handoff_portfolio`, fora do repositório (só na máquina do autor), é a base do
+design (R3); os tokens dela já estão em `src/styles/global.css` e o resumo em `docs/design/design-system.md`.
+Reaproveite `tokens/` e use `components/` como ponto de partida; não copie o HTML das telas (`*.dc.html`),
+`support.js`, `image-slot.js` nem os sketches de `assets/`. Onde o handoff diverge das convenções deste repositório,
+as convenções prevalecem (fonte self-hospedada, CSS Module em vez de `.ds-*`, código sem comentários). Referência
+visual validada pelo PO: `docs/design/prototype/` (`npm run dev`, em `/docs/design/prototype/prototipo-indice.dc.html`).
 
 **Rotas:** cinco telas, com caminhos em inglês (D32) sob o prefixo do idioma (`/<idioma>`, sem barra final): Início,
 Projetos (`/projects`), Projeto (`/projects/:id` e `/projects/:id/docs/:name`, `:id` é UUID v7), Informações (`/about`)
@@ -88,11 +89,15 @@ Regras por área; o mecanismo de cada uma está em `docs/` (tabela "Onde ler mai
   mão nem `ROUTES.home` cru em `<Link>`. Navegação interna usa `<Link to>`/`useNavigate`, nunca `<a href>` (âncora crua
   recarrega e descarta o estado). O único `<Suspense>` fica em volta do `<Outlet />` do layout: página nova não tem o
   próprio (exceção: Contato, em `docs/screens/contact.md#implementação`).
-- **i18n** (`src/i18n/`, `src/locales/`): idioma ativo por `getLanguage()` e troca por `setLanguage(language)`, o único
-  código que grava `LANGUAGE_STORAGE_KEY` (componente nunca usa `saveLanguage` nem `localStorage`). Namespace novo entra
-  nos três idiomas, em `src/i18n/resources.ts` e no `ns` de `src/i18n/i18n.ts`. Chave em inglês, lowerCamelCase,
-  hierárquica; quem usa `common` carrega `useTranslation(["notFound", "common"])` e chama `t("common:backHome")`; texto
-  com marcação usa `<Trans>`.
+- **i18n** (`src/i18n/`, `src/locales/`): idioma ativo por `useLanguage()` (`src/hooks/`) em componente e hook, `getLanguage()` só
+  em código fora de React, e troca por `setLanguage(language)`, o único código que grava `LANGUAGE_STORAGE_KEY`
+  (componente nunca usa `saveLanguage` nem `localStorage`). Namespace novo entra
+  nos três idiomas, no `src/i18n/languageBundles/<idioma>.ts` de cada idioma e em `src/i18n/namespaces.ts` (o `ns` de
+  `src/i18n/i18n.ts`). O cliente baixa um chunk por idioma com `loadLanguage(language)` antes de todo
+  `i18n.changeLanguage`; código de cliente nunca importa `@/i18n/resources` nem JSON de `src/locales/` (só o
+  `entry-server.tsx`, por `addStaticResources`, e os testes), senão os três idiomas voltam ao pacote de entrada. Chave
+  em inglês, lowerCamelCase, hierárquica; quem usa `common` carrega `useTranslation(["notFound", "common"])` e chama
+  `t("common:backHome")`; texto com marcação usa `<Trans>`.
 - **Estado** (`src/store/`): endpoint nunca em `api.ts`, sempre injetado por domínio em `src/store/api/<dominio>.api.ts`
   (`api.injectEndpoints`); slice em `slices/<nome>.slice.ts`; tipos de store em `src/types/store/`. Código de aplicação
   usa `useAppDispatch` e `useAppSelector` com seletor estreito, nunca o estado inteiro. Dado de conteúdo (R1) vem de
@@ -116,8 +121,8 @@ Regras por área; o mecanismo de cada uma está em `docs/` (tabela "Onde ler mai
   calado). Sem estilo inline nem CSS global local; `:global` só nos hovers de `projectCard.module.css` e
   `featuredProject.module.css`. Tema e movimento só se escrevem por `useTheme()` e `useMotion()`; animação nova usa
   `--dur-*` e `--ease`. Detalhe em `docs/architecture/frontend.md`.
-- **Alias e `public/`**: `@/*` resolve para `src/*` em dois lugares que precisam concordar, `paths` do
-  `tsconfig.app.json` e `resolve.alias` do `vite.config.ts`. Asset estático novo (imagem, fonte, dado mock) entra em
+- **Alias e `public/`**: `@/*` resolve para `src/*` em três lugares que precisam concordar, `paths` do
+  `tsconfig.app.json` e do `tsconfig.e2e.json` e `resolve.alias` do `vite.config.ts`. Asset estático novo (imagem, fonte, dado mock) entra em
   `public/`; fonte é self-hospedada, nunca CDN.
 - **Config e dados:** variável do cliente tem prefixo `VITE_` e se lê com `import.meta.env.VITE_ALGO`; `BASE_URL`,
   `VITE_API_URL` e `VITE_SITE_URL` só são lidos em `src/utils/publicUrl.ts`, `src/services/http/apiUrl.ts` e
@@ -204,9 +209,10 @@ O `<Tipo>` de branch, commit e título de PR vem sempre desta tabela:
 
 ### Issues
 
-Toda issue entra no projeto [Portfolio](https://github.com/users/felipe-sant/projects/16) com Status `Backlog`, `Marco`
-do `docs/product/roadmap.md` (ou `Pessoal`), um único `Tipo` (`FEAT`, `DOC` ou `BUG`) e labels só de área (`frontend`,
-`backend`, `infra`); dependência vira "blocked by" do GitHub ([`CONTRIBUTING.md`](../CONTRIBUTING.md#issues)).
+Toda issue entra no projeto [Portfolio](https://github.com/users/felipe-sant/projects/16) com Status `Backlog`, `Versão`
+(`v1`, a entrega da Fatec, ou `v2`, AWS, banco e backend), um único `Tipo` (`FEAT`, `DOC` ou `BUG`) e labels só de área
+(`frontend`, `backend`, `infra`); dependência vira "blocked by" do GitHub
+([`CONTRIBUTING.md`](../CONTRIBUTING.md#issues)).
 
 ### Branches
 

@@ -95,7 +95,7 @@ describe("ContactPage", () => {
 
         await userEvent.click(resume)
 
-        expect(screen.getByRole("dialog", { name: "Currículo" })).toBeInTheDocument()
+        expect(await screen.findByRole("dialog", { name: "Currículo" })).toBeInTheDocument()
     })
 
     it("com a flag ligada mostra a abertura do formulário e os canais depois dele", async () => {
@@ -218,11 +218,15 @@ describe("ContactPage", () => {
         expect(
             document.head.querySelector('meta[name="twitter:card"]')?.getAttribute("content")
         ).toBeTruthy()
+        expect(
+            document.head.querySelector('meta[property="og:image"]')?.getAttribute("content")
+        ).toBe(`${SITE_URL}/images/share/pt-BR/contact.png`)
+        expect(
+            document.head.querySelector('meta[property="og:image:alt"]')?.getAttribute("content")
+        ).toBe("Gato ao lado do nome Luiz Felipe dos Santos e do título Contato")
         expect(readJsonLd()["@type"]).toBe("ContactPage")
         await screen.findByText("contato@example.com")
-        await waitFor(() =>
-            expect(readJsonLd().mainEntity.email).toBe("mailto:contato@example.com")
-        )
+        await waitFor(() => expect(readJsonLd().mainEntity.email).toBe("contato@example.com"))
     })
 
     it("tem um h1 e nenhum main próprio", async () => {

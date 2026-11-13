@@ -215,8 +215,77 @@ describe("render", () => {
         expect(html.match(/<link rel="alternate" hrefLang="[^"]+"/g)).toHaveLength(4)
         expect(html).toContain('hrefLang="x-default" href="http://localhost:5173/en"')
         expect(html).toContain('<script type="application/ld+json">')
-        expect(html).toContain(`http://localhost:5173/${language}#person`)
+        expect(html).toContain("http://localhost:5173/#person")
+        expect(html).not.toContain(`http://localhost:5173/${language}#person`)
         expect(html).toContain("https://github.com/example")
+    })
+
+    it.each([
+        [
+            "pt-BR.html",
+            "Luiz Felipe dos Santos · Desenvolvedor full stack Júnior · React, TypeScript e Node.js"
+        ],
+        [
+            "en.html",
+            "Luiz Felipe dos Santos · Junior full stack developer · React, TypeScript and Node.js"
+        ],
+        [
+            "es.html",
+            "Luiz Felipe dos Santos · Desarrollador full stack junior · React, TypeScript y Node.js"
+        ]
+    ])("traz o title com nome, cargo e stack em %s", async (file, title) => {
+        const target = targets.find((item) => item.file === file)
+        if (!target) {
+            throw new Error(`Alvo ${file} não encontrado`)
+        }
+
+        const { html } = await render(target)
+
+        expect(html).toContain(`<title>${title}</title>`)
+    })
+
+    it.each([
+        [
+            "pt-BR.html",
+            "Luiz Felipe dos Santos · Desenvolvedor full stack Júnior · React, TypeScript e Node.js"
+        ],
+        [
+            "en.html",
+            "Luiz Felipe dos Santos · Junior full stack developer · React, TypeScript and Node.js"
+        ],
+        [
+            "es.html",
+            "Luiz Felipe dos Santos · Desarrollador full stack junior · React, TypeScript y Node.js"
+        ]
+    ])("traz as tags do Twitter iguais às de Open Graph em %s", async (file, title) => {
+        const target = targets.find((item) => item.file === file)
+        if (!target) {
+            throw new Error(`Alvo ${file} não encontrado`)
+        }
+
+        const { html } = await render(target)
+        const ogImage = html.match(/<meta property="og:image" content="([^"]+)"\/>/)?.[1]
+
+        expect(html).toContain(`<meta name="twitter:title" content="${title}"/>`)
+        expect(ogImage).toBeDefined()
+        expect(html).toContain(`<meta name="twitter:image" content="${ogImage}"/>`)
+    })
+
+    it.each([
+        ["en.html", "en/home.png"],
+        ["es.html", "es/home.png"],
+        ["pt-BR/contact.html", "pt-BR/contact.png"]
+    ])("traz a imagem de compartilhamento da página no idioma em %s", async (file, image) => {
+        const target = targets.find((item) => item.file === file)
+        if (!target) {
+            throw new Error(`Alvo ${file} não encontrado`)
+        }
+
+        const { html } = await render(target)
+        const url = `http://localhost:5173/images/share/${image}`
+
+        expect(html).toContain(`<meta property="og:image" content="${url}"/>`)
+        expect(html).toContain(`<meta name="twitter:image" content="${url}"/>`)
     })
 
     it.each(["pt-BR/contact.html", "en/contact.html", "es/contact.html"])(
@@ -441,6 +510,9 @@ describe("render", () => {
         expect(html).not.toContain('rel="canonical"')
         expect(html).not.toContain("hrefLang")
         expect(html).not.toContain("og:title")
+        expect(html).not.toContain("twitter:title")
+        expect(html).not.toContain("twitter:description")
+        expect(html).not.toContain("twitter:image")
         expect(html).not.toContain("application/ld+json")
     })
 

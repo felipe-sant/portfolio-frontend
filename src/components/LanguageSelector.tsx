@@ -4,10 +4,9 @@ import { Link, useLocation } from "react-router-dom"
 import Flag from "@/components/Flag"
 import Icon from "@/components/Icon"
 import useDropdown from "@/hooks/useDropdown"
-import FALLBACK_LANGUAGE from "@/i18n/fallbackLanguage"
+import useLanguage from "@/hooks/useLanguage"
 import getEquivalentPath from "@/i18n/getEquivalentPath"
 import getLanguageFromPath from "@/i18n/getLanguageFromPath"
-import resolveSupportedLanguage from "@/i18n/resolveSupportedLanguage"
 import setLanguage from "@/i18n/setLanguage"
 import SUPPORTED_LANGUAGES from "@/i18n/supportedLanguages"
 import dropdown from "@/styles/components/dropdownPanel.module.css"
@@ -53,14 +52,12 @@ function LanguageOption({ language, to, isActive, onSelect }: LanguageOptionProp
 }
 
 function LanguageSelector({ variant = "inline" }: LanguageSelectorProps) {
-    const { t, i18n } = useTranslation()
+    const { t } = useTranslation()
     const { pathname, search, hash } = useLocation()
     const { isOpen, isMounted, close, toggle, containerRef, buttonRef, panelProps } = useDropdown()
     const listId = useId()
-    const activeLanguage =
-        getLanguageFromPath(pathname) ??
-        resolveSupportedLanguage(i18n.resolvedLanguage) ??
-        FALLBACK_LANGUAGE
+    const currentLanguage = useLanguage()
+    const activeLanguage = getLanguageFromPath(pathname) ?? currentLanguage
 
     function select(language: SupportedLanguage) {
         void setLanguage(language)

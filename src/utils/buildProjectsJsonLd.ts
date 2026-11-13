@@ -3,6 +3,7 @@ import type SupportedLanguage from "@/types/language/SupportedLanguage.types"
 import type ProjectSummary from "@/types/project/ProjectSummary.types"
 import type JsonLdNode from "@/types/seo/JsonLdNode.types"
 import buildAbsoluteUrl from "@/utils/buildAbsoluteUrl"
+import buildPersonId from "@/utils/buildPersonId"
 
 type ProjectsJsonLdLabels = {
     title: string
@@ -21,7 +22,7 @@ function buildProjectsJsonLd(
         description: labels.description,
         url: buildAbsoluteUrl(ROUTES.projects, language),
         inLanguage: language,
-        author: { "@id": `${buildAbsoluteUrl(ROUTES.home, language)}#person` },
+        author: { "@id": buildPersonId() },
         mainEntity: {
             "@type": "ItemList",
             itemListElement: projects.map((project, index) => ({

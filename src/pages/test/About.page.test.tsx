@@ -306,7 +306,7 @@ describe("AboutPage, apresentação", () => {
 
         await userEvent.click(link)
 
-        const dialog = screen.getByRole("dialog", { name: "Currículo" })
+        const dialog = await screen.findByRole("dialog", { name: "Currículo" })
         expect(within(dialog).getByTitle("Currículo em PDF")).toHaveAttribute(
             "src",
             "/cv/cv-pt-BR.pdf"
@@ -556,6 +556,17 @@ describe("AboutPage, metadados", () => {
         expect(document.head.querySelector('meta[name="twitter:card"]')).toBeInTheDocument()
     })
 
+    it("declara a imagem de compartilhamento de Informações", () => {
+        renderAbout()
+
+        expect(
+            document.head.querySelector('meta[property="og:image"]')?.getAttribute("content")
+        ).toBe(`${SITE_URL}/images/share/pt-BR/about.png`)
+        expect(
+            document.head.querySelector('meta[property="og:image:alt"]')?.getAttribute("content")
+        ).toBe("Gato ao lado do nome Luiz Felipe dos Santos e do título Informações")
+    })
+
     it("monta o JSON-LD ProfilePage com Person e escapa o <", async () => {
         stubContentFetch(buildFiles({ summary: "Texto </script> perigoso" }))
         renderAbout()
@@ -566,6 +577,49 @@ describe("AboutPage, metadados", () => {
         expect(readJsonLd().mainEntity["@type"]).toBe("Person")
         expect(readJsonLd().mainEntity.description).toBe("Texto </script> perigoso")
         expect(script?.innerHTML).not.toContain("</script>")
+    })
+})
+
+describe("AboutPage, data de atualização", () => {
+    it.each([
+        ["pt-BR", "Atualizado em 07/2026"],
+        ["en", "Updated 07/2026"],
+        ["es", "Actualizado en 07/2026"]
+    ] as const)("mostra mês e ano de updatedAt em %s", async (language, text) => {
+        await act(() => setLanguage(language))
+        renderAbout()
+
+        expect(await screen.findByText(text)).toBeInTheDocument()
+    })
+
+    it("não mostra a data enquanto o perfil carrega", () => {
+        renderAbout()
+
+        expect(screen.queryByText(/Atualizado/)).not.toBeInTheDocument()
+    })
+
+    it("não mostra a data nem a chave quando o perfil falha", async () => {
+        stubContentFetch(without(buildFiles(), "content/pt-BR/profile.json"))
+        renderAbout()
+
+        await screen.findByRole("alert")
+
+        expect(screen.queryByText(/Atualizado/)).not.toBeInTheDocument()
+        expect(screen.queryByText(/updatedAt/)).not.toBeInTheDocument()
+    })
+
+    it("traz dateModified no JSON-LD ProfilePage com o updatedAt do perfil", async () => {
+        renderAbout()
+        await screen.findByText("Atualizado em 07/2026")
+
+        await waitFor(() => expect(readJsonLd().dateModified).toBe("2026-07-19"))
+    })
+
+    it("não tem violações de acessibilidade com a data visível", async () => {
+        const { container } = renderAbout()
+        await screen.findByText("Atualizado em 07/2026")
+
+        await expectNoAxeViolations(container)
     })
 })
 

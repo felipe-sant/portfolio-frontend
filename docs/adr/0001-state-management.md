@@ -1,7 +1,8 @@
 # 0001. Gerenciamento de estado
 
-- **Status:** aceita
-- **Data:** 01-10-2026
+- **Status:** `aceita`
+- **Data:** `01-10-2026`
+- **Issues:** sem issue (decisão do commit inicial)
 
 ## Contexto
 

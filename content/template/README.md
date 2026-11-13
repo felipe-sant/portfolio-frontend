@@ -17,7 +17,7 @@ Esta pasta não é publicada: o que vai ao ar fica em `public/`.
 3. Apague os campos opcionais que você não vai usar. Campo opcional sem valor não aparece no
    arquivo: texto vazio e `null` são inválidos. Os opcionais são `photo`, `location.detail`,
    `contact.responseTime`, `links.github`, `links.linkedin` (perfil), `organization`, `stage`,
-   `end`, `issuer` (trajetória), `demoUrl`, `repositoryUrl`, `updatedAt`, `caption` e
+   `end`, `issuer` (trajetória), `demoUrl`, `repositoryUrl`, `caption` e
    `contentLanguage` (projeto).
 4. O modelo traz um item em cada lista só para mostrar a forma. Apague, repita ou deixe `[]` onde o
    contrato permite lista vazia.

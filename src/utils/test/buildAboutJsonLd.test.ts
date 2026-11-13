@@ -23,11 +23,23 @@ describe("buildAboutJsonLd", () => {
             inLanguage: "pt-BR",
             mainEntity: {
                 "@type": "Person",
-                "@id": `${SITE_URL}/pt-BR#person`,
+                "@id": `${SITE_URL}/#person`,
                 name: "Luiz Felipe dos Santos",
                 url: `${SITE_URL}/pt-BR`
             }
         })
+    })
+
+    it("traz dateModified igual ao updatedAt do perfil e o omite sem perfil", () => {
+        const withProfile = buildAboutJsonLd(
+            "pt-BR",
+            LABELS,
+            buildProfile({ updatedAt: "2026-07-19" })
+        )
+        const withoutProfile = buildAboutJsonLd("pt-BR", LABELS)
+
+        expect(JSON.parse(serializeJsonLd(withProfile)).dateModified).toBe("2026-07-19")
+        expect(JSON.parse(serializeJsonLd(withoutProfile))).not.toHaveProperty("dateModified")
     })
 
     it("usa a canônica de about no idioma, o cargo e o resumo do perfil", () => {
@@ -36,7 +48,7 @@ describe("buildAboutJsonLd", () => {
 
         expect(node.url).toBe(`${SITE_URL}/en/about`)
         expect(node.inLanguage).toBe("en")
-        expect(person["@id"]).toBe(`${SITE_URL}/en#person`)
+        expect(person["@id"]).toBe(`${SITE_URL}/#person`)
         expect(person.url).toBe(`${SITE_URL}/en`)
         expect(person.jobTitle).toBe("Desenvolvedor full stack")
         expect(person.description).toBe("Desenvolvedor full stack em TypeScript.")

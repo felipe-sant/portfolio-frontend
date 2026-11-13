@@ -4,12 +4,11 @@ import ButtonLink from "@/components/ButtonLink"
 import CopyEmailButton from "@/components/CopyEmailButton"
 import Icon from "@/components/Icon"
 import ResumeLink from "@/components/ResumeLink"
-import ResumeModal from "@/components/ResumeModal"
+import LazyResumeModal from "@/components/LazyResumeModal"
+import useLanguage from "@/hooks/useLanguage"
 import useLocalizedPath from "@/hooks/useLocalizedPath"
 import usePageTransition from "@/hooks/usePageTransition"
 import useResume from "@/hooks/useResume"
-import FALLBACK_LANGUAGE from "@/i18n/fallbackLanguage"
-import resolveSupportedLanguage from "@/i18n/resolveSupportedLanguage"
 import ROUTES from "@/routers/paths"
 import css from "@/styles/components/footer.module.css"
 import profileApi from "@/store/api/profile.api"
@@ -174,7 +173,7 @@ function NavigationBlock({ profile }: ProfileBlockProps) {
                     </li>
                 </ul>
             </div>
-            <ResumeModal isOpen={resume.isOpen} onClose={resume.close} />
+            <LazyResumeModal isOpen={resume.isOpen} onClose={resume.close} />
         </>
     )
 }
@@ -193,8 +192,7 @@ function BottomBar() {
 }
 
 function Footer({ variant, inert }: FooterProps) {
-    const { i18n } = useTranslation()
-    const lang = resolveSupportedLanguage(i18n.resolvedLanguage) ?? FALLBACK_LANGUAGE
+    const lang = useLanguage()
     const { data: profile } = profileApi.useGetProfileQuery({ lang })
 
     return (

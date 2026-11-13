@@ -32,15 +32,16 @@ Na v1 não há backend (R1). Os dados vêm de arquivos locais que uma camada de 
 API responderia, com os mesmos parâmetros, respostas e erros de
 [`api-contract.md`](api-contract.md):
 
-| Onde                                          | O que guarda                                                                             |
-| --------------------------------------------- | ---------------------------------------------------------------------------------------- |
-| `public/content/<idioma>/`                    | `profile.json`, `timeline.json` e `projects.json` de `pt-BR`, `en` e `es`                |
-| `public/content/<idioma>/projects/<id>/docs/` | Documentos traduzidos do projeto (`README.md`, `SETUP.md` ...)                           |
-| `public/content/shared/projects/<id>/docs/`   | Documentos neutros do projeto (`LICENSE`), um arquivo só para os três idiomas            |
-| `public/images/`                              | Imagens dos projetos (`projects/<id>/<n>-large.webp` e `-small.webp`) e a foto do perfil |
-| `content/template/`                           | Modelo em branco do conteúdo, com README de uso (não é publicado)                        |
-| `src/services/content/`                       | A camada local: leitura dos arquivos, busca, ordenação, trajetória e validação           |
-| `src/store/api/`                              | Endpoints do RTK Query (`profile.api.ts`, `timeline.api.ts`, `projects.api.ts`)          |
+| Onde                                          | O que guarda                                                                                 |
+| --------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| `public/content/<idioma>/`                    | `profile.json`, `timeline.json` e `projects.json` de `pt-BR`, `en` e `es`                    |
+| `public/content/<idioma>/projects/<id>/docs/` | Documentos traduzidos do projeto (`README.md`, `SETUP.md` ...)                               |
+| `public/content/shared/projects/<id>/docs/`   | Documentos neutros do projeto (`LICENSE`), um arquivo só para os três idiomas                |
+| `public/images/`                              | Imagens dos projetos (`projects/<id>/<n>-large.webp` e `-small.webp`) e a foto do perfil     |
+| `content/template/`                           | Modelo em branco do conteúdo, com README de uso (não é publicado)                            |
+| `src/services/content/`                       | A camada local: leitura dos arquivos, busca, ordenação, trajetória e validação               |
+| `src/services/content/schemas/`               | Schemas Zod (`zod/mini`) da forma dos JSON, carregados por `import()` dinâmico em `readJson` |
+| `src/store/api/`                              | Endpoints do RTK Query (`profile.api.ts`, `timeline.api.ts`, `projects.api.ts`)              |
 
 Página e componente nunca leem esses arquivos: o acesso é pelos endpoints, com `lang` no argumento
 (`projectsApi.useGetProjectsQuery({ lang, sort: "recent" })`). Os arquivos de `public/` são
@@ -71,8 +72,8 @@ chaves em `pt-BR`, `en` e `es`. A configuração fica em `src/i18n/`. As chaves 
 dos JSON de `pt-BR`: chave inexistente em `t()` ou faltando em `en`/`es` é erro de compilação.
 
 Para adicionar uma chave, escreva-a primeiro em `src/locales/pt-BR/<namespace>.json` e depois em
-`en` e `es`. Para adicionar um namespace, crie o JSON nos três idiomas, registre-o em
-`src/i18n/resources.ts` e inclua o nome no `ns` de `src/i18n/i18n.ts`.
+`en` e `es`. Para adicionar um namespace, crie o JSON nos três idiomas, importe-o nos
+três arquivos de `src/i18n/languageBundles/` (`ptBR.ts`, `en.ts` e `es.ts`) e inclua o nome em `src/i18n/namespaces.ts`.
 
 O idioma ativo é o do primeiro segmento do caminho: `/pt-BR`, `/en` ou `/es`. Prefixo
 desconhecido ou ausente (`/fr`, `/pt`, `/projects`) cai na página não encontrada, em inglês, e `?lng=`
@@ -85,9 +86,10 @@ ativo. Link interno usa `useLocalizedPath()`, que mantém o prefixo do idioma. O
 
 ## Alias de import, `public/`, enum e utils
 
-- **Alias de import `@/`** — `@/*` resolve para `src/*`. Configurado em dois lugares que precisam
-  continuar concordando: `paths` no `tsconfig.app.json` (para o `tsc` e o editor) e `resolve.alias` no
-  `vite.config.ts` (para o dev server e o build). Mexer em um sem o outro deixa o `tsc -b`
+- **Alias de import `@/`** — `@/*` resolve para `src/*`. Configurado em três lugares que precisam
+  continuar concordando: `paths` no `tsconfig.app.json` (para o `tsc` e o editor), `paths` no
+  `tsconfig.e2e.json` (para os E2E do Playwright) e `resolve.alias` no `vite.config.ts` (para o dev
+  server e o build). Mexer em um sem o outro deixa o `tsc -b`
   verde e quebra o build, ou vice-versa. O Vitest herda o alias do mesmo `vite.config.ts`.
 - **`public/`** — assets estáticos que o Vite copia como estão para a raiz de `dist/` no build, sem
   passar pelo bundler, e são referenciados por caminho absoluto (`/favicon.svg`). Arquivo estático

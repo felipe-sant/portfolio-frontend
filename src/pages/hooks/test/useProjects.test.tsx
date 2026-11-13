@@ -5,6 +5,7 @@ import { createMemoryRouter, RouterProvider } from "react-router-dom"
 import { act, render, waitFor } from "@testing-library/react"
 import listProjects from "@/services/content/listProjects"
 import useProjects from "@/pages/hooks/useProjects"
+import type useProjectsPages from "@/pages/hooks/useProjectsPages"
 import projectsApi from "@/store/api/projects.api"
 import createStore from "@/store/createStore"
 import buildProfile from "@/testUtils/buildProfile"
@@ -17,6 +18,11 @@ import type ProjectRecord from "@/types/project/ProjectRecord.types"
 
 const hydration = vi.hoisted(() => ({ value: true }))
 
+const capturedPages = vi.hoisted(() => ({
+    current: undefined as
+        ReturnType<typeof import("@/pages/hooks/useProjectsPages").default> | undefined
+}))
+
 vi.mock("@/hooks/useHasHydrated", () => ({ default: () => hydration.value }))
 
 vi.mock("@/services/content/listProjects", async (importOriginal) => {
@@ -25,7 +31,22 @@ vi.mock("@/services/content/listProjects", async (importOriginal) => {
     return { default: vi.fn(original.default) }
 })
 
+vi.mock("@/pages/hooks/useProjectsPages", async (importOriginal) => {
+    const original = await importOriginal<typeof import("@/pages/hooks/useProjectsPages")>()
+
+    return {
+        default: (...args: Parameters<typeof original.default>) => {
+            const pages = original.default(...args)
+            capturedPages.current = pages
+
+            return pages
+        }
+    }
+})
+
 type ProjectsHook = ReturnType<typeof useProjects>
+
+type ProjectsPages = ReturnType<typeof useProjectsPages>
 
 type RenderSnapshot = { text: string; isLoading: boolean; shown: number }
 
@@ -34,20 +55,25 @@ const PROJECTS_FILE = "content/pt-BR/projects.json"
 const PROFILE_FILE = "content/pt-BR/profile.json"
 
 let latest: ProjectsHook
+let latestPages: ProjectsPages
 const snapshots: RenderSnapshot[] = []
 
 function Probe() {
     const projects = useProjects()
-    const { gridRef } = projects
+    const pages = capturedPages.current
+    const { gridRef } = projects.list
 
     useEffect(() => {
         latest = projects
+        if (pages) {
+            latestPages = pages
+        }
     })
 
     snapshots.push({
-        text: projects.resultsText,
-        isLoading: projects.isLoading,
-        shown: projects.shown
+        text: projects.results.text,
+        isLoading: projects.list.isLoading,
+        shown: pages?.shown ?? 0
     })
 
     return (
@@ -57,14 +83,14 @@ function Probe() {
             </h1>
             <div ref={gridRef}>
                 <ul>
-                    {projects.items.map((item) => (
+                    {pages?.items.map((item) => (
                         <li key={item.id}>
                             <a href={`#${item.id}`}>{item.title}</a>
                         </li>
                     ))}
                 </ul>
             </div>
-            {projects.loadMoreError && <div id={projects.ids.loadMoreAlert} tabIndex={-1} />}
+            {projects.more.loadMoreError && <div id={projects.ids.loadMoreAlert} tabIndex={-1} />}
         </>
     )
 }
@@ -101,7 +127,7 @@ function projectRequests(fetchMock: ReturnType<typeof stubContentFetch>) {
 }
 
 function listedTitles() {
-    const list = latest.jsonLd?.mainEntity
+    const list = latest.seo.jsonLd?.mainEntity
     const elements =
         typeof list === "object" && list !== null && "itemListElement" in list
             ? list.itemListElement
@@ -117,7 +143,15 @@ function listedTitles() {
 }
 
 async function settled() {
-    await waitFor(() => expect(latest.isLoading).toBe(false))
+    await waitFor(() => expect(latest.list.isLoading).toBe(false))
+}
+
+function exposedNames() {
+    return Object.values(latest).flatMap((value) =>
+        typeof value === "object" && value !== null && !Array.isArray(value)
+            ? Object.keys(value)
+            : []
+    )
 }
 
 function dedupe(values: string[]) {
@@ -141,8 +175,8 @@ describe("useProjects", () => {
         mount()
         await settled()
 
-        expect(latest.isEmptyContent).toBe(true)
-        expect(latest.total).toBe(0)
+        expect(latest.results.isEmptyContent).toBe(true)
+        expect(latestPages.total).toBe(0)
     })
 
     it("deriva mainItems e experimentItems de items, na ordem recebida", async () => {
@@ -151,10 +185,13 @@ describe("useProjects", () => {
         mount()
         await settled()
 
-        expect(latest.mainItems.map((item) => item.title)).toEqual(["Projeto 2", "Projeto 1"])
-        expect(latest.experimentItems.map((item) => item.title)).toEqual(["Projeto 4", "Projeto 3"])
-        expect(latest.items).toHaveLength(4)
-        expect(latest.total).toBe(4)
+        expect(latest.list.mainItems.map((item) => item.title)).toEqual(["Projeto 2", "Projeto 1"])
+        expect(latest.list.experimentItems.map((item) => item.title)).toEqual([
+            "Projeto 4",
+            "Projeto 3"
+        ])
+        expect(latestPages.items).toHaveLength(4)
+        expect(latestPages.total).toBe(4)
     })
 
     it("devolve experimentItems vazio quando nenhum projeto é experimento", async () => {
@@ -163,8 +200,8 @@ describe("useProjects", () => {
         mount()
         await settled()
 
-        expect(latest.experimentItems).toEqual([])
-        expect(latest.mainItems).toHaveLength(3)
+        expect(latest.list.experimentItems).toEqual([])
+        expect(latest.list.mainItems).toHaveLength(3)
     })
 
     it("começa carregando, com a contagem vazia antes do texto de carregando", async () => {
@@ -173,14 +210,14 @@ describe("useProjects", () => {
 
         mount()
 
-        expect(latest.isLoading).toBe(true)
+        expect(latest.list.isLoading).toBe(true)
         expect(snapshots[0]?.text).toBe("")
-        await waitFor(() => expect(latest.resultsText).toBe("Carregando projetos…"))
+        await waitFor(() => expect(latest.results.text).toBe("Carregando projetos…"))
         await act(async () => {
             release()
         })
         await settled()
-        await waitFor(() => expect(latest.resultsText).toBe("9 de 10 projetos"))
+        await waitFor(() => expect(latest.results.text).toBe("9 de 10 projetos"))
         expect(latest.filters).toEqual({ q: "", sort: "recent" })
     })
 
@@ -193,7 +230,7 @@ describe("useProjects", () => {
             .filter((entry) => entry?.endpointName === "getProjectsPages")
             .map((entry) => entry?.originalArgs)
         expect(args).toEqual([{ lang: "pt-BR", type: "web", sort: "title" }])
-        expect(latest.items.map((item) => item.title)).toEqual([
+        expect(latestPages.items.map((item) => item.title)).toEqual([
             "Projeto 1",
             "Projeto 3",
             "Projeto 5",
@@ -209,7 +246,7 @@ describe("useProjects", () => {
         const { rerender, router, store } = mount(`${PATH}?type=web`)
         await settled()
         expect(latest.filters).toEqual({ q: "", sort: "recent" })
-        expect(latest.shown).toBe(9)
+        expect(latestPages.shown).toBe(9)
 
         hydration.value = true
         rerender(
@@ -219,7 +256,7 @@ describe("useProjects", () => {
         )
 
         await waitFor(() => expect(latest.filters.type).toBe("web"))
-        await waitFor(() => expect(latest.shown).toBe(5))
+        await waitFor(() => expect(latestPages.shown).toBe(5))
     })
 
     it("ignora valor inválido na query e o tira da URL na próxima mudança", async () => {
@@ -228,7 +265,7 @@ describe("useProjects", () => {
         await settled()
         expect(latest.filters).toEqual({ q: "", sort: "recent" })
 
-        act(() => latest.setCategory("academic"))
+        act(() => latest.filterBar.setCategory("academic"))
 
         await waitFor(() => expect(router.state.location.search).toBe("?category=academic"))
     })
@@ -239,15 +276,15 @@ describe("useProjects", () => {
         const { router } = mount()
         await settled()
 
-        act(() => latest.setDraft("p"))
+        act(() => latest.search.setDraft("p"))
         act(() => {
             vi.advanceTimersByTime(200)
         })
-        act(() => latest.setDraft("pr"))
+        act(() => latest.search.setDraft("pr"))
         act(() => {
             vi.advanceTimersByTime(200)
         })
-        expect(latest.draft).toBe("pr")
+        expect(latest.search.draft).toBe("pr")
         expect(router.state.location.search).toBe("")
         expect(latest.filters.q).toBe("")
 
@@ -263,11 +300,11 @@ describe("useProjects", () => {
         stubProjects(buildProjectRecords(10))
         const { router } = mount(`${PATH}?q=projeto`)
         await settled()
-        expect(latest.draft).toBe("projeto")
+        expect(latest.search.draft).toBe("projeto")
 
-        act(() => latest.clearSearch())
+        act(() => latest.search.clearSearch())
 
-        expect(latest.draft).toBe("")
+        expect(latest.search.draft).toBe("")
         await waitFor(() => expect(router.state.location.search).toBe(""))
     })
 
@@ -275,13 +312,13 @@ describe("useProjects", () => {
         stubProjects(buildProjectRecords(10))
         const { router } = mount(`${PATH}?q=projeto&type=web&category=academic&sort=title`)
         await settled()
-        expect(latest.hasFilters).toBe(true)
+        expect(latest.results.hasFilters).toBe(true)
 
-        act(() => latest.clearFilters())
+        act(() => latest.results.clearFilters())
 
-        expect(latest.draft).toBe("")
+        expect(latest.search.draft).toBe("")
         await waitFor(() => expect(router.state.location.search).toBe("?sort=title"))
-        expect(latest.hasFilters).toBe(false)
+        expect(latest.results.hasFilters).toBe(false)
     })
 
     it("não conta a ordenação como filtro", async () => {
@@ -290,7 +327,7 @@ describe("useProjects", () => {
         mount(`${PATH}?sort=oldest`)
         await settled()
 
-        expect(latest.hasFilters).toBe(false)
+        expect(latest.results.hasFilters).toBe(false)
     })
 
     it("troca o tipo, ignora o clique no tipo ativo e troca ou desmarca a categoria", async () => {
@@ -298,22 +335,22 @@ describe("useProjects", () => {
         const { router } = mount()
         await settled()
 
-        act(() => latest.setType("web"))
+        act(() => latest.filterBar.setType("web"))
         await waitFor(() => expect(router.state.location.search).toBe("?type=web"))
         await settled()
         const key = router.state.location.key
 
-        act(() => latest.setType("web"))
+        act(() => latest.filterBar.setType("web"))
         expect(router.state.location.key).toBe(key)
 
-        act(() => latest.setType(""))
+        act(() => latest.filterBar.setType(""))
         await waitFor(() => expect(router.state.location.search).toBe(""))
 
-        act(() => latest.setCategory("academic"))
+        act(() => latest.filterBar.setCategory("academic"))
         await waitFor(() => expect(router.state.location.search).toBe("?category=academic"))
-        act(() => latest.setCategory("personal"))
+        act(() => latest.filterBar.setCategory("personal"))
         await waitFor(() => expect(router.state.location.search).toBe("?category=personal"))
-        act(() => latest.setCategory("personal"))
+        act(() => latest.filterBar.setCategory("personal"))
         await waitFor(() => expect(router.state.location.search).toBe(""))
     })
 
@@ -322,7 +359,7 @@ describe("useProjects", () => {
         const { router } = mount(`${PATH}?sort=title&category=academic`)
         await settled()
 
-        act(() => latest.setType("web"))
+        act(() => latest.filterBar.setType("web"))
 
         await waitFor(() =>
             expect(router.state.location.search).toBe("?type=web&category=academic&sort=title")
@@ -347,12 +384,20 @@ describe("useProjects", () => {
         mount()
         await settled()
 
-        expect(latest.typeOptions.map((option) => option.value)).toEqual(["", "web", "api"])
-        expect(latest.typeOptions.map((option) => option.label)).toEqual(["Todos", "Web", "API"])
+        expect(latest.filterBar.typeOptions.map((option) => option.value)).toEqual([
+            "",
+            "web",
+            "api"
+        ])
+        expect(latest.filterBar.typeOptions.map((option) => option.label)).toEqual([
+            "Todos",
+            "Web",
+            "API"
+        ])
 
-        act(() => latest.setType("api"))
+        act(() => latest.filterBar.setType("api"))
 
-        await waitFor(() => expect(latest.items.map((item) => item.title)).toContain("Dupla"))
+        await waitFor(() => expect(latestPages.items.map((item) => item.title)).toContain("Dupla"))
     })
 
     it("aplica um tipo válido fora dos disponíveis, sem botão pressionado", async () => {
@@ -360,11 +405,11 @@ describe("useProjects", () => {
         mount(`${PATH}?type=iot`)
         await settled()
 
-        expect(latest.total).toBe(0)
-        expect(latest.typeValue).toBe("iot")
-        expect(latest.typeOptions.map((option) => option.value)).not.toContain("iot")
-        expect(latest.hasFilters).toBe(true)
-        expect(latest.isNoResults).toBe(true)
+        expect(latestPages.total).toBe(0)
+        expect(latest.filterBar.typeValue).toBe("iot")
+        expect(latest.filterBar.typeOptions.map((option) => option.value)).not.toContain("iot")
+        expect(latest.results.hasFilters).toBe(true)
+        expect(latest.results.isNoResults).toBe(true)
     })
 
     it.each([
@@ -378,7 +423,7 @@ describe("useProjects", () => {
         mount()
         await settled()
 
-        await waitFor(() => expect(latest.resultsText).toBe(expected))
+        await waitFor(() => expect(latest.results.text).toBe(expected))
     })
 
     it("devolve a contagem vazia no erro", async () => {
@@ -386,21 +431,21 @@ describe("useProjects", () => {
 
         mount()
 
-        await waitFor(() => expect(latest.isError).toBe(true))
-        await waitFor(() => expect(latest.resultsText).toBe(""))
+        await waitFor(() => expect(latest.list.isError).toBe(true))
+        await waitFor(() => expect(latest.results.text).toBe(""))
     })
 
     it("acrescenta o último card com 10 projetos e esconde o botão", async () => {
         stubProjects(buildProjectRecords(10))
         mount()
         await settled()
-        expect(latest.hasMore).toBe(true)
+        expect(latest.more.hasMore).toBe(true)
 
-        act(() => latest.loadMore())
+        act(() => latest.more.loadMore())
 
-        await waitFor(() => expect(latest.shown).toBe(10))
-        expect(latest.hasMore).toBe(false)
-        await waitFor(() => expect(latest.resultsText).toBe("10 de 10 projetos"))
+        await waitFor(() => expect(latestPages.shown).toBe(10))
+        expect(latest.more.hasMore).toBe(false)
+        await waitFor(() => expect(latest.results.text).toBe("10 de 10 projetos"))
     })
 
     it("pede o próximo lote com offset igual a principais mais experimentos já mostrados", async () => {
@@ -409,13 +454,13 @@ describe("useProjects", () => {
         await settled()
         vi.mocked(listProjects).mockClear()
 
-        act(() => latest.loadMore())
+        act(() => latest.more.loadMore())
 
-        await waitFor(() => expect(latest.shown).toBe(12))
+        await waitFor(() => expect(latestPages.shown).toBe(12))
         const offsets = vi.mocked(listProjects).mock.calls.map(([, params]) => params.offset)
         expect(offsets).toContain(9)
-        expect(latest.mainItems).toHaveLength(7)
-        expect(latest.experimentItems).toHaveLength(5)
+        expect(latest.list.mainItems).toHaveLength(7)
+        expect(latest.list.experimentItems).toHaveLength(5)
     })
 
     it("acrescenta 9 e depois 2 cards com 20 projetos", async () => {
@@ -423,14 +468,14 @@ describe("useProjects", () => {
         mount()
         await settled()
 
-        act(() => latest.loadMore())
-        await waitFor(() => expect(latest.shown).toBe(18))
-        await waitFor(() => expect(latest.resultsText).toBe("18 de 20 projetos"))
-        expect(latest.hasMore).toBe(true)
+        act(() => latest.more.loadMore())
+        await waitFor(() => expect(latestPages.shown).toBe(18))
+        await waitFor(() => expect(latest.results.text).toBe("18 de 20 projetos"))
+        expect(latest.more.hasMore).toBe(true)
 
-        act(() => latest.loadMore())
-        await waitFor(() => expect(latest.shown).toBe(20))
-        expect(latest.hasMore).toBe(false)
+        act(() => latest.more.loadMore())
+        await waitFor(() => expect(latestPages.shown).toBe(20))
+        expect(latest.more.hasMore).toBe(false)
     })
 
     it("mantém a contagem, mostra os esqueletos e ignora o segundo clique enquanto a página chega", async () => {
@@ -440,37 +485,37 @@ describe("useProjects", () => {
         const release = holdFetchAfter(fetchMock, 0)
         const before = projectRequests(fetchMock)
 
-        act(() => latest.loadMore())
-        await waitFor(() => expect(latest.isFetchingMore).toBe(true))
-        act(() => latest.loadMore())
+        act(() => latest.more.loadMore())
+        await waitFor(() => expect(latest.more.isFetchingMore).toBe(true))
+        act(() => latest.more.loadMore())
 
-        expect(latest.skeletonCount).toBe(9)
-        await waitFor(() => expect(latest.resultsText).toBe("9 de 20 projetos"))
-        expect(latest.shown).toBe(9)
+        expect(latest.list.skeletonCount).toBe(9)
+        await waitFor(() => expect(latest.results.text).toBe("9 de 20 projetos"))
+        expect(latestPages.shown).toBe(9)
 
         await act(async () => {
             release()
         })
-        await waitFor(() => expect(latest.shown).toBe(18))
+        await waitFor(() => expect(latestPages.shown).toBe(18))
         expect(projectRequests(fetchMock) - before).toBe(1)
-        expect(latest.skeletonCount).toBe(0)
+        expect(latest.list.skeletonCount).toBe(0)
     })
 
     it("usa min(9, faltantes) esqueletos na última página", async () => {
         const fetchMock = stubProjects(buildProjectRecords(20))
         mount()
         await settled()
-        act(() => latest.loadMore())
-        await waitFor(() => expect(latest.shown).toBe(18))
+        act(() => latest.more.loadMore())
+        await waitFor(() => expect(latestPages.shown).toBe(18))
         const release = holdFetchAfter(fetchMock, 0)
 
-        act(() => latest.loadMore())
+        act(() => latest.more.loadMore())
 
-        await waitFor(() => expect(latest.skeletonCount).toBe(2))
+        await waitFor(() => expect(latest.list.skeletonCount).toBe(2))
         await act(async () => {
             release()
         })
-        await waitFor(() => expect(latest.shown).toBe(20))
+        await waitFor(() => expect(latestPages.shown).toBe(20))
     })
 
     it("foca o link do primeiro card novo e muda a contagem uma só vez", async () => {
@@ -479,11 +524,11 @@ describe("useProjects", () => {
         await settled()
         snapshots.length = 0
 
-        act(() => latest.loadMore())
-        await waitFor(() => expect(latest.shown).toBe(18))
+        act(() => latest.more.loadMore())
+        await waitFor(() => expect(latestPages.shown).toBe(18))
 
         await waitFor(() => expect(document.activeElement).toHaveTextContent(/^Projeto/))
-        expect(document.activeElement).toHaveTextContent(latest.items[9]?.title ?? "")
+        expect(document.activeElement).toHaveTextContent(latestPages.items[9]?.title ?? "")
         expect(dedupe(snapshots.map((snapshot) => snapshot.text))).toEqual([
             "9 de 20 projetos",
             "18 de 20 projetos"
@@ -496,50 +541,50 @@ describe("useProjects", () => {
         await settled()
         const recover = failFetchAfter(fetchMock, 0)
 
-        act(() => latest.loadMore())
+        act(() => latest.more.loadMore())
 
-        await waitFor(() => expect(latest.loadMoreError).toBe(true))
-        expect(latest.shown).toBe(9)
-        await waitFor(() => expect(latest.resultsText).toBe("9 de 20 projetos"))
-        expect(latest.hasMore).toBe(false)
-        expect(latest.skeletonCount).toBe(0)
+        await waitFor(() => expect(latest.more.loadMoreError).toBe(true))
+        expect(latestPages.shown).toBe(9)
+        await waitFor(() => expect(latest.results.text).toBe("9 de 20 projetos"))
+        expect(latest.more.hasMore).toBe(false)
+        expect(latest.list.skeletonCount).toBe(0)
         expect(document.activeElement).toHaveAttribute("id", latest.ids.loadMoreAlert)
 
         recover()
-        act(() => latest.retryLoadMore())
+        act(() => latest.more.retryLoadMore())
 
-        await waitFor(() => expect(latest.shown).toBe(18))
-        expect(latest.loadMoreError).toBe(false)
-        expect(document.activeElement).toHaveTextContent(latest.items[9]?.title ?? "")
+        await waitFor(() => expect(latestPages.shown).toBe(18))
+        expect(latest.more.loadMoreError).toBe(false)
+        expect(document.activeElement).toHaveTextContent(latestPages.items[9]?.title ?? "")
     })
 
     it("volta a uma página só ao mudar o filtro depois de carregar mais", async () => {
         stubProjects(buildProjectRecords(20))
         mount()
         await settled()
-        act(() => latest.loadMore())
-        await waitFor(() => expect(latest.shown).toBe(18))
+        act(() => latest.more.loadMore())
+        await waitFor(() => expect(latestPages.shown).toBe(18))
 
-        act(() => latest.setType("web"))
+        act(() => latest.filterBar.setType("web"))
 
-        await waitFor(() => expect(latest.total).toBe(10))
-        expect(latest.shown).toBe(9)
+        await waitFor(() => expect(latestPages.total).toBe(10))
+        expect(latestPages.shown).toBe(9)
     })
 
     it("volta ao primeiro lote com clearFilters mesmo com a lista padrão em cache", async () => {
         stubProjects(buildProjectRecords(20))
         const { router } = mount()
         await settled()
-        act(() => latest.loadMore())
-        await waitFor(() => expect(latest.shown).toBe(18))
-        act(() => latest.setType("web"))
-        await waitFor(() => expect(latest.total).toBe(10))
+        act(() => latest.more.loadMore())
+        await waitFor(() => expect(latestPages.shown).toBe(18))
+        act(() => latest.filterBar.setType("web"))
+        await waitFor(() => expect(latestPages.total).toBe(10))
 
-        act(() => latest.clearFilters())
+        act(() => latest.results.clearFilters())
 
         await waitFor(() => expect(latest.filters.type).toBeUndefined())
-        await waitFor(() => expect(latest.total).toBe(20))
-        expect(latest.shown).toBe(9)
+        await waitFor(() => expect(latestPages.total).toBe(20))
+        expect(latestPages.shown).toBe(9)
         expect(router.state.location.state).toBeNull()
     })
 
@@ -549,17 +594,17 @@ describe("useProjects", () => {
         await settled()
         const release = holdFetchAfter(fetchMock, 0)
 
-        act(() => latest.setType("web"))
+        act(() => latest.filterBar.setType("web"))
 
         await waitFor(() => expect(latest.filters.type).toBe("web"))
-        expect(latest.isLoading).toBe(false)
-        expect(latest.shown).toBe(9)
-        await waitFor(() => expect(latest.resultsText).toBe("9 de 20 projetos"))
+        expect(latest.list.isLoading).toBe(false)
+        expect(latestPages.shown).toBe(9)
+        await waitFor(() => expect(latest.results.text).toBe("9 de 20 projetos"))
 
         await act(async () => {
             release()
         })
-        await waitFor(() => expect(latest.resultsText).toBe("9 de 10 projetos"))
+        await waitFor(() => expect(latest.results.text).toBe("9 de 10 projetos"))
     })
 
     it("mostra o erro da lista com os filtros intactos e refaz o pedido focando o título", async () => {
@@ -567,24 +612,24 @@ describe("useProjects", () => {
         mount(`${PATH}?type=web&sort=title`)
         await settled()
         const recover = failFetchAfter(fetchMock, 0)
-        act(() => latest.setCategory("academic"))
-        await waitFor(() => expect(latest.isError).toBe(true))
+        act(() => latest.filterBar.setCategory("academic"))
+        await waitFor(() => expect(latest.list.isError).toBe(true))
 
         expect(latest.filters).toEqual({ q: "", type: "web", category: "academic", sort: "title" })
-        await waitFor(() => expect(latest.resultsText).toBe(""))
+        await waitFor(() => expect(latest.results.text).toBe(""))
 
         recover()
         const release = holdFetchAfter(fetchMock, 0)
         act(() => {
-            void latest.retry()
+            void latest.list.retry()
         })
 
         expect(document.activeElement).toHaveAttribute("id", latest.ids.heading)
-        await waitFor(() => expect(latest.isError).toBe(false))
+        await waitFor(() => expect(latest.list.isError).toBe(false))
         await act(async () => {
             release()
         })
-        await waitFor(() => expect(latest.total).toBeGreaterThan(0))
+        await waitFor(() => expect(latestPages.total).toBeGreaterThan(0))
     })
 
     it("guarda a quantidade de páginas no estado da entrada atual do histórico", async () => {
@@ -592,8 +637,8 @@ describe("useProjects", () => {
         const { router } = mount()
         await settled()
 
-        act(() => latest.loadMore())
-        await waitFor(() => expect(latest.shown).toBe(18))
+        act(() => latest.more.loadMore())
+        await waitFor(() => expect(latestPages.shown).toBe(18))
 
         await waitFor(() => expect(router.state.location.state).toEqual({ pages: 2 }))
         expect(router.state.historyAction).toBe("REPLACE")
@@ -604,14 +649,14 @@ describe("useProjects", () => {
         stubProjects(buildProjectRecords(20))
         const first = mount()
         await settled()
-        act(() => latest.loadMore())
-        await waitFor(() => expect(latest.shown).toBe(18))
+        act(() => latest.more.loadMore())
+        await waitFor(() => expect(latestPages.shown).toBe(18))
         first.unmount()
         snapshots.length = 0
 
         mount({ pathname: PATH, state: { pages: 2 } }, first.store)
 
-        await waitFor(() => expect(latest.shown).toBe(18))
+        await waitFor(() => expect(latestPages.shown).toBe(18))
         expect(snapshots[0]).toMatchObject({ isLoading: false, shown: 18 })
         expect(snapshots.some((snapshot) => snapshot.isLoading)).toBe(false)
     })
@@ -621,8 +666,8 @@ describe("useProjects", () => {
 
         mount({ pathname: PATH, state: { pages: 2 } })
 
-        expect(latest.isLoading).toBe(true)
-        await waitFor(() => expect(latest.shown).toBe(18))
+        expect(latest.list.isLoading).toBe(true)
+        await waitFor(() => expect(latestPages.shown).toBe(18))
     })
 
     it("abre no primeiro lote com a query aplicada quando não há estado", async () => {
@@ -631,7 +676,7 @@ describe("useProjects", () => {
         mount(`${PATH}?type=web`)
         await settled()
 
-        expect(latest.shown).toBe(9)
+        expect(latestPages.shown).toBe(9)
         expect(latest.filters.type).toBe("web")
     })
 
@@ -650,13 +695,13 @@ describe("useProjects", () => {
         mount()
 
         await settled()
-        const firstPage = latest.items.map((item) => item.title)
-        act(() => latest.loadMore())
-        await waitFor(() => expect(latest.shown).toBe(18))
+        const firstPage = latestPages.items.map((item) => item.title)
+        act(() => latest.more.loadMore())
+        await waitFor(() => expect(latestPages.shown).toBe(18))
 
         expect(firstPage[0]).toBe("Projeto 12")
-        expect(latest.items.slice(0, 9).map((item) => item.title)).toEqual(firstPage)
-        expect(latest.items[9]?.title).toBe("Projeto 3")
+        expect(latestPages.items.slice(0, 9).map((item) => item.title)).toEqual(firstPage)
+        expect(latestPages.items[9]?.title).toBe("Projeto 3")
         vi.mocked(listProjects).mockImplementation((records, params) => {
             if (!original) {
                 throw new Error("sem implementação original")
@@ -666,18 +711,66 @@ describe("useProjects", () => {
         })
     })
 
+    describe("breadcrumb do primeiro lote", () => {
+        it("fica indefinido enquanto carrega e traz Início e Projetos quando a lista chega", async () => {
+            const fetchMock = stubProjects(buildProjectRecords(3))
+            const release = holdFetchAfter(fetchMock, 0)
+
+            mount()
+            expect(latest.seo.breadcrumbJsonLd).toBeUndefined()
+
+            await act(async () => {
+                release()
+            })
+            await waitFor(() => expect(latest.seo.breadcrumbJsonLd).toBeDefined())
+            const serialized = JSON.stringify(latest.seo.breadcrumbJsonLd)
+
+            expect(serialized).toContain("BreadcrumbList")
+            expect(serialized.indexOf("Início")).toBeGreaterThanOrEqual(0)
+            expect(serialized.indexOf("Início")).toBeLessThan(serialized.indexOf("Projetos"))
+        })
+    })
+
+    describe("conteúdo vazio e sem resultado", () => {
+        it("distingue conteúdo vazio de sem resultado com e sem filtro", async () => {
+            stubProjects([])
+            const empty = mount()
+            await settled()
+
+            expect(latest.results.isEmptyContent).toBe(true)
+            expect(latest.results.isNoResults).toBe(false)
+            empty.unmount()
+
+            stubProjects([])
+            mount(`${PATH}?q=zzz`)
+            await settled()
+
+            expect(latest.results.isEmptyContent).toBe(false)
+            expect(latest.results.isNoResults).toBe(true)
+        })
+
+        it("não marca nenhum dos dois quando há resultado", async () => {
+            stubProjects(buildProjectRecords(3))
+            mount()
+            await settled()
+
+            expect(latest.results.isEmptyContent).toBe(false)
+            expect(latest.results.isNoResults).toBe(false)
+        })
+    })
+
     describe("JSON-LD do primeiro lote", () => {
         it("fica indefinido enquanto a lista carrega e aparece quando ela chega", async () => {
             const fetchMock = stubProjects(buildProjectRecords(3))
             const release = holdFetchAfter(fetchMock, 0)
 
             mount()
-            expect(latest.jsonLd).toBeUndefined()
+            expect(latest.seo.jsonLd).toBeUndefined()
 
             await act(async () => {
                 release()
             })
-            await waitFor(() => expect(latest.jsonLd).toBeDefined())
+            await waitFor(() => expect(latest.seo.jsonLd).toBeDefined())
         })
 
         it("fica indefinido quando a lista falha", async () => {
@@ -685,16 +778,16 @@ describe("useProjects", () => {
             failFetchAfter(fetchMock, 0)
 
             mount()
-            await waitFor(() => expect(latest.isError).toBe(true))
+            await waitFor(() => expect(latest.list.isError).toBe(true))
 
-            expect(latest.jsonLd).toBeUndefined()
+            expect(latest.seo.jsonLd).toBeUndefined()
         })
 
         it("lista os 3 projetos de um conteúdo pequeno", async () => {
             stubProjects(buildProjectRecords(3))
 
             mount()
-            await waitFor(() => expect(latest.jsonLd).toBeDefined())
+            await waitFor(() => expect(latest.seo.jsonLd).toBeDefined())
 
             expect(listedTitles()).toEqual(["Projeto 3", "Projeto 2", "Projeto 1"])
         })
@@ -703,22 +796,22 @@ describe("useProjects", () => {
             stubProjects(buildProjectRecords(10))
 
             mount()
-            await waitFor(() => expect(latest.jsonLd).toBeDefined())
+            await waitFor(() => expect(latest.seo.jsonLd).toBeDefined())
 
             const titles = listedTitles()
             expect(titles).toHaveLength(9)
             expect(titles[0]).toBe("Projeto 10")
             expect(titles).not.toContain("Projeto 1")
-            expect(JSON.stringify(latest.jsonLd)).not.toContain("numberOfItems")
+            expect(JSON.stringify(latest.seo.jsonLd)).not.toContain("numberOfItems")
         })
 
         it("não cresce com o Carregar mais", async () => {
             stubProjects(buildProjectRecords(10))
 
             mount()
-            await waitFor(() => expect(latest.jsonLd).toBeDefined())
-            act(() => latest.loadMore())
-            await waitFor(() => expect(latest.shown).toBe(10))
+            await waitFor(() => expect(latest.seo.jsonLd).toBeDefined())
+            act(() => latest.more.loadMore())
+            await waitFor(() => expect(latestPages.shown).toBe(10))
 
             expect(listedTitles()).toHaveLength(9)
         })
@@ -727,19 +820,19 @@ describe("useProjects", () => {
             stubProjects(buildProjectRecords(20))
 
             mount(`${PATH}?type=web&sort=title`)
-            await waitFor(() => expect(latest.jsonLd).toBeDefined())
+            await waitFor(() => expect(latest.seo.jsonLd).toBeDefined())
 
             const titles = listedTitles()
             expect(titles).toHaveLength(9)
-            expect(titles).toEqual(latest.items.map((item) => item.title))
-            expect(latest.jsonLd?.url).toBe("http://localhost:5173/pt-BR/projects")
+            expect(titles).toEqual(latestPages.items.map((item) => item.title))
+            expect(latest.seo.jsonLd?.url).toBe("http://localhost:5173/pt-BR/projects")
         })
 
         it("mantém o resultado anterior até o novo chegar e acompanha a lista mostrada", async () => {
             const fetchMock = stubProjects(buildProjectRecords(20))
             const store = createStore()
             const { router } = mount(PATH, store)
-            await waitFor(() => expect(latest.jsonLd).toBeDefined())
+            await waitFor(() => expect(latest.seo.jsonLd).toBeDefined())
             const before = listedTitles()
             const release = holdFetchAfter(fetchMock, 0)
 
@@ -747,24 +840,24 @@ describe("useProjects", () => {
                 await router.navigate(`${PATH}?q=projeto%201`)
             })
 
-            expect(latest.items.map((item) => item.title)).toEqual(before)
+            expect(latestPages.items.map((item) => item.title)).toEqual(before)
             expect(listedTitles()).toEqual(before)
 
             await act(async () => {
                 release()
             })
             await waitFor(() => expect(listedTitles()).not.toEqual(before))
-            expect(listedTitles()).toEqual(latest.items.map((item) => item.title))
+            expect(listedTitles()).toEqual(latestPages.items.map((item) => item.title))
         })
 
         it("deixa o ItemList vazio numa busca sem resultado", async () => {
             stubProjects(buildProjectRecords(3))
 
             mount(`${PATH}?q=zzzz`)
-            await waitFor(() => expect(latest.isNoResults).toBe(true))
+            await waitFor(() => expect(latest.results.isNoResults).toBe(true))
 
             expect(listedTitles()).toEqual([])
-            expect(latest.jsonLd?.mainEntity).toMatchObject({ itemListElement: [] })
+            expect(latest.seo.jsonLd?.mainEntity).toMatchObject({ itemListElement: [] })
         })
 
         it("não abre a consulta de índice", async () => {
@@ -772,7 +865,7 @@ describe("useProjects", () => {
             const store = createStore()
 
             mount(PATH, store)
-            await waitFor(() => expect(latest.jsonLd).toBeDefined())
+            await waitFor(() => expect(latest.seo.jsonLd).toBeDefined())
 
             const endpoints = Object.values(store.getState().api.queries).map(
                 (entry) => entry?.endpointName
@@ -802,26 +895,26 @@ describe("useProjects", () => {
             stubFilterProjects()
 
             mount(`${PATH}?tech=React&year=2025&year=2024&type=web`)
-            await waitFor(() => expect(latest.technologyOptions.length).toBeGreaterThan(0))
+            await waitFor(() => expect(latest.modal.technologyOptions.length).toBeGreaterThan(0))
 
-            expect(latest.technologyOptions).toEqual([
+            expect(latest.modal.technologyOptions).toEqual([
                 { value: "Docker", count: 0 },
                 { value: "Node.js", count: 2 },
                 { value: "Prisma", count: 1 },
                 { value: "React", count: 2 }
             ])
-            expect(latest.yearOptions).toEqual([
+            expect(latest.modal.yearOptions).toEqual([
                 { value: "2026", count: 1 },
                 { value: "2025", count: 2 },
                 { value: "2024", count: 1 }
             ])
-            expect(latest.filtersCount).toBe(3)
+            expect(latest.modal.filtersCount).toBe(3)
         })
 
         it("pede as opções uma vez por idioma, sem esperar a lista", async () => {
             const fetchMock = stubFilterProjects()
             const { store } = mount()
-            await waitFor(() => expect(latest.technologyOptions.length).toBeGreaterThan(0))
+            await waitFor(() => expect(latest.modal.technologyOptions.length).toBeGreaterThan(0))
 
             const queries = Object.values(store.getState().api.queries).filter(
                 (entry) =>
@@ -838,12 +931,12 @@ describe("useProjects", () => {
             const release = holdFetchAfter(fetchMock, 0)
             mount()
 
-            expect(latest.technologyOptions).toEqual([])
-            expect(latest.yearOptions).toEqual([])
+            expect(latest.modal.technologyOptions).toEqual([])
+            expect(latest.modal.yearOptions).toEqual([])
             await act(async () => {
                 release()
             })
-            await waitFor(() => expect(latest.technologyOptions.length).toBeGreaterThan(0))
+            await waitFor(() => expect(latest.modal.technologyOptions.length).toBeGreaterThan(0))
         })
 
         it("com o perfil falhando mantém a lista e as opções vazias", async () => {
@@ -851,10 +944,10 @@ describe("useProjects", () => {
             mount()
             await settled()
 
-            expect(latest.items.length).toBe(2)
-            expect(latest.isError).toBe(false)
-            expect(latest.technologyOptions).toEqual([])
-            expect(latest.yearOptions).toEqual([])
+            expect(latestPages.items.length).toBe(2)
+            expect(latest.list.isError).toBe(false)
+            expect(latest.modal.technologyOptions).toEqual([])
+            expect(latest.modal.yearOptions).toEqual([])
         })
 
         it("abre o modal mesmo sem opções, sem expor canOpenFilters, e não conta filtros que não são de tecnologia e ano", async () => {
@@ -863,10 +956,11 @@ describe("useProjects", () => {
             mount(`${PATH}?type=web&category=academic&q=a`)
             await settled()
 
-            expect(latest.filtersCount).toBe(0)
+            expect(latest.modal.filtersCount).toBe(0)
             expect(latest).not.toHaveProperty("canOpenFilters")
-            act(() => latest.openFilters())
-            expect(latest.isFiltersOpen).toBe(true)
+            expect(exposedNames()).not.toContain("canOpenFilters")
+            act(() => latest.modal.open())
+            expect(latest.modal.isOpen).toBe(true)
         })
 
         it("abre e fecha o modal", async () => {
@@ -874,11 +968,11 @@ describe("useProjects", () => {
             mount()
             await settled()
 
-            act(() => latest.openFilters())
-            expect(latest.isFiltersOpen).toBe(true)
+            act(() => latest.modal.open())
+            expect(latest.modal.isOpen).toBe(true)
 
-            act(() => latest.closeFilters())
-            expect(latest.isFiltersOpen).toBe(false)
+            act(() => latest.modal.close())
+            expect(latest.modal.isOpen).toBe(false)
         })
 
         it("applyModalFilters escreve a URL uma vez por replace, mantém o resto e volta ao primeiro lote", async () => {
@@ -887,7 +981,7 @@ describe("useProjects", () => {
             await settled()
 
             act(() =>
-                latest.applyModalFilters({
+                latest.modal.applyModalFilters({
                     tech: ["React", "Node.js"],
                     year: ["2024"],
                     sort: "title"
@@ -907,13 +1001,13 @@ describe("useProjects", () => {
             stubFilterProjects()
             const { router } = mount(`${PATH}?tech=React&year=2025&sort=oldest`)
             await settled()
-            expect(latest.hasFilters).toBe(true)
+            expect(latest.results.hasFilters).toBe(true)
 
-            act(() => latest.clearFilters())
+            act(() => latest.results.clearFilters())
 
             await waitFor(() => expect(router.state.location.search).toBe("?sort=oldest"))
-            expect(latest.hasFilters).toBe(false)
-            expect(latest.filtersCount).toBe(0)
+            expect(latest.results.hasFilters).toBe(false)
+            expect(latest.modal.filtersCount).toBe(0)
         })
 
         it("applyModalFilters omite o sort padrão da URL", async () => {
@@ -921,7 +1015,7 @@ describe("useProjects", () => {
             const { router } = mount(`${PATH}?type=web&sort=title`)
             await settled()
 
-            act(() => latest.applyModalFilters({ tech: ["React"], year: [], sort: "recent" }))
+            act(() => latest.modal.applyModalFilters({ tech: ["React"], year: [], sort: "recent" }))
 
             await waitFor(() => expect(router.state.location.search).toBe("?type=web&tech=React"))
         })
@@ -932,10 +1026,10 @@ describe("useProjects", () => {
             mount(`${PATH}?sort=oldest`)
             await settled()
 
-            expect(latest.filtersCount).toBe(0)
-            expect(latest.hasFilters).toBe(false)
-            expect(latest.appliedFilters).toEqual({ tech: [], year: [], sort: "oldest" })
-            expect(latest.sortOptions.map((option) => option.value)).toEqual([
+            expect(latest.modal.filtersCount).toBe(0)
+            expect(latest.results.hasFilters).toBe(false)
+            expect(latest.modal.applied).toEqual({ tech: [], year: [], sort: "oldest" })
+            expect(latest.modal.sortOptions.map((option) => option.value)).toEqual([
                 "recent",
                 "oldest",
                 "title"
@@ -949,6 +1043,8 @@ describe("useProjects", () => {
 
             expect(latest).not.toHaveProperty("setSort")
             expect(latest).not.toHaveProperty("setTechAndYear")
+            expect(exposedNames()).not.toContain("setSort")
+            expect(exposedNames()).not.toContain("setTechAndYear")
         })
     })
 })

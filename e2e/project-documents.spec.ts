@@ -5,8 +5,10 @@ import expectNoAxeViolations from "./support/expectNoAxeViolations"
 import chooseLanguageInHeader from "./support/chooseLanguageInHeader"
 import navigateClientSide from "./support/navigateClientSide"
 import openProject from "./support/openProject"
+import UI_TEXTS from "./support/uiTexts"
 import PROJECT_TEXTS from "./support/projectTexts"
 import projectPath from "./support/projectPath"
+import readBreadcrumb from "./support/readBreadcrumb"
 import readProjectDetail from "./support/readProjectDetail"
 import waitForHydration from "./support/waitForHydration"
 
@@ -82,6 +84,50 @@ async function expectBelowNav(page: Page, target: ReturnType<Page["locator"]>) {
 async function bottom(locator: ReturnType<Page["locator"]>) {
     return locator.evaluate((element) => element.getBoundingClientRect().bottom)
 }
+
+test.describe("breadcrumb em JSON-LD", () => {
+    for (const language of LANGUAGES) {
+        test(`NF-IA-08, RF-PROJECT-35: em ${language} o documento SETUP.md emite BreadcrumbList com 4 itens e a URL absoluta do documento`, async ({
+            page
+        }) => {
+            const project = readProjectDetail(language, MNIST)
+            await page.goto(projectPath(language, project.id, "SETUP.md"))
+
+            await expect.poll(() => readBreadcrumb(page)).toHaveLength(4)
+
+            const items = await readBreadcrumb(page)
+            expect(items.map((item) => item.name)).toEqual([
+                UI_TEXTS[language].navigation.home,
+                UI_TEXTS[language].navigation.projects,
+                project.title,
+                "SETUP.md"
+            ])
+            expect(items[3].item).toMatch(
+                new RegExp(`^https?://.+/${language}/projects/${project.id}/docs/SETUP\\.md$`)
+            )
+        })
+    }
+
+    test.describe("sem JavaScript", () => {
+        test.use({ javaScriptEnabled: false })
+
+        for (const language of LANGUAGES) {
+            test(`NF-CO-03, NF-IA-08: em ${language} o HTML pré-renderizado do projeto e do documento já traz o BreadcrumbList`, async ({
+                page
+            }) => {
+                const project = readProjectDetail(language, MNIST)
+
+                await page.goto(projectPath(language, project.id))
+                expect(await readBreadcrumb(page)).toHaveLength(3)
+
+                await page.goto(projectPath(language, project.id, "SETUP.md"))
+                const items = await readBreadcrumb(page)
+                expect(items).toHaveLength(4)
+                expect(items[3].name).toBe("SETUP.md")
+            })
+        }
+    })
+})
 
 test.describe("navegação entre documentos", () => {
     for (const language of LANGUAGES) {

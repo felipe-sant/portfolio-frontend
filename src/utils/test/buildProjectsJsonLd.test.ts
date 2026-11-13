@@ -32,7 +32,7 @@ describe("buildProjectsJsonLd", () => {
             description: "Lista de projetos",
             url: `${SITE_URL}/pt-BR/projects`,
             inLanguage: "pt-BR",
-            author: { "@id": `${SITE_URL}/pt-BR#person` }
+            author: { "@id": `${SITE_URL}/#person` }
         })
         expect(node.url).not.toContain("?")
     })

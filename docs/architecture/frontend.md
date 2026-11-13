@@ -48,26 +48,27 @@ Uma rota só entra em `paths.ts` junto com a página que ela renderiza. Navegaç
 
 Decidida no [ADR 0004](../adr/0004-prerendering.md) (opção 1, script próprio, sem biblioteca nova). `npm run build` gera, em `dist/`, um HTML por rota pública pré-renderizada e por idioma, mais o `404.html`, e o cliente os hidrata sem erro.
 
-- **Entrada de servidor** (`src/entry-server.tsx`, `render(target)`): `createStaticHandler`, `createStaticRouter` e `StaticRouterProvider` sobre `routes`, com uma store nova por chamada; carrega os dados da rota (`src/prerender/loadPrerenderData.ts`: o perfil do Rodapé mais as consultas da rota, por `initiate`, aguardando as assinaturas e dando `unsubscribe` ao fim, falhando o build com a rota e a causa se uma consulta der erro) e renderiza com `prerender` de `react-dom/static` e `progressiveChunkSize: Infinity`, para nenhum bloco de Suspense sair fora de linha. Os renders são sequenciais, porque o i18next é uma instância global trocada pelo `loader` de cada rota.
-- **Registro** (`src/prerender/prerenderRoutes.ts`): descreve cada rota pré-renderizável (padrão, escopo dos parâmetros e consultas). A raiz `/` nunca entra (responde 302). `scripts/prerender/listTargets.ts` só emite o alvo cujo padrão existe em `routes` além da `*`; o resto é listado como ignorado e não falha o build. **Toda tela nova entrega a própria pré-renderização**: acrescenta a entrada ao registro (rota e consultas) e um teste de `<h1>` e conteúdo principal nos três idiomas.
-- **Arquivos** (todos sob o `base`): `pt-BR.html`, `en.html`, `es.html` para a Início; `<idioma>/<rota>.html` para as demais; `<idioma>/projects/<id>.html`; documento em `<idioma>/projects/<id>/docs/<nome>.html` com o nome do arquivo e a extensão (`SETUP.md.html`), **nunca** em pasta com `index.html`, que o Pages redireciona (301) e quebra a URL do D55. O `README.md` do projeto é `/projects/<id>` e não gera arquivo de documento. O `404.html` é a página não encontrada em inglês; `/` continua o `index.html`, com o script de redirecionamento por idioma.
-- **Composição** (`scripts/prerender/composePage.ts`): parte do `index.html` buildado, troca o `lang`, move o `<head>` que o React emite (`title`, `meta`, `link`, `script type="application/ld+json"`) para o `<head>` do arquivo sem duplicar `title` nem `description`, acrescenta ao `<head>` o `<link rel="stylesheet">` dos CSS de chunk que a rota usa (`readStylesheets` lê `dist/assets/*.css`; `selectStylesheets` escolhe os que têm classe presente no HTML da rota e que o `index.html` ainda não linka), troca o `<noscript>` pelo texto de `common:noscript` do idioma (a faixa de aviso, em vermelho claro, é `body > noscript` em `global.css`, sob `@media (scripting: none)`), põe o corpo em `#root` e grava `window.prerenderedPath`, `window.preloadedState` e `window.routerData`, com `<` escapado como `\u003c`. Falha se o HTML tiver `id="S:`.
+- **Entrada de servidor** (`src/entry-server.tsx`, `render(target)`): ao ser importada, chama `addStaticResources()` (`src/i18n/`), que adiciona à instância do i18next os três idiomas de `src/i18n/resources.ts` de forma estática, sem chunk dinâmico; depois, `createStaticHandler`, `createStaticRouter` e `StaticRouterProvider` sobre `routes`, com uma store nova por chamada; carrega os dados da rota (`src/prerender/loadPrerenderData.ts`: o perfil do Rodapé mais as consultas da rota, por `initiate`, aguardando as assinaturas e dando `unsubscribe` ao fim, falhando o build com a rota e a causa se uma consulta der erro) e renderiza com `prerender` de `react-dom/static` e `progressiveChunkSize: Infinity`, para nenhum bloco de Suspense sair fora de linha. Os renders são sequenciais, porque o i18next é uma instância global trocada pelo `loader` de cada rota.
+- **Registro** (`src/prerender/prerenderRoutes.ts`): descreve cada rota pré-renderizável (padrão, escopo dos parâmetros e consultas). A raiz `/` nunca entra (não é rota com tela); o HTML dela é gerado à parte, por `composeRootPage`. `scripts/prerender/listTargets.ts` só emite o alvo cujo padrão existe em `routes` além da `*`; o resto é listado como ignorado e não falha o build. **Toda tela nova entrega a própria pré-renderização**: acrescenta a entrada ao registro (rota e consultas) e um teste de `<h1>` e conteúdo principal nos três idiomas.
+- **Arquivos** (todos sob o `base`): `pt-BR.html`, `en.html`, `es.html` para a Início; `<idioma>/<rota>.html` para as demais; `<idioma>/projects/<id>.html`; documento em `<idioma>/projects/<id>/docs/<nome>.html` com o nome do arquivo e a extensão (`SETUP.md.html`), **nunca** em pasta com `index.html`, que o Pages redireciona (301) e quebra a URL do D55. O `README.md` do projeto é `/projects/<id>` e não gera arquivo de documento. O `404.html` é a página não encontrada em inglês; `/` é o `index.html` gerado no fim do `scripts/prerender.ts` por `composeRootPage` (`lang` `en`, `canonical`, `hreflang`, `og:*` e `<noscript data-root>` com `<h1>` e três links), mantendo o script de redirecionamento por idioma.
+- **Composição** (`scripts/prerender/composePage.ts`): parte do `index.html` buildado, troca o `lang`, move o `<head>` que o React emite (`title`, `meta`, `link`, `script type="application/ld+json"`) para o `<head>` do arquivo sem duplicar `title` nem `description`, acrescenta ao `<head>` o `<link rel="stylesheet">` dos CSS de chunk que a rota usa (`readStylesheets` lê `dist/assets/*.css`; `selectStylesheets` escolhe os que têm classe presente no HTML da rota e que o `index.html` ainda não linka), troca o `<noscript>` pelo texto de `common:noscript` do idioma (a faixa de aviso, em vermelho claro, é `body > noscript` em `global.css`, sob `@media (scripting: none)`), põe o corpo em `#root` e grava logo depois dele um bloco `<script type="application/json" id="prerender-data">` com `path` (o caminho com o `base`), `state` (a store) e `routerData` (`loaderData`, `actionData` e `errors`), com `<` escapado como `\u003c`. É bloco de dados, não script executável: a CSP não o governa (como o JSON-LD), e o HTML pré-renderizado fica sem script inline além dos 3 do `index.html`, que a CSP da Vercel cobre por hash (#163). Falha se o HTML tiver `id="S:`. A raiz (`scripts/prerender/composeRootPage.ts`, textos de `readRootTexts`) é composta por último, sobre o mesmo molde passado por `removeRootPageItems`, que tira os itens da raiz para que uma segunda `npm run prerender` não vaze `canonical` nem links para as demais páginas; o `body > noscript[data-root]` tem regra própria em `global.css`, fora da faixa de aviso.
 - **Leitura de `public/` no Node** (`scripts/prerender/installPublicFetch.ts`): durante a pré-renderização troca `globalThis.fetch` por uma leitura de `public/` para URLs sob o `base`, restaurando no fim; `src/services/` não muda.
-- **Cliente** (`src/entry-client.tsx` e `src/prerender/mountClient.tsx`): `hydrateRoot` com `preloadedState` e `hydrationData` quando `shouldHydrate` vê que o caminho aberto é o `prerenderedPath`; senão remove o `title` e a `meta description` do HTML (`removePrerenderedHead`) e usa `createRoot` sem estado nem dados do roteador. É o caso do `404.html` servido em `/pt-BR/xyz` e da raiz `/`.
+- **Cliente** (`src/entry-client.tsx` e `src/prerender/mountClient.tsx`): antes de montar, `loadInitialLanguage` baixa o idioma do prefixo do caminho (ou `en`, sem prefixo válido) com `loadLanguage` e o ativa com `i18n.changeLanguage`, para o primeiro render já sair no idioma do HTML. Se o chunk falhar, há um único retry; se as duas tentativas falharem, `mountClient` rejeita e a página pré-renderizada fica visível, mas sem hidratar. Depois, lê o bloco `prerender-data` com `readPrerenderData` (`src/utils/`, que devolve `undefined` sem bloco, com bloco vazio, JSON inválido ou forma errada) e chama `hydrateRoot` com o `state` na store e o `routerData` em `hydrationData` quando `shouldHydrate` vê que o caminho aberto é o `path` do bloco, dentro de `startTransition` (`hydrateInTransition`), para o React fatiar a hidratação em tarefas curtas e reduzir o tempo de bloqueio (TBT); senão remove o `title` e a `meta description` do HTML (`removePrerenderedHead`) e usa `createRoot` sem estado nem dados do roteador. É o caso do `404.html` servido em `/pt-BR/xyz` e da raiz `/`.
+- **Cache e headers na Vercel** (`vercel.json`): cache longo em `/assets`, `/fonts` e `/images`, headers de segurança e a CSP em `Report-Only` com o hash dos 3 scripts inline do `index.html` vêm só do `vercel.json` e só valem na Vercel (produção e `staging`). O build da Fatec não recebe nada disso: o GitHub Pages não lê `vercel.json` nem permite header próprio (NF-HO-04). Detalhe em [`environments.md`](../setup/environments.md#fluxo-de-publicação).
 - **Guarda de ambiente**: `src/i18n/i18n.ts` testa `typeof window` e `typeof document` para importar no Node.
 - **Teste**: `src/test/entry-server.test.tsx` renderiza cada rota do registro existente nos três idiomas; a hidratação (`src/prerender/test/mountClient.test.tsx`) usa HTML gerado por `src/testUtils/prerenderGlobalSetup.ts`, que roda no processo principal do Vitest (`globalSetup` só no projeto `prerender`), porque o `react-dom/server` deixa os contextos do React sujos no mesmo processo e o cliente acusaria "multiple renderers".
 
 ## Metadados de SEO
 
-Cada tela pública declara, além de `<title>` e `<meta name="description">`, o mecanismo de #52: `<PageMeta title description path params? type? image? />` (`src/components/PageMeta.tsx`) emite `<link rel="canonical">` autorreferente, quatro `<link rel="alternate" hreflang>` (`pt-BR`, `en`, `es` e `x-default` para `en`), Open Graph (`og:title`, `og:description`, `og:type`, `og:url`, `og:image` com 1200×630 e `og:image:alt`, `og:locale` e `og:locale:alternate`) e `twitter:card` `summary_large_image`; `<JsonLd data={...} />` (`src/components/JsonLd.tsx`) emite o `<script type="application/ld+json">`, serializado por `serializeJsonLd` com todo `<` escapado como `\u003c` (NF-IA-09). As duas usam as tags nativas do React 19, sem biblioteca, e acompanham a troca de idioma sem recarregar. Query e hash nunca entram nas URLs. A canônica de `/projects` não leva a query (D45).
+Cada tela pública declara, além de `<title>` e `<meta name="description">`, o mecanismo de #52: `<PageMeta title description path params? type? image? />` (`src/components/PageMeta.tsx`) emite `<link rel="canonical">` autorreferente, quatro `<link rel="alternate" hreflang>` (`pt-BR`, `en`, `es` e `x-default` para `en`), Open Graph (`og:title`, `og:description`, `og:type`, `og:url`, `og:image` com 1200×630 e `og:image:alt`, `og:locale` e `og:locale:alternate`) `twitter:card` `summary_large_image` e `twitter:title`, `twitter:description`, `twitter:image` e `twitter:image:alt` iguais a `og:title`, `og:description`, `og:image` e `og:image:alt`, com o atributo `name`; `<JsonLd data={...} />` (`src/components/JsonLd.tsx`) emite o `<script type="application/ld+json">`, serializado por `serializeJsonLd` com todo `<` escapado como `\u003c` (NF-IA-09). As duas usam as tags nativas do React 19, sem biblioteca, e acompanham a troca de idioma sem recarregar. Query e hash nunca entram nas URLs. A canônica de `/projects` não leva a query (D45).
 
-A URL absoluta vem de `buildAbsoluteUrl(path, language, params?)` (`src/utils/`): `getSiteUrl()` (única leitura de `VITE_SITE_URL`, só a origem) mais o `base` do Vite (`publicUrl`, uma vez só) mais o caminho com prefixo de idioma (`buildPath`). `VITE_SITE_URL` é validada no `npm run build` por `scripts/resolveSiteUrl.ts` e vale em canônica, Open Graph e sitemap (NF-HO-06); valores por ambiente em [`environments.md`](../setup/environments.md#variáveis). A imagem padrão `public/images/og-site.png` (gato e nome) é gerada por `npm run og:image` e versionada. Os dados do JSON-LD de cada tela vêm de construtores em `src/utils/` (`buildHomeJsonLd`, `buildProjectsJsonLd`), com o `@id` único da `Person` em `<URL canônica de />#person`. No HTML pré-renderizado o `<link>` e o `<meta>` sobem para o `<head>`; o `<script>` do JSON-LD fica no corpo, o que o Google aceita. A não encontrada e a de erro não usam o mecanismo (`noindex`).
+A URL absoluta vem de `buildAbsoluteUrl(path, language, params?)` (`src/utils/`): `getSiteUrl()` (única leitura de `VITE_SITE_URL`, só a origem) mais o `base` do Vite (`publicUrl`, uma vez só) mais o caminho com prefixo de idioma (`buildPath`). `VITE_SITE_URL` é validada no `npm run build` por `scripts/resolveSiteUrl.ts` e vale em canônica, Open Graph e sitemap (NF-HO-06); valores por ambiente em [`environments.md`](../setup/environments.md#variáveis). Início, Projetos, Informações e Contato declaram a própria imagem por idioma, `public/images/share/<idioma>/<página>.png`, pelo hook `useShareImage(page)` (`src/hooks/`), que devolve o caminho de `buildShareImagePath` e o alt de `<página>:meta.imageAlt`; Projeto e documento usam a captura do projeto e, sem ela, a imagem de Projetos. A imagem padrão `public/images/og-site.png` (gato e nome) continua como reserva do `PageMeta`. As 13 imagens são geradas por `npm run og:image` e versionadas. Os dados do JSON-LD de cada tela vêm de construtores em `src/utils/` (`buildHomeJsonLd`, `buildProjectsJsonLd`, `buildBreadcrumbJsonLd`), com o `@id` único da `Person` em `<origem><base>/#person` (raiz do site com o `base` do Vite, sem prefixo de idioma), montado por `buildPersonId()` (`src/utils/`). No HTML pré-renderizado o `<link>` e o `<meta>` sobem para o `<head>`; o `<script>` do JSON-LD fica no corpo, o que o Google aceita. A não encontrada e a de erro não usam o mecanismo (`noindex`). Na página de documento além do `README.md`, a descrição é própria, derivada do conteúdo por `buildDocumentDescription` (primeiro parágrafo útil, sem Markdown, até 155 caracteres) e, sem conteúdo, a chave `project:meta.documentDescription`; a `LICENSE` emite `<meta name="robots" content="noindex">` (`D73`).
 
 ## Arquivos para buscadores e IA
 
-`npm run build` termina com `npm run build:seo` (`scripts/generateSeoFiles.ts`), que escreve na raiz de `dist/`, sob o `base` do Vite, seis arquivos de texto (#51): `robots.txt` (grupo `*` e um grupo liberado para cada um dos 11 crawlers de IA de NF-IA-12, com o `Sitemap:` absoluto), `sitemap.xml` (uma `<url>` por rota pré-renderizada e idioma, com `xhtml:link` para `pt-BR`, `en`, `es` e `x-default` em `en`, e `<lastmod>` só quando o projeto ou o documento tem `updatedAt`), `llms.txt` (formato de llmstxt.org, em `pt-BR`, com as quatro páginas nos três idiomas, cada projeto uma vez com os links `en` e `es`, o CV em Markdown e PDF e os três textos completos) e `llms-full.txt`, `llms-full.en.txt` e `llms-full.es.txt` (perfil, stack, trajetória completa, CV embutido e, por projeto, ficha técnica, links, galeria e os documentos Markdown, sem o `LICENSE`).
+`npm run build` termina com `npm run build:seo` (`scripts/generateSeoFiles.ts`), que escreve na raiz de `dist/`, sob o `base` do Vite, seis arquivos de texto (#51): `robots.txt` (grupo `*` e um grupo liberado para cada um dos 11 crawlers de IA de NF-IA-12, cada grupo com `Allow: /` e a linha `Content-Signal` da política de IA, cujo valor fica em `scripts/seo/contentSignal.ts` (`D72`), e o `Sitemap:` absoluto), `sitemap.xml` (uma `<url>` por rota pré-renderizada e idioma, com `xhtml:link` para `pt-BR`, `en`, `es` e `x-default` em `en`, e `<lastmod>` em toda `<url>`, sempre de `updatedAt` do conteúdo: Informações e Contato usam `profile.updatedAt`, Projetos o maior `updatedAt` de projeto, Início o maior entre os dois, projeto e documento o próprio; a `LICENSE` de projeto (`isLicenseDocument`) fica fora do sitemap e com `noindex`, `D73`), `llms.txt` (formato de llmstxt.org, com o resumo `pt-BR` no `>` e os resumos `en` e `es` em parágrafos logo abaixo, seguidos, por idioma, das seções `## <seção> (<idioma>)` com as quatro páginas e a `meta.description` de cada uma, os projetos com título e resumo do idioma, o CV em Markdown e PDF e o texto completo do idioma; cada URL aparece uma vez) e `llms-full.txt`, `llms-full.en.txt` e `llms-full.es.txt` (perfil, stack, trajetória completa, CV embutido e, por projeto, ficha técnica, links, galeria e os documentos Markdown, sem o `LICENSE`; sem o endereço de e-mail, trocado no perfil e no CV pelo link para a página de Contato do idioma, `D71`).
 
-- **Fonte**: os JSONs de `public/content/`, os `cv-<idioma>.md` e `.pdf` de `public/cv/` e os rótulos de `src/locales/<idioma>/common.json`, lidos por `scripts/seo/readSeoContent.ts`; as rotas vêm de `listTargets` (#49) sobre o `dist-server/`, a mesma lista da pré-renderização, então o sitemap só tem o que foi pré-renderizado (sem a raiz `/` nem o `404.html`).
+- **Fonte**: os JSONs de `public/content/`, os `cv-<idioma>.md` e `.pdf` de `public/cv/`, os rótulos de `src/locales/<idioma>/common.json` e a `meta.description` de `src/locales/<idioma>/{home,projects,about,contact}.json`, lidos por `scripts/seo/readSeoContent.ts`; as rotas vêm de `listTargets` (#49) sobre o `dist-server/`, a mesma lista da pré-renderização, então o sitemap só tem o que foi pré-renderizado (sem a raiz `/` nem o `404.html`).
 - **URLs**: `scripts/seo/buildSeoUrl.ts` monta origem + `base` + caminho, iguais às canônicas de `buildAbsoluteUrl`; a origem vem de `VITE_SITE_URL` (`scripts/seo/resolveSeoOrigin.ts`) e o subcaminho de `BASE_PATH`.
 - **Código**: um gerador puro por arquivo em `scripts/seo/` (`buildRobotsTxt`, `buildSitemapXml`, `buildLlmsTxt`, `buildLlmsFullTxt`); `writeSeoFiles` gera tudo em memória antes de escrever, então JSON inválido ou arquivo ausente falha o build em português, sem arquivo parcial.
 - **Como conferir**: depois de `npm run build:fatec` e `npm run preview:fatec`, `curl -s http://localhost:4173/ra2581392423047/robots.txt` (e `sitemap.xml`, `llms.txt`, `llms-full.txt`, `llms-full.en.txt`, `llms-full.es.txt`) devolve 200. No Pages da Fatec o `robots.txt` do subcaminho não é lido por crawlers (NF-IA-13), mas é gerado mesmo assim. A `staging` recebe os mesmos arquivos, com o `noindex` do `deploy.yml`.
@@ -92,9 +93,13 @@ Hoje a store não tem slice: `src/store/api.ts` declara o `createApi` sem endpoi
 
 ## Camada de dados local (v1)
 
+Por que RTK Query com `queryFn` sobre dados locais, o que a #43 troca e quais arquivos ficam sem uso até lá: [ADR 0005](../adr/0005-rtk-query-local-data.md).
+
 Fluxo de uma leitura: a página chama o hook gerado do endpoint (`projectsApi.useGetProjectsQuery`),
 o `queryFn` valida o argumento, a camada local carrega os arquivos de `public/` e monta a resposta
 com funções puras, e o resultado volta como `{ data }` ou `{ error }` no formato do contrato.
+
+**Sem uso até a #43, de propósito** ([ADR 0005](../adr/0005-rtk-query-local-data.md#arquivos-sem-uso-até-a-43)): o `baseQuery` (`fetchBaseQuery` com `prepareHeaders`) de `src/store/api.ts`, que nenhum endpoint chama enquanto todos usam `queryFn`, e `src/services/http/get.ts` e `post.ts`, importados só pelos testes, com o `parseResponse.ts` que só eles usam. Não são código morto a remover.
 
 ```mermaid
 flowchart LR
@@ -120,6 +125,7 @@ flowchart LR
 - **Regras só na camada:** busca, filtros, ordenação, paginação, `availableTypes`, as opções de filtro com contagem (`ProjectFilterOptions`), destaques, agrupamento e ordem da trajetória, certificados sem repetição e itens em curso vivem em `src/services/content/`; a tela não filtra nem ordena.
 - **Caminhos:** todo arquivo de `public/` é pedido com `import.meta.env.BASE_URL`, lido só em `src/utils/publicUrl.ts`. O `src` de imagem do JSON continua relativo, como o contrato, e quem exibe a imagem o resolve com a mesma base.
 - **Validação do conteúdo:** `src/services/content/validation/` implementa a seção "Validação do conteúdo" de [`data-model.md`](data-model.md); `npm run content:check` e o teste de `src/services/content/test/content.test.ts` falham com o arquivo, o campo e a regra.
+- **Schemas de execução (#162):** `src/services/content/schemas/` tem um schema Zod (`zod/mini`) por arquivo, anotado contra o tipo de `src/types/`. `readJson(path, loadSchema)` valida o JSON e lança `ContentException` `INVALID_CONTENT` (500) quando ele foge do contrato. O schema é carregado por `import()` dinâmico, em paralelo com a leitura (`Promise.all`), para o Zod ficar fora do pacote de entrada; só `schemas/` importa `zod`. Detalhe em [`data-model.md`](data-model.md#o-que-cada-camada-garante-162).
 
 - **Cache de leitura (D65):** `readText` (`src/services/content/`) guarda a promessa por caminho, de modo que `projects.json` e `profile.json` são lidos uma vez por carga, e não uma vez por consulta; leitura que falha apaga a entrada. A tela de Projetos abre duas consultas (lista e opções do modal), e o `ItemList` do JSON-LD sai da primeira página da lista, sem consulta própria. Tudo isso é da camada local e sai com ela na #43.
 - **Migração (#43): a filtragem sai do frontend.** Busca, filtros por tipo, categoria, tecnologia e ano, ordenação, paginação, `availableTypes` e as opções do modal com contagem são simulados em `src/services/content/` só para a v1. Quando a #43 trocar cada `queryFn` por `query`, essas regras saem do frontend e o servidor passa a receber `q`, `type`, `category`, `tech`, `year`, `sort`, `offset` e `limit`; a tela só monta parâmetros e acumula páginas. Detalhe em [`api-contract.md`](api-contract.md#camada-local-na-v1).
@@ -140,7 +146,7 @@ As fontes são as três famílias do handoff (Bricolage Grotesque para títulos,
 
 Todo texto visível vem de uma chave de tradução, com o valor de cada idioma em `src/locales/<idioma>/<namespace>.json`. Os idiomas suportados são `pt-BR`, `en` e `es`; `pt-BR` é a língua de referência e `en` é o `fallbackLng`.
 
-O caminho da URL decide o idioma (`/pt-BR`, `/en`, `/es`); o i18next inicia com o idioma do primeiro segmento e o `loader` de cada rota-pai o troca na navegação. `?lng=` não tem efeito. A escolha salva por `setLanguage` fica em `localStorage` na chave `portfolio-frontend:language` e só é lida na raiz `/`, que redireciona por ela, depois pelo idioma do navegador e por fim `en`.
+O caminho da URL decide o idioma (`/pt-BR`, `/en`, `/es`); o i18next inicia com o idioma do primeiro segmento e o `loader` de cada rota-pai o troca na navegação. No cliente, os textos de cada idioma são um chunk próprio, baixado por `loadLanguage` antes de montar e antes de cada troca: o pacote de entrada não carrega texto de nenhum idioma. `?lng=` não tem efeito. A escolha salva por `setLanguage` fica em `localStorage` na chave `portfolio-frontend:language` e só é lida na raiz `/`, que redireciona por ela, depois pelo idioma do navegador e por fim `en`.
 
 Toda feature com texto de UI entrega o texto nos três idiomas, e chave sem uso é removida (R2). O seletor de idioma fica no cabeçalho (`PT · EN · ES`, entre a navegação e o tema) e no menu mobile, e navega para a URL equivalente no outro idioma, salvando a escolha por `setLanguage` (D31, em [`decisions.md`](../design/decisions.md)).
 
@@ -215,14 +221,34 @@ Texto movido do `.claude/CLAUDE.md`, por área. As seções acima dão a visão 
   arquivo com `export default`. `i18n.ts` cria a instância com `createInstance()` (import nomeado
   de `i18next`; `i18next.use(...)` no export default cai em `import/no-named-as-default-member`),
   registra `initReactI18next` — que torna a instância global, sem provider nem wrapper de render —
-  e inicia de forma síncrona (`initAsync: false`) com `resources` (`resources.ts`),
-  `defaultNS: "common"`, `supportedLngs: SUPPORTED_LANGUAGES` (`supportedLanguages.ts`),
+  e inicia de forma síncrona (`initAsync: false`) sem recursos (`resources: {}`,
+  `partialBundledLanguages: true`), com `ns` copiado de `NAMESPACES` (`namespaces.ts`; cópia porque o
+  i18next tira do array o namespace removido), `defaultNS: "common"`, `supportedLngs: SUPPORTED_LANGUAGES` (`supportedLanguages.ts`),
   `fallbackLng: FALLBACK_LANGUAGE` (`fallbackLanguage.ts`, valor `en`) e
   `lng: getLanguageFromPath(removeBasePath(window.location.pathname))` (indefinido, sem prefixo
   válido, vale o `fallbackLng`). Não há detector do i18next, nem `?lng=`: o caminho é a única fonte
   do idioma e o `loader` de cada rota-pai o troca na navegação. Não existe constante de "idioma
-  padrão" nem de língua de referência: `pt-BR` é referência pelo tipo de `resources.ts`, não pelo
-  runtime.
+  padrão" nem de língua de referência: `pt-BR` é referência pelo tipo de
+  `languageBundles/ptBR.ts`, não pelo runtime.
+    - **Carga dos textos por idioma:** `languageBundles/<idioma>.ts` (`ptBR.ts`, `en.ts`, `es.ts`)
+      junta os oito JSON de um idioma; `languageBundleImporters.ts` tem um `import()` explícito por
+      idioma, para o Vite gerar um chunk por idioma (`import.meta.glob` com um JSON por arquivo
+      daria oito requisições). `loadLanguage(language): Promise<void>` importa o chunk e chama
+      `i18n.addResourceBundle` para cada namespace; é idempotente: com os oito namespaces já na
+      instância (servidor, testes) resolve sem importar, guarda a promessa em andamento (duas
+      chamadas simultâneas fazem uma importação só) e a descarta ao terminar, então uma falha de
+      rede rejeita e a chamada seguinte tenta de novo. Todo `i18n.changeLanguage` do cliente vem
+      depois de `await loadLanguage(...)` (`setLanguage`, `createLanguageLoader` e
+      `loadInitialLanguage` do `mountClient`): o i18next só resolve um idioma que tem recursos no
+      momento da troca, e sem isso `getLanguage()` cairia para `en`.
+    - **Recursos estáticos:** `resources.ts` compõe os três idiomas a partir de `languageBundles/`
+      e só é importado por `addStaticResources.ts` (fora o `import type` de `src/types/i18next.d.ts`
+      e os testes), chamado pelo `entry-server.tsx` (pré-renderização,
+      antes do primeiro render) e pelo `beforeEach` de `src/setupTests.ts` (todo teste começa com os
+      três idiomas carregados). Código de cliente nunca importa `resources` nem JSON de
+      `src/locales/`, senão os três idiomas voltam ao pacote de entrada;
+      `src/i18n/test/loadLanguage.test.ts` lê os fontes de `src/` e falha se outro arquivo fizer
+      esse import estático.
     - **Funções de caminho** (puras, sobre o `pathname` relativo ao `basename`):
       `getLanguageFromPath` (primeiro segmento exatamente igual a um idioma suportado, senão
       `undefined`), `stripLanguagePrefix`, `addLanguagePrefix` (`/` vira `/en`),
@@ -234,15 +260,20 @@ Texto movido do `.claude/CLAUDE.md`, por área. As seções acima dão a visão 
       (`languageStorageKey.ts`, único lugar onde o valor da chave aparece), interno à pasta e
       chamado só por `setLanguage`. Visitar `/en` por link não grava escolha.
     - **API de idioma:** `getLanguage(): SupportedLanguage` (idioma ativo, função comum, usável fora
-      de React) e `setLanguage(language): Promise<void>` (troca e salva a escolha). Componente e
-      página usam só essas duas, nunca `saveLanguage` nem `localStorage` direto.
+      de React), `useLanguage(): SupportedLanguage` (`src/hooks/`, o mesmo valor em componente e hook, que
+      rerenderiza na troca de idioma) e `setLanguage(language): Promise<void>` (carrega o idioma, troca e salva a
+      escolha). Componente e página leem o idioma por `useLanguage()` (nunca repetem
+      `resolveSupportedLanguage(i18n.resolvedLanguage) ?? FALLBACK_LANGUAGE`) e trocam por `setLanguage`, nunca por
+      `saveLanguage` nem `localStorage` direto.
     - Um listener de `languageChanged`, registrado antes do `init()`, mantém
       `document.documentElement.lang` sincronizado com o idioma ativo. O `lang="pt-BR"` do
       `index.html` descreve o conteúdo estático daquele arquivo e é corrigido assim que o JS roda.
     - `SupportedLanguage` vem de `src/types/language/SupportedLanguage.types.ts`, derivado de `SUPPORTED_LANGUAGES`.
       `src/types/i18next.d.ts` augmenta `CustomTypeOptions` com `defaultNS: "common"` e os recursos
-      de `pt-BR`: chave inexistente em `t()` é erro de compilação, e `en`/`es` são tipados como
-      `typeof` de `pt-BR` em `resources.ts`, então namespace ou chave faltando também não compila.
+      de `pt-BR` (só `import type` de `resources.ts`, sem trazer código ao pacote): chave inexistente
+      em `t()` é erro de compilação, e `languageBundles/en.ts` e `es.ts` são tipados por
+      `LanguageResources` (`src/types/i18n/`, `typeof` de `languageBundles/ptBR.ts`), então
+      namespace ou chave faltando também não compila.
 
 ### Módulo `src/locales/`
 
@@ -256,8 +287,8 @@ Texto movido do `.claude/CLAUDE.md`, por área. As seções acima dão a visão 
   dois, `useTranslation(["notFound", "common"])`, e chama `t("common:backHome")`, senão a chave não
   tipa. Texto com marcação no meio usa `<Trans>` com `t={t}`, `i18nKey` e
   `components={{ strong: <strong /> }}`, com o `<strong>` escrito no próprio valor do JSON.
-  Namespace novo entra nos três idiomas, em `src/i18n/resources.ts` e no `ns` de
-  `src/i18n/i18n.ts`.
+  Namespace novo entra nos três idiomas, no `src/i18n/languageBundles/<idioma>.ts` de cada idioma
+  e em `src/i18n/namespaces.ts` (o `ns` de `src/i18n/i18n.ts`); `resources.ts` os compõe sozinho.
 
 ### Módulo `src/routers/`
 
@@ -265,7 +296,8 @@ Texto movido do `.claude/CLAUDE.md`, por área. As seções acima dão a visão 
   (`RouteObject[]`, export default): as páginas ficam em `pageRoutes`, definidas uma vez (Início
   como `index`, `*` de não encontrada, caminhos relativos), e uma função local gera **três
   rotas-pai idênticas** (`pt-BR`, `en`, `es`) com `MainLayout`, `errorElement`,
-  `loader: createLanguageLoader(idioma)` (chama `i18n.changeLanguage`, não `setLanguage`) e as
+  `loader: createLanguageLoader(idioma)` (espera `loadLanguage` e chama `i18n.changeLanguage`, não
+  `setLanguage`) e as
   mesmas `pageRoutes`. Depois delas, a rota `/` (`redirectRootLoader`: escolha salva → navegador →
   `en`, preservando query e hash) e a rota `*` sem prefixo, que renderiza a não encontrada em
   inglês. Os paths vêm de `ROUTES` em `paths.ts` (`root` é a raiz que redireciona, `home` a
@@ -288,14 +320,16 @@ Texto movido do `.claude/CLAUDE.md`, por área. As seções acima dão a visão 
 
 - **Pré-renderização** (ADR 0004, `docs/architecture/frontend.md#pré-renderização`) — `npm run build`
   gera em `dist/` um HTML por rota pública e idioma, mais o `404.html`. `src/entry-server.tsx`
-  (`render(target)`, só `react-dom/static` com `progressiveChunkSize: Infinity`, uma URL por vez),
+  (`render(target)`, só `react-dom/static` com `progressiveChunkSize: Infinity`, uma URL por vez,
+  com os três idiomas adicionados de forma estática por `addStaticResources`),
   `src/prerender/` (`prerenderRoutes.ts`, o registro das rotas pré-renderizáveis com padrão, escopo dos
   parâmetros e consultas RTK Query; `loadPrerenderData.ts`; `mountClient.tsx`) e `scripts/prerender.ts`
   com `scripts/prerender/` (`listTargets`, `getTargetFile`, `composePage`, `installPublicFetch`, que lê
   `public/` no Node sem tocar em `src/services/`). O servidor nunca importa `App.tsx`. Arquivos: `<idioma>.html`
   para a Início, `<idioma>/<rota>.html` para as demais e `<nome>.md.html` para documento (nunca pasta com
   `index.html`, que o Pages redireciona); `/` continua o `index.html`. O `404.html` é a não encontrada em
-  inglês: o cliente só chama `hydrateRoot` quando o caminho é o `prerenderedPath`, senão remove o
+  inglês: o cliente carrega o idioma do caminho antes de montar e só chama `hydrateRoot` (dentro de
+  `startTransition`) quando o caminho é o `path` do bloco `prerender-data`, senão remove o
   `title` e a `meta description` do HTML e usa `createRoot` (`shouldHydrate`, `removePrerenderedHead`).
   **Toda tela nova entrega a própria pré-renderização**: acrescenta a entrada ao registro (rota e
   consultas) e um teste de `<h1>` e conteúdo principal nos três idiomas (`src/test/entry-server.test.tsx`
@@ -321,7 +355,7 @@ Texto movido do `.claude/CLAUDE.md`, por área. As seções acima dão a visão 
       projeto precisar de invalidação.
     - `rootReducer.ts` (`combineReducers` com `[api.reducerPath]: api.reducer`, onde slices entram),
       `createStore.ts` (`createStore(preloadedState?)`, `configureStore` com `api.middleware`
-      concatenado, store nova a cada chamada) (a store da aplicação é criada em `mountClient`, com o `preloadedState` do HTML quando há).
+      concatenado, store nova a cada chamada) (a store da aplicação é criada em `mountClient`, com o `state` do bloco `prerender-data` quando há).
     - `useAppDispatch.ts` e `useAppSelector.ts`: `useDispatch.withTypes<AppDispatch>()` e
       `useSelector.withTypes<RootState>()`; código de aplicação usa só esses, com seletor estreito
       (`useAppSelector((state) => state.x.y)`), nunca o estado inteiro.
@@ -334,7 +368,8 @@ Texto movido do `.claude/CLAUDE.md`, por área. As seções acima dão a visão 
       dado do servidor vai para um endpoint do RTK Query. Idioma continua em `src/i18n/`.
     - Refetch on focus/reconnect (`setupListeners`) segue desligado, o padrão do RTK Query.
     - Endpoints de conteúdo (`profile.api.ts`, `timeline.api.ts`, `projects.api.ts`) usam `queryFn`
-      que chama `src/services/content/`, com `lang` no argumento (cache por idioma) e erro no
+      que chama `src/services/content/`, com `lang` no argumento (cache por idioma). O corpo do
+      `queryFn` vai dentro de `runQueryFn` (`src/utils/runQueryFn.ts`), que devolve `{ data }` ou o erro no
       formato do contrato (`toQueryError`); a #43 troca cada `queryFn` por `query`.
     - **Projetos:** consultas, estado na URL e paginação em [`projects.md`](../screens/projects.md#implementação).
 
@@ -342,14 +377,15 @@ Texto movido do `.claude/CLAUDE.md`, por área. As seções acima dão a visão 
 
 - **SEO por tela** — toda tela pública nova declara `<PageMeta title description path />`
   (`src/components/`: canônica autorreferente, quatro `hreflang` com `x-default` em `en`, Open
-  Graph e `twitter:card`; `params` e `image` opcionais) e `<JsonLd data={...} />` com o objeto de
+  Graph, `twitter:card` e as quatro `twitter:*` iguais às `og:*`; `params` e `image` opcionais) e `<JsonLd data={...} />` com o objeto de
   um construtor em `src/utils/` (`buildHomeJsonLd`, `buildProjectsJsonLd`; o `@id` da `Person` é
-  `<URL canônica de />#person`), além do `<title>` e da `description` próprios. A URL absoluta vem
+  `<origem><base>/#person`, por `buildPersonId()`), além do `<title>` e da `description` próprios. A URL absoluta vem
   de `buildAbsoluteUrl(path, language, params?)` (`getSiteUrl()` + `publicUrl` + `buildPath`);
   `getSiteUrl` é a única leitura de `VITE_SITE_URL` (só a origem, obrigatória no `npm run build`,
   validada por `scripts/resolveSiteUrl.ts`; localhost no dev e nos testes). `serializeJsonLd`
-  escapa `<`. A imagem padrão `public/images/og-site.png` vem de `npm run og:image` e é
-  versionada. Não encontrada e erro não usam o mecanismo.
+  escapa `<`. Início, Projetos, Informações e Contato usam a imagem própria por idioma de `public/images/share/` (`useShareImage`);
+  Projeto e documento, a captura ou, sem ela, a de Projetos; `public/images/og-site.png` é a
+  reserva. Todas vêm de `npm run og:image` e são versionadas. Não encontrada e erro não usam o mecanismo.
 
 ### Serviços `src/services/http/` e `src/services/content/`
 

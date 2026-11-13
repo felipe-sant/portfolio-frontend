@@ -93,7 +93,9 @@ describe("runWithRetry", () => {
         const messages = log.mock.calls.map((call) => call[0])
         expect(code).toBe(124)
         expect(execute).toHaveBeenCalledTimes(3)
-        expect(messages.filter((message) => message.includes("excedeu o tempo limite"))).toHaveLength(3)
+        expect(
+            messages.filter((message) => message.includes("excedeu o tempo limite"))
+        ).toHaveLength(3)
     })
 
     it("não fala em tempo limite quando o código é 124 e nenhum código de tempo foi informado", async () => {

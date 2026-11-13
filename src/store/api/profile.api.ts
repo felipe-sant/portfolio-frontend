@@ -1,9 +1,9 @@
 import loadProfile from "@/services/content/loadProfile"
-import toQueryError from "@/services/content/toQueryError"
 import validateLang from "@/services/content/validateLang"
 import api from "@/store/api"
 import type SupportedLanguage from "@/types/language/SupportedLanguage.types"
 import type Profile from "@/types/profile/Profile.types"
+import runQueryFn from "@/utils/runQueryFn"
 
 type GetProfileArgs = {
     lang: SupportedLanguage
@@ -12,14 +12,11 @@ type GetProfileArgs = {
 const profileApi = api.injectEndpoints({
     endpoints: (build) => ({
         getProfile: build.query<Profile, GetProfileArgs>({
-            queryFn: async ({ lang }) => {
-                try {
+            queryFn: ({ lang }) =>
+                runQueryFn(async () => {
                     validateLang(lang)
-                    return { data: await loadProfile(lang) }
-                } catch (error) {
-                    return { error: toQueryError(error) }
-                }
-            }
+                    return await loadProfile(lang)
+                })
         })
     })
 })

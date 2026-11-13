@@ -13,7 +13,6 @@ type LlmsLabels = {
     workPrinciples: string
     location: string
     availability: string
-    email: string
     responseTime: string
     stack: string
     trajectory: string

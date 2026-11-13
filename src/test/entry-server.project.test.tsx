@@ -162,15 +162,16 @@ describe("render de projeto", () => {
         }
     )
 
-    it("traz o documento markdown com título de documento, canônica do nome exato e dois JSON-LD", async () => {
+    it("traz o documento markdown com título de documento, canônica do nome exato e três JSON-LD", async () => {
         const result = await render(findTarget(`en/projects/${FULL_ID}/docs/SETUP.md.html`))
 
         expect(result.html).toContain("<title>SETUP.md · Complete · Luiz Felipe dos Santos</title>")
         expect(result.html).toContain(
             `<link rel="canonical" href="http://localhost:5173/en/projects/${FULL_ID}/docs/SETUP.md"/>`
         )
-        expect(result.html.match(/<script type="application\/ld\+json">/g)).toHaveLength(2)
+        expect(result.html.match(/<script type="application\/ld\+json">/g)).toHaveLength(3)
         expect(result.html).toContain("TechArticle")
+        expect(result.html).toContain("BreadcrumbList")
         expect(result.html).toMatch(/<h3[^>]*>Passos<\/h3>/)
     })
 
@@ -179,7 +180,7 @@ describe("render de projeto", () => {
 
         expect(result.html).toMatch(/<pre[^>]*lang="en"/)
         expect(result.html).toContain("MIT License")
-        expect(result.html.match(/<script type="application\/ld\+json">/g)).toHaveLength(2)
+        expect(result.html.match(/<script type="application\/ld\+json">/g)).toHaveLength(3)
     })
 
     it("pré-renderiza sem erro o projeto sem relacionados, sem imagem e só com README", async () => {
@@ -188,6 +189,7 @@ describe("render de projeto", () => {
         expect(result.html).toMatch(/<h1[^>]*>Simples es<\/h1>/)
         expect(result.html).toContain("Leia-me")
         expect(result.html).not.toContain("Projetos relacionados")
-        expect(result.html.match(/<script type="application\/ld\+json">/g)).toHaveLength(1)
+        expect(result.html.match(/<script type="application\/ld\+json">/g)).toHaveLength(2)
+        expect(result.html).toContain("BreadcrumbList")
     })
 })

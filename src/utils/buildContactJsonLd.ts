@@ -3,6 +3,7 @@ import type SupportedLanguage from "@/types/language/SupportedLanguage.types"
 import type Profile from "@/types/profile/Profile.types"
 import type JsonLdNode from "@/types/seo/JsonLdNode.types"
 import buildAbsoluteUrl from "@/utils/buildAbsoluteUrl"
+import buildPersonId from "@/utils/buildPersonId"
 
 type ContactJsonLdLabels = {
     title: string
@@ -28,9 +29,9 @@ function buildContactJsonLd(
         inLanguage: language,
         mainEntity: {
             "@type": "Person",
-            "@id": `${buildAbsoluteUrl(ROUTES.home, language)}#person`,
+            "@id": buildPersonId(),
             name: labels.name,
-            email: profile ? `mailto:${profile.contact.email}` : undefined,
+            email: profile?.contact.email,
             sameAs: sameAs.length > 0 ? sameAs : undefined
         }
     }

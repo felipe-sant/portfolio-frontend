@@ -1,22 +1,20 @@
-import { useDeferredValue, useState } from "react"
+import { useState } from "react"
 import { useTranslation } from "react-i18next"
-import PROJECT_CATEGORIES from "@/enum/projectCategories.enum"
-import PROJECT_SORTS from "@/enum/projectSorts.enum"
-import PROJECT_TYPES from "@/enum/projectTypes.enum"
-import FALLBACK_LANGUAGE from "@/i18n/fallbackLanguage"
-import resolveSupportedLanguage from "@/i18n/resolveSupportedLanguage"
 import useDragScroll from "@/hooks/useDragScroll"
+import useLanguage from "@/hooks/useLanguage"
+import useShareImage from "@/hooks/useShareImage"
+import useProjectsFilterOptions from "@/pages/hooks/useProjectsFilterOptions"
 import useProjectsFilters from "@/pages/hooks/useProjectsFilters"
 import useProjectsPages from "@/pages/hooks/useProjectsPages"
-import projectsApi from "@/store/api/projects.api"
-import buildProjectsJsonLd from "@/utils/buildProjectsJsonLd"
+import useProjectsResults from "@/pages/hooks/useProjectsResults"
+import useProjectsSeo from "@/pages/hooks/useProjectsSeo"
 import buildProjectsQueryArgs from "@/utils/buildProjectsQueryArgs"
 import projectsElementIds from "@/utils/projectsElementIds"
-import splitExperiments from "@/utils/splitExperiments"
 
 function useProjects() {
-    const { t, i18n } = useTranslation(["projects", "common"])
-    const language = resolveSupportedLanguage(i18n.resolvedLanguage) ?? FALLBACK_LANGUAGE
+    const shareImage = useShareImage("projects")
+    const { t } = useTranslation(["projects", "common"])
+    const language = useLanguage()
     const {
         filters,
         draft,
@@ -30,101 +28,68 @@ function useProjects() {
     } = useProjectsFilters()
     const { ref: filtersRef, dragProps: filtersDragProps } = useDragScroll<HTMLDivElement>()
     const pages = useProjectsPages(buildProjectsQueryArgs(language, filters))
-    const filterOptionsQuery = projectsApi.useGetProjectFilterOptionsQuery({ lang: language })
 
     const [isFiltersOpen, setIsFiltersOpen] = useState(false)
-    const appliedFilters = {
-        tech: filters.tech ?? [],
-        year: filters.year ?? [],
-        sort: filters.sort
-    }
 
     function openFilters() {
         setIsFiltersOpen(true)
     }
 
-    const isEmptyContent =
-        pages.hasData && pages.total === 0 && !hasFilters && pages.availableTypes.length === 0
-    const isNoResults = pages.hasData && pages.total === 0 && !isEmptyContent
-
-    function retry() {
-        document.getElementById(projectsElementIds.heading)?.focus()
-        return pages.retry()
-    }
-
-    function buildResultsText() {
-        if (pages.isError) {
-            return ""
-        }
-
-        if (pages.isLoading) {
-            return t("results.loading")
-        }
-
-        if (!pages.hasData) {
-            return ""
-        }
-
-        return pages.total === 0
-            ? t("results.countNone")
-            : t("results.count", { count: pages.total, shown: pages.shown })
-    }
-
-    const { main: mainItems, experiments: experimentItems } = splitExperiments(pages.items)
-    const currentResultsText = buildResultsText()
-    const resultsText = useDeferredValue(
-        currentResultsText,
-        pages.hasData ? currentResultsText : ""
-    )
+    const filterOptions = useProjectsFilterOptions(filters, pages.availableTypes)
+    const seo = useProjectsSeo(pages.firstPageItems)
+    const results = useProjectsResults(pages, hasFilters)
 
     return {
+        shareImage,
         t,
         ids: projectsElementIds,
-        jsonLd: pages.firstPageItems
-            ? buildProjectsJsonLd(
-                  language,
-                  { title: t("meta.title"), description: t("meta.description") },
-                  pages.firstPageItems
-              )
-            : undefined,
+        seo,
         filters,
-        filtersRef,
-        filtersDragProps,
-        draft,
-        setDraft,
-        clearSearch,
-        clearFilters,
-        setType,
-        setCategory,
-        applyModalFilters,
-        hasFilters,
-        filtersCount: appliedFilters.tech.length + appliedFilters.year.length,
-        appliedFilters,
-        isFiltersOpen,
-        openFilters,
-        closeFilters: () => setIsFiltersOpen(false),
-        typeValue: filters.type ?? "",
-        typeOptions: [
-            { value: "", label: t("filters.type.all") },
-            ...PROJECT_TYPES.filter((type) => pages.availableTypes.includes(type)).map((type) => ({
-                value: type,
-                label: t(`common:projectType.${type}`)
-            }))
-        ],
-        categoryOptions: PROJECT_CATEGORIES.map((category) => ({
-            value: category,
-            label: t(`filters.category.${category}`)
-        })),
-        technologyOptions: filterOptionsQuery.currentData?.technologies ?? [],
-        yearOptions: filterOptionsQuery.currentData?.years ?? [],
-        sortOptions: PROJECT_SORTS.map((sort) => ({ value: sort, label: t(`sort.${sort}`) })),
-        resultsText,
-        isEmptyContent,
-        isNoResults,
-        ...pages,
-        mainItems,
-        experimentItems,
-        retry
+        search: { draft, setDraft, clearSearch },
+        filterBar: {
+            ref: filtersRef,
+            dragProps: filtersDragProps,
+            typeValue: filterOptions.typeValue,
+            typeOptions: filterOptions.typeOptions,
+            categoryOptions: filterOptions.categoryOptions,
+            setType,
+            setCategory
+        },
+        modal: {
+            isOpen: isFiltersOpen,
+            open: openFilters,
+            close: () => setIsFiltersOpen(false),
+            filtersCount: filterOptions.filtersCount,
+            applied: filterOptions.appliedFilters,
+            technologyOptions: filterOptions.technologyOptions,
+            yearOptions: filterOptions.yearOptions,
+            sortOptions: filterOptions.sortOptions,
+            applyModalFilters
+        },
+        results: {
+            text: results.text,
+            hasFilters,
+            canClearFilters: results.canClearFilters,
+            isEmptyContent: results.isEmptyContent,
+            isNoResults: results.isNoResults,
+            clearFilters
+        },
+        list: {
+            isLoading: pages.isLoading,
+            isError: pages.isError,
+            retry: results.retry,
+            mainItems: results.mainItems,
+            experimentItems: results.experimentItems,
+            skeletonCount: pages.skeletonCount,
+            gridRef: pages.gridRef
+        },
+        more: {
+            hasMore: pages.hasMore,
+            isFetchingMore: pages.isFetchingMore,
+            loadMoreError: pages.loadMoreError,
+            loadMore: pages.loadMore,
+            retryLoadMore: pages.retryLoadMore
+        }
     }
 }
 

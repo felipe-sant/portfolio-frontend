@@ -1,8 +1,10 @@
 {
     "meta": {
         "title": "About · Luiz Felipe dos Santos",
-        "description": "Who Luiz Felipe dos Santos is: about me, stack, background and education."
+        "description": "Who Luiz Felipe dos Santos is: about me, stack, background and education.",
+        "imageAlt": "Cat next to the name Luiz Felipe dos Santos and the title About"
     },
+    "updatedAt": "Updated {{date}}",
     "hero": {
         "label": "About",
         "photoAlt": "Photo of {{name}}"

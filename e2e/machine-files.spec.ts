@@ -1,6 +1,8 @@
 import { expect, test } from "@playwright/test"
 import FATEC_BASE_PATH from "@scripts/fatecBasePath"
+import isLicenseDocument from "@/utils/isLicenseDocument"
 import isRecord from "./support/isRecord"
+import readProfile from "./support/readProfile"
 import readRawProjects from "./support/readRawProjects"
 
 const ORIGIN = "https://fatec-jacarei-dsm-portfolio.github.io"
@@ -20,16 +22,29 @@ const AI_CRAWLERS = [
     "CCBot"
 ]
 const FULL_FILES = ["llms-full.txt", "llms-full.en.txt", "llms-full.es.txt"]
+const FULL_FILE_BY_LANGUAGE: Record<string, string> = {
+    "pt-BR": "llms-full.txt",
+    en: "llms-full.en.txt",
+    es: "llms-full.es.txt"
+}
+const EMAIL_PATTERN = /[A-Za-z0-9._+-]+@[A-Za-z0-9-]+\.[a-z]{2,}/
 
-function countDocumentsBesidesReadme(): number {
-    return readRawProjects("pt-BR").reduce((total, project) => {
+function listIndexableDocuments(language: string): string[] {
+    return readRawProjects(language).flatMap((project) => {
         const documents = Array.isArray(project.documents) ? project.documents : []
-        return (
-            total +
-            documents.filter((document) => isRecord(document) && document.name !== "README.md")
-                .length
+        return documents.flatMap((document) =>
+            isRecord(document) &&
+            typeof document.name === "string" &&
+            document.name !== "README.md" &&
+            !isLicenseDocument(document.name)
+                ? [`${language}/projects/${String(project.id)}/docs/${document.name}`]
+                : []
         )
-    }, 0)
+    })
+}
+
+function contactUrl(language: string): string {
+    return `${ORIGIN}${FATEC_BASE_PATH}${language}/contact`
 }
 
 function toRelativePath(url: string): string {
@@ -63,6 +78,17 @@ test.describe("arquivos para buscadores e IA", () => {
         }
     })
 
+    test("NF-IA-12: robots.txt declara a política de IA com Content-Signal em cada grupo", async ({
+        request
+    }) => {
+        const body = await (await request.get("robots.txt")).text()
+        const signal = "Content-Signal: search=yes, ai-input=yes, ai-train=yes\n"
+        for (const agent of ["*", ...AI_CRAWLERS]) {
+            expect(body).toContain(`User-agent: ${agent}\nAllow: /\n${signal}`)
+        }
+        expect(body.match(/^Content-Signal: /gm)).toHaveLength(AI_CRAWLERS.length + 1)
+    })
+
     test("NF-IA-15: sitemap.xml é servido como XML", async ({ request }) => {
         const response = await request.get("sitemap.xml")
         expect(response.status()).toBe(200)
@@ -76,10 +102,33 @@ test.describe("arquivos para buscadores e IA", () => {
     }) => {
         const projects = readRawProjects("pt-BR").length
         expect(projects).toBeGreaterThan(0)
-        const expected = (STATIC_ROUTES + projects + countDocumentsBesidesReadme()) * 3
+        const expected = (STATIC_ROUTES + projects + listIndexableDocuments("pt-BR").length) * 3
         const locs = extractLocs(await (await request.get("sitemap.xml")).text())
         expect(locs).toHaveLength(expected)
         expect(new Set(locs).size).toBe(expected)
+    })
+
+    test("NF-IA-15, NF-IA-02: nenhuma loc é de LICENSE e cada idioma lista os documentos além do README e da LICENSE", async ({
+        request
+    }) => {
+        const locs = extractLocs(await (await request.get("sitemap.xml")).text())
+        const paths = locs.map(toRelativePath)
+        expect(paths.some((path) => isLicenseDocument(path.split("/").at(-1) ?? ""))).toBe(false)
+        for (const language of LANGUAGES) {
+            const listed = paths.filter((path) => path.startsWith(`${language}/projects/`))
+            const documents = listed.filter((path) => path.includes("/docs/")).toSorted()
+            expect(documents).toEqual(listIndexableDocuments(language).toSorted())
+            expect(documents).toHaveLength(6)
+        }
+    })
+
+    test("NF-IA-15: toda url do sitemap tem lastmod AAAA-MM-DD", async ({ request }) => {
+        const xml = await (await request.get("sitemap.xml")).text()
+        const blocks = xml.split("<url>").slice(1)
+        expect(blocks.length).toBe(extractLocs(xml).length)
+        for (const block of blocks) {
+            expect(block).toMatch(/<lastmod>\d{4}-\d{2}-\d{2}<\/lastmod>/)
+        }
     })
 
     test("NF-IA-15, NF-IA-11: cada loc é absoluto sob o base e tem hreflang recíproco com x-default em en", async ({
@@ -115,13 +164,17 @@ test.describe("arquivos para buscadores e IA", () => {
         }
     })
 
-    test("NF-IA-05: llms.txt é servido em pt-BR no formato llmstxt.org", async ({ request }) => {
+    test("NF-IA-05: llms.txt é servido nos três idiomas no formato llmstxt.org", async ({
+        request
+    }) => {
         const response = await request.get("llms.txt")
         expect(response.status()).toBe(200)
         const body = await response.text()
         expect(body).toMatch(/^# \S/)
-        expect(body).toMatch(/\n> \S/)
-        expect(body).toMatch(/\n## \S/)
+        expect(body).toContain(`\n> ${readProfile("pt-BR").summary}\n`)
+        expect(body).toContain(`\nEnglish: ${readProfile("en").summary}\n`)
+        expect(body).toContain(`\nEspañol: ${readProfile("es").summary}\n`)
+        expect(body.match(/^## \S/gm)).toHaveLength(12)
         expect(body).toMatch(/\n- \[[^\]]+\]\(https:\/\/[^)]+\)/)
     })
 
@@ -175,18 +228,15 @@ test.describe("arquivos para buscadores e IA", () => {
     test("NF-IA-06, NF-IA-07: cada llms-full está no idioma do arquivo e traz o CV e todos os projetos", async ({
         request
     }) => {
-        const files: Record<string, string> = {
-            "pt-BR": "llms-full.txt",
-            en: "llms-full.en.txt",
-            es: "llms-full.es.txt"
-        }
         for (const language of LANGUAGES) {
-            const body = await (await request.get(files[language])).text()
+            const body = await (await request.get(FULL_FILE_BY_LANGUAGE[language])).text()
             for (const extension of ["md", "pdf"]) {
                 expect(body).toContain(`${ORIGIN}${FATEC_BASE_PATH}cv/cv-${language}.${extension}`)
             }
             const resume = await (await request.get(`cv/cv-${language}.md`)).text()
-            expect(body).toContain(resume.trim())
+            expect(body).toContain(
+                resume.trim().replaceAll(readProfile(language).email, contactUrl(language))
+            )
             for (const project of readRawProjects(language)) {
                 expect(body).toContain(String(project.title))
                 expect(body).toContain(String(project.summary))
@@ -196,6 +246,23 @@ test.describe("arquivos para buscadores e IA", () => {
         const english = await (await request.get("llms-full.en.txt")).text()
         for (const project of portuguese) {
             expect(english).not.toContain(String(project.summary))
+        }
+    })
+
+    test("NF-IA-06: nenhum llms*.txt traz o e-mail, e cada llms-full liga a Contato do idioma", async ({
+        request
+    }) => {
+        const emails = LANGUAGES.map((language) => readProfile(language).email)
+        for (const file of ["llms.txt", ...FULL_FILES]) {
+            const body = await (await request.get(file)).text()
+            expect(body, file).not.toMatch(EMAIL_PATTERN)
+            for (const email of emails) {
+                expect(body, file).not.toContain(email)
+            }
+        }
+        for (const language of LANGUAGES) {
+            const body = await (await request.get(FULL_FILE_BY_LANGUAGE[language])).text()
+            expect(body).toContain(contactUrl(language))
         }
     })
 })

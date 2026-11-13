@@ -1,6 +1,7 @@
 import { prerender } from "react-dom/static"
 import { Provider } from "react-redux"
 import { createStaticHandler, createStaticRouter, StaticRouterProvider } from "react-router-dom"
+import addStaticResources from "@/i18n/addStaticResources"
 import getLanguage from "@/i18n/getLanguage"
 import loadPrerenderData from "@/prerender/loadPrerenderData"
 import prerenderRoutes from "@/prerender/prerenderRoutes"
@@ -10,6 +11,8 @@ import createStore from "@/store/createStore"
 import publicUrl from "@/utils/publicUrl"
 import type PrerenderResult from "@/types/prerender/PrerenderResult.types"
 import type PrerenderTarget from "@/types/prerender/PrerenderTarget.types"
+
+addStaticResources()
 
 function toScriptJson(value: unknown): string {
     return JSON.stringify(value).replace(/</g, "\\u003c")

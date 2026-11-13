@@ -1,9 +1,9 @@
 import { useTranslation } from "react-i18next"
+import useLanguage from "@/hooks/useLanguage"
 import useLocalizedPath from "@/hooks/useLocalizedPath"
 import usePageTransition from "@/hooks/usePageTransition"
 import useResume from "@/hooks/useResume"
-import FALLBACK_LANGUAGE from "@/i18n/fallbackLanguage"
-import resolveSupportedLanguage from "@/i18n/resolveSupportedLanguage"
+import useShareImage from "@/hooks/useShareImage"
 import ROUTES from "@/routers/paths"
 import profileApi from "@/store/api/profile.api"
 import projectsApi from "@/store/api/projects.api"
@@ -25,8 +25,9 @@ const FOCUS_IDS: Record<FocusableName, string> = {
 }
 
 function useHome() {
-    const { t, i18n } = useTranslation(["home", "common"])
-    const language = resolveSupportedLanguage(i18n.resolvedLanguage) ?? FALLBACK_LANGUAGE
+    const shareImage = useShareImage("home")
+    const { t } = useTranslation(["home", "common"])
+    const language = useLanguage()
     const localizedPath = useLocalizedPath()
     const viewTransition = usePageTransition()
     const resume = useResume()
@@ -52,6 +53,7 @@ function useHome() {
     const isLoading = profileQuery.isLoading || timelineQuery.isLoading || featuredQuery.isLoading
 
     return {
+        shareImage,
         t,
         language,
         jsonLd,

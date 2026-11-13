@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test"
 import type { Locator, Page } from "@playwright/test"
+import waitForHydration from "./support/waitForHydration"
 
 const DESKTOP_MIN_WIDTH = 640
 const SCROLL_TARGET = 600
@@ -13,21 +14,21 @@ const LANGUAGES = {
         button: "Idioma: Português",
         option: "Português",
         heading: "Desenvolvedor full stack Júnior",
-        title: "Portfólio · Luiz Felipe dos Santos"
+        title: "Luiz Felipe dos Santos · Desenvolvedor full stack Júnior · React, TypeScript e Node.js"
     },
     en: {
         menu: "Menu",
         button: "Language: English",
         option: "English",
         heading: "Junior full stack developer",
-        title: "Portfolio · Luiz Felipe dos Santos"
+        title: "Luiz Felipe dos Santos · Junior full stack developer · React, TypeScript and Node.js"
     },
     es: {
         menu: "Menú",
         button: "Idioma: Español",
         option: "Español",
         heading: "Desarrollador full stack junior",
-        title: "Portafolio · Luiz Felipe dos Santos"
+        title: "Luiz Felipe dos Santos · Desarrollador full stack junior · React, TypeScript y Node.js"
     }
 }
 
@@ -69,6 +70,7 @@ async function chooseLanguage(page: Page, from: Language, to: Language) {
 async function openHome(page: Page, language: Language) {
     await page.goto(language)
     await page.getByRole("heading", { level: 1 }).waitFor()
+    await waitForHydration(page)
 }
 
 async function expectHomeIn(page: Page, language: Language) {

@@ -1,7 +1,7 @@
 # Design system
 
 Resumo do design system do portfólio, para consulta rápida durante o desenvolvimento. O ponto de
-partida é o handoff de design em `/home/felipe/faculdade/design_handoff_portfolio` (requisito R3), e
+partida é o handoff de design, a pasta `design_handoff_portfolio`, que fica fora do repositório (requisito R3), e
 a referência visual validada pelo PO é o [protótipo navegável](prototype/README.md), com as sete
 telas, os estados e os dois temas.
 
@@ -114,6 +114,39 @@ Pesos carregados: Bricolage Grotesque 600–800 (variável), IBM Plex Sans 400/5
 Mono 400/500 (`--weight-regular` a `--weight-black`). A poda de pesos (D08) foi aplicada na #40;
 `scripts/test/fontWeights.test.ts` impede que arquivo, `@font-face`, `preload` e `--weight-*`
 voltem a divergir.
+
+### Fonte reserva da IBM Plex Sans
+
+`--font-body` é `"IBM Plex Sans", "IBM Plex Sans Fallback", system-ui, sans-serif`. A "IBM Plex Sans Fallback" são
+quatro `@font-face` (400, 500, 600 e 700) em `src/styles/global.css` com `src: local(...)` (Arial, Liberation Sans
+ou Helvetica; Arial Bold e equivalentes nos pesos 600 e 700), `size-adjust` e `ascent-override`, `descent-override` e
+`line-gap-override`. Ela existe para a quebra de linha ser a mesma antes e depois da troca de fonte (`font-display:
+swap`): sem ela, o texto da fonte do sistema era 11% a 13% mais largo, a linha de botões de Contato quebrava em duas
+e voltava a uma só quando a fonte chegava (CLS 0,10 no celular, #266). A Bricolage Grotesque não tem reserva (tem
+`preload` e não deslocou nas medições).
+
+Como os valores foram obtidos (Chromium, `canvas.measureText` a 1000 px, texto igual na IBM Plex Sans e na reserva):
+
+- `size-adjust` é a razão das larguras. Em 400 e 500 usa-se a razão de um corpus de títulos, parágrafos e rótulos nos
+  três idiomas (99,68% e 101,80%). Em 600 e 700 (botões e rótulos) a razão do corpus (96,12% e 97,47%) deixava a
+  reserva estreita demais para rótulos curtos (a linha de botões do Início em `en` quebrava só depois da troca), então
+  usa-se a mediana dos rótulos de interface mais uma folga: 97,5% e 98,21%.
+- `ascent-override` e `descent-override` são as métricas da IBM Plex Sans (1,025 e 0,275 em unidades de em) divididas
+  pelo `size-adjust`; `line-gap-override` é 0.
+- Uma razão única por peso não iguala todas as palavras (o desvio por rótulo é de cerca de 5%); linha que cai
+  exatamente na fronteira ainda pode quebrar diferente. Por isso a janela de `size-adjust` do peso 600 é estreita
+  (96,8% a 97,0% separa dois casos medidos): mude o valor só junto com a medição de CLS abaixo.
+
+### Como medir o CLS
+
+`npm run build:fatec` e `PREVIEW_PORT=<porta própria> npm run preview:fatec` (nunca 4173 nem 5173); no Chromium em
+perfil Pixel 5 (393 px), rede de 150 ms e 1,6 Mb/s e CPU 4x mais lenta, registre `PerformanceObserver` de
+`layout-shift` desde o início da navegação (com `buffered: true`), carregue a rota, espere `document.fonts.ready` e
+mais 3 s, e some os valores sem `hadRecentInput`. Imprima também `sources` (nó, retângulo anterior e atual) para
+achar o elemento. Rode 3 vezes por idioma: o resultado é determinístico por build, mas varia com o ambiente. A
+medição que vale para a meta (`NF-DE-02`, 0,1) é a do Lighthouse mobile no site publicado, feita na #41. O E2E
+`NF-DE-02` de `e2e/contact.spec.ts` trava a regressão: atrasa os `woff2` de IBM Plex Sans que não têm `preload`
+(500, 600 e 700) e exige CLS abaixo de 0,1 depois que chegam.
 
 ### Escala
 
@@ -316,6 +349,52 @@ As fontes (Bricolage Grotesque, IBM Plex Sans e IBM Plex Mono) são self-hospeda
 licenças OFL em `public/fonts/`, para não fazer requisição a terceiros com o IP de quem visita
 (privacidade, LGPD/GDPR), não depender de CDN externa e servir as fontes da mesma origem, com
 `preload`.
+
+### Redução dos arquivos de fonte
+
+Os `woff2` de `public/fonts/` são reduzidos para a primeira carga de qualquer rota somar até 160 KB
+(`NF-DE-11`, #267), sem tirar peso nem família: a Bricolage Grotesque fica com o eixo `wght` de 600 a
+800 (o que o CSS declara) e cada fonte fica só com os caracteres de `pt-BR`, `en` e `es` (`U+0020–007E`,
+`U+00A0–00FF`, `U+2013`, `U+2014`, `U+2018`, `U+2019`, `U+201C`, `U+201D`, `U+2022`, `U+2026`, `U+00B7`,
+`U+20AC`, `U+2190–2193`, `U+2197`, `U+2713`, `U+2715`), com todas as `layout features`. Os nomes dos
+arquivos e os `@font-face` não mudam. O `scripts/test/fontCoverage.test.ts` falha se a soma passar de
+160 KB ou se um caractere dos textos do site sair do `cmap` (`→` e `↗` já caem na fonte do sistema, pois as
+fontes originais não os têm).
+
+Para repetir (ao trocar uma fonte ou acrescentar caractere), com o `woff2` original em `<origem>` e a saída
+em `public/fonts/`, usando `fonttools` e `brotli` fora do `package.json` (`uv venv && uv pip install fonttools brotli`):
+
+```python
+from pathlib import Path
+from fontTools.ttLib import TTFont
+from fontTools.varLib import instancer
+from fontTools import subset
+
+UNICODES = (
+    set(range(0x20, 0x7F))
+    | set(range(0xA0, 0x100))
+    | {0x2013, 0x2014, 0x2018, 0x2019, 0x201C, 0x201D, 0x2022, 0x2026, 0xB7, 0x20AC, 0x2197, 0x2713, 0x2715}
+    | set(range(0x2190, 0x2194))
+)
+
+def reduce(source: Path, target: Path, axes=None):
+    font = TTFont(source)
+    if axes:
+        font = instancer.instantiateVariableFont(font, axes)
+    options = subset.Options()
+    options.layout_features = ["*"]
+    options.flavor = "woff2"
+    options.notdef_outline = True
+    options.name_IDs = ["*"]
+    subsetter = subset.Subsetter(options)
+    subsetter.populate(unicodes=UNICODES)
+    subsetter.subset(font)
+    font.flavor = "woff2"
+    font.save(target)
+```
+
+Chame `reduce(origem, destino, {"wght": (600, 800)})` para a Bricolage e `reduce(origem, destino)` para as demais.
+Depois confira a soma por rota no `build:fatec`, com `PerformanceObserver` ou a aba Rede filtrada por `Font`.
 
 ## Decisões de design
 

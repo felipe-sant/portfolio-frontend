@@ -71,6 +71,16 @@ function readJsonLd() {
     return JSON.parse(script?.textContent ?? "null")
 }
 
+function readAllJsonLd() {
+    return Array.from(document.querySelectorAll('script[type="application/ld+json"]')).map(
+        (script) => JSON.parse(script.textContent ?? "null")
+    )
+}
+
+function readBreadcrumb() {
+    return readAllJsonLd().find((node) => node?.["@type"] === "BreadcrumbList")
+}
+
 function hiddenItemsOf(card: HTMLElement) {
     return card.closest("ul")?.querySelectorAll(':scope > li[aria-hidden="true"]') ?? []
 }
@@ -375,7 +385,11 @@ describe("ProjectsPage", () => {
         await user.click(
             within(screen.getByRole("group", { name: "Tipo" })).getByRole("button", { name: "Web" })
         )
-        await user.click(screen.getByRole("button", { name: "Carregar mais" }))
+        await waitFor(() => expect(currentLocation()).toContain("type="))
+        await waitFor(() =>
+            expect(screen.getByRole("status")).toHaveTextContent("9 de 10 projetos")
+        )
+        await user.click(await screen.findByRole("button", { name: "Carregar mais" }))
         await waitFor(() => expect(cards()).toHaveLength(10))
         await user.click(await screen.findByRole("button", { name: "Limpar filtros" }))
 
@@ -535,6 +549,28 @@ describe("ProjectsPage", () => {
         expect(screen.queryByRole("alert")).not.toBeInTheDocument()
     })
 
+    it("não mostra Limpar filtros com filtro aplicado e a lista com erro", async () => {
+        const fetchMock = stubProjects(10)
+        failFetchAfter(fetchMock, 0)
+        renderPage("/pt-BR/projects?type=web")
+
+        await screen.findByRole("alert")
+
+        expect(screen.queryByRole("button", { name: "Limpar filtros" })).not.toBeInTheDocument()
+    })
+
+    it("não mostra Limpar filtros com filtro aplicado enquanto a lista carrega", async () => {
+        const fetchMock = stubProjects(10)
+        holdFetchAfter(fetchMock, 0)
+        renderPage("/pt-BR/projects?type=web")
+
+        await waitFor(() =>
+            expect(screen.getByRole("status")).toHaveTextContent("Carregando projetos…")
+        )
+
+        expect(screen.queryByRole("button", { name: "Limpar filtros" })).not.toBeInTheDocument()
+    })
+
     it.each(LANGUAGES)("mantém o prefixo de %s nos links dos cards", async (language) => {
         stubProjects(10)
         await setLanguage(language)
@@ -619,7 +655,7 @@ describe("ProjectsPage", () => {
         expect(plain.name).toBe("Projetos · Luiz Felipe dos Santos")
         expect(plain.url).toBe(`${SITE_URL}/pt-BR/projects`)
         expect(plain.inLanguage).toBe("pt-BR")
-        expect(plain.author).toEqual({ "@id": `${SITE_URL}/pt-BR#person` })
+        expect(plain.author).toEqual({ "@id": `${SITE_URL}/#person` })
         expect(plain.mainEntity["@type"]).toBe("ItemList")
         expect(plain.mainEntity.itemListElement).toHaveLength(9)
         expect(plain.mainEntity).not.toHaveProperty("numberOfItems")
@@ -635,6 +671,60 @@ describe("ProjectsPage", () => {
         expect(readJsonLd().name).toBe(plain.name)
     })
 
+    it("emite BreadcrumbList com Início e Projetos, nessa ordem, com URLs absolutas", async () => {
+        stubProjects(3)
+
+        renderPage()
+        await waitFor(() => expect(readBreadcrumb()).toBeDefined())
+
+        expect(readBreadcrumb().itemListElement).toEqual([
+            { "@type": "ListItem", position: 1, name: "Início", item: `${SITE_URL}/pt-BR` },
+            {
+                "@type": "ListItem",
+                position: 2,
+                name: "Projetos",
+                item: `${SITE_URL}/pt-BR/projects`
+            }
+        ])
+    })
+
+    it.each([
+        ["pt-BR", "Início", "Projetos"],
+        ["en", "Home", "Projects"],
+        ["es", "Inicio", "Proyectos"]
+    ] as const)("os nomes do breadcrumb em %s são %s e %s", async (language, home, projects) => {
+        stubProjects(3)
+        await setLanguage(language)
+
+        renderPage(`/${language}/projects`)
+        await waitFor(() => expect(readBreadcrumb()).toBeDefined())
+
+        expect(readBreadcrumb().itemListElement.map((item: { name: string }) => item.name)).toEqual(
+            [home, projects]
+        )
+        expect(readBreadcrumb().itemListElement[1].item).toBe(`${SITE_URL}/${language}/projects`)
+    })
+
+    it("a CollectionPage continua sendo o primeiro JSON-LD", async () => {
+        stubProjects(3)
+
+        renderPage()
+        await waitFor(() => expect(readBreadcrumb()).toBeDefined())
+
+        expect(readAllJsonLd().map((node) => node["@type"])).toEqual([
+            "CollectionPage",
+            "BreadcrumbList"
+        ])
+    })
+
+    it("sem dados carregados não emite o breadcrumb", () => {
+        stubProjects(3)
+
+        renderPage()
+
+        expect(readAllJsonLd()).toEqual([])
+    })
+
     it("abre só a lista e as opções, sem consulta de índice", async () => {
         stubProjects(10)
 
@@ -647,6 +737,20 @@ describe("ProjectsPage", () => {
         expect(endpoints).toContain("getProjectsPages")
         expect(endpoints).toContain("getProjectFilterOptions")
         expect(endpoints).not.toContain("getProjectsIndex")
+    })
+
+    it("declara a imagem de compartilhamento de Projetos", async () => {
+        stubProjects(10)
+
+        renderPage()
+        await listLoaded()
+
+        expect(
+            document.head.querySelector('meta[property="og:image"]')?.getAttribute("content")
+        ).toBe(`${SITE_URL}/images/share/pt-BR/projects.png`)
+        expect(
+            document.head.querySelector('meta[property="og:image:alt"]')?.getAttribute("content")
+        ).toBe("Gato ao lado do nome Luiz Felipe dos Santos e do título Projetos")
     })
 
     it("declara a canônica sem query e nenhum noindex com query", async () => {

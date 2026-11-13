@@ -35,7 +35,8 @@ const UI_TEXTS = {
         },
         homeHeading: "Desenvolvedor full stack Júnior",
         homeStack: "React, TypeScript e Node.js",
-        homeTitle: "Portfólio · Luiz Felipe dos Santos",
+        homeTitle:
+            "Luiz Felipe dos Santos · Desenvolvedor full stack Júnior · React, TypeScript e Node.js",
         homeDescription:
             "Portfólio de Luiz Felipe dos Santos, desenvolvedor full stack Júnior com React, TypeScript e Node.js: projetos, trajetória e contato.",
         heroViewProjects: "Ver projetos",
@@ -58,6 +59,7 @@ const UI_TEXTS = {
             title: "Informações · Luiz Felipe dos Santos",
             description: "Quem é Luiz Felipe dos Santos: sobre mim, stack, trajetória e formação.",
             label: "Informações",
+            updatedPrefix: "Atualizado em",
             photoAlt: "Foto de Luiz Felipe dos Santos",
             aboutMe: "Sobre mim",
             nowHeading: "Agora",
@@ -254,7 +256,8 @@ const UI_TEXTS = {
         },
         homeHeading: "Junior full stack developer",
         homeStack: "React, TypeScript and Node.js",
-        homeTitle: "Portfolio · Luiz Felipe dos Santos",
+        homeTitle:
+            "Luiz Felipe dos Santos · Junior full stack developer · React, TypeScript and Node.js",
         homeDescription:
             "Portfolio of Luiz Felipe dos Santos, junior full stack developer with React, TypeScript and Node.js: projects, background and contact.",
         heroViewProjects: "View projects",
@@ -278,6 +281,7 @@ const UI_TEXTS = {
             description:
                 "Who Luiz Felipe dos Santos is: about me, stack, background and education.",
             label: "About",
+            updatedPrefix: "Updated",
             photoAlt: "Photo of Luiz Felipe dos Santos",
             aboutMe: "About me",
             nowHeading: "Now",
@@ -471,7 +475,8 @@ const UI_TEXTS = {
         },
         homeHeading: "Desarrollador full stack junior",
         homeStack: "React, TypeScript y Node.js",
-        homeTitle: "Portafolio · Luiz Felipe dos Santos",
+        homeTitle:
+            "Luiz Felipe dos Santos · Desarrollador full stack junior · React, TypeScript y Node.js",
         homeDescription:
             "Portafolio de Luiz Felipe dos Santos, desarrollador full stack junior con React, TypeScript y Node.js: proyectos, trayectoria y contacto.",
         heroViewProjects: "Ver proyectos",
@@ -495,6 +500,7 @@ const UI_TEXTS = {
             description:
                 "Quién es Luiz Felipe dos Santos: sobre mí, stack, trayectoria y formación.",
             label: "Información",
+            updatedPrefix: "Actualizado en",
             photoAlt: "Foto de Luiz Felipe dos Santos",
             aboutMe: "Sobre mí",
             nowHeading: "Ahora",

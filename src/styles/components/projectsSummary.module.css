@@ -1,0 +1,15 @@
+.summary {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    min-height: var(--hit-min);
+    margin-bottom: var(--space-4);
+}
+
+.count {
+    margin: 0;
+    font-size: var(--text-body-sm);
+    color: var(--text-weak);
+}

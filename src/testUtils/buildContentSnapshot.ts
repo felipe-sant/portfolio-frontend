@@ -58,20 +58,23 @@ function buildProjects(lang: SupportedLanguage): ProjectRecord[] {
                     id: "0192f1d0-0000-7000-8000-000000000002",
                     name: "SETUP.md",
                     format: "markdown",
-                    translated: true
+                    translated: true,
+                    updatedAt: "2026-09-30"
                 },
                 {
                     id: "0192f1d0-0000-7000-8000-000000000003",
                     name: "LICENSE",
                     format: "text",
                     translated: false,
-                    contentLanguage: "en"
+                    contentLanguage: "en",
+                    updatedAt: "2026-09-30"
                 },
                 {
                     id: "0192f1d0-0000-7000-8000-000000000005",
                     name: "config.json",
                     format: "text",
-                    translated: false
+                    translated: false,
+                    updatedAt: "2026-09-30"
                 }
             ],
             related: [{ id: SECOND_PROJECT }],
@@ -101,7 +104,8 @@ function buildProjects(lang: SupportedLanguage): ProjectRecord[] {
                     translated: true
                 }
             ],
-            related: []
+            related: [],
+            updatedAt: "2026-09-30"
         }
     ]
 }
@@ -109,6 +113,7 @@ function buildProjects(lang: SupportedLanguage): ProjectRecord[] {
 function buildLanguage(lang: SupportedLanguage): LanguageContent {
     return {
         profile: {
+            updatedAt: "2026-09-30",
             role: `Desenvolvedor full stack (${lang})`,
             homeIntro: `Trabalho em produtos web (${lang})`,
             summary: `Desenvolvedor em TypeScript (${lang})`,
