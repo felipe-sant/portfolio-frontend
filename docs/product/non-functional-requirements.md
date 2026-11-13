@@ -372,7 +372,7 @@ Comandos contra a URL publicada
 
 ```bash
 for path in / /projects /projects/<id> /projects/<id>/docs/LICENSE /about /contact \
-    /en/ /en/projects /en/projects/<id> /es/ /es/about /nao-existe /en/nao-existe; do
+    /en /en/projects /en/projects/<id> /es /es/about /nao-existe /en/nao-existe; do
     curl -s -o /dev/null -w "%{http_code} $path\n" -L "$SITE$path"
 done
 curl -sL "$SITE/projects/<id>" | grep -o "<h1[^>]*>[^<]*"
