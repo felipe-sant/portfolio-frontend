@@ -1,9 +1,9 @@
 import Button from "@/components/Button"
-import FilterGroup from "@/components/FilterGroup"
 import JsonLd from "@/components/JsonLd"
 import LoadError from "@/components/LoadError"
 import PageMeta from "@/components/PageMeta"
 import ProjectsEmptyState from "@/components/ProjectsEmptyState"
+import ProjectsFilterBar from "@/components/ProjectsFilterBar"
 import ProjectsFiltersModal from "@/components/ProjectsFiltersModal"
 import ProjectsResults from "@/components/ProjectsResults"
 import ProjectsToolbar from "@/components/ProjectsToolbar"
@@ -14,7 +14,6 @@ import css from "@/styles/pages/projects.module.css"
 function ProjectsPage() {
     const { t, shareImage, ids, seo, filters, search, filterBar, modal, results, list, more } =
         useProjects()
-    const { ref: filterBarRef, dragProps, ...bar } = filterBar
 
     return (
         <>
@@ -48,21 +47,7 @@ function ProjectsPage() {
                             isFiltersOpen={modal.isOpen}
                             onOpenFilters={modal.open}
                         />
-                        <div ref={filterBarRef} className={css.filters} {...dragProps}>
-                            <FilterGroup
-                                label={t("filters.type.label")}
-                                options={bar.typeOptions}
-                                value={bar.typeValue}
-                                onChange={bar.setType}
-                            />
-                            <span className={css.separator} aria-hidden="true" />
-                            <FilterGroup
-                                label={t("filters.category.label")}
-                                options={bar.categoryOptions}
-                                value={filters.category}
-                                onChange={bar.setCategory}
-                            />
-                        </div>
+                        <ProjectsFilterBar filterBar={filterBar} categoryValue={filters.category} />
                         <div className={css.summary}>
                             <p role={"status"} className={css.count}>
                                 {results.text}
