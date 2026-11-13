@@ -150,11 +150,11 @@ responde a URL que de fato não existe (substitui a cópia do `index.html` previ
 **Idiomas na pré-renderização.** O PO decidiu (11-10-2026) pôr o idioma no caminho já na v1.
 Opções avaliadas:
 
-| Opção                                          | Avaliação                                                                                                                                                           | Decisão                          |
-| ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------- |
-| Só `pt-BR` pré-renderizado, idioma por `?lng=` | Um HTML por rota; `en` e `es` só existem depois do JavaScript, então IA e prévia de link veem só `pt-BR`; sem `hreflang`                                            | Descartada pelo PO               |
-| Por idioma com `?lng=`                         | Impossível em hospedagem estática: a query string não escolhe arquivo                                                                                               | Descartada                       |
-| Por idioma no caminho                          | Três versões indexáveis e legíveis sem JavaScript, `hreflang` correto, link compartilhável por idioma (o CV em inglês aponta para `/en/`); muda rotas e `src/i18n/` | **Decidida pelo PO na v1** (#53) |
+| Opção                                          | Avaliação                                                                                                                                                          | Decisão                          |
+| ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------- |
+| Só `pt-BR` pré-renderizado, idioma por `?lng=` | Um HTML por rota; `en` e `es` só existem depois do JavaScript, então IA e prévia de link veem só `pt-BR`; sem `hreflang`                                           | Descartada pelo PO               |
+| Por idioma com `?lng=`                         | Impossível em hospedagem estática: a query string não escolhe arquivo                                                                                              | Descartada                       |
+| Por idioma no caminho                          | Três versões indexáveis e legíveis sem JavaScript, `hreflang` correto, link compartilhável por idioma (o CV em inglês aponta para `/en`); muda rotas e `src/i18n/` | **Decidida pelo PO na v1** (#53) |
 
 **Esquema de URL:**
 
