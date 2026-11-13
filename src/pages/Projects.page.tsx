@@ -5,6 +5,7 @@ import JsonLd from "@/components/JsonLd"
 import LoadError from "@/components/LoadError"
 import PageMeta from "@/components/PageMeta"
 import ProjectsEmptyState from "@/components/ProjectsEmptyState"
+import ProjectsExperiments from "@/components/ProjectsExperiments"
 import ProjectsFiltersModal from "@/components/ProjectsFiltersModal"
 import ProjectsGrid from "@/components/ProjectsGrid"
 import SearchInput from "@/components/SearchInput"
@@ -137,20 +138,11 @@ function ProjectsPage() {
                                         />
                                     )}
                                     {listState.experimentItems.length > 0 && (
-                                        <section className={css.experiments}>
-                                            <h2 className={css.experimentsHeading}>
-                                                {t("experiments.heading")}
-                                            </h2>
-                                            <p className={css.experimentsDescription}>
-                                                {t("experiments.description")}
-                                            </p>
-                                            <ProjectsGrid
-                                                projects={listState.experimentItems}
-                                                firstIndex={listState.mainItems.length}
-                                                headingLevel={3}
-                                                skeletonCount={listState.skeletonCount}
-                                            />
-                                        </section>
+                                        <ProjectsExperiments
+                                            projects={listState.experimentItems}
+                                            firstIndex={listState.mainItems.length}
+                                            skeletonCount={listState.skeletonCount}
+                                        />
                                     )}
                                 </div>
                             )}

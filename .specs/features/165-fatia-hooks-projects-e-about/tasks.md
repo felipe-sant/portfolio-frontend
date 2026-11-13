@@ -151,7 +151,7 @@ Sequencial (as três fases editam hooks e páginas que cada uma depende de si); 
     - **Feito quando:** a página usa `ProjectsGrid` nas duas grades e no esqueleto de carga; `ProjectListItem` e `SkeletonItems` saem da página e viram auxiliares locais de `ProjectsGrid.tsx`; `projects.module.css` perdeu `grid` e `item`; `ProjectsGridProps` local, `export default`, sem comentário; toda classe `css.x` existe no módulo novo com declaração idêntica à da `staging`; `Projects.page.test.tsx` sem edição e verde
     - **Evidência:** gate verde (typecheck, lint, ProjectsGrid.test.tsx 10 testes, Projects.page.test.tsx e useProjects.test.tsx); página usa ProjectsGrid no esqueleto de carga (projects=[]), na grade principal (esqueletos só sem experimentos) e em Experimentos (firstIndex = mainItems.length, headingLevel 3); ProjectListItem e SkeletonItems viraram auxiliares locais de ProjectsGrid.tsx; projects.module.css perdeu grid e item copiados literalmente; Projects.page.test.tsx sem edição. Nos testes, itens diretos por ':scope > ul > li' (o cartão tem li aninhados).
 
-- [ ] T12 — Componente `ProjectsExperiments`
+- [x] T12 — Componente `ProjectsExperiments`
     - **Arquivo(s):** `src/components/ProjectsExperiments.tsx`, `src/components/test/ProjectsExperiments.test.tsx`, `src/styles/components/projectsExperiments.module.css`, `src/styles/pages/projects.module.css` (remove as classes movidas), `src/pages/Projects.page.tsx`
     - **Depende de:** T11
     - **Testes (escritos antes, RED):** (`render` com props simuladas, sem store; texto em português)
@@ -160,7 +160,7 @@ Sequencial (as três fases editam hooks e páginas que cada uma depende de si); 
         - sem violação de axe (`expectNoAxeViolations(container)`)
     - **Gate:** `npm run typecheck && npm run lint && npm test -- --run --maxWorkers=2 src/components/test/ProjectsExperiments.test.tsx src/pages/test/Projects.page.test.tsx src/pages/hooks/test/useProjects.test.tsx`
     - **Feito quando:** a página usa `ProjectsExperiments`; `projects.module.css` perdeu `experiments`, `experimentsHeading` e `experimentsDescription`; `ProjectsExperimentsProps` local, `export default`, sem comentário; toda classe `css.x` existe no módulo novo com declaração idêntica à da `staging`; `Projects.page.test.tsx` sem edição e verde
-    - **Evidência:** ...
+    - **Evidência:** gate verde (typecheck, lint, ProjectsExperiments.test.tsx 5 testes, Projects.page.test.tsx e useProjects.test.tsx: 152 testes); página usa ProjectsExperiments (useTranslation('projects'), h2, descrição e ProjectsGrid com headingLevel 3); projects.module.css perdeu experiments, experimentsHeading e experimentsDescription copiados literalmente; Projects.page.test.tsx sem edição.
 
 - [ ] T13 — Componente `ProjectsResults`
     - **Arquivo(s):** `src/components/ProjectsResults.tsx`, `src/components/test/ProjectsResults.test.tsx`, `src/pages/Projects.page.tsx`

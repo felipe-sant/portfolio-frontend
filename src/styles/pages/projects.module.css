@@ -94,26 +94,6 @@
     color: var(--text-weak);
 }
 
-.experiments {
-    margin-top: clamp(2.5rem, 5vw, 4rem);
-}
-
-.experimentsHeading {
-    margin: 0 0 var(--space-2);
-    font-family: var(--font-heading);
-    font-size: var(--text-h2);
-    font-weight: var(--weight-bold);
-    color: var(--text-strong);
-}
-
-.experimentsDescription {
-    max-width: var(--measure);
-    margin: 0 0 var(--space-5);
-    font-size: var(--text-body-md);
-    line-height: var(--lh-body);
-    text-wrap: pretty;
-}
-
 .moreError {
     margin-top: var(--space-6);
 }
