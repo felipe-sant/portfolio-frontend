@@ -28,10 +28,10 @@
     - **Feito quando:** excesso 0 px a 360 px (e com zoom de 200%) com o espaçamento, nos três idiomas, e visual igual sem ele
     - **Evidência:** `.heading` com `overflow-wrap: anywhere` (`break-word` não bastou, medido); altura do `h1` igual ao anterior em todas as larguras medidas; E2E do título verde nos 3 idiomas e 2 temas. O zoom de 200% de uma janela de 720 px equivale a 360 px, coberto pelo mesmo teste.
 
-- [ ] T4 — Verificação final
+- [x] T4 — Verificação final
     - **Arquivo(s):** nenhum
     - **Depende de:** T2, T3
     - **Testes (escritos antes, RED):** não se aplica
     - **Gate:** `npm run typecheck && npm run lint && npx vitest --run --maxWorkers=2 src/components src/pages/test/Home.page.test.tsx`; CI do PR roda build e E2E
     - **Feito quando:** o gate passa e o CI do PR fica verde
-    - **Evidência:** (executor)
+    - **Evidência:** CI do PR #270 verde (Build, Lint, Test, Changeset, E2E e os 4 shards); typecheck, lint e 700 testes afetados verdes localmente.

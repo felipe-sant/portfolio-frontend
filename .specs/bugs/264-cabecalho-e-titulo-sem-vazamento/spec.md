@@ -1,7 +1,7 @@
 # Spec: Cabeçalho e título da Início sem vazamento com o espaçamento de texto
 
 > **Tipo:** `bug` <br />
-> **Status:** `em-andamento` <br />
+> **Status:** `implementada` <br />
 > **Issue:** `#264` e `#265` (mesmo PR; relacionadas à `#41`, sem fechá-la) <br />
 > **Criado em:** `12-11-2026`
 
@@ -37,11 +37,11 @@ Com o espaçamento de texto da WCAG 1.4.12 aplicado, nada corta nem vaza: o cabe
 
 ## Critérios de aceite
 
-- [ ] Com o espaçamento de texto da WCAG 1.4.12, o cabeçalho a 768 px não passa da largura da tela em pt-BR, en e es, nos dois temas, e nenhum item fica cortado ou escondido.
-- [ ] Com o mesmo espaçamento, o `h1` da Início a 360 px cabe em pt-BR, en e es, nos dois temas, sem rolagem horizontal; também cabe com zoom de 200%.
-- [ ] Sem o espaçamento aumentado, o visual do cabeçalho e do título é igual ao atual (nas larguras 360, 390, 768 e 1280 px).
-- [ ] Um E2E novo (`e2e/text-spacing.spec.ts`, ID `A11Y-G11` no título) aplica o espaçamento e confirma largura x idioma; o axe segue sem violações.
-- [ ] Nenhum comentário no código.
+- [x] Com o espaçamento de texto da WCAG 1.4.12, o cabeçalho a 768 px não passa da largura da tela em pt-BR, en e es, nos dois temas, e nenhum item fica cortado ou escondido.
+- [x] Com o mesmo espaçamento, o `h1` da Início a 360 px cabe em pt-BR, en e es, nos dois temas, sem rolagem horizontal; também cabe com zoom de 200%.
+- [x] Sem o espaçamento aumentado, o visual do cabeçalho e do título é igual ao atual (nas larguras 360, 390, 768 e 1280 px).
+- [x] Um E2E novo (`e2e/text-spacing.spec.ts`, ID `A11Y-G11` no título) aplica o espaçamento e confirma largura x idioma; o axe segue sem violações.
+- [x] Nenhum comentário no código.
 
 ## Estratégia de validação
 
