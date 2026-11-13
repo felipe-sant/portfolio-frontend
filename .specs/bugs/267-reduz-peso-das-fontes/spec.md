@@ -1,7 +1,7 @@
 # Spec: reduzir as fontes da primeira carga para até 160 KB
 
 > **Tipo:** `bug` <br />
-> **Status:** `em-revisao` <br />
+> **Status:** `em-andamento` <br />
 > **Issue:** `#267` (relacionada à #41, sem fechá-la) <br />
 > **Criado em:** `12-11-2026`
 
