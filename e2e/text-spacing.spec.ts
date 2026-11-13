@@ -22,7 +22,7 @@ async function readOverflow(page: Page) {
 
 test.describe("espaçamento de texto da WCAG 1.4.12", () => {
     for (const language of LANGUAGES) {
-        test(`A11Y-1.4.12: o cabeçalho a ${HEADER_WIDTH}px não passa da largura da tela em ${language}`, async ({
+        test(`A11Y-G11: o cabeçalho a ${HEADER_WIDTH}px não passa da largura da tela em ${language}`, async ({
             page
         }) => {
             await openHome(page, language, HEADER_WIDTH)
@@ -43,7 +43,7 @@ test.describe("espaçamento de texto da WCAG 1.4.12", () => {
             await expectNoAxeViolations(page)
         })
 
-        test(`A11Y-1.4.12: o título da Início cabe em ${TITLE_WIDTH}px em ${language}`, async ({
+        test(`A11Y-G11: o título da Início cabe em ${TITLE_WIDTH}px em ${language}`, async ({
             page
         }) => {
             await openHome(page, language, TITLE_WIDTH)
