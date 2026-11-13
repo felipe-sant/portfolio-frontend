@@ -1,15 +1,12 @@
 import { useDeferredValue, useState } from "react"
 import { useTranslation } from "react-i18next"
-import PROJECT_CATEGORIES from "@/enum/projectCategories.enum"
-import PROJECT_SORTS from "@/enum/projectSorts.enum"
-import PROJECT_TYPES from "@/enum/projectTypes.enum"
 import useDragScroll from "@/hooks/useDragScroll"
 import useLanguage from "@/hooks/useLanguage"
 import useShareImage from "@/hooks/useShareImage"
+import useProjectsFilterOptions from "@/pages/hooks/useProjectsFilterOptions"
 import useProjectsFilters from "@/pages/hooks/useProjectsFilters"
 import useProjectsPages from "@/pages/hooks/useProjectsPages"
 import useProjectsSeo from "@/pages/hooks/useProjectsSeo"
-import projectsApi from "@/store/api/projects.api"
 import buildProjectsQueryArgs from "@/utils/buildProjectsQueryArgs"
 import projectsElementIds from "@/utils/projectsElementIds"
 import splitExperiments from "@/utils/splitExperiments"
@@ -31,14 +28,8 @@ function useProjects() {
     } = useProjectsFilters()
     const { ref: filtersRef, dragProps: filtersDragProps } = useDragScroll<HTMLDivElement>()
     const pages = useProjectsPages(buildProjectsQueryArgs(language, filters))
-    const filterOptionsQuery = projectsApi.useGetProjectFilterOptionsQuery({ lang: language })
 
     const [isFiltersOpen, setIsFiltersOpen] = useState(false)
-    const appliedFilters = {
-        tech: filters.tech ?? [],
-        year: filters.year ?? [],
-        sort: filters.sort
-    }
 
     function openFilters() {
         setIsFiltersOpen(true)
@@ -71,6 +62,7 @@ function useProjects() {
             : t("results.count", { count: pages.total, shown: pages.shown })
     }
 
+    const filterOptions = useProjectsFilterOptions(filters, pages.availableTypes)
     const seo = useProjectsSeo(pages.firstPageItems)
     const { main: mainItems, experiments: experimentItems } = splitExperiments(pages.items)
     const currentResultsText = buildResultsText()
@@ -95,26 +87,10 @@ function useProjects() {
         setCategory,
         applyModalFilters,
         hasFilters,
-        filtersCount: appliedFilters.tech.length + appliedFilters.year.length,
-        appliedFilters,
+        ...filterOptions,
         isFiltersOpen,
         openFilters,
         closeFilters: () => setIsFiltersOpen(false),
-        typeValue: filters.type ?? "",
-        typeOptions: [
-            { value: "", label: t("filters.type.all") },
-            ...PROJECT_TYPES.filter((type) => pages.availableTypes.includes(type)).map((type) => ({
-                value: type,
-                label: t(`common:projectType.${type}`)
-            }))
-        ],
-        categoryOptions: PROJECT_CATEGORIES.map((category) => ({
-            value: category,
-            label: t(`filters.category.${category}`)
-        })),
-        technologyOptions: filterOptionsQuery.currentData?.technologies ?? [],
-        yearOptions: filterOptionsQuery.currentData?.years ?? [],
-        sortOptions: PROJECT_SORTS.map((sort) => ({ value: sort, label: t(`sort.${sort}`) })),
         resultsText,
         isEmptyContent,
         isNoResults,

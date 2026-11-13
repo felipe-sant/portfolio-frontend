@@ -91,7 +91,7 @@ Sequencial (as três fases editam hooks e páginas que cada uma depende de si); 
     - **Feito quando:** o gate passa; o describe "JSON-LD do primeiro lote" (669) segue verde com a mesma asserção, só com acessor novo
     - **Evidência:** gate verde (typecheck, lint, 3 arquivos, 151 testes). useProjectsSeo.test.tsx: "devolve os dois JSON-LD indefinidos sem itens" (toEqual({ jsonLd: undefined, breadcrumbJsonLd: undefined })) e it.each pt-BR/en/es (toMatchObject com name/description do idioma, itens Primeiro/Segundo, breadcrumb Início/Projetos e URLs com `/<idioma>"` e `/<idioma>/projects"`). Describe "JSON-LD do primeiro lote" sem mudança de asserção, só `latest.seo.jsonLd`.
 
-- [ ] T7 — Hook `useProjectsFilterOptions`
+- [x] T7 — Hook `useProjectsFilterOptions`
     - **Arquivo(s):** `src/pages/hooks/useProjectsFilterOptions.ts`, `src/pages/hooks/test/useProjectsFilterOptions.test.tsx`, `src/pages/hooks/useProjects.ts`
     - **Depende de:** T6
     - **Testes (escritos antes, RED):** (store real com `stubContentFetch`, como em `useProjects.test.tsx`)
@@ -103,7 +103,7 @@ Sequencial (as três fases editam hooks e páginas que cada uma depende de si); 
         - muda o idioma: refaz a consulta de opções uma vez (VAL-165-07; herda 821)
     - **Gate:** `npm run typecheck && npm run lint && npm test -- --run --maxWorkers=2 src/pages/hooks/test/useProjectsFilterOptions.test.tsx src/pages/hooks/test/useProjects.test.tsx src/pages/test/Projects.page.test.tsx`
     - **Feito quando:** o gate passa; `useProjects` não chama mais `projectsApi.useGetProjectFilterOptionsQuery` nem importa os enums de opções
-    - **Evidência:** ...
+    - **Evidência:** gate verde (typecheck, lint, 3 arquivos, 155 testes). useProjectsFilterOptions.test.tsx (8 it): "Todos" primeiro e só disponíveis na ordem do enum (toEqual(["", "web", "api", "iot"])), typeValue, categorias e ordenações do enum, technologyOptions/yearOptions vazias e depois do endpoint, perfil falhando mantém vazias, filtersCount 3 (só tech e year) e appliedFilters com sort, mudança de idioma refaz a consulta uma vez por idioma (originalArgs [{lang:"pt-BR"},{lang:"en"}]). `useProjects` não chama mais `useGetProjectFilterOptionsQuery` nem importa os enums de opções.
 
 - [ ] T8 — Hook `useProjectsResults`
     - **Arquivo(s):** `src/pages/hooks/useProjectsResults.ts`, `src/pages/hooks/test/useProjectsResults.test.tsx`, `src/pages/hooks/useProjects.ts`
