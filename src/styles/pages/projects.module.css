@@ -26,13 +26,3 @@
     line-height: var(--lh-body);
     text-wrap: pretty;
 }
-
-.moreError {
-    margin-top: var(--space-6);
-}
-
-.more {
-    display: flex;
-    justify-content: center;
-    margin-top: clamp(2rem, 4vw, 3rem);
-}

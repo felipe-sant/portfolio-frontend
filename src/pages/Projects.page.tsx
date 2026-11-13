@@ -1,10 +1,9 @@
-import Button from "@/components/Button"
 import JsonLd from "@/components/JsonLd"
-import LoadError from "@/components/LoadError"
 import PageMeta from "@/components/PageMeta"
 import ProjectsEmptyState from "@/components/ProjectsEmptyState"
 import ProjectsFilterBar from "@/components/ProjectsFilterBar"
 import ProjectsFiltersModal from "@/components/ProjectsFiltersModal"
+import ProjectsLoadMore from "@/components/ProjectsLoadMore"
 import ProjectsResults from "@/components/ProjectsResults"
 import ProjectsSummary from "@/components/ProjectsSummary"
 import ProjectsToolbar from "@/components/ProjectsToolbar"
@@ -60,27 +59,11 @@ function ProjectsPage() {
                             query={filters.q}
                             onClearFilters={results.clearFilters}
                         />
-                        {more.loadMoreError && (
-                            <div className={css.moreError}>
-                                <LoadError
-                                    id={ids.loadMoreAlert}
-                                    title={t("loadMoreError.heading")}
-                                    retryLabel={t("loadMoreError.retry")}
-                                    onRetry={more.retryLoadMore}
-                                />
-                            </div>
-                        )}
-                        {more.hasMore && !list.isError && (
-                            <div className={css.more}>
-                                <Button
-                                    variant="secondary"
-                                    loading={more.isFetchingMore}
-                                    onClick={more.loadMore}
-                                >
-                                    {t("loadMore")}
-                                </Button>
-                            </div>
-                        )}
+                        <ProjectsLoadMore
+                            more={more}
+                            alertId={ids.loadMoreAlert}
+                            isListError={list.isError}
+                        />
                         <ProjectsFiltersModal
                             isOpen={modal.isOpen}
                             technologies={modal.technologyOptions}

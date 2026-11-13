@@ -212,7 +212,7 @@ Sequencial (as três fases editam hooks e páginas que cada uma depende de si); 
     - **Feito quando:** a página usa `ProjectsSummary` com `results.canClearFilters`; `projects.module.css` perdeu `summary` e `count`; `ProjectsSummaryProps` local, `export default`, sem comentário; toda classe `css.x` existe no módulo novo com declaração idêntica à da `staging`; `Projects.page.test.tsx` sem edição e verde
     - **Evidência:** gate verde (typecheck, lint, ProjectsSummary.test.tsx 5 testes, Projects.page.test.tsx e useProjects.test.tsx: 152 testes); página usa ProjectsSummary com results.text, results.canClearFilters e results.clearFilters; <p role={"status"}> segue um único nó (teste de rerender confere o mesmo nó); projects.module.css perdeu summary e count copiados literalmente; Projects.page.test.tsx sem edição.
 
-- [ ] T17 — Componente `ProjectsLoadMore`
+- [x] T17 — Componente `ProjectsLoadMore`
     - **Arquivo(s):** `src/components/ProjectsLoadMore.tsx`, `src/components/test/ProjectsLoadMore.test.tsx`, `src/styles/components/projectsLoadMore.module.css`, `src/styles/pages/projects.module.css` (remove as classes movidas), `src/pages/Projects.page.tsx`
     - **Depende de:** T16
     - **Testes (escritos antes, RED):** (`render` com props simuladas, sem store; texto em português)
@@ -222,7 +222,7 @@ Sequencial (as três fases editam hooks e páginas que cada uma depende de si); 
         - sem violação de axe (`expectNoAxeViolations(container)`)
     - **Gate:** `npm run typecheck && npm run lint && npm test -- --run --maxWorkers=2 src/components/test/ProjectsLoadMore.test.tsx src/pages/test/Projects.page.test.tsx src/pages/hooks/test/useProjects.test.tsx`
     - **Feito quando:** a página usa `ProjectsLoadMore`; `projects.module.css` fica só com `container`, `heading` e `intro`; `Projects.page.tsx` tem no máximo cerca de 90 linhas, desestrutura no máximo 12 nomes e não importa mais `Button`, `AsyncSection`, `FilterGroup`, `SearchInput`, `LoadError`, `ProjectCard` nem `ProjectCardSkeleton` (VAL-165-08, 12 e 13); `ProjectsLoadMoreProps` local, `export default`, sem comentário; toda classe `css.x` existe no módulo novo com declaração idêntica à da `staging`; `Projects.page.test.tsx` sem edição e verde
-    - **Evidência:** ...
+    - **Evidência:** gate verde (typecheck, lint, ProjectsLoadMore.test.tsx 7 testes, Projects.page.test.tsx e useProjects.test.tsx 147 testes); página usa ProjectsLoadMore (more inteiro, alertId=ids.loadMoreAlert, isListError=list.isError); Projects.page.tsx com 83 linhas, desestrutura 11 nomes e não importa mais Button, AsyncSection, FilterGroup, SearchInput, LoadError, ProjectCard nem ProjectCardSkeleton; projects.module.css ficou só com container, heading (e heading:focus) e intro; moreError e more copiados literalmente; Projects.page.test.tsx sem edição.
 
 - [ ] T18 — Documentação
     - **Arquivo(s):** `docs/screens/about.md` (parágrafo de `useAbout`, linha cerca de 454), `docs/screens/projects.md` (Implementação de `useProjects` e dos componentes novos), `docs/architecture/components.md` (catálogo: acrescentar os oito componentes e trocar a menção ao `ProjectListItem` local da página), `docs/architecture/frontend.md` se citar hooks ou o formato antigo, e qualquer outro `docs/` achado por `grep -rn "useProjects\|useAbout\|ProjectListItem" docs/` que cite o formato antigo
