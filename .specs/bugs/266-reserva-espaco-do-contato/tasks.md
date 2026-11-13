@@ -39,7 +39,7 @@ Pré-requisito: o PO responde as questões em aberto 1 a 3 da spec; mudou a resp
     - **Feito quando:** o gate passa; CLS ≤ 0,02 nas três rotas de Contato e igual ou menor nas outras; tabela antes e depois pronta para o PR; captura carregada igual à da `staging`
     - **Evidência:** (executor)
 
-- [ ] T4 — Documentação e verificação completa
+- [x] T4 — Documentação e verificação completa
     - **Arquivo(s):** `docs/setup/e2e-performance.md` (ou `docs/design/design-system.md`)
     - **Depende de:** T3
     - **Testes (escritos antes, RED):** não se aplica (documentação)

@@ -1,7 +1,7 @@
 # Spec: reserva de espaço na tela Contato para o layout não pular no celular
 
 > **Tipo:** `bug` <br />
-> **Status:** `em-andamento` <br />
+> **Status:** `implementada` <br />
 > **Issue:** `#266` (relacionada à #41, sem fechá-la) <br />
 > **Criado em:** `12-11-2026`
 
