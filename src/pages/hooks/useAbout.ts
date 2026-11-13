@@ -10,6 +10,7 @@ import ROUTES from "@/routers/paths"
 import profileApi from "@/store/api/profile.api"
 import timelineApi from "@/store/api/timeline.api"
 import type TimelineItem from "@/types/timeline/TimelineItem.types"
+import aboutElementIds from "@/utils/aboutElementIds"
 import buildAboutJsonLd from "@/utils/buildAboutJsonLd"
 import formatMonthYear from "@/utils/formatMonthYear"
 import sortStackGroups from "@/utils/sortStackGroups"
@@ -25,13 +26,6 @@ type FocusableName = `${RetrySource}Heading` | `${RetrySource}Alert`
 type SelectedItem = {
     item: TimelineItem
     pathname: string
-}
-
-const FOCUS_IDS: Record<FocusableName, string> = {
-    profileHeading: "about-hero-heading",
-    profileAlert: "about-profile-alert",
-    timelineHeading: "about-trajectory-heading",
-    timelineAlert: "about-timeline-alert"
 }
 
 function useAbout() {
@@ -80,7 +74,7 @@ function useAbout() {
         }
         const isError = source === "profile" ? isProfileError : isTimelineError
         const target: FocusableName = isError ? `${source}Alert` : `${source}Heading`
-        const element = document.getElementById(FOCUS_IDS[target])
+        const element = document.getElementById(aboutElementIds[target])
         if (element) {
             element.focus()
             handledRetry.current = retryRequest
@@ -132,7 +126,7 @@ function useAbout() {
         isLoading: profileQuery.isLoading || timelineQuery.isLoading,
         resume,
         paths: { contact: localizedPath(ROUTES.contact) },
-        ids: FOCUS_IDS,
+        ids: aboutElementIds,
         profile: {
             data: profile,
             isLoading: profileQuery.isLoading,

@@ -36,14 +36,14 @@ Sequencial (as três fases editam hooks e páginas que cada uma depende de si); 
     - **Feito quando:** o gate passa contra o código sem fatiar (se algum caso falhar, é bug real: parar e avisar o Orc em vez de mudar o código) e cada lacuna da spec tem um `it` identificável
     - **Evidência:** verde contra o código sem fatiar (3 arquivos, 164 testes). Lacunas: useAbout.test.tsx "foca o alerta da trajetória quando o retry da trajetória falha de novo" (expect(alert).toHaveFocus()), "foca o título do perfil quando o retry do perfil dá certo" (expect(heading).toHaveFocus()), "não refoca depois de tratado..." (expect(heading).not.toHaveFocus()); useProjects.test.tsx describe "breadcrumb do primeiro lote" (toBeUndefined, depois BreadcrumbList com Início antes de Projetos) e "conteúdo vazio e sem resultado" (isEmptyContent x isNoResults com e sem filtro); Projects.page.test.tsx dois `it` novos "não mostra Limpar filtros com filtro aplicado e a lista com erro" / "...enquanto a lista carrega" (queryByRole(...).not.toBeInTheDocument()), só adições.
 
-- [ ] T2 — Util `aboutElementIds`
+- [x] T2 — Util `aboutElementIds`
     - **Arquivo(s):** `src/utils/aboutElementIds.ts`, `src/utils/test/aboutElementIds.test.ts`, `src/pages/hooks/useAbout.ts` (troca `FOCUS_IDS` pelo util, ids com os mesmos valores)
     - **Depende de:** T1
     - **Testes (escritos antes, RED):**
         - os quatro ids têm os valores atuais (`about-hero-heading`, `about-profile-alert`, `about-trajectory-heading`, `about-timeline-alert`) (VAL-165-01) em `src/utils/test/aboutElementIds.test.ts`
     - **Gate:** `npm run typecheck && npm run lint && npm test -- --run --maxWorkers=2 src/utils/test/aboutElementIds.test.ts src/pages/hooks/test/useAbout.test.tsx src/pages/test/About.page.test.tsx`
     - **Feito quando:** o gate passa e `FOCUS_IDS` não existe mais
-    - **Evidência:** ...
+    - **Evidência:** gate verde (typecheck, lint, 3 arquivos, 61 testes); `FOCUS_IDS` removido; src/utils/test/aboutElementIds.test.ts "mantém os quatro ids de foco" (expect(aboutElementIds).toEqual({...os quatro valores})).
 
 - [ ] T3 — Hook `useTrajectorySelection`
     - **Arquivo(s):** `src/pages/hooks/useTrajectorySelection.ts`, `src/pages/hooks/test/useTrajectorySelection.test.tsx`, `src/pages/hooks/useAbout.ts` (passa a chamar o hook e a devolver `trajectory: { selectedItem, open, close, registerTrigger }`), `src/pages/hooks/test/useAbout.test.tsx` e `src/pages/About.page.tsx` (só acessores: `selectedItem`/`open`/`close`/`registerTrigger` viram `trajectory.*`)
