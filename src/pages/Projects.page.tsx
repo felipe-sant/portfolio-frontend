@@ -4,50 +4,16 @@ import FilterGroup from "@/components/FilterGroup"
 import JsonLd from "@/components/JsonLd"
 import LoadError from "@/components/LoadError"
 import PageMeta from "@/components/PageMeta"
-import ProjectCard from "@/components/ProjectCard"
-import ProjectCardSkeleton from "@/components/ProjectCardSkeleton"
 import ProjectsEmptyState from "@/components/ProjectsEmptyState"
 import ProjectsFiltersModal from "@/components/ProjectsFiltersModal"
+import ProjectsGrid from "@/components/ProjectsGrid"
 import SearchInput from "@/components/SearchInput"
 import useProjects from "@/pages/hooks/useProjects"
 import ROUTES from "@/routers/paths"
 import css from "@/styles/pages/projects.module.css"
-import type ProjectSummary from "@/types/project/ProjectSummary.types"
 import projectsPageSize from "@/utils/projectsPageSize"
 
-interface SkeletonItemsProps {
-    count: number
-}
-
-interface ProjectListItemProps {
-    project: ProjectSummary
-    index: number
-    headingLevel?: 2 | 3
-}
-
 const SEARCH_MAX_LENGTH = 100
-
-function SkeletonItems({ count }: SkeletonItemsProps) {
-    return Array.from({ length: count }, (_value, index) => (
-        <li key={index} className={css.item} aria-hidden="true">
-            <ProjectCardSkeleton />
-        </li>
-    ))
-}
-
-function ProjectListItem({ project, index, headingLevel }: ProjectListItemProps) {
-    return (
-        <li className={css.item}>
-            <ProjectCard
-                project={project}
-                index={index}
-                revealIndex={index % projectsPageSize}
-                headingLevel={headingLevel}
-                fromProjects
-            />
-        </li>
-    )
-}
 
 function ProjectsPage() {
     const { t, shareImage, ids, seo, filters, search, filterBar, modal, results, list, more } =
@@ -133,9 +99,7 @@ function ProjectsPage() {
                             isLoading={listState.isLoading}
                             isError={listState.isError}
                             skeleton={
-                                <ul className={css.grid}>
-                                    <SkeletonItems count={projectsPageSize} />
-                                </ul>
+                                <ProjectsGrid projects={[]} skeletonCount={projectsPageSize} />
                             }
                             error={{
                                 title: t("error.heading"),
@@ -163,18 +127,14 @@ function ProjectsPage() {
                                 <div ref={gridRef}>
                                     {(listState.mainItems.length > 0 ||
                                         listState.experimentItems.length === 0) && (
-                                        <ul className={css.grid}>
-                                            {listState.mainItems.map((project, index) => (
-                                                <ProjectListItem
-                                                    key={project.id}
-                                                    project={project}
-                                                    index={index}
-                                                />
-                                            ))}
-                                            {listState.experimentItems.length === 0 && (
-                                                <SkeletonItems count={listState.skeletonCount} />
-                                            )}
-                                        </ul>
+                                        <ProjectsGrid
+                                            projects={listState.mainItems}
+                                            skeletonCount={
+                                                listState.experimentItems.length === 0
+                                                    ? listState.skeletonCount
+                                                    : 0
+                                            }
+                                        />
                                     )}
                                     {listState.experimentItems.length > 0 && (
                                         <section className={css.experiments}>
@@ -184,17 +144,12 @@ function ProjectsPage() {
                                             <p className={css.experimentsDescription}>
                                                 {t("experiments.description")}
                                             </p>
-                                            <ul className={css.grid}>
-                                                {listState.experimentItems.map((project, index) => (
-                                                    <ProjectListItem
-                                                        key={project.id}
-                                                        project={project}
-                                                        index={listState.mainItems.length + index}
-                                                        headingLevel={3}
-                                                    />
-                                                ))}
-                                                <SkeletonItems count={listState.skeletonCount} />
-                                            </ul>
+                                            <ProjectsGrid
+                                                projects={listState.experimentItems}
+                                                firstIndex={listState.mainItems.length}
+                                                headingLevel={3}
+                                                skeletonCount={listState.skeletonCount}
+                                            />
                                         </section>
                                     )}
                                 </div>

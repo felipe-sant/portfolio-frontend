@@ -94,15 +94,6 @@
     color: var(--text-weak);
 }
 
-.grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 1fr));
-    gap: clamp(1.75rem, 3vw, 2.25rem) clamp(1.25rem, 2.5vw, 1.75rem);
-    margin: 0;
-    padding: 0;
-    list-style: none;
-}
-
 .experiments {
     margin-top: clamp(2.5rem, 5vw, 4rem);
 }
@@ -121,10 +112,6 @@
     font-size: var(--text-body-md);
     line-height: var(--lh-body);
     text-wrap: pretty;
-}
-
-.item {
-    min-width: 0;
 }
 
 .moreError {
