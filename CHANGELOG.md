@@ -1,5 +1,43 @@
 # portfolio-frontend
 
+## 1.4.0
+
+### Minor Changes
+
+- [#242](https://github.com/felipe-sant/portfolio-frontend/pull/242) [`38b049c`](https://github.com/felipe-sant/portfolio-frontend/commit/38b049c7f2fb0b0c5f8c704778df4602eef07fe2) Thanks [@felipe-sant](https://github.com/felipe-sant)! - Publica os arquivos para IA (llms.txt) também em inglês e espanhol, troca o e-mail desses arquivos por um link para a página de Contato e declara no robots.txt a política de uso por IA com Content-Signal.
+
+- [#259](https://github.com/felipe-sant/portfolio-frontend/pull/259) [`a0fcd41`](https://github.com/felipe-sant/portfolio-frontend/commit/a0fcd413937d1c779aaf27d83dfabcd98b21f1c2) Thanks [@felipe-sant](https://github.com/felipe-sant)! - Mostra a data da última atualização na página Informações, preenche a data de atualização de todas as páginas no sitemap, tira as páginas de licença do sitemap com marcação para não indexar e dá a cada página de documentação uma descrição própria.
+
+- [#251](https://github.com/felipe-sant/portfolio-frontend/pull/251) [`2d7281d`](https://github.com/felipe-sant/portfolio-frontend/commit/2d7281d99017ed7c9d7226da09d79e2b8688eace) Thanks [@felipe-sant](https://github.com/felipe-sant)! - Acrescenta o caminho de navegação (Início, Projetos, projeto e documento) aos dados estruturados das páginas de Projetos, Projeto e documento, e passa a provar com teste cada campo dos dados estruturados do projeto nos três idiomas e nos seis projetos reais.
+
+### Patch Changes
+
+- [#262](https://github.com/felipe-sant/portfolio-frontend/pull/262) [`d999338`](https://github.com/felipe-sant/portfolio-frontend/commit/d99933821e7e82df14223999b560953bd6b091d0) Thanks [@felipe-sant](https://github.com/felipe-sant)! - Extrai AsyncSection e Section e divide a página Informações em partes, sem mudança visual.
+
+- [#271](https://github.com/felipe-sant/portfolio-frontend/pull/271) [`ececcf4`](https://github.com/felipe-sant/portfolio-frontend/commit/ececcf41ede5fce47507b5ea511443089d18d52c) Thanks [@felipe-sant](https://github.com/felipe-sant)! - Evita o salto de layout da tela Contato no celular ao carregar as fontes, com uma fonte reserva de métricas ajustadas para a IBM Plex Sans.
+
+- [#243](https://github.com/felipe-sant/portfolio-frontend/pull/243) [`1e98766`](https://github.com/felipe-sant/portfolio-frontend/commit/1e9876687d56220a989cf09244ca802e37d89c85) Thanks [@felipe-sant](https://github.com/felipe-sant)! - Inclui o cargo e a stack no título da página inicial nos três idiomas e completa as tags de compartilhamento do Twitter (título, descrição, imagem e texto alternativo da imagem) com os mesmos valores do Open Graph.
+
+- [#270](https://github.com/felipe-sant/portfolio-frontend/pull/270) [`b2ea025`](https://github.com/felipe-sant/portfolio-frontend/commit/b2ea02592a777417f4fd6fbcab305d765523733d) Thanks [@felipe-sant](https://github.com/felipe-sant)! - Impede que o cabeçalho (a 768 px) e o título da Início (a 360 px) passem da largura da tela quando o leitor aumenta o espaçamento do texto, nos três idiomas.
+
+- [#245](https://github.com/felipe-sant/portfolio-frontend/pull/245) [`164c1d0`](https://github.com/felipe-sant/portfolio-frontend/commit/164c1d0fa53941b62e1ab656bf3e59ad070683bb) Thanks [@felipe-sant](https://github.com/felipe-sant)! - Aumenta para 44 px o alvo do link de título dos projetos em destaque da página inicial no celular, acerta a proporção 16:9 das capas e adiciona o esmaecimento na borda da linha de filtros de Projetos no celular.
+
+- [#244](https://github.com/felipe-sant/portfolio-frontend/pull/244) [`f81fea3`](https://github.com/felipe-sant/portfolio-frontend/commit/f81fea3d5ef7f7ef8f385b53bdfb83d5fb67e985) Thanks [@felipe-sant](https://github.com/felipe-sant)! - Divide o JavaScript por página e carrega os textos de cada idioma sob demanda, reduzindo o pacote de entrada e o tempo de bloqueio na abertura das páginas.
+
+- [#272](https://github.com/felipe-sant/portfolio-frontend/pull/272) [`456c4db`](https://github.com/felipe-sant/portfolio-frontend/commit/456c4db62fa15332ff6ac406f606b132297156cf) Thanks [@felipe-sant](https://github.com/felipe-sant)! - Reduz as fontes da primeira carga para menos de 160 KB, sem tirar peso nem família e sem mudar a aparência.
+
+- [#257](https://github.com/felipe-sant/portfolio-frontend/pull/257) [`13e116d`](https://github.com/felipe-sant/portfolio-frontend/commit/13e116da620dd1bd139fb08b8f557814b3ae5116) Thanks [@felipe-sant](https://github.com/felipe-sant)! - Dá conteúdo à página inicial sem idioma: ela passa a trazer, sem JavaScript, links para os três idiomas, endereço canônico e versões por idioma, e o redirecionamento com JavaScript continua igual.
+
+- [#252](https://github.com/felipe-sant/portfolio-frontend/pull/252) [`968b648`](https://github.com/felipe-sant/portfolio-frontend/commit/968b648e84dc375f76337d97faae38c3050cacda) Thanks [@felipe-sant](https://github.com/felipe-sant)! - Gera uma imagem de compartilhamento própria para Início, Projetos, Informações e Contato em cada idioma, com texto alternativo traduzido, e usa a imagem de Projetos como reserva na tela de um projeto sem captura.
+
+- [#269](https://github.com/felipe-sant/portfolio-frontend/pull/269) [`1a61132`](https://github.com/felipe-sant/portfolio-frontend/commit/1a61132d470ce0d7ea71bd74a236f9849ec7ac86) Thanks [@felipe-sant](https://github.com/felipe-sant)! - Reorganiza o código das páginas Informações e Projetos em partes menores, sem mudar o que aparece na tela nem o comportamento de foco e navegação por teclado.
+
+- [#260](https://github.com/felipe-sant/portfolio-frontend/pull/260) [`56dc92c`](https://github.com/felipe-sant/portfolio-frontend/commit/56dc92c8379055ff778bafaa4948015a1dd14574) Thanks [@felipe-sant](https://github.com/felipe-sant)! - Valida o formato dos arquivos de conteúdo antes de usá-los: um arquivo fora do formato esperado passa a gerar erro claro em vez de dados quebrados na tela.
+
+- [#255](https://github.com/felipe-sant/portfolio-frontend/pull/255) [`10b4376`](https://github.com/felipe-sant/portfolio-frontend/commit/10b4376c6f5eef2ec71e09207fd49a4137f90891) Thanks [@felipe-sant](https://github.com/felipe-sant)! - Centraliza a leitura do idioma ativo em um hook `useLanguage`, que substitui a expressão repetida em páginas, hooks e componentes, sem mudar o comportamento.
+
+- [#263](https://github.com/felipe-sant/portfolio-frontend/pull/263) [`cfd6d4e`](https://github.com/felipe-sant/portfolio-frontend/commit/cfd6d4ead3dd1faf761fc7096673e745cbd3c42f) Thanks [@felipe-sant](https://github.com/felipe-sant)! - Extrai o try/catch repetido dos endpoints de conteúdo em um helper runQueryFn, sem mudar o comportamento.
+
 ## 1.3.1
 
 ### Patch Changes
