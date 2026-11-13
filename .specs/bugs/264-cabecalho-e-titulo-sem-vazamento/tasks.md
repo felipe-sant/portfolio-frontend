@@ -10,7 +10,7 @@
     - **Testes (escritos antes, RED):** com o espaçamento de 1.4.12 aplicado, o cabeçalho a 768 px e o `h1` da Início a 360 px não passam da largura da tela em pt-BR, en e es (critérios 1, 2 e 4 da spec); axe sem violações
     - **Gate:** `npm run typecheck && npm run lint` localmente; o E2E roda no CI (falha antes do CSS, passa depois)
     - **Feito quando:** o teste cobre os dois pontos nos três idiomas e entra em exatamente uma lista de `specClassification.ts`
-    - **Evidência:** E2E novo `e2e/text-spacing.spec.ts` na lista `perEnvironmentSpecs`; vermelho antes do CSS (cabeçalho 4 px pt-BR e 24 px es, título 9 px pt-BR; en passa), rodado local em porta própria (4190) com build:fatec.
+    - **Evidência:** E2E novo `e2e/text-spacing.spec.ts` na lista `perEnvironmentSpecs`; roda nos projetos claro e escuro do Playwright por estar em `perEnvironmentSpecs`; vermelho antes do CSS (cabeçalho 4 px pt-BR e 24 px es, título 9 px pt-BR; en passa), rodado local em porta própria (4190) com build:fatec.
 
 - [x] T2 — Cabeçalho sem vazamento a 768 px (#264)
     - **Arquivo(s):** `src/styles/components/header.module.css`

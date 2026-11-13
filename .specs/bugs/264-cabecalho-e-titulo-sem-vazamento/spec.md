@@ -40,7 +40,7 @@ Com o espaçamento de texto da WCAG 1.4.12 aplicado, nada corta nem vaza: o cabe
 - [ ] Com o espaçamento de texto da WCAG 1.4.12, o cabeçalho a 768 px não passa da largura da tela em pt-BR, en e es, nos dois temas, e nenhum item fica cortado ou escondido.
 - [ ] Com o mesmo espaçamento, o `h1` da Início a 360 px cabe em pt-BR, en e es, nos dois temas, sem rolagem horizontal; também cabe com zoom de 200%.
 - [ ] Sem o espaçamento aumentado, o visual do cabeçalho e do título é igual ao atual (nas larguras 360, 390, 768 e 1280 px).
-- [ ] Um E2E novo (`e2e/text-spacing.spec.ts`, ID do requisito de 1.4.12 no título) aplica o espaçamento e confirma largura x idioma; o axe segue sem violações.
+- [ ] Um E2E novo (`e2e/text-spacing.spec.ts`, ID `A11Y-G11` no título) aplica o espaçamento e confirma largura x idioma; o axe segue sem violações.
 - [ ] Nenhum comentário no código.
 
 ## Estratégia de validação
