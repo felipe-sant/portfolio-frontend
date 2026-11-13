@@ -162,7 +162,7 @@ Sequencial (as três fases editam hooks e páginas que cada uma depende de si); 
     - **Feito quando:** a página usa `ProjectsExperiments`; `projects.module.css` perdeu `experiments`, `experimentsHeading` e `experimentsDescription`; `ProjectsExperimentsProps` local, `export default`, sem comentário; toda classe `css.x` existe no módulo novo com declaração idêntica à da `staging`; `Projects.page.test.tsx` sem edição e verde
     - **Evidência:** gate verde (typecheck, lint, ProjectsExperiments.test.tsx 5 testes, Projects.page.test.tsx e useProjects.test.tsx: 152 testes); página usa ProjectsExperiments (useTranslation('projects'), h2, descrição e ProjectsGrid com headingLevel 3); projects.module.css perdeu experiments, experimentsHeading e experimentsDescription copiados literalmente; Projects.page.test.tsx sem edição.
 
-- [ ] T13 — Componente `ProjectsResults`
+- [x] T13 — Componente `ProjectsResults`
     - **Arquivo(s):** `src/components/ProjectsResults.tsx`, `src/components/test/ProjectsResults.test.tsx`, `src/pages/Projects.page.tsx`
     - **Depende de:** T12
     - **Testes (escritos antes, RED):** (`render` com props simuladas, sem store; texto em português)
@@ -174,7 +174,7 @@ Sequencial (as três fases editam hooks e páginas que cada uma depende de si); 
         - sem violação de axe (`expectNoAxeViolations(container)`)
     - **Gate:** `npm run typecheck && npm run lint && npm test -- --run --maxWorkers=2 src/components/test/ProjectsResults.test.tsx src/pages/test/Projects.page.test.tsx src/pages/hooks/test/useProjects.test.tsx`
     - **Feito quando:** a página usa `ProjectsResults` no lugar de `AsyncSection` com a grade e o sem resultados, e o `ProjectsEmptyState` do sem resultados passa a viver nele; sem módulo CSS próprio (a tarefa não move classe); `ProjectsResultsProps` local, `export default`, sem comentário; o componente não importa CSS Module; `Projects.page.test.tsx` sem edição e verde
-    - **Evidência:** ...
+    - **Evidência:** gate verde (typecheck, lint, ProjectsResults.test.tsx 9 testes, Projects.page.test.tsx e useProjects.test.tsx: 156 testes); página usa ProjectsResults (list inteiro, isNoResults, query=filters.q, onClearFilters); o componente desestrutura gridRef de list (sem violação de react/refs) e não importa CSS Module; Projects.page.test.tsx sem edição.
 
 - [ ] T14 — Componente `ProjectsToolbar`
     - **Arquivo(s):** `src/components/ProjectsToolbar.tsx`, `src/components/test/ProjectsToolbar.test.tsx`, `src/styles/components/projectsToolbar.module.css`, `src/styles/pages/projects.module.css` (remove as classes movidas), `src/pages/Projects.page.tsx`

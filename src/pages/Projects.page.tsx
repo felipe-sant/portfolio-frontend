@@ -1,18 +1,15 @@
 import Button from "@/components/Button"
-import AsyncSection from "@/components/AsyncSection"
 import FilterGroup from "@/components/FilterGroup"
 import JsonLd from "@/components/JsonLd"
 import LoadError from "@/components/LoadError"
 import PageMeta from "@/components/PageMeta"
 import ProjectsEmptyState from "@/components/ProjectsEmptyState"
-import ProjectsExperiments from "@/components/ProjectsExperiments"
 import ProjectsFiltersModal from "@/components/ProjectsFiltersModal"
-import ProjectsGrid from "@/components/ProjectsGrid"
+import ProjectsResults from "@/components/ProjectsResults"
 import SearchInput from "@/components/SearchInput"
 import useProjects from "@/pages/hooks/useProjects"
 import ROUTES from "@/routers/paths"
 import css from "@/styles/pages/projects.module.css"
-import projectsPageSize from "@/utils/projectsPageSize"
 
 const SEARCH_MAX_LENGTH = 100
 
@@ -20,7 +17,6 @@ function ProjectsPage() {
     const { t, shareImage, ids, seo, filters, search, filterBar, modal, results, list, more } =
         useProjects()
     const { ref: filterBarRef, dragProps, ...bar } = filterBar
-    const { gridRef, ...listState } = list
 
     return (
         <>
@@ -96,57 +92,12 @@ function ProjectsPage() {
                                 </Button>
                             )}
                         </div>
-                        <AsyncSection
-                            isLoading={listState.isLoading}
-                            isError={listState.isError}
-                            skeleton={
-                                <ProjectsGrid projects={[]} skeletonCount={projectsPageSize} />
-                            }
-                            error={{
-                                title: t("error.heading"),
-                                description: t("error.description"),
-                                retryLabel: t("error.retry"),
-                                onRetry: listState.retry
-                            }}
-                        >
-                            {results.isNoResults && !listState.isError && (
-                                <ProjectsEmptyState
-                                    heading={t("noResults.heading")}
-                                    description={
-                                        filters.q === ""
-                                            ? t("noResults.withoutSearch")
-                                            : t("noResults.withSearch", { query: filters.q })
-                                    }
-                                    action={
-                                        <Button variant="secondary" onClick={results.clearFilters}>
-                                            {t("results.clearFilters")}
-                                        </Button>
-                                    }
-                                />
-                            )}
-                            {!listState.isError && !results.isNoResults && (
-                                <div ref={gridRef}>
-                                    {(listState.mainItems.length > 0 ||
-                                        listState.experimentItems.length === 0) && (
-                                        <ProjectsGrid
-                                            projects={listState.mainItems}
-                                            skeletonCount={
-                                                listState.experimentItems.length === 0
-                                                    ? listState.skeletonCount
-                                                    : 0
-                                            }
-                                        />
-                                    )}
-                                    {listState.experimentItems.length > 0 && (
-                                        <ProjectsExperiments
-                                            projects={listState.experimentItems}
-                                            firstIndex={listState.mainItems.length}
-                                            skeletonCount={listState.skeletonCount}
-                                        />
-                                    )}
-                                </div>
-                            )}
-                        </AsyncSection>
+                        <ProjectsResults
+                            list={list}
+                            isNoResults={results.isNoResults}
+                            query={filters.q}
+                            onClearFilters={results.clearFilters}
+                        />
                         {more.loadMoreError && (
                             <div className={css.moreError}>
                                 <LoadError
@@ -157,7 +108,7 @@ function ProjectsPage() {
                                 />
                             </div>
                         )}
-                        {more.hasMore && !listState.isError && (
+                        {more.hasMore && !list.isError && (
                             <div className={css.more}>
                                 <Button
                                     variant="secondary"
