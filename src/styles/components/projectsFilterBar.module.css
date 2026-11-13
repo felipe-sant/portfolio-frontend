@@ -1,0 +1,48 @@
+.filters {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: var(--space-2);
+    margin-inline: calc(-1 * var(--pad-page));
+    padding: var(--space-1) var(--pad-page);
+    overflow-x: auto;
+    scroll-padding-inline: var(--pad-page);
+    scrollbar-width: none;
+    mask-image: linear-gradient(
+        to right,
+        transparent,
+        #000 calc(var(--pad-page) - var(--space-1)),
+        #000 calc(100% - (var(--pad-page) - var(--space-1))),
+        transparent
+    );
+}
+
+.filters::-webkit-scrollbar {
+    display: none;
+}
+
+.filters[data-dragging="true"] {
+    user-select: none;
+}
+
+.filters[data-dragging="true"] button {
+    cursor: grabbing;
+}
+
+.separator {
+    flex: none;
+    width: 1px;
+    height: var(--space-6);
+    margin-inline: var(--space-2);
+    background-color: var(--border-subtle);
+}
+
+@media (min-width: 640px) {
+    .filters {
+        flex-wrap: wrap;
+        margin-inline: 0;
+        padding-inline: 0;
+        overflow-x: visible;
+        mask-image: none;
+    }
+}

@@ -38,6 +38,7 @@
     letter-spacing: var(--ls-display);
     color: var(--text-strong);
     text-wrap: balance;
+    overflow-wrap: anywhere;
 }
 
 .stack {

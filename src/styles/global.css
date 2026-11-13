@@ -39,6 +39,54 @@
 }
 
 @font-face {
+    font-family: "IBM Plex Sans Fallback";
+    font-style: normal;
+    font-weight: 400;
+    src: local("Arial"), local("ArialMT"), local("Liberation Sans"), local("Helvetica");
+    size-adjust: 99.68%;
+    ascent-override: 102.83%;
+    descent-override: 27.59%;
+    line-gap-override: 0%;
+}
+
+@font-face {
+    font-family: "IBM Plex Sans Fallback";
+    font-style: normal;
+    font-weight: 500;
+    src: local("Arial"), local("ArialMT"), local("Liberation Sans"), local("Helvetica");
+    size-adjust: 101.8%;
+    ascent-override: 100.68%;
+    descent-override: 27.01%;
+    line-gap-override: 0%;
+}
+
+@font-face {
+    font-family: "IBM Plex Sans Fallback";
+    font-style: normal;
+    font-weight: 600;
+    src:
+        local("Arial Bold"), local("Arial-BoldMT"), local("Liberation Sans Bold"),
+        local("Helvetica Bold");
+    size-adjust: 97.5%;
+    ascent-override: 105.13%;
+    descent-override: 28.21%;
+    line-gap-override: 0%;
+}
+
+@font-face {
+    font-family: "IBM Plex Sans Fallback";
+    font-style: normal;
+    font-weight: 700;
+    src:
+        local("Arial Bold"), local("Arial-BoldMT"), local("Liberation Sans Bold"),
+        local("Helvetica Bold");
+    size-adjust: 98.21%;
+    ascent-override: 104.37%;
+    descent-override: 28%;
+    line-gap-override: 0%;
+}
+
+@font-face {
     font-family: "IBM Plex Mono";
     font-style: normal;
     font-display: swap;
@@ -138,7 +186,7 @@
     color-scheme: light;
 
     --font-heading: "Bricolage Grotesque", system-ui, sans-serif;
-    --font-body: "IBM Plex Sans", system-ui, sans-serif;
+    --font-body: "IBM Plex Sans", "IBM Plex Sans Fallback", system-ui, sans-serif;
     --font-mono: "IBM Plex Mono", ui-monospace, monospace;
     --text-display: clamp(2.5rem, 6vw, 3.5rem);
     --text-h1: clamp(1.875rem, 4vw, 2.5rem);

@@ -76,6 +76,12 @@ const fontFaceUrls = fontFaces.map((fontFace) => fontFace.url)
 const staticFiles = readdirSync(FONTS_DIRECTORY).filter((name) => name.endsWith(".woff2"))
 const preloadedFonts = readPreloadedFonts(INDEX_HTML)
 
+const FALLBACK_FAMILY = "IBM Plex Sans Fallback"
+const fallbackBlocks = (GLOBAL_CSS.match(/@font-face\s*\{[^}]*\}/g) ?? []).filter((block) =>
+    block.includes(`font-family: "${FALLBACK_FAMILY}"`)
+)
+const bodyStack = GLOBAL_CSS.match(/--font-body:\s*([^;]+);/)?.[1] ?? ""
+
 function hasFace(family: string, weight: number): boolean {
     return fontFaces.some(
         (face) => face.family === family && face.minWeight <= weight && weight <= face.maxWeight
@@ -155,5 +161,26 @@ describe("pesos de fonte", () => {
         expect(face).toBeDefined()
         expect(Math.min(...headingWeights)).toBeGreaterThanOrEqual(face?.minWeight ?? Infinity)
         expect(Math.max(...headingWeights)).toBeLessThanOrEqual(face?.maxWeight ?? -Infinity)
+    })
+})
+
+describe("reserva de fonte do IBM Plex Sans", () => {
+    const plexSansWeights = fontFaces
+        .filter((face) => face.family === "IBM Plex Sans")
+        .map((face) => face.minWeight)
+
+    it.each(plexSansWeights)("o peso %s tem uma fonte reserva com size-adjust", (weight) => {
+        const block = fallbackBlocks.find((candidate) =>
+            new RegExp(`font-weight:\\s*${weight};`).test(candidate)
+        )
+        expect(block).toBeDefined()
+        expect(block).toMatch(/size-adjust:\s*[\d.]+%/)
+        expect(block).toMatch(/src:\s*local\(/)
+    })
+
+    it("a pilha de --font-body cita a reserva depois de IBM Plex Sans e antes de system-ui", () => {
+        const families = bodyStack.split(",").map((family) => family.trim().replaceAll('"', ""))
+        expect(families.indexOf(FALLBACK_FAMILY)).toBe(families.indexOf("IBM Plex Sans") + 1)
+        expect(families.indexOf("system-ui")).toBeGreaterThan(families.indexOf(FALLBACK_FAMILY))
     })
 })

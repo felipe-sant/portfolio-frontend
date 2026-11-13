@@ -198,7 +198,7 @@ A região de anúncio existe no DOM desde a primeira renderização, vazia, para
 
 ## Idioma
 
-- O idioma vem do caminho da URL (`/`, `/en/`, `/es/`), decisão da #8 que vale já na v1, e `<html lang>` acompanha o idioma da URL. O sincronismo de `lang` com o idioma ativo já existe em `src/i18n/i18n.ts`.
+- O idioma vem do caminho da URL (`/`, `/en`, `/es`), decisão da #8 que vale já na v1, e `<html lang>` acompanha o idioma da URL. O sincronismo de `lang` com o idioma ativo já existe em `src/i18n/i18n.ts`.
 - O seletor (D12) navega para a URL equivalente do idioma escolhido: cada opção é um link (`<Link>`) para a mesma tela no outro idioma, com `hreflang` e `lang` do idioma de destino, e a opção ativa tem `aria-current="true"`. Não é botão com `aria-pressed`, porque trocar de URL é navegação.
 - O nome de cada idioma é escrito no próprio idioma ("Português", "English", "Español"), com `lang` no link (3.1.2); a sigla visível fica contida no nome acessível. O valor dessa chave é o mesmo nos três JSON.
 - Trecho de conteúdo em outro idioma (por exemplo, documentação de projeto que só exista num idioma) recebe `lang` no contêiner.
@@ -263,7 +263,7 @@ Cada item tem um ID estável e a forma de verificação entre colchetes: `[teste
 ### Todas as telas
 
 - [ ] `A11Y-G01` — Um `main`, um `h1` e um `<title>` próprio e traduzido [teste]
-- [ ] `A11Y-G02` — `<html lang>` igual ao idioma da URL (`/`, `/en/`, `/es/`) [teste]
+- [ ] `A11Y-G02` — `<html lang>` igual ao idioma da URL (`/`, `/en`, `/es`) [teste]
 - [ ] `A11Y-G03` — Nenhuma violação do axe em cada estado da tela [axe]
 - [ ] `A11Y-G04` — Nenhuma violação do axe no navegador, nos dois temas [e2e]
 - [ ] `A11Y-G05` — Ordem de foco igual à visual e foco visível em todo elemento focável [teclado]
