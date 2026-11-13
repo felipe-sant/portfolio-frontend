@@ -1,5 +1,5 @@
 import { execFileSync } from "node:child_process"
-import { appendFileSync, mkdtempSync, readdirSync, writeFileSync } from "node:fs"
+import { appendFileSync, mkdtempSync, readdirSync, readFileSync, writeFileSync } from "node:fs"
 import { tmpdir } from "node:os"
 import { join } from "node:path"
 import buildPromotionBody from "@scripts/buildPromotionBody"
@@ -38,6 +38,15 @@ function viewPull(number: number) {
     }
 }
 
+function readChangesets() {
+    return readdirSync(".changeset", { withFileTypes: true })
+        .filter((entry) => entry.isFile())
+        .map((entry) => ({
+            name: entry.name,
+            content: readFileSync(join(".changeset", entry.name), "utf-8")
+        }))
+}
+
 function emit(outputs: Record<string, string>) {
     const lines = Object.entries(outputs).map(([key, value]) => `${key}=${value}\n`)
 
@@ -61,7 +70,7 @@ const ahead = Number(run("git", ["rev-list", "--count", "origin/main..origin/sta
 if (ahead === 0) {
     writeSummary("Nada a promover: a main já contém todos os commits da staging.")
     emit({ promote: "false", reason: "no-diff" })
-} else if (hasPendingChangesets(readdirSync(".changeset"))) {
+} else if (hasPendingChangesets(readChangesets())) {
     writeSummary("Promoção bloqueada: há changeset pendente; mergeie o PR de versão.")
     emit({ promote: "false", reason: "pending-version" })
 } else {

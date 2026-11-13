@@ -17,6 +17,7 @@ const PULL_VIEWS: Record<string, unknown> = {
 type Scenario = {
     stagingSubjects: string[]
     changesetFiles: string[]
+    changesetContents?: Record<string, string>
 }
 
 type Result = {
@@ -36,7 +37,7 @@ function git(cwd: string, args: string[]) {
     return result.stdout.trim()
 }
 
-function createRepository({ stagingSubjects, changesetFiles }: Scenario) {
+function createRepository({ stagingSubjects, changesetFiles, changesetContents = {} }: Scenario) {
     const directory = mkdtempSync(join(tmpdir(), "promotion-test-"))
     directories.push(directory)
 
@@ -54,7 +55,7 @@ function createRepository({ stagingSubjects, changesetFiles }: Scenario) {
 
     mkdirSync(join(directory, ".changeset"))
     changesetFiles.forEach((name) => {
-        writeFileSync(join(directory, ".changeset", name), "")
+        writeFileSync(join(directory, ".changeset", name), changesetContents[name] ?? "")
     })
 
     const binDirectory = join(directory, "fake-bin")
@@ -184,5 +185,29 @@ describe("preparePromotion", () => {
 
         expect(result.status).not.toBe(0)
         expect(result.outputs.promote).toBeUndefined()
+    })
+
+    it("não bloqueia quando o único changeset pendente é vazio", () => {
+        const result = runPrepare({
+            stagingSubjects: ["Merge pull request #7 from a/b"],
+            changesetFiles: ["README.md", "slow-coats-turn.md"],
+            changesetContents: { "slow-coats-turn.md": "---\n---\n" }
+        })
+
+        expect(result.status).toBe(0)
+        expect(result.outputs.promote).toBe("true")
+    })
+
+    it("bloqueia quando há changeset vazio e um que altera a versão", () => {
+        const result = runPrepare({
+            stagingSubjects: ["Merge pull request #7 from a/b"],
+            changesetFiles: ["README.md", "slow-coats-turn.md", "cool-cats-jump.md"],
+            changesetContents: {
+                "slow-coats-turn.md": "---\n---\n",
+                "cool-cats-jump.md": '---\n"portfolio-frontend": patch\n---\n\nCorrige\n'
+            }
+        })
+
+        expect(result.outputs).toEqual({ promote: "false", reason: "pending-version" })
     })
 })
