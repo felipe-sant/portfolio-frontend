@@ -1,7 +1,7 @@
 # Tasks: Fatia os hooks useProjects e useAbout por responsabilidade
 
 > Spec: `./spec.md` <br />
-> **Status:** `em-andamento`
+> **Status:** `implementada`
 
 Regras de todas as tarefas: nenhum comentário em código; identificadores em inglês; `npm test -- --run --maxWorkers=2 <arquivo>` (nunca todos os workers); conferir `uptime` antes de Vitest/build (load acima de 14: esperar); um commit atômico por tarefa no formato `Refactor :recycle: [#165] <descrição>` (`Test :test_tube:` na T1, `Docs :bulb:` na T18; componentes novos de Projetos entram como `Refactor :recycle:` com o CSS movido no mesmo commit), sempre verde; asserção de comportamento de teste existente nunca é editada.
 
