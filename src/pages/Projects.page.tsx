@@ -6,6 +6,7 @@ import LoadError from "@/components/LoadError"
 import PageMeta from "@/components/PageMeta"
 import ProjectCard from "@/components/ProjectCard"
 import ProjectCardSkeleton from "@/components/ProjectCardSkeleton"
+import ProjectsEmptyState from "@/components/ProjectsEmptyState"
 import ProjectsFiltersModal from "@/components/ProjectsFiltersModal"
 import SearchInput from "@/components/SearchInput"
 import useProjects from "@/pages/hooks/useProjects"
@@ -73,10 +74,10 @@ function ProjectsPage() {
                 </h1>
                 <p className={css.intro}>{t("intro")}</p>
                 {results.isEmptyContent ? (
-                    <div className={css.emptyBox}>
-                        <h2 className={css.emptyHeading}>{t("empty.heading")}</h2>
-                        <p className={css.emptyText}>{t("empty.description")}</p>
-                    </div>
+                    <ProjectsEmptyState
+                        heading={t("empty.heading")}
+                        description={t("empty.description")}
+                    />
                 ) : (
                     <>
                         <div className={css.controls}>
@@ -144,17 +145,19 @@ function ProjectsPage() {
                             }}
                         >
                             {results.isNoResults && !listState.isError && (
-                                <div className={css.emptyBox}>
-                                    <h2 className={css.emptyHeading}>{t("noResults.heading")}</h2>
-                                    <p className={css.emptyText}>
-                                        {filters.q === ""
+                                <ProjectsEmptyState
+                                    heading={t("noResults.heading")}
+                                    description={
+                                        filters.q === ""
                                             ? t("noResults.withoutSearch")
-                                            : t("noResults.withSearch", { query: filters.q })}
-                                    </p>
-                                    <Button variant="secondary" onClick={results.clearFilters}>
-                                        {t("results.clearFilters")}
-                                    </Button>
-                                </div>
+                                            : t("noResults.withSearch", { query: filters.q })
+                                    }
+                                    action={
+                                        <Button variant="secondary" onClick={results.clearFilters}>
+                                            {t("results.clearFilters")}
+                                        </Button>
+                                    }
+                                />
                             )}
                             {!listState.isError && !results.isNoResults && (
                                 <div ref={gridRef}>

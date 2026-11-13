@@ -127,7 +127,7 @@ Sequencial (as três fases editam hooks e páginas que cada uma depende de si); 
     - **Feito quando:** o retorno tem exatamente `{ t, shareImage, ids, seo, filters, search, filterBar, modal, results, list, more }`; `Projects.page.tsx` desestrutura no máximo 12 nomes; `git diff origin/staging -- src/pages/test` vazio; `useProjects.ts` abaixo de 100 linhas (VAL-165-02, 04, 08)
     - **Evidência:** gate verde (typecheck, lint, 3 arquivos, 156 testes); retorno com exatamente { shareImage, t, ids, seo, filters, search, filterBar, modal, results, list, more }; Projects.page.tsx desestrutura 11 nomes de useProjects(); `git diff origin/staging -- src/pages/test` só tem as 22 linhas adicionadas na T1 (nenhuma linha removida); useProjects.ts com 96 linhas. useProjects.test.tsx: acessores trocados e Probe reconstrói items/shown/total pelo retorno real de useProjectsPages (vi.mock com wrapper que captura, sem segunda consulta); `it` de setSort/setTechAndYear/canOpenFilters conferem também todos os subobjetos (exposedNames). Desvios: (1) o oxlint (react/refs) acusa leitura em expressão de `list.*` e `filterBar.*` na página por esses objetos conterem ref; a página extrai `gridRef` e `ref`/`dragProps` por desestruturação (`const { gridRef, ...listState } = list`, `const { ref: filterBarRef, dragProps, ...bar } = filterBar`); (2) `modal.applied` e `modal.isOpen/open/close` conforme o formato da spec.
 
-- [ ] T10 — Componente `ProjectsEmptyState`
+- [x] T10 — Componente `ProjectsEmptyState`
     - **Arquivo(s):** `src/components/ProjectsEmptyState.tsx`, `src/components/test/ProjectsEmptyState.test.tsx`, `src/styles/components/projectsEmptyState.module.css`, `src/styles/pages/projects.module.css` (remove as classes movidas), `src/pages/Projects.page.tsx`
     - **Depende de:** T9
     - **Testes (escritos antes, RED):** (`render` com props simuladas, sem store; texto em português)
@@ -136,7 +136,7 @@ Sequencial (as três fases editam hooks e páginas que cada uma depende de si); 
         - sem violação de axe (`expectNoAxeViolations(container)`)
     - **Gate:** `npm run typecheck && npm run lint && npm test -- --run --maxWorkers=2 src/components/test/ProjectsEmptyState.test.tsx src/pages/test/Projects.page.test.tsx src/pages/hooks/test/useProjects.test.tsx`
     - **Feito quando:** a página usa `ProjectsEmptyState` para o conteúdo vazio e `projects.module.css` perdeu `emptyBox`, `emptyHeading` e `emptyText` (o uso no sem resultados passa na T13); `ProjectsEmptyStateProps` local, `export default`, sem comentário; toda classe `css.x` existe no módulo novo com declaração idêntica à da `staging`; `Projects.page.test.tsx` sem edição e verde
-    - **Evidência:** ...
+    - **Evidência:** gate verde (typecheck, lint, ProjectsEmptyState.test.tsx 4 testes + Projects.page.test.tsx); página usa ProjectsEmptyState no conteúdo vazio e, por necessidade de o CSS ter saído da página, também no sem resultados (com o botão em action; T13 só move esse trecho); projects.module.css perdeu emptyBox, emptyHeading, emptyText (e a regra .emptyBox .emptyText:last-child), copiados literalmente; Projects.page.test.tsx sem edição.
 
 - [ ] T11 — Componente `ProjectsGrid`
     - **Arquivo(s):** `src/components/ProjectsGrid.tsx`, `src/components/test/ProjectsGrid.test.tsx`, `src/styles/components/projectsGrid.module.css`, `src/styles/pages/projects.module.css` (remove as classes movidas), `src/pages/Projects.page.tsx`
