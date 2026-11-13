@@ -58,7 +58,7 @@ Conferido no build (CA4): nenhum chunk de entrada contém texto de locale de nen
 
 ## Fonte Bricolage Grotesque
 
-O arquivo `public/fonts/bricolage-grotesque-latin-opsz-normal.woff2` tem 77 KB, é pré-carregado no `index.html` (`<link rel="preload" as="font">`) e declarado com `font-display: swap` em `src/styles/global.css`. Não entra no TBT: a fonte é baixada em paralelo e não roda JavaScript. O peso vem do eixo variável `opsz`; um subset que fixe o `opsz` usado pelos títulos reduziria o arquivo. Fica como recomendação, sem tarefa nesta issue.
+O arquivo `public/fonts/bricolage-grotesque-latin-opsz-normal.woff2` tem 63 KB (77 KB antes da #267), é pré-carregado no `index.html` (`<link rel="preload" as="font">`) e declarado com `font-display: swap` em `src/styles/global.css`. Não entra no TBT: a fonte é baixada em paralelo e não roda JavaScript. O arquivo foi reduzido na #267 (eixo `wght` de 600 a 800 e só os caracteres dos três idiomas; ver `docs/design/design-system.md`); o eixo `opsz` segue completo.
 
 ## Causa do TBT e a hidratação em transição
 

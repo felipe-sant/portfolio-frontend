@@ -350,6 +350,52 @@ licenças OFL em `public/fonts/`, para não fazer requisição a terceiros com o
 (privacidade, LGPD/GDPR), não depender de CDN externa e servir as fontes da mesma origem, com
 `preload`.
 
+### Redução dos arquivos de fonte
+
+Os `woff2` de `public/fonts/` são reduzidos para a primeira carga de qualquer rota somar até 160 KB
+(`NF-DE-11`, #267), sem tirar peso nem família: a Bricolage Grotesque fica com o eixo `wght` de 600 a
+800 (o que o CSS declara) e cada fonte fica só com os caracteres de `pt-BR`, `en` e `es` (`U+0020–007E`,
+`U+00A0–00FF`, `U+2013`, `U+2014`, `U+2018`, `U+2019`, `U+201C`, `U+201D`, `U+2022`, `U+2026`, `U+00B7`,
+`U+20AC`, `U+2190–2193`, `U+2197`, `U+2713`, `U+2715`), com todas as `layout features`. Os nomes dos
+arquivos e os `@font-face` não mudam. O `scripts/test/fontCoverage.test.ts` falha se a soma passar de
+160 KB ou se um caractere dos textos do site sair do `cmap` (`→` e `↗` já caem na fonte do sistema, pois as
+fontes originais não os têm).
+
+Para repetir (ao trocar uma fonte ou acrescentar caractere), com o `woff2` original em `<origem>` e a saída
+em `public/fonts/`, usando `fonttools` e `brotli` fora do `package.json` (`uv venv && uv pip install fonttools brotli`):
+
+```python
+from pathlib import Path
+from fontTools.ttLib import TTFont
+from fontTools.varLib import instancer
+from fontTools import subset
+
+UNICODES = (
+    set(range(0x20, 0x7F))
+    | set(range(0xA0, 0x100))
+    | {0x2013, 0x2014, 0x2018, 0x2019, 0x201C, 0x201D, 0x2022, 0x2026, 0xB7, 0x20AC, 0x2197, 0x2713, 0x2715}
+    | set(range(0x2190, 0x2194))
+)
+
+def reduce(source: Path, target: Path, axes=None):
+    font = TTFont(source)
+    if axes:
+        font = instancer.instantiateVariableFont(font, axes)
+    options = subset.Options()
+    options.layout_features = ["*"]
+    options.flavor = "woff2"
+    options.notdef_outline = True
+    options.name_IDs = ["*"]
+    subsetter = subset.Subsetter(options)
+    subsetter.populate(unicodes=UNICODES)
+    subsetter.subset(font)
+    font.flavor = "woff2"
+    font.save(target)
+```
+
+Chame `reduce(origem, destino, {"wght": (600, 800)})` para a Bricolage e `reduce(origem, destino)` para as demais.
+Depois confira a soma por rota no `build:fatec`, com `PerformanceObserver` ou a aba Rede filtrada por `Font`.
+
 ## Decisões de design
 
 As pendências e contradições do handoff estão decididas e registradas em
