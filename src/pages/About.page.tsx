@@ -26,10 +26,7 @@ function AboutPage() {
         workPrinciples,
         updatedLabel,
         show,
-        selectedItem,
-        open,
-        close,
-        registerTrigger
+        trajectory
     } = useAbout()
 
     return (
@@ -61,8 +58,8 @@ function AboutPage() {
                     timeline={timeline}
                     headingId={ids.timelineHeading}
                     alertId={ids.timelineAlert}
-                    onOpen={open}
-                    registerTrigger={registerTrigger}
+                    onOpen={trajectory.open}
+                    registerTrigger={trajectory.registerTrigger}
                 />
             )}
             {show.stack && <AboutStack profile={profile} groups={stackGroups} />}
@@ -75,7 +72,7 @@ function AboutPage() {
                     showWorkStyle={show.workStyle}
                 />
             )}
-            <TrajectoryModal item={selectedItem} onClose={close} />
+            <TrajectoryModal item={trajectory.selectedItem} onClose={trajectory.close} />
             <LazyResumeModal isOpen={resume.isOpen} onClose={resume.close} />
         </>
     )

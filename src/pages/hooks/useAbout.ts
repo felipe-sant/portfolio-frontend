@@ -1,15 +1,14 @@
-import { useCallback, useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useTranslation } from "react-i18next"
-import { useLocation } from "react-router-dom"
 import TIMELINE_KINDS from "@/enum/timelineKinds.enum"
 import useLanguage from "@/hooks/useLanguage"
 import useLocalizedPath from "@/hooks/useLocalizedPath"
 import useResume from "@/hooks/useResume"
 import useShareImage from "@/hooks/useShareImage"
+import useTrajectorySelection from "@/pages/hooks/useTrajectorySelection"
 import ROUTES from "@/routers/paths"
 import profileApi from "@/store/api/profile.api"
 import timelineApi from "@/store/api/timeline.api"
-import type TimelineItem from "@/types/timeline/TimelineItem.types"
 import aboutElementIds from "@/utils/aboutElementIds"
 import buildAboutJsonLd from "@/utils/buildAboutJsonLd"
 import formatMonthYear from "@/utils/formatMonthYear"
@@ -23,40 +22,19 @@ type RetryRequest = {
 
 type FocusableName = `${RetrySource}Heading` | `${RetrySource}Alert`
 
-type SelectedItem = {
-    item: TimelineItem
-    pathname: string
-}
-
 function useAbout() {
     const shareImage = useShareImage("about")
     const { t } = useTranslation(["about", "common"])
     const language = useLanguage()
     const localizedPath = useLocalizedPath()
     const resume = useResume()
-    const { pathname } = useLocation()
     const profileQuery = profileApi.useGetProfileQuery({ lang: language })
     const timelineQuery = timelineApi.useGetTimelineQuery({ lang: language })
     const profile = profileQuery.data
     const timeline = timelineQuery.data
-    const [selected, setSelected] = useState<SelectedItem | null>(null)
-    const triggers = useRef(new Map<string, HTMLButtonElement>())
-    const itemToFocus = useRef<string | null>(null)
+    const trajectory = useTrajectorySelection()
     const [retryRequest, setRetryRequest] = useState<RetryRequest | null>(null)
     const handledRetry = useRef<RetryRequest | null>(null)
-
-    if (selected && selected.pathname !== pathname) {
-        setSelected(null)
-    }
-
-    const selectedItem = selected && selected.pathname === pathname ? selected.item : null
-
-    useEffect(() => {
-        if (selectedItem === null && itemToFocus.current !== null) {
-            triggers.current.get(itemToFocus.current)?.focus()
-            itemToFocus.current = null
-        }
-    }, [selectedItem])
 
     const isProfileError = profileQuery.isError && !profileQuery.isFetching
     const isTimelineError = timelineQuery.isError && !timelineQuery.isFetching
@@ -85,26 +63,6 @@ function useAbout() {
         await (source === "profile" ? profileQuery : timelineQuery).refetch()
         setRetryRequest({ source })
     }
-
-    function open(item: TimelineItem) {
-        itemToFocus.current = item.id
-        setSelected({ item, pathname })
-    }
-
-    function close() {
-        setSelected(null)
-    }
-
-    const registerTrigger = useCallback(
-        (id: string) => (element: HTMLButtonElement | null) => {
-            if (element) {
-                triggers.current.set(id, element)
-            } else {
-                triggers.current.delete(id)
-            }
-        },
-        []
-    )
 
     const stackGroups = sortStackGroups(profile?.stack ?? [])
     const groups = (timeline?.groups ?? []).filter(
@@ -150,10 +108,7 @@ function useAbout() {
             workStyle: showWorkStyle,
             complements: showCertificates || showWorkStyle
         },
-        selectedItem,
-        open,
-        close,
-        registerTrigger
+        trajectory
     }
 }
 

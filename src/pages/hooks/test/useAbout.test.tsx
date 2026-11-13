@@ -301,17 +301,17 @@ describe("useAbout", () => {
         const button = document.createElement("button")
         document.body.appendChild(button)
         act(() => {
-            result.current.about.registerTrigger(item.id)(button)
+            result.current.about.trajectory.registerTrigger(item.id)(button)
         })
 
-        act(() => result.current.about.open(item))
+        act(() => result.current.about.trajectory.open(item))
 
-        expect(result.current.about.selectedItem).toEqual(item)
+        expect(result.current.about.trajectory.selectedItem).toEqual(item)
         expect(document.activeElement).toBe(document.body)
 
-        act(() => result.current.about.close())
+        act(() => result.current.about.trajectory.close())
 
-        expect(result.current.about.selectedItem).toBeNull()
+        expect(result.current.about.trajectory.selectedItem).toBeNull()
         await waitFor(() => expect(button).toHaveFocus())
     })
 
@@ -322,17 +322,17 @@ describe("useAbout", () => {
         const item = result.current.about.timeline.groups[0].items[0]
         const before = window.history.length
 
-        act(() => result.current.about.open(item))
-        expect(result.current.about.selectedItem).toEqual(item)
+        act(() => result.current.about.trajectory.open(item))
+        expect(result.current.about.trajectory.selectedItem).toEqual(item)
         expect(window.history.length).toBe(before)
 
         act(() => result.current.navigate("/pt-BR/projects"))
 
-        expect(result.current.about.selectedItem).toBeNull()
+        expect(result.current.about.trajectory.selectedItem).toBeNull()
 
         act(() => result.current.navigate("/pt-BR/about"))
 
-        expect(result.current.about.selectedItem).toBeNull()
+        expect(result.current.about.trajectory.selectedItem).toBeNull()
     })
 
     it("monta o JSON-LD com os dados carregados", async () => {

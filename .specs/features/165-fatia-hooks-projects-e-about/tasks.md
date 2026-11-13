@@ -45,7 +45,7 @@ Sequencial (as três fases editam hooks e páginas que cada uma depende de si); 
     - **Feito quando:** o gate passa e `FOCUS_IDS` não existe mais
     - **Evidência:** gate verde (typecheck, lint, 3 arquivos, 61 testes); `FOCUS_IDS` removido; src/utils/test/aboutElementIds.test.ts "mantém os quatro ids de foco" (expect(aboutElementIds).toEqual({...os quatro valores})).
 
-- [ ] T3 — Hook `useTrajectorySelection`
+- [x] T3 — Hook `useTrajectorySelection`
     - **Arquivo(s):** `src/pages/hooks/useTrajectorySelection.ts`, `src/pages/hooks/test/useTrajectorySelection.test.tsx`, `src/pages/hooks/useAbout.ts` (passa a chamar o hook e a devolver `trajectory: { selectedItem, open, close, registerTrigger }`), `src/pages/hooks/test/useAbout.test.tsx` e `src/pages/About.page.tsx` (só acessores: `selectedItem`/`open`/`close`/`registerTrigger` viram `trajectory.*`)
     - **Depende de:** T2
     - **Testes (escritos antes, RED):** (`MemoryRouter` com `renderHook`, refs reais no DOM)
@@ -56,7 +56,7 @@ Sequencial (as três fases editam hooks e páginas que cada uma depende de si); 
         - mudar o `pathname` fecha o item sem alterar o histórico e sem `useEffect` de reset (VAL-165-06; herda o `it` 255)
     - **Gate:** `npm run typecheck && npm run lint && npm test -- --run --maxWorkers=2 src/pages/hooks/test/useTrajectorySelection.test.tsx src/pages/hooks/test/useAbout.test.tsx src/pages/test/About.page.test.tsx`
     - **Feito quando:** o gate passa; os `it` 233 e 255 de `useAbout.test.tsx` continuam presentes com a mesma asserção; `About.page.test.tsx` sem edição
-    - **Evidência:** ...
+    - **Evidência:** gate verde (typecheck, lint, 3 arquivos, 67 testes). useTrajectorySelection.test.tsx (7 it): "devolve o foco ao gatilho registrado do item ao fechar, mesmo com o foco no body" (expect(button).toHaveFocus()), "fecha o item quando o caminho muda, sem alterar o histórico" (expect(window.history.length).toBe(before); selectedItem toBeNull), "mantém a identidade de registerTrigger" (toBe(first)), remoção com null, sem gatilho não lança. useAbout.test.tsx: `it` 233 e 255 mantidos, só acessores `about.trajectory.*`; About.page.test.tsx sem edição.
 
 - [ ] T4 — Hook `useAboutRetryFocus`
     - **Arquivo(s):** `src/pages/hooks/useAboutRetryFocus.ts`, `src/pages/hooks/test/useAboutRetryFocus.test.tsx`, `src/pages/hooks/useAbout.ts`
