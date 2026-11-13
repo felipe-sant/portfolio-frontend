@@ -64,7 +64,9 @@ function createRepository({ stagingSubjects, changesetFiles }: Scenario) {
         gh,
         `#!/bin/sh\ncase "$3" in\n${Object.entries(PULL_VIEWS)
             .map(([number, view]) => `  ${number}) echo '${JSON.stringify(view)}';;`)
-            .join("\n")}\n  *) echo "pr desconhecido" >&2; exit 1;;\nesac\n`
+            .join(
+                "\n"
+            )}\n  207) echo "GraphQL: Could not resolve to a PullRequest with the number of 207. (repository.pullRequest)" >&2; exit 1;;\n  *) echo "falha de rede" >&2; exit 1;;\nesac\n`
     )
     chmodSync(gh, 0o755)
 
@@ -155,5 +157,32 @@ describe("preparePromotion", () => {
         expect(result.body).toContain("- #3 (PR #7)")
         expect(result.body).toContain("- PR #9: Chore nove")
         expect(result.body).not.toContain("sem número")
+    })
+
+    it("ignora o número do sufixo que é de issue e não de PR", () => {
+        const result = runPrepare({
+            stagingSubjects: [
+                "Merge pull request #7 from a/b",
+                "Docs :bulb: [#202] Especifica lastmod no sitemap (#207)",
+                "Chore :see_no_evil: Versão (#9)"
+            ],
+            changesetFiles: ["README.md"]
+        })
+
+        expect(result.status).toBe(0)
+        expect(result.outputs.promote).toBe("true")
+        expect(result.body).toContain("- #3 (PR #7)")
+        expect(result.body).toContain("- PR #9: Chore nove")
+        expect(result.body).not.toContain("207")
+    })
+
+    it("falha quando a consulta do PR quebra por outro motivo", () => {
+        const result = runPrepare({
+            stagingSubjects: ["Chore :see_no_evil: Versão (#555)"],
+            changesetFiles: ["README.md"]
+        })
+
+        expect(result.status).not.toBe(0)
+        expect(result.outputs.promote).toBeUndefined()
     })
 })

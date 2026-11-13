@@ -16,6 +16,28 @@ function run(command: string, args: string[]) {
     return execFileSync(command, args, { encoding: "utf-8" })
 }
 
+function viewPull(number: number) {
+    try {
+        return JSON.parse(
+            run("gh", [
+                "pr",
+                "view",
+                String(number),
+                "--json",
+                "number,title,closingIssuesReferences"
+            ])
+        ) as PullView
+    } catch (error) {
+        const stderr = String((error as { stderr?: unknown }).stderr ?? "")
+
+        if (stderr.includes("Could not resolve to a PullRequest")) {
+            return undefined
+        }
+
+        throw error
+    }
+}
+
 function emit(outputs: Record<string, string>) {
     const lines = Object.entries(outputs).map(([key, value]) => `${key}=${value}\n`)
 
@@ -46,22 +68,18 @@ if (ahead === 0) {
     const subjects = run("git", ["log", "--format=%s", "origin/main..origin/staging"])
         .split("\n")
         .filter((subject) => subject !== "")
-    const pulls = parseMergedPullNumbers(subjects).map((number) => {
-        const view = JSON.parse(
-            run("gh", [
-                "pr",
-                "view",
-                String(number),
-                "--json",
-                "number,title,closingIssuesReferences"
-            ])
-        ) as PullView
+    const pulls = parseMergedPullNumbers(subjects).flatMap((number) => {
+        const view = viewPull(number)
 
-        return {
-            number: view.number,
-            title: view.title,
-            issues: view.closingIssuesReferences.map((issue) => issue.number)
-        }
+        return view
+            ? [
+                  {
+                      number: view.number,
+                      title: view.title,
+                      issues: view.closingIssuesReferences.map((issue) => issue.number)
+                  }
+              ]
+            : []
     })
     const bodyFile = join(
         mkdtempSync(join(process.env.RUNNER_TEMP ?? tmpdir(), "promotion-")),
