@@ -10,6 +10,7 @@ import readProjects from "./support/readProjects"
 import readAbout from "./support/readAbout"
 import readProjectDetail from "./support/readProjectDetail"
 import ROUTES_UNDER_TEST from "./support/routesUnderTest"
+import sortProjects from "./support/sortProjects"
 import UI_TEXTS from "./support/uiTexts"
 
 const LANGUAGES = ["pt-BR", "en", "es"] as const
@@ -213,25 +214,23 @@ test.describe("sem JavaScript, projetos", () => {
     test.use({ javaScriptEnabled: false })
 
     for (const language of LANGUAGES) {
-        const texts = UI_TEXTS[language].projects
-
-        test(`RF-PROJECTS-32, NF-CO-03, NF-IA-07: em ${language} /projects traz o h2 da seção e os cards experimentais com links funcionando no HTML`, async ({
+        test(`NF-CO-03, NF-IA-07: em ${language} /projects traz os cards do primeiro lote, numa única grade, com links funcionando no HTML`, async ({
             page
         }) => {
-            const experiments = readProjects(language).filter((project) => project.experiment)
-            expect(experiments.length).toBe(2)
+            const projects = sortProjects(readProjects(language), "recent", language).slice(0, 9)
+            expect(projects.length).toBeGreaterThan(0)
 
             const response = await page.goto(`${language}/projects`)
 
             expect(response?.status()).toBe(200)
             const main = page.getByRole("main")
-            await expect(
-                main.getByRole("heading", { level: 2, name: texts.experimentsHeading })
-            ).toBeVisible()
-            await expect(main.getByText(texts.experimentsDescription)).toBeVisible()
-            const links = main.getByRole("heading", { level: 3 }).getByRole("link")
-            await expect(links).toHaveCount(experiments.length)
-            for (const project of experiments) {
+            await expect(main.getByRole("heading", { level: 3 })).toHaveCount(0)
+            const links = main
+                .getByRole("article")
+                .getByRole("heading", { level: 2 })
+                .getByRole("link")
+            await expect(links).toHaveText(projects.map((project) => project.title))
+            for (const project of projects) {
                 await expect(
                     links.and(page.locator(`a[href$="/${language}/projects/${project.id}"]`))
                 ).toHaveText(project.title)

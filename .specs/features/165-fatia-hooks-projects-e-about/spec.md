@@ -1,7 +1,7 @@
 # Spec: Fatia os hooks useProjects e useAbout por responsabilidade e extrai o JSX de Projetos em componentes
 
 > **Tipo:** `feature` (refatoração pura) <br />
-> **Status:** `em-andamento` <br />
+> **Status:** `implementada` <br />
 > **Issue:** `#165` <br />
 > **Criado em:** `12-11-2026`
 
@@ -178,7 +178,8 @@ Os testes de componente não repetem os da página; basta cobrir o caso de borda
 - [x] **VAL-165-10** `npm run typecheck`, `npm run lint`, `npm run build && npm run test:cov -- --maxWorkers=2` e os E2E de `about`, `projects`, `projects-filters`, `no-javascript`, `accessibility` e `keyboard` passam sem edição de E2E.
 - [x] **VAL-165-12** Os oito componentes (`ProjectsToolbar`, `ProjectsFilterBar`, `ProjectsSummary`, `ProjectsEmptyState`, `ProjectsGrid`, `ProjectsExperiments`, `ProjectsResults`, `ProjectsLoadMore`) existem em `src/components/` com `<Nome>Props` local e `export default`, cada um com teste em `src/components/test/<Nome>.test.tsx` cobrindo o caso de borda do "Mapa de testes de Projetos" e um `it` com `expectNoAxeViolations`; `Projects.page.tsx` não importa mais `ProjectCard`, `ProjectCardSkeleton`, `FilterGroup`, `SearchInput`, `AsyncSection`, `LoadError` nem `Button` (só os componentes novos, `ProjectsFiltersModal`, `PageMeta` e `JsonLd`).
 - [x] **VAL-165-13** `src/styles/pages/projects.module.css` fica só com `container`, `heading`, `intro`; cada classe movida existe no módulo do componente que a usa, com declaração idêntica à de `staging` (conferência por `git diff origin/staging` dos blocos), e nenhuma classe usada como `css.x` fica sem definição nem sobra sem uso.
-- [ ] **VAL-165-14** Aparência: Projetos em claro e escuro, em 375, 768 e 1280 px, sem diferença visual para a `staging` (busca, filtros rolável em telas estreitas e quebra a partir de 640 px, resumo, grade, Experimentos, vazio, sem resultado, "Carregar mais"); verificação manual, com a tela indicada.
+- [x] **VAL-165-14** Aparência: Projetos em claro e escuro, em 375, 768 e 1280 px, sem diferença visual para a `staging` (busca, filtros rolável em telas estreitas e quebra a partir de 640 px, resumo, grade, Experimentos, vazio, sem resultado, "Carregar mais"); verificação manual, com a tela indicada.
+    - **Conferência:** em 13/11/2026 o Felipe olhou o site publicado na Fatec e disse: "eu olhei visualmente e aprovei como ficou o estilo". Ele não detalhou temas nem larguras de tela; o registro é só a aprovação visual dele.
 - [x] **VAL-165-11** `docs/screens/about.md` (seção Implementação, parágrafo de `useAbout`) e `docs/screens/projects.md` (Implementação de `useProjects` e dos componentes novos) descrevem as fatias; `docs/architecture/components.md` lista os oito componentes (catálogo) e troca a menção ao `ProjectListItem` local da página; `docs/architecture/frontend.md` e `code-structure.md` só se citarem o formato antigo (checar com `grep -rn "useProjects\|useAbout\|ProjectListItem" docs/`).
 
 ## Estratégia de validação

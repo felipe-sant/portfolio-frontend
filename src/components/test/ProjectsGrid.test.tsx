@@ -57,14 +57,7 @@ describe("ProjectsGrid", () => {
         expect(items[2]).toHaveTextContent("Projeto 3")
     })
 
-    it("repassa o nível de título ao cartão", () => {
-        renderGrid({ projects: buildProjects(2), headingLevel: 3 })
-
-        expect(screen.getAllByRole("heading", { level: 3 })).toHaveLength(2)
-        expect(screen.queryAllByRole("heading", { level: 2 })).toHaveLength(0)
-    })
-
-    it("usa nível 2 de título por padrão", () => {
+    it("usa nível 2 de título nos cartões", () => {
         renderGrid({ projects: buildProjects(2) })
 
         expect(screen.getAllByRole("heading", { level: 2 })).toHaveLength(2)
@@ -80,23 +73,13 @@ describe("ProjectsGrid", () => {
         expect(steps).toEqual(["0", "1", "2", "3", "4", "5", "5", "5", "5", "0", "1"])
     })
 
-    it("desloca o índice dos cartões por firstIndex", () => {
-        renderGrid({ projects: buildProjects(2), firstIndex: 8 })
-
-        const steps = screen
-            .getAllByRole("article")
-            .map((article) => article.getAttribute("data-reveal-step"))
-
-        expect(steps).toEqual(["5", "0"])
-    })
-
     it("trata só os três primeiros índices como imagens prioritárias", () => {
-        const { container } = renderGrid({ projects: buildProjects(2), firstIndex: 2 })
+        const { container } = renderGrid({ projects: buildProjects(4) })
 
         const images = container.querySelectorAll("img")
 
-        expect(images[0]).not.toHaveAttribute("loading")
-        expect(images[1]).toHaveAttribute("loading", "lazy")
+        expect(images[2]).not.toHaveAttribute("loading")
+        expect(images[3]).toHaveAttribute("loading", "lazy")
     })
 
     it("coloca os esqueletos depois dos projetos", () => {

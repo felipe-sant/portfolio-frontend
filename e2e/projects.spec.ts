@@ -184,13 +184,9 @@ for (const language of LANGUAGES) {
             }
 
             const headings = view.main.getByRole("heading")
-            const experiments = projects.filter((project) => project.experiment).length
-            const sectionHeadings = experiments > 0 ? 1 : 0
-            await expect(headings).toHaveCount(1 + projects.length + sectionHeadings)
-            await expect(view.main.getByRole("heading", { level: 2 })).toHaveCount(
-                projects.length - experiments + sectionHeadings
-            )
-            await expect(view.main.getByRole("heading", { level: 3 })).toHaveCount(experiments)
+            await expect(headings).toHaveCount(1 + projects.length)
+            await expect(view.main.getByRole("heading", { level: 2 })).toHaveCount(projects.length)
+            await expect(view.main.getByRole("heading", { level: 3 })).toHaveCount(0)
         })
 
         test(`RF-PROJECTS-14, RF-PROJECTS-15, RF-PROJECTS-16, A11Y-PS06, NF-IN-11: os cards de ${language} seguem o conteúdo, com link do idioma e título como nome`, async ({
@@ -207,7 +203,7 @@ for (const language of LANGUAGES) {
             await expect(view.cards).toHaveCount(projects.length)
             for (const [index, project] of projects.entries()) {
                 const card = view.cards.nth(index)
-                const heading = card.getByRole("heading", { level: project.experiment ? 3 : 2 })
+                const heading = card.getByRole("heading", { level: 2 })
                 const link = heading.getByRole("link", { name: project.title, exact: true })
 
                 await expect(link).toHaveAttribute(
@@ -369,7 +365,7 @@ test.describe("busca", () => {
     test("RF-PROJECTS-20: o bloco de sem resultado sem termo diz que nenhuma combinação de filtros serve", async ({
         page
     }) => {
-        await openProjects(page, "pt-BR", "?type=cli")
+        await openProjects(page, "pt-BR", "?type=game")
         const view = getProjectsView(page, "pt-BR")
 
         await expect(view.status).toHaveText(view.texts.countNone)
@@ -747,6 +743,25 @@ test.describe("filtros de tipo e categoria", () => {
 
             for (const width of widths) {
                 await setWidth(page, width)
+                let previousLayout = ""
+                await expect
+                    .poll(
+                        async () => {
+                            const layout = JSON.stringify(
+                                await row.evaluate((element) =>
+                                    [element, ...element.querySelectorAll("button")].map((item) => {
+                                        const rect = item.getBoundingClientRect()
+                                        return [rect.left, rect.right, rect.top]
+                                    })
+                                )
+                            )
+                            const isStable = layout === previousLayout
+                            previousLayout = layout
+                            return isStable
+                        },
+                        { message: `${width}px` }
+                    )
+                    .toBe(true)
                 const measure = await readFilterRow(row)
                 const buttons = await row
                     .getByRole("button")
@@ -1498,62 +1513,6 @@ test.describe("capturas dos cards", () => {
             }
         })
     }
-})
-
-test.describe("seção Experimentos", () => {
-    for (const language of LANGUAGES) {
-        test(`RF-PROJECTS-32, RF-PROJECTS-24, NF-TE-04: ${language} mostra a seção depois dos principais, com h2, apoio e cards em h3, sem erro de hidratação`, async ({
-            page
-        }) => {
-            const projects = sortProjects(loadProjects(language), "recent", language)
-            const experiments = projects.filter((project) => project.experiment)
-            const mains = projects.filter((project) => !project.experiment)
-            expect(experiments.length).toBeGreaterThan(0)
-            const problems = collectConsoleProblems(page)
-
-            await openProjects(page, language)
-            const view = getProjectsView(page, language)
-
-            await expect(view.experimentsHeading).toBeVisible()
-            await expect(view.main.getByText(view.texts.experimentsDescription)).toBeVisible()
-            await expect(view.experimentCards).toHaveText(
-                experiments.map((project) => project.title)
-            )
-            await expect(view.main.getByRole("heading", { level: 3 })).toHaveCount(
-                experiments.length
-            )
-            await expect(view.status).toHaveText(view.texts.count(projects.length, projects.length))
-            const lastMain = view.cards.nth(mains.length - 1)
-            const firstExperiment = view.cards.nth(mains.length)
-            const headingBox = await getBox(view.experimentsHeading)
-            expect((await getBox(lastMain)).y).toBeLessThan(headingBox.y)
-            expect((await getBox(firstExperiment)).y).toBeGreaterThan(headingBox.y)
-            expect(problems).toEqual([])
-        })
-    }
-
-    test("RF-PROJECTS-32: a busca que só casa um principal esconde a seção e o h2", async ({
-        page
-    }) => {
-        await openProjects(page, "pt-BR", "?q=Maps")
-        const view = getProjectsView(page, "pt-BR")
-
-        await expect(view.cards).toHaveCount(1)
-        await expect(view.experimentsHeading).toHaveCount(0)
-        await expect(view.main.getByRole("heading", { level: 3 })).toHaveCount(0)
-    })
-
-    test("RF-PROJECTS-32: na ordenação A–Z os experimentos continuam depois dos principais", async ({
-        page
-    }) => {
-        const projects = sortProjects(loadProjects("pt-BR"), "title", "pt-BR")
-
-        await openProjects(page, "pt-BR", "?sort=title")
-        const view = getProjectsView(page, "pt-BR")
-
-        await expect(view.cardLinks).toHaveText(projects.map((project) => project.title))
-        await expect(view.experimentsHeading).toBeVisible()
-    })
 })
 
 test.describe("resumo inteiro do card", () => {

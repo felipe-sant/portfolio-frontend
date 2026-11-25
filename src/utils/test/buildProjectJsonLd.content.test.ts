@@ -7,11 +7,11 @@ import buildPersonId from "@/utils/buildPersonId"
 import buildProjectJsonLd from "@/utils/buildProjectJsonLd"
 
 const LANGUAGES: SupportedLanguage[] = ["pt-BR", "en", "es"]
-const PROJECTS_PER_LANGUAGE = 6
+const PROJECTS_PER_LANGUAGE = 8
 
 describe("buildProjectJsonLd sobre os dados reais", () => {
     describe.each(LANGUAGES)("em %s", (language) => {
-        it("são seis projetos", async () => {
+        it("são oito projetos", async () => {
             const snapshot = await readContentSnapshot()
 
             expect(projectsOf(snapshot, language)).toHaveLength(PROJECTS_PER_LANGUAGE)

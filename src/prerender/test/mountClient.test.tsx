@@ -401,8 +401,7 @@ describe("mountClient com caminho pré-renderizado", () => {
 
         expect(screen.getByRole("link", { name: "Maps" })).toBe(link)
         expect(readJsonLdText()).toBe(htmlJsonLd)
-        expect(cardTitles()).toHaveLength(6)
-        expect(screen.getByRole("heading", { level: 2, name: "Experimentos" })).toBeInTheDocument()
+        expect(cardTitles()).toHaveLength(8)
         expect(consoleSpies.error).not.toHaveBeenCalled()
         expect(hydrationWarnings(consoleSpies.warn)).toEqual([])
     })
@@ -530,7 +529,7 @@ describe("mountClient com caminho pré-renderizado", () => {
         await settle()
         observer.disconnect()
 
-        expect(countRegion()).toHaveTextContent("6 de 6 projetos")
+        expect(countRegion()).toHaveTextContent("8 de 8 projetos")
         expect(observed.join(" ")).not.toContain("Carregando")
     })
 })
