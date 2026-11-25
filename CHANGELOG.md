@@ -1,5 +1,11 @@
 # portfolio-frontend
 
+## 1.4.1
+
+### Patch Changes
+
+- [#280](https://github.com/felipe-sant/portfolio-frontend/pull/280) [`d4ba794`](https://github.com/felipe-sant/portfolio-frontend/commit/d4ba79499c9f37cf548a591a5c3cf6fb4523dc21) Thanks [@felipe-sant](https://github.com/felipe-sant)! - Adiciona os projetos ProconChat Jacareí e claude-kit, atualiza perfil, trajetória e currículos com o trabalho recente e remove a seção Experimentos de Projetos.
+
 ## 1.4.0
 
 ### Minor Changes
