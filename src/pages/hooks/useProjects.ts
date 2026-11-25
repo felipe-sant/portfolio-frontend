@@ -78,8 +78,7 @@ function useProjects() {
             isLoading: pages.isLoading,
             isError: pages.isError,
             retry: results.retry,
-            mainItems: results.mainItems,
-            experimentItems: results.experimentItems,
+            items: pages.items,
             skeletonCount: pages.skeletonCount,
             gridRef: pages.gridRef
         },

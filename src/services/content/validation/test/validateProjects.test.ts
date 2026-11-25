@@ -57,36 +57,14 @@ describe("validateProjects", () => {
         expect(issues).toEqual(["5 projetos em destaque; o máximo é 4"])
     })
 
-    it("reprova experiment ausente com o caminho do projeto", () => {
+    it("reprova a chave experiment, que não existe mais", () => {
         const issues = issuesAfter((project) => {
-            Reflect.deleteProperty(project, "experiment")
+            Object.assign(project, { experiment: false })
         })
 
         expect(issues).toEqual([
             expect.stringContaining(
-                "content/pt-BR/projects.json#items[0].experiment Campo obrigatório ausente"
-            )
-        ])
-    })
-
-    it("reprova experiment que não é booleano", () => {
-        const issues = issuesAfter((project) => {
-            Object.assign(project, { experiment: "true" })
-        })
-
-        expect(issues).toHaveLength(1)
-        expect(issues[0]).toContain("items[0].experiment")
-    })
-
-    it("reprova projeto que é destaque e experimento ao mesmo tempo", () => {
-        const issues = issuesAfter((project) => {
-            project.featured = true
-            project.experiment = true
-        })
-
-        expect(issues).toEqual([
-            expect.stringContaining(
-                "content/pt-BR/projects.json#items[0] Destaque e experimento não se combinam"
+                "content/pt-BR/projects.json#items[0].experiment Campo desconhecido"
             )
         ])
     })
