@@ -30,7 +30,6 @@ const projectRecordSchema: ZodMiniType<ProjectRecord> = object({
     types: array(enumeration(PROJECT_TYPES)).check(minLength(1)),
     category: enumeration(PROJECT_CATEGORIES),
     featured: boolean(),
-    experiment: boolean(),
     cardTechnologies: array(string()),
     cover: optional(responsiveImageSchema),
     role: string(),

@@ -7,7 +7,9 @@ const TRANSLATION_EXCEPTIONS: Record<string, string[]> = {
         "MNIST Classifier",
         "Player Profile Clustering",
         "Conversor de Unidades",
-        "Informática"
+        "Informática",
+        "ProconChat Jacareí",
+        "claude-kit"
     ],
     "items[].organization": [
         "InCicle",
@@ -21,7 +23,7 @@ const TRANSLATION_EXCEPTIONS: Record<string, string[]> = {
     "items[].disciplines[]": ["Ética"],
     "items[].certificates[].issuer": ["Expro", "Microcamp"],
     "items[].role": ["Full stack", "Frontend", "Full stack + IA"],
-    "items[].duration": ["13 meses", "2 semanas", "1 semana"]
+    "items[].duration": ["13 meses", "4 meses", "2 semanas", "1 semana"]
 }
 
 export default TRANSLATION_EXCEPTIONS

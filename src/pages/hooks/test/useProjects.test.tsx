@@ -179,29 +179,19 @@ describe("useProjects", () => {
         expect(latestPages.total).toBe(0)
     })
 
-    it("deriva mainItems e experimentItems de items, na ordem recebida", async () => {
-        stubProjects(buildProjectRecords(4, (index) => ({ experiment: index >= 2 })))
+    it("devolve em list.items todos os projetos, na ordem recebida", async () => {
+        stubProjects(buildProjectRecords(4))
 
         mount()
         await settled()
 
-        expect(latest.list.mainItems.map((item) => item.title)).toEqual(["Projeto 2", "Projeto 1"])
-        expect(latest.list.experimentItems.map((item) => item.title)).toEqual([
+        expect(latest.list.items.map((item) => item.title)).toEqual([
             "Projeto 4",
-            "Projeto 3"
+            "Projeto 3",
+            "Projeto 2",
+            "Projeto 1"
         ])
-        expect(latestPages.items).toHaveLength(4)
         expect(latestPages.total).toBe(4)
-    })
-
-    it("devolve experimentItems vazio quando nenhum projeto é experimento", async () => {
-        stubProjects(buildProjectRecords(3))
-
-        mount()
-        await settled()
-
-        expect(latest.list.experimentItems).toEqual([])
-        expect(latest.list.mainItems).toHaveLength(3)
     })
 
     it("começa carregando, com a contagem vazia antes do texto de carregando", async () => {
@@ -448,8 +438,8 @@ describe("useProjects", () => {
         await waitFor(() => expect(latest.results.text).toBe("10 de 10 projetos"))
     })
 
-    it("pede o próximo lote com offset igual a principais mais experimentos já mostrados", async () => {
-        stubProjects(buildProjectRecords(12, (index) => ({ experiment: index >= 7 })))
+    it("pede o próximo lote com offset igual aos projetos já mostrados", async () => {
+        stubProjects(buildProjectRecords(12))
         mount()
         await settled()
         vi.mocked(listProjects).mockClear()
@@ -459,8 +449,7 @@ describe("useProjects", () => {
         await waitFor(() => expect(latestPages.shown).toBe(12))
         const offsets = vi.mocked(listProjects).mock.calls.map(([, params]) => params.offset)
         expect(offsets).toContain(9)
-        expect(latest.list.mainItems).toHaveLength(7)
-        expect(latest.list.experimentItems).toHaveLength(5)
+        expect(latest.list.items).toHaveLength(12)
     })
 
     it("acrescenta 9 e depois 2 cards com 20 projetos", async () => {

@@ -2,7 +2,6 @@ import { afterEach, describe, expect, it, vi } from "vitest"
 import { renderHook } from "@testing-library/react"
 import setLanguage from "@/i18n/setLanguage"
 import useProjectsResults from "@/pages/hooks/useProjectsResults"
-import buildProjectSummary from "@/testUtils/buildProjectSummary"
 import projectsElementIds from "@/utils/projectsElementIds"
 
 type Pages = Parameters<typeof useProjectsResults>[0]
@@ -146,20 +145,6 @@ describe("useProjectsResults", () => {
         expect(renderResults(buildPages({ total: 0 }), true).result.current.canClearFilters).toBe(
             false
         )
-    })
-
-    it("separa principais e experimentos na ordem recebida", () => {
-        const items = [
-            buildProjectSummary({ id: "a", title: "A", experiment: false }),
-            buildProjectSummary({ id: "b", title: "B", experiment: true }),
-            buildProjectSummary({ id: "c", title: "C", experiment: false }),
-            buildProjectSummary({ id: "d", title: "D", experiment: true })
-        ]
-
-        const { result } = renderResults(buildPages({ items, total: 4, shown: 4 }))
-
-        expect(result.current.mainItems.map((item) => item.title)).toEqual(["A", "C"])
-        expect(result.current.experimentItems.map((item) => item.title)).toEqual(["B", "D"])
     })
 
     it("no retry foca o título antes de refazer a consulta e devolve a promessa", async () => {

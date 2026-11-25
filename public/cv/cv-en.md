@@ -21,6 +21,7 @@ Frontend development of multiple product modules (OKR, Hiring/Onboarding, DISC, 
 - Review of squad teammates' Pull Requests, contributing to the team's code quality.
 - Execution of (functional) QA tests on my own and other people's tasks, including full rounds of preventive QA that generated dozens of fix tasks before release to customers.
 - Implementation and maintenance of the AI agent configuration (ai-core) across multiple team repositories (backend and frontend), including a version update with Gitflow standardization and fixing incompatibilities between different adapters.
+- Coordination of AI agent teams (product, specification, development, review and QA) on deliverables, following SDD and TDD, and led the major version rollout of the internal agent kit across about 28 frontend repositories.
 - Resolution of urgent hotfixes on direct request, with autonomy from analysis to fix in production, recognized by the team as a reference for reporting and resolving bugs.
 - Participation in visual standardization initiatives (dark mode / design system) using a component library shared across the frontends.
 
@@ -33,7 +34,7 @@ Responsible for managing and controlling class absences, with periodic follow-up
 **Fatec – Faculdade de Tecnologia do Estado de São Paulo** (2023 – 2027) — In progress, 6th semester
 Technologist Degree in Multiplatform Software Development — expected completion in 2027
 
-Solid knowledge of TypeScript and frameworks such as React, with experience in SQL and NoSQL databases, consuming and integrating internal and external APIs, object-oriented programming and good code organization practices (including automated testing). Development of academic projects and projects in partnership with companies using the Scrum agile methodology.
+Solid knowledge of TypeScript and frameworks such as React, with experience in SQL and NoSQL databases, consuming and integrating internal and external APIs, object-oriented programming and good code organization practices (including automated testing). Development of academic projects and projects in partnership with companies using the Scrum agile methodology. In the 6th semester, I was the Scrum Master and main developer of ProconChat Jacareí, a WhatsApp chatbot built in partnership with PROCON Jacareí.
 
 **Etec – Escola Técnica Estadual** (2020 – 2022)
 Systems Development Technician
@@ -42,11 +43,13 @@ Technical course integrated with high school, with the first hands-on contact wi
 
 ## Featured projects
 
+**ProconChat Jacareí** — WhatsApp chatbot that guides consumers and books in-person appointments at PROCON Jacareí, with a web panel for the staff, a local LLM (Ollama) and data handling compliant with Brazil's LGPD. Academic project with a team of 7, where I was the Scrum Master and main developer.
+
+**claude-kit** — Command-line tool that applies a team of AI agents for Claude Code (product owner, specification, developers, reviewer and QA) to any repository, detecting the stack without overwriting what the project already has.
+
 **Player Profile Clustering** — Machine Learning model (K-Means) that classifies soccer athletes into physical performance profiles from session metrics, served through a Node.js API with ONNX Runtime.
 
 **MNIST Classifier** — Application that recognizes handwritten digits drawn by the user, using a neural network trained on the MNIST dataset (Keras/TensorFlow), with a Node.js backend and a Python/FastAPI inference service.
-
-**Maps** — Flight route simulator between two points in Brazil, randomly drawn or chosen by the user, calculating the real path with the Earth's curvature and geographic data through the IBGE API.
 
 Full portfolio with more projects, code and technical details available on the website.
 

@@ -6,8 +6,6 @@ import projectsPageSize from "@/utils/projectsPageSize"
 
 interface ProjectsGridProps {
     projects: ProjectSummary[]
-    firstIndex?: number
-    headingLevel?: 2 | 3
     skeletonCount: number
 }
 
@@ -18,7 +16,6 @@ interface SkeletonItemsProps {
 interface ProjectListItemProps {
     project: ProjectSummary
     index: number
-    headingLevel?: 2 | 3
 }
 
 function SkeletonItems({ count }: SkeletonItemsProps) {
@@ -29,35 +26,24 @@ function SkeletonItems({ count }: SkeletonItemsProps) {
     ))
 }
 
-function ProjectListItem({ project, index, headingLevel }: ProjectListItemProps) {
+function ProjectListItem({ project, index }: ProjectListItemProps) {
     return (
         <li className={css.item}>
             <ProjectCard
                 project={project}
                 index={index}
                 revealIndex={index % projectsPageSize}
-                headingLevel={headingLevel}
                 fromProjects
             />
         </li>
     )
 }
 
-function ProjectsGrid({
-    projects,
-    firstIndex = 0,
-    headingLevel,
-    skeletonCount
-}: ProjectsGridProps) {
+function ProjectsGrid({ projects, skeletonCount }: ProjectsGridProps) {
     return (
         <ul className={css.grid}>
             {projects.map((project, index) => (
-                <ProjectListItem
-                    key={project.id}
-                    project={project}
-                    index={firstIndex + index}
-                    headingLevel={headingLevel}
-                />
+                <ProjectListItem key={project.id} project={project} index={index} />
             ))}
             <SkeletonItems count={skeletonCount} />
         </ul>

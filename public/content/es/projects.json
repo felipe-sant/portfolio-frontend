@@ -8,7 +8,6 @@
             "types": ["web", "api"],
             "category": "academic",
             "featured": true,
-            "experiment": false,
             "cardTechnologies": ["React", "Express", "Leaflet"],
             "role": "Full stack",
             "duration": "13 meses",
@@ -106,7 +105,6 @@
             "types": ["web", "api", "data"],
             "category": "personal",
             "featured": true,
-            "experiment": false,
             "cardTechnologies": ["React", "TensorFlow", "FastAPI"],
             "role": "Full stack + IA",
             "duration": "2 semanas",
@@ -222,7 +220,6 @@
             "types": ["web"],
             "category": "personal",
             "featured": false,
-            "experiment": true,
             "cardTechnologies": ["React", "TypeScript"],
             "role": "Frontend",
             "duration": "1 día",
@@ -288,7 +285,6 @@
             "types": ["web", "api"],
             "category": "academic",
             "featured": false,
-            "experiment": true,
             "cardTechnologies": ["React", "Express", "MongoDB"],
             "role": "Full stack",
             "duration": "2 semanas",
@@ -380,7 +376,6 @@
             "types": ["web"],
             "category": "academic",
             "featured": false,
-            "experiment": false,
             "cardTechnologies": ["React", "TypeScript"],
             "role": "Frontend",
             "duration": "5 días",
@@ -445,7 +440,6 @@
             "types": ["api", "data"],
             "category": "personal",
             "featured": true,
-            "experiment": false,
             "cardTechnologies": ["scikit-learn", "ONNX Runtime", "Node.js"],
             "role": "IA (modelo y entrenamiento)",
             "duration": "1 semana",
@@ -542,6 +536,223 @@
                 }
             ],
             "updatedAt": "2026-04-19"
+        },
+        {
+            "id": "01a210bc-22e7-7c28-81a6-6ff53112a53e",
+            "title": "ProconChat Jacareí",
+            "summary": "Chatbot de WhatsApp que orienta al consumidor por los flujos del PROCON de Jacareí y agenda atención presencial, con panel web para el equipo e IA local.",
+            "date": "2026-11",
+            "types": ["web", "api", "bot"],
+            "category": "academic",
+            "featured": true,
+            "cardTechnologies": ["React", "Node.js", "Ollama"],
+            "role": "Scrum Master y full stack",
+            "duration": "4 meses",
+            "team": "7 personas",
+            "status": "completed",
+            "stack": [
+                {
+                    "category": "frontend",
+                    "items": [
+                        {
+                            "name": "React"
+                        },
+                        {
+                            "name": "TypeScript",
+                            "isProgrammingLanguage": true
+                        },
+                        {
+                            "name": "Vite"
+                        },
+                        {
+                            "name": "Redux Toolkit"
+                        }
+                    ]
+                },
+                {
+                    "category": "backend",
+                    "items": [
+                        {
+                            "name": "Node.js"
+                        },
+                        {
+                            "name": "Express"
+                        },
+                        {
+                            "name": "TypeScript",
+                            "isProgrammingLanguage": true
+                        },
+                        {
+                            "name": "PostgreSQL"
+                        },
+                        {
+                            "name": "Ollama"
+                        },
+                        {
+                            "name": "WhatsApp Cloud API"
+                        }
+                    ]
+                },
+                {
+                    "category": "tooling",
+                    "items": [
+                        {
+                            "name": "Vitest"
+                        },
+                        {
+                            "name": "Docker Compose"
+                        },
+                        {
+                            "name": "GitHub Actions"
+                        },
+                        {
+                            "name": "node-pg-migrate"
+                        }
+                    ]
+                }
+            ],
+            "demoUrl": "https://3.150.166.93.sslip.io",
+            "repositoryUrl": "https://github.com/Steel-Hard/ProconChat_Jacarei",
+            "images": [
+                {
+                    "large": {
+                        "src": "images/projects/01a210bc-22e7-7c28-81a6-6ff53112a53e/1-large.webp",
+                        "width": 1600,
+                        "height": 900
+                    },
+                    "small": {
+                        "src": "images/projects/01a210bc-22e7-7c28-81a6-6ff53112a53e/1-small.webp",
+                        "width": 640,
+                        "height": 360
+                    },
+                    "alt": "Pantalla de contenido del panel con la lista de categorías del chatbot y las preguntas de la categoría de cobro indebido",
+                    "caption": "Contenido del chatbot editado por el equipo"
+                },
+                {
+                    "large": {
+                        "src": "images/projects/01a210bc-22e7-7c28-81a6-6ff53112a53e/2-large.webp",
+                        "width": 1600,
+                        "height": 900
+                    },
+                    "small": {
+                        "src": "images/projects/01a210bc-22e7-7c28-81a6-6ff53112a53e/2-small.webp",
+                        "width": 640,
+                        "height": 360
+                    },
+                    "alt": "Vista previa de una respuesta del chatbot al estilo de WhatsApp, con base legal, documentos, aviso y botones para agendar",
+                    "caption": "Respuesta al ciudadano con la etiqueta de IA"
+                },
+                {
+                    "large": {
+                        "src": "images/projects/01a210bc-22e7-7c28-81a6-6ff53112a53e/3-large.webp",
+                        "width": 1600,
+                        "height": 900
+                    },
+                    "small": {
+                        "src": "images/projects/01a210bc-22e7-7c28-81a6-6ff53112a53e/3-small.webp",
+                        "width": 640,
+                        "height": 360
+                    },
+                    "alt": "Informe con el total de conversaciones del período y la división por desenlace, como resuelta y terminó en cita",
+                    "caption": "Informe de desenlace de las conversaciones"
+                }
+            ],
+            "documents": [
+                {
+                    "id": "01a210bc-22e8-72b6-bbf0-e3a81d3f54db",
+                    "name": "README.md",
+                    "format": "markdown",
+                    "translated": true,
+                    "updatedAt": "2026-11-25"
+                },
+                {
+                    "id": "01a210bc-22e8-71cb-8dfb-1447cb1b10b4",
+                    "name": "LICENSE",
+                    "format": "text",
+                    "translated": false,
+                    "contentLanguage": "en",
+                    "updatedAt": "2026-08-03"
+                }
+            ],
+            "related": [],
+            "updatedAt": "2026-11-25"
+        },
+        {
+            "id": "01a210bc-22e8-74ca-a12f-b9b943b77821",
+            "title": "claude-kit",
+            "summary": "Kit de agentes para Claude Code que se aplica a cualquier repositorio con un comando, detecta el stack y arma un equipo con especificación, TDD y revisión.",
+            "date": "2026-11",
+            "types": ["cli"],
+            "category": "personal",
+            "featured": false,
+            "cardTechnologies": ["Node.js", "Claude Code", "GitHub Actions"],
+            "role": "Autor y mantenedor",
+            "duration": "1 semana",
+            "team": "Solo",
+            "status": "inDevelopment",
+            "stack": [
+                {
+                    "category": "backend",
+                    "items": [
+                        {
+                            "name": "Node.js"
+                        },
+                        {
+                            "name": "JavaScript",
+                            "isProgrammingLanguage": true
+                        }
+                    ]
+                },
+                {
+                    "category": "tooling",
+                    "items": [
+                        {
+                            "name": "Claude Code"
+                        },
+                        {
+                            "name": "GitHub Actions"
+                        },
+                        {
+                            "name": "oxlint"
+                        }
+                    ]
+                }
+            ],
+            "repositoryUrl": "https://github.com/felipe-sant/claude-kit",
+            "images": [
+                {
+                    "large": {
+                        "src": "images/projects/01a210bc-22e8-74ca-a12f-b9b943b77821/1-large.webp",
+                        "width": 1600,
+                        "height": 900
+                    },
+                    "small": {
+                        "src": "images/projects/01a210bc-22e8-74ca-a12f-b9b943b77821/1-small.webp",
+                        "width": 640,
+                        "height": 360
+                    },
+                    "alt": "Diagrama de ai-sync grabando agentes, reglas y skills en .claude/ y de la orchestrator delegando al product-owner, a los devs, al reviewer y al qa",
+                    "caption": "Flujo del equipo de agentes"
+                }
+            ],
+            "documents": [
+                {
+                    "id": "01a210bc-22e8-7d88-b5b0-7b41bd413a3d",
+                    "name": "README.md",
+                    "format": "markdown",
+                    "translated": true,
+                    "updatedAt": "2026-11-25"
+                },
+                {
+                    "id": "01a210bc-22e8-7028-a793-d30ef222e354",
+                    "name": "SETUP.md",
+                    "format": "markdown",
+                    "translated": true,
+                    "updatedAt": "2026-11-25"
+                }
+            ],
+            "related": [],
+            "updatedAt": "2026-11-25"
         }
     ]
 }

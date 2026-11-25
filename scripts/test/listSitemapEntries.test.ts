@@ -140,7 +140,7 @@ describe("listSitemapEntries", () => {
         )
 
         expect(entries).toHaveLength((4 + projects.length + documents.length) * 3)
-        expect(entries).toHaveLength(48)
+        expect(entries).toHaveLength(57)
         expect(entries.some((entry) => isLicenseDocument(entry.path.split("/").at(-1) ?? ""))).toBe(
             false
         )

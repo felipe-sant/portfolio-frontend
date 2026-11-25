@@ -29,11 +29,11 @@ describe.each(SUPPORTED_LANGUAGES)("relacionados do conteúdo real em %s", (lang
         expect(Object.keys(clustering?.related[0] ?? {})).toEqual(["id"])
     })
 
-    it("deixa os outros quatro projetos sem relacionados", async () => {
+    it("deixa os outros seis projetos sem relacionados", async () => {
         const projects = await readProjects(language)
         const others = projects.filter((project) => ![MNIST, CLUSTERING].includes(project.id))
 
-        expect(others).toHaveLength(4)
-        expect(others.map((project) => project.related)).toEqual([[], [], [], []])
+        expect(others).toHaveLength(6)
+        expect(others.map((project) => project.related)).toEqual([[], [], [], [], [], []])
     })
 })

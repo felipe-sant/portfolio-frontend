@@ -108,8 +108,8 @@ describe("buildDocumentDescription", () => {
             })
         )
 
-        expect(descriptions).toHaveLength(6)
-        expect(new Set(descriptions).size).toBe(6)
+        expect(descriptions).toHaveLength(7)
+        expect(new Set(descriptions).size).toBe(7)
         descriptions.forEach((description) => {
             expect(description).toBeDefined()
             expect(summaries).not.toContain(description)

@@ -17,12 +17,6 @@ function getProjectsView(page: Page, language: Language) {
         status: main.getByRole("status"),
         cards: main.getByRole("article"),
         cardLinks: main.getByRole("article").getByRole("heading").getByRole("link"),
-        experimentsHeading: main.getByRole("heading", {
-            level: 2,
-            name: texts.experimentsHeading,
-            exact: true
-        }),
-        experimentCards: main.getByRole("heading", { level: 3 }).getByRole("link"),
         loadMore: main.getByRole("button", { name: texts.loadMore }),
         clearFilters: main.getByRole("button", { name: texts.clearFilters }),
         alert: main.getByRole("alert"),

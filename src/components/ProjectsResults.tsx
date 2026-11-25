@@ -3,7 +3,6 @@ import { useTranslation } from "react-i18next"
 import AsyncSection from "@/components/AsyncSection"
 import Button from "@/components/Button"
 import ProjectsEmptyState from "@/components/ProjectsEmptyState"
-import ProjectsExperiments from "@/components/ProjectsExperiments"
 import ProjectsGrid from "@/components/ProjectsGrid"
 import type ProjectSummary from "@/types/project/ProjectSummary.types"
 import projectsPageSize from "@/utils/projectsPageSize"
@@ -12,8 +11,7 @@ interface ProjectsResultsList {
     isLoading: boolean
     isError: boolean
     retry: () => void
-    mainItems: ProjectSummary[]
-    experimentItems: ProjectSummary[]
+    items: ProjectSummary[]
     skeletonCount: number
     gridRef: RefObject<HTMLDivElement | null>
 }
@@ -58,21 +56,10 @@ function ProjectsResults({ list, isNoResults, query, onClearFilters }: ProjectsR
             )}
             {!listState.isError && !isNoResults && (
                 <div ref={gridRef}>
-                    {(listState.mainItems.length > 0 || listState.experimentItems.length === 0) && (
-                        <ProjectsGrid
-                            projects={listState.mainItems}
-                            skeletonCount={
-                                listState.experimentItems.length === 0 ? listState.skeletonCount : 0
-                            }
-                        />
-                    )}
-                    {listState.experimentItems.length > 0 && (
-                        <ProjectsExperiments
-                            projects={listState.experimentItems}
-                            firstIndex={listState.mainItems.length}
-                            skeletonCount={listState.skeletonCount}
-                        />
-                    )}
+                    <ProjectsGrid
+                        projects={listState.items}
+                        skeletonCount={listState.skeletonCount}
+                    />
                 </div>
             )}
         </AsyncSection>
