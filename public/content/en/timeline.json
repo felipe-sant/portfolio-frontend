@@ -7,7 +7,7 @@
             "organization": "InCicle",
             "details": ["Hybrid"],
             "start": "2026-05",
-            "summary": "Working mainly on the frontend, with incursions into the backend, in an agile squad, going through different product modules within a micro frontend architecture, from implementing new features to evolving existing versions. Development with React, TypeScript and Node.js, REST API integration and work with SQL and NoSQL databases. Pull Request review, QA testing and production hotfixes. Use of AI agents to plan, implement and review deliverables, with TDD.",
+            "summary": "Working mainly on the frontend, with incursions into the backend, in an agile squad, going through different product modules within a micro frontend architecture, from implementing new features to evolving existing versions. Development with React, TypeScript and Node.js, REST API integration and work with SQL and NoSQL databases. Pull Request review, QA testing and production hotfixes. Coordination of AI agent teams (product, development, review and QA) to plan, implement and review deliverables with TDD, and maintenance of the internal agent and skill kit used across the company's repositories.",
             "responsibilities": [
                 "Feature development with React, TypeScript and Node.js",
                 "Integration of internal and external REST APIs",
@@ -16,10 +16,12 @@
                 "QA testing of my own and other people's tasks",
                 "Resolution of urgent production hotfixes",
                 "Automated end-to-end tests with Playwright",
-                "Planning, implementation and review of deliverables with AI agents, following TDD",
+                "Coordination of AI agent teams in planning, implementing, reviewing and testing deliverables, following TDD",
                 "Setup of CI pipelines and automatic dependency updates",
                 "Preparing and following deliveries to production",
-                "Repository maintenance"
+                "Repository maintenance",
+                "Maintenance and batch rollout of the internal AI agent and skill kit across the company's repositories",
+                "Plain-language test scripts for QA"
             ],
             "disciplines": [],
             "technologies": [
@@ -67,7 +69,7 @@
             "stage": "6th semester",
             "details": ["Expected completion in 2027"],
             "start": "2023-02",
-            "summary": "Software development education focused on programming logic, OOP, web frameworks and good coding practices, including academic projects and projects in partnership with companies.",
+            "summary": "Software development education focused on programming logic, OOP, web frameworks and good coding practices, including academic projects and projects in partnership with companies. In the 6th semester, I was the Scrum Master and main developer of ProconChat Jacareí, a WhatsApp chatbot built in partnership with PROCON Jacareí.",
             "responsibilities": [],
             "disciplines": [
                 "Mathematics for Computing",
@@ -95,7 +97,7 @@
             ],
             "technologies": ["TypeScript", "React", "SQL", "Python"],
             "certificates": [],
-            "projectIds": []
+            "projectIds": ["01a210bc-22e7-7c28-81a6-6ff53112a53e"]
         },
         {
             "id": "01a13167-0629-7157-b596-2802e8ef08cb",

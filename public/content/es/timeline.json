@@ -7,7 +7,7 @@
             "organization": "InCicle",
             "details": ["Híbrido"],
             "start": "2026-05",
-            "summary": "Actuación principalmente en frontend, con incursiones en el backend, en un squad ágil, pasando por distintos módulos de producto dentro de una arquitectura de micro frontends, desde la implementación de nuevas features hasta la evolución de versiones ya existentes. Desarrollo con React, TypeScript y Node.js, integración de APIs REST y trabajo con bases de datos SQL y NoSQL. Revisión de Pull Requests, pruebas de QA y resolución de hotfixes en producción. Uso de agentes de IA para planificar, implementar y revisar las entregas, con TDD.",
+            "summary": "Actuación principalmente en frontend, con incursiones en el backend, en un squad ágil, pasando por distintos módulos de producto dentro de una arquitectura de micro frontends, desde la implementación de nuevas features hasta la evolución de versiones ya existentes. Desarrollo con React, TypeScript y Node.js, integración de APIs REST y trabajo con bases de datos SQL y NoSQL. Revisión de Pull Requests, pruebas de QA y resolución de hotfixes en producción. Coordinación de equipos de agentes de IA (producto, desarrollo, revisión y QA) para planificar, implementar y revisar las entregas, con TDD, y mantenimiento del kit interno de agentes y skills usado por los repositorios de la empresa.",
             "responsibilities": [
                 "Desarrollo de features con React, TypeScript y Node.js",
                 "Integración de APIs REST internas y externas",
@@ -16,10 +16,12 @@
                 "Ejecución de pruebas de QA en tareas propias y ajenas",
                 "Resolución de hotfixes urgentes en producción",
                 "Pruebas end-to-end automatizadas con Playwright",
-                "Planificación, implementación y revisión de entregas con agentes de IA, siguiendo TDD",
+                "Coordinación de equipos de agentes de IA en la planificación, implementación, revisión y QA de las entregas, siguiendo TDD",
                 "Configuración de pipelines de CI y actualización automática de dependencias",
                 "Preparación y seguimiento de entregas a producción",
-                "Mantenimiento de repositorios"
+                "Mantenimiento de repositorios",
+                "Mantenimiento y actualización en lote del kit interno de agentes y skills de IA en los repositorios de la empresa",
+                "Guiones de prueba en lenguaje sencillo para QA"
             ],
             "disciplines": [],
             "technologies": [
@@ -67,7 +69,7 @@
             "stage": "6.º semestre",
             "details": ["Finalización prevista en 2027"],
             "start": "2023-02",
-            "summary": "Formación en desarrollo de software con foco en lógica de programación, POO, frameworks web y buenas prácticas de código, incluyendo proyectos académicos y en alianza con empresas.",
+            "summary": "Formación en desarrollo de software con foco en lógica de programación, POO, frameworks web y buenas prácticas de código, incluyendo proyectos académicos y en alianza con empresas. En el 6.º semestre, fui Scrum Master y desarrollador principal de ProconChat Jacareí, un chatbot de WhatsApp hecho en alianza con el PROCON de Jacareí.",
             "responsibilities": [],
             "disciplines": [
                 "Matemática para Computación",
@@ -95,7 +97,7 @@
             ],
             "technologies": ["TypeScript", "React", "SQL", "Python"],
             "certificates": [],
-            "projectIds": []
+            "projectIds": ["01a210bc-22e7-7c28-81a6-6ff53112a53e"]
         },
         {
             "id": "01a13167-0629-7157-b596-2802e8ef08cb",
