@@ -365,7 +365,7 @@ test.describe("busca", () => {
     test("RF-PROJECTS-20: o bloco de sem resultado sem termo diz que nenhuma combinação de filtros serve", async ({
         page
     }) => {
-        await openProjects(page, "pt-BR", "?type=cli")
+        await openProjects(page, "pt-BR", "?type=game")
         const view = getProjectsView(page, "pt-BR")
 
         await expect(view.status).toHaveText(view.texts.countNone)
@@ -743,6 +743,25 @@ test.describe("filtros de tipo e categoria", () => {
 
             for (const width of widths) {
                 await setWidth(page, width)
+                let previousLayout = ""
+                await expect
+                    .poll(
+                        async () => {
+                            const layout = JSON.stringify(
+                                await row.evaluate((element) =>
+                                    [element, ...element.querySelectorAll("button")].map((item) => {
+                                        const rect = item.getBoundingClientRect()
+                                        return [rect.left, rect.right, rect.top]
+                                    })
+                                )
+                            )
+                            const isStable = layout === previousLayout
+                            previousLayout = layout
+                            return isStable
+                        },
+                        { message: `${width}px` }
+                    )
+                    .toBe(true)
                 const measure = await readFilterRow(row)
                 const buttons = await row
                     .getByRole("button")

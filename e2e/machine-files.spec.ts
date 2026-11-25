@@ -118,7 +118,7 @@ test.describe("arquivos para buscadores e IA", () => {
             const listed = paths.filter((path) => path.startsWith(`${language}/projects/`))
             const documents = listed.filter((path) => path.includes("/docs/")).toSorted()
             expect(documents).toEqual(listIndexableDocuments(language).toSorted())
-            expect(documents).toHaveLength(6)
+            expect(documents).toHaveLength(7)
         }
     })
 
